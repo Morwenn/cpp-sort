@@ -67,5 +67,13 @@ namespace cppsort
 #include "detail/sort0.h"
 #include "detail/sort1.h"
 #include "detail/sort2.h"
+#include "detail/sort3.h"
+#include "detail/sort4.h"
+#include "detail/sort5.h"
+#include "detail/sort6.h"
+#include "detail/sort7.h"
+#include "detail/sort8.h"
+#include "detail/sort9.h"
+#include "detail/sort10.h"
 
 #endif // CPPSORT_SORT_N_H_
