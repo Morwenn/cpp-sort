@@ -36,8 +36,7 @@ namespace detail
         {
             using std::swap;
 
-            if (compare(begin[1u], begin[0u]))
-            {
+            if (compare(begin[1u], begin[0u])) {
                 swap(begin[0u], begin[1u]);
             }
         }

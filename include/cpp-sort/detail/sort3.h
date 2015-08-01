@@ -36,26 +36,18 @@ namespace detail
         {
             using std::swap;
 
-            if (compare(begin[0u], begin[1u]))
-            {
-                if (compare(begin[2u], begin[0u]))
-                {
+            if (compare(begin[0u], begin[1u])) {
+                if (compare(begin[2u], begin[0u])) {
                     swap(begin[0u], begin[2u]);
                 }
-            }
-            else
-            {
-                if (compare(begin[1u], begin[2u]))
-                {
+            } else {
+                if (compare(begin[1u], begin[2u])) {
                     swap(begin[0u], begin[1u]);
-                }
-                else
-                {
+                } else {
                     swap(begin[0u], begin[2u]);
                 }
             }
-            if (compare(begin[2u], begin[1u]))
-            {
+            if (compare(begin[2u], begin[1u])) {
                 swap(begin[1u], begin[2u]);
             }
         }
