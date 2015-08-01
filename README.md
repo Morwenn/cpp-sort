@@ -1,6 +1,3 @@
-`cpp-sort` - Additional sorting algorithms
-==========================================
-
 **cpp-sort** is a generic C++14 header-only sorting library. Its goal is not
 to replace `std::sort` but rather to *complete* it so that it can choose more
 efficient algorithms in some situations. It does so by providing two additional
@@ -40,3 +37,60 @@ int main()
     }
 }
 ```
+
+`cppsort::sort`
+---------------
+
+```cpp
+template<
+    typename RandomAccessIterable,
+    typename Compare = std::less<>
+>
+auto sort(RandomAccessIterable& iterable, Compare&& compare={})
+    -> void;
+
+template<
+    typename T,
+    std::size_t N,
+    typename Compare = std::less<>
+>
+auto sort(std::array<T, N>& array, Compare&& compare={})
+    -> void;
+
+template<
+    typename T,
+    std::size_t N,
+    typename Compare = std::less<>
+>
+auto sort(T (&array)[N], Compare&& compare={})
+    -> void;
+```
+
+This function takes a `RandomAccessIterable` collection and sorts it in-place in
+ascending order. The function uses `std::less<>` to compare the elements, unless
+specified otherwise.
+
+The first version is a direct wrapper around `std::sort` while the overloads taking
+a fixed-sized C array or an `std::array` call `cppsort::sort_n`. 
+
+`cppsort::sort_n`
+-----------------
+
+```cpp
+template<
+    std::size_t N,
+    typename RandomAccessIterator,
+    typename Compare = std::less<>
+>
+auto sort_n(RandomAccessIterator begin, Compare&& compare={})
+    -> void;
+```
+
+This function takes random-access iterator and proceeds to sort the elements of
+the range `[begin, begin + N)` in-place in ascending order. The function uses
+`std::less<>` to compare the elements unless specified otherwise.
+
+The generic version of the algorithm is a direct call to the standard library
+function `std::sort(begin, begin+N)`. However, the called is dispatched to specific
+and more optimal sorting algorithms for some small values of `N`.
+
