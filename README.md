@@ -149,3 +149,13 @@ different algorithms:
 
 * [Algorithm 3](http://stackoverflow.com/a/3343600/1364752)
 * [Other algorithms](http://pages.ripco.net/~jgamble/nw.html)
+
+Benchmark
+=========
+
+I have a written a small benchmark to test `cppsort::sort` when there is a small
+number of values and compare it to `std::sort`. The benchmarking method is rather
+febrile, but the results are always pretty consistent so I guess that it does mean
+that the specific sorting algorithms do their job properly. Here are the results:
+
+![cppsrot::sort vs. std::sort](http://i.imgur.com/hE6yyST.png)
