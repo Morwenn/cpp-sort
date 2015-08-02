@@ -158,7 +158,7 @@ number of values and compare it to `std::sort`. The benchmarking method is rathe
 febrile, but the results are always pretty consistent so I guess that it does mean
 that the specific sorting algorithms do their job properly. Here are the results:
 
-![cppsrot::sort vs. std::sort](http://i.imgur.com/hE6yyST.png)
+![cppsrot::sort vs. std::sort](http://i.imgur.com/nQ8eXdu.png)
 
 The results were generated with MinGW g++ 5.1 with the compiler options
 `-std=c++14 -O3`.

@@ -37,28 +37,44 @@ auto std_sort(RandomAccessIterable& iterable, Compare&& compare={})
     std::sort(std::begin(iterable), std::end(iterable), std::forward<Compare>(compare));
 }
 
-template<typename T, std::size_t N, typename SortFunction>
-auto time_it(SortFunction sort, std::size_t times)
-    -> std::chrono::milliseconds
+template<
+    typename T,
+    std::size_t N,
+    typename SortFunction1,
+    typename SortFunction2
+>
+auto time_compare(SortFunction1 sort1, SortFunction2 sort2, std::size_t times)
+    -> std::array<std::chrono::milliseconds, 2u>
 {
     // Random numbers generator
     thread_local std::mt19937_64 engine(std::time(nullptr));
 
-    // Generate shuffled array
+    // Generate shuffled array, the same for both algorithms
     std::array<T, N> array;
     std::iota(std::begin(array), std::end(array), 0);
     std::shuffle(std::begin(array), std::end(array), engine);
 
+    // Time first algorithm
     auto start = std::chrono::high_resolution_clock::now();
-
     for (std::size_t i = 0 ; i < times ; ++i)
     {
         auto unsorted = array;
-        sort(unsorted, std::less<>{});
+        sort1(unsorted, std::less<>{});
     }
-
     auto end = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    auto duration1 = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    // Time second algorithm
+    start = std::chrono::high_resolution_clock::now();
+    for (std::size_t i = 0 ; i < times ; ++i)
+    {
+        auto unsorted = array;
+        sort2(unsorted, std::less<>{});
+    }
+    end = std::chrono::high_resolution_clock::now();
+    auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    return { duration1, duration2 };
 }
 
 
@@ -72,14 +88,23 @@ auto time_them(std::size_t size, std::index_sequence<Ind...>)
             2u
         >
 {
-    // Benchmark std::array overload for cppsort::sort
-    std::array<std::chrono::milliseconds, sizeof...(Ind)> first = {
-        time_it<T, Ind>(&cppsort::sort<T, Ind, std::less<>>, size)...
+    // Benchmark the sorts std::sort
+    std::array<std::array<std::chrono::milliseconds, 2u>, sizeof...(Ind)> results = {
+        time_compare<T, Ind>(
+            &cppsort::sort<T, Ind, std::less<>>,
+            &std_sort<std::array<T, Ind>, std::less<>>,
+            size
+        )...
     };
 
-    // Benchmark std::sort
+    // Results for cppsort::sort
+    std::array<std::chrono::milliseconds, sizeof...(Ind)> first = {
+        std::get<Ind>(results)[0u]...
+    };
+
+    // Results for std::sort
     std::array<std::chrono::milliseconds, sizeof...(Ind)> second = {
-        time_it<T, Ind>(&std_sort<std::array<T, Ind>, std::less<>>, size)...
+        std::get<Ind>(results)[1u]...
     };
 
     return { first, second };
