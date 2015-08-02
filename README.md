@@ -159,3 +159,6 @@ febrile, but the results are always pretty consistent so I guess that it does me
 that the specific sorting algorithms do their job properly. Here are the results:
 
 ![cppsrot::sort vs. std::sort](http://i.imgur.com/hE6yyST.png)
+
+The results were generated with MinGW g++ 5.1 with the compiler options
+`-std=c++14 -O3`.
