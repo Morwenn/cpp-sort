@@ -25,8 +25,6 @@ TEST_CASE( "sort arrays of size 3", "[sort]" )
 {
     SECTION( "sort C arrays" )
     {
-        int sorted[] = { 1, 2, 3 };
-
         int arr0[] = { 1, 2, 3 };
         int arr1[] = { 1, 3, 2 };
         int arr2[] = { 2, 1, 3 };
@@ -41,18 +39,16 @@ TEST_CASE( "sort arrays of size 3", "[sort]" )
         cppsort::sort(arr4);
         cppsort::sort(arr5);
 
-        CHECK( std::equal(std::begin(arr0), std::end(arr0), std::begin(sorted), std::end(sorted)) );
-        CHECK( std::equal(std::begin(arr1), std::end(arr1), std::begin(sorted), std::end(sorted)) );
-        CHECK( std::equal(std::begin(arr2), std::end(arr2), std::begin(sorted), std::end(sorted)) );
-        CHECK( std::equal(std::begin(arr3), std::end(arr3), std::begin(sorted), std::end(sorted)) );
-        CHECK( std::equal(std::begin(arr4), std::end(arr4), std::begin(sorted), std::end(sorted)) );
-        CHECK( std::equal(std::begin(arr5), std::end(arr5), std::begin(sorted), std::end(sorted)) );
+        CHECK( std::is_sorted(std::begin(arr0), std::end(arr0)) );
+        CHECK( std::is_sorted(std::begin(arr1), std::end(arr1)) );
+        CHECK( std::is_sorted(std::begin(arr2), std::end(arr2)) );
+        CHECK( std::is_sorted(std::begin(arr3), std::end(arr3)) );
+        CHECK( std::is_sorted(std::begin(arr4), std::end(arr4)) );
+        CHECK( std::is_sorted(std::begin(arr5), std::end(arr5)) );
     }
 
     SECTION( "sort std::array" )
     {
-        std::array<int, 3u> sorted = { 1, 2, 3 };
-
         std::array<int, 3u> arr0 = { 1, 2, 3 };
         std::array<int, 3u> arr1 = { 1, 3, 2 };
         std::array<int, 3u> arr2 = { 2, 1, 3 };
@@ -67,11 +63,11 @@ TEST_CASE( "sort arrays of size 3", "[sort]" )
         cppsort::sort(arr4);
         cppsort::sort(arr5);
 
-        CHECK( arr0 == sorted );
-        CHECK( arr1 == sorted );
-        CHECK( arr2 == sorted );
-        CHECK( arr3 == sorted );
-        CHECK( arr4 == sorted );
-        CHECK( arr5 == sorted );
+        CHECK( std::is_sorted(std::begin(arr0), std::end(arr0)) );
+        CHECK( std::is_sorted(std::begin(arr1), std::end(arr1)) );
+        CHECK( std::is_sorted(std::begin(arr2), std::end(arr2)) );
+        CHECK( std::is_sorted(std::begin(arr3), std::end(arr3)) );
+        CHECK( std::is_sorted(std::begin(arr4), std::end(arr4)) );
+        CHECK( std::is_sorted(std::begin(arr5), std::end(arr5)) );
     }
 }
