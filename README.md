@@ -1,6 +1,6 @@
-**cpp-sort** is a generic C++14 header-only sorting library. Its goal is not
-to replace `std::sort` but rather to *complete* it so that it can choose more
-efficient algorithms in some situations. It does so by providing two additional
+**cpp-sort** is a generic C++14 header-only sorting library. Its goal is *not*
+to replace `std::sort` but rather to *complete* it with more efficient algorithms
+in the realm of small fixed-size arrays. It does so by providing two additional
 algorithms: `cppsort::sort` and `cppsort::sort_n`.
 
 `cppsort::sort_n` takes an `std::size_t` template parameter corresponding to the
@@ -158,7 +158,11 @@ of values and compare it to `std::sort`. The results speak by themselves: we can
 that `cppsort::sort` is strictly faster than `std::sort` for inputs smaller than 33,
 and that it lets `std::sort` do the job for bigger inputs.
 
-![cppsrot::sort vs. std::sort](http://i.imgur.com/nQ8eXdu.png)
+![cppsort::sort vs. std::sort](http://i.imgur.com/nQ8eXdu.png)
 
 These results were generated with MinGW g++ 5.1 with the compiler options
 `-std=c++14 -O3`.
+
+**Note:** that said, I am aware that the benchmarking method has flaws and that these
+flows might have a greater influence than I would like on the results you can see above.
+Any help to write more relevant and reliable benchmarks would be welcome :)
