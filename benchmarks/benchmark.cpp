@@ -23,6 +23,7 @@
 #include <iterator>
 #include <numeric>
 #include <random>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/sort.h>
 
@@ -45,6 +46,13 @@ template<
 auto time_compare(SortFunction1 sort1, SortFunction2 sort2, std::size_t times)
     -> std::array<std::chrono::milliseconds, 2u>
 {
+    // Choose the best clock type (always steady)
+    using clock_type = std::conditional_t<
+        std::chrono::high_resolution_clock::is_steady,
+        std::chrono::high_resolution_clock,
+        std::chrono::steady_clock
+    >;
+
     // Random numbers generator
     thread_local std::mt19937_64 engine(std::time(nullptr));
 
@@ -54,23 +62,23 @@ auto time_compare(SortFunction1 sort1, SortFunction2 sort2, std::size_t times)
     std::shuffle(std::begin(array), std::end(array), engine);
 
     // Time first algorithm
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = clock_type::now();
     for (std::size_t i = 0 ; i < times ; ++i)
     {
         auto unsorted = array;
         sort1(unsorted, std::less<>{});
     }
-    auto end = std::chrono::high_resolution_clock::now();
+    auto end = clock_type::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     // Time second algorithm
-    start = std::chrono::high_resolution_clock::now();
+    start = clock_type::now();
     for (std::size_t i = 0 ; i < times ; ++i)
     {
         auto unsorted = array;
         sort2(unsorted, std::less<>{});
     }
-    end = std::chrono::high_resolution_clock::now();
+    end = clock_type::now();
     auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     return { duration1, duration2 };
