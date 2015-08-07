@@ -93,63 +93,6 @@ namespace detail
             if (compare(begin[4u], begin[3u])) {
                 swap(begin[3u], begin[4u]);
             }
-            if (compare(begin[1u], begin[0u])) {
-                swap(begin[0u], begin[1u]);
-            }
-            if (compare(begin[3u], begin[2u])) {
-                swap(begin[2u], begin[3u]);
-            }
-            if (compare(begin[2u], begin[0u])) {
-                swap(begin[0u], begin[2u]);
-            }
-            if (compare(begin[3u], begin[1u])) {
-                swap(begin[1u], begin[3u]);
-            }
-            if (compare(begin[2u], begin[1u])) {
-                swap(begin[1u], begin[2u]);
-            }
-            if (compare(begin[5u], begin[4u])) {
-                swap(begin[4u], begin[5u]);
-            }
-            if (compare(begin[7u], begin[6u])) {
-                swap(begin[6u], begin[7u]);
-            }
-            if (compare(begin[6u], begin[4u])) {
-                swap(begin[4u], begin[6u]);
-            }
-            if (compare(begin[7u], begin[5u])) {
-                swap(begin[5u], begin[7u]);
-            }
-            if (compare(begin[6u], begin[5u])) {
-                swap(begin[5u], begin[6u]);
-            }
-            if (compare(begin[4u], begin[0u])) {
-                swap(begin[0u], begin[4u]);
-            }
-            if (compare(begin[5u], begin[1u])) {
-                swap(begin[1u], begin[5u]);
-            }
-            if (compare(begin[4u], begin[1u])) {
-                swap(begin[1u], begin[4u]);
-            }
-            if (compare(begin[6u], begin[2u])) {
-                swap(begin[2u], begin[6u]);
-            }
-            if (compare(begin[7u], begin[3u])) {
-                swap(begin[3u], begin[7u]);
-            }
-            if (compare(begin[6u], begin[3u])) {
-                swap(begin[3u], begin[6u]);
-            }
-            if (compare(begin[4u], begin[2u])) {
-                swap(begin[2u], begin[4u]);
-            }
-            if (compare(begin[5u], begin[3u])) {
-                swap(begin[3u], begin[5u]);
-            }
-            if (compare(begin[4u], begin[3u])) {
-                swap(begin[3u], begin[4u]);
-            }
         }
     };
 }}
