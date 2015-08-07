@@ -40,11 +40,10 @@ auto std_sort(RandomAccessIterable& iterable, Compare&& compare={})
 template<
     typename T,
     std::size_t N,
-    typename SortFunction1,
-    typename SortFunction2
+    typename SortFunction
 >
-auto time_compare(SortFunction1 sort1, SortFunction2 sort2, std::size_t times)
-    -> std::array<std::chrono::milliseconds, 2u>
+auto time_it(SortFunction sort, std::size_t times)
+    -> std::chrono::milliseconds
 {
     // Choose the best clock type (always steady)
     using clock_type = std::conditional_t<
@@ -53,37 +52,28 @@ auto time_compare(SortFunction1 sort1, SortFunction2 sort2, std::size_t times)
         std::chrono::steady_clock
     >;
 
-    // Random numbers generator
+    // Random numbers utilities
     thread_local std::mt19937_64 engine(std::time(nullptr));
 
-    // Generate shuffled array, the same for both algorithms
-    std::array<T, N> array;
-    std::iota(std::begin(array), std::end(array), 0);
-    std::shuffle(std::begin(array), std::end(array), engine);
-
-    // Time first algorithm
-    auto start = clock_type::now();
-    for (std::size_t i = 0 ; i < times ; ++i)
+    // Generate N shuffled arrays
+    std::vector<std::array<T, N>> arrays(times);
+    for (auto&& array: arrays)
     {
-        auto unsorted = array;
-        sort1(unsorted, std::less<>{});
+        std::iota(std::begin(array), std::end(array), 0);
+        std::shuffle(std::begin(array), std::end(array), engine);
+    }
+
+    // Time while sorting the arrays
+    auto start = clock_type::now();
+    for (auto&& array: arrays)
+    {
+        sort(array, std::less<>{});
     }
     auto end = clock_type::now();
-    auto duration1 = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    // Time second algorithm
-    start = clock_type::now();
-    for (std::size_t i = 0 ; i < times ; ++i)
-    {
-        auto unsorted = array;
-        sort2(unsorted, std::less<>{});
-    }
-    end = clock_type::now();
-    auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-    return { duration1, duration2 };
+    // Return the time it took to sort the arrays
+    return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 }
-
 
 template<typename T, std::size_t... Ind>
 auto time_them(std::size_t size, std::index_sequence<Ind...>)
@@ -95,23 +85,14 @@ auto time_them(std::size_t size, std::index_sequence<Ind...>)
             2u
         >
 {
-    // Benchmark the sorts std::sort
-    std::array<std::array<std::chrono::milliseconds, 2u>, sizeof...(Ind)> results = {
-        time_compare<T, Ind>(
-            &cppsort::sort<T, Ind, std::less<>>,
-            &std_sort<std::array<T, Ind>, std::less<>>,
-            size
-        )...
-    };
-
     // Results for cppsort::sort
     std::array<std::chrono::milliseconds, sizeof...(Ind)> first = {
-        std::get<Ind>(results)[0u]...
+        { time_it<T, Ind>(&cppsort::sort<T, Ind, std::less<>>, size)... }
     };
 
     // Results for std::sort
     std::array<std::chrono::milliseconds, sizeof...(Ind)> second = {
-        std::get<Ind>(results)[1u]...
+        { time_it<T, Ind>(&std_sort<std::array<T, Ind>, std::less<>>, size)... }
     };
 
     return { first, second };
@@ -119,7 +100,7 @@ auto time_them(std::size_t size, std::index_sequence<Ind...>)
 
 int main()
 {
-    using indices = std::make_index_sequence<64u>;
+    using indices = std::make_index_sequence<40u>;
     auto sorts_times = time_them<int>(1000000u, indices{});
 
     for (auto&& sort_times: sorts_times)

@@ -7,6 +7,7 @@ set(
 
     sort3.cpp
     sort4.cpp
+    sort5.cpp
 )
 
 # Make one executable for the whole testsuite
