@@ -19,13 +19,18 @@
 #include <array>
 #include <chrono>
 #include <ctime>
-#include <iostream>
+#include <fstream>
 #include <iterator>
 #include <numeric>
 #include <random>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sort.h>
+#include "pdqsort.h"
+#include "timsort.h"
+
+////////////////////////////////////////////////////////////
+// Sorting functions
 
 template<
     typename RandomAccessIterable,
@@ -38,11 +43,152 @@ auto std_sort(RandomAccessIterable& iterable, Compare&& compare={})
 }
 
 template<
+    typename RandomAccessIterable,
+    typename Compare = std::less<>
+>
+auto pdq_sort(RandomAccessIterable& iterable, Compare&& compare={})
+    -> void
+{
+    pdqsort(std::begin(iterable), std::end(iterable), std::forward<Compare>(compare));
+}
+
+template<
+    typename RandomAccessIterable,
+    typename Compare = std::less<>
+>
+auto tim_sort(RandomAccessIterable& iterable, Compare&& compare={})
+    -> void
+{
+    gfx::timsort(std::begin(iterable), std::end(iterable), std::forward<Compare>(compare));
+}
+
+////////////////////////////////////////////////////////////
+// Distributions
+
+struct shuffled
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        // Pseudo-random numbers generator
+        thread_local std::mt19937_64 engine(std::time(nullptr));
+
+        std::iota(begin, end, 0);
+        std::shuffle(begin, end, engine);
+    }
+
+    static constexpr const char* output = "shuffled.txt";
+};
+
+struct all_equal
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        std::fill(begin, end, 0);
+    }
+
+    static constexpr const char* output = "all_equal.txt";
+};
+
+struct ascending
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        std::iota(begin, end, 0);
+    }
+
+    static constexpr const char* output = "ascending.txt";
+};
+
+struct descending
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        std::iota(begin, end, 0);
+        std::reverse(begin, end);
+    }
+
+    static constexpr const char* output = "descending.txt";
+};
+
+struct pipe_organ
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        std::size_t size = std::distance(begin, end);
+        std::size_t count = 0u;
+        for (std::size_t i = 0 ; i < size / 2u ; ++i)
+        {
+            begin[count++] = i;
+        }
+        for (std::size_t i = size / 2 ; i < size ; ++i)
+        {
+            begin[count++] = size - i;
+        }
+    }
+
+    static constexpr const char* output = "pipe_organ.txt";
+};
+
+struct push_front
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        if (std::distance(begin, end) > 0)
+        {
+            std::iota(begin, end, 1);
+            *std::prev(end) = 0;
+        }
+    }
+
+    static constexpr const char* output = "push_front.txt";
+};
+
+struct push_middle
+{
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+        -> void
+    {
+        std::size_t size = std::distance(begin, end);
+        if (size > 0)
+        {
+            std::size_t count = 0u;
+            for (std::size_t i = 0u ; i < size ; ++i)
+            {
+                if (i != size / 2u)
+                {
+                    begin[count++] = i;
+                }
+            }
+            begin[count] = size / 2;
+        }
+    }
+
+    static constexpr const char* output = "push_middle.txt";
+};
+
+////////////////////////////////////////////////////////////
+// Timing functions
+
+template<
     typename T,
     std::size_t N,
-    typename SortFunction
+    typename SortFunction,
+    typename DistributionFunction
 >
-auto time_it(SortFunction sort, std::size_t times)
+auto time_it(SortFunction sort, DistributionFunction dist, std::size_t times)
     -> std::chrono::milliseconds
 {
     // Choose the best clock type (always steady)
@@ -52,15 +198,11 @@ auto time_it(SortFunction sort, std::size_t times)
         std::chrono::steady_clock
     >;
 
-    // Random numbers utilities
-    thread_local std::mt19937_64 engine(std::time(nullptr));
-
-    // Generate N shuffled arrays
+    // Generate times arrays of size N thanks to dist
     std::vector<std::array<T, N>> arrays(times);
     for (auto&& array: arrays)
     {
-        std::iota(std::begin(array), std::end(array), 0);
-        std::shuffle(std::begin(array), std::end(array), engine);
+        dist(std::begin(array), std::end(array));
     }
 
     // Time while sorting the arrays
@@ -75,40 +217,60 @@ auto time_it(SortFunction sort, std::size_t times)
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 }
 
-template<typename T, std::size_t... Ind>
-auto time_them(std::size_t size, std::index_sequence<Ind...>)
-    -> std::array<
-            std::array<
-                std::chrono::milliseconds,
-                sizeof...(Ind)
-            >,
-            2u
-        >
+template<
+    typename T,
+    typename Distribution,
+    std::size_t... Ind
+>
+auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
+    -> void
 {
-    // Results for cppsort::sort
-    std::array<std::chrono::milliseconds, sizeof...(Ind)> first = {
-        { time_it<T, Ind>(&cppsort::sort<T, Ind, std::less<>>, size)... }
+    // Compute results for the different sorting algorithms
+    std::array<std::chrono::milliseconds, sizeof...(Ind)> results[] = {
+        { time_it<T, Ind>(&cppsort::sort<T, Ind, std::less<>>, Distribution{}, times)... },
+        { time_it<T, Ind>(&std_sort<std::array<T, Ind>, std::less<>>, Distribution{}, times)... },
+        { time_it<T, Ind>(&tim_sort<std::array<T, Ind>, std::less<>>, Distribution{}, times)... },
+        { time_it<T, Ind>(&pdq_sort<std::array<T, Ind>, std::less<>>, Distribution{}, times)... }
     };
 
-    // Results for std::sort
-    std::array<std::chrono::milliseconds, sizeof...(Ind)> second = {
-        { time_it<T, Ind>(&std_sort<std::array<T, Ind>, std::less<>>, size)... }
-    };
+    // Output the results to their respective files
+    std::ofstream output(Distribution::output);
+    for (auto&& sort_times: results)
+    {
+        for (auto&& time: sort_times)
+        {
+            output << time.count() << ' ';
+        }
+        output << '\n';
+    }
+}
 
-    return { first, second };
+template<
+    typename T,
+    std::size_t N,
+    typename... Distributions
+>
+auto time_distributions(std::size_t times)
+    -> void
+{
+    using indices = std::make_index_sequence<N>;
+
+    // Variadic dispatch only works with expressions
+    int dummy[] = {
+        (time_distribution<T, Distributions>(times, indices{}), 0)...
+    };
+    (void) dummy;
 }
 
 int main()
 {
-    using indices = std::make_index_sequence<40u>;
-    auto sorts_times = time_them<int>(1000000u, indices{});
-
-    for (auto&& sort_times: sorts_times)
-    {
-        for (auto&& time: sort_times)
-        {
-            std::cout << time.count() << ' ';
-        }
-        std::cout << '\n';
-    }
+    time_distributions<int, 40u,
+        shuffled,
+        all_equal,
+        ascending,
+        descending,
+        pipe_organ,
+        push_front,
+        push_middle
+    >(1'000'000u);
 }
