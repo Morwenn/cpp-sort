@@ -49,7 +49,7 @@ template<
     typename RandomAccessIterable,
     typename Compare = std::less<>
 >
-auto sort(RandomAccessIterable& iterable, Compare&& compare={})
+auto sort(RandomAccessIterable& iterable, Compare compare={})
     -> void;
 
 template<
@@ -57,7 +57,7 @@ template<
     std::size_t N,
     typename Compare = std::less<>
 >
-auto sort(std::array<T, N>& array, Compare&& compare={})
+auto sort(std::array<T, N>& array, Compare compare={})
     -> void;
 
 template<
@@ -65,7 +65,7 @@ template<
     std::size_t N,
     typename Compare = std::less<>
 >
-auto sort(T (&array)[N], Compare&& compare={})
+auto sort(T (&array)[N], Compare compare={})
     -> void;
 ```
 
@@ -85,7 +85,7 @@ template<
     typename RandomAccessIterator,
     typename Compare = std::less<>
 >
-auto sort_n(RandomAccessIterator begin, Compare&& compare={})
+auto sort_n(RandomAccessIterator begin, Compare compare={})
     -> void;
 ```
 

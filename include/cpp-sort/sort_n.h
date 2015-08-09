@@ -25,7 +25,6 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
-#include <utility>
 
 namespace cppsort
 {
@@ -37,13 +36,10 @@ namespace cppsort
             // If there is no specialization to sort N value,
             // fall back to std::sort
             template<typename RandomAccessIterator, typename Compare>
-            static auto do_it(RandomAccessIterator begin, Compare&& compare)
+            static auto do_it(RandomAccessIterator begin, Compare compare)
                 -> void
             {
-                std::sort(
-                    begin, std::next(begin, N),
-                    std::forward<Compare>(compare)
-                );
+                std::sort(begin, std::next(begin, N), compare);
             }
         };
     }
@@ -53,13 +49,10 @@ namespace cppsort
         typename RandomAccessIterator,
         typename Compare = std::less<>
     >
-    auto sort_n(RandomAccessIterator begin, Compare&& compare={})
+    auto sort_n(RandomAccessIterator begin, Compare compare={})
         -> void
     {
-        detail::sorter_n<N>::do_it(
-            begin,
-            std::forward<Compare>(compare)
-        );
+        detail::sorter_n<N>::do_it(begin, compare);
     }
 }
 

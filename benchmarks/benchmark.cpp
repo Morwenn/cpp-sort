@@ -36,20 +36,20 @@ template<
     typename RandomAccessIterable,
     typename Compare = std::less<>
 >
-auto std_sort(RandomAccessIterable& iterable, Compare&& compare={})
+auto std_sort(RandomAccessIterable& iterable, Compare compare={})
     -> void
 {
-    std::sort(std::begin(iterable), std::end(iterable), std::forward<Compare>(compare));
+    std::sort(std::begin(iterable), std::end(iterable), compare);
 }
 
 template<
     typename RandomAccessIterable,
     typename Compare = std::less<>
 >
-auto pdq_sort(RandomAccessIterable& iterable, Compare&& compare={})
+auto pdq_sort(RandomAccessIterable& iterable, Compare compare={})
     -> void
 {
-    pdqsort(std::begin(iterable), std::end(iterable), std::forward<Compare>(compare));
+    pdqsort(std::begin(iterable), std::end(iterable), compare);
 }
 
 template<
@@ -59,7 +59,7 @@ template<
 auto tim_sort(RandomAccessIterable& iterable, Compare&& compare={})
     -> void
 {
-    gfx::timsort(std::begin(iterable), std::end(iterable), std::forward<Compare>(compare));
+    gfx::timsort(std::begin(iterable), std::end(iterable), compare);
 }
 
 ////////////////////////////////////////////////////////////

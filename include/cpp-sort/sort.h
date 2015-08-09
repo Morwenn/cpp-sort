@@ -26,7 +26,6 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
-#include <utility>
 #include <cpp-sort/sort_n.h>
 
 namespace cppsort
@@ -35,14 +34,10 @@ namespace cppsort
         typename RandomAccessIterable,
         typename Compare = std::less<>
     >
-    auto sort(RandomAccessIterable& iterable, Compare&& compare={})
+    auto sort(RandomAccessIterable& iterable, Compare compare={})
         -> void
     {
-        std::sort(
-            std::begin(iterable),
-            std::end(iterable),
-            std::forward<Compare>(compare)
-        );
+        std::sort(std::begin(iterable), std::end(iterable), compare);
     }
 
     template<
@@ -50,13 +45,10 @@ namespace cppsort
         std::size_t N,
         typename Compare = std::less<>
     >
-    auto sort(std::array<T, N>& array, Compare&& compare={})
+    auto sort(std::array<T, N>& array, Compare compare={})
         -> void
     {
-        sort_n<N>(
-            std::begin(array),
-            std::forward<Compare>(compare)
-        );
+        sort_n<N>(std::begin(array), compare);
     }
 
     template<
@@ -64,13 +56,10 @@ namespace cppsort
         std::size_t N,
         typename Compare = std::less<>
     >
-    auto sort(T (&array)[N], Compare&& compare={})
+    auto sort(T (&array)[N], Compare compare={})
         -> void
     {
-        sort_n<N>(
-            std::begin(array),
-            std::forward<Compare>(compare)
-        );
+        sort_n<N>(std::begin(array), compare);
     }
 }
 
