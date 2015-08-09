@@ -153,16 +153,23 @@ different algorithms:
 Benchmark
 =========
 
-I have written a small benchmark to test `cppsort::sort` when there is a small number
-of values and compare it to `std::sort`. The results speak by themselves: we can see
-that `cppsort::sort` is strictly faster than `std::sort` for inputs smaller than 33,
-and that it lets `std::sort` do the job for bigger inputs.
+The following graphs have been generated with the scripts found in the benchmarks
+directory. They show the time needed for one sorting algorithm to sort one million
+arrays generated with a given distribution. The benchmarks compare `cppsort::sort`
+to three other sorting algorithms: `std::sort`, a Timsort and a pattern-defeating
+quicksort.
 
-![cppsort::sort vs. std::sort](http://i.imgur.com/nQ8eXdu.png)
+![shuffled](http://i.imgur.com/LAUQsa7.png)
+
+![ascending](http://i.imgur.com/FMzrttG.png) ![descending](http://i.imgur.com/o8jBIOz.png)
+
+![all_equal](http://i.imgur.com/hIqBFFZ.png) ![pipe_organ](http://i.imgur.com/L4gYBO1.png)
+
+![push_front](http://i.imgur.com/1d4kFt0.png) ![push_middle](http://i.imgur.com/vVPsbtS.png)
 
 These results were generated with MinGW g++ 5.1 with the compiler options
 `-std=c++14 -O3`.
 
 **Note:** that said, I am aware that the benchmarking method has flaws and that these
-flows might have a greater influence than I would like on the results you can see above.
+flaws might have a greater influence than I would like on the results you can see above.
 Any help to write more relevant and reliable benchmarks would be welcome :)
