@@ -2,8 +2,8 @@ Sorters
 =======
 
 A *sorter* is a function object class whose `operator()` is overloaded to
-take a `RandomAccessIterable&` and a `Compare` functor. It is easy to write
-one yourself:
+take a `RandomAccessIterable&` collection and a `Compare` functor. It is
+easy to write a new sorter by yourself:
 
 ```cpp
 /**
@@ -27,15 +27,15 @@ concept.
 
 While these objects offer little more than regular sorting functions by themselves,
 you can use them with [*sorter adapaters*](sorter-adapters.md) to craft more
-elaborate sorters effortlessly. Every sorter is available from in its own file.
-However, you can also include all the availble sorters at once with the following
-include:
+elaborate sorters effortlessly. Every sorter is available in its own file. However,
+you can also include all the availble sorters at once with the following line:
 
 ```cpp
 #include <cpp-sort/sorters.h>
 ```
 
-The following sorters are available:
+Note that the library does not make a difference between sorters and sorter adapaters,
+so the adapters will also be included. The following sorters are available:
 
 `pdq_sorter`
 ------------

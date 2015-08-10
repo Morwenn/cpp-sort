@@ -1,6 +1,6 @@
 **cpp-sort** is a generic C++14 header-only sorting library. It revolves
 around one main generic sorting interface and provides several small tools
-to pick and/or design sorting algorithms. The main library's main function,
+to pick and/or design sorting algorithms. The library's main function,
 `cppsort::sort`, is available with the following include:
 
 ```cpp
@@ -47,9 +47,9 @@ Benchmarks
 
 The following graph has been generated with the scripts found in the benchmarks
 directory. It shows the time needed for one sorting algorithm to sort one million
-shuffled `std::array` of sizes 0 to 15. The benchmarks compare `cppsort::sort`
+shuffled `std::array` of sizes 0 to 15. The benchmark compares `cppsort::sort`
 (using the default sorter) to three other sorters available in the library:
-`std::sort`, a Timsort and a pattern-defeating quicksort.
+`std_sorter`, a `tim_sorter` and a `pdq_sorter`.
 
 ![shuffled](http://i.imgur.com/5U8Cilv.png)
 

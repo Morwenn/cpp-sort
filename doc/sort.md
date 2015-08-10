@@ -32,6 +32,6 @@ This overload takes a `RandomAccessIterable` collection and sorts it in-place in
 ascending order. The function uses `std::less<>` to compare the elements unless
 specified otherwise, and uses `cppsort::default_sorter` to sort them.
 
-Note that this overload does not appear in the overload set if `Compare` statifies
-the `Sorter` concept. That way, it makes sure that there are no ambiguous overloads
-when two parameters are given to `cppsort::sort`.
+Note that this second overload does not appear in the overload set if `Compare`
+satisfies the `Sorter` concept. That way, it makes sure that there are no ambiguous
+overloads when two parameters are given to `cppsort::sort`.

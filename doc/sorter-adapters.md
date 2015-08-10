@@ -27,8 +27,8 @@ small arrays of fixed size.
 
 The specific sorting algorithms used by `small_array_sorter` mostly correspond
 to [sorting networks](https://en.wikipedia.org/wiki/Sorting_network) of a given
-size. There are specializatized algorithms for the sizes 0 to 32. The following
-grid documents the number of comparisons and the number of swaps made by every
+size. There are specialized algorithms for the sizes 0 to 32. The following table
+documents the number of comparisons and the number of swaps made by every
 algorithm:
 
 Size | comparisons | swaps
