@@ -15,40 +15,45 @@
  * License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-#ifndef CPPSORT_SORT_H_
-#define CPPSORT_SORT_H_
+#ifndef CPPSORT_UTILITY_IS_IN_PACK_H_
+#define CPPSORT_UTILITY_IS_IN_PACK_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
+#include <cstddef>
 #include <type_traits>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/utility/is_sorter_for.h>
 
 namespace cppsort
 {
-    template<
-        typename RandomAccessIterable,
-        typename Compare = std::less<>,
-        typename = std::enable_if_t<not utility::is_sorter_for<Compare, RandomAccessIterable>>
-    >
-    auto sort(RandomAccessIterable& iterable, Compare compare={})
-        -> void
+namespace utility
+{
+    namespace detail
     {
-        sort(iterable, default_sorter{}, compare);
+        template<std::size_t Value, std::size_t... Values>
+        struct is_in_pack_impl;
+
+        template<
+            std::size_t Value,
+            std::size_t Head,
+            std::size_t... Tail
+        >
+        struct is_in_pack_impl<Value, Head, Tail...>:
+            std::conditional_t<
+                Value == Head,
+                std::true_type,
+                is_in_pack_impl<Value, Tail...>
+            >
+        {};
+
+        template<std::size_t Value>
+        struct is_in_pack_impl<Value>:
+            std::false_type
+        {};
     }
 
-    template<
-        typename RandomAccessIterable,
-        typename Sorter,
-        typename Compare = std::less<>
-    >
-    auto sort(RandomAccessIterable& iterable, const Sorter& sorter, Compare compare={})
-        -> void
-    {
-        sorter(iterable, compare);
-    }
-}
+    template<std::size_t Value, std::size_t... Values>
+    constexpr bool is_in_pack = detail::is_in_pack_impl<Value, Values...>::value;
+}}
 
-#endif // CPPSORT_SORT_H_
+#endif // CPPSORT_UTILITY_IS_IN_PACK_H_

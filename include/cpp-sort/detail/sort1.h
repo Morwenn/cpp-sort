@@ -22,11 +22,11 @@ namespace cppsort
 {
 namespace detail
 {
-    template<>
-    struct sorter_n<1u>
+    template<typename FallbackSorter>
+    struct sorter_n<1u, FallbackSorter>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        static auto do_it(RandomAccessIterator, Compare)
+        template<typename RandomAccessIterable, typename Compare>
+        static auto do_it(RandomAccessIterable&, Compare)
             -> void
         {}
     };

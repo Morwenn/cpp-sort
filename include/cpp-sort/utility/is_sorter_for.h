@@ -15,21 +15,28 @@
  * License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-#ifndef CPPSORT_DETAIL_SORT0_H_
-#define CPPSORT_DETAIL_SORT0_H_
+#ifndef CPPSORT_UTILITY_IS_SORTER_FOR_H_
+#define CPPSORT_UTILITY_IS_SORTER_FOR_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <type_traits>
+#include <cpp-sort/utility/detection.h>
 
 namespace cppsort
 {
-namespace detail
+namespace utility
 {
-    template<typename FallbackSorter>
-    struct sorter_n<0u, FallbackSorter>
+    namespace detail
     {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable&, Compare)
-            -> void
-        {}
-    };
+        template<typename Sorter, typename Iterable>
+        using is_sorter_for_t = std::result_of_t<Sorter(Iterable&)>;
+    }
+
+    template<typename Sorter, typename Iterable>
+    constexpr bool is_sorter_for = is_detected_v<detail::is_sorter_for_t, Sorter, Iterable>;
 }}
 
-#endif // CPPSORT_DETAIL_SORT0_H_
+#endif // CPPSORT_UTILITY_IS_SORTER_FOR_H_
+

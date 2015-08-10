@@ -1,22 +1,11 @@
-**cpp-sort** is a generic C++14 header-only sorting library. Its goal is *not*
-to replace `std::sort` but rather to *complete* it with more efficient algorithms
-in the realm of small fixed-size arrays. It does so by providing two additional
-algorithms: `cppsort::sort` and `cppsort::sort_n`.
+**cpp-sort** is a generic C++14 header-only sorting library. It revolves
+around one main generic sorting interface and provides several small tools
+to pick and/or design sorting algorithms. The main library's main function,
+`cppsort::sort`, is available with the following include:
 
-`cppsort::sort_n` takes an `std::size_t` template parameter corresponding to the
-number of values to sort, and a random-access iterator corresponding to the
-beginning of the range to sort. It then proceeds to sort the first `N` elements
-of the range using optimal sorting algorithms for a fixed number of values (see
-[sorting networks](https://en.wikipedia.org/wiki/Sorting_network) for example)
-when possible, and falls back to `std::sort` instead when there is no specialized
-algorithm.
-
-`cppsort::sort` takes a random-access range and calls `std::sort` on it. If the
-collection is an `std::array` or a fixed-size C array, it calls `sort_n` on it
-instead since the size of the collection is known at compile-time. That way, the
-library offers a common interface which will either pick `std::sort` or a dedicated
-sorting algorithm depending on its input, striving to offer the most efficient
-algorithm without any overhead.
+```cpp
+#include <cpp-sort/sort.h>
+```
 
 Using it should be pretty trivial:
 
@@ -38,138 +27,31 @@ int main()
 }
 ```
 
-API documentation
-=================
+**cpp-sort** library also provides *sorters* as well as *sorter adapters*
+which can be used by `cppsort::sort` to sort a collection. Everything lives
+in the `cppsort` namespace. You can read more about the available sorting
+tools in the documentation:
 
-`cppsort::sort`
----------------
+* [`cppsort::sort`](doc/sort.md)
+* [Sorters](doc/sorters.md)
+* [Sorter adapters](doc/sorter-adapters.md)
 
-```cpp
-template<
-    typename RandomAccessIterable,
-    typename Compare = std::less<>
->
-auto sort(RandomAccessIterable& iterable, Compare compare={})
-    -> void;
+There are also a few other utilities used by the library and made available
+to the users, even though they're not sorting-related. You can read about them
+in the following page:
 
-template<
-    typename T,
-    std::size_t N,
-    typename Compare = std::less<>
->
-auto sort(std::array<T, N>& array, Compare compare={})
-    -> void;
+* [Miscellaneous utilities](doc/utilities.md)
 
-template<
-    typename T,
-    std::size_t N,
-    typename Compare = std::less<>
->
-auto sort(T (&array)[N], Compare compare={})
-    -> void;
-```
+Benchmarks
+==========
 
-This function takes a `RandomAccessIterable` collection and sorts it in-place in
-ascending order. The function uses `std::less<>` to compare the elements, unless
-specified otherwise.
+The following graph has been generated with the scripts found in the benchmarks
+directory. It shows the time needed for one sorting algorithm to sort one million
+shuffled `std::array` of sizes 0 to 15. The benchmarks compare `cppsort::sort`
+(using the default sorter) to three other sorters available in the library:
+`std::sort`, a Timsort and a pattern-defeating quicksort.
 
-The first version is a direct wrapper around `std::sort` while the overloads taking
-a fixed-sized C array or an `std::array` call `cppsort::sort_n`. 
-
-`cppsort::sort_n`
------------------
-
-```cpp
-template<
-    std::size_t N,
-    typename RandomAccessIterator,
-    typename Compare = std::less<>
->
-auto sort_n(RandomAccessIterator begin, Compare compare={})
-    -> void;
-```
-
-This function takes random-access iterator and proceeds to sort the elements of
-the range `[begin, begin + N)` in-place in ascending order. The function uses
-`std::less<>` to compare the elements unless specified otherwise.
-
-The generic version of the algorithm is a direct call to the standard library
-function `std::sort(begin, begin+N)`. However, the called is dispatched to specific
-and more optimal sorting algorithms for some small values of `N`.
-
-Specific sorting algorithms
-===========================
-
-The specific sorting algorithms used by `cppsort::sort_n` mostly correspond to
-sorting networks for a given size. There are specializations of the algorithm
-for the sizes 0 to 32. The following grid documents the number of comparisons
-and the number of swaps made by every specialization:
-
-Size | comparisons | swaps
----- | ----------- | -----
-0 | 0 | 0
-1 | 0 | 0
-2 | 1 | ≤ 1
-3 | 3 | ≤ 2
-4 | 5 | ≤ 5
-5 | 9 | ≤ 9
-6 | 12 | ≤ 12
-7 | 16 | ≤ 16
-8 | 19 | ≤ 19
-9 | 25 | ≤ 25
-10 | 29 | ≤ 29
-11 | 35 | ≤ 35
-12 | 39 | ≤ 39
-13 | 45 | ≤ 45
-14 | 51 | ≤ 51
-15 | 56 | ≤ 56
-16 | 60 | ≤ 60
-17 | 74 | ≤ 74
-18 | 82 | ≤ 82
-19 | 91 | ≤ 91
-20 | 97 | ≤ 97
-21 | 107 | ≤ 107
-22 | 114 | ≤ 114
-23 | 122 | ≤ 122
-24 | 127 | ≤ 127
-25 | 138 | ≤ 138
-26 | 146 | ≤ 146
-27 | 155 | ≤ 155
-28 | 161 | ≤ 161
-29 | 171 | ≤ 171
-30 | 178 | ≤ 178
-31 | 186 | ≤ 186
-32 | 191 | ≤ 191
-
-The code for most of the functions has been generated by using the `SWAP` macros
-generated by http://pages.ripco.net/~jgamble/nw.html with the "Best" algorithm (as
-described on the site) for inputs inferior or equal to 16, and Batcher's Merge-Exchange
-algorithm otherwise. Following is the full list of resources used to write the
-different algorithms:
-
-* [Algorithm 3](http://stackoverflow.com/a/3343600/1364752)
-* [Other algorithms](http://pages.ripco.net/~jgamble/nw.html)
-
-Benchmark
-=========
-
-The following graphs have been generated with the scripts found in the benchmarks
-directory. They show the time needed for one sorting algorithm to sort one million
-arrays generated with a given distribution. The benchmarks compare `cppsort::sort`
-to three other sorting algorithms: `std::sort`, a Timsort and a pattern-defeating
-quicksort.
-
-![shuffled](http://i.imgur.com/LAUQsa7.png)
-
-![ascending](http://i.imgur.com/FMzrttG.png) ![descending](http://i.imgur.com/o8jBIOz.png)
-
-![all_equal](http://i.imgur.com/hIqBFFZ.png) ![pipe_organ](http://i.imgur.com/L4gYBO1.png)
-
-![push_front](http://i.imgur.com/1d4kFt0.png) ![push_middle](http://i.imgur.com/vVPsbtS.png)
+![shuffled](http://i.imgur.com/5U8Cilv.png)
 
 These results were generated with MinGW g++ 5.1 with the compiler options
-`-std=c++14 -O3`.
-
-**Note:** that said, I am aware that the benchmarking method has flaws and that these
-flaws might have a greater influence than I would like on the results you can see above.
-Any help to write more relevant and reliable benchmarks would be welcome :)
+`-std=c++14 -O3`. More benchmarks will be made available in the future.

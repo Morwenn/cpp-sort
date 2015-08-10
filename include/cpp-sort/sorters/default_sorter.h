@@ -15,21 +15,22 @@
  * License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-#ifndef CPPSORT_DETAIL_SORT0_H_
-#define CPPSORT_DETAIL_SORT0_H_
+#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <utility>
+#include <cpp-sort/sorters/pdq_sorter.h>
+#include <cpp-sort/sorters/small_array_sorter.h>
 
 namespace cppsort
 {
-namespace detail
-{
-    template<typename FallbackSorter>
-    struct sorter_n<0u, FallbackSorter>
-    {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable&, Compare)
-            -> void
-        {}
-    };
-}}
+    using default_sorter = small_array_sorter<
+        pdq_sorter,
+        std::make_index_sequence<10u>
+    >;
+}
 
-#endif // CPPSORT_DETAIL_SORT0_H_
+#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_

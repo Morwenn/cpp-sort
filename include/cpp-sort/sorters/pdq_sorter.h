@@ -15,21 +15,30 @@
  * License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-#ifndef CPPSORT_DETAIL_SORT0_H_
-#define CPPSORT_DETAIL_SORT0_H_
+#ifndef CPPSORT_SORTERS_PDQ_SORTER_H_
+#define CPPSORT_SORTERS_PDQ_SORTER_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <functional>
+#include <iterator>
+#include "../detail/pdqsort.h"
 
 namespace cppsort
 {
-namespace detail
-{
-    template<typename FallbackSorter>
-    struct sorter_n<0u, FallbackSorter>
+    struct pdq_sorter
     {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable&, Compare)
+        template<
+            typename RandomAccessIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
             -> void
-        {}
+        {
+            detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
+        }
     };
-}}
+}
 
-#endif // CPPSORT_DETAIL_SORT0_H_
+#endif // CPPSORT_SORTERS_PDQ_SORTER_H_

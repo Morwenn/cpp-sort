@@ -27,17 +27,17 @@ namespace cppsort
 {
 namespace detail
 {
-    template<>
-    struct sorter_n<2u>
+    template<typename FallbackSorter>
+    struct sorter_n<2u, FallbackSorter>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        static auto do_it(RandomAccessIterator begin, Compare compare)
+        template<typename RandomAccessIterable, typename Compare>
+        static auto do_it(RandomAccessIterable& iterable, Compare compare)
             -> void
         {
             using std::swap;
 
-            if (compare(begin[1u], begin[0u])) {
-                swap(begin[0u], begin[1u]);
+            if (compare(iterable[1u], iterable[0u])) {
+                swap(iterable[0u], iterable[1u]);
             }
         }
     };

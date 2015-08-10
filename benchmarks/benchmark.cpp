@@ -26,41 +26,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sort.h>
-#include "pdqsort.h"
-#include "timsort.h"
-
-////////////////////////////////////////////////////////////
-// Sorting functions
-
-template<
-    typename RandomAccessIterable,
-    typename Compare = std::less<>
->
-auto std_sort(RandomAccessIterable& iterable, Compare compare={})
-    -> void
-{
-    std::sort(std::begin(iterable), std::end(iterable), compare);
-}
-
-template<
-    typename RandomAccessIterable,
-    typename Compare = std::less<>
->
-auto pdq_sort(RandomAccessIterable& iterable, Compare compare={})
-    -> void
-{
-    pdqsort(std::begin(iterable), std::end(iterable), compare);
-}
-
-template<
-    typename RandomAccessIterable,
-    typename Compare = std::less<>
->
-auto tim_sort(RandomAccessIterable& iterable, Compare&& compare={})
-    -> void
-{
-    gfx::timsort(std::begin(iterable), std::end(iterable), compare);
-}
+#include <cpp-sort/sorters.h>
 
 ////////////////////////////////////////////////////////////
 // Distributions
@@ -68,7 +34,7 @@ auto tim_sort(RandomAccessIterable& iterable, Compare&& compare={})
 struct shuffled
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         // Pseudo-random numbers generator
@@ -84,7 +50,7 @@ struct shuffled
 struct all_equal
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         std::fill(begin, end, 0);
@@ -96,7 +62,7 @@ struct all_equal
 struct ascending
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         std::iota(begin, end, 0);
@@ -108,7 +74,7 @@ struct ascending
 struct descending
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         std::iota(begin, end, 0);
@@ -121,7 +87,7 @@ struct descending
 struct pipe_organ
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         std::size_t size = std::distance(begin, end);
@@ -185,10 +151,10 @@ struct push_middle
 template<
     typename T,
     std::size_t N,
-    typename SortFunction,
+    typename Sorter,
     typename DistributionFunction
 >
-auto time_it(SortFunction sort, DistributionFunction dist, std::size_t times)
+auto time_it(Sorter sorter, DistributionFunction dist, std::size_t times)
     -> std::chrono::milliseconds
 {
     // Choose the best clock type (always steady)
@@ -209,7 +175,7 @@ auto time_it(SortFunction sort, DistributionFunction dist, std::size_t times)
     auto start = clock_type::now();
     for (auto&& array: arrays)
     {
-        sort(array, std::less<>{});
+        cppsort::sort(array, sorter);
     }
     auto end = clock_type::now();
 
@@ -227,10 +193,10 @@ auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
 {
     // Compute results for the different sorting algorithms
     std::array<std::chrono::milliseconds, sizeof...(Ind)> results[] = {
-        { time_it<T, Ind>(&cppsort::sort<T, Ind, std::less<>>, Distribution{}, times)... },
-        { time_it<T, Ind>(&std_sort<std::array<T, Ind>, std::less<>>, Distribution{}, times)... },
-        { time_it<T, Ind>(&tim_sort<std::array<T, Ind>, std::less<>>, Distribution{}, times)... },
-        { time_it<T, Ind>(&pdq_sort<std::array<T, Ind>, std::less<>>, Distribution{}, times)... }
+        { time_it<T, Ind>(cppsort::default_sorter{}, Distribution{}, times)... },
+        { time_it<T, Ind>(cppsort::std_sorter{}, Distribution{}, times)... },
+        { time_it<T, Ind>(cppsort::tim_sorter{}, Distribution{}, times)... },
+        { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... }
     };
 
     // Output the results to their respective files
@@ -264,7 +230,7 @@ auto time_distributions(std::size_t times)
 
 int main()
 {
-    time_distributions<int, 40u,
+    time_distributions<int, 15u,
         shuffled,
         all_equal,
         ascending,

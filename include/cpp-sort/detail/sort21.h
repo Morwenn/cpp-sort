@@ -27,335 +27,335 @@ namespace cppsort
 {
 namespace detail
 {
-    template<>
-    struct sorter_n<21u>
+    template<typename FallbackSorter>
+    struct sorter_n<21u, FallbackSorter>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        static auto do_it(RandomAccessIterator begin, Compare compare)
+        template<typename RandomAccessIterable, typename Compare>
+        static auto do_it(RandomAccessIterable& iterable, Compare compare)
             -> void
         {
             using std::swap;
 
-            if (compare(begin[16u], begin[0u])) {
-                swap(begin[0u], begin[16u]);
+            if (compare(iterable[16u], iterable[0u])) {
+                swap(iterable[0u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[1u])) {
-                swap(begin[1u], begin[17u]);
+            if (compare(iterable[17u], iterable[1u])) {
+                swap(iterable[1u], iterable[17u]);
             }
-            if (compare(begin[18u], begin[2u])) {
-                swap(begin[2u], begin[18u]);
+            if (compare(iterable[18u], iterable[2u])) {
+                swap(iterable[2u], iterable[18u]);
             }
-            if (compare(begin[19u], begin[3u])) {
-                swap(begin[3u], begin[19u]);
+            if (compare(iterable[19u], iterable[3u])) {
+                swap(iterable[3u], iterable[19u]);
             }
-            if (compare(begin[20u], begin[4u])) {
-                swap(begin[4u], begin[20u]);
+            if (compare(iterable[20u], iterable[4u])) {
+                swap(iterable[4u], iterable[20u]);
             }
-            if (compare(begin[8u], begin[0u])) {
-                swap(begin[0u], begin[8u]);
+            if (compare(iterable[8u], iterable[0u])) {
+                swap(iterable[0u], iterable[8u]);
             }
-            if (compare(begin[9u], begin[1u])) {
-                swap(begin[1u], begin[9u]);
+            if (compare(iterable[9u], iterable[1u])) {
+                swap(iterable[1u], iterable[9u]);
             }
-            if (compare(begin[10u], begin[2u])) {
-                swap(begin[2u], begin[10u]);
+            if (compare(iterable[10u], iterable[2u])) {
+                swap(iterable[2u], iterable[10u]);
             }
-            if (compare(begin[11u], begin[3u])) {
-                swap(begin[3u], begin[11u]);
+            if (compare(iterable[11u], iterable[3u])) {
+                swap(iterable[3u], iterable[11u]);
             }
-            if (compare(begin[12u], begin[4u])) {
-                swap(begin[4u], begin[12u]);
+            if (compare(iterable[12u], iterable[4u])) {
+                swap(iterable[4u], iterable[12u]);
             }
-            if (compare(begin[13u], begin[5u])) {
-                swap(begin[5u], begin[13u]);
+            if (compare(iterable[13u], iterable[5u])) {
+                swap(iterable[5u], iterable[13u]);
             }
-            if (compare(begin[14u], begin[6u])) {
-                swap(begin[6u], begin[14u]);
+            if (compare(iterable[14u], iterable[6u])) {
+                swap(iterable[6u], iterable[14u]);
             }
-            if (compare(begin[15u], begin[7u])) {
-                swap(begin[7u], begin[15u]);
+            if (compare(iterable[15u], iterable[7u])) {
+                swap(iterable[7u], iterable[15u]);
             }
-            if (compare(begin[16u], begin[8u])) {
-                swap(begin[8u], begin[16u]);
+            if (compare(iterable[16u], iterable[8u])) {
+                swap(iterable[8u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[9u])) {
-                swap(begin[9u], begin[17u]);
+            if (compare(iterable[17u], iterable[9u])) {
+                swap(iterable[9u], iterable[17u]);
             }
-            if (compare(begin[18u], begin[10u])) {
-                swap(begin[10u], begin[18u]);
+            if (compare(iterable[18u], iterable[10u])) {
+                swap(iterable[10u], iterable[18u]);
             }
-            if (compare(begin[19u], begin[11u])) {
-                swap(begin[11u], begin[19u]);
+            if (compare(iterable[19u], iterable[11u])) {
+                swap(iterable[11u], iterable[19u]);
             }
-            if (compare(begin[20u], begin[12u])) {
-                swap(begin[12u], begin[20u]);
+            if (compare(iterable[20u], iterable[12u])) {
+                swap(iterable[12u], iterable[20u]);
             }
-            if (compare(begin[4u], begin[0u])) {
-                swap(begin[0u], begin[4u]);
+            if (compare(iterable[4u], iterable[0u])) {
+                swap(iterable[0u], iterable[4u]);
             }
-            if (compare(begin[5u], begin[1u])) {
-                swap(begin[1u], begin[5u]);
+            if (compare(iterable[5u], iterable[1u])) {
+                swap(iterable[1u], iterable[5u]);
             }
-            if (compare(begin[6u], begin[2u])) {
-                swap(begin[2u], begin[6u]);
+            if (compare(iterable[6u], iterable[2u])) {
+                swap(iterable[2u], iterable[6u]);
             }
-            if (compare(begin[7u], begin[3u])) {
-                swap(begin[3u], begin[7u]);
+            if (compare(iterable[7u], iterable[3u])) {
+                swap(iterable[3u], iterable[7u]);
             }
-            if (compare(begin[12u], begin[8u])) {
-                swap(begin[8u], begin[12u]);
+            if (compare(iterable[12u], iterable[8u])) {
+                swap(iterable[8u], iterable[12u]);
             }
-            if (compare(begin[13u], begin[9u])) {
-                swap(begin[9u], begin[13u]);
+            if (compare(iterable[13u], iterable[9u])) {
+                swap(iterable[9u], iterable[13u]);
             }
-            if (compare(begin[14u], begin[10u])) {
-                swap(begin[10u], begin[14u]);
+            if (compare(iterable[14u], iterable[10u])) {
+                swap(iterable[10u], iterable[14u]);
             }
-            if (compare(begin[15u], begin[11u])) {
-                swap(begin[11u], begin[15u]);
+            if (compare(iterable[15u], iterable[11u])) {
+                swap(iterable[11u], iterable[15u]);
             }
-            if (compare(begin[20u], begin[16u])) {
-                swap(begin[16u], begin[20u]);
+            if (compare(iterable[20u], iterable[16u])) {
+                swap(iterable[16u], iterable[20u]);
             }
-            if (compare(begin[16u], begin[4u])) {
-                swap(begin[4u], begin[16u]);
+            if (compare(iterable[16u], iterable[4u])) {
+                swap(iterable[4u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[5u])) {
-                swap(begin[5u], begin[17u]);
+            if (compare(iterable[17u], iterable[5u])) {
+                swap(iterable[5u], iterable[17u]);
             }
-            if (compare(begin[18u], begin[6u])) {
-                swap(begin[6u], begin[18u]);
+            if (compare(iterable[18u], iterable[6u])) {
+                swap(iterable[6u], iterable[18u]);
             }
-            if (compare(begin[19u], begin[7u])) {
-                swap(begin[7u], begin[19u]);
+            if (compare(iterable[19u], iterable[7u])) {
+                swap(iterable[7u], iterable[19u]);
             }
-            if (compare(begin[8u], begin[4u])) {
-                swap(begin[4u], begin[8u]);
+            if (compare(iterable[8u], iterable[4u])) {
+                swap(iterable[4u], iterable[8u]);
             }
-            if (compare(begin[9u], begin[5u])) {
-                swap(begin[5u], begin[9u]);
+            if (compare(iterable[9u], iterable[5u])) {
+                swap(iterable[5u], iterable[9u]);
             }
-            if (compare(begin[10u], begin[6u])) {
-                swap(begin[6u], begin[10u]);
+            if (compare(iterable[10u], iterable[6u])) {
+                swap(iterable[6u], iterable[10u]);
             }
-            if (compare(begin[11u], begin[7u])) {
-                swap(begin[7u], begin[11u]);
+            if (compare(iterable[11u], iterable[7u])) {
+                swap(iterable[7u], iterable[11u]);
             }
-            if (compare(begin[16u], begin[12u])) {
-                swap(begin[12u], begin[16u]);
+            if (compare(iterable[16u], iterable[12u])) {
+                swap(iterable[12u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[13u])) {
-                swap(begin[13u], begin[17u]);
+            if (compare(iterable[17u], iterable[13u])) {
+                swap(iterable[13u], iterable[17u]);
             }
-            if (compare(begin[18u], begin[14u])) {
-                swap(begin[14u], begin[18u]);
+            if (compare(iterable[18u], iterable[14u])) {
+                swap(iterable[14u], iterable[18u]);
             }
-            if (compare(begin[19u], begin[15u])) {
-                swap(begin[15u], begin[19u]);
+            if (compare(iterable[19u], iterable[15u])) {
+                swap(iterable[15u], iterable[19u]);
             }
-            if (compare(begin[2u], begin[0u])) {
-                swap(begin[0u], begin[2u]);
+            if (compare(iterable[2u], iterable[0u])) {
+                swap(iterable[0u], iterable[2u]);
             }
-            if (compare(begin[3u], begin[1u])) {
-                swap(begin[1u], begin[3u]);
+            if (compare(iterable[3u], iterable[1u])) {
+                swap(iterable[1u], iterable[3u]);
             }
-            if (compare(begin[6u], begin[4u])) {
-                swap(begin[4u], begin[6u]);
+            if (compare(iterable[6u], iterable[4u])) {
+                swap(iterable[4u], iterable[6u]);
             }
-            if (compare(begin[7u], begin[5u])) {
-                swap(begin[5u], begin[7u]);
+            if (compare(iterable[7u], iterable[5u])) {
+                swap(iterable[5u], iterable[7u]);
             }
-            if (compare(begin[10u], begin[8u])) {
-                swap(begin[8u], begin[10u]);
+            if (compare(iterable[10u], iterable[8u])) {
+                swap(iterable[8u], iterable[10u]);
             }
-            if (compare(begin[11u], begin[9u])) {
-                swap(begin[9u], begin[11u]);
+            if (compare(iterable[11u], iterable[9u])) {
+                swap(iterable[9u], iterable[11u]);
             }
-            if (compare(begin[14u], begin[12u])) {
-                swap(begin[12u], begin[14u]);
+            if (compare(iterable[14u], iterable[12u])) {
+                swap(iterable[12u], iterable[14u]);
             }
-            if (compare(begin[15u], begin[13u])) {
-                swap(begin[13u], begin[15u]);
+            if (compare(iterable[15u], iterable[13u])) {
+                swap(iterable[13u], iterable[15u]);
             }
-            if (compare(begin[18u], begin[16u])) {
-                swap(begin[16u], begin[18u]);
+            if (compare(iterable[18u], iterable[16u])) {
+                swap(iterable[16u], iterable[18u]);
             }
-            if (compare(begin[19u], begin[17u])) {
-                swap(begin[17u], begin[19u]);
+            if (compare(iterable[19u], iterable[17u])) {
+                swap(iterable[17u], iterable[19u]);
             }
-            if (compare(begin[16u], begin[2u])) {
-                swap(begin[2u], begin[16u]);
+            if (compare(iterable[16u], iterable[2u])) {
+                swap(iterable[2u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[3u])) {
-                swap(begin[3u], begin[17u]);
+            if (compare(iterable[17u], iterable[3u])) {
+                swap(iterable[3u], iterable[17u]);
             }
-            if (compare(begin[20u], begin[6u])) {
-                swap(begin[6u], begin[20u]);
+            if (compare(iterable[20u], iterable[6u])) {
+                swap(iterable[6u], iterable[20u]);
             }
-            if (compare(begin[8u], begin[2u])) {
-                swap(begin[2u], begin[8u]);
+            if (compare(iterable[8u], iterable[2u])) {
+                swap(iterable[2u], iterable[8u]);
             }
-            if (compare(begin[9u], begin[3u])) {
-                swap(begin[3u], begin[9u]);
+            if (compare(iterable[9u], iterable[3u])) {
+                swap(iterable[3u], iterable[9u]);
             }
-            if (compare(begin[12u], begin[6u])) {
-                swap(begin[6u], begin[12u]);
+            if (compare(iterable[12u], iterable[6u])) {
+                swap(iterable[6u], iterable[12u]);
             }
-            if (compare(begin[13u], begin[7u])) {
-                swap(begin[7u], begin[13u]);
+            if (compare(iterable[13u], iterable[7u])) {
+                swap(iterable[7u], iterable[13u]);
             }
-            if (compare(begin[16u], begin[10u])) {
-                swap(begin[10u], begin[16u]);
+            if (compare(iterable[16u], iterable[10u])) {
+                swap(iterable[10u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[11u])) {
-                swap(begin[11u], begin[17u]);
+            if (compare(iterable[17u], iterable[11u])) {
+                swap(iterable[11u], iterable[17u]);
             }
-            if (compare(begin[20u], begin[14u])) {
-                swap(begin[14u], begin[20u]);
+            if (compare(iterable[20u], iterable[14u])) {
+                swap(iterable[14u], iterable[20u]);
             }
-            if (compare(begin[4u], begin[2u])) {
-                swap(begin[2u], begin[4u]);
+            if (compare(iterable[4u], iterable[2u])) {
+                swap(iterable[2u], iterable[4u]);
             }
-            if (compare(begin[5u], begin[3u])) {
-                swap(begin[3u], begin[5u]);
+            if (compare(iterable[5u], iterable[3u])) {
+                swap(iterable[3u], iterable[5u]);
             }
-            if (compare(begin[8u], begin[6u])) {
-                swap(begin[6u], begin[8u]);
+            if (compare(iterable[8u], iterable[6u])) {
+                swap(iterable[6u], iterable[8u]);
             }
-            if (compare(begin[9u], begin[7u])) {
-                swap(begin[7u], begin[9u]);
+            if (compare(iterable[9u], iterable[7u])) {
+                swap(iterable[7u], iterable[9u]);
             }
-            if (compare(begin[12u], begin[10u])) {
-                swap(begin[10u], begin[12u]);
+            if (compare(iterable[12u], iterable[10u])) {
+                swap(iterable[10u], iterable[12u]);
             }
-            if (compare(begin[13u], begin[11u])) {
-                swap(begin[11u], begin[13u]);
+            if (compare(iterable[13u], iterable[11u])) {
+                swap(iterable[11u], iterable[13u]);
             }
-            if (compare(begin[16u], begin[14u])) {
-                swap(begin[14u], begin[16u]);
+            if (compare(iterable[16u], iterable[14u])) {
+                swap(iterable[14u], iterable[16u]);
             }
-            if (compare(begin[17u], begin[15u])) {
-                swap(begin[15u], begin[17u]);
+            if (compare(iterable[17u], iterable[15u])) {
+                swap(iterable[15u], iterable[17u]);
             }
-            if (compare(begin[20u], begin[18u])) {
-                swap(begin[18u], begin[20u]);
+            if (compare(iterable[20u], iterable[18u])) {
+                swap(iterable[18u], iterable[20u]);
             }
-            if (compare(begin[1u], begin[0u])) {
-                swap(begin[0u], begin[1u]);
+            if (compare(iterable[1u], iterable[0u])) {
+                swap(iterable[0u], iterable[1u]);
             }
-            if (compare(begin[3u], begin[2u])) {
-                swap(begin[2u], begin[3u]);
+            if (compare(iterable[3u], iterable[2u])) {
+                swap(iterable[2u], iterable[3u]);
             }
-            if (compare(begin[5u], begin[4u])) {
-                swap(begin[4u], begin[5u]);
+            if (compare(iterable[5u], iterable[4u])) {
+                swap(iterable[4u], iterable[5u]);
             }
-            if (compare(begin[7u], begin[6u])) {
-                swap(begin[6u], begin[7u]);
+            if (compare(iterable[7u], iterable[6u])) {
+                swap(iterable[6u], iterable[7u]);
             }
-            if (compare(begin[9u], begin[8u])) {
-                swap(begin[8u], begin[9u]);
+            if (compare(iterable[9u], iterable[8u])) {
+                swap(iterable[8u], iterable[9u]);
             }
-            if (compare(begin[11u], begin[10u])) {
-                swap(begin[10u], begin[11u]);
+            if (compare(iterable[11u], iterable[10u])) {
+                swap(iterable[10u], iterable[11u]);
             }
-            if (compare(begin[13u], begin[12u])) {
-                swap(begin[12u], begin[13u]);
+            if (compare(iterable[13u], iterable[12u])) {
+                swap(iterable[12u], iterable[13u]);
             }
-            if (compare(begin[15u], begin[14u])) {
-                swap(begin[14u], begin[15u]);
+            if (compare(iterable[15u], iterable[14u])) {
+                swap(iterable[14u], iterable[15u]);
             }
-            if (compare(begin[17u], begin[16u])) {
-                swap(begin[16u], begin[17u]);
+            if (compare(iterable[17u], iterable[16u])) {
+                swap(iterable[16u], iterable[17u]);
             }
-            if (compare(begin[19u], begin[18u])) {
-                swap(begin[18u], begin[19u]);
+            if (compare(iterable[19u], iterable[18u])) {
+                swap(iterable[18u], iterable[19u]);
             }
-            if (compare(begin[16u], begin[1u])) {
-                swap(begin[1u], begin[16u]);
+            if (compare(iterable[16u], iterable[1u])) {
+                swap(iterable[1u], iterable[16u]);
             }
-            if (compare(begin[18u], begin[3u])) {
-                swap(begin[3u], begin[18u]);
+            if (compare(iterable[18u], iterable[3u])) {
+                swap(iterable[3u], iterable[18u]);
             }
-            if (compare(begin[20u], begin[5u])) {
-                swap(begin[5u], begin[20u]);
+            if (compare(iterable[20u], iterable[5u])) {
+                swap(iterable[5u], iterable[20u]);
             }
-            if (compare(begin[8u], begin[1u])) {
-                swap(begin[1u], begin[8u]);
+            if (compare(iterable[8u], iterable[1u])) {
+                swap(iterable[1u], iterable[8u]);
             }
-            if (compare(begin[10u], begin[3u])) {
-                swap(begin[3u], begin[10u]);
+            if (compare(iterable[10u], iterable[3u])) {
+                swap(iterable[3u], iterable[10u]);
             }
-            if (compare(begin[12u], begin[5u])) {
-                swap(begin[5u], begin[12u]);
+            if (compare(iterable[12u], iterable[5u])) {
+                swap(iterable[5u], iterable[12u]);
             }
-            if (compare(begin[14u], begin[7u])) {
-                swap(begin[7u], begin[14u]);
+            if (compare(iterable[14u], iterable[7u])) {
+                swap(iterable[7u], iterable[14u]);
             }
-            if (compare(begin[16u], begin[9u])) {
-                swap(begin[9u], begin[16u]);
+            if (compare(iterable[16u], iterable[9u])) {
+                swap(iterable[9u], iterable[16u]);
             }
-            if (compare(begin[18u], begin[11u])) {
-                swap(begin[11u], begin[18u]);
+            if (compare(iterable[18u], iterable[11u])) {
+                swap(iterable[11u], iterable[18u]);
             }
-            if (compare(begin[20u], begin[13u])) {
-                swap(begin[13u], begin[20u]);
+            if (compare(iterable[20u], iterable[13u])) {
+                swap(iterable[13u], iterable[20u]);
             }
-            if (compare(begin[4u], begin[1u])) {
-                swap(begin[1u], begin[4u]);
+            if (compare(iterable[4u], iterable[1u])) {
+                swap(iterable[1u], iterable[4u]);
             }
-            if (compare(begin[6u], begin[3u])) {
-                swap(begin[3u], begin[6u]);
+            if (compare(iterable[6u], iterable[3u])) {
+                swap(iterable[3u], iterable[6u]);
             }
-            if (compare(begin[8u], begin[5u])) {
-                swap(begin[5u], begin[8u]);
+            if (compare(iterable[8u], iterable[5u])) {
+                swap(iterable[5u], iterable[8u]);
             }
-            if (compare(begin[10u], begin[7u])) {
-                swap(begin[7u], begin[10u]);
+            if (compare(iterable[10u], iterable[7u])) {
+                swap(iterable[7u], iterable[10u]);
             }
-            if (compare(begin[12u], begin[9u])) {
-                swap(begin[9u], begin[12u]);
+            if (compare(iterable[12u], iterable[9u])) {
+                swap(iterable[9u], iterable[12u]);
             }
-            if (compare(begin[14u], begin[11u])) {
-                swap(begin[11u], begin[14u]);
+            if (compare(iterable[14u], iterable[11u])) {
+                swap(iterable[11u], iterable[14u]);
             }
-            if (compare(begin[16u], begin[13u])) {
-                swap(begin[13u], begin[16u]);
+            if (compare(iterable[16u], iterable[13u])) {
+                swap(iterable[13u], iterable[16u]);
             }
-            if (compare(begin[18u], begin[15u])) {
-                swap(begin[15u], begin[18u]);
+            if (compare(iterable[18u], iterable[15u])) {
+                swap(iterable[15u], iterable[18u]);
             }
-            if (compare(begin[20u], begin[17u])) {
-                swap(begin[17u], begin[20u]);
+            if (compare(iterable[20u], iterable[17u])) {
+                swap(iterable[17u], iterable[20u]);
             }
-            if (compare(begin[2u], begin[1u])) {
-                swap(begin[1u], begin[2u]);
+            if (compare(iterable[2u], iterable[1u])) {
+                swap(iterable[1u], iterable[2u]);
             }
-            if (compare(begin[4u], begin[3u])) {
-                swap(begin[3u], begin[4u]);
+            if (compare(iterable[4u], iterable[3u])) {
+                swap(iterable[3u], iterable[4u]);
             }
-            if (compare(begin[6u], begin[5u])) {
-                swap(begin[5u], begin[6u]);
+            if (compare(iterable[6u], iterable[5u])) {
+                swap(iterable[5u], iterable[6u]);
             }
-            if (compare(begin[8u], begin[7u])) {
-                swap(begin[7u], begin[8u]);
+            if (compare(iterable[8u], iterable[7u])) {
+                swap(iterable[7u], iterable[8u]);
             }
-            if (compare(begin[10u], begin[9u])) {
-                swap(begin[9u], begin[10u]);
+            if (compare(iterable[10u], iterable[9u])) {
+                swap(iterable[9u], iterable[10u]);
             }
-            if (compare(begin[12u], begin[11u])) {
-                swap(begin[11u], begin[12u]);
+            if (compare(iterable[12u], iterable[11u])) {
+                swap(iterable[11u], iterable[12u]);
             }
-            if (compare(begin[14u], begin[13u])) {
-                swap(begin[13u], begin[14u]);
+            if (compare(iterable[14u], iterable[13u])) {
+                swap(iterable[13u], iterable[14u]);
             }
-            if (compare(begin[16u], begin[15u])) {
-                swap(begin[15u], begin[16u]);
+            if (compare(iterable[16u], iterable[15u])) {
+                swap(iterable[15u], iterable[16u]);
             }
-            if (compare(begin[18u], begin[17u])) {
-                swap(begin[17u], begin[18u]);
+            if (compare(iterable[18u], iterable[17u])) {
+                swap(iterable[17u], iterable[18u]);
             }
-            if (compare(begin[20u], begin[19u])) {
-                swap(begin[19u], begin[20u]);
+            if (compare(iterable[20u], iterable[19u])) {
+                swap(iterable[19u], iterable[20u]);
             }
         }
     };

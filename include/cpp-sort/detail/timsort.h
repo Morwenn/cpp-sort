@@ -6,6 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
+ * Modified in 2015 by Morwenn for inclusion into cpp-sort.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -48,7 +49,8 @@
 #define GFX_TIMSORT_MOVE(x) (x)
 #endif
 
-namespace gfx {
+namespace cppsort {
+namespace detail {
 
 // ---------------------------------------
 // Declaration
@@ -666,7 +668,8 @@ inline void timsort(RandomAccessIterator const first, RandomAccessIterator const
     TimSort<RandomAccessIterator, LessFunction>::sort(first, last, compare);
 }
 
-} // namespace gfx
+} // namespace detail
+} // namespace cppsort
 
 #undef GFX_TIMSORT_LOG
 #undef GFX_TIMSORT_MOVE
