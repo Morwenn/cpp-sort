@@ -27,8 +27,8 @@
  * IN THE SOFTWARE.
  */
 
-#ifndef GFX_TIMSORT_HPP
-#define GFX_TIMSORT_HPP
+#ifndef CPPSORT_DETAIL_TIMSORT_H_
+#define CPPSORT_DETAIL_TIMSORT_H_
 
 #include <vector>
 #include <cassert>
@@ -43,7 +43,7 @@
 #define GFX_TIMSORT_LOG(expr) ((void)0)
 #endif
 
-#if ENABLE_STD_MOVE && __cplusplus >= 201103L
+#if __cplusplus >= 201103L
 #define GFX_TIMSORT_MOVE(x) std::move(x)
 #else
 #define GFX_TIMSORT_MOVE(x) (x)
@@ -673,4 +673,4 @@ inline void timsort(RandomAccessIterator const first, RandomAccessIterator const
 
 #undef GFX_TIMSORT_LOG
 #undef GFX_TIMSORT_MOVE
-#endif // GFX_TIMSORT_HPP
+#endif // CPPSORT_DETAIL_TIMSORT_H_

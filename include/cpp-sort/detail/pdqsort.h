@@ -20,8 +20,8 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef PDQSORT_H
-#define PDQSORT_H
+#ifndef CPPSORT_DETAIL_PDQSORT_H_
+#define CPPSORT_DETAIL_PDQSORT_H_
 
 #include <utility>
 #include <algorithm>
@@ -226,7 +226,6 @@ namespace detail {
 
         template<class Iter, class Compare>
         inline void pdqsort_loop(Iter begin, Iter end, Compare comp, int bad_allowed, bool leftmost = true) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
             typedef typename std::iterator_traits<Iter>::difference_type diff_t;
 
             // Use a while loop for tail recursion elimination.
@@ -316,4 +315,4 @@ namespace detail {
 
 #undef PDQSORT_PREFER_MOVE
 
-#endif
+#endif // CPPSORT_DETAIL_PDQSORT_H_
