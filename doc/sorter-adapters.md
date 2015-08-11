@@ -36,7 +36,7 @@ Size | comparisons | swaps
 0 | 0 | 0
 1 | 0 | 0
 2 | 1 | ≤ 1
-3 | 3 | ≤ 2
+3 | 2-3 | < 2
 4 | 5 | ≤ 5
 5 | 9 | ≤ 9
 6 | 12 | ≤ 12
@@ -73,7 +73,7 @@ described on the site) for inputs inferior or equal to 16, and Batcher's Merge-E
 algorithm otherwise. Following is the full list of resources used to write the
 different algorithms:
 
-* [Algorithm 3](http://stackoverflow.com/a/3343600/1364752)
+* [Algorithm 3](https://github.com/llvm-mirror/libcxx/blob/master/include/algorithm#L3602)
 * [Other algorithms](http://pages.ripco.net/~jgamble/nw.html)
 
 There is another specialization of `small_array_sorter` which takes a `Sorter` and

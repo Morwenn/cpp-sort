@@ -37,18 +37,26 @@ namespace detail
             using std::swap;
 
             if (compare(iterable[0u], iterable[1u])) {
-                if (compare(iterable[2u], iterable[0u])) {
-                    swap(iterable[0u], iterable[2u]);
-                }
-            } else {
-                if (compare(iterable[1u], iterable[2u])) {
-                    swap(iterable[0u], iterable[1u]);
-                } else {
-                    swap(iterable[0u], iterable[2u]);
+                if (compare(iterable[2u], iterable[1u])) {
+                    if (compare(iterable[2u], iterable[0u])) {
+                        auto tmp = std::move(iterable[2u]);
+                        iterable[2u] = std::move(iterable[1u]);
+                        iterable[1u] = std::move(iterable[0u]);
+                        iterable[0u] = std::move(tmp);
+                    } else {
+                        swap(iterable[1u], iterable[2u]);
+                    }
                 }
             }
-            if (compare(iterable[2u], iterable[1u])) {
-                swap(iterable[1u], iterable[2u]);
+            else if (compare(iterable[2u], iterable[1u])) {
+                swap(iterable[0u], iterable[2u]);
+            } else if (compare(iterable[2u], iterable[0u])) {
+                auto tmp = std::move(iterable[0u]);
+                iterable[0u] = std::move(iterable[1u]);
+                iterable[1u] = std::move(iterable[2u]);
+                iterable[2u] = std::move(tmp);
+            } else {
+                swap(iterable[0u], iterable[1u]);
             }
         }
     };
