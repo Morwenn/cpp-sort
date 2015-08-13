@@ -21,27 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_IS_SORTER_FOR_H_
-#define CPPSORT_UTILITY_IS_SORTER_FOR_H_
+#ifndef CPPSORT_SORTERS_SELF_SORTER_H_
+#define CPPSORT_SORTERS_SELF_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <functional>
 #include <type_traits>
-#include <cpp-sort/utility/detection.h>
+#include <cpp-sort/utility/has_sort_method.h>
 
 namespace cppsort
 {
-namespace utility
-{
-    namespace detail
+    template<typename Sorter>
+    struct self_sorter
     {
-        template<typename Sorter, typename Iterable>
-        using is_sorter_for_t = std::result_of_t<Sorter(Iterable&)>;
-    }
+        template<
+            typename Iterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(Iterable& iterable, Compare compare={}) const
+            -> std::enable_if_t<utility::has_sort_method<Iterable>, void>
+        {
+            iterable.sort(compare);
+        }
 
-    template<typename Sorter, typename Iterable>
-    constexpr bool is_sorter_for = is_detected_v<detail::is_sorter_for_t, Sorter, Iterable>;
-}}
+        template<
+            typename Iterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(Iterable& iterable, Compare compare={}) const
+            -> std::enable_if_t<not utility::has_sort_method<Iterable>, void>
+        {
+            Sorter{}(iterable, compare);
+        }
+    };
+}
 
-#endif // CPPSORT_UTILITY_IS_SORTER_FOR_H_
+#endif // CPPSORT_SORTERS_SELF_SORTER_H_

@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_IS_SORTER_FOR_H_
-#define CPPSORT_UTILITY_IS_SORTER_FOR_H_
+#ifndef CPPSORT_UTILITY_HAS_SORT_METHOD_H_
+#define CPPSORT_UTILITY_HAS_SORT_METHOD_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <type_traits>
+#include <utility>
 #include <cpp-sort/utility/detection.h>
 
 namespace cppsort
@@ -36,12 +36,12 @@ namespace utility
 {
     namespace detail
     {
-        template<typename Sorter, typename Iterable>
-        using is_sorter_for_t = std::result_of_t<Sorter(Iterable&)>;
+        template<typename Iterable>
+        using has_sort_method_t = decltype(std::declval<Iterable&>().sort());
     }
 
-    template<typename Sorter, typename Iterable>
-    constexpr bool is_sorter_for = is_detected_v<detail::is_sorter_for_t, Sorter, Iterable>;
+    template<typename Iterable>
+    constexpr bool has_sort_method = is_detected_v<detail::has_sort_method_t, Iterable>;
 }}
 
-#endif // CPPSORT_UTILITY_IS_SORTER_FOR_H_
+#endif // CPPSORT_UTILITY_HAS_SORT_METHOD_H_

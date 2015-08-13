@@ -6,6 +6,21 @@ A *sorter adapter* is a class template that takes another `Sorter` template
 parameter and alters its behavior. The resulting class can be used as a regular
 sorter.
 
+`self_sorter`
+-------------
+
+```cpp
+#include <cpp-sort/sorters/self_sorter.h>
+```
+
+The name is not the best one, but this adapter takes a sorter and, if the object
+to be sorted has a `sort` method, it is used to sort the object. If the object
+has no `sort` method, the adapted sorter is used instead.
+
+This sorter adapter allows to support out-of-the-box sorting for `std::list` and
+`std::forward_list` as well as other user-defined classes that may have a `sort`
+method.
+
 `small_array_sorter`
 --------------------
 

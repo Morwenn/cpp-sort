@@ -48,9 +48,11 @@ Sorter striving to use a sorting algorithm as optimized as possible. The current
 implementation defines it as follows:
 
 ```cpp
-using default_sorter = small_array_sorter<
-    pdq_sorter,
-    std::make_index_sequence<10u>
+using default_sorter = self_sorter<
+    small_array_sorter<
+        pdq_sorter,
+        std::make_index_sequence<10u>
+    >
 >;
 ```
 

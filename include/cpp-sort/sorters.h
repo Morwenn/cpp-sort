@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
+#include <cpp-sort/sorters/self_sorter.h>
 #include <cpp-sort/sorters/small_array_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>

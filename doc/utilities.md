@@ -20,6 +20,21 @@ Since the documentation is already available online, it won't be repeated it
 here. Note that this header also provides the types `void_t` and `nonesuch` which
 are used to implement the detection framework.
 
+`has_sort_method`
+-----------------
+
+```cpp
+#include <cpp-sort/utility/has_sort_method.h>
+```
+
+The variable template `has_sort_method<typename Iterable>` equals `true` if
+the type `Iterable` has a method name `sort` which can be called without any
+parameter and equals `false` otherwise.
+
+```cpp
+template<typename Iterable>
+constexpr bool has_sort_method = /* implementation-defined */;
+
 `is_in_range`
 -------------
 
@@ -43,10 +58,10 @@ constexpr bool is_in_pack = /* implementation-defined */;
 #include <cpp-sort/utility/is_sorter_for.h>
 ```
 
-The variable template `is_sorter_for<Sorter, Iterable>` equals `true` if the
-type `Sorter` is a [*sorter*](sorters.md) and equals `false` otherwise. In
-our case, a `Sorter` is a type that can be called with an `Iterable&`. It
-mainly exists for SFINAE purpose.
+The variable template `is_sorter_for<typename Sorter, typename Iterable>`
+equals `true` if the type `Sorter` is a [*sorter*](sorters.md) and equals
+`false` otherwise. In our case, a `Sorter` is a type that can be called
+with an `Iterable&`. It mainly exists for SFINAE purpose.
 
 ```cpp
 template<typename Sorter, typename Iterable>
