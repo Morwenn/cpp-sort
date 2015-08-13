@@ -34,6 +34,7 @@ parameter and equals `false` otherwise.
 ```cpp
 template<typename Iterable>
 constexpr bool has_sort_method = /* implementation-defined */;
+```
 
 `is_in_range`
 -------------
