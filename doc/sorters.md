@@ -37,34 +37,6 @@ you can also include all the availble sorters at once with the following line:
 Note that the library does not make a difference between sorters and sorter adapaters,
 so the adapters will also be included. The following sorters are available:
 
-`pdq_sorter`
-------------
-
-```cpp
-#include <cpp-sort/sorters/pdq_sorter.h>
-```
-
-Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
-
-`tim_sorter`
-------------
-
-```cpp
-#include <cpp-sort/sorters/tim_sorter.h>
-```
-
-Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
-
-`std_sorter`
-------------
-
-```cpp
-#include <cpp-sort/sorters/std_sorter.h>
-```
-
-Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort)
-to sort a collection.
-
 `default_sorter`
 ----------------
 
@@ -81,3 +53,31 @@ using default_sorter = small_array_sorter<
     std::make_index_sequence<10u>
 >;
 ```
+
+`pdq_sorter`
+------------
+
+```cpp
+#include <cpp-sort/sorters/pdq_sorter.h>
+```
+
+Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
+
+`std_sorter`
+------------
+
+```cpp
+#include <cpp-sort/sorters/std_sorter.h>
+```
+
+Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort)
+to sort a collection.
+
+`tim_sorter`
+------------
+
+```cpp
+#include <cpp-sort/sorters/tim_sorter.h>
+```
+
+Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
