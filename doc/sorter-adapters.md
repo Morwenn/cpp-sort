@@ -1,10 +1,10 @@
 Sorter adapters
 ===============
 
-Sorter adapters are the main reason for the existence of the sorter classes.
-A *sorter adapter* is a class template that takes another `Sorter` template
-parameter and alters its behavior. The resulting class can be used as a regular
-sorter.
+Sorter adapters are the main reason for using sorter function objects instead
+of regular functions. A *sorter adapter* is a class template that takes another
+`Sorter` template parameter and alters its behavior. The resulting class can be
+used as a regular sorter.
 
 `self_sorter`
 -------------
@@ -13,12 +13,12 @@ sorter.
 #include <cpp-sort/sorters/self_sorter.h>
 ```
 
-The name is not the best one, but this adapter takes a sorter and, if the object
-to be sorted has a `sort` method, it is used to sort the object. If the object
-has no `sort` method, the adapted sorter is used instead.
+The name is not the best in thee World, but this adapter takes a sorter and, if
+the object to be sorted has a `sort` method, it is used to sort the object.
+Otherwise, the adapted sorter is used instead to sort the collection.
 
 This sorter adapter allows to support out-of-the-box sorting for `std::list` and
-`std::forward_list` as well as other user-defined classes that may have a `sort`
+`std::forward_list` as well as other user-defined classes that implement a `sort`
 method.
 
 `small_array_sorter`
@@ -103,7 +103,7 @@ struct small_array_sorter<Sorter, std::index_sequence<Indices...>>
 ```
 
 This version of the sorter adapter only uses the specialized sorting algorithms
-for fixed-size arrays if the size is contained in `Indices` and falls back to
+for fixed-size arrays if the size is contained in `Indices`, and falls back to
 `Sorter` in every other case. The main advantage is that it allows to use the class
 [`std::make_index_sequence`](http://en.cppreference.com/w/cpp/utility/integer_sequence)
 to generate the indices and pick the specialized algorithms for the smallest values

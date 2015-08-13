@@ -1,9 +1,9 @@
 Sorters
 =======
 
-A *sorter* is a function object class whose `operator()` is overloaded to
-take a `RandomAccessIterable&` collection and a `Compare` functor. It is
-easy to write a new sorter by yourself:
+A *sorter* is a function object class whose `operator()` is overloaded to take
+an `Iterable&` collection and a `Compare` functor. It is easy to write a new
+sorter by yourself:
 
 ```cpp
 /**
@@ -11,8 +11,8 @@ easy to write a new sorter by yourself:
  */
 struct spam_sorter
 {
-    template<typename RandomAccessIterable, typename Compare>
-    auto operator()(RandomAccessIterable& iterable, Compare cmp) const
+    template<typename Iterable, typename Compare>
+    auto operator()(Iterable& iterable, Compare cmp) const
         -> void
     {
         spam_sort(std::begin(iterable), std::end(iterable), cmp);
@@ -20,22 +20,23 @@ struct spam_sorter
 };
 ```
 
-`RandomAccessIterable` has to be a type for which `std::begin` and `std::end`
-return [random-access iterators](http://en.cppreference.com/w/cpp/concept/RandomAccessIterator).
+`Iterable` has to be a type on which `std::begin` and `std::end` can be used.
 `Compare` should be a type satisfying the [`Compare`](http://en.cppreference.com/w/cpp/concept/Compare)
 concept.
 
-While these objects offer little more than regular sorting functions by themselves,
-you can use them with [*sorter adapaters*](sorter-adapters.md) to craft more
-elaborate sorters effortlessly. Every sorter is available in its own file. However,
-you can also include all the availble sorters at once with the following line:
+While these funnction objects offer little more than regular sorting functions by
+themselves, you can use them together with [*sorter adapaters*](sorter-adapters.md)
+to craft more elaborate sorters effortlessly. Every sorter is available in its own
+file. However, you can also include all the availble sorters at once with the
+following line:
 
 ```cpp
 #include <cpp-sort/sorters.h>
 ```
 
 Note that the library does not make a difference between sorters and sorter adapaters,
-so the adapters will also be included. The following sorters are available:
+so the adapters will also be included by the lie above. The following non-adapter
+sorters are available:
 
 `default_sorter`
 ----------------
