@@ -48,7 +48,8 @@ namespace cppsort
     template<
         typename RandomAccessIterable,
         typename Sorter,
-        typename Compare = std::less<>
+        typename Compare = std::less<>,
+        typename = std::enable_if_t<utility::is_sorter_for<Sorter, RandomAccessIterable>>
     >
     auto sort(RandomAccessIterable& iterable, const Sorter& sorter, Compare compare={})
         -> void
