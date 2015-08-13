@@ -56,6 +56,15 @@ using default_sorter = self_sorter<
 >;
 ```
 
+`insertion_sorter`
+------------------
+
+```cpp
+#include <cpp-sort/sorters/insertion_sorter.h>
+```
+
+Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
+
 `pdq_sorter`
 ------------
 

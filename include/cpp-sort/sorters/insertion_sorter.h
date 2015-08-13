@@ -21,18 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_INSERTION_SORTER_H_
+#define CPPSORT_SORTERS_INSERTION_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <functional>
+#include <iterator>
+#include "../detail/insertion_sort.h"
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    struct insertion_sorter
+    {
+        template<
+            typename BidirectionalIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
+        }
+    };
+}
+
+#endif // CPPSORT_SORTERS_INSERTION_SORTER_H_
