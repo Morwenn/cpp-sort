@@ -114,7 +114,7 @@ struct pipe_organ
 struct push_front
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         if (std::distance(begin, end) > 0)
@@ -130,7 +130,7 @@ struct push_front
 struct push_middle
 {
     template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end)
+    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
         std::size_t size = std::distance(begin, end);
