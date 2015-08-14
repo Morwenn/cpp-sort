@@ -21,19 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_DETAIL_COMPARISON_COUNTER_H_
+#define CPPSORT_DETAIL_COMPARISON_COUNTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <cstddef>
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<
+        typename Compare,
+        typename CountType = std::size_t
+    >
+    struct comparison_counter
+    {
+        comparison_counter(Compare compare):
+            compare(compare),
+            counter(nullptr),
+            count(0)
+        {
+            counter = this;
+        }
+
+        template<typename T, typename U>
+        auto operator()(T&& lhs, U&& rhs)
+            -> decltype(auto)
+        {
+            ++counter->count;
+            return compare(std::forward<T>(lhs), std::forward<U>(rhs));
+        }
+
+        Compare compare;
+        comparison_counter* counter;
+        CountType count;
+    };
+}}
+
+#endif // CPPSORT_DETAIL_COMPARISON_COUNTER_H_

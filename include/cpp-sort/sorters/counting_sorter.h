@@ -21,19 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_COUNTING_SORTER_H_
+#define CPPSORT_SORTERS_COUNTING_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <cstddef>
+#include <functional>
+#include "../detail/comparison_counter.h"
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    template<
+        typename Sorter,
+        typename CountType = std::size_t
+    >
+    struct counting_sorter
+    {
+        template<
+            typename Iterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(Iterable& iterable, Compare compare={}) const
+            -> CountType
+        {
+            detail::comparison_counter<Compare, CountType> cmp(compare);
+            Sorter{}(iterable, cmp);
+            return cmp.count;
+        }
+    };
+}
+
+#endif // CPPSORT_SORTERS_COUNTING_SORTER_H_

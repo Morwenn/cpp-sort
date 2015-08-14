@@ -6,6 +6,31 @@ of regular functions. A *sorter adapter* is a class template that takes another
 `Sorter` template parameter and alters its behavior. The resulting class can be
 used as a regular sorter.
 
+`counting_sorter`
+-----------------
+
+```cpp
+#include <cpp-sort/sorters/counting_sorter.h>
+```
+
+Unlike other sorters, `counting_sorter::operator()` does not return `void` but
+the number of comparisons that have been needed to sort the iterable. It will
+adapt the comparison functor so that it can count the number of comparisons
+made by any other sorter with a reasonable implementation. Generally speaking,
+the number of comparisons of a sort can be used as an heuristic in hybrid sorts
+and may be constitute interesting information nevertheless.
+
+The actual counter type can be configured with the template parameter `CountType`,
+which defaults to `std::size_t` if not specified.
+
+```cpp
+template<
+    typename Sorter,
+    typename CountType = std::size_t
+>
+struct counting_sorter;
+```
+
 `self_sorter`
 -------------
 
@@ -21,6 +46,11 @@ This sorter adapter allows to support out-of-the-box sorting for `std::list` and
 `std::forward_list` as well as other user-defined classes that implement a `sort`
 method.
 
+```cpp
+template<typename Sorter>
+struct self_sorter;
+```
+
 `small_array_sorter`
 --------------------
 
@@ -32,7 +62,7 @@ This sorter adapter comes into two flavors:
 
 ```cpp
 template<typename Sorter>
-struct small_array_sorter<Sorter>
+struct small_array_sorter<Sorter>;
 ```
 
 This specialization takes a sorter and uses it to sort the collections it
@@ -99,7 +129,7 @@ template<
     typename Sorter,
     std::size_t... Indices
 >
-struct small_array_sorter<Sorter, std::index_sequence<Indices...>>
+struct small_array_sorter<Sorter, std::index_sequence<Indices...>>;
 ```
 
 This version of the sorter adapter only uses the specialized sorting algorithms
