@@ -52,7 +52,7 @@ namespace detail
             auto sift = cur;
             auto sift_1 = std::prev(cur);
 
-            // Compare first so we can eliminate 2 moves for
+            // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
             if (compare(*sift, *sift_1))
             {

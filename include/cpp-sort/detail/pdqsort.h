@@ -26,6 +26,7 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include "insertion_sort.h"
 
 #if __cplusplus >= 201103L
     #define PDQSORT_PREFER_MOVE(x) std::move(x)
@@ -54,28 +55,6 @@ namespace detail {
             return log;
         }
 
-        // Sorts [begin, end) using insertion sort with the given comparison function.
-        template<class Iter, class Compare>
-        inline void insertion_sort(Iter begin, Iter end, Compare comp) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
-            if (begin == end) return;
-
-            for (Iter cur = begin + 1; cur != end; ++cur) {
-                Iter sift = cur;
-                Iter sift_1 = cur - 1;
-
-                // Compare first so we can elimite 2 moves for an element already positioned correctly.
-                if (comp(*sift, *sift_1)) {
-                    T tmp = PDQSORT_PREFER_MOVE(*sift);
-
-                    do { *sift-- = PDQSORT_PREFER_MOVE(*sift_1); }
-                    while (sift != begin && comp(tmp, *--sift_1));
-
-                    *sift = PDQSORT_PREFER_MOVE(tmp);
-                }
-            }
-        }
-
         // Sorts [begin, end) using insertion sort with the given comparison function. Assumes
         // *(begin - 1) is an element smaller than or equal to any element in [begin, end).
         template<class Iter, class Compare>
@@ -87,7 +66,7 @@ namespace detail {
                 Iter sift = cur;
                 Iter sift_1 = cur - 1;
 
-                // Compare first so we can elimite 2 moves for an element already positioned correctly.
+                // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(*sift, *sift_1)) {
                     T tmp = PDQSORT_PREFER_MOVE(*sift);
 
@@ -114,7 +93,7 @@ namespace detail {
                 Iter sift = cur;
                 Iter sift_1 = cur - 1;
 
-                // Compare first so we can elimite 2 moves for an element already positioned correctly.
+                // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(*sift, *sift_1)) {
                     T tmp = PDQSORT_PREFER_MOVE(*sift);
 
