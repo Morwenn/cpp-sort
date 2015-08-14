@@ -37,27 +37,34 @@ namespace detail
         typename Compare,
         typename CountType = std::size_t
     >
-    struct comparison_counter
+    class comparison_counter
     {
-        comparison_counter(Compare compare):
-            compare(compare),
-            counter(nullptr),
-            count(0)
-        {
-            counter = this;
-        }
+        public:
 
-        template<typename T, typename U>
-        auto operator()(T&& lhs, U&& rhs)
-            -> decltype(auto)
-        {
-            ++counter->count;
-            return compare(std::forward<T>(lhs), std::forward<U>(rhs));
-        }
+            comparison_counter(Compare compare):
+                compare(compare),
+                count(0),
+                counter(*this)
+            {}
 
-        Compare compare;
-        comparison_counter* counter;
-        CountType count;
+            template<typename T, typename U>
+            auto operator()(T&& lhs, U&& rhs)
+                -> decltype(auto)
+            {
+                ++counter.count;
+                return compare(std::forward<T>(lhs), std::forward<U>(rhs));
+            }
+
+            // Accessible member data
+            Compare compare;
+            CountType count;
+
+        private:
+
+            // Comparison functions are generally passed by value,
+            // therefore we need to know which is the original counter
+            // in order to increment the right count
+            comparison_counter& counter;
     };
 }}
 
