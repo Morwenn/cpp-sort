@@ -16,9 +16,9 @@ used as a regular sorter.
 Unlike other sorters, `counting_sorter::operator()` does not return `void` but
 the number of comparisons that have been needed to sort the iterable. It will
 adapt the comparison functor so that it can count the number of comparisons
-made by any other sorter with a reasonable implementation. Generally speaking,
-the number of comparisons of a sort can be used as an heuristic in hybrid sorts
-and may be constitute interesting information nevertheless.
+made by any other sorter with a reasonable implementation. The actual number of
+comparisons needed to sort an interable can be used as a heuristic in hybrid sorts
+and may constitute an interesting information nevertheless.
 
 The actual counter type can be configured with the template parameter `CountType`,
 which defaults to `std::size_t` if not specified.
@@ -38,9 +38,9 @@ struct counting_sorter;
 #include <cpp-sort/sorters/self_sorter.h>
 ```
 
-The name is not the best in thee World, but this adapter takes a sorter and, if
+The name is not the best in the World, but this adapter takes a sorter and, if
 the object to be sorted has a `sort` method, it is used to sort the object.
-Otherwise, the adapted sorter is used instead to sort the collection.
+Otherwise, the adapted sorter is used instead to sort the iterable.
 
 This sorter adapter allows to support out-of-the-box sorting for `std::list` and
 `std::forward_list` as well as other user-defined classes that implement a `sort`
