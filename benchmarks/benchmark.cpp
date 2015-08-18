@@ -21,135 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <algorithm>
 #include <array>
 #include <chrono>
-#include <ctime>
+#include <cstddef>
 #include <fstream>
 #include <iterator>
-#include <numeric>
-#include <random>
 #include <type_traits>
 #include <utility>
+#include <vector>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
-
-////////////////////////////////////////////////////////////
-// Distributions
-
-struct shuffled
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        // Pseudo-random numbers generator
-        thread_local std::mt19937_64 engine(std::time(nullptr));
-
-        std::iota(begin, end, 0);
-        std::shuffle(begin, end, engine);
-    }
-
-    static constexpr const char* output = "shuffled.txt";
-};
-
-struct all_equal
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        std::fill(begin, end, 0);
-    }
-
-    static constexpr const char* output = "all_equal.txt";
-};
-
-struct ascending
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        std::iota(begin, end, 0);
-    }
-
-    static constexpr const char* output = "ascending.txt";
-};
-
-struct descending
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        std::iota(begin, end, 0);
-        std::reverse(begin, end);
-    }
-
-    static constexpr const char* output = "descending.txt";
-};
-
-struct pipe_organ
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        std::size_t size = std::distance(begin, end);
-        std::size_t count = 0u;
-        for (std::size_t i = 0 ; i < size / 2u ; ++i)
-        {
-            begin[count++] = i;
-        }
-        for (std::size_t i = size / 2 ; i < size ; ++i)
-        {
-            begin[count++] = size - i;
-        }
-    }
-
-    static constexpr const char* output = "pipe_organ.txt";
-};
-
-struct push_front
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        if (std::distance(begin, end) > 0)
-        {
-            std::iota(begin, end, 1);
-            *std::prev(end) = 0;
-        }
-    }
-
-    static constexpr const char* output = "push_front.txt";
-};
-
-struct push_middle
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
-        -> void
-    {
-        std::size_t size = std::distance(begin, end);
-        if (size > 0)
-        {
-            std::size_t count = 0u;
-            for (std::size_t i = 0u ; i < size ; ++i)
-            {
-                if (i != size / 2u)
-                {
-                    begin[count++] = i;
-                }
-            }
-            begin[count] = size / 2;
-        }
-    }
-
-    static constexpr const char* output = "push_middle.txt";
-};
+#include "distributions.h"
 
 ////////////////////////////////////////////////////////////
 // Timing functions
@@ -198,18 +80,19 @@ auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
     -> void
 {
     // Compute results for the different sorting algorithms
-    std::array<std::chrono::milliseconds, sizeof...(Ind)> results[] = {
-        { time_it<T, Ind>(cppsort::default_sorter{}, Distribution{}, times)... },
-        { time_it<T, Ind>(cppsort::std_sorter{}, Distribution{}, times)... },
-        { time_it<T, Ind>(cppsort::tim_sorter{}, Distribution{}, times)... },
-        { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... }
+    std::pair<const char*, std::array<std::chrono::milliseconds, sizeof...(Ind)>> results[] = {
+        { "default_sorter", { time_it<T, Ind>(cppsort::default_sorter{}, Distribution{}, times)... } },
+        { "std_sorter", { time_it<T, Ind>(cppsort::std_sorter{}, Distribution{}, times)... } },
+        { "tim_sorter", { time_it<T, Ind>(cppsort::tim_sorter{}, Distribution{}, times)... } },
+        { "pdq_sorter", { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... } }
     };
 
     // Output the results to their respective files
     std::ofstream output(Distribution::output);
-    for (auto&& sort_times: results)
+    for (auto&& sort_result: results)
     {
-        for (auto&& time: sort_times)
+        output << std::get<0>(sort_result) << ' ';
+        for (auto&& time: std::get<1>(sort_result))
         {
             output << time.count() << ' ';
         }

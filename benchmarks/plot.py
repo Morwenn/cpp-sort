@@ -9,30 +9,26 @@ def fetch_results(fresults):
 
     
 if __name__ == '__main__':
-    # Results of timing functions
-    cppsort = []
-    stdsort = []
-    timsort = []
-    pdqsort = []
+    # Name and results of timing functions
+    names = []
+    values = []
     
     # Fetch the results
     with open(sys.argv[1]) as f:
-        cppsort = fetch_results(f)
-        stdsort = fetch_results(f)
-        timsort = fetch_results(f)
-        pdqsort = fetch_results(f)
-            
-    # Plot the results
-    xaxis = list(range(len(cppsort)))
-    line_cpp, = plt.plot(xaxis, cppsort)
-    line_std, = plt.plot(xaxis, stdsort)
-    line_tim, = plt.plot(xaxis, timsort)
-    line_pdq, = plt.plot(xaxis, pdqsort)
-    plt.legend(
-        [line_cpp, line_std, line_tim, line_pdq],
-        ['cppsort::sort', 'std::sort', 'gfx::timsort', 'pdqsort'],
-        loc='upper left'
-    )
+        for line in f:
+            results = line.split(' ')
+            # Get sorter name
+            names.append(results.pop(0))
+            # Remove EOL character
+            results.pop()
+            # Plot the results
+            intresults = [int(elem) for elem in results]
+            xaxis = list(range(len(intresults)))
+            val, = plt.plot(xaxis, intresults)
+            values.append(val)
+
+    # Add a legend
+    plt.legend(values, names, loc='upper left')
     plt.xlabel('Number of elements to sort')
     plt.ylabel('Execution time (ms)')
     plt.show()
