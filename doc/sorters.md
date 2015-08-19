@@ -66,6 +66,9 @@ using default_sorter = self_sorter<
 
 Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 
+    Best        Average     Worst       Memory      Stable
+    n           n²          n²          1           Yes
+
 `pdq_sorter`
 ------------
 
@@ -74,6 +77,10 @@ Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 ```
 
 Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
+
+
+    Best        Average     Worst       Memory      Stable
+    n           n log n     n log n     log n       No
 
 `std_sorter`
 ------------
@@ -85,6 +92,9 @@ Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
 Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort)
 to sort a collection.
 
+    Best        Average     Worst       Memory      Stable
+    ?           n log n     n log n     ?           No
+
 `tim_sorter`
 ------------
 
@@ -93,3 +103,6 @@ to sort a collection.
 ```
 
 Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
+
+    Best        Average     Worst       Memory      Stable
+    n           n log n     n log n     n           Yes
