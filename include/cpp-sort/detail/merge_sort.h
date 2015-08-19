@@ -21,20 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_DETAIL_MERGE_SORT_H_
+#define CPPSORT_DETAIL_MERGE_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sort.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <algorithm>
+#include <functional>
+#include <iterator>
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<
+        typename RandomAccessIterator,
+        typename Compare = std::less<>
+    >
+    void merge_sort(RandomAccessIterator first,
+                    RandomAccessIterator last,
+                    Compare compare={})
+    {
+        if (std::distance(first, last) > 1)
+        {
+            auto middle = first + (last - first) / 2;
+            merge_sort(first, middle);
+            merge_sort(middle, last);
+            std::inplace_merge(first, middle, last, compare);
+        }
+    }
+}}
+
+#endif // CPPSORT_DETAIL_MERGE_SORT_H_

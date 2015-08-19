@@ -69,6 +69,18 @@ Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
     Best        Average     Worst       Memory      Stable
     n           n²          n²          1           Yes
 
+`merge_sorter`
+--------------
+
+```cpp
+#include <cpp-sort/sorters/merge_sorter.h>
+```
+
+Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
+
+    Best        Average     Worst       Memory      Stable
+    n log n     n log n     n log n     n           Yes
+
 `pdq_sorter`
 ------------
 
