@@ -29,9 +29,14 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <type_traits>
+#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     template<typename... Sorters>
     class hybrid_sorter
     {
@@ -66,6 +71,16 @@ namespace cppsort
                 using category = typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category;
                 sorters(iterable, compare, category{});
             }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<typename... Sorters>
+    struct sorter_traits<hybrid_sorter<Sorters...>>
+    {
+        using iterator_category = std::common_type_t<iterator_category<Sorters>...>;
+        static constexpr bool is_stable = false;
     };
 }
 

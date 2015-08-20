@@ -29,10 +29,14 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_traits.h>
 #include "../detail/timsort.h"
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     struct tim_sorter
     {
         template<
@@ -46,6 +50,16 @@ namespace cppsort
         {
             detail::timsort(std::begin(iterable), std::end(iterable), compare);
         }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<tim_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        static constexpr bool is_stable = true;
     };
 }
 

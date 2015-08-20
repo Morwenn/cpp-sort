@@ -29,10 +29,14 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_traits.h>
 #include "../detail/insertion_sort.h"
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     struct insertion_sorter
     {
         template<
@@ -46,6 +50,16 @@ namespace cppsort
         {
             detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
         }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<insertion_sorter>
+    {
+        using iterator_category = std::bidirectional_iterator_tag;
+        static constexpr bool is_stable = true;
     };
 }
 

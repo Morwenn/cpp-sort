@@ -32,11 +32,15 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/is_in_pack.h>
 #include "../detail/sort_n.h"
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     template<typename...>
     struct small_array_sorter;
 
@@ -85,6 +89,16 @@ namespace cppsort
     struct small_array_sorter<Sorter>:
         small_array_sorter<Sorter, std::make_index_sequence<33u>>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<typename Sorter, std::size_t... Indices>
+    struct sorter_traits<small_array_sorter<Sorter, std::index_sequence<Indices...>>>
+    {
+        using iterator_category = iterator_category<Sorter>;
+        static constexpr bool is_stable = false;
+    };
 }
 
 #endif // CPPSORT_SORTERS_SMALL_ARRAY_SORTER_H_

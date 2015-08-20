@@ -30,9 +30,13 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     struct std_sorter
     {
         template<
@@ -46,6 +50,16 @@ namespace cppsort
         {
             std::sort(std::begin(iterable), std::end(iterable), compare);
         }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<std_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        static constexpr bool is_stable = false;
     };
 }
 
