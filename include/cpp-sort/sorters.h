@@ -30,7 +30,7 @@
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sort.h>
+#include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/self_sorter.h>
 #include <cpp-sort/sorters/small_array_sorter.h>
