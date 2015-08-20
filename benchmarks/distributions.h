@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <cstddef>
 #include <ctime>
 #include <iterator>
 #include <numeric>
@@ -31,8 +30,8 @@
 ////////////////////////////////////////////////////////////
 // Distributions for benchmarks
 //
-// Distributions are functions object used to fill the
-// collections to sort before benchmarking the sorting
+// Distributions are function objects used to fill the
+// collections to be sorter before benchmarking the sorting
 // algorithms. These distributions allow to check how a
 // sorting algorithm behaves with common patterns found in
 // actual data sets.
@@ -44,7 +43,7 @@ struct shuffled
     auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
-        // Pseudo-random numbers generator
+        // Pseudo-random number generator
         thread_local std::mt19937_64 engine(std::time(nullptr));
 
         std::iota(begin, end, 0);
@@ -97,13 +96,13 @@ struct pipe_organ
     auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
-        std::size_t size = std::distance(begin, end);
-        std::size_t count = 0u;
-        for (std::size_t i = 0 ; i < size / 2u ; ++i)
+        int size = std::distance(begin, end);
+        int count = 0;
+        for (int i = 0 ; i < size / 2 ; ++i)
         {
             begin[count++] = i;
         }
-        for (std::size_t i = size / 2 ; i < size ; ++i)
+        for (int i = size / 2 ; i < size ; ++i)
         {
             begin[count++] = size - i;
         }
@@ -134,13 +133,13 @@ struct push_middle
     auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
         -> void
     {
-        std::size_t size = std::distance(begin, end);
+        int size = std::distance(begin, end);
         if (size > 0)
         {
-            std::size_t count = 0u;
-            for (std::size_t i = 0u ; i < size ; ++i)
+            int count = 0;
+            for (int i = 0 ; i < size ; ++i)
             {
-                if (i != size / 2u)
+                if (i != size / 2)
                 {
                     begin[count++] = i;
                 }
