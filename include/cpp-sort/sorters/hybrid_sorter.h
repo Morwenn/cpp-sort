@@ -21,21 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_HYBRID_SORTER_H_
+#define CPPSORT_SORTERS_HYBRID_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/hybrid_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <functional>
+#include <iterator>
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    template<typename... Sorters>
+    class hybrid_sorter
+    {
+        private:
+
+            template<typename Head, typename... Tail>
+            struct merge_sorters:
+                Head, merge_sorters<Tail...>
+            {
+                using Head::operator();
+                using merge_sorters<Tail...>::operator();
+            };
+
+            template<typename Head>
+            struct merge_sorters<Head>:
+                Head
+            {
+                using Head::operator();
+            };
+
+            merge_sorters<Sorters...> sorters;
+
+        public:
+
+            template<
+                typename Iterable,
+                typename Compare = std::less<>
+            >
+            auto operator()(Iterable& iterable, Compare compare={}) const
+                -> void
+            {
+                using category = typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category;
+                sorters(iterable, compare, category{});
+            }
+    };
+}
+
+#endif // CPPSORT_SORTERS_HYBRID_SORTER_H_

@@ -39,7 +39,9 @@ namespace cppsort
             typename BidirectionalIterable,
             typename Compare = std::less<>
         >
-        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+        auto operator()(BidirectionalIterable& iterable,
+                        Compare compare={},
+                        std::bidirectional_iterator_tag={}) const
             -> void
         {
             detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
