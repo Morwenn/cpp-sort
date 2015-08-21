@@ -42,22 +42,42 @@ namespace cppsort
     {
         private:
 
+            ////////////////////////////////////////////////////////////
+            // Import every operator() in one class
+
             template<typename Head, typename... Tail>
-            struct merge_sorters:
-                Head, merge_sorters<Tail...>
+            struct sorters_merger:
+                Head, sorters_merger<Tail...>
             {
                 using Head::operator();
-                using merge_sorters<Tail...>::operator();
+                using sorters_merger<Tail...>::operator();
             };
 
             template<typename Head>
-            struct merge_sorters<Head>:
+            struct sorters_merger<Head>:
                 Head
             {
                 using Head::operator();
             };
 
-            merge_sorters<Sorters...> sorters;
+            ////////////////////////////////////////////////////////////
+            // Add a dispatch on the iterator category
+
+            template<typename Sorter>
+            struct category_wrapper
+            {
+                template<
+                    typename Iterable,
+                    typename Compare = std::less<>
+                >
+                auto operator()(Iterable& iterable,
+                                Compare compare={},
+                                iterator_category<Sorter> = {}) const
+                    -> void
+                {
+                    Sorter{}(iterable, compare);
+                }
+            };
 
         public:
 
@@ -68,8 +88,17 @@ namespace cppsort
             auto operator()(Iterable& iterable, Compare compare={}) const
                 -> void
             {
-                using category = typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category;
-                sorters(iterable, compare, category{});
+                // Dispatch-enabled sorter
+                using sorter = sorters_merger<category_wrapper<Sorters>...>;
+
+                // Iterator category of the iterable to sort
+                using category =
+                    typename std::iterator_traits<
+                        decltype(std::begin(iterable))
+                    >::iterator_category;
+
+                // Call the appropriate operator()
+                sorter{}(iterable, compare, category{});
             }
     };
 

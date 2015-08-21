@@ -43,9 +43,7 @@ namespace cppsort
             typename RandomAccessIterable,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterable& iterable,
-                        Compare compare={},
-                        std::random_access_iterator_tag={}) const
+        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
             -> void
         {
             detail::merge_sort(std::begin(iterable), std::end(iterable), compare);
