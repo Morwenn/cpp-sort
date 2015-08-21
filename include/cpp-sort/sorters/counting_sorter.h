@@ -29,10 +29,14 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <functional>
+#include <cpp-sort/sorter_traits.h>
 #include "../detail/comparison_counter.h"
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     template<
         typename Sorter,
         typename CountType = std::size_t
@@ -50,6 +54,16 @@ namespace cppsort
             Sorter{}(iterable, cmp);
             return cmp.count;
         }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<typename Sorter, typename CountType>
+    struct sorter_traits<counting_sorter<Sorter, CountType>>
+    {
+        using iterator_category = iterator_category<Sorter>;
+        static constexpr bool is_stable = is_stable<Sorter>;
     };
 }
 

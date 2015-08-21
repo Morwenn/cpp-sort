@@ -51,7 +51,10 @@ implementation defines it as follows:
 ```cpp
 using default_sorter = self_sorter<
     small_array_sorter<
-        pdq_sorter,
+        hybrid_sorter<
+            insertion_sorter,
+            pdq_sorter
+        >,
         std::make_index_sequence<10u>
     >
 >;
@@ -66,8 +69,8 @@ using default_sorter = self_sorter<
 
 Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 
-    Best        Average     Worst       Memory      Stable
-    n           n²          n²          1           Yes
+    Best        Average     Worst       Memory      Stable      Iterators
+    n           n²          n²          1           Yes         Bidirectional
 
 `merge_sorter`
 --------------
@@ -78,8 +81,8 @@ Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 
 Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
 
-    Best        Average     Worst       Memory      Stable
-    n log n     n log n     n log n     n           Yes
+    Best        Average     Worst       Memory      Stable      Iterators
+    n log n     n log n     n log n     n           Yes         Random access
 
 `pdq_sorter`
 ------------
@@ -91,8 +94,8 @@ Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
 Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
 
 
-    Best        Average     Worst       Memory      Stable
-    n           n log n     n log n     log n       No
+    Best        Average     Worst       Memory      Stable      Iterators
+    n           n log n     n log n     log n       No          Random access
 
 `std_sorter`
 ------------
@@ -104,8 +107,8 @@ Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
 Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort)
 to sort a collection.
 
-    Best        Average     Worst       Memory      Stable
-    ?           n log n     n log n     ?           No
+    Best        Average     Worst       Memory      Stable      Iterators
+    ?           n log n     n log n     ?           No          Random access
 
 `tim_sorter`
 ------------
@@ -116,5 +119,5 @@ to sort a collection.
 
 Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
 
-    Best        Average     Worst       Memory      Stable
-    n           n log n     n log n     n           Yes
+    Best        Average     Worst       Memory      Stable      Iterators
+    n           n log n     n log n     n           Yes         Random access

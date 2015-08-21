@@ -21,44 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_PDQ_SORTER_H_
-#define CPPSORT_SORTERS_PDQ_SORTER_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <functional>
-#include <iterator>
-#include <cpp-sort/sorter_traits.h>
-#include "../detail/pdqsort.h"
+#ifndef CPPSORT_SORTER_TRAITS_H_
+#define CPPSORT_SORTER_TRAITS_H_
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
-
-    struct pdq_sorter
+    template<typename Sorter>
+    struct sorter_traits
     {
-        template<
-            typename RandomAccessIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
-            -> void
-        {
-            detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
-        }
+        // Defined but empty for SFINAE friendliness
     };
 
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
+    template<typename Sorter>
+    using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 
-    template<>
-    struct sorter_traits<pdq_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = false;
-    };
+    template<typename Sorter>
+    constexpr bool is_stable = sorter_traits<Sorter>::is_stable;
 }
 
-#endif // CPPSORT_SORTERS_PDQ_SORTER_H_
+#endif // CPPSORT_SORTER_TRAITS_H_

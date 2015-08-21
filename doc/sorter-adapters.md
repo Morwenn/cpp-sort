@@ -31,6 +31,33 @@ template<
 struct counting_sorter;
 ```
 
+`hybrid_sorter`
+---------------
+
+```cpp
+#include <cpp-sort/sorters/hybrid_sorter.h>
+```
+
+The goal of this sorter adapter is to aggregate several sorters into one unique
+sorter. The new sorter will call the appropriate sorting algorithm based on the
+iterator category of the iterable to sort. Therefore, the different sorters passed
+to it should have different iterator categories so that the call to `operator()`
+is not ambiguous. For example, the following sorter will call a pattern-defeating
+quicksort to sort a random-access iterable, an insertion sort to sort a bidirectional
+iterable and a bubble sort to sort a forward iterable:
+
+```cpp
+using general_purpose_sort = hybrid_sorter<
+    bubble_sorter,
+    insertion_sorter,
+    pdq_sorter
+>;
+```
+
+The order of the parameters does not matter. The only thing that matters is that
+the different sorter shall have a different `cppsort::iterator_category` so that
+they can work side by side without overlapping.
+
 `self_sorter`
 -------------
 

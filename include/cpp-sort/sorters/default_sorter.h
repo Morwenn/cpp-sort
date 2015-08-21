@@ -28,6 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/sorters/hybrid_sorter.h>
+#include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/self_sorter.h>
 #include <cpp-sort/sorters/small_array_sorter.h>
@@ -36,7 +38,10 @@ namespace cppsort
 {
     using default_sorter = self_sorter<
         small_array_sorter<
-            pdq_sorter,
+            hybrid_sorter<
+                insertion_sorter,
+                pdq_sorter
+            >,
             std::make_index_sequence<10u>
         >
     >;
