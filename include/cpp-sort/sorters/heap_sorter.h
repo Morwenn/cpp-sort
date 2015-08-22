@@ -21,24 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_HEAP_SORTER_H_
+#define CPPSORT_SORTERS_HEAP_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/heap_sorter.h>
-#include <cpp-sort/sorters/hybrid_sorter.h>
-#include <cpp-sort/sorters/inplace_merge_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <functional>
+#include <iterator>
+#include <cpp-sort/sorter_traits.h>
+#include "../detail/heapsort.h"
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
+    struct heap_sorter
+    {
+        template<
+            typename RandomAccessIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            detail::heapsort(std::begin(iterable), std::end(iterable), compare);
+        }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<heap_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        static constexpr bool is_stable = false;
+    };
+}
+
+#endif // CPPSORT_SORTERS_HEAP_SORTER_H_

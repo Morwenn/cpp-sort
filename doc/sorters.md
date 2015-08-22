@@ -61,6 +61,18 @@ using default_sorter = self_sorter<
 >;
 ```
 
+`heap_sorter`
+-------------
+
+```cpp
+#include <cpp-sort/sorters/heap_sorter.h>
+```
+
+Implements a [heapsort](https://en.wikipedia.org/wiki/Heapsort).
+
+    Best        Average     Worst       Memory      Stable      Iterators
+    n log n     n log n     n log n     1           No          Random access
+
 `inplace_merge_sorter`
 ----------------------
 
