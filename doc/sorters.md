@@ -52,6 +52,7 @@ implementation defines it as follows:
 using default_sorter = self_sorter<
     small_array_sorter<
         hybrid_sorter<
+            inplace_merge_sorter,
             insertion_sorter,
             pdq_sorter
         >,
@@ -59,6 +60,18 @@ using default_sorter = self_sorter<
     >
 >;
 ```
+
+`inplace_merge_sorter`
+----------------------
+
+```cpp
+#include <cpp-sort/sorters/inplace_merge_sorter.h>
+```
+
+Implements an in-place merge sort.
+
+    Best        Average     Worst       Memory      Stable      Iterators
+    ?           ?           n log² n    1           Yes         Forward
 
 `insertion_sorter`
 ------------------
