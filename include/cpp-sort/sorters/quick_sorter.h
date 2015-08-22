@@ -57,7 +57,7 @@ namespace cppsort
     struct sorter_traits<quick_sorter>
     {
         using iterator_category = std::bidirectional_iterator_tag;
-        static constexpr bool is_stable = true;
+        static constexpr bool is_stable = false;
     };
 }
 
