@@ -46,7 +46,6 @@ namespace cppsort
         auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
             -> void
         {
-            std::cout << "quick sorter\n";
             detail::quicksort(std::begin(iterable), std::end(iterable), compare);
         }
     };
