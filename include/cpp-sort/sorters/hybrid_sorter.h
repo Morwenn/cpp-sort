@@ -31,6 +31,7 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/any_all.h>
 
 namespace cppsort
 {
@@ -108,8 +109,13 @@ namespace cppsort
     template<typename... Sorters>
     struct sorter_traits<hybrid_sorter<Sorters...>>
     {
+        // The iterator category is the least constrained one
+        // among the aggregated sorters
         using iterator_category = std::common_type_t<iterator_category<Sorters>...>;
-        static constexpr bool is_stable = false;
+
+        // The sorter is stable only if every aggregated sorter
+        // is stable
+        static constexpr bool is_stable = utility::all(sorter_traits<Sorters>::is_stable...);
     };
 }
 
