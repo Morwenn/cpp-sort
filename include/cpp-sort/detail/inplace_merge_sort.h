@@ -83,14 +83,6 @@ namespace detail
         ++first;
       }
     }
-
-
-    /// in-place Merge Sort with default less-than operator
-    template <typename iterator>
-    void inplace_merge_sort(iterator first, iterator last)
-    {
-      mergeSortInPlace(first, last, std::less<typename std::iterator_traits<iterator>::value_type>());
-    }
 }}
 
 #endif // CPPSORT_DETAIL_INPLACE_MERGE_SORT_H_
