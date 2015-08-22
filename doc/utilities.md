@@ -20,6 +20,25 @@ Since the documentation is already available online, it won't be repeated it
 here. Note that this header also provides the types `void_t` and `nonesuch` which
 are used to implement the detection framework.
 
+`any` and `all`
+---------------
+
+```cpp
+#include <cpp-sort/utility/any_all.h>
+```
+
+The `constexpr` functions `any` and `all` take several boolean parameters and
+respectively return whether any of them is `true` or whether all of them are
+`true`.
+
+```cpp
+template<typename... Bools>
+constexpr bool any(bool head, Bools... tail);
+
+template<typename... Bools>
+constexpr bool all(bool head, Bools... tail);
+```
+
 `has_sort_method`
 -----------------
 
