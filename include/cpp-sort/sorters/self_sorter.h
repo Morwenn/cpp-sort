@@ -33,6 +33,9 @@
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     template<typename Sorter>
     struct self_sorter
     {
@@ -55,6 +58,17 @@ namespace cppsort
         {
             Sorter{}(iterable, compare);
         }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<typename Sorter>
+    struct sorter_traits<self_sorter<Sorter>>
+    {
+        // We can't guarantee the stability of the sort method,
+        // therefore we default the stability to false
+        static constexpr bool is_stable = false;
     };
 }
 
