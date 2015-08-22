@@ -21,23 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_QUICK_SORTER_H_
+#define CPPSORT_SORTERS_QUICK_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/hybrid_sorter.h>
-#include <cpp-sort/sorters/inplace_merge_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
+#include <functional>
+#include <iterator>
+#include <cpp-sort/sorter_traits.h>
+#include "../detail/quicksort.h"
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
+    struct quick_sorter
+    {
+        template<
+            typename BidirectionalIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            std::cout << "quick sorter\n";
+            detail::quicksort(std::begin(iterable), std::end(iterable), compare);
+        }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<quick_sorter>
+    {
+        using iterator_category = std::bidirectional_iterator_tag;
+        static constexpr bool is_stable = true;
+    };
+}
+
+#endif // CPPSORT_SORTERS_QUICK_SORTER_H_

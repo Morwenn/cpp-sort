@@ -110,6 +110,19 @@ Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
     Best        Average     Worst       Memory      Stable      Iterators
     n           n log n     n log n     log n       No          Random access
 
+`quick_sorter`
+--------------
+
+```cpp
+#include <cpp-sort/sorters/quick_sorter.h>
+```
+
+Implements a [quicksort](https://en.wikipedia.org/wiki/Quicksort).
+
+
+    Best        Average     Worst       Memory      Stable      Iterators
+    n long n    n log n     n²          n           No          Bidirectional
+
 `std_sorter`
 ------------
 
