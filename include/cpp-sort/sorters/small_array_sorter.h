@@ -97,6 +97,11 @@ namespace cppsort
     struct sorter_traits<small_array_sorter<Sorter, std::index_sequence<Indices...>>>
     {
         using iterator_category = iterator_category<Sorter>;
+
+        // Some of the algorithms are stable, some other are not,
+        // the stability *could* be documented depending on which
+        // fixed-size algorithms are used, but it would be lots of
+        // work...
         static constexpr bool is_stable = false;
     };
 }
