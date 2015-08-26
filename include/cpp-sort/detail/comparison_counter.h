@@ -41,7 +41,7 @@ namespace detail
     {
         public:
 
-            comparison_counter(Compare compare):
+            explicit comparison_counter(Compare compare):
                 compare(compare),
                 count(0),
                 counter(*this)
