@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/size.h>
 #include "../detail/quicksort.h"
 
 namespace cppsort
@@ -46,7 +47,12 @@ namespace cppsort
         auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
             -> void
         {
-            detail::quicksort(std::begin(iterable), std::end(iterable), compare);
+            detail::quicksort(
+                std::begin(iterable),
+                std::end(iterable),
+                compare,
+                utility::size(iterable)
+            );
         }
     };
 

@@ -29,9 +29,9 @@ namespace cppsort
 namespace detail
 {
     template <typename iterator, typename LessThan>
-    void quicksort(iterator first, iterator last, LessThan lessThan)
+    void quicksort(iterator first, iterator last, LessThan lessThan, std::size_t size=0)
     {
-      size_t numElements = std::distance(first, last);
+      size_t numElements = size ? size : std::distance(first, last);
       // already sorted ?
       if (numElements <= 1)
         return;
