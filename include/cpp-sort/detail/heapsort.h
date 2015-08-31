@@ -39,8 +39,8 @@ namespace detail
         typename Compare = std::less<>
     >
     void heapsort(RandomAccessIterator first,
-                    RandomAccessIterator last,
-                    Compare compare={})
+                  RandomAccessIterator last,
+                  Compare compare={})
     {
         std::make_heap(first, last, compare);
         std::sort_heap(first, last, compare);
