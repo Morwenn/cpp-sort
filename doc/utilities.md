@@ -120,3 +120,17 @@ template<
 >
 using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 ```
+
+`size`
+------
+
+```cpp
+#include <cpp-sort/utility/size.h>
+```
+
+`size` is a function that can be used to get the size of an iterable. It is equivalent
+to the C++17 function [`std::size`](http://en.cppreference.com/w/cpp/iterator/size)
+but has an additional tweak so that, if the iterable is not a fixed-size C array and
+doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))`
+on the iterable. Therefore, this function can also be used for `std::forard_list` as
+well as some implementations of ranges.
