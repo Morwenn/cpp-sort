@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/size.h>
 #include "../detail/inplace_merge_sort.h"
 
 namespace cppsort
@@ -46,7 +47,12 @@ namespace cppsort
         auto operator()(ForwardIterable& iterable, Compare compare={}) const
             -> void
         {
-            detail::inplace_merge_sort(std::begin(iterable), std::end(iterable), compare);
+            detail::inplace_merge_sort(
+                std::begin(iterable),
+                std::end(iterable),
+                compare,
+                utility::size(iterable)
+            );
         }
     };
 
