@@ -31,15 +31,8 @@ namespace detail
 {
     /// in-place Merge Sort, allow user-defined less-than operator
     template <typename iterator, typename LessThan>
-    void inplace_merge_sort(iterator first, iterator last, LessThan lessThan, std::size_t size = 0)
+    void inplace_merge_sort(iterator first, iterator last, LessThan lessThan, std::size_t size)
     {
-      // determine size if not known yet
-      if (size == 0 && first != last)
-        size = std::distance(first, last);
-      // by the way, the size parameter can be omitted but
-      // then we are required to compute it each time which can be expensive
-      // for non-random access iterators
-
       // one element is always sorted
       if (size <= 1)
         return;
