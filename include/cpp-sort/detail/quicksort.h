@@ -29,21 +29,20 @@ namespace cppsort
 namespace detail
 {
     template <typename iterator, typename LessThan>
-    void quicksort(iterator first, iterator last, LessThan lessThan, std::size_t size=0)
+    void quicksort(iterator first, iterator last, LessThan lessThan, std::size_t size)
     {
-      size_t numElements = size ? size : std::distance(first, last);
       // already sorted ?
-      if (numElements <= 1)
+      if (size <= 1)
         return;
 
       iterator pivot = last;
       --pivot;
 
       // choose middle element as pivot (good choice for partially sorted data)
-      if (numElements > 2)
+      if (size > 2)
       {
         iterator middle = first;
-        std::advance(middle, numElements/2);
+        std::advance(middle, size / 2);
         std::iter_swap(middle, pivot);
       }
 
@@ -67,8 +66,9 @@ namespace detail
         std::iter_swap(pivot, left);
 
       // subdivide
-      quicksort(first,  left, lessThan);
-      quicksort(++left, last, lessThan); // *left itself is already sorted
+      quicksort(first,  left, lessThan, std::distance(first, left));
+      ++left; // *left itself is already sorted
+      quicksort(left, last, lessThan, std::distance(left, last));
     }
 }}
 
