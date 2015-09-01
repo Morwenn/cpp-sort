@@ -66,9 +66,10 @@ namespace detail
         std::iter_swap(pivot, left);
 
       // subdivide
-      quicksort(first,  left, lessThan, std::distance(first, left));
-      ++left; // *left itself is already sorted
-      quicksort(left, last, lessThan, std::distance(left, last));
+      std::size_t size_left = std::distance(first, left);
+      quicksort(first,  left, lessThan, size_left);
+      // *left itself is already sorted
+      quicksort(++left, last, lessThan, size - size_left - 1);
     }
 }}
 
