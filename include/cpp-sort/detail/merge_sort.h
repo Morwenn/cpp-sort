@@ -46,8 +46,8 @@ namespace detail
         if (std::distance(first, last) > 1)
         {
             auto middle = first + (last - first) / 2;
-            merge_sort(first, middle);
-            merge_sort(middle, last);
+            merge_sort(first, middle, compare);
+            merge_sort(middle, last, compare);
             std::inplace_merge(first, middle, last, compare);
         }
     }
