@@ -35,23 +35,23 @@
 namespace cppsort
 {
     template<
-        typename RandomAccessIterable,
+        typename Iterable,
         typename Compare = std::less<>,
-        typename = std::enable_if_t<not utility::is_sorter_for<Compare, RandomAccessIterable>>
+        typename = std::enable_if_t<not utility::is_sorter_for<Compare, Iterable>>
     >
-    auto sort(RandomAccessIterable& iterable, Compare compare={})
+    auto sort(Iterable& iterable, Compare compare={})
         -> void
     {
         sort(iterable, default_sorter{}, compare);
     }
 
     template<
-        typename RandomAccessIterable,
+        typename Iterable,
         typename Sorter,
         typename Compare = std::less<>,
-        typename = std::enable_if_t<utility::is_sorter_for<Sorter, RandomAccessIterable>>
+        typename = std::enable_if_t<utility::is_sorter_for<Sorter, Iterable>>
     >
-    auto sort(RandomAccessIterable& iterable, const Sorter& sorter, Compare compare={})
+    auto sort(Iterable& iterable, const Sorter& sorter, Compare compare={})
         -> void
     {
         sorter(iterable, compare);
