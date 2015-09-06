@@ -159,3 +159,16 @@ Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
 
     Best        Average     Worst       Memory      Stable      Iterators
     n           n log n     n log n     n           Yes         Random access
+
+`verge_sorter`
+--------------
+
+```cpp
+#include <cpp-sort/sorters/verge_sorter.h>
+```
+
+Implements a [vergesort](https://github.com/Morwenn/vergesort).
+
+
+    Best        Average     Worst       Memory      Stable      Iterators
+    n           n log n     n log n     n           No          Random access

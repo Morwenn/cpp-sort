@@ -84,7 +84,8 @@ auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
         { "default_sorter", { time_it<T, Ind>(cppsort::default_sorter{}, Distribution{}, times)... } },
         { "std_sorter",     { time_it<T, Ind>(cppsort::std_sorter{}, Distribution{}, times)... } },
         { "tim_sorter",     { time_it<T, Ind>(cppsort::tim_sorter{}, Distribution{}, times)... } },
-        { "pdq_sorter",     { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... } }
+        { "pdq_sorter",     { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... } },
+        { "verge_sorter",   { time_it<T, Ind>(cppsort::verge_sorter{}, Distribution{}, times)... } }
     };
 
     // Output the results to their respective files
