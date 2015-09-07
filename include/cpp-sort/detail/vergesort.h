@@ -62,7 +62,13 @@ namespace detail
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         difference_type dist = std::distance(first, last);
-        if (dist < 2) return;
+
+        if (dist < 80)
+        {
+            // vergesort is inefficient for small collections
+            pdqsort(first, last, compare);
+            return;
+        }
 
         // Limit under which pdqsort is used
         int unstable_limit = dist / pdqsort_detail::log2(dist);
