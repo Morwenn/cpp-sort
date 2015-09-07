@@ -238,7 +238,8 @@ class TimSort {
         while( pending_.size() > 1 ) {
             diff_t n = pending_.size() - 2;
 
-            if(n > 0 && pending_[n - 1].len <= pending_[n].len + pending_[n + 1].len) {
+            if((n > 0 && pending_[n - 1].len <= pending_[n].len + pending_[n + 1].len)
+                || (n > 1 && pending_[n - 2].len <= pending_[n - 1].len + pending_[n].len)){
                 if(pending_[n - 1].len < pending_[n + 1].len) {
                     --n;
                 }
