@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_SMALL_ARRAY_SORTER_H_
-#define CPPSORT_SORTERS_SMALL_ARRAY_SORTER_H_
+#ifndef CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
+#define CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -39,16 +39,16 @@
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
-    // Sorter
+    // Adapter
 
     template<typename...>
-    struct small_array_sorter;
+    struct small_array_adapter;
 
     template<
         typename Sorter,
         std::size_t... Indices
     >
-    struct small_array_sorter<Sorter, std::index_sequence<Indices...>>
+    struct small_array_adapter<Sorter, std::index_sequence<Indices...>>
     {
         template<
             typename RandomAccessIterable,
@@ -86,15 +86,15 @@ namespace cppsort
     };
 
     template<typename Sorter>
-    struct small_array_sorter<Sorter>:
-        small_array_sorter<Sorter, std::make_index_sequence<33u>>
+    struct small_array_adapter<Sorter>:
+        small_array_adapter<Sorter, std::make_index_sequence<33u>>
     {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
     template<typename Sorter, std::size_t... Indices>
-    struct sorter_traits<small_array_sorter<Sorter, std::index_sequence<Indices...>>>
+    struct sorter_traits<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
     {
         using iterator_category = iterator_category<Sorter>;
 
@@ -106,4 +106,4 @@ namespace cppsort
     };
 }
 
-#endif // CPPSORT_SORTERS_SMALL_ARRAY_SORTER_H_
+#endif // CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_

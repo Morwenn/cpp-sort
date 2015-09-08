@@ -7,7 +7,7 @@ Sorter traits
 
 The class template `sorter_traits<Sorter>` contains information about
 sorters and sorter adapters such as the kind of iterators accepted by
-a sorter or whether it implements or not a stable sorting algorithm.
+a sorter and whether it implements or not a stable sorting algorithm.
 
 `sorter_traits`
 ---------------
@@ -36,7 +36,7 @@ template<typename Sorter>
 using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 ```
 
-Some tools needs to know which category of iterators a sorting algorithm
+Some tools need to know which category of iterators a sorting algorithm
 can work with. Therefore, a well-defined sorter provides one of the standard
 library [iterator tags](http://en.cppreference.com/w/cpp/iterator/iterator_tags)
 in order to document that.

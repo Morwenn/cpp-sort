@@ -24,19 +24,17 @@ struct spam_sorter
 `Compare` should be a type satisfying the [`Compare`](http://en.cppreference.com/w/cpp/concept/Compare)
 concept.
 
-While these funnction objects offer little more than regular sorting functions by
+While these function objects offer little more than regular sorting functions by
 themselves, you can use them together with [*sorter adapaters*](sorter-adapters.md)
 to craft more elaborate sorters effortlessly. Every sorter is available in its own
-file. However, you can also include all the availble sorters at once with the
+file. However, you can also include all the available sorters at once with the
 following line:
 
 ```cpp
 #include <cpp-sort/sorters.h>
 ```
 
-Note that the library does not make a difference between sorters and sorter adapaters,
-so the adapters will also be included by the lie above. The following non-adapter
-sorters are available:
+The following sorters are available in the library:
 
 `default_sorter`
 ----------------
@@ -49,9 +47,9 @@ Sorter striving to use a sorting algorithm as optimized as possible. The current
 implementation defines it as follows:
 
 ```cpp
-using default_sorter = self_sorter<
-    small_array_sorter<
-        hybrid_sorter<
+using default_sorter = self_sort_adapter<
+    small_array_adapter<
+        hybrid_adapter<
             inplace_merge_sorter,
             insertion_sorter,
             pdq_sorter

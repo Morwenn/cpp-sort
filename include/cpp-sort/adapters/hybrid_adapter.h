@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_HYBRID_SORTER_H_
-#define CPPSORT_SORTERS_HYBRID_SORTER_H_
+#ifndef CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_
+#define CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -36,10 +36,10 @@
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
-    // Sorter
+    // Adapter
 
     template<typename... Sorters>
-    class hybrid_sorter
+    class hybrid_adapter
     {
         private:
 
@@ -107,16 +107,16 @@ namespace cppsort
     // Sorter traits
 
     template<typename... Sorters>
-    struct sorter_traits<hybrid_sorter<Sorters...>>
+    struct sorter_traits<hybrid_adapter<Sorters...>>
     {
         // The iterator category is the least constrained one
         // among the aggregated sorters
         using iterator_category = std::common_type_t<iterator_category<Sorters>...>;
 
-        // The sorter is stable only if every aggregated sorter
+        // The adapter is stable only if every aggregated sorter
         // is stable
         static constexpr bool is_stable = utility::all(sorter_traits<Sorters>::is_stable...);
     };
 }
 
-#endif // CPPSORT_SORTERS_HYBRID_SORTER_H_
+#endif // CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_

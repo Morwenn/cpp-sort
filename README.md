@@ -27,11 +27,11 @@ int main()
 }
 ```
 
-**cpp-sort** library also provides *sorters* as well as *sorter adapters*
-which can be used by `cppsort::sort` to sort a collection. It is possible
-to get some information about the sorters and sorter adapters with *sorter
-traits*. Everything lives in the `cppsort` namespace. You can read more
-about the available sorting tools in the documentation:
+**cpp-sort** also provides *sorters* as well as *sorter adapters* which can
+be used by `cppsort::sort` to sort a collection. It is possible to get some
+information about the sorters and sorter adapters with *sorter traits*.
+Everything lives in the `cppsort` namespace. You can read more about the
+available sorting tools in the documentation:
 
 * [`cppsort::sort`](doc/sort.md)
 * [Sorters](doc/sorters.md)
@@ -39,8 +39,8 @@ about the available sorting tools in the documentation:
 * [Sorter traits](doc/sorter-traits.md)
 
 There are also a few other utilities used by the library and made available
-to the users, even though they are not sorting-related. You can read about
-them in the following page:
+to the users, even though they are not explicitly sorting-related. You can
+read about them in the following page:
 
 * [Miscellaneous utilities](doc/utilities.md)
 
@@ -51,9 +51,10 @@ The following graph has been generated with the scripts found in the benchmarks
 directory. It shows the time needed for one sorting algorithm to sort one million
 shuffled `std::array` of sizes 0 to 15. The benchmark compares `cppsort::sort`
 (using the default sorter) to three other sorters available in the library:
-`std_sorter`, a `tim_sorter` and a `pdq_sorter`.
+an `std_sorter`, a `tim_sorter` and a `pdq_sorter`.
 
 ![shuffled](http://i.imgur.com/5U8Cilv.png)
 
 These results were generated with MinGW g++ 5.1 with the compiler options
-`-std=c++14 -O3`. More benchmarks will be made available in the future.
+`-std=c++14 -O3 -march=native`. More benchmarks will be made available in
+the future.

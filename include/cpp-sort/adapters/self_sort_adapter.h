@@ -21,50 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_COUNTING_SORTER_H_
-#define CPPSORT_SORTERS_COUNTING_SORTER_H_
+#ifndef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_
+#define CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
 #include <functional>
-#include <cpp-sort/sorter_traits.h>
-#include "../detail/comparison_counter.h"
+#include <type_traits>
+#include <cpp-sort/utility/has_sort_method.h>
 
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
-    // Sorter
+    // Adapter
 
-    template<
-        typename Sorter,
-        typename CountType = std::size_t
-    >
-    struct counting_sorter
+    template<typename Sorter>
+    struct self_sort_adapter
     {
         template<
             typename Iterable,
             typename Compare = std::less<>
         >
         auto operator()(Iterable& iterable, Compare compare={}) const
-            -> CountType
+            -> std::enable_if_t<utility::has_sort_method<Iterable>, void>
         {
-            detail::comparison_counter<Compare, CountType> cmp(compare);
-            Sorter{}(iterable, cmp);
-            return cmp.count;
+            iterable.sort(compare);
+        }
+
+        template<
+            typename Iterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(Iterable& iterable, Compare compare={}) const
+            -> std::enable_if_t<not utility::has_sort_method<Iterable>, void>
+        {
+            Sorter{}(iterable, compare);
         }
     };
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    template<typename Sorter, typename CountType>
-    struct sorter_traits<counting_sorter<Sorter, CountType>>
+    template<typename Sorter>
+    struct sorter_traits<self_sort_adapter<Sorter>>
     {
         using iterator_category = iterator_category<Sorter>;
-        static constexpr bool is_stable = is_stable<Sorter>;
+
+        // We can't guarantee the stability of the sort method,
+        // therefore we default the stability to false
+        static constexpr bool is_stable = false;
     };
 }
 
-#endif // CPPSORT_SORTERS_COUNTING_SORTER_H_
+#endif // CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_

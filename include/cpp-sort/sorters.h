@@ -27,17 +27,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/heap_sorter.h>
-#include <cpp-sort/sorters/hybrid_sorter.h>
 #include <cpp-sort/sorters/inplace_merge_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/self_sorter.h>
-#include <cpp-sort/sorters/small_array_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>
 #include <cpp-sort/sorters/verge_sorter.h>

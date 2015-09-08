@@ -4,16 +4,25 @@ Sorter adapters
 Sorter adapters are the main reason for using sorter function objects instead
 of regular functions. A *sorter adapter* is a class template that takes another
 `Sorter` template parameter and alters its behavior. The resulting class can be
-used as a regular sorter.
-
-`counting_sorter`
------------------
+used as a regular sorter, and be adapted in turn. It is possible to include all
+the available adapters at once with the following line:
 
 ```cpp
-#include <cpp-sort/sorters/counting_sorter.h>
+#include <cpp-sort/adapters.h>
 ```
 
-Unlike other sorters, `counting_sorter::operator()` does not return `void` but
+In this documentation, we will call *adapted sorters* the sorters passed to the
+adapters and *resulting sorter* the sorter class that results from the adaption
+of a sorter by an adapter.
+
+`counting_adapter`
+------------------
+
+```cpp
+#include <cpp-sort/adapters/counting_adapter.h>
+```
+
+Unlike regular sorters, `counting_adapter::operator()` does not return `void` but
 the number of comparisons that have been needed to sort the iterable. It will
 adapt the comparison functor so that it can count the number of comparisons
 made by any other sorter with a reasonable implementation. The actual number of
@@ -28,14 +37,17 @@ template<
     typename Sorter,
     typename CountType = std::size_t
 >
-struct counting_sorter;
+struct counting_adapter;
 ```
 
-`hybrid_sorter`
----------------
+The iterator category and the stability of the *resulting sorter* are those of the
+*adapted sorter*.
+
+`hybrid_adapter`
+----------------
 
 ```cpp
-#include <cpp-sort/sorters/hybrid_sorter.h>
+#include <cpp-sort/adapters/hybrid_adapter.h>
 ```
 
 The goal of this sorter adapter is to aggregate several sorters into one unique
@@ -47,7 +59,7 @@ quicksort to sort a random-access iterable, an insertion sort to sort a bidirect
 iterable and a bubble sort to sort a forward iterable:
 
 ```cpp
-using general_purpose_sort = hybrid_sorter<
+using general_purpose_sorter = hybrid_adapter<
     bubble_sorter,
     insertion_sorter,
     pdq_sorter
@@ -55,19 +67,23 @@ using general_purpose_sort = hybrid_sorter<
 ```
 
 The order of the parameters does not matter. The only thing that matters is that
-the different sorter shall have a different `cppsort::iterator_category` so that
+the different sorters shall have a different `cppsort::iterator_category` so that
 they can work side by side without overlapping.
 
-`self_sorter`
--------------
+The staibility of the *resulting sorter* is `true` if and only if the stability
+of every *adapter sorter* is `true`. The iterator category of the *resulting
+sorter* is the most permissive iterator category among the the *adapted sorters*.
+
+`self_sort_adapter`
+-------------------
 
 ```cpp
-#include <cpp-sort/sorters/self_sorter.h>
+#include <cpp-sort/adapters/self_sort_adapter.h>
 ```
 
-The name is not the best in the World, but this adapter takes a sorter and, if
-the object to be sorted has a `sort` method, it is used to sort the object.
-Otherwise, the adapted sorter is used instead to sort the iterable.
+This adapter takes a sorter and, if the object to be sorted has a `sort` method,
+it is used to sort the object. Otherwise, the *adapted sorter* is used instead to
+sort the iterable.
 
 This sorter adapter allows to support out-of-the-box sorting for `std::list` and
 `std::forward_list` as well as other user-defined classes that implement a `sort`
@@ -75,21 +91,25 @@ method.
 
 ```cpp
 template<typename Sorter>
-struct self_sorter;
+struct self_sort_adapter;
 ```
 
-`small_array_sorter`
---------------------
+Since it is impossible to guarantee the stability of the `sort` method of a
+given iterable, the stability of the *resulting sorter* is always `false`.
+The iterator category of the *resulting sorter* is that of the *adapted sorter*.
+
+`small_array_adapter`
+---------------------
 
 ```cpp
-#include <cpp-sort/sorters/small_array_sorter.h>
+#include <cpp-sort/adapters/small_array_adapter.h>
 ```
 
 This sorter adapter comes into two flavors:
 
 ```cpp
 template<typename Sorter>
-struct small_array_sorter<Sorter>;
+struct small_array_adapter<Sorter>;
 ```
 
 This specialization takes a sorter and uses it to sort the collections it
@@ -97,7 +117,7 @@ receives. However, if the collection is an `std::array` or a fixed-size C
 array, it replaces the `Sorter` sort by special algorithms designed to sort
 small arrays of fixed size.
 
-The specific sorting algorithms used by `small_array_sorter` mostly correspond
+The specific sorting algorithms used by `small_array_adapter` mostly correspond
 to [sorting networks](https://en.wikipedia.org/wiki/Sorting_network) of a given
 size. There are specialized algorithms for the sizes 0 to 32. The following table
 documents the number of comparisons and the number of swaps made by every
@@ -148,7 +168,7 @@ different algorithms:
 * [Algorithm 3](https://github.com/llvm-mirror/libcxx/blob/master/include/algorithm#L3602)
 * [Other algorithms](http://pages.ripco.net/~jgamble/nw.html)
 
-There is another specialization of `small_array_sorter` which takes a `Sorter` and
+There is another specialization of `small_array_adapter` which takes a `Sorter` and
 an `std::index_sequence`:
 
 ```cpp
@@ -156,12 +176,12 @@ template<
     typename Sorter,
     std::size_t... Indices
 >
-struct small_array_sorter<Sorter, std::index_sequence<Indices...>>;
+struct small_array_adapter<Sorter, std::index_sequence<Indices...>>;
 ```
 
 This version of the sorter adapter only uses the specialized sorting algorithms
-for fixed-size arrays if the size is contained in `Indices`, and falls back to
-`Sorter` in every other case. The main advantage is that it allows to use the class
-[`std::make_index_sequence`](http://en.cppreference.com/w/cpp/utility/integer_sequence)
+for fixed-size arrays if the size of the array to sort is contained in `Indices`,
+and falls back to `Sorter` in every other case. The main advantage is that it allows
+to use the class [`std::make_index_sequence`](http://en.cppreference.com/w/cpp/utility/integer_sequence)
 to generate the indices and pick the specialized algorithms for the smallest values
 of N, which tend to be the most optimized ones.
