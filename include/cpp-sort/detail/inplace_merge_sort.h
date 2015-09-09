@@ -17,7 +17,6 @@
     3. Altered source versions must be plainly marked as such, and must not be misrepresented as
        being the original software.
 */
-
 #ifndef CPPSORT_DETAIL_INPLACE_MERGE_SORT_H_
 #define CPPSORT_DETAIL_INPLACE_MERGE_SORT_H_
 
