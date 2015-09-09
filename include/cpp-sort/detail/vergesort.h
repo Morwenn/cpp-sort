@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <cpp-sort/utility/log2.h>
 #include "pdqsort.h"
 
 namespace cppsort
@@ -70,7 +71,7 @@ namespace detail
         }
 
         // Limit under which pdqsort is used
-        difference_type unstable_limit = dist / pdqsort_detail::log2(dist);
+        difference_type unstable_limit = dist / utility::log2(dist);
 
         // Beginning of an unstable partition, last if the
         // previous partition is stable

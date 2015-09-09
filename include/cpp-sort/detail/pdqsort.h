@@ -23,20 +23,16 @@
 #ifndef CPPSORT_DETAIL_PDQSORT_H_
 #define CPPSORT_DETAIL_PDQSORT_H_
 
-#include <utility>
 #include <algorithm>
 #include <functional>
+#include <utility>
+#include <cpp-sort/utility/log2.h>
 #include "insertion_sort.h"
 
-#if __cplusplus >= 201103L
-    #define PDQSORT_PREFER_MOVE(x) std::move(x)
-#else
-    #define PDQSORT_PREFER_MOVE(x) (x)
-#endif
-
-
-namespace cppsort {
-namespace detail {
+namespace cppsort
+{
+namespace detail
+{
     namespace pdqsort_detail {
         enum {
             // Partitions below this size are sorted using insertion sort.
@@ -47,18 +43,10 @@ namespace detail {
             partial_insertion_sort_limit = 8
         };
 
-        // Returns floor(log2(n)), assumes n > 0.
-        template<class T>
-        inline int log2(T n) {
-            int log = 0;
-            while (n >>= 1) ++log;
-            return log;
-        }
-
         // Sorts [begin, end) using insertion sort with the given comparison function. Assumes
         // *(begin - 1) is an element smaller than or equal to any element in [begin, end).
         template<class Iter, class Compare>
-        inline void unguarded_insertion_sort(Iter begin, Iter end, Compare comp) {
+        void unguarded_insertion_sort(Iter begin, Iter end, Compare comp) {
             typedef typename std::iterator_traits<Iter>::value_type T;
             if (begin == end) return;
 
@@ -68,21 +56,21 @@ namespace detail {
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(*sift, *sift_1)) {
-                    T tmp = PDQSORT_PREFER_MOVE(*sift);
+                    T tmp = std::move(*sift);
 
-                    do { *sift-- = PDQSORT_PREFER_MOVE(*sift_1); }
+                    do { *sift-- = std::move(*sift_1); }
                     while (comp(tmp, *--sift_1));
 
-                    *sift = PDQSORT_PREFER_MOVE(tmp);
+                    *sift = std::move(tmp);
                 }
             }
         }
 
         // Attempts to use insertion sort on [begin, end). Will return false if more than
         // partial_insertion_sort_limit elements were moved, and abort sorting. Otherwise it will
-        // succesfully sort and return true.
+        // successfully sort and return true.
         template<class Iter, class Compare>
-        inline bool partial_insertion_sort(Iter begin, Iter end, Compare comp) {
+        bool partial_insertion_sort(Iter begin, Iter end, Compare comp) {
             typedef typename std::iterator_traits<Iter>::value_type T;
             if (begin == end) return true;
 
@@ -95,12 +83,43 @@ namespace detail {
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(*sift, *sift_1)) {
-                    T tmp = PDQSORT_PREFER_MOVE(*sift);
+                    T tmp = std::move(*sift);
 
-                    do { *sift-- = PDQSORT_PREFER_MOVE(*sift_1); }
+                    do { *sift-- = std::move(*sift_1); }
                     while (sift != begin && comp(tmp, *--sift_1));
 
-                    *sift = PDQSORT_PREFER_MOVE(tmp);
+                    *sift = std::move(tmp);
+                    limit += cur - sift;
+                }
+            }
+
+            return true;
+        }
+
+        // Attempts to use insertion sort on [begin, end). Will return false if more than
+        // partial_insertion_sort_limit elements were moved, and abort sorting. Otherwise it will
+        // successfully sort and return true. Assumes *(begin - 1) is an element smaller than or
+        // equal to any element in [begin, end).
+        template<class Iter, class Compare>
+        bool unguarded_partial_insertion_sort(Iter begin, Iter end, Compare comp) {
+            typedef typename std::iterator_traits<Iter>::value_type T;
+            if (begin == end) return true;
+
+            int limit = 0;
+            for (Iter cur = begin + 1; cur != end; ++cur) {
+                if (limit > partial_insertion_sort_limit) return false;
+
+                Iter sift = cur;
+                Iter sift_1 = cur - 1;
+
+                // Compare first so we can avoid 2 moves for an element already positioned correctly.
+                if (comp(*sift, *sift_1)) {
+                    T tmp = std::move(*sift);
+
+                    do { *sift-- = std::move(*sift_1); }
+                    while (comp(tmp, *--sift_1));
+
+                    *sift = std::move(tmp);
                     limit += cur - sift;
                 }
             }
@@ -110,7 +129,7 @@ namespace detail {
 
         // Sorts the elements *a, *b and *c using comparison function comp.
         template<class Iter, class Compare>
-        inline void sort3(Iter a, Iter b, Iter c, Compare comp) {
+        void sort3(Iter a, Iter b, Iter c, Compare comp) {
             if (!comp(*b, *a)) {
                 if (!comp(*c, *b)) return;
 
@@ -135,11 +154,11 @@ namespace detail {
         // pivot is a median of at least 3 elements and that [begin, end) is at least
         // insertion_sort_threshold long.
         template<class Iter, class Compare>
-        inline std::pair<Iter, bool> partition_right(Iter begin, Iter end, Compare comp) {
+        std::pair<Iter, bool> partition_right(Iter begin, Iter end, Compare comp) {
             typedef typename std::iterator_traits<Iter>::value_type T;
 
             // Move pivot into local for speed.
-            T pivot(PDQSORT_PREFER_MOVE(*begin));
+            T pivot(std::move(*begin));
 
             Iter first = begin;
             Iter last = end;
@@ -168,8 +187,8 @@ namespace detail {
 
             // Put the pivot in the right place.
             Iter pivot_pos = first - 1;
-            *begin = PDQSORT_PREFER_MOVE(*pivot_pos);
-            *pivot_pos = PDQSORT_PREFER_MOVE(pivot);
+            *begin = std::move(*pivot_pos);
+            *pivot_pos = std::move(pivot);
 
             return std::make_pair(pivot_pos, already_partitioned);
         }
@@ -177,10 +196,10 @@ namespace detail {
         // Similar function to the one above, except elements equal to the pivot are put to the left of
         // the pivot and it doesn't check or return if the passed sequence already was partitioned.
         template<class Iter, class Compare>
-        inline Iter partition_left(Iter begin, Iter end, Compare comp) {
+        Iter partition_left(Iter begin, Iter end, Compare comp) {
             typedef typename std::iterator_traits<Iter>::value_type T;
 
-            T pivot(PDQSORT_PREFER_MOVE(*begin));
+            T pivot(std::move(*begin));
             Iter first = begin;
             Iter last = end;
 
@@ -196,15 +215,15 @@ namespace detail {
             }
 
             Iter pivot_pos = last;
-            *begin = PDQSORT_PREFER_MOVE(*pivot_pos);
-            *pivot_pos = PDQSORT_PREFER_MOVE(pivot);
+            *begin = std::move(*pivot_pos);
+            *pivot_pos = std::move(pivot);
 
             return pivot_pos;
         }
 
 
         template<class Iter, class Compare>
-        inline void pdqsort_loop(Iter begin, Iter end, Compare comp, int bad_allowed, bool leftmost = true) {
+        void pdqsort_loop(Iter begin, Iter end, Compare comp, int bad_allowed, bool leftmost = true) {
             typedef typename std::iterator_traits<Iter>::difference_type diff_t;
 
             // Use a while loop for tail recursion elimination.
@@ -264,7 +283,7 @@ namespace detail {
                     // If we were decently balanced and we tried to sort an already partitioned
                     // sequence try to use insertion sort.
                     if (already_partitioned && partial_insertion_sort(begin, pivot_pos, comp)
-                                            && partial_insertion_sort(pivot_pos + 1, end, comp)) return;
+                                            && unguarded_partial_insertion_sort(pivot_pos + 1, end, comp)) return;
                 }
 
                 // Sort the left partition first using recursion and do tail recursion elimination for
@@ -276,22 +295,11 @@ namespace detail {
         }
     }
 
-
     template<class Iter, class Compare>
-    inline void pdqsort(Iter begin, Iter end, Compare comp) {
-        if (begin == end) return;
-        pdqsort_detail::pdqsort_loop(begin, end, comp, pdqsort_detail::log2(end - begin));
-    }
-
-
-    template<class Iter>
-    inline void pdqsort(Iter begin, Iter end) {
-        typedef typename std::iterator_traits<Iter>::value_type T;
-        pdqsort(begin, end, std::less<T>());
+    void pdqsort(Iter begin, Iter end, Compare comp) {
+        if (end - begin < 2) return;
+        pdqsort_detail::pdqsort_loop(begin, end, comp, utility::log2(end - begin));
     }
 }}
-
-
-#undef PDQSORT_PREFER_MOVE
 
 #endif // CPPSORT_DETAIL_PDQSORT_H_

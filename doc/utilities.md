@@ -88,6 +88,24 @@ template<typename Sorter, typename Iterable>
 constexpr bool is_sorter_for = /* implementation-defined */;
 ```
 
+`log2`
+------
+
+```cpp
+#include <cpp-sort/utility/log2.h>
+```
+
+The function `log2` computes the [binary logarithm](https://en.wikipedia.org/wiki/Binary_logarithm)
+of the given integer. The binary logarithm of the size of a collection to
+sort is typically used as a heuristic by sorting algorithms to try things
+a limited amount of time before switching to another algorithm to allow
+optimizations but still guarantee that the algorithm will run in log time.
+
+```cpp
+template<typename Integer>
+Integer log2(Integer n);
+```
+
 `make_integer_range`
 --------------------
 
