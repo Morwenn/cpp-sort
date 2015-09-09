@@ -26,7 +26,6 @@
 #define CPPSORT_DETAIL_VERGESORT_H_
 
 #include <algorithm>
-#include <functional>
 #include <iterator>
 #include "pdqsort.h"
 
@@ -39,11 +38,11 @@ namespace detail
     // done in the order that should result in the smallest number
     // of comparisons
     template<typename RandomAccessIterator, typename Compare>
-    inline void inplace_merge3(RandomAccessIterator first,
-                               RandomAccessIterator middle1,
-                               RandomAccessIterator middle2,
-                               RandomAccessIterator last,
-                               Compare compare)
+    void inplace_merge3(RandomAccessIterator first,
+                        RandomAccessIterator middle1,
+                        RandomAccessIterator middle2,
+                        RandomAccessIterator last,
+                        Compare compare)
     {
         if (std::distance(first, middle1) < std::distance(middle2, last))
         {
@@ -58,7 +57,7 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare>
-    inline void vergesort(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+    void vergesort(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         difference_type dist = std::distance(first, last);
@@ -71,7 +70,7 @@ namespace detail
         }
 
         // Limit under which pdqsort is used
-        int unstable_limit = dist / pdqsort_detail::log2(dist);
+        difference_type unstable_limit = dist / pdqsort_detail::log2(dist);
 
         // Beginning of an unstable partition, last if the
         // previous partition is stable
@@ -83,79 +82,90 @@ namespace detail
 
         while (true)
         {
-            RandomAccessIterator begin_rng = current;
+            // Beginning of the current range
+            RandomAccessIterator begin_range = current;
 
-            // Decreasing range
-            while (next != last)
-            {
-                if (compare(*current, *next)) break;
-                ++current;
-                ++next;
-            }
+            // Set backward iterators
+            difference_type limit = std::min(std::distance(next, last), unstable_limit);
+            std::advance(current, limit);
+            std::advance(next, limit);
 
-            // Reverse and merge
-            if (std::distance(begin_rng, next) > unstable_limit)
+            // Set forward iterators
+            RandomAccessIterator current2 = current;
+            RandomAccessIterator next2 = next;
+
+            if (compare(*current, *next))
             {
-                if (begin_unstable != last)
+                // Found an increasing range, move iterators
+                // to the limits of the range
+                while (current != begin_range)
                 {
-                    pdqsort(begin_unstable, begin_rng, compare);
-                    std::reverse(begin_rng, next);
-                    inplace_merge3(first, begin_unstable, begin_rng, next, compare);
-                    begin_unstable = last;
+                    --current;
+                    --next;
+                    if (compare(*next, *current)) break;
                 }
-                else
+                if (compare(*next, *current)) ++current;
+
+                while (next2 != last)
                 {
-                    std::reverse(begin_rng, next);
-                    std::inplace_merge(first, begin_rng, next, compare);
+                    if (compare(*next2, *current2)) break;
+                    ++current2;
+                    ++next2;
+                }
+
+                // Remember the beginning of the unsorted range
+                if (begin_unstable == last) begin_unstable = begin_range;
+
+                // Check whether we found a big enough sorted sequence
+                if (std::distance(current, next2) >= unstable_limit)
+                {
+                    pdqsort(begin_unstable, current, compare);
+                    inplace_merge3(first, begin_unstable, current, next2, compare);
+                    begin_unstable = last;
                 }
             }
             else
             {
-                if (begin_unstable == last) begin_unstable = begin_rng;
-            }
-
-            if (next == last) break;
-
-            ++current;
-            ++next;
-
-            begin_rng = current;
-
-            // Increasing range
-            while (next != last)
-            {
-                if (compare(*next, *current)) break;
-                ++current;
-                ++next;
-            }
-
-            // Merge
-            if (std::distance(begin_rng, next) > unstable_limit)
-            {
-                if (begin_unstable != last)
+                // Found an decreasing range, move iterators
+                // to the limits of the range
+                while (current != begin_range)
                 {
-                    pdqsort(begin_unstable, begin_rng, compare);
-                    inplace_merge3(first, begin_unstable, begin_rng, next, compare);
+                    --current;
+                    --next;
+                    if (compare(*current, *next)) break;
+                }
+                if (compare(*current, *next)) ++current;
+
+                while (next2 != last)
+                {
+                    if (compare(*current2, *next2)) break;
+                    ++current2;
+                    ++next2;
+                }
+
+                // Remember the beginning of the unsorted range
+                if (begin_unstable == last) begin_unstable = begin_range;
+
+                // Check whether we found a big enough sorted sequence
+                if (std::distance(current, next2) >= unstable_limit)
+                {
+                    pdqsort(begin_unstable, current, compare);
+                    std::reverse(current, next2);
+                    inplace_merge3(first, begin_unstable, current, next2, compare);
                     begin_unstable = last;
                 }
-                else
-                {
-                    std::inplace_merge(first, begin_rng, next, compare);
-                }
-            }
-            else
-            {
-                if (begin_unstable == last) begin_unstable = begin_rng;
             }
 
-            if (next == last) break;
+            if (next2 == last) break;
 
-            ++current;
-            ++next;
+            current = current2 + 1;
+            next = next2 + 1;
         }
 
         if (begin_unstable != last)
         {
+            // If there are unsorted elements left,
+            // sort them and merge everything
             pdqsort(begin_unstable, last, compare);
             std::inplace_merge(first, begin_unstable, last, compare);
         }
