@@ -32,69 +32,30 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/inplace_merge_sort.h"
+#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    class inplace_merge_sorter
+    struct inplace_merge_sorter:
+        detail::sorter_base<inplace_merge_sorter>
     {
-        private:
-
-            ////////////////////////////////////////////////////////////
-            // Function pointer aliases
-
-            template<typename ForwardIterable>
-            using fptr_t = void(*)(ForwardIterable&);
-
-            template<typename ForwardIterable, typename Compare>
-            using fptr_cmp_t = void(*)(ForwardIterable&, Compare);
-
-        public:
-
-            ////////////////////////////////////////////////////////////
-            // operator()
-
-            template<
-                typename ForwardIterable,
-                typename Compare = std::less<>
-            >
-            auto operator()(ForwardIterable& iterable, Compare compare={}) const
-                -> void
-            {
-                detail::inplace_merge_sort(
-                    std::begin(iterable),
-                    std::end(iterable),
-                    compare,
-                    utility::size(iterable)
-                );
-            }
-
-            ////////////////////////////////////////////////////////////
-            // Conversion to function pointer
-
-            template<typename ForwardIterable>
-            operator fptr_t<ForwardIterable>() const
-            {
-                return [](ForwardIterable& iterable) {
-                    detail::inplace_merge_sort(
-                        std::begin(iterable), std::end(iterable),
-                        std::less<>{}, utility::size(iterable)
-                    );
-                };
-            }
-
-            template<typename ForwardIterable, typename Compare>
-            operator fptr_cmp_t<ForwardIterable, Compare>() const
-            {
-                return [](ForwardIterable& iterable, Compare compare) {
-                    detail::inplace_merge_sort(
-                        std::begin(iterable), std::end(iterable),
-                        compare, utility::size(iterable)
-                    );
-                };
-            }
+        template<
+            typename ForwardIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(ForwardIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            detail::inplace_merge_sort(
+                std::begin(iterable),
+                std::end(iterable),
+                compare,
+                utility::size(iterable)
+            );
+        }
     };
 
     ////////////////////////////////////////////////////////////

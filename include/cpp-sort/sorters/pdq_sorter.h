@@ -31,58 +31,25 @@
 #include <iterator>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/pdqsort.h"
+#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    class pdq_sorter
+    struct pdq_sorter:
+        detail::sorter_base<pdq_sorter>
     {
-        private:
-
-            ////////////////////////////////////////////////////////////
-            // Function pointer aliases
-
-            template<typename RandomAccessIterable>
-            using fptr_t = void(*)(RandomAccessIterable&);
-
-            template<typename RandomAccessIterable, typename Compare>
-            using fptr_cmp_t = void(*)(RandomAccessIterable&, Compare);
-
-        public:
-
-            ////////////////////////////////////////////////////////////
-            // operator()
-
-            template<
-                typename RandomAccessIterable,
-                typename Compare = std::less<>
-            >
-            auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
-                -> void
-            {
-                detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
-            }
-
-            ////////////////////////////////////////////////////////////
-            // Conversion to function pointer
-
-            template<typename RandomAccessIterable>
-            operator fptr_t<RandomAccessIterable>() const
-            {
-                return [](RandomAccessIterable& iterable) {
-                    detail::pdqsort(std::begin(iterable), std::end(iterable), std::less<>{});
-                };
-            }
-
-            template<typename RandomAccessIterable, typename Compare>
-            operator fptr_cmp_t<RandomAccessIterable, Compare>() const
-            {
-                return [](RandomAccessIterable& iterable, Compare compare) {
-                    detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
-                };
-            }
+        template<
+            typename RandomAccessIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
+        }
     };
 
     ////////////////////////////////////////////////////////////

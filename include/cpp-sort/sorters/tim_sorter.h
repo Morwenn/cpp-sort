@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <cpp-sort/sorter_traits.h>
+#include "../detail/sorter_base.h"
 #include "../detail/timsort.h"
 
 namespace cppsort
@@ -37,52 +38,18 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    class tim_sorter
+    struct tim_sorter:
+        detail::sorter_base<tim_sorter>
     {
-        private:
-
-            ////////////////////////////////////////////////////////////
-            // Function pointer aliases
-
-            template<typename RandomAccessIterable>
-            using fptr_t = void(*)(RandomAccessIterable&);
-
-            template<typename RandomAccessIterable, typename Compare>
-            using fptr_cmp_t = void(*)(RandomAccessIterable&, Compare);
-
-        public:
-
-            ////////////////////////////////////////////////////////////
-            // operator()
-
-            template<
-                typename RandomAccessIterable,
-                typename Compare = std::less<>
-            >
-            auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
-                -> void
-            {
-                detail::timsort(std::begin(iterable), std::end(iterable), compare);
-            }
-
-            ////////////////////////////////////////////////////////////
-            // Conversion to function pointer
-
-            template<typename RandomAccessIterable>
-            operator fptr_t<RandomAccessIterable>() const
-            {
-                return [](RandomAccessIterable& iterable) {
-                    detail::timsort(std::begin(iterable), std::end(iterable), std::less<>{});
-                };
-            }
-
-            template<typename RandomAccessIterable, typename Compare>
-            operator fptr_cmp_t<RandomAccessIterable, Compare>() const
-            {
-                return [](RandomAccessIterable& iterable, Compare compare) {
-                    detail::timsort(std::begin(iterable), std::end(iterable), compare);
-                };
-            }
+        template<
+            typename RandomAccessIterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            detail::timsort(std::begin(iterable), std::end(iterable), compare);
+        }
     };
 
     ////////////////////////////////////////////////////////////

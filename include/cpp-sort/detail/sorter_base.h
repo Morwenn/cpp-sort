@@ -21,52 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_QUICK_SORTER_H_
-#define CPPSORT_SORTERS_QUICK_SORTER_H_
+#ifndef CPPSORT_DETAIL_SORTER_BASE_H_
+#define CPPSORT_DETAIL_SORTER_BASE_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
-#include <iterator>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
-#include "../detail/quicksort.h"
-#include "../detail/sorter_base.h"
+#include <cstddef>
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
-
-    struct quick_sorter:
-        detail::sorter_base<quick_sorter>
+namespace detail
+{
+    // This class is a CRTP base class whose sorters inherit
+    // from which gives them the ability to convert to function
+    // pointers. This mechanism is only possible if sorters are
+    // stateless.
+    template<typename Sorter>
+    class sorter_base
     {
-        template<
-            typename BidirectionalIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
-            -> void
-        {
-            detail::quicksort(
-                std::begin(iterable),
-                std::end(iterable),
-                compare,
-                utility::size(iterable)
-            );
-        }
+        protected:
+
+            template<typename Iterable>
+            using fptr_t = void(*)(Iterable&);
+
+            template<typename Iterable, typename Compare>
+            using fptr_cmp_t = void(*)(Iterable&, Compare);
+
+        public:
+
+            template<typename Iterable>
+            operator fptr_t<Iterable>() const
+            {
+                return [](Iterable& iterable) {
+                    Sorter{}(iterable);
+                };
+            }
+
+            template<typename Iterable, typename Compare>
+            operator fptr_cmp_t<Iterable, Compare>() const
+            {
+                return [](Iterable& iterable, Compare compare) {
+                    Sorter{}(iterable, compare);
+                };
+            }
     };
+}}
 
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<quick_sorter>
-    {
-        using iterator_category = std::bidirectional_iterator_tag;
-        static constexpr bool is_stable = false;
-    };
-}
-
-#endif // CPPSORT_SORTERS_QUICK_SORTER_H_
+#endif // CPPSORT_DETAIL_SORTER_BASE_H_
