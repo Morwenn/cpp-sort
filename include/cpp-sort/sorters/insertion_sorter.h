@@ -37,17 +37,52 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct insertion_sorter
+    class insertion_sorter
     {
-        template<
-            typename BidirectionalIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
-            -> void
-        {
-            detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
-        }
+        private:
+
+            ////////////////////////////////////////////////////////////
+            // Function pointer aliases
+
+            template<typename BidirectionalIterable>
+            using fptr_t = void(*)(BidirectionalIterable&);
+
+            template<typename BidirectionalIterable, typename Compare>
+            using fptr_cmp_t = void(*)(BidirectionalIterable&, Compare);
+
+        public:
+
+            ////////////////////////////////////////////////////////////
+            // operator()
+
+            template<
+                typename BidirectionalIterable,
+                typename Compare = std::less<>
+            >
+            auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+                -> void
+            {
+                detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Conversion to function pointer
+
+            template<typename BidirectionalIterable>
+            operator fptr_t<BidirectionalIterable>() const
+            {
+                return [](BidirectionalIterable& iterable) {
+                    detail::insertion_sort(std::begin(iterable), std::end(iterable), std::less<>{});
+                };
+            }
+
+            template<typename BidirectionalIterable, typename Compare>
+            operator fptr_cmp_t<BidirectionalIterable, Compare>() const
+            {
+                return [](BidirectionalIterable& iterable, Compare compare) {
+                    detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
+                };
+            }
     };
 
     ////////////////////////////////////////////////////////////
