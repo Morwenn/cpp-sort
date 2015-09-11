@@ -31,6 +31,7 @@
 #include <functional>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/comparison_counter.h"
+#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
@@ -41,7 +42,8 @@ namespace cppsort
         typename Sorter,
         typename CountType = std::size_t
     >
-    struct counting_adapter
+    struct counting_adapter:
+        detail::sorter_base<counting_adapter<Sorter, CountType>>
     {
         template<
             typename Iterable,

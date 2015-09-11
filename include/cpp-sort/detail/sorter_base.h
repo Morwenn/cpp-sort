@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <type_traits>
 
 namespace cppsort
 {
@@ -43,10 +44,10 @@ namespace detail
         protected:
 
             template<typename Iterable>
-            using fptr_t = void(*)(Iterable&);
+            using fptr_t = std::result_of_t<Sorter(Iterable&)>(*)(Iterable&);
 
             template<typename Iterable, typename Compare>
-            using fptr_cmp_t = void(*)(Iterable&, Compare);
+            using fptr_cmp_t = std::result_of_t<Sorter(Iterable&, Compare)>(*)(Iterable&, Compare);
 
         public:
 
@@ -54,7 +55,7 @@ namespace detail
             operator fptr_t<Iterable>() const
             {
                 return [](Iterable& iterable) {
-                    Sorter{}(iterable);
+                    return Sorter{}(iterable);
                 };
             }
 
@@ -62,7 +63,7 @@ namespace detail
             operator fptr_cmp_t<Iterable, Compare>() const
             {
                 return [](Iterable& iterable, Compare compare) {
-                    Sorter{}(iterable, compare);
+                    return Sorter{}(iterable, compare);
                 };
             }
     };
