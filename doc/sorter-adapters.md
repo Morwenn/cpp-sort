@@ -1,5 +1,4 @@
-Sorter adapters
-===============
+# Sorter adapters
 
 Sorter adapters are the main reason for using sorter function objects instead
 of regular functions. A *sorter adapter* is a class template that takes another
@@ -15,8 +14,11 @@ In this documentation, we will call *adapted sorters* the sorters passed to the
 adapters and *resulting sorter* the sorter class that results from the adaption
 of a sorter by an adapter.
 
-`counting_adapter`
-------------------
+## Available sorter adapters
+
+The following sorter adapters are available in the library:
+
+### `counting_adapter`
 
 ```cpp
 #include <cpp-sort/adapters/counting_adapter.h>
@@ -43,8 +45,7 @@ struct counting_adapter;
 The iterator category and the stability of the *resulting sorter* are those of the
 *adapted sorter*.
 
-`hybrid_adapter`
-----------------
+### `hybrid_adapter`
 
 ```cpp
 #include <cpp-sort/adapters/hybrid_adapter.h>
@@ -74,8 +75,7 @@ The staibility of the *resulting sorter* is `true` if and only if the stability
 of every *adapter sorter* is `true`. The iterator category of the *resulting
 sorter* is the most permissive iterator category among the the *adapted sorters*.
 
-`self_sort_adapter`
--------------------
+### `self_sort_adapter`
 
 ```cpp
 #include <cpp-sort/adapters/self_sort_adapter.h>
@@ -98,8 +98,7 @@ Since it is impossible to guarantee the stability of the `sort` method of a
 given iterable, the stability of the *resulting sorter* is always `false`.
 The iterator category of the *resulting sorter* is that of the *adapted sorter*.
 
-`small_array_adapter`
----------------------
+### `small_array_adapter`
 
 ```cpp
 #include <cpp-sort/adapters/small_array_adapter.h>

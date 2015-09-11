@@ -1,12 +1,10 @@
-Miscellaneous utilities
-=======================
+# Miscellaneous utilities
 
 The following utilities are available in the directory `cpp-sort/utility`
 and live in the namespace `cppsort::utility`. While not directly related
 to sorting, they might be useful.
 
-The detection framework
------------------------
+### The detection framework
 
 ```cpp
 #include <cpp-sort/utility/detection.h>
@@ -20,8 +18,7 @@ Since the documentation is already available online, it won't be repeated it
 here. Note that this header also provides the types `void_t` and `nonesuch` which
 are used to implement the detection framework.
 
-`any` and `all`
----------------
+### `any` and `all`
 
 ```cpp
 #include <cpp-sort/utility/any_all.h>
@@ -39,8 +36,7 @@ template<typename... Bools>
 constexpr bool all(bool head, Bools... tail);
 ```
 
-`has_sort_method`
------------------
+### `has_sort_method`
 
 ```cpp
 #include <cpp-sort/utility/has_sort_method.h>
@@ -55,8 +51,7 @@ template<typename Iterable>
 constexpr bool has_sort_method = /* implementation-defined */;
 ```
 
-`is_in_range`
--------------
+### `is_in_range`
 
 ```cpp
 #include <cpp-sort/utility/is_in_range.h>
@@ -71,8 +66,7 @@ template<std::size_t Value, std::size_t... Values>
 constexpr bool is_in_pack = /* implementation-defined */;
 ```
 
-`is_sorter_for`
----------------
+### `is_sorter_for`
 
 ```cpp
 #include <cpp-sort/utility/is_sorter_for.h>
@@ -88,8 +82,7 @@ template<typename Sorter, typename Iterable>
 constexpr bool is_sorter_for = /* implementation-defined */;
 ```
 
-`log2`
-------
+### `log2`
 
 ```cpp
 #include <cpp-sort/utility/log2.h>
@@ -106,8 +99,7 @@ template<typename Integer>
 Integer log2(Integer n);
 ```
 
-`make_integer_range`
---------------------
+### `make_integer_range`
 
 ```cpp
 #include <cpp-sort/utility/make_integer_range.h>
@@ -139,8 +131,7 @@ template<
 using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 ```
 
-`size`
-------
+### `size`
 
 ```cpp
 #include <cpp-sort/utility/size.h>

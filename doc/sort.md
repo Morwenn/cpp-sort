@@ -1,5 +1,4 @@
-`cppsort::sort`
-===============
+# `cppsort::sort`
 
 `cppsort::sort` has two overloads. One which takes a [sorter](sorters.md) to sort
 the given iterable, and another one which uses the library's `cppsort::default_sorter`
