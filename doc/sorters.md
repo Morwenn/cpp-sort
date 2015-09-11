@@ -9,24 +9,31 @@ object, where a type satisfies the `ForwardIterable` concept if and only if call
 to `std::begin` and `std::end` on this object return instances of a type satisfying
 the [`ForwardIterator`](http://en.cppreference.com/w/cpp/concept/ForwardIterator)
 concept (since the iterable is sorted in-place and thus altered, sorting an
-`InputIterable` type is not possible).
+`InputIterable` type is not possible). A `Sorter` instance should additionally be
+convertible to `Ret(*)(ForwardIterable&)` where `Ret` is the return type of the
+operation.
 
 A type satisfies the `ComparisonSorter` concept if it satisfies the `Sorter`
 concept and can additionally be called with a second parameter satisfying the
 [`Compare`](http://en.cppreference.com/w/cpp/concept/Compare) concept. While
 most sorters satisfy this concept, some of them might implement non-comparison
 based sorting algorithms such as radix sort, and thus only satisfy the `Sorter`
-concept.
+concept. A `ComparisonSorter` instance should additionally be convertible to
+`Ret(*)(ForwardIterable&, Compare)` where `Ret` is the return type of the
+operation.
 
 Implementing a sorter is easy once you have a sorting algorithm: simply add an
 `operator()` overload that forwards its values to a sorting function.
 
 ```cpp
+#include <cpp-sort/sorter_base.h>
+
 /**
  * ComparisonSorter implementing a spam_sort algorithm, where spam_sort
  * is a sorting algorithm working with bidirectional iterators.
  */
-struct spam_sorter
+struct spam_sorter:
+    cppsort::sorter_base<spam_sorter>
 {
     template<typename BidirectionalIterable, typename Compare>
     auto operator()(BidirectionalIterable& iterable, Compare cmp) const
@@ -36,6 +43,9 @@ struct spam_sorter
     }
 };
 ```
+
+In the previous example, `sorter_base` is a CRTP base class that is used to provide
+the function pointer conversion operators to the sorter.
 
 While these function objects offer little more than regular sorting functions by
 themselves, you can use them together with [*sorter adapaters*](sorter-adapters.md)

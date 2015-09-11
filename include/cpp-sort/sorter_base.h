@@ -21,46 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_PDQ_SORTER_H_
-#define CPPSORT_SORTERS_PDQ_SORTER_H_
+#ifndef CPPSORT_SORTER_BASE_H_
+#define CPPSORT_SORTER_BASE_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
-#include <iterator>
-#include <cpp-sort/sorter_base.h>
-#include <cpp-sort/sorter_traits.h>
-#include "../detail/pdqsort.h"
+#include <cstddef>
+#include <type_traits>
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
-
-    struct pdq_sorter:
-        sorter_base<pdq_sorter>
+    // This class is a CRTP base class whose sorters inherit
+    // from which gives them the ability to convert to function
+    // pointers. This mechanism is only possible if sorters are
+    // stateless.
+    template<typename Sorter>
+    class sorter_base
     {
-        template<
-            typename RandomAccessIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
-            -> void
-        {
-            detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
-        }
-    };
+        protected:
 
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
+            template<typename Iterable>
+            using fptr_t = std::result_of_t<Sorter(Iterable&)>(*)(Iterable&);
 
-    template<>
-    struct sorter_traits<pdq_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = false;
+            template<typename Iterable, typename Compare>
+            using fptr_cmp_t = std::result_of_t<Sorter(Iterable&, Compare)>(*)(Iterable&, Compare);
+
+        public:
+
+            template<typename Iterable>
+            operator fptr_t<Iterable>() const
+            {
+                return [](Iterable& iterable) {
+                    return Sorter{}(iterable);
+                };
+            }
+
+            template<typename Iterable, typename Compare>
+            operator fptr_cmp_t<Iterable, Compare>() const
+            {
+                return [](Iterable& iterable, Compare compare) {
+                    return Sorter{}(iterable, compare);
+                };
+            }
     };
 }
 
-#endif // CPPSORT_SORTERS_PDQ_SORTER_H_
+#endif // CPPSORT_SORTER_BASE_H_

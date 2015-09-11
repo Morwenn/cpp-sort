@@ -32,6 +32,7 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/is_in_pack.h>
 #include "../detail/sort_n.h"
@@ -48,7 +49,8 @@ namespace cppsort
         typename Sorter,
         std::size_t... Indices
     >
-    struct small_array_adapter<Sorter, std::index_sequence<Indices...>>
+    struct small_array_adapter<Sorter, std::index_sequence<Indices...>>:
+        sorter_base<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
     {
         template<
             typename RandomAccessIterable,

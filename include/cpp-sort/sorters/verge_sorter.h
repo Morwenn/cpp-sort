@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/vergesort.h"
 
@@ -37,7 +38,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct verge_sorter
+    struct verge_sorter:
+        sorter_base<verge_sorter>
     {
         template<
             typename RandomAccessIterable,

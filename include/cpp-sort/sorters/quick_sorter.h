@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/quicksort.h"
@@ -38,7 +39,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct quick_sorter
+    struct quick_sorter:
+        sorter_base<quick_sorter>
     {
         template<
             typename BidirectionalIterable,
