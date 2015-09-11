@@ -44,8 +44,7 @@ read about them in the following page:
 
 * [Miscellaneous utilities](doc/utilities.md)
 
-Benchmarks
-==========
+# Benchmarks
 
 The following graph has been generated with the scripts found in the benchmarks
 directory. It shows the time needed for one sorting algorithm to sort one million

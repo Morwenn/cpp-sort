@@ -1,5 +1,4 @@
-Sorter traits
-=============
+# Sorter traits
 
 ```cpp
 #include <cpp-sort/sorter_traits.h>
@@ -9,8 +8,7 @@ The class template `sorter_traits<Sorter>` contains information about
 sorters and sorter adapters such as the kind of iterators accepted by
 a sorter and whether it implements or not a stable sorting algorithm.
 
-`sorter_traits`
----------------
+### `sorter_traits`
 
 Here is the basic definition of `sorter_traits`:
 
@@ -28,8 +26,7 @@ following fields:
 The non-specialized version of `sorter_traits` is defined but empty for
 SFINAE friendliness.
 
-`iterator_category`
--------------------
+### `iterator_category`
 
 ```cpp
 template<typename Sorter>
@@ -49,8 +46,7 @@ the resulting sorter's category will be `std::forward_iterator_tag` since it
 is guaranteed to work with any iterable type which has *at least* forward
 iterators.
 
-`is_stable`
------------
+### `is_stable`
 
 ```cpp
 template<typename Sorter>
