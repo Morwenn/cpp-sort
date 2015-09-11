@@ -57,3 +57,33 @@ an `std_sorter`, a `tim_sorter` and a `pdq_sorter`.
 These results were generated with MinGW g++ 5.1 with the compiler options
 `-std=c++14 -O3 -march=native`. More benchmarks will be made available in
 the future.
+
+# Thanks
+
+**cpp-sort** reuses a great deal of code coming from other projects, often
+slightly altered to integrate seamlessly into the library. Here is a list of
+resources I used to create this library. I hope that the different licenses
+are compatible. If it is not the case, please contact me (or post an issue)
+and we will see what can be done about it:
+
+* The algorithms used by `inplace_merge_sorter` and `quick_sorter` come from
+Stephan Brumme's [Sorting STL containers](http://create.stephan-brumme.com/stl-sort/).
+
+* The algorithms used by `insertion_sorter` and `pdq_sorter` come from Orson
+Peters' [pattern-defeating quicksort](https://github.com/orlp/pdqsort). Some
+parts of the benchmarks come from there as well.
+
+* The algorithm used by `tim_sorter` comes from Goro Fuji's (gfx) [C++
+implementation](https://github.com/gfx/cpp-TimSort) of TimSort.
+
+* The algorithm used by `verge_sorter` comes from my own [implementation of
+a vergesort](https://github.com/Morwenn/vergesort) (at least, I know that the
+license for this one is compatible :p).
+
+* The algorithm used to sort three values in-place is derived from the one
+[found in libc++](https://github.com/llvm-mirror/libcxx/blob/master/include/algorithm#L3602).
+
+* The other algorithms used to sort a fixed number of values have been
+generated thanks to the `SWAP` macros that can be found on [this page about
+sorting networks](http://pages.ripco.net/~jgamble/nw.html) which itself
+generates its macros thanks to the Perl module `Algorithm::Networksort`.
