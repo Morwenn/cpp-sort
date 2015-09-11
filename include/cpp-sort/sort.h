@@ -27,34 +27,50 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
 #include <type_traits>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/utility/is_sorter_for.h>
 
 namespace cppsort
 {
-    template<
-        typename Iterable,
-        typename Compare = std::less<>,
-        typename = std::enable_if_t<not utility::is_sorter_for<Compare, Iterable>>
-    >
-    auto sort(Iterable& iterable, Compare compare={})
+    template<typename Iterable>
+    auto sort(Iterable& iterable)
         -> void
     {
-        sort(iterable, default_sorter{}, compare);
+        default_sorter{}(iterable);
+    }
+
+    template<
+        typename Iterable,
+        typename Compare,
+        typename = std::enable_if_t<not utility::is_sorter_for<Compare, Iterable>>
+    >
+    auto sort(Iterable& iterable, Compare compare)
+        -> void
+    {
+        default_sorter{}(iterable, compare);
     }
 
     template<
         typename Iterable,
         typename Sorter,
-        typename Compare = std::less<>,
         typename = std::enable_if_t<utility::is_sorter_for<Sorter, Iterable>>
     >
-    auto sort(Iterable& iterable, const Sorter& sorter, Compare compare={})
-        -> void
+    auto sort(Iterable& iterable, const Sorter& sorter)
+        -> decltype(auto)
     {
-        sorter(iterable, compare);
+        return sorter(iterable);
+    }
+
+    template<
+        typename Iterable,
+        typename ComparisonSorter,
+        typename Compare
+    >
+    auto sort(Iterable& iterable, const ComparisonSorter& sorter, Compare compare)
+        -> decltype(auto)
+    {
+        return sorter(iterable, compare);
     }
 }
 
