@@ -29,10 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/inplace_merge_sort.h"
-#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
@@ -40,7 +40,7 @@ namespace cppsort
     // Sorter
 
     struct inplace_merge_sorter:
-        detail::sorter_base<inplace_merge_sorter>
+        sorter_base<inplace_merge_sorter>
     {
         template<
             typename ForwardIterable,

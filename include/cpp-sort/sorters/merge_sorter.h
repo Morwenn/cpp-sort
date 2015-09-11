@@ -29,9 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/merge_sort.h"
-#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
@@ -39,7 +39,7 @@ namespace cppsort
     // Sorter
 
     struct merge_sorter:
-        detail::sorter_base<merge_sorter>
+        sorter_base<merge_sorter>
     {
         template<
             typename RandomAccessIterable,

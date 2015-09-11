@@ -30,9 +30,9 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/any_all.h>
-#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
@@ -41,7 +41,7 @@ namespace cppsort
 
     template<typename... Sorters>
     class hybrid_adapter:
-        detail::sorter_base<hybrid_adapter<Sorters...>>
+        sorter_base<hybrid_adapter<Sorters...>>
     {
         private:
 

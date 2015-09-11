@@ -29,8 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
+#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/has_sort_method.h>
-#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
@@ -39,7 +40,7 @@ namespace cppsort
 
     template<typename Sorter>
     struct self_sort_adapter:
-        detail::sorter_base<self_sort_adapter<Sorter>>
+        sorter_base<self_sort_adapter<Sorter>>
     {
         template<
             typename Iterable,

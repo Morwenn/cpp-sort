@@ -29,9 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/insertion_sort.h"
-#include "../detail/sorter_base.h"
 
 namespace cppsort
 {
@@ -39,7 +39,7 @@ namespace cppsort
     // Sorter
 
     struct insertion_sorter:
-        detail::sorter_base<insertion_sorter>
+        sorter_base<insertion_sorter>
     {
         template<
             typename BidirectionalIterable,

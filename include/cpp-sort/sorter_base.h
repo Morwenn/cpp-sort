@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_SORTER_BASE_H_
-#define CPPSORT_DETAIL_SORTER_BASE_H_
+#ifndef CPPSORT_SORTER_BASE_H_
+#define CPPSORT_SORTER_BASE_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,8 +31,6 @@
 #include <type_traits>
 
 namespace cppsort
-{
-namespace detail
 {
     // This class is a CRTP base class whose sorters inherit
     // from which gives them the ability to convert to function
@@ -67,6 +65,6 @@ namespace detail
                 };
             }
     };
-}}
+}
 
-#endif // CPPSORT_DETAIL_SORTER_BASE_H_
+#endif // CPPSORT_SORTER_BASE_H_

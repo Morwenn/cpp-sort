@@ -29,8 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
-#include "../detail/sorter_base.h"
 #include "../detail/timsort.h"
 
 namespace cppsort
@@ -39,7 +39,7 @@ namespace cppsort
     // Sorter
 
     struct tim_sorter:
-        detail::sorter_base<tim_sorter>
+        sorter_base<tim_sorter>
     {
         template<
             typename RandomAccessIterable,
