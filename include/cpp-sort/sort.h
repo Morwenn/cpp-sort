@@ -28,8 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/utility/is_sorter_for.h>
 
 namespace cppsort
 {
@@ -43,7 +43,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not utility::is_sorter<Compare, Iterable>>
+        typename = std::enable_if_t<not is_sorter<Compare, Iterable>>
     >
     auto sort(Iterable& iterable, Compare compare)
         -> void
@@ -54,7 +54,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Sorter,
-        typename = std::enable_if_t<utility::is_sorter<Sorter, Iterable>>
+        typename = std::enable_if_t<is_sorter<Sorter, Iterable>>
     >
     auto sort(Iterable& iterable, const Sorter& sorter)
         -> decltype(auto)

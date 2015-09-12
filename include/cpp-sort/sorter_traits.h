@@ -24,8 +24,37 @@
 #ifndef CPPSORT_SORTER_TRAITS_H_
 #define CPPSORT_SORTER_TRAITS_H_
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <type_traits>
+#include <cpp-sort/utility/detection.h>
+
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter type categories
+
+    namespace detail
+    {
+        template<typename Sorter, typename Iterable>
+        using is_sorter_t = std::result_of_t<Sorter(Iterable&)>;
+
+        template<typename Sorter, typename Iterable, typename Compare>
+        using is_comparison_sorter_t = std::result_of_t<Sorter(Iterable&, Compare)>;
+    }
+
+    template<typename Sorter, typename Iterable>
+    constexpr bool is_sorter
+        = utility::is_detected_v<detail::is_sorter_t, Sorter, Iterable>;
+
+    template<typename Sorter, typename Iterable, typename Compare>
+    constexpr bool is_comparison_sorter
+        = utility::is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable, Compare>;
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
     template<typename Sorter>
     struct sorter_traits
     {
