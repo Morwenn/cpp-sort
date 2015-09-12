@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/any_all.h>
@@ -69,26 +69,18 @@ namespace cppsort
             template<typename Sorter>
             struct category_wrapper
             {
-                template<
-                    typename Iterable,
-                    typename Compare = std::less<>
-                >
-                auto operator()(Iterable& iterable,
-                                Compare compare={},
-                                iterator_category<Sorter> = {}) const
+                template<typename... Args>
+                auto operator()(iterator_category<Sorter>, Args&&... args) const
                     -> void
                 {
-                    Sorter{}(iterable, compare);
+                    Sorter{}(std::forward<Args>(args)...);
                 }
             };
 
         public:
 
-            template<
-                typename Iterable,
-                typename Compare = std::less<>
-            >
-            auto operator()(Iterable& iterable, Compare compare={}) const
+            template<typename Iterable, typename... Args>
+            auto operator()(Iterable& iterable, Args&&... args) const
                 -> void
             {
                 // Dispatch-enabled sorter
@@ -101,7 +93,7 @@ namespace cppsort
                     >::iterator_category;
 
                 // Call the appropriate operator()
-                sorter{}(iterable, compare, category{});
+                sorter{}(category{}, iterable, std::forward<Args>(args)...);
             }
     };
 
