@@ -43,7 +43,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not utility::is_sorter_for<Compare, Iterable>>
+        typename = std::enable_if_t<not utility::is_sorter<Compare, Iterable>>
     >
     auto sort(Iterable& iterable, Compare compare)
         -> void
@@ -54,7 +54,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Sorter,
-        typename = std::enable_if_t<utility::is_sorter_for<Sorter, Iterable>>
+        typename = std::enable_if_t<utility::is_sorter<Sorter, Iterable>>
     >
     auto sort(Iterable& iterable, const Sorter& sorter)
         -> decltype(auto)

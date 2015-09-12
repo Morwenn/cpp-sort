@@ -37,11 +37,17 @@ namespace utility
     namespace detail
     {
         template<typename Sorter, typename Iterable>
-        using is_sorter_for_t = std::result_of_t<Sorter(Iterable&)>;
+        using is_sorter_t = std::result_of_t<Sorter(Iterable&)>;
+
+        template<typename Sorter, typename Iterable, typename Compare>
+        using is_comparison_sorter_t = std::result_of_t<Sorter(Iterable&, Compare)>;
     }
 
     template<typename Sorter, typename Iterable>
-    constexpr bool is_sorter_for = is_detected_v<detail::is_sorter_for_t, Sorter, Iterable>;
+    constexpr bool is_sorter = is_detected_v<detail::is_sorter_t, Sorter, Iterable>;
+
+    template<typename Sorter, typename Iterable, typename Compare>
+    constexpr bool is_comparison_sorter = is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable>;
 }}
 
 #endif // CPPSORT_UTILITY_IS_SORTER_FOR_H_
