@@ -39,11 +39,11 @@ namespace cppsort
     // Adapter
 
     template<
-        typename Sorter,
+        typename ComparisonSorter,
         typename CountType = std::size_t
     >
     struct counting_adapter:
-        sorter_base<counting_adapter<Sorter, CountType>>
+        sorter_base<counting_adapter<ComparisonSorter, CountType>>
     {
         template<
             typename Iterable,
@@ -53,7 +53,7 @@ namespace cppsort
             -> CountType
         {
             detail::comparison_counter<Compare, CountType> cmp(compare);
-            Sorter{}(iterable, cmp);
+            ComparisonSorter{}(iterable, cmp);
             return cmp.count;
         }
     };
@@ -61,11 +61,11 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    template<typename Sorter, typename CountType>
-    struct sorter_traits<counting_adapter<Sorter, CountType>>
+    template<typename ComparisonSorter, typename CountType>
+    struct sorter_traits<counting_adapter<ComparisonSorter, CountType>>
     {
-        using iterator_category = iterator_category<Sorter>;
-        static constexpr bool is_stable = is_stable<Sorter>;
+        using iterator_category = iterator_category<ComparisonSorter>;
+        static constexpr bool is_stable = is_stable<ComparisonSorter>;
     };
 }
 

@@ -52,11 +52,15 @@ namespace cppsort
     struct small_array_adapter<Sorter, std::index_sequence<Indices...>>:
         sorter_base<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
     {
-        template<
-            typename RandomAccessIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+        template<typename Iterable>
+        auto operator()(Iterable& iterable) const
+            -> void
+        {
+            Sorter{}(iterable);
+        }
+
+        template<typename Iterable, typename Compare>
+        auto operator()(Iterable& iterable, Compare compare) const
             -> void
         {
             Sorter{}(iterable, compare);

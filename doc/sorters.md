@@ -23,10 +23,16 @@ concept. A `ComparisonSorter` instance should additionally be convertible to
 operation.
 
 Implementing a sorter is easy once you have a sorting algorithm: simply add an
-`operator()` overload that forwards its values to a sorting function.
+`operator()` overload that forwards its values to a sorting function. If your
+sorter supports custom comparison functions, make sure that it can also be
+called *without* such a function. A `ComparisonSorter` should be usable wherever
+a `Sorter` is usable.
 
 ```cpp
+#include <functional>
+#include <iterator>
 #include <cpp-sort/sorter_base.h>
+#include "spam_sort.h"
 
 /**
  * ComparisonSorter implementing a spam_sort algorithm, where spam_sort
@@ -35,8 +41,11 @@ Implementing a sorter is easy once you have a sorting algorithm: simply add an
 struct spam_sorter:
     cppsort::sorter_base<spam_sorter>
 {
-    template<typename BidirectionalIterable, typename Compare>
-    auto operator()(BidirectionalIterable& iterable, Compare cmp) const
+    template<
+        typename BidirectionalIterable,
+        typename Compare = std::less<>
+    >
+    auto operator()(BidirectionalIterable& iterable, Compare cmp={}) const
         -> void
     {
         spam_sort(std::begin(iterable), std::end(iterable), cmp);
@@ -45,7 +54,21 @@ struct spam_sorter:
 ```
 
 In the previous example, `sorter_base` is a CRTP base class that is used to provide
-the function pointer conversion operators to the sorter.
+the function pointer conversion operators to the sorter. If you want your sorter to
+work well with everything in the library, you better specialize the template class
+[`cppsort::sorter_traits`](sorter-traits.md) for it:
+
+```cpp
+namespace cppsort
+{
+    template<>
+    struct sorter_traits<spam_sorter>
+    {
+        using iterator_category = std::bidirectional_iterator_tag;
+        static constexpr bool is_stable = true;
+    };
+}
+```
 
 While these function objects offer little more than regular sorting functions by
 themselves, you can use them together with [*sorter adapaters*](sorter-adapters.md)

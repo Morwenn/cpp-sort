@@ -66,22 +66,6 @@ template<std::size_t Value, std::size_t... Values>
 constexpr bool is_in_pack = /* implementation-defined */;
 ```
 
-### `is_sorter_for`
-
-```cpp
-#include <cpp-sort/utility/is_sorter_for.h>
-```
-
-The variable template `is_sorter_for<typename Sorter, typename Iterable>`
-equals `true` if the type `Sorter` is a [*sorter*](sorters.md) and equals
-`false` otherwise. In our case, a `Sorter` is a type that can be called
-with an `Iterable&`. It mainly exists for SFINAE purpose.
-
-```cpp
-template<typename Sorter, typename Iterable>
-constexpr bool is_sorter_for = /* implementation-defined */;
-```
-
 ### `log2`
 
 ```cpp

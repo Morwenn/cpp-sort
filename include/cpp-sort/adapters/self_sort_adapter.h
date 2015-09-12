@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
 #include <type_traits>
 #include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
@@ -42,21 +41,29 @@ namespace cppsort
     struct self_sort_adapter:
         sorter_base<self_sort_adapter<Sorter>>
     {
-        template<
-            typename Iterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(Iterable& iterable, Compare compare={}) const
+        template<typename Iterable>
+        auto operator()(Iterable& iterable) const
+            -> std::enable_if_t<utility::has_sort_method<Iterable>, void>
+        {
+            iterable.sort();
+        }
+
+        template<typename Iterable>
+        auto operator()(Iterable& iterable) const
+            -> std::enable_if_t<not utility::has_sort_method<Iterable>, void>
+        {
+            Sorter{}(iterable);
+        }
+
+        template<typename Iterable, typename Compare>
+        auto operator()(Iterable& iterable, Compare compare) const
             -> std::enable_if_t<utility::has_sort_method<Iterable>, void>
         {
             iterable.sort(compare);
         }
 
-        template<
-            typename Iterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(Iterable& iterable, Compare compare={}) const
+        template<typename Iterable, typename Compare>
+        auto operator()(Iterable& iterable, Compare compare) const
             -> std::enable_if_t<not utility::has_sort_method<Iterable>, void>
         {
             Sorter{}(iterable, compare);
