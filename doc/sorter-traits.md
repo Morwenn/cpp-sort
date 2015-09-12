@@ -4,13 +4,31 @@
 #include <cpp-sort/sorter_traits.h>
 ```
 
-The class template `sorter_traits<Sorter>` contains information about
-sorters and sorter adapters such as the kind of iterators accepted by
-a sorter and whether it implements or not a stable sorting algorithm.
+### `is_sorter` and `is_comparison_sorter`
+
+These variable templates `is_sorter<typename Sorter, typename Iterable>` and
+`is_comparison_sorter<typename Sorter, typename Iterable, typename Compare>`
+respectively equal `true` if the type `Sorter` satisfies the [`sorter`](sorters.md)
+concept or the `ComparisonSorter` concept and equals `false` otherwise.
+
+In our case, a `Sorter` is a type that can be called with an `Iterable&`
+while a  `ComparisonSorter` is a that can be called with an `Iterable&` and
+a `Compare`. These traits mainly exist for SFINAE purpose and concept
+checking.
+
+```cpp
+template<typename Sorter, typename Iterable>
+constexpr bool is_sorter = /* implementation-defined */;
+
+template<typename Sorter, typename Iterable, typename Compare>
+constexpr bool is_comparison_sorter = /* implementation-defined */;
+```
 
 ### `sorter_traits`
 
-Here is the basic definition of `sorter_traits`:
+The class template `sorter_traits<Sorter>` contains information about
+sorters and sorter adapters such as the kind of iterators accepted by
+a sorter and whether it implements or not a stable sorting algorithm.
 
 ```cpp
 template<typename Sorter>

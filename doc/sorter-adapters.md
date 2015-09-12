@@ -36,14 +36,15 @@ which defaults to `std::size_t` if not specified.
 
 ```cpp
 template<
-    typename Sorter,
+    typename ComparisonSorter,
     typename CountType = std::size_t
 >
 struct counting_adapter;
 ```
 
 The iterator category and the stability of the *resulting sorter* are those of the
-*adapted sorter*.
+*adapted sorter*. Note that this adapter only works with sorters that satisfy the
+`ComparisonSorter` concept since it needs to adapt a comparison function.
 
 ### `hybrid_adapter`
 
@@ -71,7 +72,7 @@ The order of the parameters does not matter. The only thing that matters is that
 the different sorters shall have a different `cppsort::iterator_category` so that
 they can work side by side without overlapping.
 
-The staibility of the *resulting sorter* is `true` if and only if the stability
+The stability of the *resulting sorter* is `true` if and only if the stability
 of every *adapter sorter* is `true`. The iterator category of the *resulting
 sorter* is the most permissive iterator category among the the *adapted sorters*.
 
