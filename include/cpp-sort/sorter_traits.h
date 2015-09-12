@@ -50,7 +50,8 @@ namespace cppsort
 
     template<typename Sorter, typename Iterable, typename Compare>
     constexpr bool is_comparison_sorter
-        = utility::is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable, Compare>;
+        = is_sorter<Sorter, Iterable> &&
+          utility::is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable, Compare>;
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
