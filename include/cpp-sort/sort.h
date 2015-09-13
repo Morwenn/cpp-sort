@@ -51,6 +51,24 @@ namespace cppsort
         default_sorter{}(iterable, compare);
     }
 
+    template<typename Iterator>
+    auto sort(Iterator first, Iterator last)
+        -> void
+    {
+        default_sorter{}(first, last);
+    }
+
+    template<
+        typename Iterator,
+        typename Compare,
+        typename = std::enable_if_t<not is_sorter_iterator<Compare, Iterator>>
+    >
+    auto sort(Iterator first, Iterator last, Compare compare)
+        -> void
+    {
+        default_sorter{}(first, last, compare);
+    }
+
     template<
         typename Iterable,
         typename Sorter,
@@ -71,6 +89,28 @@ namespace cppsort
         -> decltype(auto)
     {
         return sorter(iterable, compare);
+    }
+
+    template<
+        typename Iterator,
+        typename Sorter,
+        typename = std::enable_if_t<is_sorter_iterator<Sorter, Iterator>>
+    >
+    auto sort(Iterator first, Iterator last, const Sorter& sorter)
+        -> decltype(auto)
+    {
+        return sorter(first, last);
+    }
+
+    template<
+        typename Iterator,
+        typename ComparisonSorter,
+        typename Compare
+    >
+    auto sort(Iterator first, Iterator last, const ComparisonSorter& sorter, Compare compare)
+        -> decltype(auto)
+    {
+        return sorter(first, last, compare);
     }
 }
 
