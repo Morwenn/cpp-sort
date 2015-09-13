@@ -77,22 +77,34 @@ namespace cppsort
                 }
             };
 
+            // Dispatch-enabled sorter
+            using dispatch_sorter = sorters_merger<category_wrapper<Sorters>...>;
+
         public:
 
-            using sorter_base<hybrid_adapter<Sorters...>>::operator();
+            template<typename Iterable, typename... Args>
+            auto operator()(Iterable& iterable, Args&&... args) const
+                -> void
+            {
+                // Iterator category of the iterable to sort
+                using category =
+                    typename std::iterator_traits<
+                        decltype(std::begin(iterable))
+                    >::iterator_category;
+
+                // Call the appropriate operator()
+                dispatch_sorter{}(category{}, iterable, std::forward<Args>(args)...);
+            }
 
             template<typename Iterator, typename... Args>
             auto operator()(Iterator first, Iterator last, Args&&... args) const
                 -> void
             {
-                // Dispatch-enabled sorter
-                using sorter = sorters_merger<category_wrapper<Sorters>...>;
-
                 // Iterator category of the iterable to sort
                 using category = typename std::iterator_traits<Iterator>::iterator_category;
 
                 // Call the appropriate operator()
-                sorter{}(category{}, first, last, std::forward<Args>(args)...);
+                dispatch_sorter{}(category{}, first, last, std::forward<Args>(args)...);
             }
     };
 
