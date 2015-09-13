@@ -57,14 +57,14 @@ namespace cppsort
 
         template<typename Iterable, typename Compare>
         auto operator()(Iterable& iterable, Compare compare) const
-            -> std::enable_if_t<utility::has_sort_method<Iterable>, void>
+            -> std::enable_if_t<utility::has_comparison_sort_method<Iterable, Compare>, void>
         {
             iterable.sort(compare);
         }
 
         template<typename Iterable, typename Compare>
         auto operator()(Iterable& iterable, Compare compare) const
-            -> std::enable_if_t<not utility::has_sort_method<Iterable>, void>
+            -> std::enable_if_t<not utility::has_comparison_sort_method<Iterable, Compare>, void>
         {
             Sorter{}(iterable, compare);
         }

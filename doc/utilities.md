@@ -36,19 +36,25 @@ template<typename... Bools>
 constexpr bool all(bool head, Bools... tail);
 ```
 
-### `has_sort_method`
+### `has_sort_method` and `has_comparison_sort_method`
 
 ```cpp
 #include <cpp-sort/utility/has_sort_method.h>
 ```
 
 The variable template `has_sort_method<typename Iterable>` equals `true` if
-the type `Iterable` has a method name `sort` which can be called without any
-parameter and equals `false` otherwise.
+the type `Iterable` has a method named `sort` which can be called without any
+parameter and equals `false` otherwise. Its companion variable template
+`has_comparison_sort_method<typename Iterable, typename Compare>` equals
+`true` if the type `Iterable` has a method named `sort` which can be called
+with a parameter of type `Compare` and equals `false` otherwise.
 
 ```cpp
 template<typename Iterable>
 constexpr bool has_sort_method = /* implementation-defined */;
+
+template<typename Iterable, typename Compare>
+constexpr bool has_comparison_sort_method = /* implementation-defined */;
 ```
 
 ### `is_in_range`

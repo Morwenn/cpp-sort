@@ -37,11 +37,21 @@ namespace utility
     namespace detail
     {
         template<typename Iterable>
-        using has_sort_method_t = decltype(std::declval<Iterable&>().sort());
+        using has_sort_method_t
+            = decltype(std::declval<Iterable&>().sort());
+
+        template<typename Iterable, typename Compare>
+        using has_comparison_sort_method_t
+            = decltype(std::declval<Iterable&>().sort(std::declval<Compare&>()));
     }
 
     template<typename Iterable>
-    constexpr bool has_sort_method = is_detected_v<detail::has_sort_method_t, Iterable>;
+    constexpr bool has_sort_method
+        = is_detected_v<detail::has_sort_method_t, Iterable>;
+
+    template<typename Iterable, typename Compare>
+    constexpr bool has_comparison_sort_method
+        = is_detected_v<detail::has_sort_method_t, Iterable, Compare>;
 }}
 
 #endif // CPPSORT_UTILITY_HAS_SORT_METHOD_H_
