@@ -41,14 +41,18 @@ namespace cppsort
     struct heap_sorter:
         sorter_base<heap_sorter>
     {
+        using sorter_base<heap_sorter>::operator();
+
         template<
-            typename RandomAccessIterable,
+            typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+        auto operator()(RandomAccessIterator first,
+                        RandomAccessIterator last,
+                        Compare compare={}) const
             -> void
         {
-            detail::heapsort(std::begin(iterable), std::end(iterable), compare);
+            detail::heapsort(first, last, compare);
         }
     };
 

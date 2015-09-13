@@ -56,6 +56,22 @@ namespace cppsort
                 utility::size(iterable)
             );
         }
+
+        template<
+            typename ForwardIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(ForwardIterator first,
+                        ForwardIterator last,
+                        Compare compare={}) const
+            -> void
+        {
+            detail::inplace_merge_sort(
+                first, last,
+                compare,
+                std::distance(first, last)
+            );
+        }
     };
 
     ////////////////////////////////////////////////////////////

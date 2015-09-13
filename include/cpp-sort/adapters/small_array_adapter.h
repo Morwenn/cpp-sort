@@ -66,6 +66,20 @@ namespace cppsort
             Sorter{}(iterable, compare);
         }
 
+        template<typename Iterator>
+        auto operator()(Iterator first, Iterator last) const
+            -> void
+        {
+            Sorter{}(first, last);
+        }
+
+        template<typename Iterator, typename Compare>
+        auto operator()(Iterator first, Iterator last, Compare compare) const
+            -> void
+        {
+            Sorter{}(first, last, compare);
+        }
+
         template<
             typename T,
             std::size_t N,

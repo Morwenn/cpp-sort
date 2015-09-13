@@ -37,11 +37,39 @@ namespace cppsort
 
     namespace detail
     {
+        // Group two iterators as a range, used to discriminate
+        // sorters from comparison functions
+        template<typename Iterator>
+        class range
+        {
+            public:
+
+                range(Iterator begin, Iterator end):
+                    _begin(begin),
+                    _end(end)
+                {}
+
+                Iterator begin() { return _begin; }
+                Iterator end() { return _end; }
+                Iterator begin() const { return _begin; }
+                Iterator end() const { return _end; }
+
+            private:
+
+                Iterator _begin, _end;
+        };
+
         template<typename Sorter, typename Iterable>
         using is_sorter_t = std::result_of_t<Sorter(Iterable&)>;
 
         template<typename Sorter, typename Iterable, typename Compare>
         using is_comparison_sorter_t = std::result_of_t<Sorter(Iterable&, Compare)>;
+
+        template<typename Sorter, typename Iterator>
+        using is_sorter_iterator_t = is_sorter_t<Sorter, range<Iterator>>;
+
+        template<typename Sorter, typename Iterator, typename Compare>
+        using is_comparison_sorter_iterator_t = is_comparison_sorter_t<Sorter, range<Iterator>, Compare>;
     }
 
     template<typename Sorter, typename Iterable>
@@ -52,6 +80,15 @@ namespace cppsort
     constexpr bool is_comparison_sorter
         = is_sorter<Sorter, Iterable> &&
           utility::is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable, Compare>;
+
+    template<typename Sorter, typename Iterator>
+    constexpr bool is_sorter_iterator
+        = utility::is_detected_v<detail::is_sorter_iterator_t, Sorter, Iterator>;
+
+    template<typename Sorter, typename Iterator, typename Compare>
+    constexpr bool is_comparison_sorter_iterator
+        = is_sorter_iterator<Sorter, Iterator> &&
+          utility::is_detected_v<detail::is_comparison_sorter_iterator_t, Sorter, Iterator, Compare>;
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

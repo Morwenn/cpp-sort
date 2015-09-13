@@ -41,14 +41,18 @@ namespace cppsort
     struct std_sorter:
         sorter_base<std_sorter>
     {
+        using sorter_base<std_sorter>::operator();
+
         template<
-            typename RandomAccessIterable,
+            typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+        auto operator()(RandomAccessIterator first,
+                        RandomAccessIterator last,
+                        Compare compare={}) const
             -> void
         {
-            std::sort(std::begin(iterable), std::end(iterable), compare);
+            std::sort(first, last, compare);
         }
     };
 

@@ -41,14 +41,18 @@ namespace cppsort
     struct verge_sorter:
         sorter_base<verge_sorter>
     {
+        using sorter_base<verge_sorter>::operator();
+
         template<
-            typename RandomAccessIterable,
+            typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+        auto operator()(RandomAccessIterator first,
+                        RandomAccessIterator last,
+                        Compare compare={}) const
             -> void
         {
-            detail::vergesort(std::begin(iterable), std::end(iterable), compare);
+            detail::vergesort(first, last, compare);
         }
     };
 

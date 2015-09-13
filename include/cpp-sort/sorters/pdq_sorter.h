@@ -41,14 +41,18 @@ namespace cppsort
     struct pdq_sorter:
         sorter_base<pdq_sorter>
     {
+        using sorter_base<pdq_sorter>::operator();
+
         template<
-            typename RandomAccessIterable,
+            typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+        auto operator()(RandomAccessIterator first,
+                        RandomAccessIterator last,
+                        Compare compare={}) const
             -> void
         {
-            detail::pdqsort(std::begin(iterable), std::end(iterable), compare);
+            detail::pdqsort(first, last, compare);
         }
     };
 

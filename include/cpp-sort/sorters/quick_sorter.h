@@ -56,6 +56,22 @@ namespace cppsort
                 utility::size(iterable)
             );
         }
+
+        template<
+            typename BidirectionalIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(BidirectionalIterator first,
+                        BidirectionalIterator last,
+                        Compare compare={}) const
+            -> void
+        {
+            detail::quicksort(
+                first, last,
+                compare,
+                std::distance(first, last)
+            );
+        }
     };
 
     ////////////////////////////////////////////////////////////
