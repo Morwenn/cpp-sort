@@ -66,9 +66,9 @@ namespace cppsort
             typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
         >
         auto operator()(std::array<T, N>& array, Compare compare={}) const
-            -> void
+            -> decltype(auto)
         {
-            detail::sort_n<N, Sorter>(array, compare);
+            return detail::sort_n<N, Sorter>(array, compare);
         }
 
         template<
@@ -78,9 +78,9 @@ namespace cppsort
             typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
         >
         auto operator()(T (&array)[N], Compare compare={}) const
-            -> void
+            -> decltype(auto)
         {
-            detail::sort_n<N, Sorter>(array, compare);
+            return detail::sort_n<N, Sorter>(array, compare);
         }
     };
 

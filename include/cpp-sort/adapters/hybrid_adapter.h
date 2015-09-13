@@ -71,9 +71,9 @@ namespace cppsort
             {
                 template<typename... Args>
                 auto operator()(iterator_category<Sorter>, Args&&... args) const
-                    -> void
+                    -> decltype(auto)
                 {
-                    Sorter{}(std::forward<Args>(args)...);
+                    return Sorter{}(std::forward<Args>(args)...);
                 }
             };
 
@@ -84,7 +84,7 @@ namespace cppsort
 
             template<typename Iterable, typename... Args>
             auto operator()(Iterable& iterable, Args&&... args) const
-                -> void
+                -> decltype(auto)
             {
                 // Iterator category of the iterable to sort
                 using category =
@@ -93,18 +93,18 @@ namespace cppsort
                     >::iterator_category;
 
                 // Call the appropriate operator()
-                dispatch_sorter{}(category{}, iterable, std::forward<Args>(args)...);
+                return dispatch_sorter{}(category{}, iterable, std::forward<Args>(args)...);
             }
 
             template<typename Iterator, typename... Args>
             auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> void
+                -> decltype(auto)
             {
                 // Iterator category of the iterable to sort
                 using category = typename std::iterator_traits<Iterator>::iterator_category;
 
                 // Call the appropriate operator()
-                dispatch_sorter{}(category{}, first, last, std::forward<Args>(args)...);
+                return dispatch_sorter{}(category{}, first, last, std::forward<Args>(args)...);
             }
     };
 

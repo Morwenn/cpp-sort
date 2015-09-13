@@ -41,46 +41,62 @@ namespace cppsort
     struct self_sort_adapter:
         sorter_base<self_sort_adapter<Sorter>>
     {
-        template<typename Iterable>
+        template<
+            typename Iterable,
+            typename = std::enable_if_t<utility::has_sort_method<Iterable>>
+        >
         auto operator()(Iterable& iterable) const
-            -> std::enable_if_t<utility::has_sort_method<Iterable>, void>
+            -> decltype(auto)
         {
-            iterable.sort();
+            return iterable.sort();
         }
 
-        template<typename Iterable>
+        template<
+            typename Iterable,
+            typename = std::enable_if_t<not utility::has_sort_method<Iterable>>,
+            typename = void // dummy parameter for ODR
+        >
         auto operator()(Iterable& iterable) const
-            -> std::enable_if_t<not utility::has_sort_method<Iterable>, void>
+            -> decltype(auto)
         {
-            Sorter{}(iterable);
+            return Sorter{}(iterable);
         }
 
-        template<typename Iterable, typename Compare>
+        template<
+            typename Iterable,
+            typename Compare,
+            typename = std::enable_if_t<utility::has_comparison_sort_method<Iterable, Compare>>
+        >
         auto operator()(Iterable& iterable, Compare compare) const
-            -> std::enable_if_t<utility::has_comparison_sort_method<Iterable, Compare>, void>
+            -> decltype(auto)
         {
-            iterable.sort(compare);
+            return iterable.sort(compare);
         }
 
-        template<typename Iterable, typename Compare>
+        template<
+            typename Iterable,
+            typename Compare,
+            typename = std::enable_if_t<not utility::has_comparison_sort_method<Iterable, Compare>>,
+            typename = void // dummy parameter for ODR
+        >
         auto operator()(Iterable& iterable, Compare compare) const
-            -> std::enable_if_t<not utility::has_comparison_sort_method<Iterable, Compare>, void>
+            -> decltype(auto)
         {
-            Sorter{}(iterable, compare);
+            return Sorter{}(iterable, compare);
         }
 
         template<typename Iterator>
         auto operator()(Iterator first, Iterator last) const
-            -> void
+            -> decltype(auto)
         {
-            Sorter{}(first, last);
+            return Sorter{}(first, last);
         }
 
         template<typename Iterator, typename Compare>
         auto operator()(Iterator first, Iterator last, Compare compare) const
-            -> void
+            -> decltype(auto)
         {
-            Sorter{}(first, last, compare);
+            return Sorter{}(first, last, compare);
         }
     };
 

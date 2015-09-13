@@ -28,7 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
-#include <functional>
 
 namespace cppsort
 {
@@ -39,9 +38,9 @@ namespace detail
     {
         template<typename RandomAccessIterable, typename Compare>
         static auto do_it(RandomAccessIterable& iterable, Compare compare)
-            -> void
+            -> decltype(auto)
         {
-            FallbackSorter{}(iterable, compare);
+            return FallbackSorter{}(iterable, compare);
         }
     };
 
@@ -49,12 +48,12 @@ namespace detail
         std::size_t N,
         typename FallbackSorter,
         typename RandomAccessIterable,
-        typename Compare = std::less<>
+        typename Compare
     >
     auto sort_n(RandomAccessIterable& iterable, Compare compare)
-        -> void
+        -> decltype(auto)
     {
-        sorter_n<N, FallbackSorter>::do_it(iterable, compare);
+        return sorter_n<N, FallbackSorter>::do_it(iterable, compare);
     }
 }}
 
