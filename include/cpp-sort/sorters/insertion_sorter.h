@@ -41,14 +41,18 @@ namespace cppsort
     struct insertion_sorter:
         sorter_base<insertion_sorter>
     {
+        using sorter_base<insertion_sorter>::operator();
+
         template<
-            typename BidirectionalIterable,
+            typename BidirectionalIterator,
             typename Compare = std::less<>
         >
-        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+        auto operator()(BidirectionalIterator first,
+                        BidirectionalIterator last,
+                        Compare compare={}) const
             -> void
         {
-            detail::insertion_sort(std::begin(iterable), std::end(iterable), compare);
+            detail::insertion_sort(first, last, compare);
         }
     };
 

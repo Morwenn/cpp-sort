@@ -41,14 +41,18 @@ namespace cppsort
     struct merge_sorter:
         sorter_base<merge_sorter>
     {
+        using sorter_base<merge_sorter>::operator();
+
         template<
-            typename RandomAccessIterable,
+            typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterable& iterable, Compare compare={}) const
+        auto operator()(RandomAccessIterator first,
+                        RandomAccessIterator last,
+                        Compare compare={}) const
             -> void
         {
-            detail::merge_sort(std::begin(iterable), std::end(iterable), compare);
+            detail::merge_sort(first, last, compare);
         }
     };
 
