@@ -4,7 +4,7 @@
 #include <cpp-sort/sorter_traits.h>
 ```
 
-### `is_sorter` and `is_comparison_sorter`
+### `is_sorter` and friends
 
 These variable templates `is_sorter<typename Sorter, typename Iterable>` and
 `is_comparison_sorter<typename Sorter, typename Iterable, typename Compare>`
@@ -22,6 +22,18 @@ constexpr bool is_sorter = /* implementation-defined */;
 
 template<typename Sorter, typename Iterable, typename Compare>
 constexpr bool is_comparison_sorter = /* implementation-defined */;
+```
+
+There are also variants of these variable templates which take a potential
+sorter type and an iterator type. These exist to check whether the sorter
+can be called with a pair of iterators.
+
+```cpp
+template<typename Sorter, typename Iterator>
+constexpr bool is_sorter_iterator = /* implementation-defined */;
+
+template<typename Sorter, typename Iterator, typename Compare>
+constexpr bool is_comparison_sorter_iterator = /* implementation-defined */;
 ```
 
 ### `sorter_traits`

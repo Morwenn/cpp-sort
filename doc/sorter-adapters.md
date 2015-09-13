@@ -4,7 +4,7 @@ Sorter adapters are the main reason for using sorter function objects instead
 of regular functions. A *sorter adapter* is a class template that takes another
 `Sorter` template parameter and alters its behavior. The resulting class can be
 used as a regular sorter, and be adapted in turn. It is possible to include all
-the available adapters at once with the following line:
+the available adapters at once with the following directive:
 
 ```cpp
 #include <cpp-sort/adapters.h>
