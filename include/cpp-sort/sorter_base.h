@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
+#include <iterator>
 #include <type_traits>
 
 namespace cppsort
@@ -41,13 +41,25 @@ namespace cppsort
     {
         protected:
 
+            ////////////////////////////////////////////////////////////
+            // Function pointer types
+
             template<typename Iterable>
             using fptr_t = std::result_of_t<Sorter(Iterable&)>(*)(Iterable&);
 
             template<typename Iterable, typename Compare>
             using fptr_cmp_t = std::result_of_t<Sorter(Iterable&, Compare)>(*)(Iterable&, Compare);
 
+            template<typename Iterator>
+            using fptr_it_t = std::result_of_t<Sorter(Iterator, Iterator)>(*)(Iterator, Iterator);
+
+            template<typename Iterator, typename Compare>
+            using fptr_cmp_it_t = std::result_of_t<Sorter(Iterator, Iterator, Compare)>(*)(Iterator, Iterator, Compare);
+
         public:
+
+            ////////////////////////////////////////////////////////////
+            // Conversion to function pointers
 
             template<typename Iterable>
             operator fptr_t<Iterable>() const
@@ -63,6 +75,39 @@ namespace cppsort
                 return [](Iterable& iterable, Compare compare) {
                     return Sorter{}(iterable, compare);
                 };
+            }
+
+            template<typename Iterator>
+            operator fptr_it_t<Iterator>() const
+            {
+                return [](Iterator first, Iterator last) {
+                    return Sorter{}(first, last);
+                };
+            }
+
+            template<typename Iterator, typename Compare>
+            operator fptr_cmp_it_t<Iterator, Compare>() const
+            {
+                return [](Iterator first, Iterator last, Compare compare) {
+                    return Sorter{}(first, last, compare);
+                };
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Automatic iterable sorting interface
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable) const
+                -> decltype(auto)
+            {
+                return Sorter{}(std::begin(iterable), std::end(iterable));
+            }
+
+            template<typename Iterable, typename Compare>
+            auto operator()(Iterable& iterable, Compare compare) const
+                -> decltype(auto)
+            {
+                return Sorter{}(std::begin(iterable), std::end(iterable), compare);
             }
     };
 }
