@@ -48,7 +48,7 @@ for filename in os.listdir("profiles"):
         "Alternating (16 values)"
     )
 
-    algos = ("heapsort", "introsort", "pdqsort", "vergesort", "timsort")
+    algos = ("heapsort", "introsort", "pdqsort", "vergesort", "timsort", "spreadsort")
 
     groupnames = distributions
     groupsize = len(algos)
@@ -57,7 +57,7 @@ for filename in os.listdir("profiles"):
     spacing = 1
     groupwidth = groupsize * barwidth + spacing
 
-    colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080"]
+    colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080", "#3ADF00"]
     for i, algo in enumerate(algos):
         heights = [numpy.median(data[size][distribution][algo]) for distribution in distributions]
         errors = [numpy.std(data[size][distribution][algo]) for distribution in distributions]
