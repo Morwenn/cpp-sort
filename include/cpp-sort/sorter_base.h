@@ -98,14 +98,14 @@ namespace cppsort
 
             template<typename Iterable>
             auto operator()(Iterable& iterable) const
-                -> decltype(auto)
+                -> decltype(Sorter{}(std::begin(iterable), std::end(iterable)))
             {
                 return Sorter{}(std::begin(iterable), std::end(iterable));
             }
 
             template<typename Iterable, typename Compare>
             auto operator()(Iterable& iterable, Compare compare) const
-                -> decltype(auto)
+                -> decltype(Sorter{}(std::begin(iterable), std::end(iterable), compare))
             {
                 return Sorter{}(std::begin(iterable), std::end(iterable), compare);
             }
