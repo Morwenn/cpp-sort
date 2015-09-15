@@ -71,7 +71,7 @@ namespace cppsort
             {
                 template<typename... Args>
                 auto operator()(iterator_category<Sorter>, Args&&... args) const
-                    -> decltype(auto)
+                    -> decltype(Sorter{}(std::forward<Args>(args)...))
                 {
                     return Sorter{}(std::forward<Args>(args)...);
                 }
