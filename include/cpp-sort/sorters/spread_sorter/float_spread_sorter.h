@@ -28,6 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <limits>
+#include <type_traits>
 #include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/spreadsort/float_sort.h"
@@ -44,7 +46,11 @@ namespace cppsort
 
         template<typename RandomAccessIterator>
         auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-            -> void
+            -> std::enable_if_t<
+                std::numeric_limits<
+                    typename std::iterator_traits<RandomAccessIterator>::value_type
+                >::is_iec559
+            >
         {
             detail::spreadsort::float_sort(first, last);
         }

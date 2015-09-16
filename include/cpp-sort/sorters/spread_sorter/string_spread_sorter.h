@@ -28,6 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <string>
+#include <type_traits>
 #include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/spreadsort/string_sort.h"
@@ -44,7 +46,12 @@ namespace cppsort
 
         template<typename RandomAccessIterator>
         auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-            -> void
+            -> std::enable_if_t<
+                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                             typename std::string>::value ||
+                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                             typename std::wstring>::value
+            >
         {
             detail::spreadsort::string_sort(first, last);
         }
