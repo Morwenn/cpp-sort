@@ -17,6 +17,7 @@ set(
     SORTERS_TESTS
 
     sorters/default_sorter.cpp
+    sorters/default_sorter_fptr.cpp
 )
 
 # Make one executable for the whole testsuite
