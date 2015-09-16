@@ -5,6 +5,7 @@ include_directories(${CATCH_INCLUDE_DIR})
 set(
     ADAPTER_TESTS
 
+    adapters/hybrid_adapter_sfinae.cpp
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter3.cpp
     adapters/small_array_adapter4.cpp
