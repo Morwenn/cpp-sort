@@ -54,11 +54,15 @@ The iterator category and the stability of the *resulting sorter* are those of t
 
 The goal of this sorter adapter is to aggregate several sorters into one unique
 sorter. The new sorter will call the appropriate sorting algorithm based on the
-iterator category of the iterable to sort. Therefore, the different sorters passed
-to it should have different iterator categories so that the call to `operator()`
-is not ambiguous. For example, the following sorter will call a pattern-defeating
-quicksort to sort a random-access iterable, an insertion sort to sort a bidirectional
-iterable and a bubble sort to sort a forward iterable:
+iterator category of the iterable to sort. If several of the aggregated sorters
+have the same iterator category, the first to appear in the template parameter
+list will be the chosen one, unless some SFINAE condition prevents it from being
+used. As long as the iterator categories are different, the order of the sorters
+in the parameter pack does not matter.
+
+For example, the following sorter will call a pattern-defeating quicksort to sort
+a random-access iterable, an insertion sort to sort a bidirectional iterable and
+a bubble sort to sort a forward iterable:
 
 ```cpp
 using general_purpose_sorter = hybrid_adapter<
@@ -68,9 +72,9 @@ using general_purpose_sorter = hybrid_adapter<
 >;
 ```
 
-The order of the parameters does not matter. The only thing that matters is that
-the different sorters shall have a different `cppsort::iterator_category` so that
-they can work side by side without overlapping.
+This adapter uses `cppsort::iterator_category` to check the iterator category of
+the sorters to aggregate. Therefore, if you write a sorter, you will need to
+specialize `cppsort::sorter_traits` if you want it to be usable with this adapter.
 
 The stability of the *resulting sorter* is `true` if and only if the stability
 of every *adapter sorter* is `true`. The iterator category of the *resulting

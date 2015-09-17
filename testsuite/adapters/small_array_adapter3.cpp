@@ -27,7 +27,7 @@
 #include <catch.hpp>
 #include <cpp-sort/sort.h>
 
-TEST_CASE( "sort arrays of size 3", "[sort]" )
+TEST_CASE( "sort arrays of size 3", "[small_array_adapter][sort]" )
 {
     SECTION( "sort C arrays" )
     {

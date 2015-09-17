@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstddef>
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -36,6 +37,43 @@
 
 namespace cppsort
 {
+    namespace detail
+    {
+        // Here goes what we can't put into hybrid_sorter's privates
+        // because full template specialization is not allowed in
+        // classes...
+
+        ////////////////////////////////////////////////////////////
+        // Overload resolution tool
+
+        template<std::size_t Value>
+        struct choice:
+            choice<Value + 1>
+        {};
+
+        template<>
+        struct choice<256> {};
+
+        ////////////////////////////////////////////////////////////
+        // Associate a priority to iterator categories, there is
+        // probably a trick to automate that...
+
+        template<typename>
+        constexpr std::size_t iterator_category_value;
+
+        template<>
+        constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 0;
+
+        template<>
+        constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 1;
+
+        template<>
+        constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 2;
+
+        template<>
+        constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
+    }
+
     ////////////////////////////////////////////////////////////
     // Adapter
 
@@ -44,6 +82,9 @@ namespace cppsort
         sorter_base<hybrid_adapter<Sorters...>>
     {
         private:
+
+            // Number of acceptable iterator categories
+            static constexpr std::size_t categories_number = 4;
 
             ////////////////////////////////////////////////////////////
             // Import every operator() in one class
@@ -64,21 +105,42 @@ namespace cppsort
             };
 
             ////////////////////////////////////////////////////////////
-            // Add a dispatch on the iterator category
+            // Add a dispatch to the operator() so that a sorter is
+            // preferred for its iterator category first, then for its
+            // position into the sorters
 
-            template<typename Sorter>
-            struct category_wrapper
+            template<typename Sorter, std::size_t Ind>
+            struct selection_wrapper
             {
                 template<typename... Args>
-                auto operator()(iterator_category<Sorter>, Args&&... args) const
+                auto operator()(detail::choice<Ind>, Args&&... args) const
                     -> decltype(Sorter{}(std::forward<Args>(args)...))
                 {
                     return Sorter{}(std::forward<Args>(args)...);
                 }
             };
 
+            // Associate and index to every sorter depending on
+            // its position in the parameter pack
+            template<typename>
+            struct dispatch_sorter_impl;
+
+            template<std::size_t... Indices>
+            struct dispatch_sorter_impl<std::index_sequence<Indices...>>
+            {
+                using type = sorters_merger<
+                    selection_wrapper<
+                        Sorters,
+                        Indices + detail::iterator_category_value<iterator_category<Sorters>>
+                                * categories_number
+                    >...
+                >;
+            };
+
             // Dispatch-enabled sorter
-            using dispatch_sorter = sorters_merger<category_wrapper<Sorters>...>;
+            using dispatch_sorter = typename dispatch_sorter_impl<
+                std::make_index_sequence<sizeof...(Sorters)>
+            >::type;
 
         public:
 
@@ -93,7 +155,10 @@ namespace cppsort
                     >::iterator_category;
 
                 // Call the appropriate operator()
-                return dispatch_sorter{}(category{}, iterable, std::forward<Args>(args)...);
+                return dispatch_sorter{}(
+                    detail::choice<detail::iterator_category_value<category> * categories_number>{},
+                    iterable, std::forward<Args>(args)...
+                );
             }
 
             template<typename Iterator, typename... Args>
@@ -104,7 +169,10 @@ namespace cppsort
                 using category = typename std::iterator_traits<Iterator>::iterator_category;
 
                 // Call the appropriate operator()
-                return dispatch_sorter{}(category{}, first, last, std::forward<Args>(args)...);
+                return dispatch_sorter{}(
+                    detail::choice<detail::iterator_category_value<category> * categories_number>{},
+                    first, last, std::forward<Args>(args)...
+                );
             }
     };
 

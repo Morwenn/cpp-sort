@@ -2,12 +2,22 @@
 include_directories(${CATCH_INCLUDE_DIR})
 
 # Define test files
-set(
-    SORT_TESTS
 
-    sort3.cpp
-    sort4.cpp
-    sort5.cpp
+set(
+    ADAPTER_TESTS
+
+    adapters/hybrid_adapter_sfinae.cpp
+    adapters/self_sort_adapter_no_compare.cpp
+    adapters/small_array_adapter3.cpp
+    adapters/small_array_adapter4.cpp
+    adapters/small_array_adapter5.cpp
+)
+
+set(
+    SORTERS_TESTS
+
+    sorters/default_sorter.cpp
+    sorters/default_sorter_fptr.cpp
 )
 
 # Make one executable for the whole testsuite
@@ -15,7 +25,8 @@ add_executable(
     cpp-sort-testsuite
 
     main.cpp
-    ${SORT_TESTS}
+    ${ADAPTER_TESTS}
+    ${SORTERS_TESTS}
 )
 
 add_test(testsuite cpp-sort-testsuite)

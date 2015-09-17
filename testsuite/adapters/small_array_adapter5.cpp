@@ -27,17 +27,17 @@
 #include <catch.hpp>
 #include <cpp-sort/sort.h>
 
-TEST_CASE( "sort arrays of size 4", "[sort]" )
+TEST_CASE( "sort arrays of size 5", "[small_array_adapter][sort]" )
 {
     SECTION( "sort C arrays" )
     {
         // Create a sorted array
-        int array[] = { 1, 2, 3, 4 };
+        int array[] = { 1, 2, 3, 4, 5 };
 
         // Try to sort every permutation
         do
         {
-            int to_sort[] = { 0, 0, 0, 0 };
+            int to_sort[] = { 0, 0, 0, 0, 0 };
             std::copy(std::begin(array), std::end(array), std::begin(to_sort));
             cppsort::sort(to_sort);
             CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
@@ -47,7 +47,7 @@ TEST_CASE( "sort arrays of size 4", "[sort]" )
     SECTION( "sort std::array" )
     {
         // Create a sorted array
-        std::array<int, 4u> array = { 1, 2, 3, 4 };
+        std::array<int, 5u> array = { 1, 2, 3, 4, 5 };
 
         // Try to sort every permutation
         do
