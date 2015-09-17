@@ -87,9 +87,10 @@ following line:
 #include <cpp-sort/sorters.h>
 ```
 
-## Available comparison sorters
+## Generic sorters
 
-The following comparison sorters are available in the library:
+The following sorters are available and will work with any type for which `std::less`
+works:
 
 ### `default_sorter`
 
@@ -215,3 +216,33 @@ Implements a [vergesort](https://github.com/Morwenn/vergesort).
 
     Best        Average     Worst       Memory      Stable      Iterators
     n           n log n     n log n     n           No          Random access
+
+## Type-specific sorters
+
+The following sorters are available but will only work for some specific types:
+
+### `spread_sorter`
+
+```cpp
+#include <cpp-sort/sorters/spread_sorter.h>
+```
+
+`spread_sorter` impements a [spreadsort](https://en.wikipedia.org/wiki/Spreadsort)
+and comes into three main flavours:
+
+* `integer_spread_sorter` works with any type satisfying `std::is_integral`.
+* `float_spread_sorter` works with any type satisfying `std::numeric_limits::is_iec559`.
+* `string_spread_sorter` works with `std::string` and `std::wstring`.
+
+    Best        Average     Worst       Memory      Stable      Iterators
+    ?           n*(k/d)     n*(k/s+d)   n*(k/d)     No          Random access
+
+These three sorters are aggregated into one main sorter the following way:
+
+```cpp
+using spread_sorter = hybrid_adapter<
+    integer_spread_sorter,
+    float_spread_sorter,
+    string_spread_sorter
+>;
+```
