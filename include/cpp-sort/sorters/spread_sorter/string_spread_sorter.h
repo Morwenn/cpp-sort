@@ -53,7 +53,10 @@ namespace cppsort
                              typename std::wstring>::value
             >
         {
-            detail::spreadsort::string_sort(first, last);
+            detail::spreadsort::string_sort(
+                first, last,
+                typename std::iterator_traits<RandomAccessIterator>::value_type{}
+            );
         }
     };
 
