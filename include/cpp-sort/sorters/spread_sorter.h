@@ -21,22 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_SPREAD_SORTER_H_
+#define CPPSORT_SORTERS_SPREAD_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/heap_sorter.h>
-#include <cpp-sort/sorters/inplace_merge_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
-#include <cpp-sort/sorters/verge_sorter.h>
+#include <cpp-sort/adapters/hybrid_adapter.h>
+#include <cpp-sort/sorters/spread_sorter/float_spread_sorter.h>
+#include <cpp-sort/sorters/spread_sorter/integer_spread_sorter.h>
+#include <cpp-sort/sorters/spread_sorter/string_spread_sorter.h>
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    using spread_sorter = hybrid_adapter<
+        integer_spread_sorter,
+        float_spread_sorter,
+        string_spread_sorter
+    >;
+}
+
+#endif // CPPSORT_SORTERS_SPREAD_SORTER_H_

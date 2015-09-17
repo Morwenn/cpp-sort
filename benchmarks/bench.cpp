@@ -124,10 +124,10 @@ int main()
     auto seed = std::time(0);
     std::mt19937_64 el;
 
-    using DistrF    = std::vector<int>(*)(size_t, std::mt19937_64&);
-    using SortF     = void(*)(std::vector<int>&);
+    using distr_f    = std::vector<int>(*)(size_t, std::mt19937_64&);
+    using sort_f     = void(*)(std::vector<int>&);
 
-    std::pair<std::string, DistrF> distributions[] = {
+    std::pair<std::string, distr_f> distributions[] = {
         { "shuffled_int",               shuffled_int                },
         { "shuffled_16_values_int",     shuffled_16_values_int      },
         { "all_equal_int",              all_equal_int               },
@@ -142,12 +142,13 @@ int main()
         { "alternating_16_values_int",  alternating_16_values_int   }
     };
 
-    std::pair<std::string, SortF> sorts[] = {
-        { "heapsort",   cppsort::heap_sorter()  },
-        { "introsort",  cppsort::std_sorter()   },
-        { "pdqsort",    cppsort::pdq_sorter()   },
-        { "vergesort",  cppsort::verge_sorter() },
-        { "timsort",    cppsort::tim_sorter()   }
+    std::pair<std::string, sort_f> sorts[] = {
+        { "heapsort",   cppsort::heap_sorter()              },
+        { "introsort",  cppsort::std_sorter()               },
+        { "pdqsort",    cppsort::pdq_sorter()               },
+        { "vergesort",  cppsort::verge_sorter()             },
+        { "timsort",    cppsort::tim_sorter()               },
+        { "spreadsort", cppsort::integer_spread_sorter()    }
     };
 
     int sizes[] = { 1'000'000 };
