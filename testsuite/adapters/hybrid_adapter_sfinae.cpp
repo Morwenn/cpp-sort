@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include <iterator>
+#include <string>
 #include <type_traits>
 #include <vector>
 #include <catch.hpp>
@@ -34,7 +35,8 @@
 enum class sorter_type
 {
     integer,
-    floating_point
+    floating_point,
+    generic
 };
 
 struct integer_sorter:
@@ -73,6 +75,19 @@ struct float_sorter:
     }
 };
 
+struct generic_sorter:
+    cppsort::sorter_base<generic_sorter>
+{
+    using cppsort::sorter_base<generic_sorter>::operator();
+
+    template<typename RandomAccessIterator>
+    auto operator()(RandomAccessIterator, RandomAccessIterator)
+        -> sorter_type
+    {
+        return sorter_type::generic;
+    }
+};
+
 namespace cppsort
 {
     template<>
@@ -88,6 +103,13 @@ namespace cppsort
         using iterator_category = std::random_access_iterator_tag;
         static constexpr bool is_stable = false;
     };
+
+    template<>
+    struct sorter_traits<generic_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        static constexpr bool is_stable = false;
+    };
 }
 
 TEST_CASE( "sfinae forwarding in hybrid_adapter",
@@ -97,12 +119,15 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
     // the SFINAE in the aggregated sorters
 
     // Vectors to "sort"
-    std::vector<int> vec1(80);
-    std::vector<float> vec2(80);
+    std::vector<int> vec1(3);
+    std::vector<float> vec2(3);
+    std::vector<std::string> vec3(3);
 
     using sorter = cppsort::hybrid_adapter<
         float_sorter,
-        integer_sorter
+        integer_sorter,
+        // Should act as a fallback
+        generic_sorter
     >;
 
     SECTION( "with iterators" )
@@ -112,6 +137,9 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
 
         sorter_type res2 = cppsort::sort(std::begin(vec2), std::end(vec2), sorter{});
         CHECK( res2 == sorter_type::floating_point );
+
+        sorter_type res3 = cppsort::sort(std::begin(vec3), std::end(vec3), sorter{});
+        CHECK( res3 == sorter_type::generic );
     }
 
     SECTION( "with iterables" )
@@ -121,5 +149,8 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
 
         sorter_type res2 = cppsort::sort(vec2, sorter{});
         CHECK( res2 == sorter_type::floating_point );
+
+        sorter_type res3 = cppsort::sort(vec3, sorter{});
+        CHECK( res3 == sorter_type::generic );
     }
 }
