@@ -79,7 +79,7 @@ namespace cppsort
 
     template<typename... Sorters>
     class hybrid_adapter:
-        sorter_base<hybrid_adapter<Sorters...>>
+        public sorter_base<hybrid_adapter<Sorters...>>
     {
         private:
 
