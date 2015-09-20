@@ -48,15 +48,21 @@ namespace cppsort
         auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
             -> std::enable_if_t<
                 std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::string>::value ||
+                             typename std::string>::value
+            >
+        {
+            detail::spreadsort::string_sort(first, last);
+        }
+
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+            -> std::enable_if_t<
                 std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
                              typename std::wstring>::value
             >
         {
-            detail::spreadsort::string_sort(
-                first, last,
-                typename std::iterator_traits<RandomAccessIterator>::value_type{}
-            );
+            unsigned wchar_t unused = '\0';
+            detail::spreadsort::string_sort(first, last, unused);
         }
     };
 
