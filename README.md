@@ -46,6 +46,12 @@ read about them in the following page:
 
 * [Miscellaneous utilities](doc/utilities.md)
 
+While the primary goal of **cpp-sort** is to provide sorting algorithms, it has
+also be designed to be extensible. The following tutorials may help you to write
+custom sorters and sorter adapters:
+
+* [Writing a sorter](doc/writing-sorter.md)
+
 # Benchmarks
 
 The following graph has been generated with the scripts found in the benchmarks

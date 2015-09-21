@@ -1,81 +1,11 @@
 # Sorters
 
 **cpp-sort** uses function objects called *sorters* instead of regular function
-templates in order to implement sorting algorithms. It defines two concepts
-correspoding to two kinds of sorters: `Sorter` and `ComparisonSorter`.
-
-A type satisfies the `Sorter` concept if it can be called on a `ForwardIterable&`
-object, where a type satisfies the `ForwardIterable` concept if and only if calls
-to `std::begin` and `std::end` on this object return instances of a type satisfying
-the [`ForwardIterator`](http://en.cppreference.com/w/cpp/concept/ForwardIterator)
-concept (since the iterable is sorted in-place and thus altered, sorting an
-`InputIterable` type is not possible). To satisfy the `Sorter` concept, a type also
-has to provide an overload of `operator()` which takes a pair of `ForwardIterator`.
-A `Sorter` instance should additionally be convertible to `Ret(*)(ForwardIterable&)`
-and `Ret(*)(ForwardIterator, ForwardIterator)` where `Ret` is the return type of
-the operation.
-
-A type satisfies the `ComparisonSorter` concept if it satisfies the `Sorter`
-concept and can additionally be called with another parameter satisfying the
-[`Compare`](http://en.cppreference.com/w/cpp/concept/Compare) concept. While
-most sorters satisfy this concept, some of them might implement non-comparison
-based sorting algorithms such as radix sort, and thus only satisfy the `Sorter`
-concept. A `ComparisonSorter` instance should additionally be convertible to
-`Ret(*)(ForwardIterable&, Compare)` and `Ret(*)(ForwardIterator, ForwardIterator, Compare)`
-where `Ret` is the return type of the operation.
-
-Implementing a sorter is easy once you have a sorting algorithm: simply add an
-`operator()` overload that forwards its values to a sorting function. If your
-sorter supports custom comparison functions, make sure that it can also be
-called *without* such a function. A `ComparisonSorter` should be usable wherever
-a `Sorter` is usable.
-
-```cpp
-#include <functional>
-#include <iterator>
-#include <cpp-sort/sorter_base.h>
-#include "spam_sort.h"
-
-/**
- * ComparisonSorter implementing a spam_sort algorithm, where spam_sort
- * is a sorting algorithm working with bidirectional iterators.
- */
-struct spam_sorter:
-    cppsort::sorter_base<spam_sorter>
-{
-    using cppsort::sorter_base<spam_sorter>::operator();
-
-    template<
-        typename BidirectionalIterator,
-        typename Compare = std::less<>
-    >
-    auto operator()(BidirectionalIterator first,
-                    BidirectionalIterator last,
-                    Compare cmp={}) const
-        -> void
-    {
-        spam_sort(std::begin(iterable), std::end(iterable), cmp);
-    }
-};
-```
-
-In the previous example, [`sorter_base`](sorter-base.md) is a CRTP base class that
-is used to provide the function pointer conversion operators to the sorter. It also
-generates the range overloads of `operator()`. If you want your sorter to integrate
-seamlessly into the library, you should additionally specialize the template class
-[`cppsort::sorter_traits`](sorter-traits.md) for it:
-
-```cpp
-namespace cppsort
-{
-    template<>
-    struct sorter_traits<spam_sorter>
-    {
-        using iterator_category = std::bidirectional_iterator_tag;
-        static constexpr bool is_stable = true;
-    };
-}
-```
+templates in order to implement sorting algorithms. The library provides two
+categories of sorters: generic sorters that will sort a collection with any given
+comparison function, and type-specific sorters which will be optimized to sort
+collections of a given type, and generally don't allow to use custom comparison
+functions due to the way they work.
 
 While these function objects offer little more than regular sorting functions by
 themselves, you can use them together with [*sorter adapaters*](sorter-adapters.md)
@@ -87,10 +17,13 @@ following line:
 #include <cpp-sort/sorters.h>
 ```
 
+If you want to read more about sorters and/or write your own one, then you should
+have a look at [the dedicated page](writing-sorter.md).
+
 ## Generic sorters
 
 The following sorters are available and will work with any type for which `std::less`
-works:
+works and should accept any well-formed comparison function:
 
 ### `default_sorter`
 
@@ -232,7 +165,7 @@ and comes into three main flavours:
 
 * `integer_spread_sorter` works with any type satisfying `std::is_integral`.
 * `float_spread_sorter` works with any type satisfying `std::numeric_limits::is_iec559`.
-* `string_spread_sorter` works with `std::string` and `std::wstring`.
+* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes).
 
     Best        Average     Worst       Memory      Stable      Iterators
     ?           n*(k/d)     n*(k/s+d)   n*(k/d)     No          Random access
