@@ -3,7 +3,7 @@
 In this tutorial, you will learn the quirks involved in writing a good sorter to
 wrap a sorting algorithm. Writing a basic sorter is easy, but getting everything
 right to the details might be a bit tricky from time to time. This guide should
-help you to make the choices (at least I hope so).
+help you to make the good choices (at least I hope so).
 
 ## Concepts
 
@@ -53,7 +53,7 @@ void selection_sort(ForwardIterator first, ForwardIterator last,
 ```
 
 Wrapping this algorithm into a `selection_sorter` object to benefit from the full
-power of **cpp-sort** is actually rather trivial. Here is the sorter:
+power of **cpp-sort** is actually rather trivial. Here is the corresponding sorter:
 
 ```cpp
 struct selection_sorter:
@@ -74,7 +74,7 @@ struct selection_sorter:
 };
 ```
 
-As you can see, you simply have to add an `operator()` overload that forwards its
+As you can see, you simply have to provide an `operator()` overload that forwards its
 values to the sorting function. If your sorter supports custom comparison functions,
 make sure that it can also be called *without* a comparison function. The reason is
 that a `ComparisonSorter` should also be usable wherever a `Sorter` is usable.
@@ -107,10 +107,10 @@ auto operator()(ForwardIterable iterable, Compare compare={}) const
 
 While the `selection_sorter` we wrote should work with most of the library, a little
 bit of work has still to be done so that it can benefit from `hybrid_adapter`, which
-is subjectively the most interesting componend of this library. `hybrid_adapter`'s
-`operator()` needs the iterator category of the sorters it aggregates in order to
-dispatch a call to the most suitable sorter. You can provide this iterator category
-information by specializing [`sorter_traits`](sorter-traits.md) for your sorter:
+is subjectively the most interesting component in this library. `hybrid_adapter`'s
+`operator()` needs to know the iterator category of the sorters it aggregates so that
+it can dispatch a call to the most suitable sorter. You can provide this information
+by specializing [`sorter_traits`](sorter-traits.md) for your sorter:
 
 ```cpp
 namespace cppsort
@@ -124,7 +124,7 @@ namespace cppsort
 }
 ```
 
-Note that `sorter_traits` also contain information about the stability of the sorting
+Note that `sorter_traits` also contains information about the stability of the sorting
 algorithm. This information is currently unused in the library but still provided for
 every sorter and sorter adapter.
 
@@ -133,14 +133,14 @@ every sorter and sorter adapter.
 While most sorting algorithms are comparison sorts designed to work with any type for
 which a total order exists (given the appropriate comparison function, which tends to
 be `std::less<>` by default), it is also possible to write sorters for algorithms that
-do not implement a comparison sort. In thi chapter, we will see how to make a sorter
+do not implement a comparison sort. In this chapter, we will see how to make a sorter
 to wrap a [counting sort](https://en.wikipedia.org/wiki/Counting_sort).
 
-A couting sort is not a comparison sort since it does not really about which element
-is greater than another, but relies on integer an array arithmetics to perform the
-sort. That said, it being a non-comparison sort means that it cannot be given an
-arbitrary comparison function to perform the sort. Implementing the basic sorter
-remains trivial:
+A couting sort is not a comparison sort since it does not really care that much about
+which element is greater than another, but relies on integer an array arithmetics to
+perform the sort. That said, it being a non-comparison sort means that it cannot be
+given an arbitrary comparison function to perform the sort. The naive implementation
+for such a sorter remains trivial:
 
 ```cpp
 struct counting_sorter:
@@ -164,8 +164,8 @@ types since they generally use the properties of these types to sort the collect
 For example, our `counting_sorter` only works with built-in integer types, but this
 information currently does not appear anywhere in the interface.
 
-While it could be possible to trigger hard error with a `static_assert`, it is actually
-more interesting to use SFINAE so that it is only a soft error:
+While it could be possible to trigger a hard error with a `static_assert`, using SFINAE
+to trigger a soft error instead is actuallymore interesting:
 
 ```cpp
 struct counting_sorter:
@@ -189,7 +189,7 @@ struct counting_sorter:
 Using such a soft error mechanism instead of a hard one will make it possible to use
 your sorter together with `hybrid_adapter` (provided you specialized `sorter_traits`
 accordingly) so that you can make it fallback to a generic sorting algorithm when a
-collection not handled by your sorter is given to it:
+collection not handled by your sorter is given to the aggregate:
 
 ```cpp
 // This sorter will use couting_sorter if a collection

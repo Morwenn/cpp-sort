@@ -8,7 +8,7 @@ collections of a given type, and generally don't allow to use custom comparison
 functions due to the way they work.
 
 While these function objects offer little more than regular sorting functions by
-themselves, you can use them together with [*sorter adapaters*](sorter-adapters.md)
+themselves, you can use them together with [*sorter adapters*](sorter-adapters.md)
 to craft more elaborate sorters effortlessly. Every sorter is available in its own
 file. However, you can also include all the available sorters at once with the
 following line:
