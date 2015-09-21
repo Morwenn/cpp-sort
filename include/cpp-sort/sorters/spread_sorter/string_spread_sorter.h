@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstdint>
 #include <iterator>
 #include <string>
 #include <type_traits>
@@ -58,10 +59,11 @@ namespace cppsort
         auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
             -> std::enable_if_t<
                 std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::wstring>::value
+                             typename std::wstring
+                >::value && (sizeof(wchar_t) == 2)
             >
         {
-            unsigned wchar_t unused = '\0';
+            std::uint16_t unused = 0;
             detail::spreadsort::string_sort(first, last, unused);
         }
     };
