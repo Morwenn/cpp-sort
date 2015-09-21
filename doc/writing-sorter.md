@@ -200,3 +200,79 @@ using generic_sorter = cppsort::hybrid_adapter<
     cppsort::inplace_merge_sorter
 >;
 ```
+
+## Rules and guarantees
+
+Enforcing everything from the library side is rather difficult and **cpp-sort** remains
+rather permissive. That said, if you don't want to be surprised when implementing your
+sorters, you should at least follow a few rules...
+
+* For any sorter called without a comparison function, `std::is_sorted` called without
+a comparison function on the resulting collection shall return `true`.
+* For any sorter called with a specific comparison function, `std::is_sorted` called
+with the same comparison function on the resulting collection shall return `true`.
+* Calling a sorter with `std::less<>`, with `std::less<T>` (where `T` is the type of the
+elements of the collection to sort) or without a comparison function should be strictly
+equivalent: calling `std::is_sorted` without a comparison function on the resulting
+collection should return `true`.
+* Every sorter callable with at least one comparison function should also be callable
+without a comparison function.
+* Every sorter which can be called with a collection and a comparison function shall
+also be callable with two corresponding iterators and the same comparison functions.
+
+Some parts of the library should still work even if these rules are not enforced, but
+enforcing should protect you against surprising behaviour.
+
+## Improving type-specific sorters
+
+The rules above allow to safely break from the black & white world of comparison and
+non-comparison sorters, and to write sorters that accept only *some* specific comparison
+functions. To support that model, [`sorter_base`](sorter-base.md) adds overloads to
+`operator()` which take an `std::less<>` or an `std::less<T>` instance to non-comparison
+sorters so that *any* non-comparison sorter can also be called with `std::less<>`, so
+you don't have to do that by yourself either.
+
+Now, assume that our `counting_sort` algorithm also has an evil twin, to which we will
+give the name of `reverse_counting_sort`. From the following rules, it is pretty clear
+that makinga  `reverse_counting_sorter` would be a bad idea since sorters called without
+a comparison function are supposed to sort a collection in ascending order. However,
+after having reverse-sorted a collection of integers, the following assertion should
+hold:
+
+```cpp
+assert( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+```
+
+That means that we can actually safely add `reverse_counting_sort` to `counting_sorter`
+by making an overload that takes an instance of `std::greater<>` and still satisfy all
+the rules described in the previous section. Here is the overload:
+
+```cpp
+template<typename ForwardIterator>
+auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
+    -> std::enable_if_t<
+        std::is_integral<
+            typename std::iterator_traits<ForwardIterator>::value_type
+        >::value
+    >
+{
+    reverse_counting_sort(first, last);
+}
+```
+
+Note that for the sorter to be really complete, it would need to take an equivalent
+overload for `std::greater<T>`, but `sorter_base` does not automate the generation
+of such overloads for you (yet?), so you are bound to write that boilerplate by
+yourself. Now, the `hybrid_adapter` from a little while ago just got a bit more
+powerful:
+
+```cpp
+// This sorter will use couting_sorter if a random-access collection of
+// integers is given to it with no comparison function, with std::less
+// or with std::greater and will fallback to inplace_merge_sorter in
+// any other case
+using generic_sorter = cppsort::hybrid_adapter<
+    counting_sorter,
+    cppsort::inplace_merge_sorter
+>;
+```
