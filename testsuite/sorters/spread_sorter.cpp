@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <ctime>
 #include <iterator>
+#include <random>
 #include <string>
 #include <vector>
 #include <catch.hpp>

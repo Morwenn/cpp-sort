@@ -25,11 +25,11 @@
 #include <string>
 #include <type_traits>
 #include <vector>
-#include <catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
+#include <catch.hpp>
 
 // Type of sorter used for checks
 enum class sorter_type

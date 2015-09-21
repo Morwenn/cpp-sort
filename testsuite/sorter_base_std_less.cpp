@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <cassert>
+#include <functional>
 #include <iterator>
-#include <string>
-#include <type_traits>
 #include <vector>
 #include <catch.hpp>
+#include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_traits.h>
 
 struct comparison_sorter:
     cppsort::sorter_base<comparison_sorter>
@@ -66,8 +66,9 @@ struct non_comparison_sorter:
 TEST_CASE( "std::less<> forwarding to sorters",
            "[sorter_base][compare]" )
 {
-    // Check that hybrid_adapter takes into account
-    // the SFINAE in the aggregated sorters
+    // Check that sorter_base only creates the overloads for
+    // std::less when the original sorter does not support
+    // custom comparison functions
 
     // Vector to "sort"
     std::vector<int> vec(3);
