@@ -1,74 +1,63 @@
 /*
-    Copyright (c) 2013-2014 Stephan Brumme
-    Modified in 2015 by Morwenn for inclusion into cpp-sort
-
-    This software is provided 'as-is', without any express or implied warranty. In no event will the
-    authors be held liable for any damages arising from the use of this software.
-
-    Permission is granted to anyone to use this software for any purpose, including commercial
-    applications, and to alter it and redistribute it freely, subject to the following restrictions:
-
-    1. The origin of this software must not be misrepresented; you must not claim that you wrote the
-       original software.
-
-    2. If you use this software in a product, an acknowledgment in the product documentation would be
-       appreciated but is not required.
-
-    3. Altered source versions must be plainly marked as such, and must not be misrepresented as
-       being the original software.
-*/
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 #ifndef CPPSORT_DETAIL_QUICKSORT_H_
 #define CPPSORT_DETAIL_QUICKSORT_H_
 
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 
 namespace cppsort
 {
 namespace detail
 {
-    template <typename iterator, typename LessThan>
-    void quicksort(iterator first, iterator last, LessThan lessThan, std::size_t size)
+    template <typename BidirectionalIterator, typename Compare>
+    void quicksort(BidirectionalIterator first, BidirectionalIterator last,
+                   Compare compare, std::size_t size)
     {
-      // already sorted ?
-      if (size <= 1)
-        return;
+        // A collection of 0 or 1 elements is already sorted
+        if (size < 2) return;
 
-      iterator pivot = last;
-      --pivot;
+        // Choose a pivot, size / 2 is ok
+        const auto& pivot = *std::next(first, size / 2);
 
-      // choose middle element as pivot (good choice for partially sorted data)
-      if (size > 2)
-      {
-        iterator middle = first;
-        std::advance(middle, size / 2);
-        std::iter_swap(middle, pivot);
-      }
+        // Partition the collection
+        BidirectionalIterator middle1 = std::partition(
+            first, last,
+            [=](const auto& elem) { return compare(elem, pivot); }
+        );
+        BidirectionalIterator middle2 = std::partition(
+            middle1, last,
+            [=](const auto& elem){ return not compare(pivot, elem); }
+        );
 
-      // scan beginning from left and right end and swap misplaced elements
-      iterator left  = first;
-      iterator right = pivot;
-      while (left != right)
-      {
-        // look for mismatches
-        while (!lessThan(*pivot, *left)  && left != right)
-          ++left;
-        while (!lessThan(*right, *pivot) && left != right)
-          --right;
-        // swap two values which are both on the wrong side of the pivot element
-        if (left != right)
-          std::iter_swap(left, right);
-      }
-
-      // move pivot to its final position
-      if (pivot != left && lessThan(*pivot, *left))
-        std::iter_swap(pivot, left);
-
-      // subdivide
-      std::size_t size_left = std::distance(first, left);
-      quicksort(first,  left, lessThan, size_left);
-      // *left itself is already sorted
-      quicksort(++left, last, lessThan, size - size_left - 1);
+        // Recursive call: heuristic trick here
+        // The "middle" partition is more likely to be smaller than the
+        // last one, so computing its size should generally be cheaper
+        std::size_t size_left = std::distance(first, middle1);
+        quicksort(first, middle1, compare, size_left);
+        quicksort(middle2, last, compare, size - size_left - std::distance(middle1, middle2));
     }
 }}
 

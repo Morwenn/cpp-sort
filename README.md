@@ -74,8 +74,8 @@ resources I used to create this library. I hope that the different licenses
 are compatible. If it is not the case, please contact me (or post an issue)
 and we will see what can be done about it:
 
-* The algorithms used by `inplace_merge_sorter` and `quick_sorter` come from
-Stephan Brumme's [Sorting STL containers](http://create.stephan-brumme.com/stl-sort/).
+* The algorithm used by `inplace_merge_sorter` comes from Stephan Brumme's
+[Sorting STL containers](http://create.stephan-brumme.com/stl-sort/).
 
 * The algorithms used by `insertion_sorter` and `pdq_sorter` come from Orson
 Peters' [pattern-defeating quicksort](https://github.com/orlp/pdqsort). Some
