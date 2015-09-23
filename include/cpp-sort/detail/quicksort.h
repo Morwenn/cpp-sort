@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include "insertion_sort.h"
 
 namespace cppsort
 {
@@ -36,8 +37,13 @@ namespace detail
     void quicksort(BidirectionalIterator first, BidirectionalIterator last,
                    Compare compare, std::size_t size)
     {
-        // A collection of 0 or 1 elements is already sorted
-        if (size < 2) return;
+        // If the collection is small, fall back to
+        // insertion sort
+        if (size < 25)
+        {
+            insertion_sort(first, last, compare);
+            return;
+        }
 
         // Choose a pivot, size / 2 is ok
         const auto& pivot = *std::next(first, size / 2);
@@ -49,7 +55,7 @@ namespace detail
         );
         BidirectionalIterator middle2 = std::partition(
             middle1, last,
-            [=](const auto& elem){ return not compare(pivot, elem); }
+            [=](const auto& elem) { return not compare(pivot, elem); }
         );
 
         // Recursive call: heuristic trick here
