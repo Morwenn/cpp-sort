@@ -89,7 +89,7 @@ Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n log n     n log n     n log n     n           Yes         Random access
+    n log n     n log n     n log n     n           Yes         Bidirectional
 
 ### `pdq_sorter`
 

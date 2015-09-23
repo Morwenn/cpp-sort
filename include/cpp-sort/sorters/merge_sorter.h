@@ -41,18 +41,35 @@ namespace cppsort
     struct merge_sorter:
         sorter_base<merge_sorter>
     {
-        using sorter_base<merge_sorter>::operator();
-
         template<
-            typename RandomAccessIterator,
+            typename BidirectionalIterable,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterator first,
-                        RandomAccessIterator last,
+        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+            -> void
+        {
+            detail::merge_sort(
+                std::begin(iterable),
+                std::end(iterable),
+                compare,
+                utility::size(iterable)
+            );
+        }
+
+        template<
+            typename BidirectionalIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(BidirectionalIterator first,
+                        BidirectionalIterator last,
                         Compare compare={}) const
             -> void
         {
-            detail::merge_sort(first, last, compare);
+            detail::merge_sort(
+                first, last,
+                compare,
+                std::distance(first, last)
+            );
         }
     };
 
@@ -62,7 +79,7 @@ namespace cppsort
     template<>
     struct sorter_traits<merge_sorter>
     {
-        using iterator_category = std::random_access_iterator_tag;
+        using iterator_category = std::bidirectional_iterator_tag;
         static constexpr bool is_stable = true;
     };
 }

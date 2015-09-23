@@ -28,28 +28,25 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <functional>
+#include <cstddef>
 #include <iterator>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<
-        typename RandomAccessIterator,
-        typename Compare = std::less<>
-    >
-    void merge_sort(RandomAccessIterator first,
-                    RandomAccessIterator last,
-                    Compare compare={})
+    template<typename BidirectionalIterator, typename Compare>
+    void merge_sort(BidirectionalIterator first, BidirectionalIterator last,
+                    Compare compare, std::size_t size)
     {
-        if (std::distance(first, last) > 1)
-        {
-            auto middle = first + (last - first) / 2;
-            merge_sort(first, middle, compare);
-            merge_sort(middle, last, compare);
-            std::inplace_merge(first, middle, last, compare);
-        }
+        if (size < 2) return;
+
+        auto size_left = size / 2;
+        auto middle = std::next(first, size_left);
+
+        merge_sort(first, middle, compare, size_left);
+        merge_sort(middle, last, compare, size - size_left);
+        std::inplace_merge(first, middle, last, compare);
     }
 }}
 
