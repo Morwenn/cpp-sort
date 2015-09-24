@@ -57,6 +57,23 @@ template<typename Iterable, typename Compare>
 constexpr bool has_comparison_sort_method = /* implementation-defined */;
 ```
 
+### `inplace_merge`
+
+This function is similar to [`std::inplace_merge`](http://en.cppreference.com/w/cpp/algorithm/inplace_merge)
+except that it is aso allowed to work with forward iterators while the standard
+version only works with bidirectional iterators. This function will try to use
+additional memory to merge the ranges, and use a slower algorithm if it cannot
+allocate extra memory.
+
+```cpp
+template<
+    typename ForwardIterator,
+    typename Compare = std::less<>
+>
+void inplace_merge(ForwardIterator first, ForwardIterator middle,
+                   ForwardIterator last, Compare compare={});
+```
+
 ### `is_in_range`
 
 ```cpp
