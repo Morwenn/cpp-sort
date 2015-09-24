@@ -27,26 +27,30 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <cpp-sort/utility/inplace_merge.h>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename BidirectionalIterator, typename Compare>
-    void merge_sort(BidirectionalIterator first, BidirectionalIterator last,
+    template<typename ForwardIterator, typename Compare>
+    void merge_sort(ForwardIterator first, ForwardIterator last,
                     Compare compare, std::size_t size)
     {
         if (size < 2) return;
 
+        // Divide the range into two partitions
         auto size_left = size / 2;
         auto middle = std::next(first, size_left);
 
+        // Recursively sort the partitions
         merge_sort(first, middle, compare, size_left);
         merge_sort(middle, last, compare, size - size_left);
-        std::inplace_merge(first, middle, last, compare);
+
+        // Merge the sorted partitions in-place
+        utility::inplace_merge(first, middle, last, compare);
     }
 }}
 

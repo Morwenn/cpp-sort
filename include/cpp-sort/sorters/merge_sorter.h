@@ -31,6 +31,7 @@
 #include <iterator>
 #include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/size.h>
 #include "../detail/merge_sort.h"
 
 namespace cppsort
@@ -42,10 +43,10 @@ namespace cppsort
         sorter_base<merge_sorter>
     {
         template<
-            typename BidirectionalIterable,
+            typename ForwardIterable,
             typename Compare = std::less<>
         >
-        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+        auto operator()(ForwardIterable& iterable, Compare compare={}) const
             -> void
         {
             detail::merge_sort(
@@ -57,11 +58,10 @@ namespace cppsort
         }
 
         template<
-            typename BidirectionalIterator,
+            typename ForwardIterator,
             typename Compare = std::less<>
         >
-        auto operator()(BidirectionalIterator first,
-                        BidirectionalIterator last,
+        auto operator()(ForwardIterator first, ForwardIterator last,
                         Compare compare={}) const
             -> void
         {
@@ -79,7 +79,7 @@ namespace cppsort
     template<>
     struct sorter_traits<merge_sorter>
     {
-        using iterator_category = std::bidirectional_iterator_tag;
+        using iterator_category = std::forward_iterator_tag;
         static constexpr bool is_stable = true;
     };
 }
