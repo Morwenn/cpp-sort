@@ -66,6 +66,7 @@ namespace utility
             }
             else // Hand-made in-place merge algorithm
             {
+                ForwardIterator insertion_point = middle;
                 for (; first != middle ; ++first)
                 {
                     if (compare(*middle, *first))
@@ -77,17 +78,17 @@ namespace utility
                         *first = std::move(*middle);
 
                         // Look for the place where to insert tmp
-                        ForwardIterator current = middle;
-                        ForwardIterator next = std::next(current);
+                        ForwardIterator next = std::next(insertion_point);
 
                         // Move everything smaller than tmp to the left
+                        std::move(std::next(middle), next, middle);
                         while (next != last && compare(*next, tmp))
                         {
-                            *current++ = std::move(*next++);
+                            *insertion_point++ = std::move(*next++);
                         }
 
                         // Insert tmp in the right place
-                        *current = std::move(tmp);
+                        *insertion_point = std::move(tmp);
                     }
                 }
             }
@@ -103,17 +104,17 @@ namespace utility
         }
     }
 
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>
-        >
-        auto inplace_merge(ForwardIterator first, ForwardIterator middle,
-                           ForwardIterator last, Compare compare={})
-            -> void
-        {
-            using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
-            detail::inplace_merge(first, middle, last, compare, category{});
-        }
+    template<
+        typename ForwardIterator,
+        typename Compare = std::less<>
+    >
+    auto inplace_merge(ForwardIterator first, ForwardIterator middle,
+                       ForwardIterator last, Compare compare={})
+        -> void
+    {
+        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        detail::inplace_merge(first, middle, last, compare, category{});
+    }
 }}
 
 #endif // CPPSORT_UTILITY_INPLACE_MERGE_H_
