@@ -118,6 +118,18 @@ Implements a [quicksort](https://en.wikipedia.org/wiki/Quicksort).
     Best        Average     Worst       Memory      Stable      Iterators
     n long n    n log n     n²          n           No          Forward
 
+### `selection_sorter`
+
+```cpp
+#include <cpp-sort/sorters/selection_sorter.h>
+```
+
+Implements a [selection sort](https://en.wikipedia.org/wiki/Selection_sort).
+
+
+    Best        Average     Worst       Memory      Stable      Iterators
+    n²          n²          n²          n           No          Forward
+
 ### `std_sorter`
 
 ```cpp

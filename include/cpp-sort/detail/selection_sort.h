@@ -21,23 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_DETAIL_SELECTION_SORT_H_
+#define CPPSORT_DETAIL_SELECTION_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/heap_sorter.h>
-#include <cpp-sort/sorters/inplace_merge_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/selection_sorter.h>
-#include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
-#include <cpp-sort/sorters/verge_sorter.h>
+#include <algorithm>
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename ForwardIterator, typename Compare>
+    void selection_sort(ForwardIterator first, ForwardIterator last,
+                        Compare compare)
+    {
+        for (ForwardIterator it = first ; it != last ; ++it)
+        {
+            std::iter_swap(it, std::min_element(it, last, compare));
+        }
+    }
+}}
+
+#endif // CPPSORT_DETAIL_SELECTION_SORT_H_
