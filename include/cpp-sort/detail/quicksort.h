@@ -33,8 +33,8 @@ namespace cppsort
 {
 namespace detail
 {
-    template <typename BidirectionalIterator, typename Compare>
-    void quicksort(BidirectionalIterator first, BidirectionalIterator last,
+    template <typename ForwardIterator, typename Compare>
+    void quicksort(ForwardIterator first, ForwardIterator last,
                    Compare compare, std::size_t size)
     {
         // If the collection is small, fall back to
@@ -49,11 +49,11 @@ namespace detail
         const auto& pivot = *std::next(first, size / 2);
 
         // Partition the collection
-        BidirectionalIterator middle1 = std::partition(
+        ForwardIterator middle1 = std::partition(
             first, last,
             [=](const auto& elem) { return compare(elem, pivot); }
         );
-        BidirectionalIterator middle2 = std::partition(
+        ForwardIterator middle2 = std::partition(
             middle1, last,
             [=](const auto& elem) { return not compare(pivot, elem); }
         );
