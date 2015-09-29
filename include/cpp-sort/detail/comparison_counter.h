@@ -48,7 +48,7 @@ namespace detail
             {}
 
             template<typename T, typename U>
-            auto operator()(T&& lhs, U&& rhs)
+            auto operator()(T&& lhs, U&& rhs) const
                 -> decltype(auto)
             {
                 ++counter.count;

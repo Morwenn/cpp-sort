@@ -104,6 +104,29 @@ namespace cppsort
 
     template<typename Sorter>
     constexpr bool is_stable = sorter_traits<Sorter>::is_stable;
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits modifiers
+
+    template<typename Sorter, typename Category>
+    struct rebind_iterator_category:
+        Sorter
+    {
+        static_assert(
+            std::is_base_of<
+                iterator_category<Sorter>,
+                Category
+            >::value,
+            "the new iterator category should be more specific"
+        );
+    };
+
+    template<typename Sorter, typename Category>
+    struct sorter_traits<rebind_iterator_category<Sorter, Category>>
+    {
+        using iterator_category = Category;
+        static constexpr bool is_stable = is_stable<Sorter>;
+    };
 }
 
 #endif // CPPSORT_SORTER_TRAITS_H_

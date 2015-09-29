@@ -91,3 +91,36 @@ When a sorter adapter is used, the stability of the resulting sorter is
 `true` if and only if its stability can be guaranteed and `false` otherwise,
 even when the adapted sorter *may* be stable (for example, `self_sorter` is
 always `false` since you can't guarantee its stability).
+
+### `rebind_iterator_category`
+
+```cpp
+template<typename Sorter, typename Category>
+struct rebind_iterator_category;
+```
+
+This class allows to get a sorter similar to the one passed but with a stricter
+iterator category. For example, it can generate a sorter whose iterator category
+is `std::bidirectional_iterator_tag` from another sorter whose iterator category
+is `std::forward_iterator_tag`. It is mostly ueful to make several sorters with
+the same iterator category work work for different iterator categories in an
+`hybrid_adapter`. Let's say we have two sorters, `foo_sorter` and `bar_sorter`;
+both have the iterator category `std::forward_iterator_tag`, but `foo_sorter` is
+the best to sort forward iterators while `bar_sorter` is benefits from some
+optimizations for bidirectional and random-access iterators. It is possible to
+use the best of both with the following sorter:
+
+```cpp
+using sorter = cppsort::hybrid_adapter<
+    foo_sorter,
+    cppsort::rebind_iterator_category<
+        bar_sorter,
+        std::bidirectional_iterator_tag
+    >
+>;
+```
+
+The sorter above will pick `foo_sorter` for forward iterators, but it will pick
+`bar_sorter` for bidirectional and random-access iterators. A compile-time error
+will occur if one tries to rebind to an iterator category that is not derived from
+the sorter's original iterator category.

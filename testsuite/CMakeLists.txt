@@ -27,6 +27,7 @@ add_executable(
     cpp-sort-testsuite
 
     main.cpp
+    rebind_iterator_category.cpp
     sorter_base_std_less.cpp
     ${ADAPTER_TESTS}
     ${SORTERS_TESTS}
