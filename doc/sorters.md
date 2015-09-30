@@ -181,7 +181,8 @@ and comes into three main flavours:
 
 * `integer_spread_sorter` works with any type satisfying `std::is_integral`.
 * `float_spread_sorter` works with any type satisfying `std::numeric_limits::is_iec559`.
-* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes).
+* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2
+bytes). This sorter also supports reverse sorting with `std::greater<>`.
 
     Best        Average     Worst       Memory      Stable      Iterators
     ?           n*(k/d)     n*(k/s+d)   n*(k/d)     No          Random access

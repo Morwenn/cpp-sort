@@ -95,4 +95,38 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
+
+    SECTION( "reverse sort with std::string iterable" )
+    {
+        std::vector<std::string> vec;
+        for (int i = 0 ; i < 100'000 ; ++i)
+        {
+            vec.push_back(std::to_string(i));
+        }
+
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(vec, cppsort::spread_sorter{}, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(vec, cppsort::spread_sorter{}, std::greater<std::string>{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<std::string>{}) );
+    }
+
+    SECTION( "reverse sort with std::wstring iterators" )
+    {
+        std::vector<std::wstring> vec;
+        for (int i = 0 ; i < 100'000 ; ++i)
+        {
+            vec.push_back(std::to_wstring(i));
+        }
+
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<std::wstring>{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<std::wstring>{}) );
+    }
 }
