@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
+#include <algorithm>
 #include <iterator>
 #include <utility>
 
@@ -33,24 +33,21 @@ namespace cppsort
 {
 namespace detail
 {
-    // Sorts [first, last) using insertion sort with the given comparison function.
-    template<
-        typename BidirectionalIterator,
-        typename Compare = std::less<>
-    >
+    template<typename BidirectionalIterator, typename Compare>
     void insertion_sort(BidirectionalIterator first,
                         BidirectionalIterator last,
-                        Compare compare={})
+                        Compare compare,
+                        std::bidirectional_iterator_tag)
     {
         if (first == last)
         {
             return;
         }
 
-        for (auto cur = std::next(first) ; cur != last ; ++cur)
+        for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur)
         {
-            auto sift = cur;
-            auto sift_1 = std::prev(cur);
+            BidirectionalIterator sift = cur;
+            BidirectionalIterator sift_1 = std::prev(cur);
 
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
@@ -65,6 +62,25 @@ namespace detail
                 *sift = std::move(tmp);
             }
         }
+    }
+
+    template<typename ForwardIterator, typename Compare>
+    void insertion_sort(ForwardIterator first, ForwardIterator last,
+                        Compare compare,
+                        std::forward_iterator_tag)
+    {
+        for (ForwardIterator it = first ; it != last ; ++it) {
+            ForwardIterator insertion_point = std::upper_bound(first, it, *it, compare);
+            std::rotate(insertion_point, it, std::next(it));
+        }
+    }
+
+    template<typename ForwardIterator, typename Compare>
+    void insertion_sort(ForwardIterator first, ForwardIterator last,
+                        Compare compare)
+    {
+        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        insertion_sort(first, last, compare, category{});
     }
 }}
 

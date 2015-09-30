@@ -39,7 +39,10 @@ using default_sorter = self_sort_adapter<
     small_array_adapter<
         hybrid_adapter<
             inplace_merge_sorter,
-            insertion_sorter,
+            rebind_iterator_category<
+                quick_sorter,
+                std::bidirectional_iterator_tag
+            >,
             pdq_sorter
         >,
         std::make_index_sequence<10u>
@@ -78,7 +81,7 @@ Implements an in-place merge sort.
 Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n           n²          n²          1           Yes         Bidirectional
+    n           n²          n²          1           Yes         Forward
 
 ### `merge_sorter`
 
@@ -113,7 +116,7 @@ Implements a [quicksort](https://en.wikipedia.org/wiki/Quicksort).
 
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n long n    n log n     n²          n           No          Bidirectional
+    n long n    n log n     n²          n           No          Forward
 
 ### `selection_sorter`
 

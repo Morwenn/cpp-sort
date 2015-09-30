@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <utility>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
@@ -34,6 +35,7 @@
 #include <cpp-sort/sorters/inplace_merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
+#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
@@ -41,7 +43,10 @@ namespace cppsort
         small_array_adapter<
             hybrid_adapter<
                 inplace_merge_sorter,
-                quick_sorter,
+                rebind_iterator_category<
+                    quick_sorter,
+                    std::bidirectional_iterator_tag
+                >,
                 pdq_sorter
             >,
             std::make_index_sequence<10u>

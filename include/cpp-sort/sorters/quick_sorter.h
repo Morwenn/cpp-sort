@@ -43,10 +43,10 @@ namespace cppsort
         sorter_base<quick_sorter>
     {
         template<
-            typename BidirectionalIterable,
+            typename ForwardIterable,
             typename Compare = std::less<>
         >
-        auto operator()(BidirectionalIterable& iterable, Compare compare={}) const
+        auto operator()(ForwardIterable& iterable, Compare compare={}) const
             -> void
         {
             detail::quicksort(
@@ -58,11 +58,10 @@ namespace cppsort
         }
 
         template<
-            typename BidirectionalIterator,
+            typename ForwardIterator,
             typename Compare = std::less<>
         >
-        auto operator()(BidirectionalIterator first,
-                        BidirectionalIterator last,
+        auto operator()(ForwardIterator first, ForwardIterator last,
                         Compare compare={}) const
             -> void
         {
@@ -80,7 +79,7 @@ namespace cppsort
     template<>
     struct sorter_traits<quick_sorter>
     {
-        using iterator_category = std::bidirectional_iterator_tag;
+        using iterator_category = std::forward_iterator_tag;
         static constexpr bool is_stable = false;
     };
 }

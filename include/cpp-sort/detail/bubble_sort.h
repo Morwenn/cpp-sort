@@ -21,49 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_INSERTION_SORTER_H_
-#define CPPSORT_SORTERS_INSERTION_SORTER_H_
+#ifndef CPPSORT_DETAIL_BUBBLE_SORT_H_
+#define CPPSORT_DETAIL_BUBBLE_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
+#include <algorithm>
+#include <cstddef>
 #include <iterator>
-#include <cpp-sort/sorter_base.h>
-#include <cpp-sort/sorter_traits.h>
-#include "../detail/insertion_sort.h"
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
+namespace detail
+{
+    //
+    // This sorting algorithm isn't exposed to users of the
+    // library, it's only intended to be used as a fallback
+    // by other algorithms to sort small collections
+    //
+    // These recursive algorithms tend to compute the size
+    // of the collection, so bubble_sort can use it to have
+    // a decreasing bound for forward iterators
+    //
 
-    struct insertion_sorter:
-        sorter_base<insertion_sorter>
+    template<typename ForwardIterator, typename Compare>
+    void bubble_sort(ForwardIterator first, Compare compare, std::size_t size)
     {
-        using sorter_base<insertion_sorter>::operator();
+        if (size < 2) return;
 
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
-            -> void
+        while (--size)
         {
-            detail::insertion_sort(first, last, compare);
+            ForwardIterator current = first;
+            ForwardIterator next = std::next(current);
+            for (std::size_t i = 0 ; i < size ; ++i)
+            {
+                if (compare(*next, *current))
+                {
+                    std::iter_swap(current, next);
+                }
+                ++next;
+                ++current;
+            }
         }
-    };
+    }
+}}
 
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<insertion_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        static constexpr bool is_stable = true;
-    };
-}
-
-#endif // CPPSORT_SORTERS_INSERTION_SORTER_H_
+#endif // CPPSORT_DETAIL_BUBBLE_SORT_H_

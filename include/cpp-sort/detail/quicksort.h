@@ -24,29 +24,77 @@
 #ifndef CPPSORT_DETAIL_QUICKSORT_H_
 #define CPPSORT_DETAIL_QUICKSORT_H_
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include "bubble_sort.h"
 #include "insertion_sort.h"
+#include "iter_sort3.h"
 
 namespace cppsort
 {
 namespace detail
 {
+    template <typename ForwardIterator, typename Compare>
+    void quicksort(ForwardIterator first, ForwardIterator last,
+                   Compare compare, std::size_t size,
+                   std::forward_iterator_tag category)
+    {
+        // If the collection is small, fall back to
+        // bubble sort
+        if (size < 10)
+        {
+            bubble_sort(first, compare, size);
+            return;
+        }
+
+        // Choose pivot as median of 3
+        ForwardIterator middle = std::next(first, size / 2);
+        iter_sort3(first, middle,
+                   std::next(middle, size - size/2 - 1),
+                   compare);
+        const auto& pivot = *middle;
+
+        // Partition the collection
+        ForwardIterator middle1 = std::partition(
+            first, last,
+            [=](const auto& elem) { return compare(elem, pivot); }
+        );
+        ForwardIterator middle2 = std::partition(
+            middle1, last,
+            [=](const auto& elem) { return not compare(pivot, elem); }
+        );
+
+        // Recursive call: heuristic trick here
+        // The "middle" partition is more likely to be smaller than the
+        // last one, so computing its size should generally be cheaper
+        std::size_t size_left = std::distance(first, middle1);
+        quicksort(first, middle1, compare, size_left, category);
+        quicksort(middle2, last, compare,
+                  size - size_left - std::distance(middle1, middle2),
+                  category);
+    }
+
     template <typename BidirectionalIterator, typename Compare>
     void quicksort(BidirectionalIterator first, BidirectionalIterator last,
-                   Compare compare, std::size_t size)
+                   Compare compare, std::size_t size,
+                   std::bidirectional_iterator_tag category)
     {
         // If the collection is small, fall back to
         // insertion sort
-        if (size < 25)
+        if (size < 42)
         {
             insertion_sort(first, last, compare);
             return;
         }
 
-        // Choose a pivot, size / 2 is ok
-        const auto& pivot = *std::next(first, size / 2);
+        // Choose pivot as median of 3
+        BidirectionalIterator middle = std::next(first, size / 2);
+        iter_sort3(first, middle, std::prev(last), compare);
+        const auto& pivot = *middle;
 
         // Partition the collection
         BidirectionalIterator middle1 = std::partition(
@@ -62,8 +110,18 @@ namespace detail
         // The "middle" partition is more likely to be smaller than the
         // last one, so computing its size should generally be cheaper
         std::size_t size_left = std::distance(first, middle1);
-        quicksort(first, middle1, compare, size_left);
-        quicksort(middle2, last, compare, size - size_left - std::distance(middle1, middle2));
+        quicksort(first, middle1, compare, size_left, category);
+        quicksort(middle2, last, compare,
+                  size - size_left - std::distance(middle1, middle2),
+                  category);
+    }
+
+    template <typename ForwardIterator, typename Compare>
+    void quicksort(ForwardIterator first, ForwardIterator last,
+                   Compare compare, std::size_t size)
+    {
+        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        quicksort(first, last, compare, size, category{});
     }
 }}
 
