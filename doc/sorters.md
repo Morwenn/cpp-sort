@@ -81,9 +81,13 @@ Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n log n     n log n     n log n     n           Yes         Forward
+    n log n     n log n     n log n     n           Yes         Bidirectional
+    n log n     n log n     n²          n           Yes         Forward
 
-**Note:** the complexity is out-of-date and needs to be rethought for forward iterators.
+**Note:** the worst-case complexity of n² for forward iterators may only be
+reached when no additional memory can be allocated. That means that the sort
+won't ever have the worst-case memory *and* the worst-case complexity at the
+same time.
 
 ### `pdq_sorter`
 
@@ -107,7 +111,7 @@ Implements a [quicksort](https://en.wikipedia.org/wiki/Quicksort).
 
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n long n    n log n     n²          n           No          Forward
+    n log n     n log n     n²          n           No          Forward
 
 ### `selection_sorter`
 
@@ -119,7 +123,7 @@ Implements a [selection sort](https://en.wikipedia.org/wiki/Selection_sort).
 
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n²          n²          n²          n           No          Forward
+    n²          n²          n²          1           No          Forward
 
 ### `std_sorter`
 
@@ -139,7 +143,7 @@ to sort a collection.
 #include <cpp-sort/sorters/tim_sorter.h>
 ```
 
-Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
+Implements a [timsort](https://en.wikipedia.org/wiki/Timsort).
 
     Best        Average     Worst       Memory      Stable      Iterators
     n           n log n     n log n     n           Yes         Random access
@@ -155,6 +159,12 @@ Implements a [vergesort](https://github.com/Morwenn/vergesort).
     Best        Average     Worst       Memory      Stable      Iterators
     n           n log n     n log n     n           No          Random access
     n           n log n     n²          n           No          Bidirectional
+
+**Note:** while the worst-case complexity is n², I don't even know how to reach
+such a case: the fallback quicksort tends to have its worst-case complexity for
+patterns and the vergesort layer defeats such patterns. Therefore, it *may* be
+impossible for this sort to have a quadratic behavior. If you ever find a way to
+trigger a quadratic behavior, don't hesitate to report it.
 
 ## Type-specific sorters
 
