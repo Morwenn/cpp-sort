@@ -31,33 +31,13 @@
 #include <cstddef>
 #include <iterator>
 #include <cpp-sort/utility/inplace_merge.h>
+#include "bubble_sort.h"
 #include "insertion_sort.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template <typename ForwardIterator, typename Compare>
-    void bubble_sort(ForwardIterator first, Compare compare, std::size_t size)
-    {
-        if (size < 2) return;
-
-        while (--size)
-        {
-            ForwardIterator current = first;
-            ForwardIterator next = std::next(current);
-            for (std::size_t i = 0 ; i < size ; ++i)
-            {
-                if (compare(*next, *current))
-                {
-                    std::iter_swap(current, next);
-                }
-                ++next;
-                ++current;
-            }
-        }
-    }
-
     template<typename ForwardIterator, typename Compare>
     void merge_sort(ForwardIterator first, ForwardIterator last,
                     Compare compare, std::size_t size,
