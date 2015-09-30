@@ -33,90 +33,100 @@
     #endif
 #endif
 
-
-inline std::vector<int> shuffled_int(size_t size, std::mt19937_64& rng) {
+template<template<typename...> class Collection>
+Collection<int> shuffled_int(size_t size, std::mt19937_64& rng) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
     std::shuffle(v.begin(), v.end(), rng);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> shuffled_16_values_int(size_t size, std::mt19937_64& rng) {
+template<template<typename...> class Collection>
+Collection<int> shuffled_16_values_int(size_t size, std::mt19937_64& rng) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i % 16);
     std::shuffle(v.begin(), v.end(), rng);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> all_equal_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> all_equal_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(0);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> ascending_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> ascending_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> descending_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> descending_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = size - 1; i >= 0; --i) v.push_back(i);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> pipe_organ_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> pipe_organ_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size/2; ++i) v.push_back(i);
     for (int i = size/2; i < size; ++i) v.push_back(size - i);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> push_front_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> push_front_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 1; i < size; ++i) v.push_back(i);
     v.push_back(0);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> push_middle_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> push_middle_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) {
         if (i != size/2) v.push_back(i);
     }
     v.push_back(size/2);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> ascending_sawtooth_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> ascending_sawtooth_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     int limit = size / log2(size) * 1.1;
     for (int i = 0; i < size; ++i) v.push_back(i % limit);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> descending_sawtooth_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> descending_sawtooth_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     int limit = size / log2(size) * 1.1;
     for (int i = size - 1; i >= 0; --i) v.push_back(i % limit);
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> alternating_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> alternating_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
     for (int i = 0; i < size; i += 2) v[i] *= -1;
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
 
-inline std::vector<int> alternating_16_values_int(size_t size, std::mt19937_64&) {
+template<template<typename...> class Collection>
+Collection<int> alternating_16_values_int(size_t size, std::mt19937_64&) {
     std::vector<int> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i % 16);
     for (int i = 0; i < size; i += 2) v[i] *= -1;
-    return v;
+    return Collection<int>(std::begin(v), std::end(v));
 }
-
 
 
 int main()
@@ -143,12 +153,12 @@ int main()
     };
 
     std::pair<std::string, sort_f> sorts[] = {
-        { "heapsort",   cppsort::heap_sorter()              },
-        { "introsort",  cppsort::std_sorter()               },
-        { "pdqsort",    cppsort::pdq_sorter()               },
-        { "vergesort",  cppsort::verge_sorter()             },
-        { "timsort",    cppsort::tim_sorter()               },
-        { "spreadsort", cppsort::integer_spread_sorter()    }
+        { "heapsort",   cppsort::heap_sorter()      },
+        { "introsort",  cppsort::std_sorter()       },
+        { "pdqsort",    cppsort::pdq_sorter()       },
+        { "vergesort",  cppsort::verge_sorter()     },
+        { "timsort",    cppsort::tim_sorter()       },
+        { "spreadsort", cppsort::spread_sorter()    }
     };
 
     int sizes[] = { 1'000'000 };
