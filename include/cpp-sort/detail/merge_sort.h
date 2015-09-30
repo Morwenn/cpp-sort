@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <cpp-sort/utility/inplace_merge.h>
@@ -43,7 +42,7 @@ namespace detail
                     Compare compare, std::size_t size,
                     std::forward_iterator_tag category)
     {
-        if (size < 20)
+        if (size < 18)
         {
             bubble_sort(first, compare, size);
             return;
@@ -66,7 +65,7 @@ namespace detail
                     Compare compare, std::size_t size,
                     std::bidirectional_iterator_tag category)
     {
-        if (size < 20)
+        if (size < 40)
         {
             insertion_sort(first, last, compare);
             return;
