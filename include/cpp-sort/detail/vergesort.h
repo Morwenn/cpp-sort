@@ -28,6 +28,7 @@
 #include <iterator>
 #include <cpp-sort/utility/log2.h>
 #include "pdqsort.h"
+#include "quicksort.h"
 
 namespace cppsort
 {
@@ -37,11 +38,9 @@ namespace detail
     // and [middle2, last) are sorted. The two in-place merges are
     // done in the order that should result in the smallest number
     // of comparisons
-    template<typename RandomAccessIterator, typename Compare>
-    void inplace_merge3(RandomAccessIterator first,
-                        RandomAccessIterator middle1,
-                        RandomAccessIterator middle2,
-                        RandomAccessIterator last,
+    template<typename BidirectionalIterator, typename Compare>
+    void inplace_merge3(BidirectionalIterator first, BidirectionalIterator middle1,
+                        BidirectionalIterator middle2, BidirectionalIterator last,
                         Compare compare)
     {
         if (std::distance(first, middle1) < std::distance(middle2, last))
@@ -56,8 +55,123 @@ namespace detail
         }
     }
 
+    template<typename BidirectionalIterator, typename Compare>
+    void vergesort(BidirectionalIterator first, BidirectionalIterator last, Compare compare,
+                   std::bidirectional_iterator_tag)
+    {
+        auto dist = std::distance(first, last);
+        if (dist < 80)
+        {
+            // vergesort is inefficient for small collections
+            quicksort(first, last, compare, dist);
+            return;
+        }
+
+        // Limit under which quicksort is used
+        int unstable_limit = dist / utility::log2(dist);
+
+        // Beginning of an unstable partition, last if the
+        // previous partition is stable
+        BidirectionalIterator begin_unstable = last;
+
+        // Size of the unstable partition
+        std::size_t size_unstable = 0;
+
+        // Pair of iterators to iterate through the collection
+        BidirectionalIterator next = std::is_sorted_until(first, last, compare);
+        BidirectionalIterator current = std::prev(next);
+
+        while (true)
+        {
+            BidirectionalIterator begin_rng = current;
+
+            // Decreasing range
+            while (next != last)
+            {
+                if (compare(*current, *next)) break;
+                ++current;
+                ++next;
+            }
+
+            // Reverse and merge
+            dist = std::distance(begin_rng, next);
+            if (dist > unstable_limit)
+            {
+                if (begin_unstable != last)
+                {
+                    quicksort(begin_unstable, begin_rng, compare, size_unstable);
+                    std::reverse(begin_rng, next);
+                    std::inplace_merge(begin_unstable, begin_rng, next, compare);
+                    std::inplace_merge(first, begin_unstable, next, compare);
+                    begin_unstable = last;
+                    size_unstable = 0;
+                }
+                else
+                {
+                    std::reverse(begin_rng, next);
+                    std::inplace_merge(first, begin_rng, next, compare);
+                }
+            }
+            else
+            {
+                size_unstable += dist;
+                if (begin_unstable == last) begin_unstable = begin_rng;
+            }
+
+            if (next == last) break;
+
+            ++current;
+            ++next;
+
+            begin_rng = current;
+
+            // Increasing range
+            while (next != last)
+            {
+                if (compare(*next, *current)) break;
+                ++current;
+                ++next;
+            }
+
+            // Merge
+            dist = std::distance(begin_rng, next);
+            if (dist > unstable_limit)
+            {
+                if (begin_unstable != last)
+                {
+                    quicksort(begin_unstable, begin_rng, compare, size_unstable);
+                    std::inplace_merge(begin_unstable, begin_rng, next, compare);
+                    std::inplace_merge(first, begin_unstable, next, compare);
+                    begin_unstable = last;
+                    size_unstable = 0;
+                }
+                else
+                {
+                    std::inplace_merge(first, begin_rng, next, compare);
+                }
+            }
+            else
+            {
+                size_unstable += dist;
+                if (begin_unstable == last) begin_unstable = begin_rng;
+            }
+
+            if (next == last) break;
+
+            ++current;
+            ++next;
+        }
+
+        if (begin_unstable != last)
+        {
+            quicksort(begin_unstable, last, compare, size_unstable);
+            std::inplace_merge(first, begin_unstable, last, compare);
+        }
+    }
+
     template<typename RandomAccessIterator, typename Compare>
-    void vergesort(RandomAccessIterator first, RandomAccessIterator last, Compare compare)
+    void vergesort(RandomAccessIterator first, RandomAccessIterator last, Compare compare,
+                   std::random_access_iterator_tag)
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         difference_type dist = std::distance(first, last);
@@ -169,6 +283,13 @@ namespace detail
             pdqsort(begin_unstable, last, compare);
             std::inplace_merge(first, begin_unstable, last, compare);
         }
+    }
+
+    template<typename BidirectionalIterator, typename Compare>
+    void vergesort(BidirectionalIterator first, BidirectionalIterator last, Compare compare)
+    {
+        using category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
+        vergesort(first, last, compare, category{});
     }
 }}
 

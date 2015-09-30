@@ -152,9 +152,9 @@ Implements a [timsort](https://en.wikipedia.org/wiki/Timsort) algorithm.
 
 Implements a [vergesort](https://github.com/Morwenn/vergesort).
 
-
     Best        Average     Worst       Memory      Stable      Iterators
     n           n log n     n log n     n           No          Random access
+    n           n log n     n²          n           No          Bidirectional
 
 ## Type-specific sorters
 

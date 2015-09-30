@@ -44,11 +44,11 @@ namespace cppsort
         using sorter_base<verge_sorter>::operator();
 
         template<
-            typename RandomAccessIterator,
+            typename BidirectionalIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterator first,
-                        RandomAccessIterator last,
+        auto operator()(BidirectionalIterator first,
+                        BidirectionalIterator last,
                         Compare compare={}) const
             -> void
         {
@@ -62,7 +62,7 @@ namespace cppsort
     template<>
     struct sorter_traits<verge_sorter>
     {
-        using iterator_category = std::random_access_iterator_tag;
+        using iterator_category = std::bidirectional_iterator_tag;
         static constexpr bool is_stable = false;
     };
 }
