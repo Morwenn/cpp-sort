@@ -21,37 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
-#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#ifndef CPPSORT_SORTERS_SELECTION_SORTER_H_
+#define CPPSORT_SORTERS_SELECTION_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <functional>
 #include <iterator>
-#include <utility>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
+#include <cpp-sort/sorter_base.h>
 #include <cpp-sort/sorter_traits.h>
+#include "../detail/selection_sort.h"
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        small_array_adapter<
-            hybrid_adapter<
-                merge_sorter,
-                rebind_iterator_category<
-                    quick_sorter,
-                    std::bidirectional_iterator_tag
-                >,
-                pdq_sorter
-            >,
-            std::make_index_sequence<10u>
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
+    struct selection_sorter:
+        sorter_base<selection_sorter>
+    {
+        using sorter_base<selection_sorter>::operator();
+
+        template<
+            typename ForwardIterator,
+            typename Compare = std::less<>
         >
-    >;
+        auto operator()(ForwardIterator first, ForwardIterator last,
+                        Compare compare={}) const
+            -> void
+        {
+            detail::selection_sort(first, last, compare);
+        }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<selection_sorter>
+    {
+        using iterator_category = std::forward_iterator_tag;
+        static constexpr bool is_stable = false;
+    };
 }
 
-#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#endif // CPPSORT_SORTERS_SELECTION_SORTER_H_

@@ -21,37 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
-#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#ifndef CPPSORT_DETAIL_SELECTION_SORT_H_
+#define CPPSORT_DETAIL_SELECTION_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
-#include <utility>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorter_traits.h>
+#include <algorithm>
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        small_array_adapter<
-            hybrid_adapter<
-                merge_sorter,
-                rebind_iterator_category<
-                    quick_sorter,
-                    std::bidirectional_iterator_tag
-                >,
-                pdq_sorter
-            >,
-            std::make_index_sequence<10u>
-        >
-    >;
-}
+namespace detail
+{
+    template<typename ForwardIterator, typename Compare>
+    void selection_sort(ForwardIterator first, ForwardIterator last,
+                        Compare compare)
+    {
+        for (ForwardIterator it = first ; it != last ; ++it)
+        {
+            std::iter_swap(it, std::min_element(it, last, compare));
+        }
+    }
+}}
 
-#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#endif // CPPSORT_DETAIL_SELECTION_SORT_H_

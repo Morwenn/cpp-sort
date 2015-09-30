@@ -21,37 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
-#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#ifndef CPPSORT_DETAIL_BUBBLE_SORT_H_
+#define CPPSORT_DETAIL_BUBBLE_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
+#include <cstddef>
 #include <iterator>
-#include <utility>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        small_array_adapter<
-            hybrid_adapter<
-                merge_sorter,
-                rebind_iterator_category<
-                    quick_sorter,
-                    std::bidirectional_iterator_tag
-                >,
-                pdq_sorter
-            >,
-            std::make_index_sequence<10u>
-        >
-    >;
-}
+namespace detail
+{
+    //
+    // This sorting algorithm isn't exposed to users of the
+    // library, it's only intended to be used as a fallback
+    // by other algorithms to sort small collections
+    //
+    // These recursive algorithms tend to compute the size
+    // of the collection, so bubble_sort can use it to have
+    // a decreasing bound for forward iterators
+    //
 
-#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_
+    template<typename ForwardIterator, typename Compare>
+    void bubble_sort(ForwardIterator first, Compare compare, std::size_t size)
+    {
+        if (size < 2) return;
+
+        while (--size)
+        {
+            ForwardIterator current = first;
+            ForwardIterator next = std::next(current);
+            for (std::size_t i = 0 ; i < size ; ++i)
+            {
+                if (compare(*next, *current))
+                {
+                    std::iter_swap(current, next);
+                }
+                ++next;
+                ++current;
+            }
+        }
+    }
+}}
+
+#endif // CPPSORT_DETAIL_BUBBLE_SORT_H_
