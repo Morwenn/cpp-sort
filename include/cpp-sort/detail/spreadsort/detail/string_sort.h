@@ -693,15 +693,6 @@ namespace spreadsort
         (first, last, 0, bin_cache, 0, bin_sizes);
     }
 
-    template <class RandomAccessIter, class Unsigned_char_type>
-    disable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    string_sort(RandomAccessIter first, RandomAccessIter last,
-                Unsigned_char_type)
-    {
-      //We're using std::sort, even though string_sort was called
-      std::sort(first, last);
-    }
-
     //Holds the bin vector and makes the initial recursive call
     template <class RandomAccessIter, class Unsigned_char_type>
     std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
@@ -712,17 +703,6 @@ namespace spreadsort
       std::vector<RandomAccessIter> bin_cache;
       reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type>
         (first, last, 0, bin_cache, 0, bin_sizes);
-    }
-
-    template <class RandomAccessIter, class Unsigned_char_type>
-    disable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-                Unsigned_char_type)
-    {
-      typedef typename std::iterator_traits<RandomAccessIter>::value_type
-        Data_type;
-      //We're using std::sort, even though string_sort was called
-      std::sort(first, last, std::greater<Data_type>());
     }
 
     //Holds the bin vector and makes the initial recursive call
@@ -736,16 +716,6 @@ namespace spreadsort
       std::vector<RandomAccessIter> bin_cache;
       string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
         Get_length>(first, last, 0, bin_cache, 0, bin_sizes, getchar, length);
-    }
-
-    template <class RandomAccessIter, class Get_char, class Get_length,
-              class Unsigned_char_type>
-    disable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    string_sort(RandomAccessIter first, RandomAccessIter last,
-                Get_char getchar, Get_length length, Unsigned_char_type)
-    {
-      //>e're using std::sort, even though string_sort was called
-      std::sort(first, last);
     }
 
     //Holds the bin vector and makes the initial recursive call
@@ -762,17 +732,6 @@ namespace spreadsort
         (first, last, 0, bin_cache, 0, bin_sizes, getchar, length, comp);
     }
 
-    //disable_if_c was refusing to compile, so rewrote to use enable_if_c
-    template <class RandomAccessIter, class Get_char, class Get_length,
-              class Compare, class Unsigned_char_type>
-    std::enable_if_t< (sizeof(Unsigned_char_type) > 2), void >
-    string_sort(RandomAccessIter first, RandomAccessIter last,
-        Get_char getchar, Get_length length, Compare comp, Unsigned_char_type)
-    {
-      //We're using std::sort, even though string_sort was called
-      std::sort(first, last, comp);
-    }
-
     //Holds the bin vector and makes the initial recursive call
     template <class RandomAccessIter, class Get_char, class Get_length,
               class Compare, class Unsigned_char_type>
@@ -785,16 +744,6 @@ namespace spreadsort
       reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
                               Get_length, Compare>
         (first, last, 0, bin_cache, 0, bin_sizes, getchar, length, comp);
-    }
-
-    template <class RandomAccessIter, class Get_char, class Get_length,
-              class Compare, class Unsigned_char_type>
-    disable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-        Get_char getchar, Get_length length, Compare comp, Unsigned_char_type)
-    {
-      //>e're using std::sort, even though string_sort was called
-      std::sort(first, last, comp);
     }
   }
 }}}
