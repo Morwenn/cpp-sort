@@ -22,11 +22,15 @@
 #ifndef CPPSORT_DETAIL_PDQSORT_H_
 #define CPPSORT_DETAIL_PDQSORT_H_
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
 #include <utility>
 #include <cpp-sort/utility/log2.h>
 #include "insertion_sort.h"
+#include "iter_sort3.h"
 
 namespace cppsort
 {
@@ -126,27 +130,6 @@ namespace detail
             return true;
         }
 
-        // Sorts the elements *a, *b and *c using comparison function comp.
-        template<class Iter, class Compare>
-        void sort3(Iter a, Iter b, Iter c, Compare comp) {
-            if (!comp(*b, *a)) {
-                if (!comp(*c, *b)) return;
-
-                std::iter_swap(b, c);
-                if (comp(*b, *a)) std::iter_swap(a, b);
-
-                return;
-            }
-
-            if (comp(*c, *b)) {
-                std::iter_swap(a, c);
-                return;
-            }
-
-            std::iter_swap(a, b);
-            if (comp(*c, *b)) std::iter_swap(b, c);
-        }
-
         // Partitions [begin, end) around pivot *begin using comparison function comp. Elements equal
         // to the pivot are put in the right-hand partition. Returns the position of the pivot after
         // partitioning and whether the passed sequence already was correctly partitioned. Assumes the
@@ -237,7 +220,7 @@ namespace detail
                 }
 
                 // Choose pivot as median of 3.
-                sort3(begin + size / 2, begin, end - 1, comp);
+                iter_sort3(begin + size / 2, begin, end - 1, comp);
 
                 // If *(begin - 1) is the end of the right partition of a previous partition operation
                 // there is no element in [*begin, end) that is smaller than *(begin - 1). Then if our
