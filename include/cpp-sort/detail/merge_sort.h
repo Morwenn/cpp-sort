@@ -27,26 +27,68 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <cpp-sort/utility/inplace_merge.h>
+#include "bubble_sort.h"
+#include "insertion_sort.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename BidirectionalIterator, typename Compare>
-    void merge_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    Compare compare, std::size_t size)
+    template<typename ForwardIterator, typename Compare>
+    void merge_sort(ForwardIterator first, ForwardIterator last,
+                    Compare compare, std::size_t size,
+                    std::forward_iterator_tag category)
     {
-        if (size < 2) return;
+        if (size < 18)
+        {
+            bubble_sort(first, compare, size);
+            return;
+        }
 
+        // Divide the range into two partitions
         auto size_left = size / 2;
         auto middle = std::next(first, size_left);
 
-        merge_sort(first, middle, compare, size_left);
-        merge_sort(middle, last, compare, size - size_left);
-        std::inplace_merge(first, middle, last, compare);
+        // Recursively sort the partitions
+        merge_sort(first, middle, compare, size_left, category);
+        merge_sort(middle, last, compare, size - size_left, category);
+
+        // Merge the sorted partitions in-place
+        utility::inplace_merge(first, middle, last, compare);
+    }
+
+    template<typename BidirectionalIterator, typename Compare>
+    void merge_sort(BidirectionalIterator first, BidirectionalIterator last,
+                    Compare compare, std::size_t size,
+                    std::bidirectional_iterator_tag category)
+    {
+        if (size < 40)
+        {
+            insertion_sort(first, last, compare);
+            return;
+        }
+
+        // Divide the range into two partitions
+        auto size_left = size / 2;
+        auto middle = std::next(first, size_left);
+
+        // Recursively sort the partitions
+        merge_sort(first, middle, compare, size_left, category);
+        merge_sort(middle, last, compare, size - size_left, category);
+
+        // Merge the sorted partitions in-place
+        utility::inplace_merge(first, middle, last, compare);
+    }
+
+    template<typename ForwardIterator, typename Compare>
+    void merge_sort(ForwardIterator first, ForwardIterator last,
+                    Compare compare, std::size_t size)
+    {
+        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        merge_sort(first, last, compare, size, category{});
     }
 }}
 

@@ -38,7 +38,7 @@ implementation defines it as follows:
 using default_sorter = self_sort_adapter<
     small_array_adapter<
         hybrid_adapter<
-            inplace_merge_sorter,
+            merge_sorter,
             rebind_iterator_category<
                 quick_sorter,
                 std::bidirectional_iterator_tag
@@ -61,17 +61,6 @@ Implements a [heapsort](https://en.wikipedia.org/wiki/Heapsort).
     Best        Average     Worst       Memory      Stable      Iterators
     n log n     n log n     n log n     1           No          Random access
 
-### `inplace_merge_sorter`
-
-```cpp
-#include <cpp-sort/sorters/inplace_merge_sorter.h>
-```
-
-Implements an in-place merge sort.
-
-    Best        Average     Worst       Memory      Stable      Iterators
-    ?           ?           n log² n    1           Yes         Forward
-
 ### `insertion_sorter`
 
 ```cpp
@@ -92,7 +81,9 @@ Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
 Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n log n     n log n     n log n     n           Yes         Bidirectional
+    n log n     n log n     n log n     n           Yes         Forward
+
+**Note:** the complexity is out-of-date and needs to be rethought for forward iterators.
 
 ### `pdq_sorter`
 

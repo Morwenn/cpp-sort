@@ -32,7 +32,7 @@
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/inplace_merge_sorter.h>
+#include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorter_traits.h>
@@ -42,7 +42,7 @@ namespace cppsort
     using default_sorter = self_sort_adapter<
         small_array_adapter<
             hybrid_adapter<
-                inplace_merge_sorter,
+                merge_sorter,
                 rebind_iterator_category<
                     quick_sorter,
                     std::bidirectional_iterator_tag
