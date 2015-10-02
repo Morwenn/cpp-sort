@@ -94,16 +94,16 @@ namespace detail
         // Choose pivot as median of 3
         BidirectionalIterator middle = std::next(first, size / 2);
         iter_sort3(first, middle, std::prev(last), compare);
-        const auto& pivot = *middle;
+        const auto pivot = *middle;
 
         // Partition the collection
         BidirectionalIterator middle1 = std::partition(
             first, last,
-            [=](const auto& elem) { return compare(elem, pivot); }
+            [&](const auto& elem) { return compare(elem, pivot); }
         );
         BidirectionalIterator middle2 = std::partition(
             middle1, last,
-            [=](const auto& elem) { return not compare(pivot, elem); }
+            [&](const auto& elem) { return not compare(pivot, elem); }
         );
 
         // Recursive call: heuristic trick here
