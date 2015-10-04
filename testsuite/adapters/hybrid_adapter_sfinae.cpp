@@ -27,7 +27,7 @@
 #include <vector>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <catch.hpp>
 
@@ -40,9 +40,9 @@ enum class sorter_type
 };
 
 struct integer_sorter:
-    cppsort::sorter_base<integer_sorter>
+    cppsort::sorter_facade<integer_sorter>
 {
-    using cppsort::sorter_base<integer_sorter>::operator();
+    using cppsort::sorter_facade<integer_sorter>::operator();
 
     template<typename RandomAccessIterator>
     auto operator()(RandomAccessIterator, RandomAccessIterator)
@@ -58,9 +58,9 @@ struct integer_sorter:
 };
 
 struct float_sorter:
-    cppsort::sorter_base<float_sorter>
+    cppsort::sorter_facade<float_sorter>
 {
-    using cppsort::sorter_base<float_sorter>::operator();
+    using cppsort::sorter_facade<float_sorter>::operator();
 
     template<typename RandomAccessIterator>
     auto operator()(RandomAccessIterator, RandomAccessIterator)
@@ -76,9 +76,9 @@ struct float_sorter:
 };
 
 struct generic_sorter:
-    cppsort::sorter_base<generic_sorter>
+    cppsort::sorter_facade<generic_sorter>
 {
-    using cppsort::sorter_base<generic_sorter>::operator();
+    using cppsort::sorter_facade<generic_sorter>::operator();
 
     template<typename RandomAccessIterator>
     auto operator()(RandomAccessIterator, RandomAccessIterator)

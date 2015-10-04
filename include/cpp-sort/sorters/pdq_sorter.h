@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/pdqsort.h"
 
@@ -39,9 +39,9 @@ namespace cppsort
     // Sorter
 
     struct pdq_sorter:
-        sorter_base<pdq_sorter>
+        sorter_facade<pdq_sorter>
     {
-        using sorter_base<pdq_sorter>::operator();
+        using sorter_facade<pdq_sorter>::operator();
 
         template<
             typename RandomAccessIterator,

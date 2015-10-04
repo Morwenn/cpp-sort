@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/timsort.h"
 
@@ -39,9 +39,9 @@ namespace cppsort
     // Sorter
 
     struct tim_sorter:
-        sorter_base<tim_sorter>
+        sorter_facade<tim_sorter>
     {
-        using sorter_base<tim_sorter>::operator();
+        using sorter_facade<tim_sorter>::operator();
 
         template<
             typename RandomAccessIterator,

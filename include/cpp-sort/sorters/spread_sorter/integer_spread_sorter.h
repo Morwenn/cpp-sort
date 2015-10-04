@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <type_traits>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/spreadsort/integer_sort.h"
 
@@ -39,9 +39,9 @@ namespace cppsort
     // Sorter
 
     struct integer_spread_sorter:
-        sorter_base<integer_spread_sorter>
+        sorter_facade<integer_spread_sorter>
     {
-        using sorter_base<integer_spread_sorter>::operator();
+        using sorter_facade<integer_spread_sorter>::operator();
 
         template<typename RandomAccessIterator>
         auto operator()(RandomAccessIterator first, RandomAccessIterator last) const

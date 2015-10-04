@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTER_BASE_H_
-#define CPPSORT_SORTER_BASE_H_
+#ifndef CPPSORT_SORTER_FACADE_H_
+#define CPPSORT_SORTER_FACADE_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -40,7 +40,7 @@ namespace cppsort
     // stateless.
 
     template<typename Sorter>
-    class sorter_base
+    class sorter_facade
     {
         protected:
 
@@ -171,4 +171,4 @@ namespace cppsort
     };
 }
 
-#endif // CPPSORT_SORTER_BASE_H_
+#endif // CPPSORT_SORTER_FACADE_H_

@@ -27,13 +27,13 @@
 #include <catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
 struct comparison_sorter:
-    cppsort::sorter_base<comparison_sorter>
+    cppsort::sorter_facade<comparison_sorter>
 {
-    using cppsort::sorter_base<comparison_sorter>::operator();
+    using cppsort::sorter_facade<comparison_sorter>::operator();
 
     template<typename Iterator, typename Compare>
     auto operator()(Iterator, Iterator, Compare) const
@@ -51,9 +51,9 @@ struct comparison_sorter:
 };
 
 struct non_comparison_sorter:
-    cppsort::sorter_base<non_comparison_sorter>
+    cppsort::sorter_facade<non_comparison_sorter>
 {
-    using cppsort::sorter_base<non_comparison_sorter>::operator();
+    using cppsort::sorter_facade<non_comparison_sorter>::operator();
 
     template<typename Iterator>
     auto operator()(Iterator, Iterator)
@@ -64,9 +64,9 @@ struct non_comparison_sorter:
 };
 
 TEST_CASE( "std::less<> forwarding to sorters",
-           "[sorter_base][compare]" )
+           "[sorter_facade][compare]" )
 {
-    // Check that sorter_base only creates the overloads for
+    // Check that sorter_facade only creates the overloads for
     // std::less when the original sorter does not support
     // custom comparison functions
 

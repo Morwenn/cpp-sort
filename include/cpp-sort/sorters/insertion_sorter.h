@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/insertion_sort.h"
 
@@ -39,9 +39,9 @@ namespace cppsort
     // Sorter
 
     struct insertion_sorter:
-        sorter_base<insertion_sorter>
+        sorter_facade<insertion_sorter>
     {
-        using sorter_base<insertion_sorter>::operator();
+        using sorter_facade<insertion_sorter>::operator();
 
         template<
             typename ForwardIterator,

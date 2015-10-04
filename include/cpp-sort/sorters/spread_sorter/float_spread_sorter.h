@@ -30,7 +30,7 @@
 #include <iterator>
 #include <limits>
 #include <type_traits>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/spreadsort/float_sort.h"
 
@@ -40,9 +40,9 @@ namespace cppsort
     // Sorter
 
     struct float_spread_sorter:
-        sorter_base<float_spread_sorter>
+        sorter_facade<float_spread_sorter>
     {
-        using sorter_base<float_spread_sorter>::operator();
+        using sorter_facade<float_spread_sorter>::operator();
 
         template<typename RandomAccessIterator>
         auto operator()(RandomAccessIterator first, RandomAccessIterator last) const

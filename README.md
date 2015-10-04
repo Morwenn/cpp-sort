@@ -28,16 +28,16 @@ int main()
 ```
 
 **cpp-sort** also provides *sorters* as well as *sorter adapters* which can be
-used by `cppsort::sort` to sort a collection, as well as a sorter base class to
-ease the construction of new sorters. It is possible to get some information
-about the sorters and sorter adapters thanks to *sorter traits*. Everything lives
-in the `cppsort` namespace. You can read more about the available sorting tools
-in the documentation:
+used by `cppsort::sort` to sort a collection, as well as a sorter facade to ease
+the construction of new sorters. It is possible to get some information about
+the sorters and sorter adapters thanks to *sorter traits*. Everything lives in
+the `cppsort` namespace. You can read more about the available sorting tools in
+the documentation:
 
 * [`cppsort::sort`](doc/sort.md)
 * [Sorters](doc/sorters.md)
 * [Sorter adapters](doc/sorter-adapters.md)
-* [Sorter base](doc/sorter-base.md)
+* [Sorter facade](doc/sorter-facade.md)
 * [Sorter traits](doc/sorter-traits.md)
 
 There are also a few other utilities used by the library and made available

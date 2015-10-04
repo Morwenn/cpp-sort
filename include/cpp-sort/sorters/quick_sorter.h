@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/quicksort.h"
@@ -40,7 +40,7 @@ namespace cppsort
     // Sorter
 
     struct quick_sorter:
-        sorter_base<quick_sorter>
+        sorter_facade<quick_sorter>
     {
         template<
             typename ForwardIterable,

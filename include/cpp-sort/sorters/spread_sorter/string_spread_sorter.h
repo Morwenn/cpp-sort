@@ -31,7 +31,7 @@
 #include <iterator>
 #include <string>
 #include <type_traits>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/spreadsort/string_sort.h"
 
@@ -41,9 +41,9 @@ namespace cppsort
     // Sorter
 
     struct string_spread_sorter:
-        sorter_base<string_spread_sorter>
+        sorter_facade<string_spread_sorter>
     {
-        using sorter_base<string_spread_sorter>::operator();
+        using sorter_facade<string_spread_sorter>::operator();
 
         ////////////////////////////////////////////////////////////
         // Ascending string sort

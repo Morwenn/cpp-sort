@@ -26,7 +26,7 @@
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/sort.h>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 
 enum struct sorter_type
 {
@@ -36,9 +36,9 @@ enum struct sorter_type
 };
 
 struct partial_comparison_sorter:
-    cppsort::sorter_base<partial_comparison_sorter>
+    cppsort::sorter_facade<partial_comparison_sorter>
 {
-    using cppsort::sorter_base<partial_comparison_sorter>::operator();
+    using cppsort::sorter_facade<partial_comparison_sorter>::operator();
 
     // Sort in ascending order
     template<typename Iterator>
@@ -58,9 +58,9 @@ struct partial_comparison_sorter:
 };
 
 struct generic_sorter:
-    cppsort::sorter_base<generic_sorter>
+    cppsort::sorter_facade<generic_sorter>
 {
-    using cppsort::sorter_base<generic_sorter>::operator();
+    using cppsort::sorter_facade<generic_sorter>::operator();
 
     template<typename Iterator, typename Compare>
     auto operator()(Iterator, Iterator, Compare)

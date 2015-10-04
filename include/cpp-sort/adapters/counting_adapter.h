@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <functional>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/comparison_counter.h"
 
@@ -43,9 +43,9 @@ namespace cppsort
         typename CountType = std::size_t
     >
     struct counting_adapter:
-        sorter_base<counting_adapter<ComparisonSorter, CountType>>
+        sorter_facade<counting_adapter<ComparisonSorter, CountType>>
     {
-        using sorter_base<counting_adapter<ComparisonSorter, CountType>>::operator();
+        using sorter_facade<counting_adapter<ComparisonSorter, CountType>>::operator();
 
         template<
             typename Iterator,

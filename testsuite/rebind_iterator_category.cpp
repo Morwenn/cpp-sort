@@ -29,7 +29,7 @@
 #include <catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
-#include <cpp-sort/sorter_base.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
 enum struct sorter_type
@@ -39,9 +39,9 @@ enum struct sorter_type
 };
 
 struct foo_sorter:
-    cppsort::sorter_base<foo_sorter>
+    cppsort::sorter_facade<foo_sorter>
 {
-    using cppsort::sorter_base<foo_sorter>::operator();
+    using cppsort::sorter_facade<foo_sorter>::operator();
 
     template<typename Iterator>
     auto operator()(Iterator, Iterator) const
@@ -52,9 +52,9 @@ struct foo_sorter:
 };
 
 struct bar_sorter:
-    cppsort::sorter_base<bar_sorter>
+    cppsort::sorter_facade<bar_sorter>
 {
-    using cppsort::sorter_base<bar_sorter>::operator();
+    using cppsort::sorter_facade<bar_sorter>::operator();
 
     template<typename Iterator>
     auto operator()(Iterator, Iterator) const
