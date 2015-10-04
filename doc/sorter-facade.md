@@ -87,7 +87,7 @@ where `T` is the type of the values to sort:
 ```cpp
 template<typename Iterable>
 auto operator()(Iterable& iterable, std::less<>) const
-    -> decltype(Sorter{}(std::begin(iterable), std::end(iterable)));
+    -> decltype(Sorter{}(iterable));
 
 template<typename Iterator>
 auto operator()(Iterator first, Iterator last, std::less<>) const
@@ -96,7 +96,7 @@ auto operator()(Iterator first, Iterator last, std::less<>) const
 template<typename Iterable>
 auto operator()(Iterable& iterable,
                 std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
-    -> decltype(Sorter{}(std::begin(iterable), std::end(iterable)));
+    -> decltype(Sorter{}(iterable));
 
 template<typename Iterator>
 auto operator()(Iterator first, Iterator last,

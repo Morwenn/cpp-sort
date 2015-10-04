@@ -63,12 +63,36 @@ struct non_comparison_sorter:
     }
 };
 
+struct non_comparison_iterable_sorter:
+    cppsort::sorter_facade<non_comparison_iterable_sorter>
+{
+    using cppsort::sorter_facade<non_comparison_iterable_sorter>::operator();
+
+    template<typename Iterator>
+    auto operator()(Iterator, Iterator)
+        -> bool
+    {
+        return true;
+    }
+
+    template<typename Iterable>
+    auto operator()(Iterable&)
+        -> bool
+    {
+        return false;
+    }
+};
+
 TEST_CASE( "std::less<> forwarding to sorters",
            "[sorter_facade][compare]" )
 {
     // Check that sorter_facade only creates the overloads for
     // std::less when the original sorter does not support
     // custom comparison functions
+
+    // Make sure the iterator overload calls the operator() from
+    // the sorter for iterators, and that the iterable overload
+    // calls the original sorter's iterable operator() overload
 
     // Vector to "sort"
     std::vector<int> vec(3);
@@ -80,6 +104,9 @@ TEST_CASE( "std::less<> forwarding to sorters",
 
         CHECK( cppsort::sort(vec, non_comparison_sorter{}, std::less<>{}) );
         CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, std::less<>{}) );
+
+        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, std::less<>{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<>{}) );
     }
 
     SECTION( "with std::less<T>" )
@@ -89,5 +116,8 @@ TEST_CASE( "std::less<> forwarding to sorters",
 
         CHECK( cppsort::sort(vec, non_comparison_sorter{}, std::less<int>{}) );
         CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, std::less<int>{}) );
+
+        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, std::less<int>{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<int>{}) );
     }
 }

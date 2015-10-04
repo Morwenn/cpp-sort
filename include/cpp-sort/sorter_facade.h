@@ -120,10 +120,10 @@ namespace cppsort
             auto operator()(Iterable& iterable, std::less<>) const
                 -> std::enable_if_t<
                     not is_comparison_sorter_iterator<Sorter, decltype(std::begin(iterable)), std::less<>>,
-                    decltype(Sorter{}(std::begin(iterable), std::end(iterable)))
+                    decltype(Sorter{}(iterable))
                 >
             {
-                return Sorter{}(std::begin(iterable), std::end(iterable));
+                return Sorter{}(iterable);
             }
 
             template<typename Iterator>
@@ -148,10 +148,10 @@ namespace cppsort
                         decltype(std::begin(iterable)),
                         std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>
                     >,
-                    decltype(Sorter{}(std::begin(iterable), std::end(iterable)))
+                    decltype(Sorter{}(iterable))
                 >
             {
-                return Sorter{}(std::begin(iterable), std::end(iterable));
+                return Sorter{}(iterable);
             }
 
             template<typename Iterator>
