@@ -79,13 +79,17 @@ template<
 auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
     -> void
 {
+    using fixed_sorter = cppsort::small_array_adapter<
+        cppsort::pdq_sorter
+    >;
+
     // Compute results for the different sorting algorithms
     std::pair<const char*, std::array<std::chrono::milliseconds, sizeof...(Ind)>> results[] = {
-        { "default_sorter", { time_it<T, Ind>(cppsort::default_sorter{}, Distribution{}, times)... } },
-        { "std_sorter",     { time_it<T, Ind>(cppsort::std_sorter{}, Distribution{}, times)... } },
-        { "tim_sorter",     { time_it<T, Ind>(cppsort::tim_sorter{}, Distribution{}, times)... } },
-        { "pdq_sorter",     { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... } },
-        { "verge_sorter",   { time_it<T, Ind>(cppsort::verge_sorter{}, Distribution{}, times)... } }
+        { "fixed_sorter",       { time_it<T, Ind>(fixed_sorter{},               Distribution{}, times)... } },
+        { "std_sorter",         { time_it<T, Ind>(cppsort::std_sorter{},        Distribution{}, times)... } },
+        { "tim_sorter",         { time_it<T, Ind>(cppsort::tim_sorter{},        Distribution{}, times)... } },
+        { "pdq_sorter",         { time_it<T, Ind>(cppsort::pdq_sorter{},        Distribution{}, times)... } },
+        { "insertion_sorter",   { time_it<T, Ind>(cppsort::insertion_sorter{},  Distribution{}, times)... } }
     };
 
     // Output the results to their respective files
