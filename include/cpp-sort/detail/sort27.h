@@ -28,484 +28,488 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
 namespace detail
 {
     template<typename FallbackSorter>
-    struct sorter_n<27u, FallbackSorter>
+    struct sorter_n<27u, FallbackSorter>:
+        sorter_facade<sorter_n<27u, FallbackSorter>>
     {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable& iterable, Compare compare)
+        using sorter_facade<sorter_n<27u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
             using std::swap;
 
-            if (compare(iterable[16u], iterable[0u])) {
-                swap(iterable[0u], iterable[16u]);
+            if (compare(first[16u], first[0u])) {
+                swap(first[0u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[1u])) {
-                swap(iterable[1u], iterable[17u]);
+            if (compare(first[17u], first[1u])) {
+                swap(first[1u], first[17u]);
             }
-            if (compare(iterable[18u], iterable[2u])) {
-                swap(iterable[2u], iterable[18u]);
+            if (compare(first[18u], first[2u])) {
+                swap(first[2u], first[18u]);
             }
-            if (compare(iterable[19u], iterable[3u])) {
-                swap(iterable[3u], iterable[19u]);
+            if (compare(first[19u], first[3u])) {
+                swap(first[3u], first[19u]);
             }
-            if (compare(iterable[20u], iterable[4u])) {
-                swap(iterable[4u], iterable[20u]);
+            if (compare(first[20u], first[4u])) {
+                swap(first[4u], first[20u]);
             }
-            if (compare(iterable[21u], iterable[5u])) {
-                swap(iterable[5u], iterable[21u]);
+            if (compare(first[21u], first[5u])) {
+                swap(first[5u], first[21u]);
             }
-            if (compare(iterable[22u], iterable[6u])) {
-                swap(iterable[6u], iterable[22u]);
+            if (compare(first[22u], first[6u])) {
+                swap(first[6u], first[22u]);
             }
-            if (compare(iterable[23u], iterable[7u])) {
-                swap(iterable[7u], iterable[23u]);
+            if (compare(first[23u], first[7u])) {
+                swap(first[7u], first[23u]);
             }
-            if (compare(iterable[24u], iterable[8u])) {
-                swap(iterable[8u], iterable[24u]);
+            if (compare(first[24u], first[8u])) {
+                swap(first[8u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[9u])) {
-                swap(iterable[9u], iterable[25u]);
+            if (compare(first[25u], first[9u])) {
+                swap(first[9u], first[25u]);
             }
-            if (compare(iterable[26u], iterable[10u])) {
-                swap(iterable[10u], iterable[26u]);
+            if (compare(first[26u], first[10u])) {
+                swap(first[10u], first[26u]);
             }
-            if (compare(iterable[8u], iterable[0u])) {
-                swap(iterable[0u], iterable[8u]);
+            if (compare(first[8u], first[0u])) {
+                swap(first[0u], first[8u]);
             }
-            if (compare(iterable[9u], iterable[1u])) {
-                swap(iterable[1u], iterable[9u]);
+            if (compare(first[9u], first[1u])) {
+                swap(first[1u], first[9u]);
             }
-            if (compare(iterable[10u], iterable[2u])) {
-                swap(iterable[2u], iterable[10u]);
+            if (compare(first[10u], first[2u])) {
+                swap(first[2u], first[10u]);
             }
-            if (compare(iterable[11u], iterable[3u])) {
-                swap(iterable[3u], iterable[11u]);
+            if (compare(first[11u], first[3u])) {
+                swap(first[3u], first[11u]);
             }
-            if (compare(iterable[12u], iterable[4u])) {
-                swap(iterable[4u], iterable[12u]);
+            if (compare(first[12u], first[4u])) {
+                swap(first[4u], first[12u]);
             }
-            if (compare(iterable[13u], iterable[5u])) {
-                swap(iterable[5u], iterable[13u]);
+            if (compare(first[13u], first[5u])) {
+                swap(first[5u], first[13u]);
             }
-            if (compare(iterable[14u], iterable[6u])) {
-                swap(iterable[6u], iterable[14u]);
+            if (compare(first[14u], first[6u])) {
+                swap(first[6u], first[14u]);
             }
-            if (compare(iterable[15u], iterable[7u])) {
-                swap(iterable[7u], iterable[15u]);
+            if (compare(first[15u], first[7u])) {
+                swap(first[7u], first[15u]);
             }
-            if (compare(iterable[24u], iterable[16u])) {
-                swap(iterable[16u], iterable[24u]);
+            if (compare(first[24u], first[16u])) {
+                swap(first[16u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[17u])) {
-                swap(iterable[17u], iterable[25u]);
+            if (compare(first[25u], first[17u])) {
+                swap(first[17u], first[25u]);
             }
-            if (compare(iterable[26u], iterable[18u])) {
-                swap(iterable[18u], iterable[26u]);
+            if (compare(first[26u], first[18u])) {
+                swap(first[18u], first[26u]);
             }
-            if (compare(iterable[16u], iterable[8u])) {
-                swap(iterable[8u], iterable[16u]);
+            if (compare(first[16u], first[8u])) {
+                swap(first[8u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[9u])) {
-                swap(iterable[9u], iterable[17u]);
+            if (compare(first[17u], first[9u])) {
+                swap(first[9u], first[17u]);
             }
-            if (compare(iterable[18u], iterable[10u])) {
-                swap(iterable[10u], iterable[18u]);
+            if (compare(first[18u], first[10u])) {
+                swap(first[10u], first[18u]);
             }
-            if (compare(iterable[19u], iterable[11u])) {
-                swap(iterable[11u], iterable[19u]);
+            if (compare(first[19u], first[11u])) {
+                swap(first[11u], first[19u]);
             }
-            if (compare(iterable[20u], iterable[12u])) {
-                swap(iterable[12u], iterable[20u]);
+            if (compare(first[20u], first[12u])) {
+                swap(first[12u], first[20u]);
             }
-            if (compare(iterable[21u], iterable[13u])) {
-                swap(iterable[13u], iterable[21u]);
+            if (compare(first[21u], first[13u])) {
+                swap(first[13u], first[21u]);
             }
-            if (compare(iterable[22u], iterable[14u])) {
-                swap(iterable[14u], iterable[22u]);
+            if (compare(first[22u], first[14u])) {
+                swap(first[14u], first[22u]);
             }
-            if (compare(iterable[23u], iterable[15u])) {
-                swap(iterable[15u], iterable[23u]);
+            if (compare(first[23u], first[15u])) {
+                swap(first[15u], first[23u]);
             }
-            if (compare(iterable[4u], iterable[0u])) {
-                swap(iterable[0u], iterable[4u]);
+            if (compare(first[4u], first[0u])) {
+                swap(first[0u], first[4u]);
             }
-            if (compare(iterable[5u], iterable[1u])) {
-                swap(iterable[1u], iterable[5u]);
+            if (compare(first[5u], first[1u])) {
+                swap(first[1u], first[5u]);
             }
-            if (compare(iterable[6u], iterable[2u])) {
-                swap(iterable[2u], iterable[6u]);
+            if (compare(first[6u], first[2u])) {
+                swap(first[2u], first[6u]);
             }
-            if (compare(iterable[7u], iterable[3u])) {
-                swap(iterable[3u], iterable[7u]);
+            if (compare(first[7u], first[3u])) {
+                swap(first[3u], first[7u]);
             }
-            if (compare(iterable[12u], iterable[8u])) {
-                swap(iterable[8u], iterable[12u]);
+            if (compare(first[12u], first[8u])) {
+                swap(first[8u], first[12u]);
             }
-            if (compare(iterable[13u], iterable[9u])) {
-                swap(iterable[9u], iterable[13u]);
+            if (compare(first[13u], first[9u])) {
+                swap(first[9u], first[13u]);
             }
-            if (compare(iterable[14u], iterable[10u])) {
-                swap(iterable[10u], iterable[14u]);
+            if (compare(first[14u], first[10u])) {
+                swap(first[10u], first[14u]);
             }
-            if (compare(iterable[15u], iterable[11u])) {
-                swap(iterable[11u], iterable[15u]);
+            if (compare(first[15u], first[11u])) {
+                swap(first[11u], first[15u]);
             }
-            if (compare(iterable[20u], iterable[16u])) {
-                swap(iterable[16u], iterable[20u]);
+            if (compare(first[20u], first[16u])) {
+                swap(first[16u], first[20u]);
             }
-            if (compare(iterable[21u], iterable[17u])) {
-                swap(iterable[17u], iterable[21u]);
+            if (compare(first[21u], first[17u])) {
+                swap(first[17u], first[21u]);
             }
-            if (compare(iterable[22u], iterable[18u])) {
-                swap(iterable[18u], iterable[22u]);
+            if (compare(first[22u], first[18u])) {
+                swap(first[18u], first[22u]);
             }
-            if (compare(iterable[23u], iterable[19u])) {
-                swap(iterable[19u], iterable[23u]);
+            if (compare(first[23u], first[19u])) {
+                swap(first[19u], first[23u]);
             }
-            if (compare(iterable[16u], iterable[4u])) {
-                swap(iterable[4u], iterable[16u]);
+            if (compare(first[16u], first[4u])) {
+                swap(first[4u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[5u])) {
-                swap(iterable[5u], iterable[17u]);
+            if (compare(first[17u], first[5u])) {
+                swap(first[5u], first[17u]);
             }
-            if (compare(iterable[18u], iterable[6u])) {
-                swap(iterable[6u], iterable[18u]);
+            if (compare(first[18u], first[6u])) {
+                swap(first[6u], first[18u]);
             }
-            if (compare(iterable[19u], iterable[7u])) {
-                swap(iterable[7u], iterable[19u]);
+            if (compare(first[19u], first[7u])) {
+                swap(first[7u], first[19u]);
             }
-            if (compare(iterable[24u], iterable[12u])) {
-                swap(iterable[12u], iterable[24u]);
+            if (compare(first[24u], first[12u])) {
+                swap(first[12u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[13u])) {
-                swap(iterable[13u], iterable[25u]);
+            if (compare(first[25u], first[13u])) {
+                swap(first[13u], first[25u]);
             }
-            if (compare(iterable[26u], iterable[14u])) {
-                swap(iterable[14u], iterable[26u]);
+            if (compare(first[26u], first[14u])) {
+                swap(first[14u], first[26u]);
             }
-            if (compare(iterable[8u], iterable[4u])) {
-                swap(iterable[4u], iterable[8u]);
+            if (compare(first[8u], first[4u])) {
+                swap(first[4u], first[8u]);
             }
-            if (compare(iterable[9u], iterable[5u])) {
-                swap(iterable[5u], iterable[9u]);
+            if (compare(first[9u], first[5u])) {
+                swap(first[5u], first[9u]);
             }
-            if (compare(iterable[10u], iterable[6u])) {
-                swap(iterable[6u], iterable[10u]);
+            if (compare(first[10u], first[6u])) {
+                swap(first[6u], first[10u]);
             }
-            if (compare(iterable[11u], iterable[7u])) {
-                swap(iterable[7u], iterable[11u]);
+            if (compare(first[11u], first[7u])) {
+                swap(first[7u], first[11u]);
             }
-            if (compare(iterable[16u], iterable[12u])) {
-                swap(iterable[12u], iterable[16u]);
+            if (compare(first[16u], first[12u])) {
+                swap(first[12u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[13u])) {
-                swap(iterable[13u], iterable[17u]);
+            if (compare(first[17u], first[13u])) {
+                swap(first[13u], first[17u]);
             }
-            if (compare(iterable[18u], iterable[14u])) {
-                swap(iterable[14u], iterable[18u]);
+            if (compare(first[18u], first[14u])) {
+                swap(first[14u], first[18u]);
             }
-            if (compare(iterable[19u], iterable[15u])) {
-                swap(iterable[15u], iterable[19u]);
+            if (compare(first[19u], first[15u])) {
+                swap(first[15u], first[19u]);
             }
-            if (compare(iterable[24u], iterable[20u])) {
-                swap(iterable[20u], iterable[24u]);
+            if (compare(first[24u], first[20u])) {
+                swap(first[20u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[21u])) {
-                swap(iterable[21u], iterable[25u]);
+            if (compare(first[25u], first[21u])) {
+                swap(first[21u], first[25u]);
             }
-            if (compare(iterable[26u], iterable[22u])) {
-                swap(iterable[22u], iterable[26u]);
+            if (compare(first[26u], first[22u])) {
+                swap(first[22u], first[26u]);
             }
-            if (compare(iterable[2u], iterable[0u])) {
-                swap(iterable[0u], iterable[2u]);
+            if (compare(first[2u], first[0u])) {
+                swap(first[0u], first[2u]);
             }
-            if (compare(iterable[3u], iterable[1u])) {
-                swap(iterable[1u], iterable[3u]);
+            if (compare(first[3u], first[1u])) {
+                swap(first[1u], first[3u]);
             }
-            if (compare(iterable[6u], iterable[4u])) {
-                swap(iterable[4u], iterable[6u]);
+            if (compare(first[6u], first[4u])) {
+                swap(first[4u], first[6u]);
             }
-            if (compare(iterable[7u], iterable[5u])) {
-                swap(iterable[5u], iterable[7u]);
+            if (compare(first[7u], first[5u])) {
+                swap(first[5u], first[7u]);
             }
-            if (compare(iterable[10u], iterable[8u])) {
-                swap(iterable[8u], iterable[10u]);
+            if (compare(first[10u], first[8u])) {
+                swap(first[8u], first[10u]);
             }
-            if (compare(iterable[11u], iterable[9u])) {
-                swap(iterable[9u], iterable[11u]);
+            if (compare(first[11u], first[9u])) {
+                swap(first[9u], first[11u]);
             }
-            if (compare(iterable[14u], iterable[12u])) {
-                swap(iterable[12u], iterable[14u]);
+            if (compare(first[14u], first[12u])) {
+                swap(first[12u], first[14u]);
             }
-            if (compare(iterable[15u], iterable[13u])) {
-                swap(iterable[13u], iterable[15u]);
+            if (compare(first[15u], first[13u])) {
+                swap(first[13u], first[15u]);
             }
-            if (compare(iterable[18u], iterable[16u])) {
-                swap(iterable[16u], iterable[18u]);
+            if (compare(first[18u], first[16u])) {
+                swap(first[16u], first[18u]);
             }
-            if (compare(iterable[19u], iterable[17u])) {
-                swap(iterable[17u], iterable[19u]);
+            if (compare(first[19u], first[17u])) {
+                swap(first[17u], first[19u]);
             }
-            if (compare(iterable[22u], iterable[20u])) {
-                swap(iterable[20u], iterable[22u]);
+            if (compare(first[22u], first[20u])) {
+                swap(first[20u], first[22u]);
             }
-            if (compare(iterable[23u], iterable[21u])) {
-                swap(iterable[21u], iterable[23u]);
+            if (compare(first[23u], first[21u])) {
+                swap(first[21u], first[23u]);
             }
-            if (compare(iterable[26u], iterable[24u])) {
-                swap(iterable[24u], iterable[26u]);
+            if (compare(first[26u], first[24u])) {
+                swap(first[24u], first[26u]);
             }
-            if (compare(iterable[16u], iterable[2u])) {
-                swap(iterable[2u], iterable[16u]);
+            if (compare(first[16u], first[2u])) {
+                swap(first[2u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[3u])) {
-                swap(iterable[3u], iterable[17u]);
+            if (compare(first[17u], first[3u])) {
+                swap(first[3u], first[17u]);
             }
-            if (compare(iterable[20u], iterable[6u])) {
-                swap(iterable[6u], iterable[20u]);
+            if (compare(first[20u], first[6u])) {
+                swap(first[6u], first[20u]);
             }
-            if (compare(iterable[21u], iterable[7u])) {
-                swap(iterable[7u], iterable[21u]);
+            if (compare(first[21u], first[7u])) {
+                swap(first[7u], first[21u]);
             }
-            if (compare(iterable[24u], iterable[10u])) {
-                swap(iterable[10u], iterable[24u]);
+            if (compare(first[24u], first[10u])) {
+                swap(first[10u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[11u])) {
-                swap(iterable[11u], iterable[25u]);
+            if (compare(first[25u], first[11u])) {
+                swap(first[11u], first[25u]);
             }
-            if (compare(iterable[8u], iterable[2u])) {
-                swap(iterable[2u], iterable[8u]);
+            if (compare(first[8u], first[2u])) {
+                swap(first[2u], first[8u]);
             }
-            if (compare(iterable[9u], iterable[3u])) {
-                swap(iterable[3u], iterable[9u]);
+            if (compare(first[9u], first[3u])) {
+                swap(first[3u], first[9u]);
             }
-            if (compare(iterable[12u], iterable[6u])) {
-                swap(iterable[6u], iterable[12u]);
+            if (compare(first[12u], first[6u])) {
+                swap(first[6u], first[12u]);
             }
-            if (compare(iterable[13u], iterable[7u])) {
-                swap(iterable[7u], iterable[13u]);
+            if (compare(first[13u], first[7u])) {
+                swap(first[7u], first[13u]);
             }
-            if (compare(iterable[16u], iterable[10u])) {
-                swap(iterable[10u], iterable[16u]);
+            if (compare(first[16u], first[10u])) {
+                swap(first[10u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[11u])) {
-                swap(iterable[11u], iterable[17u]);
+            if (compare(first[17u], first[11u])) {
+                swap(first[11u], first[17u]);
             }
-            if (compare(iterable[20u], iterable[14u])) {
-                swap(iterable[14u], iterable[20u]);
+            if (compare(first[20u], first[14u])) {
+                swap(first[14u], first[20u]);
             }
-            if (compare(iterable[21u], iterable[15u])) {
-                swap(iterable[15u], iterable[21u]);
+            if (compare(first[21u], first[15u])) {
+                swap(first[15u], first[21u]);
             }
-            if (compare(iterable[24u], iterable[18u])) {
-                swap(iterable[18u], iterable[24u]);
+            if (compare(first[24u], first[18u])) {
+                swap(first[18u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[19u])) {
-                swap(iterable[19u], iterable[25u]);
+            if (compare(first[25u], first[19u])) {
+                swap(first[19u], first[25u]);
             }
-            if (compare(iterable[4u], iterable[2u])) {
-                swap(iterable[2u], iterable[4u]);
+            if (compare(first[4u], first[2u])) {
+                swap(first[2u], first[4u]);
             }
-            if (compare(iterable[5u], iterable[3u])) {
-                swap(iterable[3u], iterable[5u]);
+            if (compare(first[5u], first[3u])) {
+                swap(first[3u], first[5u]);
             }
-            if (compare(iterable[8u], iterable[6u])) {
-                swap(iterable[6u], iterable[8u]);
+            if (compare(first[8u], first[6u])) {
+                swap(first[6u], first[8u]);
             }
-            if (compare(iterable[9u], iterable[7u])) {
-                swap(iterable[7u], iterable[9u]);
+            if (compare(first[9u], first[7u])) {
+                swap(first[7u], first[9u]);
             }
-            if (compare(iterable[12u], iterable[10u])) {
-                swap(iterable[10u], iterable[12u]);
+            if (compare(first[12u], first[10u])) {
+                swap(first[10u], first[12u]);
             }
-            if (compare(iterable[13u], iterable[11u])) {
-                swap(iterable[11u], iterable[13u]);
+            if (compare(first[13u], first[11u])) {
+                swap(first[11u], first[13u]);
             }
-            if (compare(iterable[16u], iterable[14u])) {
-                swap(iterable[14u], iterable[16u]);
+            if (compare(first[16u], first[14u])) {
+                swap(first[14u], first[16u]);
             }
-            if (compare(iterable[17u], iterable[15u])) {
-                swap(iterable[15u], iterable[17u]);
+            if (compare(first[17u], first[15u])) {
+                swap(first[15u], first[17u]);
             }
-            if (compare(iterable[20u], iterable[18u])) {
-                swap(iterable[18u], iterable[20u]);
+            if (compare(first[20u], first[18u])) {
+                swap(first[18u], first[20u]);
             }
-            if (compare(iterable[21u], iterable[19u])) {
-                swap(iterable[19u], iterable[21u]);
+            if (compare(first[21u], first[19u])) {
+                swap(first[19u], first[21u]);
             }
-            if (compare(iterable[24u], iterable[22u])) {
-                swap(iterable[22u], iterable[24u]);
+            if (compare(first[24u], first[22u])) {
+                swap(first[22u], first[24u]);
             }
-            if (compare(iterable[25u], iterable[23u])) {
-                swap(iterable[23u], iterable[25u]);
+            if (compare(first[25u], first[23u])) {
+                swap(first[23u], first[25u]);
             }
-            if (compare(iterable[1u], iterable[0u])) {
-                swap(iterable[0u], iterable[1u]);
+            if (compare(first[1u], first[0u])) {
+                swap(first[0u], first[1u]);
             }
-            if (compare(iterable[3u], iterable[2u])) {
-                swap(iterable[2u], iterable[3u]);
+            if (compare(first[3u], first[2u])) {
+                swap(first[2u], first[3u]);
             }
-            if (compare(iterable[5u], iterable[4u])) {
-                swap(iterable[4u], iterable[5u]);
+            if (compare(first[5u], first[4u])) {
+                swap(first[4u], first[5u]);
             }
-            if (compare(iterable[7u], iterable[6u])) {
-                swap(iterable[6u], iterable[7u]);
+            if (compare(first[7u], first[6u])) {
+                swap(first[6u], first[7u]);
             }
-            if (compare(iterable[9u], iterable[8u])) {
-                swap(iterable[8u], iterable[9u]);
+            if (compare(first[9u], first[8u])) {
+                swap(first[8u], first[9u]);
             }
-            if (compare(iterable[11u], iterable[10u])) {
-                swap(iterable[10u], iterable[11u]);
+            if (compare(first[11u], first[10u])) {
+                swap(first[10u], first[11u]);
             }
-            if (compare(iterable[13u], iterable[12u])) {
-                swap(iterable[12u], iterable[13u]);
+            if (compare(first[13u], first[12u])) {
+                swap(first[12u], first[13u]);
             }
-            if (compare(iterable[15u], iterable[14u])) {
-                swap(iterable[14u], iterable[15u]);
+            if (compare(first[15u], first[14u])) {
+                swap(first[14u], first[15u]);
             }
-            if (compare(iterable[17u], iterable[16u])) {
-                swap(iterable[16u], iterable[17u]);
+            if (compare(first[17u], first[16u])) {
+                swap(first[16u], first[17u]);
             }
-            if (compare(iterable[19u], iterable[18u])) {
-                swap(iterable[18u], iterable[19u]);
+            if (compare(first[19u], first[18u])) {
+                swap(first[18u], first[19u]);
             }
-            if (compare(iterable[21u], iterable[20u])) {
-                swap(iterable[20u], iterable[21u]);
+            if (compare(first[21u], first[20u])) {
+                swap(first[20u], first[21u]);
             }
-            if (compare(iterable[23u], iterable[22u])) {
-                swap(iterable[22u], iterable[23u]);
+            if (compare(first[23u], first[22u])) {
+                swap(first[22u], first[23u]);
             }
-            if (compare(iterable[25u], iterable[24u])) {
-                swap(iterable[24u], iterable[25u]);
+            if (compare(first[25u], first[24u])) {
+                swap(first[24u], first[25u]);
             }
-            if (compare(iterable[16u], iterable[1u])) {
-                swap(iterable[1u], iterable[16u]);
+            if (compare(first[16u], first[1u])) {
+                swap(first[1u], first[16u]);
             }
-            if (compare(iterable[18u], iterable[3u])) {
-                swap(iterable[3u], iterable[18u]);
+            if (compare(first[18u], first[3u])) {
+                swap(first[3u], first[18u]);
             }
-            if (compare(iterable[20u], iterable[5u])) {
-                swap(iterable[5u], iterable[20u]);
+            if (compare(first[20u], first[5u])) {
+                swap(first[5u], first[20u]);
             }
-            if (compare(iterable[22u], iterable[7u])) {
-                swap(iterable[7u], iterable[22u]);
+            if (compare(first[22u], first[7u])) {
+                swap(first[7u], first[22u]);
             }
-            if (compare(iterable[24u], iterable[9u])) {
-                swap(iterable[9u], iterable[24u]);
+            if (compare(first[24u], first[9u])) {
+                swap(first[9u], first[24u]);
             }
-            if (compare(iterable[26u], iterable[11u])) {
-                swap(iterable[11u], iterable[26u]);
+            if (compare(first[26u], first[11u])) {
+                swap(first[11u], first[26u]);
             }
-            if (compare(iterable[8u], iterable[1u])) {
-                swap(iterable[1u], iterable[8u]);
+            if (compare(first[8u], first[1u])) {
+                swap(first[1u], first[8u]);
             }
-            if (compare(iterable[10u], iterable[3u])) {
-                swap(iterable[3u], iterable[10u]);
+            if (compare(first[10u], first[3u])) {
+                swap(first[3u], first[10u]);
             }
-            if (compare(iterable[12u], iterable[5u])) {
-                swap(iterable[5u], iterable[12u]);
+            if (compare(first[12u], first[5u])) {
+                swap(first[5u], first[12u]);
             }
-            if (compare(iterable[14u], iterable[7u])) {
-                swap(iterable[7u], iterable[14u]);
+            if (compare(first[14u], first[7u])) {
+                swap(first[7u], first[14u]);
             }
-            if (compare(iterable[16u], iterable[9u])) {
-                swap(iterable[9u], iterable[16u]);
+            if (compare(first[16u], first[9u])) {
+                swap(first[9u], first[16u]);
             }
-            if (compare(iterable[18u], iterable[11u])) {
-                swap(iterable[11u], iterable[18u]);
+            if (compare(first[18u], first[11u])) {
+                swap(first[11u], first[18u]);
             }
-            if (compare(iterable[20u], iterable[13u])) {
-                swap(iterable[13u], iterable[20u]);
+            if (compare(first[20u], first[13u])) {
+                swap(first[13u], first[20u]);
             }
-            if (compare(iterable[22u], iterable[15u])) {
-                swap(iterable[15u], iterable[22u]);
+            if (compare(first[22u], first[15u])) {
+                swap(first[15u], first[22u]);
             }
-            if (compare(iterable[24u], iterable[17u])) {
-                swap(iterable[17u], iterable[24u]);
+            if (compare(first[24u], first[17u])) {
+                swap(first[17u], first[24u]);
             }
-            if (compare(iterable[26u], iterable[19u])) {
-                swap(iterable[19u], iterable[26u]);
+            if (compare(first[26u], first[19u])) {
+                swap(first[19u], first[26u]);
             }
-            if (compare(iterable[4u], iterable[1u])) {
-                swap(iterable[1u], iterable[4u]);
+            if (compare(first[4u], first[1u])) {
+                swap(first[1u], first[4u]);
             }
-            if (compare(iterable[6u], iterable[3u])) {
-                swap(iterable[3u], iterable[6u]);
+            if (compare(first[6u], first[3u])) {
+                swap(first[3u], first[6u]);
             }
-            if (compare(iterable[8u], iterable[5u])) {
-                swap(iterable[5u], iterable[8u]);
+            if (compare(first[8u], first[5u])) {
+                swap(first[5u], first[8u]);
             }
-            if (compare(iterable[10u], iterable[7u])) {
-                swap(iterable[7u], iterable[10u]);
+            if (compare(first[10u], first[7u])) {
+                swap(first[7u], first[10u]);
             }
-            if (compare(iterable[12u], iterable[9u])) {
-                swap(iterable[9u], iterable[12u]);
+            if (compare(first[12u], first[9u])) {
+                swap(first[9u], first[12u]);
             }
-            if (compare(iterable[14u], iterable[11u])) {
-                swap(iterable[11u], iterable[14u]);
+            if (compare(first[14u], first[11u])) {
+                swap(first[11u], first[14u]);
             }
-            if (compare(iterable[16u], iterable[13u])) {
-                swap(iterable[13u], iterable[16u]);
+            if (compare(first[16u], first[13u])) {
+                swap(first[13u], first[16u]);
             }
-            if (compare(iterable[18u], iterable[15u])) {
-                swap(iterable[15u], iterable[18u]);
+            if (compare(first[18u], first[15u])) {
+                swap(first[15u], first[18u]);
             }
-            if (compare(iterable[20u], iterable[17u])) {
-                swap(iterable[17u], iterable[20u]);
+            if (compare(first[20u], first[17u])) {
+                swap(first[17u], first[20u]);
             }
-            if (compare(iterable[22u], iterable[19u])) {
-                swap(iterable[19u], iterable[22u]);
+            if (compare(first[22u], first[19u])) {
+                swap(first[19u], first[22u]);
             }
-            if (compare(iterable[24u], iterable[21u])) {
-                swap(iterable[21u], iterable[24u]);
+            if (compare(first[24u], first[21u])) {
+                swap(first[21u], first[24u]);
             }
-            if (compare(iterable[26u], iterable[23u])) {
-                swap(iterable[23u], iterable[26u]);
+            if (compare(first[26u], first[23u])) {
+                swap(first[23u], first[26u]);
             }
-            if (compare(iterable[2u], iterable[1u])) {
-                swap(iterable[1u], iterable[2u]);
+            if (compare(first[2u], first[1u])) {
+                swap(first[1u], first[2u]);
             }
-            if (compare(iterable[4u], iterable[3u])) {
-                swap(iterable[3u], iterable[4u]);
+            if (compare(first[4u], first[3u])) {
+                swap(first[3u], first[4u]);
             }
-            if (compare(iterable[6u], iterable[5u])) {
-                swap(iterable[5u], iterable[6u]);
+            if (compare(first[6u], first[5u])) {
+                swap(first[5u], first[6u]);
             }
-            if (compare(iterable[8u], iterable[7u])) {
-                swap(iterable[7u], iterable[8u]);
+            if (compare(first[8u], first[7u])) {
+                swap(first[7u], first[8u]);
             }
-            if (compare(iterable[10u], iterable[9u])) {
-                swap(iterable[9u], iterable[10u]);
+            if (compare(first[10u], first[9u])) {
+                swap(first[9u], first[10u]);
             }
-            if (compare(iterable[12u], iterable[11u])) {
-                swap(iterable[11u], iterable[12u]);
+            if (compare(first[12u], first[11u])) {
+                swap(first[11u], first[12u]);
             }
-            if (compare(iterable[14u], iterable[13u])) {
-                swap(iterable[13u], iterable[14u]);
+            if (compare(first[14u], first[13u])) {
+                swap(first[13u], first[14u]);
             }
-            if (compare(iterable[16u], iterable[15u])) {
-                swap(iterable[15u], iterable[16u]);
+            if (compare(first[16u], first[15u])) {
+                swap(first[15u], first[16u]);
             }
-            if (compare(iterable[18u], iterable[17u])) {
-                swap(iterable[17u], iterable[18u]);
+            if (compare(first[18u], first[17u])) {
+                swap(first[17u], first[18u]);
             }
-            if (compare(iterable[20u], iterable[19u])) {
-                swap(iterable[19u], iterable[20u]);
+            if (compare(first[20u], first[19u])) {
+                swap(first[19u], first[20u]);
             }
-            if (compare(iterable[22u], iterable[21u])) {
-                swap(iterable[21u], iterable[22u]);
+            if (compare(first[22u], first[21u])) {
+                swap(first[21u], first[22u]);
             }
-            if (compare(iterable[24u], iterable[23u])) {
-                swap(iterable[23u], iterable[24u]);
+            if (compare(first[24u], first[23u])) {
+                swap(first[23u], first[24u]);
             }
-            if (compare(iterable[26u], iterable[25u])) {
-                swap(iterable[25u], iterable[26u]);
+            if (compare(first[26u], first[25u])) {
+                swap(first[25u], first[26u]);
             }
         }
     };

@@ -24,15 +24,23 @@
 #ifndef CPPSORT_DETAIL_SORT1_H_
 #define CPPSORT_DETAIL_SORT1_H_
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <cpp-sort/sorter_facade.h>
+
 namespace cppsort
 {
 namespace detail
 {
     template<typename FallbackSorter>
-    struct sorter_n<1u, FallbackSorter>
+    struct sorter_n<1u, FallbackSorter>:
+        sorter_facade<sorter_n<1u, FallbackSorter>>
     {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable&, Compare)
+        using sorter_facade<sorter_n<1u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare) const
             -> void
         {}
     };

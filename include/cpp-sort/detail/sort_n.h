@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <utility>
 
 namespace cppsort
 {
@@ -36,24 +37,23 @@ namespace detail
     template<std::size_t N, typename FallbackSorter>
     struct sorter_n
     {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable& iterable, Compare compare)
+        template<typename... Args>
+        auto operator()(Args&&... args) const
             -> decltype(auto)
         {
-            return FallbackSorter{}(iterable, compare);
+            return FallbackSorter{}(std::forward<Args>(args)...);
         }
     };
 
     template<
         std::size_t N,
         typename FallbackSorter,
-        typename RandomAccessIterable,
-        typename Compare
+        typename... Args
     >
-    auto sort_n(RandomAccessIterable& iterable, Compare compare)
+    auto sort_n(Args&&... args)
         -> decltype(auto)
     {
-        return sorter_n<N, FallbackSorter>::do_it(iterable, compare);
+        return sorter_n<N, FallbackSorter>{}(std::forward<Args>(args)...);
     }
 }}
 

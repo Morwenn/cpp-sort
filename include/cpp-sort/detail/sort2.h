@@ -28,22 +28,26 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
 namespace detail
 {
     template<typename FallbackSorter>
-    struct sorter_n<2u, FallbackSorter>
+    struct sorter_n<2u, FallbackSorter>:
+        sorter_facade<sorter_n<2u, FallbackSorter>>
     {
-        template<typename RandomAccessIterable, typename Compare>
-        static auto do_it(RandomAccessIterable& iterable, Compare compare)
+        using sorter_facade<sorter_n<2u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
             using std::swap;
 
-            if (compare(iterable[1u], iterable[0u])) {
-                swap(iterable[0u], iterable[1u]);
+            if (compare(first[1u], first[0u])) {
+                swap(first[0u], first[1u]);
             }
         }
     };
