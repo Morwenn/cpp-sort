@@ -45,7 +45,17 @@ namespace cppsort
     struct counting_adapter:
         sorter_facade<counting_adapter<ComparisonSorter, CountType>>
     {
-        using sorter_facade<counting_adapter<ComparisonSorter, CountType>>::operator();
+        template<
+            typename Iterable,
+            typename Compare = std::less<>
+        >
+        auto operator()(Iterable& iterable, Compare compare={}) const
+            -> CountType
+        {
+            detail::comparison_counter<Compare, CountType> cmp(compare);
+            ComparisonSorter{}(iterable, cmp);
+            return cmp.count;
+        }
 
         template<
             typename Iterator,
