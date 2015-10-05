@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <algorithm>
 #include <array>
+#include <cassert>
 #include <chrono>
 #include <cstddef>
 #include <fstream>
@@ -66,6 +68,12 @@ auto time_it(Sorter sorter, DistributionFunction dist, std::size_t times)
         cppsort::sort(array, sorter);
     }
     auto end = clock_type::now();
+
+    // Double benchmark as unit test
+    for (auto&& array: arrays)
+    {
+        assert(std::is_sorted(std::begin(array), std::end(array)));
+    }
 
     // Return the time it took to sort the arrays
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
