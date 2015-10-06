@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <type_traits>
 #include <utility>
 
 namespace cppsort
@@ -37,6 +38,11 @@ namespace detail
     template<std::size_t N, typename FallbackSorter>
     struct sorter_n
     {
+        static_assert(
+            not std::is_void<FallbackSorter>::value,
+            "unspecialized sorter_n cannot be called without a fallback sorter"
+        );
+
         template<typename... Args>
         auto operator()(Args&&... args) const
             -> decltype(auto)
@@ -47,7 +53,7 @@ namespace detail
 
     template<
         std::size_t N,
-        typename FallbackSorter,
+        typename FallbackSorter = void,
         typename... Args
     >
     auto sort_n(Args&&... args)
