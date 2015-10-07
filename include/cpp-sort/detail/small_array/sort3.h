@@ -46,32 +46,14 @@ namespace detail
         {
             using std::swap;
 
+            if (compare(first[2u], first[1u])) {
+                swap(first[1u], first[2u]);
+            }
+            if (compare(first[2u], first[0u])) {
+                swap(first[0u], first[2u]);
+            }
             if (compare(first[1u], first[0u])) {
-                if (compare(first[2u], first[0u])) {
-                    if (compare(first[2u], first[1u])) {
-                        swap(first[0u], first[2u]);
-                    } else {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(tmp);
-                    }
-                } else {
-                    swap(first[0u], first[1u]);
-                }
-            } else {
-                if (compare(first[2u], first[1u]))
-                {
-                    if (compare(first[2u], first[0u]))
-                    {
-                        auto tmp = std::move(first[2u]);
-                        first[2u] = std::move(first[1u]);
-                        first[1u] = std::move(first[0u]);
-                        first[0u] = std::move(tmp);
-                    } else {
-                        swap(first[1u], first[2u]);
-                    }
-                }
+                swap(first[0u], first[1u]);
             }
         }
     };

@@ -46,15 +46,20 @@ namespace detail
         {
             using std::swap;
 
-            sort_n<3u>(first, first+3u, compare);
+            if (compare(first[1u], first[0u])) {
+                swap(first[0u], first[1u]);
+            }
             if (compare(first[3u], first[2u])) {
                 swap(first[2u], first[3u]);
-                if (compare(first[2u], first[1u])) {
-                    swap(first[1u], first[2u]);
-                    if (compare(first[1u], first[0u])) {
-                        swap(first[0u], first[1u]);
-                    }
-                }
+            }
+            if (compare(first[2u], first[0u])) {
+                swap(first[0u], first[2u]);
+            }
+            if (compare(first[3u], first[1u])) {
+                swap(first[1u], first[3u]);
+            }
+            if (compare(first[2u], first[1u])) {
+                swap(first[1u], first[2u]);
             }
         }
     };
