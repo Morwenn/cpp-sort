@@ -45,7 +45,7 @@ using default_sorter = self_sort_adapter<
             >,
             pdq_sorter
         >,
-        std::make_index_sequence<10u>
+        std::make_index_sequence<14u>
     >
 >;
 ```

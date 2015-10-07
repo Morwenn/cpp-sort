@@ -49,7 +49,7 @@ namespace cppsort
                 >,
                 pdq_sorter
             >,
-            std::make_index_sequence<10u>
+            std::make_index_sequence<14u>
         >
     >;
 }

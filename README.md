@@ -60,11 +60,11 @@ shuffled `std::array` of sizes 0 to 15. The benchmark compares `cppsort::sort`
 (using the default sorter) to three other sorters available in the library:
 an `std_sorter`, a `tim_sorter` and a `pdq_sorter`.
 
-![shuffled](http://i.imgur.com/5U8Cilv.png)
+![shuffled](https://imgur.com/a0EtY0A)
 
 These results were generated with MinGW g++ 5.1 with the compiler options
-`-std=c++14 -O3 -march=native`. More benchmarks will be made available in
-the future.
+`-std=c++14 -O3 -fexpensive-optimizations -march=native`. More benchmarks
+will be made available in the future.
 
 # Thanks
 
