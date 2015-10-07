@@ -21,17 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_H_
-#define CPPSORT_ADAPTERS_H_
+#ifndef CPPSORT_DETAIL_SMALL_ARRAY_SORT1_H_
+#define CPPSORT_DETAIL_SMALL_ARRAY_SORT1_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/low_comparisons_adapter.h>
-#include <cpp-sort/adapters/low_moves_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
+#include <cpp-sort/sorter_facade.h>
 
-#endif // CPPSORT_ADAPTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename FallbackSorter>
+    struct sorter_n<1u, FallbackSorter>:
+        sorter_facade<sorter_n<1u, FallbackSorter>>
+    {
+        using sorter_facade<sorter_n<1u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare) const
+            -> void
+        {}
+    };
+}}
+
+#endif // CPPSORT_DETAIL_SMALL_ARRAY_SORT1_H_

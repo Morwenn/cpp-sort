@@ -21,17 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_H_
-#define CPPSORT_ADAPTERS_H_
+#ifndef CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
+#define CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/low_comparisons_adapter.h>
-#include <cpp-sort/adapters/low_moves_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
+#include <cstddef>
+#include <type_traits>
+#include <utility>
 
-#endif // CPPSORT_ADAPTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<std::size_t N, typename FallbackSorter>
+    struct low_moves_sorter_n
+    {
+        static_assert(
+            not std::is_void<FallbackSorter>::value,
+            "unspecialized low_moves_sorter_n cannot be called without a fallback sorter"
+        );
+
+        template<typename... Args>
+        auto operator()(Args&&... args) const
+            -> decltype(auto)
+        {
+            return FallbackSorter{}(std::forward<Args>(args)...);
+        }
+    };
+
+    template<
+        std::size_t N,
+        typename FallbackSorter = void,
+        typename... Args
+    >
+    auto low_moves_sort_n(Args&&... args)
+        -> decltype(auto)
+    {
+        return low_moves_sorter_n<N, FallbackSorter>{}(std::forward<Args>(args)...);
+    }
+}}
+
+// Specializations of low_moves_sorter_n for some values of N
+#include "sort0.h"
+#include "sort1.h"
+#include "sort2.h"
+#include "sort3.h"
+
+#endif // CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_

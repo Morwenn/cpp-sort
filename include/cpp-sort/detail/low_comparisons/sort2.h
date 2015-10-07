@@ -21,17 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_H_
-#define CPPSORT_ADAPTERS_H_
+#ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT2_H_
+#define CPPSORT_DETAIL_LOW_COMPARISONS_SORT2_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/low_comparisons_adapter.h>
-#include <cpp-sort/adapters/low_moves_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
+#include <utility>
+#include <cpp-sort/sorter_facade.h>
 
-#endif // CPPSORT_ADAPTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename FallbackSorter>
+    struct low_comparisons_sorter_n<2u, FallbackSorter>:
+        sorter_facade<low_comparisons_sorter_n<2u, FallbackSorter>>
+    {
+        using sorter_facade<low_comparisons_sorter_n<2u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
+            -> void
+        {
+            using std::swap;
+
+            if (compare(first[1u], first[0u])) {
+                swap(first[0u], first[1u]);
+            }
+        }
+    };
+}}
+
+#endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT2_H_
