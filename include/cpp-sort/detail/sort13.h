@@ -46,140 +46,78 @@ namespace detail
         {
             using std::swap;
 
-            if (compare(first[7u], first[1u])) {
-                swap(first[1u], first[7u]);
-            }
-            if (compare(first[11u], first[9u])) {
-                swap(first[9u], first[11u]);
-            }
-            if (compare(first[4u], first[3u])) {
-                swap(first[3u], first[4u]);
-            }
-            if (compare(first[8u], first[5u])) {
-                swap(first[5u], first[8u]);
-            }
+            sort_n<11u>(first+1u, first+12u, compare);
+
             if (compare(first[12u], first[0u])) {
                 swap(first[0u], first[12u]);
             }
-            if (compare(first[6u], first[2u])) {
-                swap(first[2u], first[6u]);
-            }
+
             if (compare(first[1u], first[0u])) {
                 swap(first[0u], first[1u]);
+                if (compare(first[2u], first[1u])) {
+                    swap(first[1u], first[2u]);
+                    if (compare(first[3u], first[2u])) {
+                        swap(first[2u], first[3u]);
+                        if (compare(first[4u], first[3u])) {
+                            swap(first[3u], first[4u]);
+                            if (compare(first[5u], first[4u])) {
+                                swap(first[4u], first[5u]);
+                                if (compare(first[6u], first[5u])) {
+                                    swap(first[5u], first[6u]);
+                                    if (compare(first[7u], first[6u])) {
+                                        swap(first[6u], first[7u]);
+                                        if (compare(first[8u], first[7u])) {
+                                            swap(first[7u], first[8u]);
+                                            if (compare(first[9u], first[8u])) {
+                                                swap(first[8u], first[9u]);
+                                                if (compare(first[10u], first[9u])) {
+                                                    swap(first[9u], first[10u]);
+                                                    if (compare(first[11u], first[10u])) {
+                                                        swap(first[10u], first[11u]);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            if (compare(first[3u], first[2u])) {
-                swap(first[2u], first[3u]);
-            }
-            if (compare(first[6u], first[4u])) {
-                swap(first[4u], first[6u]);
-            }
-            if (compare(first[11u], first[8u])) {
-                swap(first[8u], first[11u]);
-            }
-            if (compare(first[12u], first[7u])) {
-                swap(first[7u], first[12u]);
-            }
-            if (compare(first[9u], first[5u])) {
-                swap(first[5u], first[9u]);
-            }
-            if (compare(first[2u], first[0u])) {
-                swap(first[0u], first[2u]);
-            }
-            if (compare(first[7u], first[3u])) {
-                swap(first[3u], first[7u]);
-            }
-            if (compare(first[11u], first[10u])) {
-                swap(first[10u], first[11u]);
-            }
-            if (compare(first[4u], first[1u])) {
-                swap(first[1u], first[4u]);
-            }
-            if (compare(first[12u], first[6u])) {
-                swap(first[6u], first[12u]);
-            }
-            if (compare(first[8u], first[7u])) {
-                swap(first[7u], first[8u]);
-            }
+
             if (compare(first[12u], first[11u])) {
                 swap(first[11u], first[12u]);
-            }
-            if (compare(first[9u], first[4u])) {
-                swap(first[4u], first[9u]);
-            }
-            if (compare(first[10u], first[6u])) {
-                swap(first[6u], first[10u]);
-            }
-            if (compare(first[4u], first[3u])) {
-                swap(first[3u], first[4u]);
-            }
-            if (compare(first[6u], first[5u])) {
-                swap(first[5u], first[6u]);
-            }
-            if (compare(first[9u], first[8u])) {
-                swap(first[8u], first[9u]);
-            }
-            if (compare(first[11u], first[10u])) {
-                swap(first[10u], first[11u]);
-            }
-            if (compare(first[7u], first[1u])) {
-                swap(first[1u], first[7u]);
-            }
-            if (compare(first[6u], first[2u])) {
-                swap(first[2u], first[6u]);
-            }
-            if (compare(first[11u], first[9u])) {
-                swap(first[9u], first[11u]);
-            }
-            if (compare(first[3u], first[1u])) {
-                swap(first[1u], first[3u]);
-            }
-            if (compare(first[7u], first[4u])) {
-                swap(first[4u], first[7u]);
-            }
-            if (compare(first[10u], first[8u])) {
-                swap(first[8u], first[10u]);
-            }
-            if (compare(first[5u], first[0u])) {
-                swap(first[0u], first[5u]);
-            }
-            if (compare(first[5u], first[2u])) {
-                swap(first[2u], first[5u]);
-            }
-            if (compare(first[8u], first[6u])) {
-                swap(first[6u], first[8u]);
-            }
-            if (compare(first[10u], first[9u])) {
-                swap(first[9u], first[10u]);
-            }
-            if (compare(first[2u], first[1u])) {
-                swap(first[1u], first[2u]);
-            }
-            if (compare(first[5u], first[3u])) {
-                swap(first[3u], first[5u]);
-            }
-            if (compare(first[8u], first[7u])) {
-                swap(first[7u], first[8u]);
-            }
-            if (compare(first[6u], first[4u])) {
-                swap(first[4u], first[6u]);
-            }
-            if (compare(first[3u], first[2u])) {
-                swap(first[2u], first[3u]);
-            }
-            if (compare(first[5u], first[4u])) {
-                swap(first[4u], first[5u]);
-            }
-            if (compare(first[7u], first[6u])) {
-                swap(first[6u], first[7u]);
-            }
-            if (compare(first[9u], first[8u])) {
-                swap(first[8u], first[9u]);
-            }
-            if (compare(first[4u], first[3u])) {
-                swap(first[3u], first[4u]);
-            }
-            if (compare(first[6u], first[5u])) {
-                swap(first[5u], first[6u]);
+                if (compare(first[11u], first[10u])) {
+                    swap(first[10u], first[11u]);
+                    if (compare(first[10u], first[9u])) {
+                        swap(first[9u], first[10u]);
+                        if (compare(first[9u], first[8u])) {
+                            swap(first[8u], first[9u]);
+                            if (compare(first[8u], first[7u])) {
+                                swap(first[7u], first[8u]);
+                                if (compare(first[7u], first[6u])) {
+                                    swap(first[6u], first[7u]);
+                                    if (compare(first[6u], first[5u])) {
+                                        swap(first[5u], first[6u]);
+                                        if (compare(first[5u], first[4u])) {
+                                            swap(first[4u], first[5u]);
+                                            if (compare(first[4u], first[3u])) {
+                                                swap(first[3u], first[4u]);
+                                                if (compare(first[3u], first[2u])) {
+                                                    swap(first[2u], first[3u]);
+                                                    if (compare(first[2u], first[1u])) {
+                                                        swap(first[1u], first[2u]);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     };

@@ -52,7 +52,6 @@ namespace detail
                 swap(first[0u], first[7u]);
             }
 
-            // Insert first values while going upwards
             if (compare(first[1u], first[0u])) {
                 swap(first[0u], first[1u]);
                 if (compare(first[2u], first[1u])) {
