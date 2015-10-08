@@ -1,13 +1,12 @@
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <ctime>
-#include <functional>
 #include <iostream>
+#include <iterator>
 #include <random>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
@@ -33,99 +32,99 @@
     #endif
 #endif
 
-template<template<typename...> class Collection>
-Collection<int> shuffled_int(size_t size, std::mt19937_64& rng) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> shuffled_int(size_t size, std::mt19937_64& rng) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
     std::shuffle(v.begin(), v.end(), rng);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> shuffled_16_values_int(size_t size, std::mt19937_64& rng) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> shuffled_16_values_int(size_t size, std::mt19937_64& rng) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i % 16);
     std::shuffle(v.begin(), v.end(), rng);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> all_equal_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> all_equal_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(0);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> ascending_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> ascending_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> descending_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> descending_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = size - 1; i >= 0; --i) v.push_back(i);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> pipe_organ_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> pipe_organ_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size/2; ++i) v.push_back(i);
     for (int i = size/2; i < size; ++i) v.push_back(size - i);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> push_front_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> push_front_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 1; i < size; ++i) v.push_back(i);
     v.push_back(0);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> push_middle_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> push_middle_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) {
         if (i != size/2) v.push_back(i);
     }
     v.push_back(size/2);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> ascending_sawtooth_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> ascending_sawtooth_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     int limit = size / log2(size) * 1.1;
     for (int i = 0; i < size; ++i) v.push_back(i % limit);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> descending_sawtooth_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> descending_sawtooth_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     int limit = size / log2(size) * 1.1;
     for (int i = size - 1; i >= 0; --i) v.push_back(i % limit);
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> alternating_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> alternating_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
     for (int i = 0; i < size; i += 2) v[i] *= -1;
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
-template<template<typename...> class Collection>
-Collection<int> alternating_16_values_int(size_t size, std::mt19937_64&) {
-    std::vector<int> v; v.reserve(size);
+template<typename T, template<typename...> class Collection>
+Collection<T> alternating_16_values_int(size_t size, std::mt19937_64&) {
+    std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i % 16);
     for (int i = 0; i < size; i += 2) v[i] *= -1;
-    return Collection<int>(std::begin(v), std::end(v));
+    return Collection<T>(std::begin(v), std::end(v));
 }
 
 
@@ -163,21 +162,21 @@ int main()
 
     int sizes[] = { 1'000'000 };
 
-    for (auto& distribution : distributions) {
-        for (auto& sort : sorts) {
+    for (auto& distribution: distributions) {
+        for (auto& sort: sorts) {
             el.seed(seed);
 
-            for (auto size : sizes) {
+            for (auto size: sizes) {
                 std::chrono::time_point<std::chrono::high_resolution_clock> total_start, total_end;
-                std::vector<uint64_t> cycles;
+                std::vector<std::uint64_t> cycles;
 
                 total_start = std::chrono::high_resolution_clock::now();
                 total_end = std::chrono::high_resolution_clock::now();
                 while (std::chrono::duration_cast<std::chrono::milliseconds>(total_end - total_start).count() < 10000) {
                     std::vector<int> vec = distribution.second(size, el);
-                    uint64_t start = rdtsc();
+                    std::uint64_t start = rdtsc();
                     sort.second(vec);
-                    uint64_t end = rdtsc();
+                    std::uint64_t end = rdtsc();
                     assert(std::is_sorted(vec.begin(), vec.end()));
                     cycles.push_back(double(end - start) / size + 0.5);
                     total_end = std::chrono::high_resolution_clock::now();
@@ -185,13 +184,11 @@ int main()
 
                 std::sort(cycles.begin(), cycles.end());
 
-                std::cerr << size << " " << distribution.first << " " << sort.first << "\n";
-                std::cout << size << " " << distribution.first << " " << sort.first << " ";
-                for (uint64_t cycle : cycles) std::cout << cycle << " ";
-                std::cout << "\n";
+                std::cerr << size << ' ' << distribution.first << ' ' << sort.first << '\n';
+                std::cout << size << ' ' << distribution.first << ' ' << sort.first << ' ';
+                for (std::uint64_t cycle: cycles) std::cout << cycle << ' ';
+                std::cout << '\n';
             }
         }
     }
-
-    return 0;
 }
