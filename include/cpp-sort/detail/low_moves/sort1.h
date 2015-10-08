@@ -21,37 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
-#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#ifndef CPPSORT_DETAIL_LOW_MOVES_SORT1_H_
+#define CPPSORT_DETAIL_LOW_MOVES_SORT1_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
-#include <utility>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        small_array_adapter<
-            hybrid_adapter<
-                merge_sorter,
-                rebind_iterator_category<
-                    quick_sorter,
-                    std::bidirectional_iterator_tag
-                >,
-                pdq_sorter
-            >,
-            std::make_index_sequence<14u>
-        >
-    >;
-}
+namespace detail
+{
+    template<typename FallbackSorter>
+    struct low_moves_sorter_n<1u, FallbackSorter>:
+        sorter_facade<low_moves_sorter_n<1u, FallbackSorter>>
+    {
+        using sorter_facade<low_moves_sorter_n<1u, FallbackSorter>>::operator();
 
-#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare) const
+            -> void
+        {}
+    };
+}}
+
+#endif // CPPSORT_DETAIL_LOW_MOVES_SORT1_H_

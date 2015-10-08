@@ -21,37 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
-#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT4_H_
+#define CPPSORT_DETAIL_LOW_COMPARISONS_SORT4_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        small_array_adapter<
-            hybrid_adapter<
-                merge_sorter,
-                rebind_iterator_category<
-                    quick_sorter,
-                    std::bidirectional_iterator_tag
-                >,
-                pdq_sorter
-            >,
-            std::make_index_sequence<14u>
-        >
-    >;
-}
+namespace detail
+{
+    template<typename FallbackSorter>
+    struct low_comparisons_sorter_n<4u, FallbackSorter>:
+        sorter_facade<low_comparisons_sorter_n<4u, FallbackSorter>>
+    {
+        using sorter_facade<low_comparisons_sorter_n<4u, FallbackSorter>>::operator();
 
-#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
+            -> void
+        {
+            using std::swap;
+
+            low_comparisons_sort_n<3u>(first, first+3u, compare);
+            if (compare(first[3u], first[2u])) {
+                swap(first[2u], first[3u]);
+                if (compare(first[2u], first[1u])) {
+                    swap(first[1u], first[2u]);
+                    if (compare(first[1u], first[0u])) {
+                        swap(first[0u], first[1u]);
+                    }
+                }
+            }
+        }
+    };
+}}
+
+#endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT4_H_

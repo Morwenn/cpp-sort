@@ -80,6 +80,135 @@ The stability of the *resulting sorter* is `true` if and only if the stability
 of every *adapter sorter* is `true`. The iterator category of the *resulting
 sorter* is the most permissive iterator category among the the *adapted sorters*.
 
+### `low_comparisons_adapter`
+
+```cpp
+#include <cpp-sort/adapters/low_comparisons_adapter.h>
+```
+
+This adapter implements small array sorts whose goal is to keep the number of
+comparisons at its lowest, which may be useful when comparisons are expensive
+but moves are cheap (large strings with common prefixes for example). To know
+which sorting algorithm has the lowest overall number of comparisons for an
+array of a given size, the following method is used: count the total number of
+comparisons needed to sort every permutation of the array, we will call this
+the *comparison weight* of the array.
+
+The specific sorting algorithms will only be called if the *resulting sorter*
+is given a fixed-size C array or an `std::array`. Otherwise it will call the
+fallback sorter if one has been given or cause a compile-time error.
+
+The following table illustrates the *comparison weight* of the algorithms used
+by the different specializations of `low_comparisons_adapter`. If you ever find
+an algorithm that beats one of those, do not hesitate to conribute:
+
+Size | Comparison weight
+---- | -----------------
+0 | 0
+1 | 0
+2 | 2
+3 | 16
+4 | 118
+5 | 896
+6 | 7524
+7 | 69072
+8 | 700704
+9 | 7735104
+10 | 93142080
+11 | 1208661120
+12 | 16910588160
+13 | 252737349120
+
+The algorithms 0 to 4 use an unrolled insertion sort while the algorithm 5 to 13
+use an unrolled version of a supposedly novel sorting algorithm that I named the
+*double insertion sort*. The algorithm is quite simple: sort the everything but
+the first and last elements of the array, switch the first and last elements if
+they are not ordered, then insert the first element into the sorted sequence from
+the front and insert the last element from the back. Even in the worst case, it
+shouldn't take more than *n* comparisons to insert both values, where *n* is the
+size of the collection.
+
+The simple `low_comparisons_adapter` takes a `Sorter` template parameter so that
+it can fall back to that sorter when no specific algorithm exists for the given
+array size:
+
+```cpp
+template<typename Sorter>
+struct low_comparisons_adapter<Sorter>;
+```
+
+There is another version that takes an additional `std::index_sequence` template
+parameter:
+
+```cpp
+template<
+    typename Sorter,
+    std::size_t... Indices
+>
+struct low_comparisons_adapter<Sorter, std::index_sequence<Indices...>>;
+```
+
+That version calls the specific algorithms of `low_comparisons_adapter` only
+if the size of the given array is comprised in the integer sequence. It allows
+to pick specific algorithms if they are deemed better than the *adapter sorter*
+for the given size.
+
+### `low_moves_adapter`
+
+```cpp
+#include <cpp-sort/adapters/low_moves_adapter.h>
+```
+
+This adapter implements small array sorts whose goal is to keep the number of
+moves performed by the sorting algorithm at its lowest, which may be useful when
+comparisons are cheaps but moves are expensive (large objects that only use one
+field for the comparison for example). To know which sorting algorithm has the
+lowest overall number of move operations performed for an array of a given size,
+the following method is used: count the total number of moves needed to sort all
+the permutations of the array, we will call this the *move weight* of the array.
+
+The specific sorting algorithms will only be called if the *resulting sorter*
+is given a fixed-size C array or an `std::array`. Otherwise it will call the
+fallback sorter if one has been given or cause a compile-time error.
+
+The following table illustrates the *move weight* of the algorithms used by the
+different specializations of `low_moves_adapter`. If you ever find an algorithm
+that beats one of those, do not hesitate to conribute:
+
+Size | Move weight
+---- | -----------
+0 | 0
+1 | 0
+2 | 2
+3 | 17
+
+The algorithms 0 to 3 use an unrolled insertion sort. This family of algorithms
+is still a work in progress and more specializations will come in the future.
+
+The simple `low_moves_adapter` takes a `Sorter` template parameter so that
+it can fall back to that sorter when no specific algorithm exists for the given
+array size:
+
+```cpp
+template<typename Sorter>
+struct low_moves_adapter<Sorter>;
+```
+
+There is another version that takes an additional `std::index_sequence` template
+parameter:
+
+```cpp
+template<
+    typename Sorter,
+    std::size_t... Indices
+>
+struct low_moves_adapter<Sorter, std::index_sequence<Indices...>>;
+```
+
+That version calls the specific algorithms of `low_moves_adapter` only if the size
+of the given array is comprised in the integer sequence. It allows to pick specific
+algorithms if they are deemed better than the *adapter sorter* for the given size.
+
 ### `self_sort_adapter`
 
 ```cpp
@@ -116,33 +245,38 @@ template<typename Sorter>
 struct small_array_adapter<Sorter>;
 ```
 
-This specialization takes a sorter and uses it to sort the collections it
-receives. However, if the collection is an `std::array` or a fixed-size C
-array, it replaces the `Sorter` sort by special algorithms designed to sort
-small arrays of fixed size.
+This specialization takes a sorter and uses it to sort the collections that it
+receives. However, if the collection is an `std::array` or a fixed-size C array,
+it replaces the `Sorter` sort by special algorithms designed to efficiently sort
+small arrays of fixed size. While it kind of overlaps `low_comparisons_adapter`
+and `low_moves_adapter`, it is different in that it does not use an objective
+criteria: it only tries to be faster than anything for « usual » types (most of
+the time for types ranging from `char` to `long long int`) and this might depend
+on the optimization level of the compiler and on the architecture.
 
 The specific sorting algorithms used by `small_array_adapter` mostly correspond
 to [sorting networks](https://en.wikipedia.org/wiki/Sorting_network) of a given
-size. There are specialized algorithms for the sizes 0 to 32. The following table
-documents the number of comparisons and the number of swaps made by every
-algorithm:
+size. There are specialized algorithms for the sizes 0 to 32; the algorithms 5 to
+13 (inclusive) correspond to an unrolled double insertion sort while every other
+algorithm actually uses sorting networks. The following table documents the number
+of comparisons and the number of swaps made by every algorithm:
 
 Size | comparisons | swaps
 ---- | ----------- | -----
 0 | 0 | 0
 1 | 0 | 0
 2 | 1 | ≤ 1
-3 | 2-3 | < 2
+3 | 3 | ≤ 3
 4 | 5 | ≤ 5
-5 | 9 | ≤ 9
-6 | 12 | ≤ 12
-7 | 16 | ≤ 16
-8 | 19 | ≤ 19
-9 | 25 | ≤ 25
-10 | 29 | ≤ 29
-11 | 35 | ≤ 35
-12 | 39 | ≤ 39
-13 | 45 | ≤ 45
+5 | 6-9 | ?
+6 | 8-12 | ?
+7 | 9-17 | ?
+8 | 11-21 | ?
+9 | 12-27 | ?
+10 | 14-32 | ?
+11 | 15-39 | ?
+12 | 17-45 | ?
+13 | 18-53 | ?
 14 | 51 | ≤ 51
 15 | 56 | ≤ 56
 16 | 60 | ≤ 60

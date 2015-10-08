@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <algorithm>
 #include <array>
+#include <cassert>
 #include <chrono>
 #include <cstddef>
 #include <fstream>
@@ -67,6 +69,12 @@ auto time_it(Sorter sorter, DistributionFunction dist, std::size_t times)
     }
     auto end = clock_type::now();
 
+    // Double benchmark as unit test
+    for (auto&& array: arrays)
+    {
+        assert(std::is_sorted(std::begin(array), std::end(array)));
+    }
+
     // Return the time it took to sort the arrays
     return std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 }
@@ -79,13 +87,17 @@ template<
 auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
     -> void
 {
+    using fixed_sorter = cppsort::small_array_adapter<
+        cppsort::pdq_sorter
+    >;
+
     // Compute results for the different sorting algorithms
     std::pair<const char*, std::array<std::chrono::milliseconds, sizeof...(Ind)>> results[] = {
-        { "default_sorter", { time_it<T, Ind>(cppsort::default_sorter{}, Distribution{}, times)... } },
-        { "std_sorter",     { time_it<T, Ind>(cppsort::std_sorter{}, Distribution{}, times)... } },
-        { "tim_sorter",     { time_it<T, Ind>(cppsort::tim_sorter{}, Distribution{}, times)... } },
-        { "pdq_sorter",     { time_it<T, Ind>(cppsort::pdq_sorter{}, Distribution{}, times)... } },
-        { "verge_sorter",   { time_it<T, Ind>(cppsort::verge_sorter{}, Distribution{}, times)... } }
+        { "fixed_sorter",       { time_it<T, Ind>(fixed_sorter{},               Distribution{}, times)... } },
+        { "std_sorter",         { time_it<T, Ind>(cppsort::std_sorter{},        Distribution{}, times)... } },
+        { "tim_sorter",         { time_it<T, Ind>(cppsort::tim_sorter{},        Distribution{}, times)... } },
+        { "pdq_sorter",         { time_it<T, Ind>(cppsort::pdq_sorter{},        Distribution{}, times)... } },
+        { "insertion_sorter",   { time_it<T, Ind>(cppsort::insertion_sorter{},  Distribution{}, times)... } }
     };
 
     // Output the results to their respective files

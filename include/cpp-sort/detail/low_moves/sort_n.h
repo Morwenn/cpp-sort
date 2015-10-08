@@ -21,37 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
-#define CPPSORT_SORTERS_DEFAULT_SORTER_H_
+#ifndef CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
+#define CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
+#include <cstddef>
+#include <type_traits>
 #include <utility>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        small_array_adapter<
-            hybrid_adapter<
-                merge_sorter,
-                rebind_iterator_category<
-                    quick_sorter,
-                    std::bidirectional_iterator_tag
-                >,
-                pdq_sorter
-            >,
-            std::make_index_sequence<14u>
-        >
-    >;
-}
+namespace detail
+{
+    template<std::size_t N, typename FallbackSorter>
+    struct low_moves_sorter_n
+    {
+        static_assert(
+            not std::is_void<FallbackSorter>::value,
+            "unspecialized low_moves_sorter_n cannot be called without a fallback sorter"
+        );
 
-#endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_
+        template<typename... Args>
+        auto operator()(Args&&... args) const
+            -> decltype(auto)
+        {
+            return FallbackSorter{}(std::forward<Args>(args)...);
+        }
+    };
+
+    template<
+        std::size_t N,
+        typename FallbackSorter = void,
+        typename... Args
+    >
+    auto low_moves_sort_n(Args&&... args)
+        -> decltype(auto)
+    {
+        return low_moves_sorter_n<N, FallbackSorter>{}(std::forward<Args>(args)...);
+    }
+}}
+
+// Specializations of low_moves_sorter_n for some values of N
+#include "sort0.h"
+#include "sort1.h"
+#include "sort2.h"
+#include "sort3.h"
+
+#endif // CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_

@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
-#define CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
+#ifndef CPPSORT_ADAPTERS_LOW_MOVES_ADAPTER_H_
+#define CPPSORT_ADAPTERS_LOW_MOVES_ADAPTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -35,7 +35,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/is_in_pack.h>
-#include "../detail/small_array/sort_n.h"
+#include "../detail/low_moves/sort_n.h"
 
 namespace cppsort
 {
@@ -43,14 +43,14 @@ namespace cppsort
     // Adapter
 
     template<typename...>
-    struct small_array_adapter;
+    struct low_moves_adapter;
 
     template<
         typename Sorter,
         std::size_t... Indices
     >
-    struct small_array_adapter<Sorter, std::index_sequence<Indices...>>:
-        sorter_facade<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
+    struct low_moves_adapter<Sorter, std::index_sequence<Indices...>>:
+        sorter_facade<low_moves_adapter<Sorter, std::index_sequence<Indices...>>>
     {
         template<typename... Args>
         auto operator()(Args&&... args) const
@@ -68,7 +68,7 @@ namespace cppsort
         auto operator()(std::array<T, N>& array, Compare compare={}) const
             -> decltype(auto)
         {
-            return detail::sort_n<N, Sorter>(array, compare);
+            return detail::low_moves_sort_n<N, Sorter>(array, compare);
         }
 
         template<
@@ -80,20 +80,20 @@ namespace cppsort
         auto operator()(T (&array)[N], Compare compare={}) const
             -> decltype(auto)
         {
-            return detail::sort_n<N, Sorter>(array, compare);
+            return detail::low_moves_sort_n<N, Sorter>(array, compare);
         }
     };
 
     template<typename Sorter>
-    struct small_array_adapter<Sorter>:
-        small_array_adapter<Sorter, std::make_index_sequence<33u>>
+    struct low_moves_adapter<Sorter>:
+        low_moves_adapter<Sorter, std::make_index_sequence<33u>>
     {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
     template<typename Sorter, std::size_t... Indices>
-    struct sorter_traits<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
+    struct sorter_traits<low_moves_adapter<Sorter, std::index_sequence<Indices...>>>
     {
         using iterator_category = iterator_category<Sorter>;
 
@@ -105,4 +105,4 @@ namespace cppsort
     };
 }
 
-#endif // CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
+#endif // CPPSORT_ADAPTERS_LOW_MOVES_ADAPTER_H_
