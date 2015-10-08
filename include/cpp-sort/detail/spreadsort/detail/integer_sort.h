@@ -20,14 +20,14 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstdint>
 #include <functional>
-#include <limits>
+#include <iterator>
 #include <type_traits>
 #include <vector>
 #include "common.h"
 #include "constants.h"
+#include "../../pdqsort.h"
 
 namespace cppsort
 {
@@ -190,9 +190,9 @@ namespace spreadsort
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using pdqsort if its worst-case is better
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          pdqsort(lastPos, bin_cache[u], std::less<>{});
         else
           spreadsort_rec<RandomAccessIter, Div_type, Size_type>(lastPos,
                                                                  bin_cache[u],
@@ -297,7 +297,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
         Size_type, log_mean_bin_size, log_min_split_count, log_finishing_count>
@@ -353,7 +353,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          pdqsort(lastPos, bin_cache[u]);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Size_type,
           log_mean_bin_size, log_min_split_count, log_finishing_count>(lastPos,
@@ -389,11 +389,11 @@ namespace spreadsort
     template <class RandomAccessIter, class Div_type>
     disable_if_t< sizeof(Div_type) <= sizeof(size_t)
       || sizeof(Div_type) <= sizeof(std::uintmax_t), void >
-    //defaulting to std::sort when integer_sort won't work
+    //defaulting to pdqsort when integer_sort won't work
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
     {
-      //We're using std::sort, even though integer_sort was called
-      std::sort(first, last);
+      //We're using pdqsort, even though integer_sort was called
+      pdqsort(first, last, std::less<>{});
     }
 
 
@@ -433,12 +433,12 @@ namespace spreadsort
               class Compare>
     disable_if_t< sizeof(Div_type) <= sizeof(size_t)
       || sizeof(Div_type) <= sizeof(std::uintmax_t), void >
-    //defaulting to std::sort when integer_sort won't work
+    //defaulting to pdqsort when integer_sort won't work
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
                 Right_shift shift, Compare comp)
     {
-      //We're using std::sort, even though integer_sort was called
-      std::sort(first, last, comp);
+      //We're using pdqsort, even though integer_sort was called
+      pdqsort(first, last, comp);
     }
 
 
@@ -475,12 +475,12 @@ namespace spreadsort
     template <class RandomAccessIter, class Div_type, class Right_shift>
     disable_if_t< sizeof(Div_type) <= sizeof(size_t)
       || sizeof(Div_type) <= sizeof(std::uintmax_t), void >
-    //defaulting to std::sort when integer_sort won't work
+    //defaulting to pdqsort when integer_sort won't work
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
                 Right_shift shift)
     {
-      //We're using std::sort, even though integer_sort was called
-      std::sort(first, last);
+      //We're using pdqsort, even though integer_sort was called
+      pdqsort(first, last, std::less<>{});
     }
   }
 }}}

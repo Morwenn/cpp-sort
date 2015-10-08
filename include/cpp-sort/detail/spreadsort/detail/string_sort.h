@@ -21,10 +21,7 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstdint>
-#include <cstring>
-#include <functional>
-#include <limits>
+#include <iterator>
 #include <type_traits>
 #include <vector>
 #include "common.h"
@@ -255,9 +252,9 @@ namespace spreadsort
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using pdqsort if its worst-case is better
         if (count < max_size)
-          std::sort(lastPos, bin_cache[u],
+          pdqsort(lastPos, bin_cache[u],
               offset_less_than<Data_type, Unsigned_char_type>(char_offset + 1));
         else
           string_sort_rec<RandomAccessIter, Unsigned_char_type>(lastPos,
@@ -365,9 +362,9 @@ namespace spreadsort
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using pdqsort if its worst-case is better
         if (count < max_size)
-          std::sort(lastPos, bin_cache[u], offset_greater_than<Data_type,
+          pdqsort(lastPos, bin_cache[u], offset_greater_than<Data_type,
                     Unsigned_char_type>(char_offset + 1));
         else
           reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type>
@@ -466,9 +463,9 @@ namespace spreadsort
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using pdqsort if its worst-case is better
         if (count < max_size)
-          std::sort(lastPos, bin_cache[u], offset_char_less_than<Data_type,
+          pdqsort(lastPos, bin_cache[u], offset_char_less_than<Data_type,
                     Get_char, Get_length>(char_offset + 1));
         else
           string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
@@ -566,9 +563,9 @@ namespace spreadsort
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using pdqsort if its worst-case is better
         if (count < max_size)
-          std::sort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp);
         else
           string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
                           Get_length, Compare>
@@ -670,9 +667,9 @@ namespace spreadsort
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
-        //using std::sort if its worst-case is better
+        //using pdqsort if its worst-case is better
         if (count < max_size)
-          std::sort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp);
         else
           reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type,
                                   Get_char, Get_length, Compare>

@@ -20,12 +20,10 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <cstring>
-#include <limits>
-#include <vector>
+#include <functional>
 #include "detail/constants.h"
 #include "detail/string_sort.h"
+#include "../pdqsort.h"
 
 namespace cppsort
 {
@@ -35,10 +33,10 @@ namespace spreadsort
 {
 
 /*! \brief String sort algorithm using random access iterators, allowing character-type overloads.\n
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c string_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 \par
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
@@ -84,17 +82,17 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      std::sort(first, last);
+      pdqsort(first, last, std::less<>{});
     else
       detail::string_sort(first, last, unused);
   }
 
 
 /*! \brief String sort algorithm using random access iterators, wraps using default of unsigned char.
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c string_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -140,10 +138,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 /*! \brief String sort algorithm using random access iterators, allowing character-type overloads.
 
-  (All variants fall back to @c std::sort if the data size is too small, < detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -193,7 +191,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      std::sort(first, last, comp);
+      pdqsort(first, last, comp);
     else
       detail::reverse_string_sort(first, last, unused);
   }
@@ -201,10 +199,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 /*! \brief String sort algorithm using random access iterators,  wraps using default of @c unsigned char.
 
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -253,10 +251,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 /*! \brief String sort algorithm using random access iterators,  wraps using default of @c unsigned char.
 
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -302,7 +300,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      std::sort(first, last);
+      pdqsort(first, last, std::less<>{});
     else {
       //skipping past empties, which allows us to get the character type
       //.empty() is not used so as not to require a user declaration of it
@@ -318,10 +316,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 /*! \brief String sort algorithm using random access iterators,  wraps using default of @c unsigned char.
 
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -369,7 +367,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      std::sort(first, last, comp);
+      pdqsort(first, last, comp);
     else {
       //skipping past empties, which allows us to get the character type
       //.empty() is not used so as not to require a user declaration of it
@@ -385,10 +383,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 /*! \brief Reverse String sort algorithm using random access iterators.
 
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -436,7 +434,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      std::sort(first, last, comp);
+      pdqsort(first, last, comp);
     else {
       //skipping past empties, which allows us to get the character type
       //.empty() is not used so as not to require a user declaration of it

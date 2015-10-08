@@ -23,12 +23,10 @@ Doxygen comments by Paul A. Bristow Jan 2015
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <vector>
-#include <cstring>
-#include <limits>
+#include <functional>
 #include "detail/constants.h"
 #include "detail/integer_sort.h"
+#include "../pdqsort.h"
 
 namespace cppsort
 {
@@ -39,10 +37,10 @@ namespace spreadsort
   //Top-level sorting call for integers.
 
 /*! \brief Integer sort algorithm using random access iterators.
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -82,16 +80,16 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     // Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      std::sort(first, last);
+      pdqsort(first, last, std::less<>{});
     else
       detail::integer_sort(first, last, *first >> 0);
   }
 
 /*! \brief Integer sort algorithm using random access iterators with both right-shift and user-defined comparison operator.
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
 so @c integer_sort is asymptotically faster
 than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
@@ -131,16 +129,16 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   void integer_sort(RandomAccessIter first, RandomAccessIter last,
                     Right_shift shift, Compare comp) {
     if (last - first < detail::min_sort_size)
-      std::sort(first, last, comp);
+      pdqsort(first, last, comp);
     else
       detail::integer_sort(first, last, shift(*first, 0), shift, comp);
   }
 
 /*! \brief Integer sort algorithm using random access iterators with just right-shift functor.
-  (All variants fall back to @c std::sort if the data size is too small, < @c detail::min_sort_size).
+  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
 
   \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c std::sort for large tests (>=100kB).\n
+which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
 
 \par Performance:
 Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
@@ -180,7 +178,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   void integer_sort(RandomAccessIter first, RandomAccessIter last,
                     Right_shift shift) {
     if (last - first < detail::min_sort_size)
-      std::sort(first, last);
+      pdqsort(first, last, std::less<>{});
     else
       detail::integer_sort(first, last, shift(*first, 0), shift);
   }

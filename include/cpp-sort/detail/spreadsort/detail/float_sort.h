@@ -22,15 +22,17 @@ Scott McMurray
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstdint>
+#include <cstring>
 #include <functional>
+#include <iterator>
 #include <limits>
 #include <type_traits>
 #include <vector>
 #include "common.h"
 #include "constants.h"
 #include "integer_sort.h"
+#include "../../pdqsort.h"
 
 namespace cppsort
 {
@@ -217,7 +219,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          pdqsort(lastPos, bin_cache[u], std::less<>{});
         else
           positive_float_sort_rec<RandomAccessIter, Div_type, Size_type>
             (lastPos, bin_cache[u], bin_cache, cache_end, bin_sizes);
@@ -277,7 +279,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[ii]);
+          pdqsort(lastPos, bin_cache[ii], std::less<>{});
         else
           negative_float_sort_rec<RandomAccessIter, Div_type, Size_type>
             (lastPos, bin_cache[ii], bin_cache, cache_end, bin_sizes);
@@ -335,7 +337,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[ii]);
+          pdqsort(lastPos, bin_cache[ii], std::less<>{});
         else
           negative_float_sort_rec<RandomAccessIter, Div_type, Right_shift,
                                   Size_type>
@@ -392,7 +394,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[ii], comp);
+          pdqsort(lastPos, bin_cache[ii], comp);
         else
           negative_float_sort_rec<RandomAccessIter, Div_type, Right_shift,
                                   Compare, Size_type>(lastPos, bin_cache[ii],
@@ -476,7 +478,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[ii]);
+          pdqsort(lastPos, bin_cache[ii], std::less<>{});
         //sort negative values using reversed-bin spreadsort
         else
           negative_float_sort_rec<RandomAccessIter, Div_type, Size_type>
@@ -489,7 +491,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          pdqsort(lastPos, bin_cache[u], std::less<>{});
         //sort positive values using normal spreadsort
         else
           positive_float_sort_rec<RandomAccessIter, Div_type, Size_type>
@@ -571,7 +573,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[ii]);
+          pdqsort(lastPos, bin_cache[ii], std::less<>{});
         //sort negative values using reversed-bin spreadsort
         else
           negative_float_sort_rec<RandomAccessIter, Div_type,
@@ -585,7 +587,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u]);
+          pdqsort(lastPos, bin_cache[u], std::less<>{});
         //sort positive values using normal spreadsort
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Size_type,
@@ -669,7 +671,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[ii], comp);
+          pdqsort(lastPos, bin_cache[ii], comp);
         //sort negative values using reversed-bin spreadsort
         else
           negative_float_sort_rec<RandomAccessIter, Div_type, Right_shift,
@@ -684,7 +686,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          std::sort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp);
         //sort positive values using normal spreadsort
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
@@ -734,7 +736,7 @@ namespace spreadsort
       void >
     float_sort(RandomAccessIter first, RandomAccessIter last)
     {
-      std::sort(first, last);
+      pdqsort(first, last, std::less<>{});
     }
 
     //These approaches require the user to do the typecast
@@ -763,14 +765,14 @@ namespace spreadsort
         (first, last, bin_cache, 0, bin_sizes, rshift);
     }
 
-    //sizeof(Div_type) doesn't match, so use std::sort
+    //sizeof(Div_type) doesn't match, so use pdqsort
     template <class RandomAccessIter, class Div_type, class Right_shift>
     disable_if_t< sizeof(std::uintmax_t) >=
       sizeof(Div_type), void >
     float_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
                Right_shift rshift)
     {
-      std::sort(first, last);
+      pdqsort(first, last, std::less<>{});
     }
 
     //specialized comparison
@@ -802,14 +804,14 @@ namespace spreadsort
         (first, last, bin_cache, 0, bin_sizes, rshift, comp);
     }
 
-    //sizeof(Div_type) doesn't match, so use std::sort
+    //sizeof(Div_type) doesn't match, so use pdqsort
     template <class RandomAccessIter, class Div_type, class Right_shift,
               class Compare>
     disable_if_t< sizeof(std::uintmax_t) >= sizeof(Div_type), void >
     float_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
                Right_shift rshift, Compare comp)
     {
-      std::sort(first, last, comp);
+      pdqsort(first, last, comp);
     }
   }
 }}}
