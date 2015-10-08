@@ -77,5 +77,6 @@ namespace detail
 #include "sort10.h"
 #include "sort11.h"
 #include "sort12.h"
+#include "sort13.h"
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT_N_H_
