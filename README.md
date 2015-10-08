@@ -51,6 +51,7 @@ also be designed to be extensible. The following tutorials may help you to write
 custom sorters and sorter adapters:
 
 * [Writing a sorter](doc/writing-sorter.md)
+* [Writing a bubble sorter](doc/writing-bubble-sorter.md)
 
 # Benchmarks
 
