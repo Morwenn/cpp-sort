@@ -68,5 +68,7 @@ namespace detail
 #include "sort1.h"
 #include "sort2.h"
 #include "sort3.h"
+#include "sort4.h"
+#include "sort5.h"
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
