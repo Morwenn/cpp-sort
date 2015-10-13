@@ -46,24 +46,39 @@ namespace detail
         {
             using std::swap;
 
-            low_moves_sort_n<4u>(first, first+4u, compare);
+            low_moves_sort_n<3u>(first+1u, first+4u, compare);
+
+            if (compare(first[4u], first[0u])) {
+                swap(first[0u], first[4u]);
+            }
+
+            if (compare(first[1u], first[0u])) {
+                if (compare(first[2u], first[0u])) {
+                    if (compare(first[3u], first[0u])) {
+                        auto tmp = std::move(first[0u]);
+                        first[0u] = std::move(first[1u]);
+                        first[1u] = std::move(first[2u]);
+                        first[2u] = std::move(first[3u]);
+                        first[3u] = std::move(tmp);
+                    } else {
+                        auto tmp = std::move(first[0u]);
+                        first[0u] = std::move(first[1u]);
+                        first[1u] = std::move(first[2u]);
+                        first[2u] = std::move(tmp);
+                    }
+                } else {
+                    swap(first[0u], first[1u]);
+                }
+            }
+
             if (compare(first[4u], first[3u])) {
                 if (compare(first[4u], first[2u])) {
                     if (compare(first[4u], first[1u])) {
-                        if (compare(first[4u], first[0u])) {
-                            auto tmp = std::move(first[4u]);
-                            first[4u] = std::move(first[3u]);
-                            first[3u] = std::move(first[2u]);
-                            first[2u] = std::move(first[1u]);
-                            first[1u] = std::move(first[0u]);
-                            first[0u] = std::move(tmp);
-                        } else {
-                            auto tmp = std::move(first[4u]);
-                            first[4u] = std::move(first[3u]);
-                            first[3u] = std::move(first[2u]);
-                            first[2u] = std::move(first[1u]);
-                            first[1u] = std::move(tmp);
-                        }
+                        auto tmp = std::move(first[4u]);
+                        first[4u] = std::move(first[3u]);
+                        first[3u] = std::move(first[2u]);
+                        first[2u] = std::move(first[1u]);
+                        first[1u] = std::move(tmp);
                     } else {
                         auto tmp = std::move(first[4u]);
                         first[4u] = std::move(first[3u]);

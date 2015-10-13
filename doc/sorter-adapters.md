@@ -210,10 +210,11 @@ Size | Move weight
 3 | 17
 4 | 176
 5 | 1384
+6 | 14396
 
-The algorithms 0 to 4 use an unrolled insertion sort. The algorithm 5 uses a
-double insertion sort. This family of algorithms is still a work in progress
-and more specializations will come in the future.
+The algorithms 0 to 4 use an unrolled insertion sort. The algorithms 5 and 6 use a
+double insertion sort. This family of algorithms is still a work in progress and
+more specializations will come in the future.
 
 The simple `low_moves_adapter` takes a `Sorter` template parameter so that
 it can fall back to that sorter when no specific algorithm exists for the given
