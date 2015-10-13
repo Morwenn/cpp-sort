@@ -47,4 +47,4 @@ namespace detail
     }
 }}
 
-#endif // CPPSORT_DETAIL_MERGE_SORT_H_
+#endif // CPPSORT_DETAIL_HEAPSORT_H_
