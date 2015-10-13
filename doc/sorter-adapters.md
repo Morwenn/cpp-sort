@@ -109,24 +109,51 @@ Size | Comparison weight
 2 | 2
 3 | 16
 4 | 118
-5 | 896
-6 | 7524
-7 | 69072
-8 | 700704
-9 | 7735104
-10 | 93142080
-11 | 1208661120
-12 | 16910588160
-13 | 252737349120
+5 | 840
+6 | 7440
+7 | 66720
+8 | 696000
+9 | 7565760
+10 | 92718720
+11 | 1190033280
+12 | 16854704640
+13 | 249831406080
 
-The algorithms 0 to 4 use an unrolled insertion sort while the algorithm 5 to 13
-use an unrolled version of a supposedly novel sorting algorithm that I named the
-*double insertion sort*. The algorithm is quite simple: sort the everything but
-the first and last elements of the array, switch the first and last elements if
-they are not ordered, then insert the first element into the sorted sequence from
-the front and insert the last element from the back. Even in the worst case, it
-shouldn't take more than *n* comparisons to insert both values, where *n* is the
-size of the collection.
+This adapter uses a variety of specialized sorting algorithms depending on the
+size of the array to sort. Many of them correspond to unrolled versions of more
+general sorts. The following table describes the algorithms used:
+
+Size | Algorithm
+---- | ---------
+0 | Nothing
+1 | Nothing
+2 | Compare and swap
+3 | Insertion sort
+4 | Insertion sort
+5 | Algorithm 5*
+6 | Insertion sort
+7 | Double insertion sort
+8 | Double insertion sort
+9 | Double insertion sort
+10 | Double insertion sort
+11 | Double insertion sort
+12 | Double insertion sort
+13 | Double insertion sort
+
+I don't know whether the algorithm 5 has a name or not. It is actually an algorithm
+that I found [on StackOverflow](http://stackoverflow.com/a/1935491/1364752) before
+translating it from LISP to C++. From the answer, it seems that it can be found in
+[The Art of Computer Programming](https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming),
+volume 3 by Donald Knuth.
+
+The algorithms 7 to 13 use a supposedly a novel sorting algorithm that I named the
+*double insertion sort* (I would be suprised if it hadn't been discovered before,
+but I couldn't find any information about it anywhere). Actually, the algorithm is
+rather simple: it sorts everything but the first and last elements of the array,
+switches the first and last elements if they are not ordered, then insert the first
+element into the sorted sequence from the front and insert the last element from
+the back. Even in the worst case, it shouldn't take more than *n* comparisons to
+insert both values, where *n* is the size of the collection.
 
 The simple `low_comparisons_adapter` takes a `Sorter` template parameter so that
 it can fall back to that sorter when no specific algorithm exists for the given
@@ -182,10 +209,11 @@ Size | Move weight
 2 | 2
 3 | 17
 4 | 176
-5 | 1778
+5 | 1384
 
-The algorithms 0 to 5 use an unrolled insertion sort. This family of algorithms
-is still a work in progress and more specializations will come in the future.
+The algorithms 0 to 4 use an unrolled insertion sort. The algorithm 5 uses a
+double insertion sort. This family of algorithms is still a work in progress
+and more specializations will come in the future.
 
 The simple `low_moves_adapter` takes a `Sorter` template parameter so that
 it can fall back to that sorter when no specific algorithm exists for the given

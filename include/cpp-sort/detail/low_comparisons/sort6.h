@@ -46,11 +46,7 @@ namespace detail
         {
             using std::swap;
 
-            low_comparisons_sort_n<4u>(first+1u, first+5u, compare);
-
-            if (compare(first[5u], first[0u])) {
-                swap(first[0u], first[5u]);
-            }
+            low_comparisons_sort_n<5u>(first+1u, first+6u, compare);
 
             if (compare(first[1u], first[0u])) {
                 swap(first[0u], first[1u]);
@@ -60,19 +56,9 @@ namespace detail
                         swap(first[2u], first[3u]);
                         if (compare(first[4u], first[3u])) {
                             swap(first[3u], first[4u]);
-                        }
-                    }
-                }
-            }
-
-            if (compare(first[5u], first[4u])) {
-                swap(first[4u], first[5u]);
-                if (compare(first[4u], first[3u])) {
-                    swap(first[3u], first[4u]);
-                    if (compare(first[3u], first[2u])) {
-                        swap(first[2u], first[3u]);
-                        if (compare(first[2u], first[1u])) {
-                            swap(first[1u], first[2u]);
+                            if (compare(first[5u], first[4u])) {
+                                swap(first[4u], first[5u]);
+                            }
                         }
                     }
                 }

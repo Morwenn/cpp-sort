@@ -90,8 +90,8 @@ some modifications so that they do no depend on Boost anymore.
 a vergesort](https://github.com/Morwenn/vergesort) (at least, I know that the
 license for this one is compatible :p).
 
-* The algorithm used to sort three values in-place is derived from the one
-[found in libc++](https://github.com/llvm-mirror/libcxx/blob/master/include/algorithm#L3602).
+* The algorithm 5 used by `low_comparison_adapter` is a C++ adaptation of an
+algorithm that I found [on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
 
 * The other algorithms used by `small_array_adapter` to sort a fixed number of
 values have been generated thanks to the `SWAP` macros that can be found on
