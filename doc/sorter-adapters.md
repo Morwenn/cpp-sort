@@ -108,7 +108,7 @@ Size | Comparison weight
 1 | 0
 2 | 2
 3 | 16
-4 | 118
+4 | 112
 5 | 840
 6 | 6960
 7 | 64080
@@ -208,9 +208,9 @@ Size | Move weight
 1 | 0
 2 | 2
 3 | 17
-4 | 176
+4 | 172
 5 | 1384
-6 | 14396
+6 | 14188
 
 The algorithms 0 to 4 use an unrolled insertion sort. The algorithms 5 and 6 use a
 double insertion sort. This family of algorithms is still a work in progress and

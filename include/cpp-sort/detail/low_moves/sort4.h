@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
+#include "../front_insert.h"
 
 namespace cppsort
 {
@@ -44,27 +45,8 @@ namespace detail
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
-            using std::swap;
-
-            low_moves_sort_n<3u>(first, first+3u, compare);
-            if (compare(first[3u], first[2u])) {
-                if (compare(first[3u], first[1u])) {
-                    if (compare(first[3u], first[0u])) {
-                        auto tmp = std::move(first[3u]);
-                        first[3u] = std::move(first[2u]);
-                        first[2u] = std::move(first[1u]);
-                        first[1u] = std::move(first[0u]);
-                        first[0u] = std::move(tmp);
-                    } else {
-                        auto tmp = std::move(first[3u]);
-                        first[3u] = std::move(first[2u]);
-                        first[2u] = std::move(first[1u]);
-                        first[1u] = std::move(tmp);
-                    }
-                } else {
-                    swap(first[2u], first[3u]);
-                }
-            }
+            low_moves_sort_n<3u>(first+1u, first+4u, compare);
+            front_insert<4u>(first, compare);
         }
     };
 }}
