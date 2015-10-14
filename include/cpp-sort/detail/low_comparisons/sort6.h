@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
+#include "../front_insert.h"
 
 namespace cppsort
 {
@@ -44,48 +45,8 @@ namespace detail
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
-            using std::swap;
-
-            low_comparisons_sort_n<5u>(first, first+5u, compare);
-
-            // Binary insertion of 5 in {0, 1, 2, 3, 4}
-            if (compare(first[5u], first[2u])) {
-                if (compare(first[5u], first[1u])) {
-                    if (compare(first[5u], first[0u])) {
-                        auto tmp = std::move(first[5u]);
-                        first[5u] = std::move(first[4u]);
-                        first[4u] = std::move(first[3u]);
-                        first[3u] = std::move(first[2u]);
-                        first[2u] = std::move(first[1u]);
-                        first[1u] = std::move(first[0u]);
-                        first[0u] = std::move(tmp);
-                    } else {
-                        auto tmp = std::move(first[5u]);
-                        first[5u] = std::move(first[4u]);
-                        first[4u] = std::move(first[3u]);
-                        first[3u] = std::move(first[2u]);
-                        first[2u] = std::move(first[1u]);
-                        first[1u] = std::move(tmp);
-                    }
-                } else {
-                    auto tmp = std::move(first[5u]);
-                    first[5u] = std::move(first[4u]);
-                    first[4u] = std::move(first[3u]);
-                    first[3u] = std::move(first[2u]);
-                    first[2u] = std::move(tmp);
-                }
-            } else {
-                if (compare(first[5u], first[4u])) {
-                    if (compare(first[5u], first[3u])) {
-                        auto tmp = std::move(first[5u]);
-                        first[5u] = std::move(first[4u]);
-                        first[4u] = std::move(first[3u]);
-                        first[3u] = std::move(tmp);
-                    } else {
-                        swap(first[4u], first[5u]);
-                    }
-                }
-            }
+            low_comparisons_sort_n<5u>(first+1u, first+6u, compare);
+            front_insert<6u>(first, compare);
         }
     };
 }}
