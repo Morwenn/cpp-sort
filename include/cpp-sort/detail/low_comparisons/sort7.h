@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
+#include "../front_insert.h"
 
 namespace cppsort
 {
@@ -52,34 +53,47 @@ namespace detail
                 swap(first[0u], first[6u]);
             }
 
-            if (compare(first[1u], first[0u])) {
-                swap(first[0u], first[1u]);
-                if (compare(first[2u], first[1u])) {
-                    swap(first[1u], first[2u]);
-                    if (compare(first[3u], first[2u])) {
-                        swap(first[2u], first[3u]);
-                        if (compare(first[4u], first[3u])) {
-                            swap(first[3u], first[4u]);
-                            if (compare(first[5u], first[4u])) {
-                                swap(first[4u], first[5u]);
-                            }
-                        }
+            // 0 | 1, 2, 3, 4, 5 | 6
+            if (compare(first[6u], first[3u])) {
+                if (compare(first[6u], first[2u])) {
+                    if (compare(first[6u], first[1u])) {
+                        auto tmp = std::move(first[6u]);
+                        first[6u] = std::move(first[5u]);
+                        first[5u] = std::move(first[4u]);
+                        first[4u] = std::move(first[3u]);
+                        first[3u] = std::move(first[2u]);
+                        first[2u] = std::move(first[1u]);
+                        first[1u] = std::move(tmp);
+                    } else {
+                        auto tmp = std::move(first[6u]);
+                        first[6u] = std::move(first[5u]);
+                        first[5u] = std::move(first[4u]);
+                        first[4u] = std::move(first[3u]);
+                        first[3u] = std::move(first[2u]);
+                        first[2u] = std::move(tmp);
+                        front_insert<2u>(first, compare);
                     }
+                } else {
+                    auto tmp = std::move(first[6u]);
+                    first[6u] = std::move(first[5u]);
+                    first[5u] = std::move(first[4u]);
+                    first[4u] = std::move(first[3u]);
+                    first[3u] = std::move(tmp);
+                    front_insert<3u>(first, compare);
                 }
-            }
-
-            if (compare(first[6u], first[5u])) {
-                swap(first[5u], first[6u]);
-                if (compare(first[5u], first[4u])) {
-                    swap(first[4u], first[5u]);
-                    if (compare(first[4u], first[3u])) {
-                        swap(first[3u], first[4u]);
-                        if (compare(first[3u], first[2u])) {
-                            swap(first[2u], first[3u]);
-                            if (compare(first[2u], first[1u])) {
-                                swap(first[1u], first[2u]);
-                            }
-                        }
+            } else {
+                if (compare(first[6u], first[4u])) {
+                    auto tmp = std::move(first[6u]);
+                    first[6u] = std::move(first[5u]);
+                    first[5u] = std::move(first[4u]);
+                    first[4u] = std::move(tmp);
+                    front_insert<4u>(first, compare);
+                } else {
+                    if (compare(first[6u], first[5u])) {
+                        swap(first[5u], first[6u]);
+                        front_insert<5u>(first, compare);
+                    } else {
+                        front_insert<6u>(first, compare);
                     }
                 }
             }

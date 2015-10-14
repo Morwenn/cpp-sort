@@ -110,14 +110,14 @@ Size | Comparison weight
 3 | 16
 4 | 118
 5 | 840
-6 | 7440
-7 | 66720
-8 | 696000
-9 | 7565760
-10 | 92718720
-11 | 1190033280
-12 | 16854704640
-13 | 249831406080
+6 | 6960
+7 | 64080
+8 | 669120
+9 | 7375680
+10 | 90299520
+11 | 1169124480
+12 | 16535370240
+13 | 246569633280
 
 This adapter uses a variety of specialized sorting algorithms depending on the
 size of the array to sort. Many of them correspond to unrolled versions of more
@@ -130,7 +130,7 @@ Size | Algorithm
 2 | Compare and swap
 3 | Insertion sort
 4 | Insertion sort
-5 | Algorithm 5*
+5 | Merge insertion sort
 6 | Insertion sort
 7 | Double insertion sort
 8 | Double insertion sort
