@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <utility>
 #include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
@@ -44,57 +43,8 @@ namespace detail
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
-            using std::swap;
-
-            low_comparisons_sort_n<7u>(first+1u, first+8u, compare);
-
-            if (compare(first[8u], first[0u])) {
-                swap(first[0u], first[8u]);
-            }
-
-            if (compare(first[1u], first[0u])) {
-                swap(first[0u], first[1u]);
-                if (compare(first[2u], first[1u])) {
-                    swap(first[1u], first[2u]);
-                    if (compare(first[3u], first[2u])) {
-                        swap(first[2u], first[3u]);
-                        if (compare(first[4u], first[3u])) {
-                            swap(first[3u], first[4u]);
-                            if (compare(first[5u], first[4u])) {
-                                swap(first[4u], first[5u]);
-                                if (compare(first[6u], first[5u])) {
-                                    swap(first[5u], first[6u]);
-                                    if (compare(first[7u], first[6u])) {
-                                        swap(first[6u], first[7u]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (compare(first[8u], first[7u])) {
-                swap(first[7u], first[8u]);
-                if (compare(first[7u], first[6u])) {
-                    swap(first[6u], first[7u]);
-                    if (compare(first[6u], first[5u])) {
-                        swap(first[5u], first[6u]);
-                        if (compare(first[5u], first[4u])) {
-                            swap(first[4u], first[5u]);
-                            if (compare(first[4u], first[3u])) {
-                                swap(first[3u], first[4u]);
-                                if (compare(first[3u], first[2u])) {
-                                    swap(first[2u], first[3u]);
-                                    if (compare(first[2u], first[1u])) {
-                                        swap(first[1u], first[2u]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            low_comparisons_sort_n<8u>(first+1u, first+9u, compare);
+            front_insert<9u>(first, compare);
         }
     };
 }}
