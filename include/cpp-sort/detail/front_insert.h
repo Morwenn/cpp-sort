@@ -65,5 +65,6 @@ namespace detail
 #include "front_inserter/inserter4.h"
 #include "front_inserter/inserter5.h"
 #include "front_inserter/inserter6.h"
+#include "front_inserter/inserter7.h"
 
 #endif // CPPSORT_DETAIL_FRONT_INSERT_H_

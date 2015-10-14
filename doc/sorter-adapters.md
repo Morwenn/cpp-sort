@@ -111,13 +111,13 @@ Size | Comparison weight
 4 | 112
 5 | 840
 6 | 6960
-7 | 64080
+7 | 63840
 8 | 669120
-9 | 7375680
+9 | 7358400
 10 | 90299520
-11 | 1169124480
+11 | 1167223680
 12 | 16535370240
-13 | 246569633280
+13 | 246273108480
 
 This adapter uses a variety of specialized sorting algorithms depending on the
 size of the array to sort. Many of them correspond to unrolled versions of more
@@ -132,7 +132,7 @@ Size | Algorithm
 4 | Insertion sort
 5 | Merge insertion sort
 6 | Insertion sort
-7 | Double insertion sort
+7 | Insertion sort
 8 | Double insertion sort
 9 | Double insertion sort
 10 | Double insertion sort
@@ -140,13 +140,7 @@ Size | Algorithm
 12 | Double insertion sort
 13 | Double insertion sort
 
-I don't know whether the algorithm 5 has a name or not. It is actually an algorithm
-that I found [on StackOverflow](http://stackoverflow.com/a/1935491/1364752) before
-translating it from LISP to C++. From the answer, it seems that it can be found in
-[The Art of Computer Programming](https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming),
-volume 3 by Donald Knuth.
-
-The algorithms 7 to 13 use a supposedly a novel sorting algorithm that I named the
+The algorithms 8 to 13 use a supposedly a novel sorting algorithm that I named the
 *double insertion sort* (I would be suprised if it hadn't been discovered before,
 but I couldn't find any information about it anywhere). Actually, the algorithm is
 rather simple: it sorts everything but the first and last elements of the array,
@@ -211,8 +205,9 @@ Size | Move weight
 4 | 172
 5 | 1384
 6 | 14188
+7 | 140736
 
-The algorithms 0 to 4 use an unrolled insertion sort. The algorithms 5 and 6 use a
+The algorithms 0 to 4 use an unrolled insertion sort. The algorithms 5 to 7 use a
 double insertion sort. This family of algorithms is still a work in progress and
 more specializations will come in the future.
 
