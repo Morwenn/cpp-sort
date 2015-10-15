@@ -21,42 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_FRONT_INSERTER5_H_
-#define CPPSORT_DETAIL_FRONT_INSERTER5_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include "../rotate_left.h"
+#ifndef CPPSORT_DETAIL_ROTATE_LEFT0_H_
+#define CPPSORT_DETAIL_ROTATE_LEFT0_H_
 
 namespace cppsort
 {
 namespace detail
 {
     template<>
-    struct front_inserter_n<5u>
+    struct rotate_left_n<0u>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, Compare compare) const
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator) const
             -> void
-        {
-            if (compare(first[2u], first[0u])) {
-                if (compare(first[3u], first[0u])) {
-                    if (compare(first[4u], first[0u])) {
-                        rotate_left<5u>(first);
-                    } else {
-                        rotate_left<4u>(first);
-                    }
-                } else {
-                    rotate_left<3u>(first);
-                }
-            } else {
-                if (compare(first[1u], first[0u])) {
-                    rotate_left<2u>(first);
-                }
-            }
-        }
+        {}
     };
 }}
 
-#endif // CPPSORT_DETAIL_FRONT_INSERTER5_H_
+#endif // CPPSORT_DETAIL_ROTATE_LEFT0_H_

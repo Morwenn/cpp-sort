@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <utility>
+#include "../rotate_left.h"
 
 namespace cppsort
 {
@@ -40,78 +40,34 @@ namespace detail
         auto operator()(RandomAccessIterator first, Compare compare) const
             -> void
         {
-            using std::swap;
-
             if (compare(first[4u], first[0u])) {
                 if (compare(first[6u], first[0u])) {
                     if (compare(first[7u], first[0u])) {
                         if (compare(first[8u], first[0u])) {
-                            auto tmp = std::move(first[0u]);
-                            first[0u] = std::move(first[1u]);
-                            first[1u] = std::move(first[2u]);
-                            first[2u] = std::move(first[3u]);
-                            first[3u] = std::move(first[4u]);
-                            first[4u] = std::move(first[5u]);
-                            first[5u] = std::move(first[6u]);
-                            first[6u] = std::move(first[7u]);
-                            first[7u] = std::move(first[8u]);
-                            first[8u] = std::move(tmp);
+                            rotate_left<9u>(first);
                         } else {
-                            auto tmp = std::move(first[0u]);
-                            first[0u] = std::move(first[1u]);
-                            first[1u] = std::move(first[2u]);
-                            first[2u] = std::move(first[3u]);
-                            first[3u] = std::move(first[4u]);
-                            first[4u] = std::move(first[5u]);
-                            first[5u] = std::move(first[6u]);
-                            first[6u] = std::move(first[7u]);
-                            first[7u] = std::move(tmp);
+                            rotate_left<8u>(first);
                         }
                     } else {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(first[3u]);
-                        first[3u] = std::move(first[4u]);
-                        first[4u] = std::move(first[5u]);
-                        first[5u] = std::move(first[6u]);
-                        first[6u] = std::move(tmp);
+                        rotate_left<7u>(first);
                     }
                 } else {
                     if (compare(first[5u], first[0u])) {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(first[3u]);
-                        first[3u] = std::move(first[4u]);
-                        first[4u] = std::move(first[5u]);
-                        first[5u] = std::move(tmp);
+                        rotate_left<6u>(first);
                     } else {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(first[3u]);
-                        first[3u] = std::move(first[4u]);
-                        first[4u] = std::move(tmp);
+                        rotate_left<5u>(first);
                     }
                 }
             } else {
                 if (compare(first[2u], first[0u])) {
                     if (compare(first[3u], first[0u])) {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(first[3u]);
-                        first[3u] = std::move(tmp);
+                        rotate_left<4u>(first);
                     } else {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(tmp);
+                        rotate_left<3u>(first);
                     }
                 } else {
                     if (compare(first[1u], first[0u])) {
-                        swap(first[0u], first[1u]);
+                        rotate_left<2u>(first);
                     }
                 }
             }

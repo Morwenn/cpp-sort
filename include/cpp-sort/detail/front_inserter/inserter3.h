@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <utility>
+#include "../rotate_left.h"
 
 namespace cppsort
 {
@@ -40,16 +40,11 @@ namespace detail
         auto operator()(RandomAccessIterator first, Compare compare) const
             -> void
         {
-            using std::swap;
-
             if (compare(first[1u], first[0u])) {
                 if (compare(first[2u], first[0u])) {
-                    auto tmp = std::move(first[0u]);
-                    first[0u] = std::move(first[1u]);
-                    first[1u] = std::move(first[2u]);
-                    first[2u] = std::move(tmp);
+                    rotate_left<3u>(first);
                 } else {
-                    swap(first[0u], first[1u]);
+                    rotate_left<2u>(first);
                 }
             }
         }

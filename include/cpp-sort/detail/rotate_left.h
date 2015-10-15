@@ -21,42 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_FRONT_INSERTER5_H_
-#define CPPSORT_DETAIL_FRONT_INSERTER5_H_
+#ifndef CPPSORT_DETAIL_ROTATE_LEFT_H_
+#define CPPSORT_DETAIL_ROTATE_LEFT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../rotate_left.h"
+#include <cstddef>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<>
-    struct front_inserter_n<5u>
+    template<std::size_t N>
+    struct rotate_left_n;
+
+    template<std::size_t N, typename RandomAccessIterator>
+    auto rotate_left(RandomAccessIterator first)
+        -> decltype(auto)
     {
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, Compare compare) const
-            -> void
-        {
-            if (compare(first[2u], first[0u])) {
-                if (compare(first[3u], first[0u])) {
-                    if (compare(first[4u], first[0u])) {
-                        rotate_left<5u>(first);
-                    } else {
-                        rotate_left<4u>(first);
-                    }
-                } else {
-                    rotate_left<3u>(first);
-                }
-            } else {
-                if (compare(first[1u], first[0u])) {
-                    rotate_left<2u>(first);
-                }
-            }
-        }
-    };
+        return rotate_left_n<N>{}(first);
+    }
 }}
 
-#endif // CPPSORT_DETAIL_FRONT_INSERTER5_H_
+// Specializations of rotate_left_n for some values of N
+#include "rotate_left/rotate0.h"
+#include "rotate_left/rotate1.h"
+#include "rotate_left/rotate2.h"
+#include "rotate_left/rotate3.h"
+#include "rotate_left/rotate4.h"
+#include "rotate_left/rotate5.h"
+#include "rotate_left/rotate6.h"
+#include "rotate_left/rotate7.h"
+#include "rotate_left/rotate8.h"
+#include "rotate_left/rotate9.h"
+
+#endif // CPPSORT_DETAIL_ROTATE_LEFT_H_
