@@ -37,7 +37,10 @@ Collection<T> shuffled_int(size_t size, std::mt19937_64& rng) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
     std::shuffle(v.begin(), v.end(), rng);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -45,28 +48,40 @@ Collection<T> shuffled_16_values_int(size_t size, std::mt19937_64& rng) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i % 16);
     std::shuffle(v.begin(), v.end(), rng);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
 Collection<T> all_equal_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(0);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
 Collection<T> ascending_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
 Collection<T> descending_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = size - 1; i >= 0; --i) v.push_back(i);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -74,7 +89,10 @@ Collection<T> pipe_organ_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size/2; ++i) v.push_back(i);
     for (int i = size/2; i < size; ++i) v.push_back(size - i);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -82,7 +100,10 @@ Collection<T> push_front_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = 1; i < size; ++i) v.push_back(i);
     v.push_back(0);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -92,7 +113,10 @@ Collection<T> push_middle_int(size_t size, std::mt19937_64&) {
         if (i != size/2) v.push_back(i);
     }
     v.push_back(size/2);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -100,7 +124,10 @@ Collection<T> ascending_sawtooth_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     int limit = size / log2(size) * 1.1;
     for (int i = 0; i < size; ++i) v.push_back(i % limit);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -108,7 +135,10 @@ Collection<T> descending_sawtooth_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     int limit = size / log2(size) * 1.1;
     for (int i = size - 1; i >= 0; --i) v.push_back(i % limit);
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -116,7 +146,10 @@ Collection<T> alternating_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i);
     for (int i = 0; i < size; i += 2) v[i] *= -1;
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 template<typename T, template<typename...> class Collection>
@@ -124,7 +157,10 @@ Collection<T> alternating_16_values_int(size_t size, std::mt19937_64&) {
     std::vector<T> v; v.reserve(size);
     for (int i = 0; i < size; ++i) v.push_back(i % 16);
     for (int i = 0; i < size; i += 2) v[i] *= -1;
-    return Collection<T>(std::begin(v), std::end(v));
+    return Collection<T>(
+        std::make_move_iterator(std::begin(v)),
+        std::make_move_iterator(std::end(v))
+    );
 }
 
 
@@ -177,7 +213,7 @@ int main()
                     std::uint64_t start = rdtsc();
                     sort.second(vec);
                     std::uint64_t end = rdtsc();
-                    assert(std::is_sorted(vec.begin(), vec.end()));
+                    assert(std::is_sorted(std::begin(vec), std::end(vec)));
                     cycles.push_back(double(end - start) / size + 0.5);
                     total_end = std::chrono::high_resolution_clock::now();
                 }
