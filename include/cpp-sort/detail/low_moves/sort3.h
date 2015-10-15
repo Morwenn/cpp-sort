@@ -29,16 +29,18 @@
 ////////////////////////////////////////////////////////////
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
+#include "../rotate_left.h"
+#include "../rotate_right.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename FallbackSorter>
-    struct low_moves_sorter_n<3u, FallbackSorter>:
-        sorter_facade<low_moves_sorter_n<3u, FallbackSorter>>
+    template<>
+    struct low_moves_sorter_n<3u>:
+        sorter_facade<low_moves_sorter_n<3u>>
     {
-        using sorter_facade<low_moves_sorter_n<3u, FallbackSorter>>::operator();
+        using sorter_facade<low_moves_sorter_n<3u>>::operator();
 
         template<typename RandomAccessIterator, typename Compare>
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
@@ -51,23 +53,15 @@ namespace detail
                     if (compare(first[2u], first[1u])) {
                         swap(first[0u], first[2u]);
                     } else {
-                        auto tmp = std::move(first[0u]);
-                        first[0u] = std::move(first[1u]);
-                        first[1u] = std::move(first[2u]);
-                        first[2u] = std::move(tmp);
+                        rotate_left<3u>(first);
                     }
                 } else {
                     swap(first[0u], first[1u]);
                 }
             } else {
-                if (compare(first[2u], first[1u]))
-                {
-                    if (compare(first[2u], first[0u]))
-                    {
-                        auto tmp = std::move(first[2u]);
-                        first[2u] = std::move(first[1u]);
-                        first[1u] = std::move(first[0u]);
-                        first[0u] = std::move(tmp);
+                if (compare(first[2u], first[1u])) {
+                    if (compare(first[2u], first[0u])) {
+                        rotate_right<3u>(first);
                     } else {
                         swap(first[1u], first[2u]);
                     }

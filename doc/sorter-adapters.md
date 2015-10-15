@@ -202,18 +202,26 @@ Size | Move weight
 1 | 0
 2 | 2
 3 | 17
-4 | 172
-5 | 1384
-6 | 14188
-7 | 140736
+4 | 122
+5 | 898
+6 | 7188
+7 | 63276
+8 | 612048
+9 | 6476112
+10 | 74558880
+11 | 929011680
+12 | 12465394560
+13 | 179294186880
 
-The algorithms 0 to 4 use an unrolled insertion sort. The algorithms 5 to 7 use a
-double insertion sort. This family of algorithms is still a work in progress and
-more specializations will come in the future.
+The algorithms 0 to 3 use an unrolled insertion sort. The following algorithms use
+a recursive selection sort, which eventually falls back on the unrolled insertion
+sort, performing a bit less move operations than a regular selection sort. This
+adapter has no upper bound, it can sort an array of size 155 if needed, but then
+it might generate too much code, so try to keep the size low if possible.
 
-The simple `low_moves_adapter` takes a `Sorter` template parameter so that
-it can fall back to that sorter when no specific algorithm exists for the given
-array size:
+The simple `low_moves_adapter` takes a `Sorter` template parameter so that it can
+fall back to that sorter when it is given to sort something else than `std::array`
+or a fixed-size C array.
 
 ```cpp
 template<typename Sorter>
@@ -233,7 +241,7 @@ struct low_moves_adapter<Sorter, std::index_sequence<Indices...>>;
 
 That version calls the specific algorithms of `low_moves_adapter` only if the size
 of the given array is comprised in the integer sequence. It allows to pick specific
-algorithms if they are deemed better than the *adapter sorter* for the given size.
+algorithms if they are deemed better than the *adapted sorter* for the given size.
 
 ### `self_sort_adapter`
 

@@ -45,10 +45,7 @@ namespace cppsort
     template<typename...>
     struct low_moves_adapter;
 
-    template<
-        typename Sorter,
-        std::size_t... Indices
-    >
+    template<typename Sorter, std::size_t... Indices>
     struct low_moves_adapter<Sorter, std::index_sequence<Indices...>>:
         sorter_facade<low_moves_adapter<Sorter, std::index_sequence<Indices...>>>
     {
@@ -68,7 +65,7 @@ namespace cppsort
         auto operator()(std::array<T, N>& array, Compare compare={}) const
             -> decltype(auto)
         {
-            return detail::low_moves_sort_n<N, Sorter>(array, compare);
+            return detail::low_moves_sort_n<N>(array, compare);
         }
 
         template<
@@ -80,14 +77,43 @@ namespace cppsort
         auto operator()(T (&array)[N], Compare compare={}) const
             -> decltype(auto)
         {
-            return detail::low_moves_sort_n<N, Sorter>(array, compare);
+            return detail::low_moves_sort_n<N>(array, compare);
         }
     };
 
     template<typename Sorter>
     struct low_moves_adapter<Sorter>:
-        low_moves_adapter<Sorter, std::make_index_sequence<33u>>
-    {};
+        sorter_facade<low_moves_adapter<Sorter>>
+    {
+        template<typename... Args>
+        auto operator()(Args&&... args) const
+            -> decltype(auto)
+        {
+            return Sorter{}(std::forward<Args>(args)...);
+        }
+
+        template<
+            typename T,
+            std::size_t N,
+            typename Compare = std::less<>
+        >
+        auto operator()(std::array<T, N>& array, Compare compare={}) const
+            -> decltype(auto)
+        {
+            return detail::low_moves_sort_n<N>(array, compare);
+        }
+
+        template<
+            typename T,
+            std::size_t N,
+            typename Compare = std::less<>
+        >
+        auto operator()(T (&array)[N], Compare compare={}) const
+            -> decltype(auto)
+        {
+            return detail::low_moves_sort_n<N>(array, compare);
+        }
+    };
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

@@ -27,39 +27,43 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
 #include <cstddef>
-#include <type_traits>
 #include <utility>
+#include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<std::size_t N, typename FallbackSorter>
-    struct low_moves_sorter_n
+    template<std::size_t N>
+    struct low_moves_sorter_n:
+        sorter_facade<low_moves_sorter_n<N>>
     {
-        static_assert(
-            not std::is_void<FallbackSorter>::value,
-            "unspecialized low_moves_sorter_n cannot be called without a fallback sorter"
-        );
+        using sorter_facade<low_moves_sorter_n<N>>::operator();
 
-        template<typename... Args>
-        auto operator()(Args&&... args) const
-            -> decltype(auto)
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                        Compare compare) const
+            -> void
         {
-            return FallbackSorter{}(std::forward<Args>(args)...);
+            RandomAccessIterator min = std::min_element(first, last, compare);
+            if (first != min)
+            {
+                std::iter_swap(first, min);
+            }
+            low_moves_sorter_n<N-1>{}(++first, last, compare);
         }
     };
 
     template<
         std::size_t N,
-        typename FallbackSorter = void,
         typename... Args
     >
     auto low_moves_sort_n(Args&&... args)
         -> decltype(auto)
     {
-        return low_moves_sorter_n<N, FallbackSorter>{}(std::forward<Args>(args)...);
+        return low_moves_sorter_n<N>{}(std::forward<Args>(args)...);
     }
 }}
 
@@ -68,9 +72,5 @@ namespace detail
 #include "sort1.h"
 #include "sort2.h"
 #include "sort3.h"
-#include "sort4.h"
-#include "sort5.h"
-#include "sort6.h"
-#include "sort7.h"
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
