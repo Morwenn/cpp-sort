@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
+#include <tuple>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 
@@ -36,6 +37,10 @@ namespace cppsort
 {
 namespace detail
 {
+    template<std::size_t N, typename... Args>
+    auto low_moves_sort_n(Args&&... args)
+        -> void;
+
     template<std::size_t N>
     struct low_moves_sorter_n:
         sorter_facade<low_moves_sorter_n<N>>
@@ -47,21 +52,43 @@ namespace detail
                         Compare compare) const
             -> void
         {
-            RandomAccessIterator min = std::min_element(first, last, compare);
-            if (first != min)
+            RandomAccessIterator min, max;
+            std::tie(min, max) = std::minmax_element(first, last--, compare);
+
+            if (max == first && min == last)
             {
-                std::iter_swap(first, min);
+                if (min == max) return;
+                std::iter_swap(min, max);
             }
-            low_moves_sorter_n<N-1>{}(++first, last, compare);
+            else if (max == first)
+            {
+                if (last != max)
+                {
+                    std::iter_swap(last, max);
+                }
+                if (first != min)
+                {
+                    std::iter_swap(first, min);
+                }
+            }
+            else
+            {
+                if (first != min)
+                {
+                    std::iter_swap(first, min);
+                }
+                if (last != max)
+                {
+                    std::iter_swap(last, max);
+                }
+            }
+            low_moves_sort_n<N-2u>(++first, last, compare);
         }
     };
 
-    template<
-        std::size_t N,
-        typename... Args
-    >
+    template<std::size_t N, typename... Args>
     auto low_moves_sort_n(Args&&... args)
-        -> decltype(auto)
+        -> void
     {
         return low_moves_sorter_n<N>{}(std::forward<Args>(args)...);
     }
@@ -72,5 +99,6 @@ namespace detail
 #include "sort1.h"
 #include "sort2.h"
 #include "sort3.h"
+#include "sort4.h"
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_

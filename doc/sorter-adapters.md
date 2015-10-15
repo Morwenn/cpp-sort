@@ -213,11 +213,12 @@ Size | Move weight
 12 | 12465394560
 13 | 179294186880
 
-The algorithms 0 to 3 use an unrolled insertion sort. The following algorithms use
-a recursive selection sort, which eventually falls back on the unrolled insertion
-sort, performing a bit less move operations than a regular selection sort. This
-adapter has no upper bound, it can sort an array of size 155 if needed, but then
-it might generate too much code, so try to keep the size low if possible.
+The algorithms 0 to 3 use an unrolled insertion sort. The algorithm 4 uses a simple
+selection sort. The following algorithms use a recursive bidirectional selection
+sort, sometimes known as cocktail selection sort or minmax sort. While it does not
+perform less moves than a selection sort, it performs a bit less comparisons. This
+adapter has no upper bound, it can sort an array of size 155 if needed, but then it
+might generate too much code, so try to keep the size low if possible.
 
 The simple `low_moves_adapter` takes a `Sorter` template parameter so that it can
 fall back to that sorter when it is given to sort something else than `std::array`
@@ -228,7 +229,7 @@ template<typename Sorter>
 struct low_moves_adapter<Sorter>;
 ```
 
-There is another version that takes an additional `std::index_sequence` template
+There is another version which takes an additional `std::index_sequence` template
 parameter:
 
 ```cpp
