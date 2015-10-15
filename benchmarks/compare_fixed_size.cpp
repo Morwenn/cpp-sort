@@ -58,6 +58,12 @@ struct sorter_name<low_moves_adapter<Args...>>
     static constexpr const char* value = "low_moves_sorter";
 };
 
+template<>
+struct sorter_name<selection_sorter>
+{
+    static constexpr const char* value = "selection_sorter";
+};
+
 template<typename... Args>
 struct sorter_name<small_array_adapter<Args...>>
 {
@@ -71,14 +77,14 @@ template<std::size_t N, typename Sorter, std::size_t... Ind>
 auto count_comparisons(std::index_sequence<Ind...>)
     -> void
 {
-    cppsort::counting_adapter<Sorter> sorter;
+    cppsort::counting_adapter<Sorter, unsigned long long> sorter;
 
     // Fill an array of size N
     std::array<int, N> collection;
     std::iota(std::begin(collection), std::end(collection), 0);
 
     // Total number of comparisons
-    std::size_t count = 0;
+    unsigned long long count = 0;
 
     // For each possible permutation of collection
     do
@@ -147,6 +153,7 @@ struct move_counter
             std::cout << "illegal read from a moved-from value\n";
             assert(false);
         }
+        other.moves = 0;
     }
 
     // Assignment operators
@@ -166,6 +173,7 @@ struct move_counter
             }
             can_read = true;
             value = std::move(other.value);
+            other.moves = 0;
         }
         return *this;
     }
@@ -316,10 +324,11 @@ auto compare_time()
 int main()
 {
     // Size of the arrays to sort
-    static constexpr std::size_t size = 5;
+    static constexpr std::size_t size = 7;
 
     compare_comparisons<size,
         insertion_sorter,
+        selection_sorter,
         low_moves_adapter<void>,
         low_comparisons_adapter<void>,
         small_array_adapter<void>
@@ -327,6 +336,7 @@ int main()
 
     compare_moves<size,
         insertion_sorter,
+        selection_sorter,
         low_moves_adapter<void>,
         low_comparisons_adapter<void>,
         small_array_adapter<void>
@@ -334,6 +344,7 @@ int main()
 
     compare_time<size,
         insertion_sorter,
+        selection_sorter,
         low_moves_adapter<void>,
         low_comparisons_adapter<void>,
         small_array_adapter<void>
