@@ -21,18 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_H_
-#define CPPSORT_ADAPTERS_H_
+#ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT5_H_
+#define CPPSORT_DETAIL_SORTING_NETWORK_SORT5_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/low_comparisons_adapter.h>
-#include <cpp-sort/adapters/low_moves_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/adapters/sorting_network_adapter.h>
+#include <cpp-sort/sorter_facade.h>
+#include "../swap_if.h"
 
-#endif // CPPSORT_ADAPTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename FallbackSorter>
+    struct sorting_network_sorter_n<5u, FallbackSorter>:
+        sorter_facade<sorting_network_sorter_n<5u, FallbackSorter>>
+    {
+        using sorter_facade<sorting_network_sorter_n<5u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
+            -> void
+        {
+            swap_if(first[0u], first[1u], compare);
+            swap_if(first[3u], first[4u], compare);
+            swap_if(first[2u], first[4u], compare);
+            swap_if(first[2u], first[3u], compare);
+            swap_if(first[0u], first[3u], compare);
+            swap_if(first[0u], first[2u], compare);
+            swap_if(first[1u], first[4u], compare);
+            swap_if(first[1u], first[3u], compare);
+            swap_if(first[1u], first[2u], compare);
+        }
+    };
+}}
+
+#endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT5_H_

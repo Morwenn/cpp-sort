@@ -21,18 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_H_
-#define CPPSORT_ADAPTERS_H_
+#ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT0_H_
+#define CPPSORT_DETAIL_SORTING_NETWORK_SORT0_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/low_comparisons_adapter.h>
-#include <cpp-sort/adapters/low_moves_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/adapters/sorting_network_adapter.h>
+#include <cpp-sort/sorter_facade.h>
 
-#endif // CPPSORT_ADAPTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename FallbackSorter>
+    struct sorting_network_sorter_n<0u, FallbackSorter>:
+        sorter_facade<sorting_network_sorter_n<0u, FallbackSorter>>
+    {
+        using sorter_facade<sorting_network_sorter_n<0u, FallbackSorter>>::operator();
+
+        template<typename RandomAccessIterator, typename Compare>
+        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare) const
+            -> void
+        {}
+    };
+}}
+
+#endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT0_H_
