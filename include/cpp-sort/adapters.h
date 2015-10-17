@@ -32,7 +32,6 @@
 #include <cpp-sort/adapters/low_comparisons_adapter.h>
 #include <cpp-sort/adapters/low_moves_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/adapters/sorting_network_adapter.h>
 
 #endif // CPPSORT_ADAPTERS_H_
