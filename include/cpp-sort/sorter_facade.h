@@ -101,14 +101,14 @@ namespace cppsort
 
             template<typename Iterable>
             auto operator()(Iterable& iterable) const
-                -> decltype(Sorter{}(std::begin(iterable), std::end(iterable)))
+                -> decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable)))
             {
                 return Sorter{}(std::begin(iterable), std::end(iterable));
             }
 
             template<typename Iterable, typename Compare>
             auto operator()(Iterable& iterable, Compare compare) const
-                -> decltype(Sorter{}(std::begin(iterable), std::end(iterable), compare))
+                -> decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable), compare))
             {
                 return Sorter{}(std::begin(iterable), std::end(iterable), compare);
             }
@@ -120,7 +120,7 @@ namespace cppsort
             auto operator()(Iterable& iterable, std::less<>) const
                 -> std::enable_if_t<
                     not is_comparison_sorter_iterator<Sorter, decltype(std::begin(iterable)), std::less<>>,
-                    decltype(Sorter{}(iterable))
+                    decltype(std::declval<Sorter&>()(iterable))
                 >
             {
                 return Sorter{}(iterable);
@@ -130,7 +130,7 @@ namespace cppsort
             auto operator()(Iterator first, Iterator last, std::less<>) const
                 -> std::enable_if_t<
                     not is_comparison_sorter_iterator<Sorter, Iterator, std::less<>>,
-                    decltype(Sorter{}(first, last))
+                    decltype(std::declval<Sorter&>()(first, last))
                 >
             {
                 return Sorter{}(first, last);
@@ -148,7 +148,7 @@ namespace cppsort
                         decltype(std::begin(iterable)),
                         std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>
                     >,
-                    decltype(Sorter{}(iterable))
+                    decltype(std::declval<Sorter&>()(iterable))
                 >
             {
                 return Sorter{}(iterable);
@@ -163,7 +163,7 @@ namespace cppsort
                         Iterator,
                         std::less<typename std::iterator_traits<Iterator>::value_type>
                     >,
-                    decltype(Sorter{}(first, last))
+                    decltype(std::declval<Sorter&>()(first, last))
                 >
             {
                 return Sorter{}(first, last);
