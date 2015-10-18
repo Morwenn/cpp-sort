@@ -21,33 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT10_H_
-#define CPPSORT_DETAIL_LOW_COMPARISONS_SORT10_H_
+#ifndef CPPSORT_DETAIL_ROTATE_LEFT11_H_
+#define CPPSORT_DETAIL_ROTATE_LEFT11_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorter_facade.h>
-#include "../front_insert.h"
+#include <utility>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename FallbackSorter>
-    struct low_comparisons_sorter_n<10u, FallbackSorter>:
-        sorter_facade<low_comparisons_sorter_n<10u, FallbackSorter>>
+    template<>
+    struct rotate_left_n<11u>
     {
-        using sorter_facade<low_comparisons_sorter_n<10u, FallbackSorter>>::operator();
-
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator first) const
             -> void
         {
-            low_comparisons_sort_n<9u>(first+1u, first+10u, compare);
-            front_insert<10u>(first, compare);
+            auto tmp = std::move(first[0u]);
+            first[0u] = std::move(first[1u]);
+            first[1u] = std::move(first[2u]);
+            first[2u] = std::move(first[3u]);
+            first[3u] = std::move(first[4u]);
+            first[4u] = std::move(first[5u]);
+            first[5u] = std::move(first[6u]);
+            first[6u] = std::move(first[7u]);
+            first[7u] = std::move(first[8u]);
+            first[8u] = std::move(first[9u]);
+            first[9u] = std::move(first[10u]);
+            first[10u] = std::move(tmp);
         }
     };
 }}
 
-#endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT10_H_
+#endif // CPPSORT_DETAIL_ROTATE_LEFT11_H_
