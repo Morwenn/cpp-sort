@@ -125,7 +125,7 @@ namespace cppsort
     struct sorter_traits<rebind_iterator_category<Sorter, Category>>
     {
         using iterator_category = Category;
-        static constexpr bool is_stable = is_stable<Sorter>;
+        static constexpr bool is_stable = cppsort::is_stable<Sorter>;
     };
 }
 
