@@ -59,7 +59,7 @@ namespace cppsort
         // probably a trick to automate that...
 
         template<typename>
-        constexpr std::size_t iterator_category_value;
+        std::size_t iterator_category_value;
 
         template<>
         constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 0;
