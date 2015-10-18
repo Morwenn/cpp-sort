@@ -56,5 +56,6 @@ namespace detail
 #include "rotate_left/rotate8.h"
 #include "rotate_left/rotate9.h"
 #include "rotate_left/rotate10.h"
+#include "rotate_left/rotate11.h"
 
 #endif // CPPSORT_DETAIL_ROTATE_LEFT_H_

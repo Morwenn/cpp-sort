@@ -115,9 +115,9 @@ Size | Comparison weight
 8 | 631680
 9 | 6854400
 10 | 80881920
-11 | 1111783680
+11 | 1031224320
 12 | 15292247040
-13 | 237624468480
+13 | 225057208320
 
 This adapter uses a variety of specialized sorting algorithms depending on the
 size of the array to sort. Many of them correspond to unrolled versions of more
@@ -136,11 +136,11 @@ Size | Algorithm
 8 | Insertion sort
 9 | Insertion sort
 10 | Insertion sort
-11 | Double insertion sort
+11 | Insertion sort
 12 | Double insertion sort
 13 | Double insertion sort
 
-The algorithms 11 to 13 use a supposedly a novel sorting algorithm that I named the
+The algorithms 12 and 13 use a supposedly a novel sorting algorithm that I named
 *double insertion sort* (I would be suprised if it hadn't been discovered before,
 but I couldn't find any information about it anywhere). Actually, the algorithm is
 rather simple: it sorts everything but the first and last elements of the array,
