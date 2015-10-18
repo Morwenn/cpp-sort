@@ -52,7 +52,7 @@ namespace cppsort
         {};
 
         template<>
-        struct choice<256> {};
+        struct choice<127> {};
 
         ////////////////////////////////////////////////////////////
         // Associate a priority to iterator categories, there is
