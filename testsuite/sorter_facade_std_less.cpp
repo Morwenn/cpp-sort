@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include <functional>
+#include <iostream>
 #include <iterator>
 #include <vector>
 #include <catch.hpp>
@@ -56,7 +57,7 @@ struct non_comparison_sorter:
     using cppsort::sorter_facade<non_comparison_sorter>::operator();
 
     template<typename Iterator>
-    auto operator()(Iterator, Iterator)
+    auto operator()(Iterator, Iterator) const
         -> bool
     {
         return true;
@@ -69,14 +70,14 @@ struct non_comparison_iterable_sorter:
     using cppsort::sorter_facade<non_comparison_iterable_sorter>::operator();
 
     template<typename Iterator>
-    auto operator()(Iterator, Iterator)
+    auto operator()(Iterator, Iterator) const
         -> bool
     {
         return true;
     }
 
     template<typename Iterable>
-    auto operator()(Iterable&)
+    auto operator()(Iterable&) const
         -> bool
     {
         return false;
