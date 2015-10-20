@@ -9,9 +9,7 @@ set(
     adapters/hybrid_adapter_partial_compare.cpp
     adapters/hybrid_adapter_sfinae.cpp
     adapters/self_sort_adapter_no_compare.cpp
-    adapters/small_array_adapter3.cpp
-    adapters/small_array_adapter4.cpp
-    adapters/small_array_adapter5.cpp
+    adapters/small_array_adapter.cpp
 )
 
 set(
