@@ -32,55 +32,53 @@
 
 namespace cppsort
 {
-namespace detail
-{
-    template<typename FallbackSorter>
-    struct sorting_network_sorter_n<11u, FallbackSorter>:
-        sorter_facade<sorting_network_sorter_n<11u, FallbackSorter>>
+    template<>
+    struct sorting_network_sorter<11u>:
+        sorter_facade<sorting_network_sorter<11u>>
     {
-        using sorter_facade<sorting_network_sorter_n<11u, FallbackSorter>>::operator();
+        using sorter_facade<sorting_network_sorter<11u>>::operator();
 
         template<typename RandomAccessIterator, typename Compare>
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
-            swap_if(first[0u], first[1u], compare);
-            swap_if(first[2u], first[3u], compare);
-            swap_if(first[4u], first[5u], compare);
-            swap_if(first[6u], first[7u], compare);
-            swap_if(first[8u], first[9u], compare);
-            swap_if(first[1u], first[3u], compare);
-            swap_if(first[5u], first[7u], compare);
-            swap_if(first[0u], first[2u], compare);
-            swap_if(first[4u], first[6u], compare);
-            swap_if(first[8u], first[10u], compare);
-            swap_if(first[1u], first[2u], compare);
-            swap_if(first[5u], first[6u], compare);
-            swap_if(first[9u], first[10u], compare);
-            swap_if(first[1u], first[5u], compare);
-            swap_if(first[6u], first[10u], compare);
-            swap_if(first[5u], first[9u], compare);
-            swap_if(first[2u], first[6u], compare);
-            swap_if(first[1u], first[5u], compare);
-            swap_if(first[6u], first[10u], compare);
-            swap_if(first[0u], first[4u], compare);
-            swap_if(first[3u], first[7u], compare);
-            swap_if(first[4u], first[8u], compare);
-            swap_if(first[0u], first[4u], compare);
-            swap_if(first[1u], first[4u], compare);
-            swap_if(first[7u], first[10u], compare);
-            swap_if(first[3u], first[8u], compare);
-            swap_if(first[2u], first[3u], compare);
-            swap_if(first[8u], first[9u], compare);
-            swap_if(first[2u], first[4u], compare);
-            swap_if(first[7u], first[9u], compare);
-            swap_if(first[3u], first[5u], compare);
-            swap_if(first[6u], first[8u], compare);
-            swap_if(first[3u], first[4u], compare);
-            swap_if(first[5u], first[6u], compare);
-            swap_if(first[7u], first[8u], compare);
+            detail::swap_if(first[0u], first[1u], compare);
+            detail::swap_if(first[2u], first[3u], compare);
+            detail::swap_if(first[4u], first[5u], compare);
+            detail::swap_if(first[6u], first[7u], compare);
+            detail::swap_if(first[8u], first[9u], compare);
+            detail::swap_if(first[1u], first[3u], compare);
+            detail::swap_if(first[5u], first[7u], compare);
+            detail::swap_if(first[0u], first[2u], compare);
+            detail::swap_if(first[4u], first[6u], compare);
+            detail::swap_if(first[8u], first[10u], compare);
+            detail::swap_if(first[1u], first[2u], compare);
+            detail::swap_if(first[5u], first[6u], compare);
+            detail::swap_if(first[9u], first[10u], compare);
+            detail::swap_if(first[1u], first[5u], compare);
+            detail::swap_if(first[6u], first[10u], compare);
+            detail::swap_if(first[5u], first[9u], compare);
+            detail::swap_if(first[2u], first[6u], compare);
+            detail::swap_if(first[1u], first[5u], compare);
+            detail::swap_if(first[6u], first[10u], compare);
+            detail::swap_if(first[0u], first[4u], compare);
+            detail::swap_if(first[3u], first[7u], compare);
+            detail::swap_if(first[4u], first[8u], compare);
+            detail::swap_if(first[0u], first[4u], compare);
+            detail::swap_if(first[1u], first[4u], compare);
+            detail::swap_if(first[7u], first[10u], compare);
+            detail::swap_if(first[3u], first[8u], compare);
+            detail::swap_if(first[2u], first[3u], compare);
+            detail::swap_if(first[8u], first[9u], compare);
+            detail::swap_if(first[2u], first[4u], compare);
+            detail::swap_if(first[7u], first[9u], compare);
+            detail::swap_if(first[3u], first[5u], compare);
+            detail::swap_if(first[6u], first[8u], compare);
+            detail::swap_if(first[3u], first[4u], compare);
+            detail::swap_if(first[5u], first[6u], compare);
+            detail::swap_if(first[7u], first[8u], compare);
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT11_H_

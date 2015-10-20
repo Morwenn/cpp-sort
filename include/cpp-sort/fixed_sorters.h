@@ -21,32 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT3_H_
-#define CPPSORT_DETAIL_SORTING_NETWORK_SORT3_H_
+#ifndef CPPSORT_FIXED_SORTERS_H_
+#define CPPSORT_FIXED_SORTERS_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorter_facade.h>
-#include "../swap_if.h"
+#include <cpp-sort/fixed/low_comparisons_sorter.h>
+#include <cpp-sort/fixed/low_moves_sorter.h>
+#include <cpp-sort/fixed/sorting_network_sorter.h>
 
-namespace cppsort
-{
-    template<>
-    struct sorting_network_sorter<3u>:
-        sorter_facade<sorting_network_sorter<3u>>
-    {
-        using sorter_facade<sorting_network_sorter<3u>>::operator();
-
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
-            -> void
-        {
-            detail::swap_if(first[1u], first[2u], compare);
-            detail::swap_if(first[0u], first[2u], compare);
-            detail::swap_if(first[0u], first[1u], compare);
-        }
-    };
-}
-
-#endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT3_H_
+#endif // CPPSORT_FIXED_SORTERS_H_

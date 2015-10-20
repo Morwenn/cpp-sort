@@ -28,25 +28,24 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/sorter_facade.h>
+#include "../front_insert.h"
 
 namespace cppsort
 {
-namespace detail
-{
-    template<typename FallbackSorter>
-    struct low_comparisons_sorter_n<9u, FallbackSorter>:
-        sorter_facade<low_comparisons_sorter_n<9u, FallbackSorter>>
+    template<>
+    struct low_comparisons_sorter<9u>:
+        sorter_facade<low_comparisons_sorter<9u>>
     {
-        using sorter_facade<low_comparisons_sorter_n<9u, FallbackSorter>>::operator();
+        using sorter_facade<low_comparisons_sorter<9u>>::operator();
 
         template<typename RandomAccessIterator, typename Compare>
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
             -> void
         {
-            low_comparisons_sort_n<8u>(first+1u, first+9u, compare);
-            front_insert<9u>(first, compare);
+            low_comparisons_sorter<8u>{}(first+1u, first+9u, compare);
+            detail::front_insert<9u>(first, compare);
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT9_H_

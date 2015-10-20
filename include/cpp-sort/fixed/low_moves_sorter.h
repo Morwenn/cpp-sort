@@ -21,35 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
-#define CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
+#ifndef CPPSORT_FIXED_LOW_MOVES_SORTER_H_
+#define CPPSORT_FIXED_LOW_MOVES_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
+#include <functional>
+#include <iterator>
 #include <tuple>
-#include <utility>
 #include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
-namespace detail
-{
-    template<std::size_t N, typename... Args>
-    auto low_moves_sort_n(Args&&... args)
-        -> void;
+    ////////////////////////////////////////////////////////////
+    // Adapter
 
     template<std::size_t N>
-    struct low_moves_sorter_n:
-        sorter_facade<low_moves_sorter_n<N>>
+    struct low_moves_sorter:
+        sorter_facade<low_moves_sorter<N>>
     {
-        using sorter_facade<low_moves_sorter_n<N>>::operator();
+        using sorter_facade<low_moves_sorter<N>>::operator();
 
-        template<typename RandomAccessIterator, typename Compare>
+        template<
+            typename RandomAccessIterator,
+            typename Compare = std::less<>
+        >
         auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare) const
+                        Compare compare={}) const
             -> void
         {
             RandomAccessIterator min, max;
@@ -82,23 +83,31 @@ namespace detail
                     std::iter_swap(last, max);
                 }
             }
-            low_moves_sort_n<N-2u>(++first, last, compare);
+            low_moves_sorter<N-2u>{}(++first, last, compare);
         }
     };
 
-    template<std::size_t N, typename... Args>
-    auto low_moves_sort_n(Args&&... args)
-        -> void
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<std::size_t N>
+    struct sorter_traits<low_moves_sorter<N>>
     {
-        return low_moves_sorter_n<N>{}(std::forward<Args>(args)...);
-    }
-}}
+        using iterator_category = std::random_access_iterator_tag;
 
-// Specializations of low_moves_sorter_n for some values of N
-#include "sort0.h"
-#include "sort1.h"
-#include "sort2.h"
-#include "sort3.h"
-#include "sort4.h"
+        // Some of the algorithms are stable, some other are not,
+        // the stability *could* be documented depending on which
+        // fixed-size algorithms are used, but it would be lots of
+        // work...
+        static constexpr bool is_stable = false;
+    };
+}
 
-#endif // CPPSORT_DETAIL_LOW_MOVES_SORT_N_H_
+// Specializations of low_moves_sorter for some values of N
+#include "../detail/low_moves/sort0.h"
+#include "../detail/low_moves/sort1.h"
+#include "../detail/low_moves/sort2.h"
+#include "../detail/low_moves/sort3.h"
+#include "../detail/low_moves/sort4.h"
+
+#endif // CPPSORT_FIXED_LOW_MOVES_SORTER_H_

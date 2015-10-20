@@ -31,19 +31,17 @@
 
 namespace cppsort
 {
-namespace detail
-{
-    template<typename FallbackSorter>
-    struct low_comparisons_sorter_n<1u, FallbackSorter>:
-        sorter_facade<low_comparisons_sorter_n<1u, FallbackSorter>>
+    template<>
+    struct low_comparisons_sorter<1u>:
+        sorter_facade<low_comparisons_sorter<1u>>
     {
-        using sorter_facade<low_comparisons_sorter_n<1u, FallbackSorter>>::operator();
+        using sorter_facade<low_comparisons_sorter<1u>>::operator();
 
         template<typename RandomAccessIterator, typename Compare>
         auto operator()(RandomAccessIterator, RandomAccessIterator, Compare) const
             -> void
         {}
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT1_H_
