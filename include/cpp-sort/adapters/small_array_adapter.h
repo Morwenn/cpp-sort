@@ -57,11 +57,13 @@ namespace cppsort
         template<
             typename T,
             std::size_t N,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
+            typename Compare = std::less<>
         >
         auto operator()(std::array<T, N>& array, Compare compare={}) const
-            -> decltype(std::declval<Sorter<N>&>((array, compare)))
+            -> std::enable_if_t<
+                utility::is_in_pack<N, Indices...>,
+                decltype(std::declval<Sorter<N>&>()(array, compare))
+            >
         {
             return Sorter<N>{}(array, compare);
         }
@@ -73,7 +75,10 @@ namespace cppsort
             typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
         >
         auto operator()(T (&array)[N], Compare compare={}) const
-            -> decltype(std::declval<Sorter<N>&>((array, compare)))
+            -> std::enable_if_t<
+                utility::is_in_pack<N, Indices...>,
+                decltype(std::declval<Sorter<N>&>()(array, compare))
+            >
         {
             return Sorter<N>{}(array, compare);
         }
