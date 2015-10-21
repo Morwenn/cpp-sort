@@ -30,6 +30,7 @@
 #include <iterator>
 #include <numeric>
 #include <cpp-sort/adapters.h>
+#include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters.h>
 
 using namespace cppsort;
@@ -46,14 +47,14 @@ struct sorter_name<insertion_sorter>
     static constexpr const char* value = "insertion_sorter";
 };
 
-template<typename... Args>
-struct sorter_name<low_comparisons_adapter<Args...>>
+template<std::size_t N>
+struct sorter_name<low_comparisons_sorter<N>>
 {
     static constexpr const char* value = "low_comparisons_sorter";
 };
 
-template<typename... Args>
-struct sorter_name<low_moves_adapter<Args...>>
+template<std::size_t N>
+struct sorter_name<low_moves_sorter<N>>
 {
     static constexpr const char* value = "low_moves_sorter";
 };
@@ -64,10 +65,16 @@ struct sorter_name<selection_sorter>
     static constexpr const char* value = "selection_sorter";
 };
 
-template<typename... Args>
-struct sorter_name<small_array_adapter<Args...>>
+template<std::size_t N>
+struct sorter_name<sorting_network_sorter<N>>
 {
-    static constexpr const char* value = "small_array_sorter";
+    static constexpr const char* value = "sorting_network_sorter";
+};
+
+template<template<std::size_t> class Sorter, typename Indices>
+struct sorter_name<small_array_adapter<Sorter, Indices>>
+{
+    static constexpr const char* value = sorter_name<Sorter<0u>>::value;
 };
 
 ////////////////////////////////////////////////////////////
@@ -324,29 +331,41 @@ auto compare_time()
 int main()
 {
     // Size of the arrays to sort
-    static constexpr std::size_t size = 7;
+    static constexpr std::size_t size = 13;
+
+    using network_sorter = small_array_adapter<
+        sorting_network_sorter
+    >;
+
+    using comparisons_sorter = small_array_adapter<
+        low_comparisons_sorter
+    >;
+
+    using moves_sorter = small_array_adapter<
+        low_moves_sorter
+    >;
 
     compare_comparisons<size,
         insertion_sorter,
         selection_sorter,
-        low_moves_adapter<void>,
-        low_comparisons_adapter<void>,
-        small_array_adapter<void>
+        moves_sorter,
+        comparisons_sorter,
+        network_sorter
     >();
 
     compare_moves<size,
         insertion_sorter,
         selection_sorter,
-        low_moves_adapter<void>,
-        low_comparisons_adapter<void>,
-        small_array_adapter<void>
+        moves_sorter,
+        comparisons_sorter,
+        network_sorter
     >();
 
     compare_time<size,
         insertion_sorter,
         selection_sorter,
-        low_moves_adapter<void>,
-        low_comparisons_adapter<void>,
-        small_array_adapter<void>
+        moves_sorter,
+        comparisons_sorter,
+        network_sorter
     >();
 }

@@ -31,6 +31,8 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/adapters.h>
+#include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include "distributions.h"
@@ -87,17 +89,25 @@ template<
 auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
     -> void
 {
-    using fixed_sorter = cppsort::small_array_adapter<
-        cppsort::pdq_sorter
+    using sorting_network_sorter = cppsort::small_array_adapter<
+        cppsort::sorting_network_sorter
+    >;
+
+    using low_comparisons_sorter = cppsort::small_array_adapter<
+        cppsort::low_comparisons_sorter
+    >;
+
+    using low_moves_sorter = cppsort::small_array_adapter<
+        cppsort::low_moves_sorter
     >;
 
     // Compute results for the different sorting algorithms
     std::pair<const char*, std::array<std::chrono::milliseconds, sizeof...(Ind)>> results[] = {
-        { "fixed_sorter",       { time_it<T, Ind>(fixed_sorter{},               Distribution{}, times)... } },
-        { "std_sorter",         { time_it<T, Ind>(cppsort::std_sorter{},        Distribution{}, times)... } },
-        { "tim_sorter",         { time_it<T, Ind>(cppsort::tim_sorter{},        Distribution{}, times)... } },
-        { "pdq_sorter",         { time_it<T, Ind>(cppsort::pdq_sorter{},        Distribution{}, times)... } },
-        { "insertion_sorter",   { time_it<T, Ind>(cppsort::insertion_sorter{},  Distribution{}, times)... } }
+        { "insertion_sorter",       { time_it<T, Ind>(cppsort::insertion_sorter{},  Distribution{}, times)... } },
+        { "selection_sorter",       { time_it<T, Ind>(cppsort::selection_sorter{},  Distribution{}, times)... } },
+        { "low_moves_sorter",       { time_it<T, Ind>(low_moves_sorter{},           Distribution{}, times)... } },
+        { "low_comparisons_sorter", { time_it<T, Ind>(low_comparisons_sorter{},     Distribution{}, times)... } },
+        { "sorting_network_sorter", { time_it<T, Ind>(sorting_network_sorter{},     Distribution{}, times)... } },
     };
 
     // Output the results to their respective files
@@ -132,7 +142,7 @@ auto time_distributions(std::size_t times)
 
 int main()
 {
-    time_distributions<int, 15u,
+    time_distributions<int, 14u,
         shuffled,
         all_equal,
         ascending,

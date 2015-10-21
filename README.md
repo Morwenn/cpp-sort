@@ -27,15 +27,16 @@ int main()
 }
 ```
 
-**cpp-sort** also provides *sorters* as well as *sorter adapters* which can be
-used by `cppsort::sort` to sort a collection, as well as a sorter facade to ease
-the construction of new sorters. It is possible to get some information about
-the sorters and sorter adapters thanks to *sorter traits*. Everything lives in
-the `cppsort` namespace. You can read more about the available sorting tools in
-the documentation:
+**cpp-sort** also provides *sorters* and *fixed-size sorters* as well as *sorter
+adapters* which can be used by `cppsort::sort` to sort a collection, as well as a
+sorter facade to ease the construction of new sorters. It is possible to get some
+information about the sorters and sorter adapters thanks to *sorter traits*. Every
+class or function lives in the `cppsort` namespace. You can read more about the
+available sorting tools in the documentation:
 
 * [`cppsort::sort`](doc/sort.md)
 * [Sorters](doc/sorters.md)
+* [Fixed-size sorters](doc/fixed-sorters.md)
 * [Sorter adapters](doc/sorter-adapters.md)
 * [Sorter facade](doc/sorter-facade.md)
 * [Sorter traits](doc/sorter-traits.md)
@@ -55,46 +56,46 @@ custom sorters and sorter adapters:
 
 # Benchmarks
 
-The following graph has been generated with the scripts found in the benchmarks
+The following graph has been generated with a script found in the benchmarks
 directory. It shows the time needed for one sorting algorithm to sort one million
-shuffled `std::array` of sizes 0 to 15. The benchmark compares `cppsort::sort`
-(using the default sorter) to three other sorters available in the library:
-an `std_sorter`, a `tim_sorter` and a `pdq_sorter`.
+shuffled `std::array<int, N>` of sizes 0 to 15. It compares the sorters generally
+used to sort small arrays:
 
-![shuffled](https://i.imgur.com/a0EtY0A.png)
+![shuffled int arrays](https://i.imgur.com/GaRHn9x.png)
 
-These results were generated with MinGW g++ 5.1 with the compiler options
-`-std=c++14 -O3 -fexpensive-optimizations -march=native`. More benchmarks
-will be made available in the future.
+These results were generated with MinGW g++ 5.2 with the compiler options
+`-std=c++14 -O3 -fexpensive-optimizations -march=native`. More benchmarks will be
+made available in the future.
 
 # Thanks
 
-**cpp-sort** reuses a great deal of code coming from other projects, often
-slightly altered to integrate seamlessly into the library. Here is a list of
-resources I used to create this library. I hope that the different licenses
-are compatible. If it is not the case, please contact me (or post an issue)
-and we will see what can be done about it:
+**cpp-sort** reuses a great deal of code coming from other projects, often slightly
+altered to integrate seamlessly into the library. Here is a list of resources used
+to create this library. I hope that the different licenses are compatible. If it is
+not the case, please contact me (or submit an issue) and we will see what can be
+done about it:
 
-* The algorithms used by `insertion_sorter` and `pdq_sorter` come from Orson
-Peters' [pattern-defeating quicksort](https://github.com/orlp/pdqsort). Some
+* Some of the algorithms used by `insertion_sorter` and `pdq_sorter` come from
+Orson Peters' [pattern-defeating quicksort](https://github.com/orlp/pdqsort). Some
 parts of the benchmarks come from there as well.
 
-* The algorithm used by `tim_sorter` comes from Goro Fuji's (gfx) [C++
-implementation](https://github.com/gfx/cpp-TimSort) of TimSort.
+* The algorithm used by `tim_sorter` comes from Goro Fuji's (gfx) [implementation
+of a Timsort](https://github.com/gfx/cpp-TimSort).
 
 * The three algorithms used by `spread_sorter` come from Steven Ross [Boost.Sort
 module](http://www.boost.org/doc/libs/1_59_0/libs/sort/doc/html/index.html) with
-some modifications so that they do no depend on Boost anymore.
+some modifications so that they do not depend on Boost anymore.
 
-* The algorithm used by `verge_sorter` comes from my own [implementation of
-a vergesort](https://github.com/Morwenn/vergesort) (at least, I know that the
-license for this one is compatible :p).
+* The algorithms used by `verge_sorter` comes from my own [implementation of a
+vergesort](https://github.com/Morwenn/vergesort) (at least, I know that the license
+for this one is compatible :p).
 
-* The merge insertion sort used by `low_comparison_adapter` algorithm 5 is a C++
-adaptation of a LISP implementation of the algorithm that I found in an [answer
+* The merge insertion sort used by `low_comparison_sorter` algorithm 5 is a C++
+adaptation of a LISP implementation of the algorithm that I found in [an answer
 on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
 
-* The other algorithms used by `small_array_adapter` to sort a fixed number of
-values have been generated thanks to the `SWAP` macros that can be found on
-[this page about sorting networks](http://pages.ripco.net/~jgamble/nw.html)
-which itself generates its macros thanks to the Perl module `Algorithm::Networksort`.
+* The algorithms used by `sorting_network_sorter` have been generated thanks to the
+`SWAP` macros that can be found on [this page about sorting networks](http://pages.ripco.net/~jgamble/nw.html)
+which generates its macros thanks to the Perl module `Algorithm::Networksort`. Some
+of the optimizations come from [this discussion](http://stackoverflow.com/q/2786899/1364752)
+on StackOverflow.

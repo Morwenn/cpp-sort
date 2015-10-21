@@ -82,7 +82,7 @@ namespace cppsort
 }
 
 TEST_CASE( "iterator category rebinder",
-           "[rebind_iterator_category][hybrid_adapter" )
+           "[rebind_iterator_category][hybrid_adapter]" )
 {
     SECTION( "simple case" )
     {

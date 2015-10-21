@@ -34,13 +34,11 @@
 
 namespace cppsort
 {
-namespace detail
-{
     template<>
-    struct low_moves_sorter_n<3u>:
-        sorter_facade<low_moves_sorter_n<3u>>
+    struct low_moves_sorter<3u>:
+        sorter_facade<low_moves_sorter<3u>>
     {
-        using sorter_facade<low_moves_sorter_n<3u>>::operator();
+        using sorter_facade<low_moves_sorter<3u>>::operator();
 
         template<typename RandomAccessIterator, typename Compare>
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
@@ -53,7 +51,7 @@ namespace detail
                     if (compare(first[2u], first[1u])) {
                         swap(first[0u], first[2u]);
                     } else {
-                        rotate_left<3u>(first);
+                        detail::rotate_left<3u>(first);
                     }
                 } else {
                     swap(first[0u], first[1u]);
@@ -61,7 +59,7 @@ namespace detail
             } else {
                 if (compare(first[2u], first[1u])) {
                     if (compare(first[2u], first[0u])) {
-                        rotate_right<3u>(first);
+                        detail::rotate_right<3u>(first);
                     } else {
                         swap(first[1u], first[2u]);
                     }
@@ -69,6 +67,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT3_H_

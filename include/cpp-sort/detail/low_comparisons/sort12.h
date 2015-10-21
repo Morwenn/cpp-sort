@@ -32,13 +32,11 @@
 
 namespace cppsort
 {
-namespace detail
-{
-    template<typename FallbackSorter>
-    struct low_comparisons_sorter_n<12u, FallbackSorter>:
-        sorter_facade<low_comparisons_sorter_n<12u, FallbackSorter>>
+    template<>
+    struct low_comparisons_sorter<12u>:
+        sorter_facade<low_comparisons_sorter<12u>>
     {
-        using sorter_facade<low_comparisons_sorter_n<12u, FallbackSorter>>::operator();
+        using sorter_facade<low_comparisons_sorter<12u>>::operator();
 
         template<typename RandomAccessIterator, typename Compare>
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
@@ -46,7 +44,7 @@ namespace detail
         {
             using std::swap;
 
-            low_comparisons_sort_n<10u>(first+1u, first+11u, compare);
+            low_comparisons_sorter<10u>{}(first+1u, first+11u, compare);
 
             if (compare(first[11u], first[0u])) {
                 swap(first[0u], first[11u]);
@@ -115,6 +113,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT12_H_

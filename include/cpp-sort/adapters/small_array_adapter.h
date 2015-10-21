@@ -35,40 +35,37 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/is_in_pack.h>
-#include "../detail/small_array/sort_n.h"
 
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
     // Adapter
 
-    template<typename...>
+    template<
+        template<std::size_t> class Sorter,
+        typename Indices = void
+    >
     struct small_array_adapter;
 
     template<
-        typename Sorter,
+        template<std::size_t> class Sorter,
         std::size_t... Indices
     >
     struct small_array_adapter<Sorter, std::index_sequence<Indices...>>:
         sorter_facade<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
     {
-        template<typename... Args>
-        auto operator()(Args&&... args) const
-            -> decltype(auto)
-        {
-            return Sorter{}(std::forward<Args>(args)...);
-        }
-
         template<
             typename T,
             std::size_t N,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
+            typename Compare = std::less<>
         >
         auto operator()(std::array<T, N>& array, Compare compare={}) const
-            -> decltype(auto)
+            -> std::enable_if_t<
+                utility::is_in_pack<N, Indices...>,
+                decltype(std::declval<Sorter<N>&>()(array, compare))
+            >
         {
-            return detail::sort_n<N, Sorter>(array, compare);
+            return Sorter<N>{}(array, compare);
         }
 
         template<
@@ -78,24 +75,52 @@ namespace cppsort
             typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
         >
         auto operator()(T (&array)[N], Compare compare={}) const
-            -> decltype(auto)
+            -> std::enable_if_t<
+                utility::is_in_pack<N, Indices...>,
+                decltype(std::declval<Sorter<N>&>()(array, compare))
+            >
         {
-            return detail::sort_n<N, Sorter>(array, compare);
+            return Sorter<N>{}(array, compare);
         }
     };
 
-    template<typename Sorter>
-    struct small_array_adapter<Sorter>:
-        small_array_adapter<Sorter, std::make_index_sequence<33u>>
-    {};
+    template<template<std::size_t> class Sorter>
+    struct small_array_adapter<Sorter, void>:
+        sorter_facade<small_array_adapter<Sorter, void>>
+    {
+        template<
+            typename T,
+            std::size_t N,
+            typename Compare = std::less<>
+        >
+        auto operator()(std::array<T, N>& array, Compare compare={}) const
+            -> decltype(std::declval<Sorter<N>&>()(array, compare))
+        {
+            return Sorter<N>{}(array, compare);
+        }
+
+        template<
+            typename T,
+            std::size_t N,
+            typename Compare = std::less<>
+        >
+        auto operator()(T (&array)[N], Compare compare={}) const
+            -> decltype(std::declval<Sorter<N>&>()(array, compare))
+        {
+            return Sorter<N>{}(array, compare);
+        }
+    };
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    template<typename Sorter, std::size_t... Indices>
-    struct sorter_traits<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
+    template<
+        template<std::size_t> class Sorter,
+        typename Indices
+    >
+    struct sorter_traits<small_array_adapter<Sorter, Indices>>
     {
-        using iterator_category = iterator_category<Sorter>;
+        using iterator_category = std::random_access_iterator_tag;
 
         // Some of the algorithms are stable, some other are not,
         // the stability *could* be documented depending on which
