@@ -36,16 +36,17 @@ implementation defines it as follows:
 
 ```cpp
 using default_sorter = self_sort_adapter<
-    small_array_adapter<
-        hybrid_adapter<
-            merge_sorter,
-            rebind_iterator_category<
-                quick_sorter,
-                std::bidirectional_iterator_tag
-            >,
-            pdq_sorter
+    hybrid_adapter<
+        small_array_adapter<
+            low_comparisons_sorter,
+            std::make_index_sequence<14u>
         >,
-        std::make_index_sequence<14u>
+        merge_sorter,
+        rebind_iterator_category<
+            quick_sorter,
+            std::bidirectional_iterator_tag
+        >,
+        pdq_sorter
     >
 >;
 ```
