@@ -94,8 +94,13 @@ for this one is compatible :p).
 adaptation of a LISP implementation of the algorithm that I found in [an answer
 on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
 
-* The algorithms used by `sorting_network_sorter` have been generated thanks to the
-`SWAP` macros that can be found on [this page about sorting networks](http://pages.ripco.net/~jgamble/nw.html)
+* The algorithms 17 to 23 used by `sorting_network_sorter` correspond to the ones
+found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
+*Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
+and Miikkulainen.
+
+* The other algorithms used by `sorting_network_sorter` have been generated with
+the `SWAP` macros that can be found on [this page about sorting networks](http://pages.ripco.net/~jgamble/nw.html)
 which generates its macros thanks to the Perl module `Algorithm::Networksort`. Some
 of the optimizations come from [this discussion](http://stackoverflow.com/q/2786899/1364752)
 on StackOverflow.

@@ -152,15 +152,9 @@ unrolled resulting sorting networks may be fast enough and even tend to be faste
 than everything else when it comes to sorting small arrays of integers without even
 requiring additional memory.
 
-The algorithms used by this fixed-size sorter have been generated from the `SWAP`
-macros provided by [this page](http://pages.ripco.net/~jgamble/nw.html), using the
-"Best" algorithm for the sizes 0 to 16 and Batcher's odd-even mergesort for the
-sizes 17 to 32. This page uses the algorithms from Perl's `Algorithm::Networksort`
-module. Some of the ideas used by the implementation of the algorithms come from
-[this discussion](http://stackoverflow.com/q/2786899/1364752) on StackOverflow.
-
 *Note: don't be fooled by the name, none of the algorithms in this sorter perform
-any operation in parallel. Everything is sequential.*
+any operation in parallel. Everything is sequential. The algorithms are but long
+sequences of compare-and-exhange units.*
 
 ```cpp
 template<std::size_t N>
