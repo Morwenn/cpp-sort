@@ -32,5 +32,8 @@ install_manifest.txt
 *.depend
 *.layout
 
+# Static analyzer files
+CppCheckResults.xml
+
 # Downloaded Catch files
 catch
