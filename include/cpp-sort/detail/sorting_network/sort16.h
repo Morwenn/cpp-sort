@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <functional>
 #include <cpp-sort/sorter_facade.h>
 #include "../swap_if.h"
 
@@ -38,8 +39,11 @@ namespace cppsort
     {
         using sorter_facade<sorting_network_sorter<16u>>::operator();
 
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
+        template<
+            typename RandomAccessIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
             -> void
         {
             detail::swap_if(first[0u], first[1u], compare);

@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <functional>
 #include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
@@ -38,9 +39,11 @@ namespace cppsort
     {
         using sorter_facade<low_moves_sorter<4u>>::operator();
 
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare) const
+        template<
+            typename RandomAccessIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last, Compare compare={}) const
             -> void
         {
             RandomAccessIterator min = std::min_element(first, last, compare);
