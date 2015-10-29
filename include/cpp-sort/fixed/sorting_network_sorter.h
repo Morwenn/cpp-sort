@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <iterator>
+#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
