@@ -69,11 +69,13 @@ made available in the future.
 
 # Thanks
 
-**cpp-sort** reuses a great deal of code coming from other projects, often slightly
-altered to integrate seamlessly into the library. Here is a list of resources used
-to create this library. I hope that the different licenses are compatible. If it is
-not the case, please contact me (or submit an issue) and we will see what can be
-done about it:
+Even though some parts of the library are [original research](doc/research.md) and
+some others correspond to custom and unoriginal implementations of standard sorting
+algorithms, **cpp-sort** also reuses a great deal of code from other open-source
+projects, often slightly altered to integrate seamlessly into the library. Here is
+a list of the external resources used to create this library. I hope that the many
+different licenses are compatible. If it is not the case, please contact me (or
+submit an issue) and we will see what can be done about it:
 
 * Some of the algorithms used by `insertion_sorter` and `pdq_sorter` come from
 Orson Peters' [pattern-defeating quicksort](https://github.com/orlp/pdqsort). Some
@@ -86,21 +88,19 @@ of a Timsort](https://github.com/gfx/cpp-TimSort).
 module](http://www.boost.org/doc/libs/1_59_0/libs/sort/doc/html/index.html) with
 some modifications so that they do not depend on Boost anymore.
 
-* The algorithms used by `verge_sorter` comes from my own [implementation of a
-vergesort](https://github.com/Morwenn/vergesort) (at least, I know that the license
-for this one is compatible :p).
-
 * The merge insertion sort used by `low_comparison_sorter` algorithm 5 is a C++
 adaptation of a LISP implementation of the algorithm that I found in [an answer
 on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
 
-* The algorithms 17 to 23 used by `sorting_network_sorter` correspond to the ones
+* The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
 found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
 *Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
 and Miikkulainen.
 
-* The other algorithms used by `sorting_network_sorter` have been generated with
-the `SWAP` macros that can be found on [this page about sorting networks](http://pages.ripco.net/~jgamble/nw.html)
-which generates its macros thanks to the Perl module `Algorithm::Networksort`. Some
-of the optimizations come from [this discussion](http://stackoverflow.com/q/2786899/1364752)
-on StackOverflow.
+* The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
+Perl's [`Algorithm::Networksort` module](http://search.cpan.org/~jgamble/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
+
+* Some of the optimizations used by `sorting_network_sorter` come from [this
+discussion](http://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
+backed by the article [*Applying Sorting Networks to Synthesize Optimized Sorting
+Libraries*](http://arxiv.org/abs/1505.01962).

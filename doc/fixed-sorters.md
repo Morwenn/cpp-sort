@@ -65,7 +65,7 @@ Size | Algorithm
 ---- | ---------
 0 | Nothing
 1 | Nothing
-2 | Compare and swap
+2 | Compare and exchange
 3 | Insertion sort
 4 | Insertion sort
 5 | Merge insertion sort
@@ -75,17 +75,11 @@ Size | Algorithm
 9 | Insertion sort
 10 | Insertion sort
 11 | Insertion sort
-12 | Double insertion sort
+12 | [Double insertion sort](research.md)
 13 | Double insertion sort
 
-The algorithms 12 and 13 use a somewhat novel sorting algorithm that I named the
-*double insertion sort* (I would be suprised if it hadn't been discovered before,
-but I couldn't find any information about it anywhere). Actually, the algorithm is
-rather simple: it sorts everything but the first and last elements of the array,
-switches the first and last elements if they are not ordered, then it inserts the
-first element into the sorted sequence from the front and inserts the last element
-from the back. Even in the worst case, it shouldn't take more than *n* comparisons
-to insert both values, where *n* is the size of the collection to sort.
+However, many of the dedicated sorting algorithms are probably still suboptimal and
+could use a merge insertion sort instead.
 
 ```cpp
 template<std::size_t N>
