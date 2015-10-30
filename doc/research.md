@@ -52,7 +52,7 @@ to insert both values, where *n* is the size of the collection to sort, making l
 comparisons and less moves than a regular insertion sort on average.
 
     Best        Average     Worst       Memory      Stable      Iterators
-    n           n²          n²          1           No          Forward
+    n           n²          n²          1           No          Bidirectional
 
 This algorithm was originally used in **cpp-sort** to generate small array sorts,
 but it has since been mostly dropped in favour of better alternatives depending on
