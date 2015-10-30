@@ -62,9 +62,8 @@ namespace detail
         -> void
     {
         Integer dx = x;
-        Integer dy = y;
-        Integer tmp = x = std::min(dx, dy);
-        y ^= dx ^ tmp;
+        x = std::min(x, y);
+        y ^= dx ^ x;
     }
 
     template<
@@ -75,9 +74,8 @@ namespace detail
         -> void
     {
         Integer dx = x;
-        Integer dy = y;
-        Integer tmp = x = std::max(dx, dy);
-        y ^= dx ^ tmp;
+        x = std::max(x, y);
+        y ^= dx ^ x;
     }
 
     template<
