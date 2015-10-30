@@ -1,0 +1,100 @@
+\documentclass{minimal}
+\usepackage{tikz}
+\usepackage[trim]{tokenizer} 
+
+\makeatletter
+
+\newcounter{sncolumncounter}
+\newcounter{snrowcounter}
+
+\def \nodelabel#1{%
+\setcounter{snrowcounter}{1}
+ \foreach \i in {#1}{%
+   \draw (\value{sncolumncounter},\value{snrowcounter}) node[anchor=north]{\i};
+   \addtocounter{snrowcounter}{1}
+ }
+ \addtocounter{sncolumncounter}{1}
+}
+
+\def \nodeconnection#1{%
+  \foreach \i in {#1}{%
+    \GetTokens{nodesrc}{nodedest}{\i}
+    \draw (\value{sncolumncounter},\nodesrc) node[circle]{}--(\value{sncolumncounter},\nodedest) node[circle]{};
+  }
+  \addtocounter{sncolumncounter}{1}
+}
+ 
+\newenvironment{sortingnetwork}[3]
+{
+  \setcounter{sncolumncounter}{0}
+  \def \sn@fullsize{15}
+  \begin{tikzpicture}[y=-1cm,scale=#3*\sn@fullsize/#2,every node/.style={fill=black,inner sep=0pt,minimum size=0.2cm}]
+  \foreach \i in {1, ..., #1}
+  {
+    \draw (0,\i-1)--(#2-1,\i-1);
+  }
+}
+{
+  \end{tikzpicture}
+}
+\makeatother
+
+\begin{document}
+
+\begin{sortingnetwork}{24}{49}{1}
+\nodeconnection{{0, 1},{2, 3},{4, 5},{6, 7},{8, 9},{10, 11},{12, 13},{14, 15},{16, 17},{18, 19},{20, 21},{22, 23}}
+\nodeconnection{{1, 3},{5, 7},{9, 11},{13, 15},{17, 19},{21, 23}}
+\nodeconnection{{0, 2},{4, 6},{8, 10},{12, 14},{16, 18},{20, 22}}
+\nodeconnection{{1, 2},{5, 6},{9, 10},{13, 14},{17, 18},{21, 22}}
+\nodeconnection{{1, 5},{6, 10},{13, 17},{18, 20}}
+\nodeconnection{{5, 9},{17, 21}}
+\nodeconnection{{2, 6},{14, 18}}
+\nodeconnection{{1, 5},{6, 10},{13, 17},{18, 22}}
+\nodeconnection{{0, 4},{7, 11},{12, 16},{19, 23}}
+\nodeconnection{{3, 7},{15, 19}}
+\nodeconnection{{4, 8},{16, 20}}
+\nodeconnection{{0, 4},{7, 11},{12, 16},{19, 23}}
+\nodeconnection{{1, 4},{7, 10},{13, 16},{19, 22}}
+\nodeconnection{{3, 8},{15, 20}}
+\nodeconnection{{2, 3},{8, 9},{14, 15},{20, 21}}
+\nodeconnection{{2, 4},{7, 9},{14, 16},{19, 21}}
+\nodeconnection{{3, 5},{6, 8},{15, 17},{18, 20}}
+\nodeconnection{{3, 4},{5, 6},{7, 8},{15, 16},{17, 18},{19, 20}}
+
+\nodeconnection{{0, 12}}
+\nodeconnection{{1, 13}}
+\nodeconnection{{2, 14}}
+\nodeconnection{{3, 15}}
+\nodeconnection{{4, 16}}
+\nodeconnection{{5, 17}}
+\nodeconnection{{6, 18}}
+\nodeconnection{{7, 19}}
+\nodeconnection{{8, 20}}
+\nodeconnection{{9, 21}}
+\nodeconnection{{10, 22}}
+\nodeconnection{{11, 23}}
+
+\nodeconnection{{2, 12}}
+\nodeconnection{{3, 13}}
+\nodeconnection{{10, 20}}
+\nodeconnection{{11, 21}}
+
+\nodeconnection{{4, 12}}
+\nodeconnection{{5, 13}}
+\nodeconnection{{6, 14}}
+\nodeconnection{{7, 15}}
+\nodeconnection{{8, 16}}
+\nodeconnection{{9, 17}}
+\nodeconnection{{10, 18}}
+\nodeconnection{{11, 19}}
+\nodeconnection{{8, 12}}
+\nodeconnection{{9, 13}}
+\nodeconnection{{10, 14}}
+\nodeconnection{{11, 15}}
+\nodeconnection{{6, 8},{10, 12},{14, 16}}
+\nodeconnection{{7, 9},{11, 13},{15, 17}}
+
+\nodeconnection{{1, 2},{3, 4},{5, 6},{7, 8},{9, 10},{11, 12},{13, 14},{15, 16},{17, 18},{19, 20},{21, 22}}
+\end{sortingnetwork}
+
+\end{document}

@@ -104,3 +104,7 @@ Perl's [`Algorithm::Networksort` module](http://search.cpan.org/~jgamble/Algorit
 discussion](http://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
 backed by the article [*Applying Sorting Networks to Synthesize Optimized Sorting
 Libraries*](http://arxiv.org/abs/1505.01962).
+
+* The LaTeX scripts used to draw the sorting networks are modified versions of
+kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),
+slightly adapted to be 0-based and draw the network from top to bottom.
