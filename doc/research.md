@@ -61,7 +61,7 @@ the aim of the sort.
 ### Sorting networks 23 and 24
 
 While trying to reimplement size-optimal sorting networks as described by [*Finding
-Better Sorting Networks](https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529),
+Better Sorting Networks*](https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529),
 I ended up implementing a sorting network of size 24 that whose size was equivalent
 to that of the one described in the paper (123 compare-exchange units). However, it
 seems that this sorting network does not use an odd-even merge network but another
