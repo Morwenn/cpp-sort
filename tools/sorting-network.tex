@@ -1,0 +1,55 @@
+% sortingnetwork.tex
+% The sortingnetwork macro defined in this file uses Tikz package to draw a sorting network.
+%
+% written by: kaayy
+% Oct. 10, 2010
+% modified by: Morwenn
+% Oct. 30, 2015
+%  .draw network from top to bottom
+%  .make rows indices 0-based
+%  .make nodes smaller
+% 
+% Usage:
+% \begin{sortingnetwork}[number of inputs][number of layers][scale]
+% \nodeconnection{{1, 2},{3, 4}, ...}
+% \nodelabel{1, 2, 3, 4, ...}
+% ...
+% \end{sortingnetwork}
+%
+
+\makeatletter
+
+\newcounter{sncolumncounter}
+\newcounter{snrowcounter}
+
+\def \nodelabel#1{%
+\setcounter{snrowcounter}{1}
+ \foreach \i in {#1}{%
+   \draw (\value{sncolumncounter},\value{snrowcounter}) node[anchor=north]{\i};
+   \addtocounter{snrowcounter}{1}
+ }
+ \addtocounter{sncolumncounter}{1}
+}
+
+\def \nodeconnection#1{%
+  \foreach \i in {#1}{%
+    \GetTokens{nodesrc}{nodedest}{\i}
+    \draw (\value{sncolumncounter},\nodesrc) node[circle]{}--(\value{sncolumncounter},\nodedest) node[circle]{};
+  }
+  \addtocounter{sncolumncounter}{1}
+}
+ 
+\newenvironment{sortingnetwork}[3]
+{
+  \setcounter{sncolumncounter}{0}
+  \def \sn@fullsize{15}
+  \begin{tikzpicture}[y=-1cm,scale=#3*\sn@fullsize/#2,every node/.style={fill=black,inner sep=0pt,minimum size=0.2cm}]
+  \foreach \i in {1, ..., #1}
+  {
+    \draw (0,\i-1)--(#2-1,\i-1);
+  }
+}
+{
+  \end{tikzpicture}
+}
+\makeatother
