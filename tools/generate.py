@@ -11,6 +11,8 @@ def transform(line):
 if __name__ == '__main__':
     with open(sys.argv[1]) as source:
         for line in source:
-            res = transform(line)
-            if res:
-                print(res)
+            pairs = line.split('],[')
+            for pair in pairs:
+                res = transform(pair)
+                if res:
+                    print(res)
