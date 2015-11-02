@@ -76,7 +76,7 @@ namespace cppsort
     template<typename ComparisonSorter, typename CountType>
     struct sorter_traits<counting_adapter<ComparisonSorter, CountType>>
     {
-        using iterator_category = iterator_category<ComparisonSorter>;
+        using iterator_category = cppsort::iterator_category<ComparisonSorter>;
         static constexpr bool is_stable = is_stable<ComparisonSorter>;
     };
 }

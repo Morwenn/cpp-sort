@@ -200,7 +200,7 @@ namespace cppsort
     {
         // The iterator category is the least constrained one
         // among the aggregated sorters
-        using iterator_category = std::common_type_t<iterator_category<Sorters>...>;
+        using iterator_category = std::common_type_t<cppsort::iterator_category<Sorters>...>;
 
         // The adapter is stable only if every aggregated sorter
         // is stable

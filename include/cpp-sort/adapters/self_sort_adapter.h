@@ -106,7 +106,7 @@ namespace cppsort
     template<typename Sorter>
     struct sorter_traits<self_sort_adapter<Sorter>>
     {
-        using iterator_category = iterator_category<Sorter>;
+        using iterator_category = cppsort::iterator_category<Sorter>;
 
         // We can't guarantee the stability of the sort method,
         // therefore we default the stability to false
