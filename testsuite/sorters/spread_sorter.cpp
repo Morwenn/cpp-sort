@@ -31,6 +31,29 @@
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <cpp-sort/sort.h>
 
+////////////////////////////////////////////////////////////
+// static_if utility
+
+template<bool Condition>
+struct static_if
+{
+    template<typename Func>
+    static void run(Func) {}
+};
+
+template<>
+struct static_if<true>
+{
+    template<typename Func>
+    static void run(Func func)
+    {
+        func();
+    }
+};
+
+////////////////////////////////////////////////////////////
+// Actual tests
+
 TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
 {
     // Pseudo-random number engine
@@ -86,14 +109,16 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
 
     SECTION( "sort with std::wstring iterators" )
     {
-        std::vector<std::wstring> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
-            vec.push_back(std::to_wstring(i));
-        }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        static_if<sizeof(wchar_t) == 2>::run([&] {
+            std::vector<std::wstring> vec;
+            for (int i = 0 ; i < 100'000 ; ++i)
+            {
+                vec.push_back(std::to_wstring(i));
+            }
+            std::shuffle(std::begin(vec), std::end(vec), engine);
+            cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{});
+            CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        });
     }
 
     SECTION( "reverse sort with std::string iterable" )
@@ -115,18 +140,20 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
 
     SECTION( "reverse sort with std::wstring iterators" )
     {
-        std::vector<std::wstring> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
-            vec.push_back(std::to_wstring(i));
-        }
+        static_if<sizeof(wchar_t) == 2>::run([&] {
+            std::vector<std::wstring> vec;
+            for (int i = 0 ; i < 100'000 ; ++i)
+            {
+                vec.push_back(std::to_wstring(i));
+            }
 
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+            std::shuffle(std::begin(vec), std::end(vec), engine);
+            cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<>{});
+            CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<std::wstring>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<std::wstring>{}) );
+            std::shuffle(std::begin(vec), std::end(vec), engine);
+            cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<std::wstring>{});
+            CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<std::wstring>{}) );
+        });
     }
 }
