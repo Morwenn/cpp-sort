@@ -154,3 +154,48 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
         CHECK( res3 == sorter_type::generic );
     }
 }
+
+TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
+           "[hybrid_adapter][sfinae]" )
+{
+    // Check that hybrid_adapter takes into account
+    // the SFINAE in the aggregated sorters
+
+    // Vectors to "sort"
+    std::vector<int> vec1(3);
+    std::vector<float> vec2(3);
+    std::vector<std::string> vec3(3);
+
+    using sorter = cppsort::hybrid_adapter<
+        cppsort::hybrid_adapter<
+            float_sorter,
+            integer_sorter
+        >,
+        // Should act as a fallback
+        generic_sorter
+    >;
+
+    SECTION( "with iterators" )
+    {
+        sorter_type res1 = cppsort::sort(std::begin(vec1), std::end(vec1), sorter{});
+        CHECK( res1 == sorter_type::integer );
+
+        sorter_type res2 = cppsort::sort(std::begin(vec2), std::end(vec2), sorter{});
+        CHECK( res2 == sorter_type::floating_point );
+
+        sorter_type res3 = cppsort::sort(std::begin(vec3), std::end(vec3), sorter{});
+        CHECK( res3 == sorter_type::generic );
+    }
+
+    SECTION( "with iterables" )
+    {
+        sorter_type res1 = cppsort::sort(vec1, sorter{});
+        CHECK( res1 == sorter_type::integer );
+
+        sorter_type res2 = cppsort::sort(vec2, sorter{});
+        CHECK( res2 == sorter_type::floating_point );
+
+        sorter_type res3 = cppsort::sort(vec3, sorter{});
+        CHECK( res3 == sorter_type::generic );
+    }
+}

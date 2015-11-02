@@ -146,7 +146,15 @@ namespace cppsort
 
             template<typename Iterable, typename... Args>
             auto operator()(Iterable& iterable, Args&&... args) const
-                -> decltype(auto)
+                -> decltype(dispatch_sorter{}(
+                    detail::choice<
+                        detail::iterator_category_value<typename std::iterator_traits<
+                            decltype(std::begin(iterable))
+                        >::iterator_category> * categories_number
+                    >{},
+                    iterable,
+                    std::forward<Args>(args)...
+                ))
             {
                 // Iterator category of the iterable to sort
                 using category =
@@ -163,7 +171,15 @@ namespace cppsort
 
             template<typename Iterator, typename... Args>
             auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(auto)
+                -> decltype(dispatch_sorter{}(
+                        detail::choice<
+                            detail::iterator_category_value<
+                                typename std::iterator_traits<Iterator>::iterator_category
+                            > * categories_number
+                        >{},
+                        first, last,
+                        std::forward<Args>(args)...
+                ))
             {
                 // Iterator category of the iterable to sort
                 using category = typename std::iterator_traits<Iterator>::iterator_category;
