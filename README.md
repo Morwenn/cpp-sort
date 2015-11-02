@@ -27,32 +27,17 @@ int main()
 }
 ```
 
-**cpp-sort** also provides *sorters* and *fixed-size sorters* as well as *sorter
-adapters* which can be used by `cppsort::sort` to sort a collection, as well as a
-sorter facade to ease the construction of new sorters. It is possible to get some
-information about the sorters and sorter adapters thanks to *sorter traits*. Every
-class or function lives in the `cppsort` namespace. You can read more about the
-available sorting tools in the documentation:
+**cpp-sort** actually provides a full set of sorting-related features. The most
+important one is probably the concept of *sorters* and *sorter adapters*. Sorters
+are function objects implementing a sorting algorithm and sorter adapters are
+special class templates designed to adapt sorters and alter their behavior in some
+specific manner. The library provides sorters implementing common and not-so-common
+sorting algorithms as well as some specific adapters. It also provides fixed-size
+sorters and tools such as sorter facade or sorter traits, designed to craft your
+own sorter.
 
-* [`cppsort::sort`](doc/sort.md)
-* [Sorters](doc/sorters.md)
-* [Fixed-size sorters](doc/fixed-sorters.md)
-* [Sorter adapters](doc/sorter-adapters.md)
-* [Sorter facade](doc/sorter-facade.md)
-* [Sorter traits](doc/sorter-traits.md)
-
-There are also a few other utilities used by the library and made available
-to the users, even though they are not explicitly sorting-related. You can
-read about them in the following page:
-
-* [Miscellaneous utilities](doc/utilities.md)
-
-While the primary goal of **cpp-sort** is to provide sorting algorithms, it has
-also be designed to be extensible. The following tutorials may help you to write
-custom sorters and sorter adapters:
-
-* [Writing a sorter](doc/writing-sorter.md)
-* [Writing a bubble sorter](doc/writing-bubble-sorter.md)
+You can read more about all the availables tools and read some tutorial about using
+and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wiki).
 
 # Benchmarks
 
@@ -66,6 +51,25 @@ used to sort small arrays:
 These results were generated with MinGW g++ 5.2 with the compiler options
 `-std=c++14 -O3 -fexpensive-optimizations -march=native`. More benchmarks will be
 made available in the future.
+
+# Compiler support
+
+**Note:** the library uses some of the most recent (and not widely supported) C++14
+features. Therefore, it might only work with the most recent compilers. It should
+work with g++ 5.2 (which is the compiler used to develop the library) and I can
+confirm that it doesn't compile with g++ 5.1 nor clang++ 3.8. The goal is to write
+a standard-compliant library, not to support old compilers, which means that the
+compatility will only be ensured for the most up-to-date compilers. The long-term
+goal is to switch to a newer C++ standard once it is standardized and keep a branch
+for the previous standard, which means that once C++17 is out, the master branch
+will be assumed to be C++17 and the C++14 branch may be kept around for some time
+until it is too expensive to maintain.
+
+I am currently trying to get the library to compile with clang++ 3.8 but it seems
+that the mechanism described in [this article](https://rmf.io/cxx11/overload-ranking/)
+is not currently supported. Since one of the most important features of the library
+rely on it, I guess that it won't be clang-compatible until clang++ supports the
+idiom.
 
 # Thanks
 
