@@ -43,7 +43,7 @@ namespace cppsort
             typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
             -> void
         {
             detail::swap_if(first[0u], first[16u], compare);
