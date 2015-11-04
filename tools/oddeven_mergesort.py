@@ -61,6 +61,34 @@ def oddeven_merge_sort2(length):
         p //= 2
 
 
+###########################################################
+# Index-based recursive approach
+
+def oddeven_merge3(indices):
+    # TODO: make it work for networks of arbitrary size
+    size = len(indices)
+
+    if size == 2:
+        yield(indices[0], indices[1])
+    elif size > 1:
+        yield from oddeven_merge3([indices[i] for i in range(size) if not i % 2])
+        yield from oddeven_merge3([indices[i] for i in range(size) if i % 2])
+        for i in range(1, size - 1, 2):
+            yield (indices[i], indices[i+1])
+
+
+###########################################################
+# Function adapted from http://flylib.com/books/en/3.55.1.112/1/
+
+#def oddeven_merge2(l: int, m: int, r: int): 
+#    N = r - l + 1  # assuming N/2 is m - l + 1 
+#    for (int k = N/2; k > 0; k /= 2) 
+#        for (int j = k % (N/2); j+k < N; j += k+k) 
+#            for i in range(k):
+#                yield (l+j+i, l+j+i+k)
+
+
 if __name__ == '__main__':
-    for pair in oddeven_merge_sort(24):
+    for pair in oddeven_merge3(list(range(14))):
         print(list(pair))
+
