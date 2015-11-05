@@ -36,9 +36,8 @@ namespace utility
     struct identity
     {
         template<typename T>
-        auto operator()(T&& value) const
-            noexcept(noexcept(std::forward<T>(value)))
-            -> decltype(std::forward<T>(value))
+        constexpr auto operator()(T&& value) const noexcept
+            -> T&&
         {
             return std::forward<T>(value);
         }
