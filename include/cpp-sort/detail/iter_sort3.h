@@ -26,30 +26,42 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include "as_function.h"
 
 namespace cppsort
 {
 namespace detail
 {
     // Sorts the elements *a, *b and *c using comparison function comp.
-    template<class Iter, class Compare>
-    void iter_sort3(Iter a, Iter b, Iter c, Compare comp) {
-        if (!comp(*b, *a)) {
-            if (!comp(*c, *b)) return;
+    template<typename Iterator, typename Compare, typename Projection>
+    void iter_sort3(Iterator a, Iterator b, Iterator c,
+                    Compare compare, Projection projection)
+    {
+        auto&& proj = as_function(projection);
+
+        if (!compare(proj(*b), proj(*a)))
+        {
+            if (!compare(proj(*c), proj(*b))) return;
 
             std::iter_swap(b, c);
-            if (comp(*b, *a)) std::iter_swap(a, b);
-
+            if (compare(proj(*b), proj(*a)))
+            {
+                std::iter_swap(a, b);
+            }
             return;
         }
 
-        if (comp(*c, *b)) {
+        if (compare(proj(*c), proj(*b)))
+        {
             std::iter_swap(a, c);
             return;
         }
 
         std::iter_swap(a, b);
-        if (comp(*c, *b)) std::iter_swap(b, c);
+        if (compare(proj(*c), proj(*b)))
+        {
+            std::iter_swap(b, c);
+        }
     }
 }}
 

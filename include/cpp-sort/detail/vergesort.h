@@ -27,6 +27,9 @@
 #include <algorithm>
 #include <iterator>
 #include <cpp-sort/utility/log2.h>
+#include "as_function.h"
+#include "inplace_merge.h"
+#include "is_sorted_until.h"
 #include "pdqsort.h"
 #include "quicksort.h"
 
@@ -38,32 +41,33 @@ namespace detail
     // and [middle2, last) are sorted. The two in-place merges are
     // done in the order that should result in the smallest number
     // of comparisons
-    template<typename BidirectionalIterator, typename Compare>
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
     void inplace_merge3(BidirectionalIterator first, BidirectionalIterator middle1,
                         BidirectionalIterator middle2, BidirectionalIterator last,
-                        Compare compare)
+                        Compare compare, Projection projection)
     {
         if (std::distance(first, middle1) < std::distance(middle2, last))
         {
-            std::inplace_merge(first, middle1, middle2, compare);
-            std::inplace_merge(first, middle2, last, compare);
+            detail::inplace_merge(first, middle1, middle2, compare, projection);
+            detail::inplace_merge(first, middle2, last, compare, projection);
         }
         else
         {
-            std::inplace_merge(middle1, middle2, last, compare);
-            std::inplace_merge(first, middle1, last, compare);
+            detail::inplace_merge(middle1, middle2, last, compare, projection);
+            detail::inplace_merge(first, middle1, last, compare, projection);
         }
     }
 
-    template<typename BidirectionalIterator, typename Compare>
-    void vergesort(BidirectionalIterator first, BidirectionalIterator last, Compare compare,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    void vergesort(BidirectionalIterator first, BidirectionalIterator last,
+                   Compare compare, Projection projection,
                    std::bidirectional_iterator_tag)
     {
         auto dist = std::distance(first, last);
         if (dist < 80)
         {
             // vergesort is inefficient for small collections
-            quicksort(first, last, compare, dist);
+            quicksort(first, last, compare, projection, dist);
             return;
         }
 
@@ -78,8 +82,10 @@ namespace detail
         std::size_t size_unstable = 0;
 
         // Pair of iterators to iterate through the collection
-        BidirectionalIterator next = std::is_sorted_until(first, last, compare);
+        BidirectionalIterator next = is_sorted_until(first, last, compare, projection);
         BidirectionalIterator current = std::prev(next);
+
+        auto&& proj = as_function(projection);
 
         while (true)
         {
@@ -88,7 +94,7 @@ namespace detail
             // Decreasing range
             while (next != last)
             {
-                if (compare(*current, *next)) break;
+                if (compare(proj(*current), proj(*next))) break;
                 ++current;
                 ++next;
             }
@@ -99,17 +105,17 @@ namespace detail
             {
                 if (begin_unstable != last)
                 {
-                    quicksort(begin_unstable, begin_rng, compare, size_unstable);
+                    quicksort(begin_unstable, begin_rng, compare, projection, size_unstable);
                     std::reverse(begin_rng, next);
-                    std::inplace_merge(begin_unstable, begin_rng, next, compare);
-                    std::inplace_merge(first, begin_unstable, next, compare);
+                    detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
+                    detail::inplace_merge(first, begin_unstable, next, compare, projection);
                     begin_unstable = last;
                     size_unstable = 0;
                 }
                 else
                 {
                     std::reverse(begin_rng, next);
-                    std::inplace_merge(first, begin_rng, next, compare);
+                    detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
             }
             else
@@ -128,7 +134,7 @@ namespace detail
             // Increasing range
             while (next != last)
             {
-                if (compare(*next, *current)) break;
+                if (compare(proj(*next), proj(*current))) break;
                 ++current;
                 ++next;
             }
@@ -139,15 +145,15 @@ namespace detail
             {
                 if (begin_unstable != last)
                 {
-                    quicksort(begin_unstable, begin_rng, compare, size_unstable);
-                    std::inplace_merge(begin_unstable, begin_rng, next, compare);
-                    std::inplace_merge(first, begin_unstable, next, compare);
+                    quicksort(begin_unstable, begin_rng, compare, projection, size_unstable);
+                    detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
+                    detail::inplace_merge(first, begin_unstable, next, compare, projection);
                     begin_unstable = last;
                     size_unstable = 0;
                 }
                 else
                 {
-                    std::inplace_merge(first, begin_rng, next, compare);
+                    detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
             }
             else
@@ -164,13 +170,14 @@ namespace detail
 
         if (begin_unstable != last)
         {
-            quicksort(begin_unstable, last, compare, size_unstable);
-            std::inplace_merge(first, begin_unstable, last, compare);
+            quicksort(begin_unstable, last, compare, projection, size_unstable);
+            detail::inplace_merge(first, begin_unstable, last, compare, projection);
         }
     }
 
-    template<typename RandomAccessIterator, typename Compare>
-    void vergesort(RandomAccessIterator first, RandomAccessIterator last, Compare compare,
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    void vergesort(RandomAccessIterator first, RandomAccessIterator last,
+                   Compare compare, Projection projection,
                    std::random_access_iterator_tag)
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
@@ -179,7 +186,7 @@ namespace detail
         if (dist < 80)
         {
             // vergesort is inefficient for small collections
-            pdqsort(first, last, compare);
+            pdqsort(first, last, compare, projection);
             return;
         }
 
@@ -191,8 +198,10 @@ namespace detail
         RandomAccessIterator begin_unstable = last;
 
         // Pair of iterators to iterate through the collection
-        RandomAccessIterator current = std::is_sorted_until(first, last, compare) - 1;
+        RandomAccessIterator current = is_sorted_until(first, last, compare, projection) - 1;
         RandomAccessIterator next = current + 1;
+
+        auto&& proj = as_function(projection);
 
         while (true)
         {
@@ -208,7 +217,7 @@ namespace detail
             RandomAccessIterator current2 = current;
             RandomAccessIterator next2 = next;
 
-            if (compare(*current, *next))
+            if (compare(proj(*current), proj(*next)))
             {
                 // Found an increasing range, move iterators
                 // to the limits of the range
@@ -216,13 +225,13 @@ namespace detail
                 {
                     --current;
                     --next;
-                    if (compare(*next, *current)) break;
+                    if (compare(proj(*next), proj(*current))) break;
                 }
-                if (compare(*next, *current)) ++current;
+                if (compare(proj(*next), proj(*current))) ++current;
 
                 while (next2 != last)
                 {
-                    if (compare(*next2, *current2)) break;
+                    if (compare(proj(*next2), proj(*current2))) break;
                     ++current2;
                     ++next2;
                 }
@@ -233,8 +242,8 @@ namespace detail
                 // Check whether we found a big enough sorted sequence
                 if (std::distance(current, next2) >= unstable_limit)
                 {
-                    pdqsort(begin_unstable, current, compare);
-                    inplace_merge3(first, begin_unstable, current, next2, compare);
+                    pdqsort(begin_unstable, current, compare, projection);
+                    inplace_merge3(first, begin_unstable, current, next2, compare, projection);
                     begin_unstable = last;
                 }
             }
@@ -246,13 +255,13 @@ namespace detail
                 {
                     --current;
                     --next;
-                    if (compare(*current, *next)) break;
+                    if (compare(proj(*current), proj(*next))) break;
                 }
-                if (compare(*current, *next)) ++current;
+                if (compare(proj(*current), proj(*next))) ++current;
 
                 while (next2 != last)
                 {
-                    if (compare(*current2, *next2)) break;
+                    if (compare(proj(*current2), proj(*next2))) break;
                     ++current2;
                     ++next2;
                 }
@@ -263,9 +272,9 @@ namespace detail
                 // Check whether we found a big enough sorted sequence
                 if (std::distance(current, next2) >= unstable_limit)
                 {
-                    pdqsort(begin_unstable, current, compare);
+                    pdqsort(begin_unstable, current, compare, projection);
                     std::reverse(current, next2);
-                    inplace_merge3(first, begin_unstable, current, next2, compare);
+                    inplace_merge3(first, begin_unstable, current, next2, compare, projection);
                     begin_unstable = last;
                 }
             }
@@ -280,16 +289,17 @@ namespace detail
         {
             // If there are unsorted elements left,
             // sort them and merge everything
-            pdqsort(begin_unstable, last, compare);
-            std::inplace_merge(first, begin_unstable, last, compare);
+            pdqsort(begin_unstable, last, compare, projection);
+            detail::inplace_merge(first, begin_unstable, last, compare, projection);
         }
     }
 
-    template<typename BidirectionalIterator, typename Compare>
-    void vergesort(BidirectionalIterator first, BidirectionalIterator last, Compare compare)
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    void vergesort(BidirectionalIterator first, BidirectionalIterator last,
+                   Compare compare, Projection projection)
     {
         using category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
-        vergesort(first, last, compare, category{});
+        vergesort(first, last, compare, projection, category{});
     }
 }}
 

@@ -48,12 +48,13 @@ namespace detail
     template<
         std::size_t N,
         typename RandomAccessIterator,
-        typename Compare
+        typename Compare,
+        typename Projection
     >
-    auto front_insert(RandomAccessIterator first, Compare compare)
+    auto front_insert(RandomAccessIterator first, Compare compare, Projection projection)
         -> decltype(auto)
     {
-        return front_inserter_n<N>{}(first, compare);
+        return front_inserter_n<N>{}(first, compare, projection);
     }
 }}
 

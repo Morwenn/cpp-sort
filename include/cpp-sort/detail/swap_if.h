@@ -31,16 +31,20 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/identity.h>
+#include "as_function.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename T, typename Compare>
-    auto swap_if(T& lhs, T& rhs, Compare compare)
+    template<typename T, typename Compare, typename Projection>
+    auto swap_if(T& lhs, T& rhs, Compare compare, Projection projection)
         -> void
     {
-        if (compare(rhs, lhs))
+        auto&& proj = as_function(projection);
+
+        if (compare(proj(rhs), proj(lhs)))
         {
             using std::swap;
             swap(lhs, rhs);
@@ -51,14 +55,14 @@ namespace detail
     auto swap_if(T& lhs, T& rhs)
         -> void
     {
-        swap_if(lhs, rhs, std::less<>{});
+        swap_if(lhs, rhs, std::less<>{}, utility::identity{});
     }
 
     template<
         typename Integer,
         typename = std::enable_if_t<std::is_integral<Integer>::value>
     >
-    auto swap_if(Integer& x, Integer& y, std::less<>)
+    auto swap_if(Integer& x, Integer& y, std::less<>, utility::identity)
         -> void
     {
         Integer dx = x;
@@ -70,7 +74,7 @@ namespace detail
         typename Integer,
         typename = std::enable_if_t<std::is_integral<Integer>::value>
     >
-    auto swap_if(Integer& x, Integer& y, std::greater<>)
+    auto swap_if(Integer& x, Integer& y, std::greater<>, utility::identity)
         -> void
     {
         Integer dx = x;
@@ -82,10 +86,10 @@ namespace detail
         typename Integer,
         typename = std::enable_if_t<std::is_integral<Integer>::value>
     >
-    auto swap_if(Integer& x, Integer& y, std::less<Integer>)
+    auto swap_if(Integer& x, Integer& y, std::less<Integer>, utility::identity)
         -> void
     {
-        swap_if(x, y, std::less<>{});
+        swap_if(x, y, std::less<>{}, utility::identity{});
     }
 
     template<
@@ -95,7 +99,7 @@ namespace detail
     auto swap_if(Integer& x, Integer& y, std::greater<Integer>)
         -> void
     {
-        swap_if(x, y, std::greater<>{});
+        swap_if(x, y, std::greater<>{}, utility::identity{});
     }
 }}
 

@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/identity.h>
 #include "../swap_if.h"
 
 namespace cppsort
@@ -41,78 +42,80 @@ namespace cppsort
 
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            sorting_network_sorter<16u>{}(first, first+16u, compare);
-            sorting_network_sorter<15u>{}(first+16u, first+31u, compare);
+            sorting_network_sorter<16u>{}(first, first+16u, compare, projection);
+            sorting_network_sorter<15u>{}(first+16u, first+31u, compare, projection);
 
-            detail::swap_if(first[0u], first[16u], compare);
-            detail::swap_if(first[8u], first[24u], compare);
-            detail::swap_if(first[8u], first[16u], compare);
-            detail::swap_if(first[4u], first[20u], compare);
-            detail::swap_if(first[12u], first[28u], compare);
-            detail::swap_if(first[12u], first[20u], compare);
-            detail::swap_if(first[4u], first[8u], compare);
-            detail::swap_if(first[12u], first[16u], compare);
-            detail::swap_if(first[20u], first[24u], compare);
-            detail::swap_if(first[2u], first[18u], compare);
-            detail::swap_if(first[10u], first[26u], compare);
-            detail::swap_if(first[10u], first[18u], compare);
-            detail::swap_if(first[6u], first[22u], compare);
-            detail::swap_if(first[14u], first[30u], compare);
-            detail::swap_if(first[14u], first[22u], compare);
-            detail::swap_if(first[6u], first[10u], compare);
-            detail::swap_if(first[14u], first[18u], compare);
-            detail::swap_if(first[22u], first[26u], compare);
-            detail::swap_if(first[2u], first[4u], compare);
-            detail::swap_if(first[6u], first[8u], compare);
-            detail::swap_if(first[10u], first[12u], compare);
-            detail::swap_if(first[14u], first[16u], compare);
-            detail::swap_if(first[18u], first[20u], compare);
-            detail::swap_if(first[22u], first[24u], compare);
-            detail::swap_if(first[26u], first[28u], compare);
-            detail::swap_if(first[1u], first[17u], compare);
-            detail::swap_if(first[9u], first[25u], compare);
-            detail::swap_if(first[9u], first[17u], compare);
-            detail::swap_if(first[5u], first[21u], compare);
-            detail::swap_if(first[13u], first[29u], compare);
-            detail::swap_if(first[13u], first[21u], compare);
-            detail::swap_if(first[5u], first[9u], compare);
-            detail::swap_if(first[13u], first[17u], compare);
-            detail::swap_if(first[21u], first[25u], compare);
-            detail::swap_if(first[3u], first[19u], compare);
-            detail::swap_if(first[11u], first[27u], compare);
-            detail::swap_if(first[11u], first[19u], compare);
-            detail::swap_if(first[7u], first[23u], compare);
-            detail::swap_if(first[15u], first[23u], compare);
-            detail::swap_if(first[7u], first[11u], compare);
-            detail::swap_if(first[15u], first[19u], compare);
-            detail::swap_if(first[23u], first[27u], compare);
-            detail::swap_if(first[3u], first[5u], compare);
-            detail::swap_if(first[7u], first[9u], compare);
-            detail::swap_if(first[11u], first[13u], compare);
-            detail::swap_if(first[15u], first[17u], compare);
-            detail::swap_if(first[19u], first[21u], compare);
-            detail::swap_if(first[23u], first[25u], compare);
-            detail::swap_if(first[27u], first[29u], compare);
-            detail::swap_if(first[1u], first[2u], compare);
-            detail::swap_if(first[3u], first[4u], compare);
-            detail::swap_if(first[5u], first[6u], compare);
-            detail::swap_if(first[7u], first[8u], compare);
-            detail::swap_if(first[9u], first[10u], compare);
-            detail::swap_if(first[11u], first[12u], compare);
-            detail::swap_if(first[13u], first[14u], compare);
-            detail::swap_if(first[15u], first[16u], compare);
-            detail::swap_if(first[17u], first[18u], compare);
-            detail::swap_if(first[19u], first[20u], compare);
-            detail::swap_if(first[21u], first[22u], compare);
-            detail::swap_if(first[23u], first[24u], compare);
-            detail::swap_if(first[25u], first[26u], compare);
-            detail::swap_if(first[27u], first[28u], compare);
-            detail::swap_if(first[29u], first[30u], compare);
+            detail::swap_if(first[0u], first[16u], compare, projection);
+            detail::swap_if(first[8u], first[24u], compare, projection);
+            detail::swap_if(first[8u], first[16u], compare, projection);
+            detail::swap_if(first[4u], first[20u], compare, projection);
+            detail::swap_if(first[12u], first[28u], compare, projection);
+            detail::swap_if(first[12u], first[20u], compare, projection);
+            detail::swap_if(first[4u], first[8u], compare, projection);
+            detail::swap_if(first[12u], first[16u], compare, projection);
+            detail::swap_if(first[20u], first[24u], compare, projection);
+            detail::swap_if(first[2u], first[18u], compare, projection);
+            detail::swap_if(first[10u], first[26u], compare, projection);
+            detail::swap_if(first[10u], first[18u], compare, projection);
+            detail::swap_if(first[6u], first[22u], compare, projection);
+            detail::swap_if(first[14u], first[30u], compare, projection);
+            detail::swap_if(first[14u], first[22u], compare, projection);
+            detail::swap_if(first[6u], first[10u], compare, projection);
+            detail::swap_if(first[14u], first[18u], compare, projection);
+            detail::swap_if(first[22u], first[26u], compare, projection);
+            detail::swap_if(first[2u], first[4u], compare, projection);
+            detail::swap_if(first[6u], first[8u], compare, projection);
+            detail::swap_if(first[10u], first[12u], compare, projection);
+            detail::swap_if(first[14u], first[16u], compare, projection);
+            detail::swap_if(first[18u], first[20u], compare, projection);
+            detail::swap_if(first[22u], first[24u], compare, projection);
+            detail::swap_if(first[26u], first[28u], compare, projection);
+            detail::swap_if(first[1u], first[17u], compare, projection);
+            detail::swap_if(first[9u], first[25u], compare, projection);
+            detail::swap_if(first[9u], first[17u], compare, projection);
+            detail::swap_if(first[5u], first[21u], compare, projection);
+            detail::swap_if(first[13u], first[29u], compare, projection);
+            detail::swap_if(first[13u], first[21u], compare, projection);
+            detail::swap_if(first[5u], first[9u], compare, projection);
+            detail::swap_if(first[13u], first[17u], compare, projection);
+            detail::swap_if(first[21u], first[25u], compare, projection);
+            detail::swap_if(first[3u], first[19u], compare, projection);
+            detail::swap_if(first[11u], first[27u], compare, projection);
+            detail::swap_if(first[11u], first[19u], compare, projection);
+            detail::swap_if(first[7u], first[23u], compare, projection);
+            detail::swap_if(first[15u], first[23u], compare, projection);
+            detail::swap_if(first[7u], first[11u], compare, projection);
+            detail::swap_if(first[15u], first[19u], compare, projection);
+            detail::swap_if(first[23u], first[27u], compare, projection);
+            detail::swap_if(first[3u], first[5u], compare, projection);
+            detail::swap_if(first[7u], first[9u], compare, projection);
+            detail::swap_if(first[11u], first[13u], compare, projection);
+            detail::swap_if(first[15u], first[17u], compare, projection);
+            detail::swap_if(first[19u], first[21u], compare, projection);
+            detail::swap_if(first[23u], first[25u], compare, projection);
+            detail::swap_if(first[27u], first[29u], compare, projection);
+            detail::swap_if(first[1u], first[2u], compare, projection);
+            detail::swap_if(first[3u], first[4u], compare, projection);
+            detail::swap_if(first[5u], first[6u], compare, projection);
+            detail::swap_if(first[7u], first[8u], compare, projection);
+            detail::swap_if(first[9u], first[10u], compare, projection);
+            detail::swap_if(first[11u], first[12u], compare, projection);
+            detail::swap_if(first[13u], first[14u], compare, projection);
+            detail::swap_if(first[15u], first[16u], compare, projection);
+            detail::swap_if(first[17u], first[18u], compare, projection);
+            detail::swap_if(first[19u], first[20u], compare, projection);
+            detail::swap_if(first[21u], first[22u], compare, projection);
+            detail::swap_if(first[23u], first[24u], compare, projection);
+            detail::swap_if(first[25u], first[26u], compare, projection);
+            detail::swap_if(first[27u], first[28u], compare, projection);
+            detail::swap_if(first[29u], first[30u], compare, projection);
         }
     };
 }

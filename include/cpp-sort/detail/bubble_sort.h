@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include "as_function.h"
 
 namespace cppsort
 {
@@ -45,10 +46,13 @@ namespace detail
     // a decreasing bound for forward iterators
     //
 
-    template<typename ForwardIterator, typename Compare>
-    void bubble_sort(ForwardIterator first, Compare compare, std::size_t size)
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    void bubble_sort(ForwardIterator first, Compare compare,
+                     Projection projection, std::size_t size)
     {
         if (size < 2) return;
+
+        auto&& proj = as_function(projection);
 
         while (--size)
         {
@@ -56,7 +60,7 @@ namespace detail
             ForwardIterator next = std::next(current);
             for (std::size_t i = 0 ; i < size ; ++i)
             {
-                if (compare(*next, *current))
+                if (compare(proj(*next), proj(*current)))
                 {
                     std::iter_swap(current, next);
                 }

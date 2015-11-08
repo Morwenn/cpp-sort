@@ -30,6 +30,8 @@
 #include <functional>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/identity.h>
+#include "../as_function.h"
 #include "../rotate_left.h"
 #include "../rotate_right.h"
 
@@ -43,16 +45,19 @@ namespace cppsort
 
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
             using std::swap;
+            auto&& proj = detail::as_function(projection);
 
-            if (compare(first[1u], first[0u])) {
-                if (compare(first[2u], first[0u])) {
-                    if (compare(first[2u], first[1u])) {
+            if (compare(proj(first[1u]), proj(first[0u]))) {
+                if (compare(proj(first[2u]), proj(first[0u]))) {
+                    if (compare(proj(first[2u]), proj(first[1u]))) {
                         swap(first[0u], first[2u]);
                     } else {
                         detail::rotate_left<3u>(first);
@@ -61,8 +66,8 @@ namespace cppsort
                     swap(first[0u], first[1u]);
                 }
             } else {
-                if (compare(first[2u], first[1u])) {
-                    if (compare(first[2u], first[0u])) {
+                if (compare(proj(first[2u]), proj(first[1u]))) {
+                    if (compare(proj(first[2u]), proj(first[0u]))) {
                         detail::rotate_right<3u>(first);
                     } else {
                         swap(first[1u], first[2u]);

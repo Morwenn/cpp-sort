@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "../as_function.h"
 #include "../rotate_left.h"
 
 namespace cppsort
@@ -36,14 +37,21 @@ namespace detail
     template<>
     struct front_inserter_n<10u>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, Compare compare) const
+        template<
+            typename RandomAccessIterator,
+            typename Compare,
+            typename Projection
+        >
+        auto operator()(RandomAccessIterator first, Compare compare, Projection projection) const
             -> void
         {
-            if (compare(first[5u], first[0u])) {
-                if (compare(first[7u], first[0u])) {
-                    if (compare(first[8u], first[0u])) {
-                        if (compare(first[9u], first[0u])) {
+            auto&& proj = as_function(projection);
+            auto&& proj0 = proj(first[0u]);
+
+            if (compare(proj(first[5u]), proj0)) {
+                if (compare(proj(first[7u]), proj0)) {
+                    if (compare(proj(first[8u]), proj0)) {
+                        if (compare(proj(first[9u]), proj0)) {
                             rotate_left<10u>(first);
                         } else {
                             rotate_left<9u>(first);
@@ -52,24 +60,24 @@ namespace detail
                         rotate_left<8u>(first);
                     }
                 } else {
-                    if (compare(first[6u], first[0u])) {
+                    if (compare(proj(first[6u]), proj0)) {
                         rotate_left<7u>(first);
                     } else {
                         rotate_left<6u>(first);
                     }
                 }
             } else {
-                if (compare(first[3u], first[0u])) {
-                    if (compare(first[4u], first[0u])) {
+                if (compare(proj(first[3u]), proj0)) {
+                    if (compare(proj(first[4u]), proj0)) {
                         rotate_left<5u>(first);
                     } else {
                         rotate_left<4u>(first);
                     }
                 } else {
-                    if (compare(first[2u], first[0u])) {
+                    if (compare(proj(first[2u]), proj0)) {
                         rotate_left<3u>(first);
                     } else {
-                        if (compare(first[1u], first[0u])) {
+                        if (compare(proj(first[1u]), proj0)) {
                             rotate_left<2u>(first);
                         }
                     }

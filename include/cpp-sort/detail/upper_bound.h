@@ -21,51 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_HEAP_SORTER_H_
-#define CPPSORT_SORTERS_HEAP_SORTER_H_
+#ifndef CPPSORT_DETAIL_UPPER_BOUND_H_
+#define CPPSORT_DETAIL_UPPER_BOUND_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/identity.h>
-#include "../detail/heapsort.h"
+#include "as_function.h"
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
-
-    struct heap_sorter:
-        sorter_facade<heap_sorter>
+namespace detail
+{
+    template<
+        typename ForwardIterator,
+        typename T,
+        typename Compare = std::less<>,
+        typename Projection = utility::identity
+    >
+    auto upper_bound(ForwardIterator first, ForwardIterator last,
+                     const T& value,
+                     Compare compare={}, Projection projection={})
+        -> ForwardIterator
     {
-        using sorter_facade<heap_sorter>::operator();
+        auto&& proj = as_function(projection);
 
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare={}, Projection projection={}) const
-            -> void
+        auto size = std::distance(first, last);
+        while (size > 0)
         {
-            detail::heapsort(first, last, compare, projection);
+            ForwardIterator it = first;
+            std::advance(it, size / 2);
+            if (not compare(value, proj(*it)))
+            {
+                first = ++it;
+                size -= size / 2 + 1;
+            }
+            else
+            {
+                size /= 2;
+            }
         }
-    };
+        return first;
+    }
+}}
 
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<heap_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = false;
-    };
-}
-
-#endif // CPPSORT_SORTERS_HEAP_SORTER_H_
+#endif // CPPSORT_DETAIL_UPPER_BOUND_H_

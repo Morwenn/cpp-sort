@@ -37,14 +37,14 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename ForwardIterator, typename Compare>
+    template<typename ForwardIterator, typename Compare, typename Projection>
     void merge_sort(ForwardIterator first, ForwardIterator last,
-                    Compare compare, std::size_t size,
+                    Compare compare, Projection projection, std::size_t size,
                     std::forward_iterator_tag category)
     {
         if (size < 18)
         {
-            bubble_sort(first, compare, size);
+            bubble_sort(first, compare, projection, size);
             return;
         }
 
@@ -53,21 +53,21 @@ namespace detail
         auto middle = std::next(first, size_left);
 
         // Recursively sort the partitions
-        merge_sort(first, middle, compare, size_left, category);
-        merge_sort(middle, last, compare, size - size_left, category);
+        merge_sort(first, middle, compare, projection, size_left, category);
+        merge_sort(middle, last, compare, projection, size - size_left, category);
 
         // Merge the sorted partitions in-place
-        utility::inplace_merge(first, middle, last, compare);
+        utility::inplace_merge(first, middle, last, compare, projection);
     }
 
-    template<typename BidirectionalIterator, typename Compare>
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
     void merge_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    Compare compare, std::size_t size,
+                    Compare compare, Projection projection, std::size_t size,
                     std::bidirectional_iterator_tag category)
     {
         if (size < 40)
         {
-            insertion_sort(first, last, compare);
+            insertion_sort(first, last, compare, projection);
             return;
         }
 
@@ -76,19 +76,19 @@ namespace detail
         auto middle = std::next(first, size_left);
 
         // Recursively sort the partitions
-        merge_sort(first, middle, compare, size_left, category);
-        merge_sort(middle, last, compare, size - size_left, category);
+        merge_sort(first, middle, compare, projection, size_left, category);
+        merge_sort(middle, last, compare, projection, size - size_left, category);
 
         // Merge the sorted partitions in-place
-        utility::inplace_merge(first, middle, last, compare);
+        utility::inplace_merge(first, middle, last, compare, projection);
     }
 
-    template<typename ForwardIterator, typename Compare>
+    template<typename ForwardIterator, typename Compare, typename Projection>
     void merge_sort(ForwardIterator first, ForwardIterator last,
-                    Compare compare, std::size_t size)
+                    Compare compare, Projection projection, std::size_t size)
     {
         using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
-        merge_sort(first, last, compare, size, category{});
+        merge_sort(first, last, compare, projection, size, category{});
     }
 }}
 

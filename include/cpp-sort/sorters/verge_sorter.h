@@ -31,6 +31,7 @@
 #include <iterator>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 #include "../detail/vergesort.h"
 
 namespace cppsort
@@ -45,14 +46,14 @@ namespace cppsort
 
         template<
             typename BidirectionalIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(BidirectionalIterator first,
-                        BidirectionalIterator last,
-                        Compare compare={}) const
+        auto operator()(BidirectionalIterator first, BidirectionalIterator last,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            detail::vergesort(first, last, compare);
+            detail::vergesort(first, last, compare, projection);
         }
     };
 

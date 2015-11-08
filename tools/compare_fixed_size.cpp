@@ -331,7 +331,7 @@ auto compare_time()
 int main()
 {
     // Size of the arrays to sort
-    static constexpr std::size_t size = 13;
+    static constexpr std::size_t size = 10;
 
     using network_sorter = small_array_adapter<
         sorting_network_sorter

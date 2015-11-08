@@ -31,8 +31,12 @@ namespace detail
     template<>
     struct front_inserter_n<0u>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator, Compare) const
+        template<
+            typename RandomAccessIterator,
+            typename Compare,
+            typename Projection
+        >
+        auto operator()(RandomAccessIterator, Compare, Projection) const
             -> void
         {}
     };

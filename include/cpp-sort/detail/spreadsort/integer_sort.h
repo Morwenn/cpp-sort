@@ -24,6 +24,7 @@ Doxygen comments by Paul A. Bristow Jan 2015
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <cpp-sort/utility/identity.h>
 #include "detail/constants.h"
 #include "detail/integer_sort.h"
 #include "../pdqsort.h"
@@ -80,7 +81,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     // Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     else
       detail::integer_sort(first, last, *first >> 0);
   }
@@ -129,7 +130,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   void integer_sort(RandomAccessIter first, RandomAccessIter last,
                     Right_shift shift, Compare comp) {
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp);
+      pdqsort(first, last, comp, utility::identity{});
     else
       detail::integer_sort(first, last, shift(*first, 0), shift, comp);
   }
@@ -178,7 +179,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   void integer_sort(RandomAccessIter first, RandomAccessIter last,
                     Right_shift shift) {
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     else
       detail::integer_sort(first, last, shift(*first, 0), shift);
   }

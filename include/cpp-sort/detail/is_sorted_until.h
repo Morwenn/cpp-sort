@@ -21,51 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_HEAP_SORTER_H_
-#define CPPSORT_SORTERS_HEAP_SORTER_H_
+#ifndef CPPSORT_DETAIL_IS_SORTED_UNTIL_H_
+#define CPPSORT_DETAIL_IS_SORTED_UNTIL_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
+#include <cstddef>
 #include <iterator>
-#include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/identity.h>
-#include "../detail/heapsort.h"
+#include "as_function.h"
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
-
-    struct heap_sorter:
-        sorter_facade<heap_sorter>
+namespace detail
+{
+    template<
+        typename ForwardIterator,
+        typename Compare = std::less<>,
+        typename Projection = utility::identity
+    >
+    auto is_sorted_until(ForwardIterator first, ForwardIterator last,
+                         Compare compare={}, Projection projection={})
+        -> ForwardIterator
     {
-        using sorter_facade<heap_sorter>::operator();
-
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare={}, Projection projection={}) const
-            -> void
+        if (first != last)
         {
-            detail::heapsort(first, last, compare, projection);
+            auto&& proj = as_function(projection);
+            auto&& first_proj = proj(*first);
+
+            ForwardIterator next = first;
+            while (++next != last)
+            {
+                if (compare(proj(*next), first_proj))
+                {
+                    return next;
+                }
+                first = next;
+            }
         }
-    };
+        return last;
+    }
+}}
 
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<heap_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = false;
-    };
-}
-
-#endif // CPPSORT_SORTERS_HEAP_SORTER_H_
+#endif // CPPSORT_DETAIL_IS_SORTED_UNTIL_H_

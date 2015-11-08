@@ -25,6 +25,7 @@ Phil Endecott and Frank Gennari
 #include <iterator>
 #include <type_traits>
 #include <vector>
+#include <cpp-sort/utility/identity.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
@@ -192,7 +193,7 @@ namespace spreadsort
           continue;
         //using pdqsort if its worst-case is better
         if (count < max_count)
-          pdqsort(lastPos, bin_cache[u], std::less<>{});
+          pdqsort(lastPos, bin_cache[u], std::less<>{}, utility::identity{});
         else
           spreadsort_rec<RandomAccessIter, Div_type, Size_type>(lastPos,
                                                                  bin_cache[u],
@@ -297,7 +298,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          pdqsort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp, utility::identity{});
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
         Size_type, log_mean_bin_size, log_min_split_count, log_finishing_count>
@@ -353,7 +354,7 @@ namespace spreadsort
         if (count < 2)
           continue;
         if (count < max_count)
-          pdqsort(lastPos, bin_cache[u]);
+          pdqsort(lastPos, bin_cache[u], utility::identity{});
         else
           spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Size_type,
           log_mean_bin_size, log_min_split_count, log_finishing_count>(lastPos,
@@ -393,7 +394,7 @@ namespace spreadsort
     integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
     {
       //We're using pdqsort, even though integer_sort was called
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     }
 
 
@@ -438,7 +439,7 @@ namespace spreadsort
                 Right_shift shift, Compare comp)
     {
       //We're using pdqsort, even though integer_sort was called
-      pdqsort(first, last, comp);
+      pdqsort(first, last, comp, utility::identity{});
     }
 
 
@@ -480,7 +481,7 @@ namespace spreadsort
                 Right_shift shift)
     {
       //We're using pdqsort, even though integer_sort was called
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     }
   }
 }}}

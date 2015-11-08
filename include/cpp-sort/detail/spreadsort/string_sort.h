@@ -21,6 +21,7 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <cpp-sort/utility/identity.h>
 #include "detail/constants.h"
 #include "detail/string_sort.h"
 #include "../pdqsort.h"
@@ -82,7 +83,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     else
       detail::string_sort(first, last, unused);
   }
@@ -191,7 +192,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp);
+      pdqsort(first, last, comp, utility::identity{});
     else
       detail::reverse_string_sort(first, last, unused);
   }
@@ -300,7 +301,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     else {
       //skipping past empties, which allows us to get the character type
       //.empty() is not used so as not to require a user declaration of it
@@ -367,7 +368,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp);
+      pdqsort(first, last, comp, utility::identity{});
     else {
       //skipping past empties, which allows us to get the character type
       //.empty() is not used so as not to require a user declaration of it
@@ -434,7 +435,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp);
+      pdqsort(first, last, comp, utility::identity{});
     else {
       //skipping past empties, which allows us to get the character type
       //.empty() is not used so as not to require a user declaration of it

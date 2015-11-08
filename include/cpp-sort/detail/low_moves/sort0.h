@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/identity.h>
 
 namespace cppsort
 {
@@ -40,9 +41,11 @@ namespace cppsort
 
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
+        auto operator()(RandomAccessIterator, RandomAccessIterator,
+                        Compare={}, Projection={}) const
             -> void
         {}
     };

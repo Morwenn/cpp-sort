@@ -31,6 +31,7 @@
 #include <iterator>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/merge_sort.h"
 
@@ -53,21 +54,23 @@ namespace cppsort
                 std::begin(iterable),
                 std::end(iterable),
                 compare,
+                utility::identity{},
                 utility::size(iterable)
             );
         }
 
         template<
             typename ForwardIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
         auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
             detail::merge_sort(
                 first, last,
-                compare,
+                compare, projection,
                 std::distance(first, last)
             );
         }

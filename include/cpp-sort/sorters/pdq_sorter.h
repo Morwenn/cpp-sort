@@ -31,6 +31,7 @@
 #include <iterator>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 #include "../detail/pdqsort.h"
 
 namespace cppsort
@@ -45,14 +46,14 @@ namespace cppsort
 
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first,
-                        RandomAccessIterator last,
-                        Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            detail::pdqsort(first, last, compare);
+            detail::pdqsort(first, last, compare, projection);
         }
     };
 

@@ -27,19 +27,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
+#include "min_element.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename ForwardIterator, typename Compare>
+    template<typename ForwardIterator, typename Compare, typename Projection>
     void selection_sort(ForwardIterator first, ForwardIterator last,
-                        Compare compare)
+                        Compare compare, Projection projection)
     {
         for (ForwardIterator it = first ; it != last ; ++it)
         {
-            std::iter_swap(it, std::min_element(it, last, compare));
+            std::iter_swap(it, min_element(it, last, compare, projection));
         }
     }
 }}

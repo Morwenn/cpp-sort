@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/identity.h>
 #include "../swap_if.h"
 
 namespace cppsort
@@ -41,12 +42,14 @@ namespace cppsort
 
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            detail::swap_if(first[0u], first[1u], compare);
+            detail::swap_if(first[0u], first[1u], compare, projection);
         }
     };
 }

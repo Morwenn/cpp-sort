@@ -31,6 +31,7 @@
 #include <iterator>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 #include "../detail/insertion_sort.h"
 
 namespace cppsort
@@ -45,13 +46,14 @@ namespace cppsort
 
         template<
             typename ForwardIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
         auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            detail::insertion_sort(first, last, compare);
+            detail::insertion_sort(first, last, compare, projection);
         }
     };
 

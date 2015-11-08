@@ -24,6 +24,7 @@ Phil Endecott and Frank Gennari
 #include <iterator>
 #include <type_traits>
 #include <vector>
+#include <cpp-sort/utility/identity.h>
 #include "common.h"
 #include "constants.h"
 
@@ -255,7 +256,8 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-              offset_less_than<Data_type, Unsigned_char_type>(char_offset + 1));
+                  offset_less_than<Data_type, Unsigned_char_type>(char_offset + 1),
+                  utility::identity{});
         else
           string_sort_rec<RandomAccessIter, Unsigned_char_type>(lastPos,
               bin_cache[u], char_offset + 1, bin_cache, cache_end, bin_sizes);
@@ -364,8 +366,9 @@ namespace spreadsort
           continue;
         //using pdqsort if its worst-case is better
         if (count < max_size)
-          pdqsort(lastPos, bin_cache[u], offset_greater_than<Data_type,
-                    Unsigned_char_type>(char_offset + 1));
+          pdqsort(lastPos, bin_cache[u],
+                  offset_greater_than<Data_type, Unsigned_char_type>(char_offset + 1),
+                  utility::identity{});
         else
           reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type>
     (lastPos, bin_cache[u], char_offset + 1, bin_cache, cache_end, bin_sizes);
@@ -466,7 +469,8 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u], offset_char_less_than<Data_type,
-                    Get_char, Get_length>(char_offset + 1));
+                  Get_char, Get_length>(char_offset + 1),
+                  utility::identity{});
         else
           string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
             Get_length>(lastPos, bin_cache[u], char_offset + 1, bin_cache,
@@ -565,7 +569,7 @@ namespace spreadsort
           continue;
         //using pdqsort if its worst-case is better
         if (count < max_size)
-          pdqsort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp, utility::identity{});
         else
           string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
                           Get_length, Compare>
@@ -669,7 +673,7 @@ namespace spreadsort
           continue;
         //using pdqsort if its worst-case is better
         if (count < max_size)
-          pdqsort(lastPos, bin_cache[u], comp);
+          pdqsort(lastPos, bin_cache[u], comp, utility::identity{});
         else
           reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type,
                                   Get_char, Get_length, Compare>

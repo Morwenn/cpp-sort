@@ -44,30 +44,33 @@ namespace cppsort
     {
         template<
             typename ForwardIterable,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(ForwardIterable& iterable, Compare compare={}) const
+        auto operator()(ForwardIterable& iterable,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
             detail::quicksort(
                 std::begin(iterable),
                 std::end(iterable),
-                compare,
+                compare, projection,
                 utility::size(iterable)
             );
         }
 
         template<
             typename ForwardIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
         auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
             detail::quicksort(
                 first, last,
-                compare,
+                compare, projection,
                 std::distance(first, last)
             );
         }

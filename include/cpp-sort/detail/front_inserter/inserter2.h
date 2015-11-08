@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "../as_function.h"
 #include "../rotate_left.h"
 
 namespace cppsort
@@ -36,11 +37,17 @@ namespace detail
     template<>
     struct front_inserter_n<2u>
     {
-        template<typename RandomAccessIterator, typename Compare>
-        auto operator()(RandomAccessIterator first, Compare compare) const
+        template<
+            typename RandomAccessIterator,
+            typename Compare,
+            typename Projection
+        >
+        auto operator()(RandomAccessIterator first, Compare compare, Projection projection) const
             -> void
         {
-            if (compare(first[1u], first[0u])) {
+            auto&& proj = as_function(projection);
+
+            if (compare(proj(first[1u]), proj(first[0u]))) {
                 rotate_left<2u>(first);
             }
         }

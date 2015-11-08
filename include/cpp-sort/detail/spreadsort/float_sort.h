@@ -25,6 +25,7 @@ Scott McMurray
 #include <cstring>
 #include <functional>
 #include <limits>
+#include <cpp-sort/utility/identity.h>
 #include "detail/constants.h"
 #include "detail/float_sort.h"
 #include "../pdqsort.h"
@@ -91,7 +92,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   void float_sort(RandomAccessIter first, RandomAccessIter last)
   {
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     else
       detail::float_sort(first, last);
   }
@@ -109,7 +110,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
                   Right_shift rshift)
   {
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{});
+      pdqsort(first, last, std::less<>{}, utility::identity{});
     else
       detail::float_sort(first, last, rshift(*first, 0), rshift);
   }
@@ -129,7 +130,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
                   Right_shift rshift, Compare comp)
   {
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp);
+      pdqsort(first, last, comp, utility::identity{});
     else
       detail::float_sort(first, last, rshift(*first, 0), rshift, comp);
   }
