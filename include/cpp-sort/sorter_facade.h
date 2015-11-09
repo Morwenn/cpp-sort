@@ -144,7 +144,8 @@ namespace cppsort
             template<typename Iterable, typename Compare>
             auto operator()(Iterable& iterable, Compare compare) const
                 -> std::enable_if_t<
-                    detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>,
+                    not detail::has_comparison_sort<Sorter, Iterable, Compare>
+                    &&  detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>,
                     decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable), compare))
                 >
             {
