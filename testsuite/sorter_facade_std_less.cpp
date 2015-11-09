@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <functional>
-#include <iostream>
 #include <iterator>
 #include <vector>
 #include <catch.hpp>
@@ -31,58 +30,61 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
-struct comparison_sorter:
-    cppsort::sorter_facade<comparison_sorter>
+namespace
 {
-    using cppsort::sorter_facade<comparison_sorter>::operator();
-
-    template<typename Iterator, typename Compare>
-    auto operator()(Iterator, Iterator, Compare) const
-        -> bool
+    struct comparison_sorter:
+        cppsort::sorter_facade<comparison_sorter>
     {
-        return true;
-    }
+        using cppsort::sorter_facade<comparison_sorter>::operator();
 
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator) const
-        -> bool
+        template<typename Iterator, typename Compare>
+        auto operator()(Iterator, Iterator, Compare) const
+            -> bool
+        {
+            return true;
+        }
+
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> bool
+        {
+            return false;
+        }
+    };
+
+    struct non_comparison_sorter:
+        cppsort::sorter_facade<non_comparison_sorter>
     {
-        return false;
-    }
-};
+        using cppsort::sorter_facade<non_comparison_sorter>::operator();
 
-struct non_comparison_sorter:
-    cppsort::sorter_facade<non_comparison_sorter>
-{
-    using cppsort::sorter_facade<non_comparison_sorter>::operator();
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> bool
+        {
+            return true;
+        }
+    };
 
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator) const
-        -> bool
+    struct non_comparison_iterable_sorter:
+        cppsort::sorter_facade<non_comparison_iterable_sorter>
     {
-        return true;
-    }
-};
+        using cppsort::sorter_facade<non_comparison_iterable_sorter>::operator();
 
-struct non_comparison_iterable_sorter:
-    cppsort::sorter_facade<non_comparison_iterable_sorter>
-{
-    using cppsort::sorter_facade<non_comparison_iterable_sorter>::operator();
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> bool
+        {
+            return true;
+        }
 
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator) const
-        -> bool
-    {
-        return true;
-    }
-
-    template<typename Iterable>
-    auto operator()(Iterable&) const
-        -> bool
-    {
-        return false;
-    }
-};
+        template<typename Iterable>
+        auto operator()(Iterable&) const
+            -> bool
+        {
+            return false;
+        }
+    };
+}
 
 TEST_CASE( "std::less<> forwarding to sorters",
            "[sorter_facade][compare]" )

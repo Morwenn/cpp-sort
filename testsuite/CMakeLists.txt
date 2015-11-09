@@ -18,6 +18,7 @@ set(
     sorters/default_sorter.cpp
     sorters/default_sorter_fptr.cpp
     sorters/spread_sorter.cpp
+    sorters/spread_sorter_defaults.cpp
 )
 
 # Make one executable for the whole testsuite
@@ -26,6 +27,7 @@ add_executable(
 
     main.cpp
     rebind_iterator_category.cpp
+    sorter_facade.cpp
     sorter_facade_std_less.cpp
     ${ADAPTER_TESTS}
     ${SORTERS_TESTS}
