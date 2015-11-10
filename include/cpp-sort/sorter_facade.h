@@ -32,6 +32,7 @@
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/detection.h>
+#include "detail/as_function.h"
 
 namespace cppsort
 {
@@ -41,13 +42,67 @@ namespace cppsort
         using has_sort_t = std::result_of_t<Sorter(Iterable&)>;
 
         template<typename Sorter, typename Iterable, typename Compare>
-        using has_comparison_sort_t = std::result_of_t<Sorter(Iterable&, Compare)>;
+        using has_comparison_sort_t = utility::void_t<
+            std::result_of_t<Sorter(Iterable&, Compare)>,
+            std::result_of_t<Compare(
+                decltype(*std::begin(std::declval<Iterable&>())),
+                decltype(*std::end(std::declval<Iterable&>()))
+            )>
+        >;
+
+        template<typename Sorter, typename Iterable, typename Projection,
+                 typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))>
+        using has_projection_sort_t = utility::void_t<
+            std::result_of_t<Sorter(Iterable&, Projection)>,
+            std::result_of_t<ProjFunc(decltype(*std::begin(std::declval<Iterable&>())))>
+        >;
+
+        template<
+            typename Sorter, typename Iterable,
+            typename Compare, typename Projection,
+            typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))
+        >
+        using has_comparison_projection_sort_t = utility::void_t<
+            std::result_of_t<Sorter(Iterable&, Compare, Projection)>,
+            std::result_of_t<ProjFunc(decltype(*std::begin(std::declval<Iterable&>())))>,
+            std::result_of_t<Compare(
+                std::result_of_t<ProjFunc(decltype(*std::begin(std::declval<Iterable&>())))>,
+                std::result_of_t<ProjFunc(decltype(*std::end(std::declval<Iterable&>())))>
+            )>
+        >;
 
         template<typename Sorter, typename Iterator>
         using has_sort_iterator_t = std::result_of_t<Sorter(Iterator, Iterator)>;
 
         template<typename Sorter, typename Iterator, typename Compare>
-        using has_comparison_sort_iterator_t = std::result_of_t<Sorter(Iterator, Iterator, Compare)>;
+        using has_comparison_sort_iterator_t = utility::void_t<
+            std::result_of_t<Sorter(Iterator, Iterator, Compare)>,
+            std::result_of_t<Compare(
+                decltype(*std::declval<Iterator&>()),
+                decltype(*std::declval<Iterator&>())
+            )>
+        >;
+
+        template<typename Sorter, typename Iterator, typename Projection,
+                 typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))>
+        using has_projection_sort_iterator_t = utility::void_t<
+            std::result_of_t<Sorter(Iterator, Iterator, Projection)>,
+            std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>
+        >;
+
+        template<
+            typename Sorter, typename Iterator,
+            typename Compare, typename Projection,
+            typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))
+        >
+        using has_comparison_projection_sort_iterator_t = utility::void_t<
+            std::result_of_t<Sorter(Iterator, Iterator, Compare, Projection)>,
+            std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>,
+            std::result_of_t<Compare(
+                std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>,
+                std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>
+            )>
+        >;
 
         template<typename Sorter, typename Iterable>
         constexpr bool has_sort
@@ -57,6 +112,20 @@ namespace cppsort
         constexpr bool has_comparison_sort
             = utility::is_detected_v<has_comparison_sort_t, Sorter, Iterable, Compare>;
 
+        template<typename Sorter, typename Iterable, typename Projection>
+        constexpr bool has_projection_sort
+            = utility::is_detected_v<has_projection_sort_t, Sorter, Iterable, Projection>;
+
+        template<
+            typename Sorter, typename Iterable,
+            typename Compare, typename Projection
+        >
+        constexpr bool has_comparison_projection_sort
+            = utility::is_detected_v<
+                has_comparison_projection_sort_t,
+                Sorter, Iterable, Compare, Projection
+            >;
+
         template<typename Sorter, typename Iterator>
         constexpr bool has_sort_iterator
             = utility::is_detected_v<has_sort_iterator_t, Sorter, Iterator>;
@@ -64,6 +133,20 @@ namespace cppsort
         template<typename Sorter, typename Iterator, typename Compare>
         constexpr bool has_comparison_sort_iterator
             = utility::is_detected_v<has_comparison_sort_iterator_t, Sorter, Iterator, Compare>;
+
+        template<typename Sorter, typename Iterator, typename Projection>
+        constexpr bool has_projection_sort_iterator
+            = utility::is_detected_v<has_projection_sort_iterator_t, Sorter, Iterator, Projection>;
+
+        template<
+            typename Sorter, typename Iterator,
+            typename Compare, typename Projection
+        >
+        constexpr bool has_comparison_projection_sort_iterator
+            = utility::is_detected_v<
+                has_comparison_projection_sort_iterator_t,
+                Sorter, Iterator, Compare, Projection
+            >;
     }
 
     // This class is a CRTP base class whose sorters inherit
@@ -145,7 +228,7 @@ namespace cppsort
             auto operator()(Iterable& iterable, Compare compare) const
                 -> std::enable_if_t<
                     not detail::has_comparison_sort<Sorter, Iterable, Compare>
-                    &&  detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>,
+                    && detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>,
                     decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable), compare))
                 >
             {
