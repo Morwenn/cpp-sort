@@ -28,6 +28,12 @@ namespace cppsort
 {
 namespace utility
 {
+    constexpr auto any(bool head)
+        -> bool
+    {
+        return head;
+    }
+
     template<typename... Bools>
     constexpr auto any(bool head, Bools... tail)
         -> bool
@@ -35,7 +41,7 @@ namespace utility
         return head || any(tail...);
     }
 
-    constexpr auto any(bool head)
+    constexpr auto all(bool head)
         -> bool
     {
         return head;
@@ -46,12 +52,6 @@ namespace utility
         -> bool
     {
         return head && all(tail...);
-    }
-
-    constexpr auto all(bool head)
-        -> bool
-    {
-        return head;
     }
 }}
 
