@@ -1,0 +1,30 @@
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+env:
+  - BUILD_TYPE=Debug
+  - BUILD_TYPE=Release
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-precise
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-3.8
+      - g++-5
+
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
+  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
+
+script: 
+  - cmake .
+  - make
+  - testsuite/cpp-sort-testsuite
+
+notifications:
+  email: false

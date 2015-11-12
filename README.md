@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
+
 **cpp-sort** is a generic C++14 header-only sorting library. It revolves
 around one main generic sorting interface and provides several small tools
 to pick and/or design sorting algorithms. The library's main function,
@@ -30,7 +32,7 @@ int main()
 **cpp-sort** actually provides a full set of sorting-related features. The most
 important one is probably the concept of *sorters* and *sorter adapters*. Sorters
 are function objects implementing a sorting algorithm and sorter adapters are
-special class templates designed to adapt sorters and alter their behavior in some
+special class templates designed to adapt sorters and alter their behaviour in some
 specific manner. The library provides sorters implementing common and not-so-common
 sorting algorithms as well as some specific adapters. It also provides fixed-size
 sorters and tools such as sorter facade or sorter traits, designed to craft your
@@ -54,28 +56,25 @@ made available in the future.
 
 # Compiler support
 
-**Note:** the library uses some of the most recent (and not widely supported) C++14
-features. Therefore, it might only work with the most recent compilers. It should
-work with g++ 5.2 (which is the compiler used to develop the library) and I can
-confirm that it doesn't compile with g++ 5.1 nor clang++ 3.8. The goal is to write
-a standard-compliant library, not to support old compilers, which means that the
-compatility will only be ensured for the most up-to-date compilers. The long-term
-goal is to switch to a newer C++ standard once it is standardized and keep a branch
-for the previous standard, which means that once C++17 is out, the master branch
-will be assumed to be C++17 and the C++14 branch may be kept around for some time
-until it is too expensive to maintain.
+**cpp-sort** currently works with g++ 5 and clang++ 3.8. It uses some of the most
+recent (and not widely supported) C++14 features and will probably use the C++17
+features once they are available. The overall goal is to make sure that the library
+works with the latest g++ and clang++ versions, without going out of its way to
+support older releases.
 
-I am currently trying to get the library to compile with clang++ 3.8 but it seems
-that the mechanism described in [this article](https://rmf.io/cxx11/overload-ranking/)
-is not currently supported. Since one of the most important features of the library
-rely on it, I guess that it won't be clang-compatible until clang++ supports the
-idiom.
+Note however that some foundation classes of the library rely on compiler-specific
+behaviour which doesn't seem to be standard *at all*. It is true black magic in the
+sense that I have no idea *why* it works but still managed to use it to get things
+to work with both g++ and clang++. I wouldn't be surprised if future versions of
+the compilers broke that, but I won't replace it because doing so would break the
+API and force users to write uglier things to get their sorters to work. I would
+rather have the ugly in the library's details than in the API.
 
 # Thanks
 
-Even though some parts of the library are [original research](doc/research.md) and
-some others correspond to custom and unoriginal implementations of standard sorting
-algorithms, **cpp-sort** also reuses a great deal of code from other open-source
+Even though some parts of the library are [original research](https://github.com/Morwenn/cpp-sort/wiki/Original-research)
+and some others correspond to custom and rather naive implementations of standard
+sorting algorithms, **cpp-sort** also reuses a great deal of code from open-source
 projects, often slightly altered to integrate seamlessly into the library. Here is
 a list of the external resources used to create this library. I hope that the many
 different licenses are compatible. If it is not the case, please contact me (or
