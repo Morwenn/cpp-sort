@@ -64,6 +64,52 @@ namespace cppsort
         template<typename Sorter, typename Iterator, typename Compare>
         constexpr bool has_comparison_sort_iterator
             = utility::is_detected_v<has_comparison_sort_iterator_t, Sorter, Iterator, Compare>;
+
+        // Black magic. Trust me, you *don't* want to know how this
+        // works. This is probably retarded anyway, but I don't think
+        // there is a standard-compliant way to achieve that without
+        // breaking the user interface.
+
+        template<typename Sorter>
+        struct wrapper:
+            Sorter
+        {
+#ifdef __clang__
+            using Sorter::operator();
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable) const
+                -> std::enable_if_t<false, utility::void_t<Iterable>>
+            {}
+
+            template<typename Iterable, typename Compare>
+            auto operator()(Iterable& iterable, Compare compare) const
+                -> std::enable_if_t<false, utility::void_t<Iterable>>
+            {}
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable, std::less<>) const
+               -> std::enable_if_t<false, utility::void_t<Iterable>>
+            {}
+
+            template<typename Iterator>
+            auto operator()(Iterator first, Iterator last, std::less<>) const
+                -> std::enable_if_t<false, utility::void_t<Iterator>>
+            {}
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable,
+                            std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
+                -> std::enable_if_t<false, utility::void_t<Iterable>>
+            {}
+
+            template<typename Iterator>
+            auto operator()(Iterator first, Iterator last,
+                            std::less<typename std::iterator_traits<Iterator>::value_type>) const
+                -> std::enable_if_t<false, utility::void_t<Iterator>>
+            {}
+#endif
+        };
     }
 
     // This class is a CRTP base class whose sorters inherit
@@ -134,7 +180,7 @@ namespace cppsort
             template<typename Iterable>
             auto operator()(Iterable& iterable) const
                 -> std::enable_if_t<
-                    not detail::has_sort<Sorter, Iterable>,
+                    not detail::has_sort<detail::wrapper<Sorter>, Iterable>,
                     decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable)))
                 >
             {
@@ -144,8 +190,8 @@ namespace cppsort
             template<typename Iterable, typename Compare>
             auto operator()(Iterable& iterable, Compare compare) const
                 -> std::enable_if_t<
-                    not detail::has_comparison_sort<Sorter, Iterable, Compare>
-                    &&  detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>,
+                    not detail::has_comparison_sort<detail::wrapper<Sorter>, Iterable, Compare>
+                    &&  detail::has_comparison_sort_iterator<detail::wrapper<Sorter>, decltype(std::begin(iterable)), Compare>,
                     decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable), compare))
                 >
             {
@@ -158,7 +204,7 @@ namespace cppsort
             template<typename Iterable>
             auto operator()(Iterable& iterable, std::less<>) const
                 -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), std::less<>>,
+                    not detail::has_comparison_sort_iterator<detail::wrapper<Sorter>, decltype(std::begin(iterable)), std::less<>>,
                     decltype(std::declval<Sorter&>()(iterable))
                 >
             {
@@ -168,7 +214,7 @@ namespace cppsort
             template<typename Iterator>
             auto operator()(Iterator first, Iterator last, std::less<>) const
                 -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<Sorter, Iterator, std::less<>>,
+                    not detail::has_comparison_sort_iterator<detail::wrapper<Sorter>, Iterator, std::less<>>,
                     decltype(std::declval<Sorter&>()(first, last))
                 >
             {
@@ -183,7 +229,7 @@ namespace cppsort
                             std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
                 -> std::enable_if_t<
                     not detail::has_comparison_sort_iterator<
-                        Sorter,
+                        detail::wrapper<Sorter>,
                         decltype(std::begin(iterable)),
                         std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>
                     >,
@@ -198,7 +244,7 @@ namespace cppsort
                             std::less<typename std::iterator_traits<Iterator>::value_type>) const
                 -> std::enable_if_t<
                     not detail::has_comparison_sort_iterator<
-                        Sorter,
+                        detail::wrapper<Sorter>,
                         Iterator,
                         std::less<typename std::iterator_traits<Iterator>::value_type>
                     >,
