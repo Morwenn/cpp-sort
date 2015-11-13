@@ -59,7 +59,7 @@ namespace
     struct generic_sorter_impl
     {
         template<typename Iterator, typename Compare>
-        auto operator()(Iterator, Iterator, Compare)
+        auto operator()(Iterator, Iterator, Compare) const
             -> sorter_type
         {
             return sorter_type::generic;

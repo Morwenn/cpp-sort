@@ -47,7 +47,7 @@ namespace cppsort
                 typename = std::enable_if_t<utility::has_sort_method<Iterable>>
             >
             auto operator()(Iterable& iterable) const
-                -> decltype(auto)
+                -> decltype(iterable.sort())
             {
                 return iterable.sort();
             }
@@ -58,7 +58,7 @@ namespace cppsort
                 typename = void // dummy parameter for ODR
             >
             auto operator()(Iterable& iterable) const
-                -> decltype(auto)
+                -> decltype(Sorter{}(iterable))
             {
                 return Sorter{}(iterable);
             }
@@ -69,7 +69,7 @@ namespace cppsort
                 typename = std::enable_if_t<utility::has_comparison_sort_method<Iterable, Compare>>
             >
             auto operator()(Iterable& iterable, Compare compare) const
-                -> decltype(auto)
+                -> decltype(iterable.sort(compare))
             {
                 return iterable.sort(compare);
             }
@@ -81,21 +81,21 @@ namespace cppsort
                 typename = void // dummy parameter for ODR
             >
             auto operator()(Iterable& iterable, Compare compare) const
-                -> decltype(auto)
+                -> decltype(Sorter{}(iterable, compare))
             {
                 return Sorter{}(iterable, compare);
             }
 
             template<typename Iterator>
             auto operator()(Iterator first, Iterator last) const
-                -> decltype(auto)
+                -> decltype(Sorter{}(first, last))
             {
                 return Sorter{}(first, last);
             }
 
             template<typename Iterator, typename Compare>
             auto operator()(Iterator first, Iterator last, Compare compare) const
-                -> decltype(auto)
+                -> decltype(Sorter{}(first, last, compare))
             {
                 return Sorter{}(first, last, compare);
             }

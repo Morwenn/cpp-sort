@@ -44,7 +44,7 @@ namespace
     struct integer_sorter_impl
     {
         template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator, RandomAccessIterator)
+        auto operator()(RandomAccessIterator, RandomAccessIterator) const
             -> std::enable_if_t<
                 std::is_integral<
                     typename std::iterator_traits<RandomAccessIterator>::value_type
@@ -59,7 +59,7 @@ namespace
     struct float_sorter_impl
     {
         template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator, RandomAccessIterator)
+        auto operator()(RandomAccessIterator, RandomAccessIterator) const
             -> std::enable_if_t<
                 std::is_floating_point<
                     typename std::iterator_traits<RandomAccessIterator>::value_type
@@ -74,7 +74,7 @@ namespace
     struct generic_sorter_impl
     {
         template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator, RandomAccessIterator)
+        auto operator()(RandomAccessIterator, RandomAccessIterator) const
             -> sorter_type
         {
             return sorter_type::generic;
