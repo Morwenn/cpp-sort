@@ -53,7 +53,7 @@ namespace detail
                     if (compare(first[2u], first[1u])) {
                         swap(first[0u], first[2u]);
                     } else {
-                        detail::rotate_left<3u>(first);
+                        rotate_left<3u>(first);
                     }
                 } else {
                     swap(first[0u], first[1u]);
@@ -61,7 +61,7 @@ namespace detail
             } else {
                 if (compare(first[2u], first[1u])) {
                     if (compare(first[2u], first[0u])) {
-                        detail::rotate_right<3u>(first);
+                        rotate_right<3u>(first);
                     } else {
                         swap(first[1u], first[2u]);
                     }

@@ -44,9 +44,9 @@ namespace detail
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
             -> void
         {
-            detail::swap_if(first[1u], first[2u], compare);
-            detail::swap_if(first[0u], first[2u], compare);
-            detail::swap_if(first[0u], first[1u], compare);
+            swap_if(first[1u], first[2u], compare);
+            swap_if(first[0u], first[2u], compare);
+            swap_if(first[0u], first[1u], compare);
         }
     };
 }}

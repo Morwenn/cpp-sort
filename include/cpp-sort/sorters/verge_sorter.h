@@ -50,7 +50,7 @@ namespace cppsort
                             Compare compare={}) const
                 -> void
             {
-                detail::vergesort(first, last, compare);
+                vergesort(first, last, compare);
             }
         };
     }

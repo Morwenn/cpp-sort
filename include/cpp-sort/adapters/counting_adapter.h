@@ -50,7 +50,7 @@ namespace cppsort
             auto operator()(Iterable& iterable, Compare compare={}) const
                 -> CountType
             {
-                detail::comparison_counter<Compare, CountType> cmp(compare);
+                comparison_counter<Compare, CountType> cmp(compare);
                 ComparisonSorter{}(iterable, cmp);
                 return cmp.count;
             }
@@ -62,7 +62,7 @@ namespace cppsort
             auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> CountType
             {
-                detail::comparison_counter<Compare, CountType> cmp(compare);
+                comparison_counter<Compare, CountType> cmp(compare);
                 ComparisonSorter{}(first, last, cmp);
                 return cmp.count;
             }

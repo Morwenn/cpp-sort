@@ -50,7 +50,7 @@ namespace cppsort
                             Compare compare={}) const
                 -> void
             {
-                detail::timsort(first, last, compare);
+                timsort(first, last, compare);
             }
         };
     }

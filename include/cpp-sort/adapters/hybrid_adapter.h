@@ -111,7 +111,7 @@ namespace cppsort
                 struct selection_wrapper
                 {
                     template<typename... Args>
-                    auto operator()(detail::choice<Ind>, Args&&... args) const
+                    auto operator()(choice<Ind>, Args&&... args) const
                         -> decltype(Sorter{}(std::forward<Args>(args)...))
                     {
                         return Sorter{}(std::forward<Args>(args)...);
@@ -129,7 +129,7 @@ namespace cppsort
                     using type = sorters_merger<
                         selection_wrapper<
                             Sorters,
-                            Indices + detail::iterator_category_value<iterator_category<Sorters>>
+                            Indices + iterator_category_value<iterator_category<Sorters>>
                                     * categories_number
                         >...
                     >;
@@ -145,8 +145,8 @@ namespace cppsort
                 template<typename Iterable, typename... Args>
                 auto operator()(Iterable& iterable, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
-                        detail::choice<
-                            detail::iterator_category_value<typename std::iterator_traits<
+                        choice<
+                            iterator_category_value<typename std::iterator_traits<
                                 decltype(std::begin(iterable))
                             >::iterator_category> * categories_number
                         >{},
@@ -162,7 +162,7 @@ namespace cppsort
 
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
-                        detail::choice<detail::iterator_category_value<category> * categories_number>{},
+                        choice<iterator_category_value<category> * categories_number>{},
                         iterable, std::forward<Args>(args)...
                     );
                 }
@@ -170,8 +170,8 @@ namespace cppsort
                 template<typename Iterator, typename... Args>
                 auto operator()(Iterator first, Iterator last, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
-                            detail::choice<
-                                detail::iterator_category_value<
+                            choice<
+                                iterator_category_value<
                                     typename std::iterator_traits<Iterator>::iterator_category
                                 > * categories_number
                             >{},
@@ -184,7 +184,7 @@ namespace cppsort
 
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
-                        detail::choice<detail::iterator_category_value<category> * categories_number>{},
+                        choice<iterator_category_value<category> * categories_number>{},
                         first, last, std::forward<Args>(args)...
                     );
                 }

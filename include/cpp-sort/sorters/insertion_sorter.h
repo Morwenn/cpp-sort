@@ -50,7 +50,7 @@ namespace cppsort
                             Compare compare={}) const
                 -> void
             {
-                detail::insertion_sort(first, last, compare);
+                insertion_sort(first, last, compare);
             }
         };
     }

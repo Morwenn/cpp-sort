@@ -50,7 +50,7 @@ namespace cppsort
             auto operator()(ForwardIterable& iterable, Compare compare={}) const
                 -> void
             {
-                detail::merge_sort(
+                merge_sort(
                     std::begin(iterable),
                     std::end(iterable),
                     compare,
@@ -66,7 +66,7 @@ namespace cppsort
                             Compare compare={}) const
                 -> void
             {
-                detail::merge_sort(
+                merge_sort(
                     first, last,
                     compare,
                     std::distance(first, last)

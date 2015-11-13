@@ -50,7 +50,7 @@ namespace cppsort
                             Compare compare={}) const
                 -> void
             {
-                detail::pdqsort(first, last, compare);
+                pdqsort(first, last, compare);
             }
         };
     }

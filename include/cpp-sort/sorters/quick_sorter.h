@@ -50,7 +50,7 @@ namespace cppsort
             auto operator()(ForwardIterable& iterable, Compare compare={}) const
                 -> void
             {
-                detail::quicksort(
+                quicksort(
                     std::begin(iterable),
                     std::end(iterable),
                     compare,
@@ -66,7 +66,7 @@ namespace cppsort
                             Compare compare={}) const
                 -> void
             {
-                detail::quicksort(
+                quicksort(
                     first, last,
                     compare,
                     std::distance(first, last)

@@ -45,7 +45,7 @@ namespace detail
             -> void
         {
             low_comparisons_sorter<9u>{}(first+1u, first+10u, compare);
-            detail::front_insert<10u>(first, compare);
+            front_insert<10u>(first, compare);
         }
     };
 }}
