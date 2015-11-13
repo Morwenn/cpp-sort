@@ -32,11 +32,8 @@
 
 namespace
 {
-    struct comparison_sorter:
-        cppsort::sorter_facade<comparison_sorter>
+    struct comparison_sorter_impl
     {
-        using cppsort::sorter_facade<comparison_sorter>::operator();
-
         // Pair of iterators overload
         template<typename Iterator, typename Compare=std::less<>>
         auto operator()(Iterator, Iterator, Compare={}) const
@@ -53,6 +50,10 @@ namespace
             return false;
         }
     };
+
+    struct comparison_sorter:
+        cppsort::sorter_facade<comparison_sorter_impl>
+    {};
 }
 
 TEST_CASE( "miscellaneous sorter_facade checks",

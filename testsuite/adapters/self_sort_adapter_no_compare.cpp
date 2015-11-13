@@ -28,8 +28,8 @@
 #include <random>
 #include <catch.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
+#include <cpp-sort/sorters/verge_sorter.h>
 #include <cpp-sort/sort.h>
 
 // This class can sort itself but its sort method
@@ -39,7 +39,7 @@ struct non_comparison_self_sortable
     std::list<int> elements;
 
     template<typename... Args>
-    non_comparison_self_sortable(Args... args):
+    explicit non_comparison_self_sortable(Args... args):
         elements(args...)
     {}
 
@@ -67,7 +67,7 @@ TEST_CASE( "self-sortable object without comparison",
         // comparator is given
 
         using sorter = cppsort::self_sort_adapter<
-            cppsort::pdq_sorter
+            cppsort::verge_sorter
         >;
 
         // Fill the collection

@@ -28,17 +28,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/sorter_facade.h>
 #include "../swap_if.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct sorting_network_sorter<20u>:
-        sorter_facade<sorting_network_sorter<20u>>
+    struct sorting_network_sorter_impl<20u>
     {
-        using sorter_facade<sorting_network_sorter<20u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>
@@ -140,6 +138,6 @@ namespace cppsort
             detail::swap_if(first[9u], first[10u], compare);
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT20_H_

@@ -32,38 +32,44 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 
-template<std::size_t N>
-struct fixed_sorter:
-    cppsort::sorter_facade<fixed_sorter<N>>
+namespace
 {
-    using cppsort::sorter_facade<fixed_sorter<N>>::operator();
-
-    template<
-        typename RandomAccessIterator,
-        typename Compare = std::less<>
-    >
-    auto operator()(RandomAccessIterator first, RandomAccessIterator last, Compare={}) const
-        -> bool
+    template<std::size_t N>
+    struct fixed_sorter_impl
     {
-        return std::distance(first, last) == N;
-    }
-};
+        template<
+            typename RandomAccessIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last, Compare={}) const
+            -> bool
+        {
+            return std::distance(first, last) == N;
+        }
+    };
 
-struct regular_sorter:
-    cppsort::sorter_facade<regular_sorter>
-{
-    using cppsort::sorter_facade<regular_sorter>::operator();
-
-    template<
-        typename RandomAccessIterator,
-        typename Compare = std::less<>
-    >
-    auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
-        -> bool
+    struct regular_sorter_impl
     {
-        return false;
-    }
-};
+        template<
+            typename RandomAccessIterator,
+            typename Compare = std::less<>
+        >
+        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
+            -> bool
+        {
+            return false;
+        }
+    };
+
+    template<std::size_t N>
+    struct fixed_sorter:
+        cppsort::sorter_facade<fixed_sorter_impl<N>>
+    {};
+
+    struct regular_sorter:
+        cppsort::sorter_facade<regular_sorter_impl>
+    {};
+}
 
 namespace cppsort
 {

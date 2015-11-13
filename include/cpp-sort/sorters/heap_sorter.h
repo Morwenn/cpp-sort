@@ -38,23 +38,26 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct heap_sorter:
-        sorter_facade<heap_sorter>
+    namespace detail
     {
-        using sorter_facade<heap_sorter>::operator();
-
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(RandomAccessIterator first,
-                        RandomAccessIterator last,
-                        Compare compare={}) const
-            -> void
+        struct heap_sorter_impl
         {
-            detail::heapsort(first, last, compare);
-        }
-    };
+            template<
+                typename RandomAccessIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                heapsort(first, last, compare);
+            }
+        };
+    }
+
+    struct heap_sorter:
+        sorter_facade<detail::heap_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

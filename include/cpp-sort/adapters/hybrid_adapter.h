@@ -72,125 +72,129 @@ namespace cppsort
 
         template<>
         constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
+
+        ////////////////////////////////////////////////////////////
+        // Adapter
+
+        template<typename... Sorters>
+        class hybrid_adapter_impl
+        {
+            private:
+
+                // Number of acceptable iterator categories
+                static constexpr std::size_t categories_number = 4;
+
+                ////////////////////////////////////////////////////////////
+                // Import every operator() in one class
+
+                template<typename Head, typename... Tail>
+                struct sorters_merger:
+                    Head, sorters_merger<Tail...>
+                {
+                    using Head::operator();
+                    using sorters_merger<Tail...>::operator();
+                };
+
+                template<typename Head>
+                struct sorters_merger<Head>:
+                    Head
+                {
+                    using Head::operator();
+                };
+
+                ////////////////////////////////////////////////////////////
+                // Add a dispatch to the operator() so that a sorter is
+                // preferred for its iterator category first, then for its
+                // position into the sorters
+
+                template<typename Sorter, std::size_t Ind>
+                struct selection_wrapper
+                {
+                    template<typename... Args>
+                    auto operator()(detail::choice<Ind>, Args&&... args) const
+                        -> decltype(Sorter{}(std::forward<Args>(args)...))
+                    {
+                        return Sorter{}(std::forward<Args>(args)...);
+                    }
+                };
+
+                // Associate and index to every sorter depending on
+                // its position in the parameter pack
+                template<typename>
+                struct dispatch_sorter_impl;
+
+                template<std::size_t... Indices>
+                struct dispatch_sorter_impl<std::index_sequence<Indices...>>
+                {
+                    using type = sorters_merger<
+                        selection_wrapper<
+                            Sorters,
+                            Indices + detail::iterator_category_value<iterator_category<Sorters>>
+                                    * categories_number
+                        >...
+                    >;
+                };
+
+                // Dispatch-enabled sorter
+                using dispatch_sorter = typename dispatch_sorter_impl<
+                    std::make_index_sequence<sizeof...(Sorters)>
+                >::type;
+
+            public:
+
+                template<typename Iterable, typename... Args>
+                auto operator()(Iterable& iterable, Args&&... args) const
+                    -> decltype(dispatch_sorter{}(
+                        detail::choice<
+                            detail::iterator_category_value<typename std::iterator_traits<
+                                decltype(std::begin(iterable))
+                            >::iterator_category> * categories_number
+                        >{},
+                        iterable,
+                        std::forward<Args>(args)...
+                    ))
+                {
+                    // Iterator category of the iterable to sort
+                    using category =
+                        typename std::iterator_traits<
+                            decltype(std::begin(iterable))
+                        >::iterator_category;
+
+                    // Call the appropriate operator()
+                    return dispatch_sorter{}(
+                        detail::choice<detail::iterator_category_value<category> * categories_number>{},
+                        iterable, std::forward<Args>(args)...
+                    );
+                }
+
+                template<typename Iterator, typename... Args>
+                auto operator()(Iterator first, Iterator last, Args&&... args) const
+                    -> decltype(dispatch_sorter{}(
+                            detail::choice<
+                                detail::iterator_category_value<
+                                    typename std::iterator_traits<Iterator>::iterator_category
+                                > * categories_number
+                            >{},
+                            first, last,
+                            std::forward<Args>(args)...
+                    ))
+                {
+                    // Iterator category of the iterable to sort
+                    using category = typename std::iterator_traits<Iterator>::iterator_category;
+
+                    // Call the appropriate operator()
+                    return dispatch_sorter{}(
+                        detail::choice<detail::iterator_category_value<category> * categories_number>{},
+                        first, last, std::forward<Args>(args)...
+                    );
+                }
+        };
     }
 
-    ////////////////////////////////////////////////////////////
-    // Adapter
-
     template<typename... Sorters>
-    class hybrid_adapter:
-        public sorter_facade<hybrid_adapter<Sorters...>>
-    {
-        private:
-
-            // Number of acceptable iterator categories
-            static constexpr std::size_t categories_number = 4;
-
-            ////////////////////////////////////////////////////////////
-            // Import every operator() in one class
-
-            template<typename Head, typename... Tail>
-            struct sorters_merger:
-                Head, sorters_merger<Tail...>
-            {
-                using Head::operator();
-                using sorters_merger<Tail...>::operator();
-            };
-
-            template<typename Head>
-            struct sorters_merger<Head>:
-                Head
-            {
-                using Head::operator();
-            };
-
-            ////////////////////////////////////////////////////////////
-            // Add a dispatch to the operator() so that a sorter is
-            // preferred for its iterator category first, then for its
-            // position into the sorters
-
-            template<typename Sorter, std::size_t Ind>
-            struct selection_wrapper
-            {
-                template<typename... Args>
-                auto operator()(detail::choice<Ind>, Args&&... args) const
-                    -> decltype(Sorter{}(std::forward<Args>(args)...))
-                {
-                    return Sorter{}(std::forward<Args>(args)...);
-                }
-            };
-
-            // Associate and index to every sorter depending on
-            // its position in the parameter pack
-            template<typename>
-            struct dispatch_sorter_impl;
-
-            template<std::size_t... Indices>
-            struct dispatch_sorter_impl<std::index_sequence<Indices...>>
-            {
-                using type = sorters_merger<
-                    selection_wrapper<
-                        Sorters,
-                        Indices + detail::iterator_category_value<iterator_category<Sorters>>
-                                * categories_number
-                    >...
-                >;
-            };
-
-            // Dispatch-enabled sorter
-            using dispatch_sorter = typename dispatch_sorter_impl<
-                std::make_index_sequence<sizeof...(Sorters)>
-            >::type;
-
-        public:
-
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable& iterable, Args&&... args) const
-                -> decltype(dispatch_sorter{}(
-                    detail::choice<
-                        detail::iterator_category_value<typename std::iterator_traits<
-                            decltype(std::begin(iterable))
-                        >::iterator_category> * categories_number
-                    >{},
-                    iterable,
-                    std::forward<Args>(args)...
-                ))
-            {
-                // Iterator category of the iterable to sort
-                using category =
-                    typename std::iterator_traits<
-                        decltype(std::begin(iterable))
-                    >::iterator_category;
-
-                // Call the appropriate operator()
-                return dispatch_sorter{}(
-                    detail::choice<detail::iterator_category_value<category> * categories_number>{},
-                    iterable, std::forward<Args>(args)...
-                );
-            }
-
-            template<typename Iterator, typename... Args>
-            auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(dispatch_sorter{}(
-                        detail::choice<
-                            detail::iterator_category_value<
-                                typename std::iterator_traits<Iterator>::iterator_category
-                            > * categories_number
-                        >{},
-                        first, last,
-                        std::forward<Args>(args)...
-                ))
-            {
-                // Iterator category of the iterable to sort
-                using category = typename std::iterator_traits<Iterator>::iterator_category;
-
-                // Call the appropriate operator()
-                return dispatch_sorter{}(
-                    detail::choice<detail::iterator_category_value<category> * categories_number>{},
-                    first, last, std::forward<Args>(args)...
-                );
-            }
-    };
+    struct hybrid_adapter:
+        sorter_facade<detail::hybrid_adapter_impl<Sorters...>>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

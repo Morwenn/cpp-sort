@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <iterator>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
@@ -36,14 +37,22 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Adapter
 
-    template<std::size_t N>
-    struct sorting_network_sorter
+    namespace detail
     {
-        static_assert(
-            N && false,
-            "sorting_network_sorter has no specialization for this size of N"
-        );
-    };
+        template<std::size_t N>
+        struct sorting_network_sorter_impl
+        {
+            static_assert(
+                N && false,
+                "sorting_network_sorter has no specialization for this size of N"
+            );
+        };
+    }
+
+    template<std::size_t N>
+    struct sorting_network_sorter:
+        sorter_facade<detail::sorting_network_sorter_impl<N>>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

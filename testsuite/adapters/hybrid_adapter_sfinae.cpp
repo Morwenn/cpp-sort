@@ -31,62 +31,68 @@
 #include <cpp-sort/sorter_traits.h>
 #include <catch.hpp>
 
-// Type of sorter used for checks
-enum class sorter_type
+namespace
 {
-    integer,
-    floating_point,
-    generic
-};
-
-struct integer_sorter:
-    cppsort::sorter_facade<integer_sorter>
-{
-    using cppsort::sorter_facade<integer_sorter>::operator();
-
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator, RandomAccessIterator)
-        -> std::enable_if_t<
-            std::is_integral<
-                typename std::iterator_traits<RandomAccessIterator>::value_type
-            >::value,
-            sorter_type
-        >
+    // Type of sorter used for checks
+    enum class sorter_type
     {
-        return sorter_type::integer;
-    }
-};
+        integer,
+        floating_point,
+        generic
+    };
 
-struct float_sorter:
-    cppsort::sorter_facade<float_sorter>
-{
-    using cppsort::sorter_facade<float_sorter>::operator();
-
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator, RandomAccessIterator)
-        -> std::enable_if_t<
-            std::is_floating_point<
-                typename std::iterator_traits<RandomAccessIterator>::value_type
-            >::value,
-            sorter_type
-        >
+    struct integer_sorter_impl
     {
-        return sorter_type::floating_point;
-    }
-};
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator, RandomAccessIterator)
+            -> std::enable_if_t<
+                std::is_integral<
+                    typename std::iterator_traits<RandomAccessIterator>::value_type
+                >::value,
+                sorter_type
+            >
+        {
+            return sorter_type::integer;
+        }
+    };
 
-struct generic_sorter:
-    cppsort::sorter_facade<generic_sorter>
-{
-    using cppsort::sorter_facade<generic_sorter>::operator();
-
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator, RandomAccessIterator)
-        -> sorter_type
+    struct float_sorter_impl
     {
-        return sorter_type::generic;
-    }
-};
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator, RandomAccessIterator)
+            -> std::enable_if_t<
+                std::is_floating_point<
+                    typename std::iterator_traits<RandomAccessIterator>::value_type
+                >::value,
+                sorter_type
+            >
+        {
+            return sorter_type::floating_point;
+        }
+    };
+
+    struct generic_sorter_impl
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator, RandomAccessIterator)
+            -> sorter_type
+        {
+            return sorter_type::generic;
+        }
+    };
+
+    struct integer_sorter:
+        cppsort::sorter_facade<integer_sorter_impl>
+    {};
+
+    struct float_sorter:
+        cppsort::sorter_facade<float_sorter_impl>
+    {};
+
+    struct generic_sorter:
+        cppsort::sorter_facade<generic_sorter_impl>
+    {};
+}
 
 namespace cppsort
 {

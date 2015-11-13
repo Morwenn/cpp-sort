@@ -33,6 +33,7 @@
 #include <iterator>
 #include <tuple>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
@@ -40,52 +41,60 @@ namespace cppsort
     // Adapter
 
     template<std::size_t N>
-    struct low_moves_sorter:
-        sorter_facade<low_moves_sorter<N>>
+    struct low_moves_sorter;
+
+    namespace detail
     {
-        using sorter_facade<low_moves_sorter<N>>::operator();
-
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare={}) const
-            -> void
+        template<std::size_t N>
+        struct low_moves_sorter_impl
         {
-            RandomAccessIterator min, max;
-            std::tie(min, max) = std::minmax_element(first, last--, compare);
+            template<
+                typename RandomAccessIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                RandomAccessIterator min, max;
+                std::tie(min, max) = std::minmax_element(first, last--, compare);
 
-            if (max == first && min == last)
-            {
-                if (min == max) return;
-                std::iter_swap(min, max);
+                if (max == first && min == last)
+                {
+                    if (min == max) return;
+                    std::iter_swap(min, max);
+                }
+                else if (max == first)
+                {
+                    if (last != max)
+                    {
+                        std::iter_swap(last, max);
+                    }
+                    if (first != min)
+                    {
+                        std::iter_swap(first, min);
+                    }
+                }
+                else
+                {
+                    if (first != min)
+                    {
+                        std::iter_swap(first, min);
+                    }
+                    if (last != max)
+                    {
+                        std::iter_swap(last, max);
+                    }
+                }
+                low_moves_sorter<N-2u>{}(++first, last, compare);
             }
-            else if (max == first)
-            {
-                if (last != max)
-                {
-                    std::iter_swap(last, max);
-                }
-                if (first != min)
-                {
-                    std::iter_swap(first, min);
-                }
-            }
-            else
-            {
-                if (first != min)
-                {
-                    std::iter_swap(first, min);
-                }
-                if (last != max)
-                {
-                    std::iter_swap(last, max);
-                }
-            }
-            low_moves_sorter<N-2u>{}(++first, last, compare);
-        }
-    };
+        };
+    }
+
+    template<std::size_t N>
+    struct low_moves_sorter:
+        sorter_facade<detail::low_moves_sorter_impl<N>>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

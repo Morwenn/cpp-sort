@@ -29,61 +29,67 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 
-template<
-    typename ForwardIterator,
-    typename StrictWeakOrdering
->
-auto bubble_sort(ForwardIterator first, StrictWeakOrdering compare,
-                 std::size_t size)
-    -> void
+namespace detail
 {
-    if (size < 2) return;
-
-    while (--size)
+    template<
+        typename ForwardIterator,
+        typename StrictWeakOrdering
+    >
+    auto bubble_sort(ForwardIterator first, StrictWeakOrdering compare,
+                     std::size_t size)
+        -> void
     {
-        ForwardIterator current = first;
-        ForwardIterator next = std::next(current);
-        for (std::size_t i = 0 ; i < size ; ++i)
+        if (size < 2) return;
+
+        while (--size)
         {
-            if (compare(*next, *current))
+            ForwardIterator current = first;
+            ForwardIterator next = std::next(current);
+            for (std::size_t i = 0 ; i < size ; ++i)
             {
-                std::iter_swap(current, next);
+                if (compare(*next, *current))
+                {
+                    std::iter_swap(current, next);
+                }
+                ++next;
+                ++current;
             }
-            ++next;
-            ++current;
         }
     }
+
+    struct bubble_sorter_impl
+    {
+        // Pair of iterators overload
+        template<
+            typename ForwardIterator,
+            typename StrictWeakOrdering = std::less<>
+        >
+        auto operator()(ForwardIterator first, ForwardIterator last,
+                        StrictWeakOrdering compare={}) const
+            -> void
+        {
+            bubble_sort(first, compare, std::distance(first, last));
+        }
+
+        // Iterable overload
+        template<
+            typename ForwardIterable,
+            typename StrictWeakOrdering = std::less<>
+        >
+        auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={}) const
+            -> void
+        {
+            bubble_sort(
+                std::begin(iterable), compare,
+                cppsort::utility::size(iterable)
+            );
+        }
+    };
 }
 
 struct bubble_sorter:
-    cppsort::sorter_facade<bubble_sorter>
-{
-    // Pair of iterators overload
-    template<
-        typename ForwardIterator,
-        typename StrictWeakOrdering = std::less<>
-    >
-    auto operator()(ForwardIterator first, ForwardIterator last,
-                    StrictWeakOrdering compare={}) const
-        -> void
-    {
-        bubble_sort(first, compare, std::distance(first, last));
-    }
-
-    // Iterable overload
-    template<
-        typename ForwardIterable,
-        typename StrictWeakOrdering = std::less<>
-    >
-    auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={}) const
-        -> void
-    {
-        bubble_sort(
-            std::begin(iterable), compare,
-            cppsort::utility::size(iterable)
-        );
-    }
-};
+    cppsort::sorter_facade<detail::bubble_sorter_impl>
+{};
 
 namespace cppsort
 {
@@ -98,6 +104,7 @@ namespace cppsort
 #include <array>
 #include <cassert>
 #include <numeric>
+#include <cpp-sort/sort.h>
 
 int main()
 {
@@ -113,7 +120,7 @@ int main()
     {
         auto to_sort = collection;
         // Bubble sort the collection
-        bubble_sorter{}(to_sort);
+        cppsort::sort(to_sort, bubble_sorter{});
         // Check that it is indeed sorted
         assert(std::is_sorted(std::begin(to_sort), std::end(to_sort)));
     } while (std::next_permutation(std::begin(collection), std::end(collection)));

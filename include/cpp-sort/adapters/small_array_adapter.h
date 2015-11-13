@@ -41,75 +41,81 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Adapter
 
+    namespace detail
+    {
+        template<template<std::size_t> class Sorter, typename Indices>
+        struct small_array_adapter_impl;
+
+        template<
+            template<std::size_t> class Sorter,
+            std::size_t... Indices
+        >
+        struct small_array_adapter_impl<Sorter, std::index_sequence<Indices...>>
+        {
+            template<
+                typename T,
+                std::size_t N,
+                typename Compare = std::less<>
+            >
+            auto operator()(std::array<T, N>& array, Compare compare={}) const
+                -> std::enable_if_t<
+                    utility::is_in_pack<N, Indices...>,
+                    decltype(std::declval<Sorter<N>&>()(array, compare))
+                >
+            {
+                return Sorter<N>{}(array, compare);
+            }
+
+            template<
+                typename T,
+                std::size_t N,
+                typename Compare = std::less<>,
+                typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
+            >
+            auto operator()(T (&array)[N], Compare compare={}) const
+                -> std::enable_if_t<
+                    utility::is_in_pack<N, Indices...>,
+                    decltype(std::declval<Sorter<N>&>()(array, compare))
+                >
+            {
+                return Sorter<N>{}(array, compare);
+            }
+        };
+
+        template<template<std::size_t> class Sorter>
+        struct small_array_adapter_impl<Sorter, void>
+        {
+            template<
+                typename T,
+                std::size_t N,
+                typename Compare = std::less<>
+            >
+            auto operator()(std::array<T, N>& array, Compare compare={}) const
+                -> decltype(std::declval<Sorter<N>&>()(array, compare))
+            {
+                return Sorter<N>{}(array, compare);
+            }
+
+            template<
+                typename T,
+                std::size_t N,
+                typename Compare = std::less<>
+            >
+            auto operator()(T (&array)[N], Compare compare={}) const
+                -> decltype(std::declval<Sorter<N>&>()(array, compare))
+            {
+                return Sorter<N>{}(array, compare);
+            }
+        };
+    }
+
     template<
         template<std::size_t> class Sorter,
         typename Indices = void
     >
-    struct small_array_adapter;
-
-    template<
-        template<std::size_t> class Sorter,
-        std::size_t... Indices
-    >
-    struct small_array_adapter<Sorter, std::index_sequence<Indices...>>:
-        sorter_facade<small_array_adapter<Sorter, std::index_sequence<Indices...>>>
-    {
-        template<
-            typename T,
-            std::size_t N,
-            typename Compare = std::less<>
-        >
-        auto operator()(std::array<T, N>& array, Compare compare={}) const
-            -> std::enable_if_t<
-                utility::is_in_pack<N, Indices...>,
-                decltype(std::declval<Sorter<N>&>()(array, compare))
-            >
-        {
-            return Sorter<N>{}(array, compare);
-        }
-
-        template<
-            typename T,
-            std::size_t N,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
-        >
-        auto operator()(T (&array)[N], Compare compare={}) const
-            -> std::enable_if_t<
-                utility::is_in_pack<N, Indices...>,
-                decltype(std::declval<Sorter<N>&>()(array, compare))
-            >
-        {
-            return Sorter<N>{}(array, compare);
-        }
-    };
-
-    template<template<std::size_t> class Sorter>
-    struct small_array_adapter<Sorter, void>:
-        sorter_facade<small_array_adapter<Sorter, void>>
-    {
-        template<
-            typename T,
-            std::size_t N,
-            typename Compare = std::less<>
-        >
-        auto operator()(std::array<T, N>& array, Compare compare={}) const
-            -> decltype(std::declval<Sorter<N>&>()(array, compare))
-        {
-            return Sorter<N>{}(array, compare);
-        }
-
-        template<
-            typename T,
-            std::size_t N,
-            typename Compare = std::less<>
-        >
-        auto operator()(T (&array)[N], Compare compare={}) const
-            -> decltype(std::declval<Sorter<N>&>()(array, compare))
-        {
-            return Sorter<N>{}(array, compare);
-        }
-    };
+    struct small_array_adapter:
+        sorter_facade<detail::small_array_adapter_impl<Sorter, Indices>>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

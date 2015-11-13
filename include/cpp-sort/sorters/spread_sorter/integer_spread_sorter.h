@@ -38,22 +38,26 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct integer_spread_sorter:
-        sorter_facade<integer_spread_sorter>
+    namespace detail
     {
-        using sorter_facade<integer_spread_sorter>::operator();
-
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-            -> std::enable_if_t<
-                std::is_integral<
-                    typename std::iterator_traits<RandomAccessIterator>::value_type
-                >::value
-            >
+        struct integer_spread_sorter_impl
         {
-            detail::spreadsort::integer_sort(first, last);
-        }
-    };
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+                -> std::enable_if_t<
+                    std::is_integral<
+                        typename std::iterator_traits<RandomAccessIterator>::value_type
+                    >::value
+                >
+            {
+                spreadsort::integer_sort(first, last);
+            }
+        };
+    }
+
+    struct integer_spread_sorter:
+        sorter_facade<detail::integer_spread_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

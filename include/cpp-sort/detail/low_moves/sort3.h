@@ -29,18 +29,16 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include <cpp-sort/sorter_facade.h>
 #include "../rotate_left.h"
 #include "../rotate_right.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_moves_sorter<3u>:
-        sorter_facade<low_moves_sorter<3u>>
+    struct low_moves_sorter_impl<3u>
     {
-        using sorter_facade<low_moves_sorter<3u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>
@@ -71,6 +69,6 @@ namespace cppsort
             }
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT3_H_

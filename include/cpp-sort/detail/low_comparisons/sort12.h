@@ -29,16 +29,15 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include <cpp-sort/sorter_facade.h>
+#include "../front_insert.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_comparisons_sorter<12u>:
-        sorter_facade<low_comparisons_sorter<12u>>
+    struct low_comparisons_sorter_impl<12u>
     {
-        using sorter_facade<low_comparisons_sorter<12u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>
@@ -117,6 +116,6 @@ namespace cppsort
             }
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT12_H_

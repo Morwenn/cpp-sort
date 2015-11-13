@@ -39,39 +39,45 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct quick_sorter:
-        sorter_facade<quick_sorter>
+    namespace detail
     {
-        template<
-            typename ForwardIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterable& iterable, Compare compare={}) const
-            -> void
+        struct quick_sorter_impl
         {
-            detail::quicksort(
-                std::begin(iterable),
-                std::end(iterable),
-                compare,
-                utility::size(iterable)
-            );
-        }
+            template<
+                typename ForwardIterable,
+                typename Compare = std::less<>
+            >
+            auto operator()(ForwardIterable& iterable, Compare compare={}) const
+                -> void
+            {
+                detail::quicksort(
+                    std::begin(iterable),
+                    std::end(iterable),
+                    compare,
+                    utility::size(iterable)
+                );
+            }
 
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
-            -> void
-        {
-            detail::quicksort(
-                first, last,
-                compare,
-                std::distance(first, last)
-            );
-        }
-    };
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                detail::quicksort(
+                    first, last,
+                    compare,
+                    std::distance(first, last)
+                );
+            }
+        };
+    }
+
+    struct quick_sorter:
+        sorter_facade<detail::quick_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

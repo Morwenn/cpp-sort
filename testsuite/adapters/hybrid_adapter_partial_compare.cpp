@@ -28,47 +28,52 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 
-enum struct sorter_type
+namespace
 {
-    ascending,
-    descending,
-    generic
-};
-
-struct partial_comparison_sorter:
-    cppsort::sorter_facade<partial_comparison_sorter>
-{
-    using cppsort::sorter_facade<partial_comparison_sorter>::operator();
-
-    // Sort in ascending order
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator) const
-        -> sorter_type
+    enum struct sorter_type
     {
-        return sorter_type::ascending;
-    }
+        ascending,
+        descending,
+        generic
+    };
 
-    // Sort in descending order
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator, std::greater<>) const
-        -> sorter_type
+    struct partial_comparison_sorter_impl
     {
-        return sorter_type::descending;
-    }
-};
+        // Sort in ascending order
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> sorter_type
+        {
+            return sorter_type::ascending;
+        }
 
-struct generic_sorter:
-    cppsort::sorter_facade<generic_sorter>
-{
-    using cppsort::sorter_facade<generic_sorter>::operator();
+        // Sort in descending order
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator, std::greater<>) const
+            -> sorter_type
+        {
+            return sorter_type::descending;
+        }
+    };
 
-    template<typename Iterator, typename Compare>
-    auto operator()(Iterator, Iterator, Compare)
-        -> sorter_type
+    struct generic_sorter_impl
     {
-        return sorter_type::generic;
-    }
-};
+        template<typename Iterator, typename Compare>
+        auto operator()(Iterator, Iterator, Compare)
+            -> sorter_type
+        {
+            return sorter_type::generic;
+        }
+    };
+
+    struct partial_comparison_sorter:
+        cppsort::sorter_facade<partial_comparison_sorter_impl>
+    {};
+
+    struct generic_sorter:
+        cppsort::sorter_facade<generic_sorter_impl>
+    {};
+}
 
 namespace cppsort
 {
