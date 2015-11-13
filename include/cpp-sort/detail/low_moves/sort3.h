@@ -29,18 +29,16 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include <cpp-sort/sorter_facade.h>
 #include "../rotate_left.h"
 #include "../rotate_right.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_moves_sorter<3u>:
-        sorter_facade<low_moves_sorter<3u>>
+    struct low_moves_sorter_impl<3u>
     {
-        using sorter_facade<low_moves_sorter<3u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>
@@ -55,7 +53,7 @@ namespace cppsort
                     if (compare(first[2u], first[1u])) {
                         swap(first[0u], first[2u]);
                     } else {
-                        detail::rotate_left<3u>(first);
+                        rotate_left<3u>(first);
                     }
                 } else {
                     swap(first[0u], first[1u]);
@@ -63,7 +61,7 @@ namespace cppsort
             } else {
                 if (compare(first[2u], first[1u])) {
                     if (compare(first[2u], first[0u])) {
-                        detail::rotate_right<3u>(first);
+                        rotate_right<3u>(first);
                     } else {
                         swap(first[1u], first[2u]);
                     }
@@ -71,6 +69,6 @@ namespace cppsort
             }
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT3_H_

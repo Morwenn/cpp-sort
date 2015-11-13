@@ -38,23 +38,26 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct tim_sorter:
-        sorter_facade<tim_sorter>
+    namespace detail
     {
-        using sorter_facade<tim_sorter>::operator();
-
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(RandomAccessIterator first,
-                        RandomAccessIterator last,
-                        Compare compare={}) const
-            -> void
+        struct tim_sorter_impl
         {
-            detail::timsort(first, last, compare);
-        }
-    };
+            template<
+                typename RandomAccessIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                timsort(first, last, compare);
+            }
+        };
+    }
+
+    struct tim_sorter:
+        sorter_facade<detail::tim_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

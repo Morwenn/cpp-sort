@@ -39,22 +39,26 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct float_spread_sorter:
-        sorter_facade<float_spread_sorter>
+    namespace detail
     {
-        using sorter_facade<float_spread_sorter>::operator();
-
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-            -> std::enable_if_t<
-                std::numeric_limits<
-                    typename std::iterator_traits<RandomAccessIterator>::value_type
-                >::is_iec559
-            >
+        struct float_spread_sorter_impl
         {
-            detail::spreadsort::float_sort(first, last);
-        }
-    };
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+                -> std::enable_if_t<
+                    std::numeric_limits<
+                        typename std::iterator_traits<RandomAccessIterator>::value_type
+                    >::is_iec559
+                >
+            {
+                spreadsort::float_sort(first, last);
+            }
+        };
+    }
+
+    struct float_spread_sorter:
+        sorter_facade<detail::float_spread_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

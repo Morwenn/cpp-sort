@@ -38,23 +38,26 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct verge_sorter:
-        sorter_facade<verge_sorter>
+    namespace detail
     {
-        using sorter_facade<verge_sorter>::operator();
-
-        template<
-            typename BidirectionalIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(BidirectionalIterator first,
-                        BidirectionalIterator last,
-                        Compare compare={}) const
-            -> void
+        struct verge_sorter_impl
         {
-            detail::vergesort(first, last, compare);
-        }
-    };
+            template<
+                typename BidirectionalIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                vergesort(first, last, compare);
+            }
+        };
+    }
+
+    struct verge_sorter:
+        sorter_facade<detail::verge_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

@@ -39,39 +39,45 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct merge_sorter:
-        sorter_facade<merge_sorter>
+    namespace detail
     {
-        template<
-            typename ForwardIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterable& iterable, Compare compare={}) const
-            -> void
+        struct merge_sorter_impl
         {
-            detail::merge_sort(
-                std::begin(iterable),
-                std::end(iterable),
-                compare,
-                utility::size(iterable)
-            );
-        }
+            template<
+                typename ForwardIterable,
+                typename Compare = std::less<>
+            >
+            auto operator()(ForwardIterable& iterable, Compare compare={}) const
+                -> void
+            {
+                merge_sort(
+                    std::begin(iterable),
+                    std::end(iterable),
+                    compare,
+                    utility::size(iterable)
+                );
+            }
 
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
-            -> void
-        {
-            detail::merge_sort(
-                first, last,
-                compare,
-                std::distance(first, last)
-            );
-        }
-    };
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                merge_sort(
+                    first, last,
+                    compare,
+                    std::distance(first, last)
+                );
+            }
+        };
+    }
+
+    struct merge_sorter:
+        sorter_facade<detail::merge_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

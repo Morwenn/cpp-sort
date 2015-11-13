@@ -38,22 +38,26 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct selection_sorter:
-        sorter_facade<selection_sorter>
+    namespace detail
     {
-        using sorter_facade<selection_sorter>::operator();
-
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}) const
-            -> void
+        struct selection_sorter_impl
         {
-            detail::selection_sort(first, last, compare);
-        }
-    };
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                selection_sort(first, last, compare);
+            }
+        };
+    }
+
+    struct selection_sorter:
+        sorter_facade<detail::selection_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

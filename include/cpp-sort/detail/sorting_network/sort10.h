@@ -28,17 +28,15 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/sorter_facade.h>
 #include "../swap_if.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct sorting_network_sorter<10u>:
-        sorter_facade<sorting_network_sorter<10u>>
+    struct sorting_network_sorter_impl<10u>
     {
-        using sorter_facade<sorting_network_sorter<10u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>
@@ -46,37 +44,37 @@ namespace cppsort
         auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
             -> void
         {
-            detail::swap_if(first[4u], first[9u], compare);
-            detail::swap_if(first[3u], first[8u], compare);
-            detail::swap_if(first[2u], first[7u], compare);
-            detail::swap_if(first[1u], first[6u], compare);
-            detail::swap_if(first[0u], first[5u], compare);
-            detail::swap_if(first[1u], first[4u], compare);
-            detail::swap_if(first[6u], first[9u], compare);
-            detail::swap_if(first[0u], first[3u], compare);
-            detail::swap_if(first[5u], first[8u], compare);
-            detail::swap_if(first[0u], first[2u], compare);
-            detail::swap_if(first[3u], first[6u], compare);
-            detail::swap_if(first[7u], first[9u], compare);
-            detail::swap_if(first[0u], first[1u], compare);
-            detail::swap_if(first[2u], first[4u], compare);
-            detail::swap_if(first[5u], first[7u], compare);
-            detail::swap_if(first[8u], first[9u], compare);
-            detail::swap_if(first[1u], first[2u], compare);
-            detail::swap_if(first[4u], first[6u], compare);
-            detail::swap_if(first[7u], first[8u], compare);
-            detail::swap_if(first[3u], first[5u], compare);
-            detail::swap_if(first[2u], first[5u], compare);
-            detail::swap_if(first[6u], first[8u], compare);
-            detail::swap_if(first[1u], first[3u], compare);
-            detail::swap_if(first[4u], first[7u], compare);
-            detail::swap_if(first[2u], first[3u], compare);
-            detail::swap_if(first[6u], first[7u], compare);
-            detail::swap_if(first[3u], first[4u], compare);
-            detail::swap_if(first[5u], first[6u], compare);
-            detail::swap_if(first[4u], first[5u], compare);
+            swap_if(first[4u], first[9u], compare);
+            swap_if(first[3u], first[8u], compare);
+            swap_if(first[2u], first[7u], compare);
+            swap_if(first[1u], first[6u], compare);
+            swap_if(first[0u], first[5u], compare);
+            swap_if(first[1u], first[4u], compare);
+            swap_if(first[6u], first[9u], compare);
+            swap_if(first[0u], first[3u], compare);
+            swap_if(first[5u], first[8u], compare);
+            swap_if(first[0u], first[2u], compare);
+            swap_if(first[3u], first[6u], compare);
+            swap_if(first[7u], first[9u], compare);
+            swap_if(first[0u], first[1u], compare);
+            swap_if(first[2u], first[4u], compare);
+            swap_if(first[5u], first[7u], compare);
+            swap_if(first[8u], first[9u], compare);
+            swap_if(first[1u], first[2u], compare);
+            swap_if(first[4u], first[6u], compare);
+            swap_if(first[7u], first[8u], compare);
+            swap_if(first[3u], first[5u], compare);
+            swap_if(first[2u], first[5u], compare);
+            swap_if(first[6u], first[8u], compare);
+            swap_if(first[1u], first[3u], compare);
+            swap_if(first[4u], first[7u], compare);
+            swap_if(first[2u], first[3u], compare);
+            swap_if(first[6u], first[7u], compare);
+            swap_if(first[3u], first[4u], compare);
+            swap_if(first[5u], first[6u], compare);
+            swap_if(first[4u], first[5u], compare);
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT10_H_

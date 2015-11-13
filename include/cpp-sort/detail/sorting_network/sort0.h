@@ -28,16 +28,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/sorter_facade.h>
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct sorting_network_sorter<0u>:
-        sorter_facade<sorting_network_sorter<0u>>
+    struct sorting_network_sorter_impl<0u>
     {
-        using sorter_facade<sorting_network_sorter<0u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>
@@ -46,6 +44,6 @@ namespace cppsort
             -> void
         {}
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT0_H_
