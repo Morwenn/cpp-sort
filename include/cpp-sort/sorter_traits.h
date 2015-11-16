@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <type_traits>
 #include <cpp-sort/utility/detection.h>
 
@@ -60,35 +61,65 @@ namespace cppsort
         };
 
         template<typename Sorter, typename Iterable>
-        using is_sorter_t = std::result_of_t<Sorter(Iterable&)>;
+        using has_sort_t = std::result_of_t<Sorter(Iterable&)>;
 
         template<typename Sorter, typename Iterable, typename Compare>
-        using is_comparison_sorter_t = std::result_of_t<Sorter(Iterable&, Compare)>;
+        using has_comparison_sort_t = utility::void_t<
+            std::result_of_t<Sorter(Iterable&, Compare)>,
+            std::result_of_t<Compare(
+                decltype(*std::begin(std::declval<Iterable&>())),
+                decltype(*std::end(std::declval<Iterable&>()))
+            )>
+        >;
 
         template<typename Sorter, typename Iterator>
-        using is_sorter_iterator_t = is_sorter_t<Sorter, range<Iterator>>;
+        using has_sort_iterator_t = std::result_of_t<Sorter(Iterator, Iterator)>;
 
         template<typename Sorter, typename Iterator, typename Compare>
-        using is_comparison_sorter_iterator_t = is_comparison_sorter_t<Sorter, range<Iterator>, Compare>;
+        using has_comparison_sort_iterator_t = utility::void_t<
+            std::result_of_t<Sorter(Iterator, Iterator, Compare)>,
+            std::result_of_t<Compare(
+                decltype(*std::declval<Iterator&>()),
+                decltype(*std::declval<Iterator&>())
+            )>
+        >;
+
+        template<typename Sorter, typename Iterable>
+        constexpr bool has_sort
+            = utility::is_detected_v<has_sort_t, Sorter, Iterable>;
+
+        template<typename Sorter, typename Iterable, typename Compare>
+        constexpr bool has_comparison_sort
+            = utility::is_detected_v<has_comparison_sort_t, Sorter, Iterable, Compare>;
+
+        template<typename Sorter, typename Iterator>
+        constexpr bool has_sort_iterator
+            = utility::is_detected_v<has_sort_iterator_t, Sorter, Iterator>;
+
+        template<typename Sorter, typename Iterator, typename Compare>
+        constexpr bool has_comparison_sort_iterator
+            = utility::is_detected_v<has_comparison_sort_iterator_t, Sorter, Iterator, Compare>;
     }
 
     template<typename Sorter, typename Iterable>
     constexpr bool is_sorter
-        = utility::is_detected_v<detail::is_sorter_t, Sorter, Iterable>;
+        = detail::has_sort<Sorter, Iterable>;
 
     template<typename Sorter, typename Iterable, typename Compare>
     constexpr bool is_comparison_sorter
         = is_sorter<Sorter, Iterable> &&
-          utility::is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable, Compare>;
+          detail::has_comparison_sort<Sorter, Iterable, Compare>;
 
     template<typename Sorter, typename Iterator>
     constexpr bool is_sorter_iterator
-        = utility::is_detected_v<detail::is_sorter_iterator_t, Sorter, Iterator>;
+        = is_sorter<Sorter, detail::range<Iterator>> &&
+          detail::has_sort_iterator<Sorter, Iterator>;
 
     template<typename Sorter, typename Iterator, typename Compare>
     constexpr bool is_comparison_sorter_iterator
         = is_sorter_iterator<Sorter, Iterator> &&
-          utility::is_detected_v<detail::is_comparison_sorter_iterator_t, Sorter, Iterator, Compare>;
+          is_comparison_sorter<Sorter, detail::range<Iterator>, Compare> &&
+          detail::has_comparison_sort_iterator<Sorter, Iterator, Compare>;
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
