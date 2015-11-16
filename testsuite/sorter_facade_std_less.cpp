@@ -32,11 +32,8 @@
 
 namespace
 {
-    struct comparison_sorter:
-        cppsort::sorter_facade<comparison_sorter>
+    struct comparison_sorter_impl
     {
-        using cppsort::sorter_facade<comparison_sorter>::operator();
-
         template<typename Iterator, typename Compare>
         auto operator()(Iterator, Iterator, Compare) const
             -> bool
@@ -52,11 +49,8 @@ namespace
         }
     };
 
-    struct non_comparison_sorter:
-        cppsort::sorter_facade<non_comparison_sorter>
+    struct non_comparison_sorter_impl
     {
-        using cppsort::sorter_facade<non_comparison_sorter>::operator();
-
         template<typename Iterator>
         auto operator()(Iterator, Iterator) const
             -> bool
@@ -65,11 +59,8 @@ namespace
         }
     };
 
-    struct non_comparison_iterable_sorter:
-        cppsort::sorter_facade<non_comparison_iterable_sorter>
+    struct non_comparison_iterable_sorter_impl
     {
-        using cppsort::sorter_facade<non_comparison_iterable_sorter>::operator();
-
         template<typename Iterator>
         auto operator()(Iterator, Iterator) const
             -> bool
@@ -84,6 +75,18 @@ namespace
             return false;
         }
     };
+
+    struct comparison_sorter:
+        cppsort::sorter_facade<comparison_sorter_impl>
+    {};
+
+    struct non_comparison_sorter:
+        cppsort::sorter_facade<non_comparison_sorter_impl>
+    {};
+
+    struct non_comparison_iterable_sorter:
+        cppsort::sorter_facade<non_comparison_iterable_sorter_impl>
+    {};
 }
 
 TEST_CASE( "std::less<> forwarding to sorters",

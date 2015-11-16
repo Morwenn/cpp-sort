@@ -40,87 +40,91 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct string_spread_sorter:
-        sorter_facade<string_spread_sorter>
+    namespace detail
     {
-        using sorter_facade<string_spread_sorter>::operator();
-
-        ////////////////////////////////////////////////////////////
-        // Ascending string sort
-
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-            -> std::enable_if_t<
-                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::string>::value
-            >
+        struct string_spread_sorter_impl
         {
-            detail::spreadsort::string_sort(first, last);
-        }
+            ////////////////////////////////////////////////////////////
+            // Ascending string sort
 
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-            -> std::enable_if_t<
-                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::wstring
-                >::value && (sizeof(wchar_t) == 2)
-            >
-        {
-            std::uint16_t unused = 0;
-            detail::spreadsort::string_sort(first, last, unused);
-        }
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+                -> std::enable_if_t<
+                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                                 typename std::string>::value
+                >
+            {
+                spreadsort::string_sort(first, last);
+            }
 
-        ////////////////////////////////////////////////////////////
-        // Descending string sort
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+                -> std::enable_if_t<
+                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                                 typename std::wstring
+                    >::value && (sizeof(wchar_t) == 2)
+                >
+            {
+                std::uint16_t unused = 0;
+                spreadsort::string_sort(first, last, unused);
+            }
 
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        std::greater<> compare) const
-            -> std::enable_if_t<
-                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::string>::value
-            >
-        {
-            detail::spreadsort::reverse_string_sort(first, last, compare);
-        }
+            ////////////////////////////////////////////////////////////
+            // Descending string sort
 
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        std::greater<std::string> compare) const
-            -> std::enable_if_t<
-                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::string>::value
-            >
-        {
-            detail::spreadsort::reverse_string_sort(first, last, compare);
-        }
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            std::greater<> compare) const
+                -> std::enable_if_t<
+                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                                 typename std::string>::value
+                >
+            {
+                spreadsort::reverse_string_sort(first, last, compare);
+            }
 
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        std::greater<> compare) const
-            -> std::enable_if_t<
-                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::wstring
-                >::value && (sizeof(wchar_t) == 2)
-            >
-        {
-            std::uint16_t unused = 0;
-            detail::spreadsort::reverse_string_sort(first, last, compare, unused);
-        }
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            std::greater<std::string> compare) const
+                -> std::enable_if_t<
+                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                                 typename std::string>::value
+                >
+            {
+                spreadsort::reverse_string_sort(first, last, compare);
+            }
 
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        std::greater<std::wstring> compare) const
-            -> std::enable_if_t<
-                std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                             typename std::wstring
-                >::value && (sizeof(wchar_t) == 2)
-            >
-        {
-            std::uint16_t unused = 0;
-            detail::spreadsort::reverse_string_sort(first, last, compare, unused);
-        }
-    };
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            std::greater<> compare) const
+                -> std::enable_if_t<
+                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                                 typename std::wstring
+                    >::value && (sizeof(wchar_t) == 2)
+                >
+            {
+                std::uint16_t unused = 0;
+                spreadsort::reverse_string_sort(first, last, compare, unused);
+            }
+
+            template<typename RandomAccessIterator>
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            std::greater<std::wstring> compare) const
+                -> std::enable_if_t<
+                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
+                                 typename std::wstring
+                    >::value && (sizeof(wchar_t) == 2)
+                >
+            {
+                std::uint16_t unused = 0;
+                spreadsort::reverse_string_sort(first, last, compare, unused);
+            }
+        };
+    }
+
+    struct string_spread_sorter:
+        sorter_facade<detail::string_spread_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

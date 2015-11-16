@@ -40,41 +40,43 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct merge_sorter:
-        sorter_facade<merge_sorter>
+    namespace detail
     {
-        template<
-            typename ForwardIterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(ForwardIterable& iterable, Compare compare={}) const
-            -> void
+        struct merge_sorter_impl
         {
-            detail::merge_sort(
-                std::begin(iterable),
-                std::end(iterable),
-                compare,
-                utility::identity{},
-                utility::size(iterable)
-            );
-        }
+            template<
+                typename ForwardIterable,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
+            >
+            auto operator()(ForwardIterable& iterable,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                merge_sort(std::begin(iterable), std::end(iterable),
+                           compare, projection,
+                           utility::size(iterable));
+            }
 
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}, Projection projection={}) const
-            -> void
-        {
-            detail::merge_sort(
-                first, last,
-                compare, projection,
-                std::distance(first, last)
-            );
-        }
-    };
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                merge_sort(first, last,
+                           compare, projection,
+                           std::distance(first, last));
+            }
+        };
+    }
+
+    struct merge_sorter:
+        sorter_facade<detail::merge_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

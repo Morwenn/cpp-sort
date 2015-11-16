@@ -147,77 +147,34 @@ namespace cppsort
                 has_comparison_projection_sort_iterator_t,
                 Sorter, Iterator, Compare, Projection
             >;
-        // Black magic. Trust me, you *don't* want to know how this
-        // works. This is probably retarded anyway, but I don't think
-        // there is a standard-compliant way to achieve that without
-        // breaking the user interface.
-
-        template<typename Sorter>
-        struct wrapper:
-            Sorter
-        {
-#ifdef __clang__
-            using Sorter::operator();
-
-            template<typename Iterable>
-            auto operator()(Iterable& iterable) const
-                -> std::enable_if_t<false, utility::void_t<Iterable>>
-            {}
-
-            template<typename Iterable, typename Compare>
-            auto operator()(Iterable& iterable, Compare compare) const
-                -> std::enable_if_t<false, utility::void_t<Iterable>>
-            {}
-
-            template<typename Iterable>
-            auto operator()(Iterable& iterable, std::less<>) const
-               -> std::enable_if_t<false, utility::void_t<Iterable>>
-            {}
-
-            template<typename Iterator>
-            auto operator()(Iterator first, Iterator last, std::less<>) const
-                -> std::enable_if_t<false, utility::void_t<Iterator>>
-            {}
-
-            template<typename Iterable>
-            auto operator()(Iterable& iterable,
-                            std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
-                -> std::enable_if_t<false, utility::void_t<Iterable>>
-            {}
-
-            template<typename Iterator>
-            auto operator()(Iterator first, Iterator last,
-                            std::less<typename std::iterator_traits<Iterator>::value_type>) const
-                -> std::enable_if_t<false, utility::void_t<Iterator>>
-            {}
-#endif
-        };
     }
 
-    // This class is a CRTP base class whose sorters inherit
-    // from which gives them the ability to convert to function
-    // pointers. This mechanism is only possible if sorters are
-    // stateless.
+    // This class takes an incomplete sorter, analyses it and creates
+    // all the methods needed to complete it: additional overloads to
+    // operator() and conversions to function pointers
 
     template<typename Sorter>
-    class sorter_facade
+    class sorter_facade:
+        public Sorter
     {
         protected:
 
             ////////////////////////////////////////////////////////////
             // Function pointer types
 
+            using this_class = sorter_facade<Sorter>;
+
             template<typename Iterable>
-            using fptr_t = std::result_of_t<Sorter(Iterable&)>(*)(Iterable&);
+            using fptr_t = std::result_of_t<this_class(Iterable&)>(*)(Iterable&);
 
             template<typename Iterable, typename Compare>
-            using fptr_cmp_t = std::result_of_t<Sorter(Iterable&, Compare)>(*)(Iterable&, Compare);
+            using fptr_cmp_t = std::result_of_t<this_class(Iterable&, Compare)>(*)(Iterable&, Compare);
 
             template<typename Iterator>
-            using fptr_it_t = std::result_of_t<Sorter(Iterator, Iterator)>(*)(Iterator, Iterator);
+            using fptr_it_t = std::result_of_t<this_class(Iterator, Iterator)>(*)(Iterator, Iterator);
 
             template<typename Iterator, typename Compare>
-            using fptr_cmp_it_t = std::result_of_t<Sorter(Iterator, Iterator, Compare)>(*)(Iterator, Iterator, Compare);
+            using fptr_cmp_it_t = std::result_of_t<this_class(Iterator, Iterator, Compare)>(*)(Iterator, Iterator, Compare);
 
         public:
 
@@ -228,7 +185,7 @@ namespace cppsort
             operator fptr_t<Iterable>() const
             {
                 return [](Iterable& iterable) {
-                    return Sorter{}(iterable);
+                    return this_class{}(iterable);
                 };
             }
 
@@ -236,7 +193,7 @@ namespace cppsort
             operator fptr_cmp_t<Iterable, Compare>() const
             {
                 return [](Iterable& iterable, Compare compare) {
-                    return Sorter{}(iterable, compare);
+                    return this_class{}(iterable, compare);
                 };
             }
 
@@ -244,7 +201,7 @@ namespace cppsort
             operator fptr_it_t<Iterator>() const
             {
                 return [](Iterator first, Iterator last) {
-                    return Sorter{}(first, last);
+                    return this_class{}(first, last);
                 };
             }
 
@@ -252,88 +209,127 @@ namespace cppsort
             operator fptr_cmp_it_t<Iterator, Compare>() const
             {
                 return [](Iterator first, Iterator last, Compare compare) {
-                    return Sorter{}(first, last, compare);
+                    return this_class{}(first, last, compare);
                 };
             }
 
             ////////////////////////////////////////////////////////////
-            // Automatic iterable sorting interface
+            // Non-comparison overloads
+
+            template<typename Iterator>
+            auto operator()(Iterator first, Iterator last) const
+                -> decltype(Sorter::operator()(first, last))
+            {
+                return Sorter::operator()(first, last);
+            }
 
             template<typename Iterable>
             auto operator()(Iterable& iterable) const
                 -> std::enable_if_t<
-                    not detail::has_sort<detail::wrapper<Sorter>, Iterable>,
-                    decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable)))
+                    detail::has_sort<Sorter, Iterable>,
+                    decltype(Sorter::operator()(iterable))
                 >
             {
-                return Sorter{}(std::begin(iterable), std::end(iterable));
+                return Sorter::operator()(iterable);
+            }
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable) const
+                -> std::enable_if_t<
+                    not detail::has_sort<Sorter, Iterable>,
+                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable)))
+                >
+            {
+                return Sorter::operator()(std::begin(iterable), std::end(iterable));
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Comparison overloads
+
+            template<typename Iterator, typename Compare>
+            auto operator()(Iterator first, Iterator last, Compare compare) const
+                -> decltype(Sorter::operator()(first, last, compare))
+            {
+                return Sorter::operator()(first, last, compare);
             }
 
             template<typename Iterable, typename Compare>
             auto operator()(Iterable& iterable, Compare compare) const
                 -> std::enable_if_t<
-                    not detail::has_comparison_sort<detail::wrapper<Sorter>, Iterable, Compare>
-                    &&  detail::has_comparison_sort_iterator<detail::wrapper<Sorter>, decltype(std::begin(iterable)), Compare>,
-                    decltype(std::declval<Sorter&>()(std::begin(iterable), std::end(iterable), compare))
+                    detail::has_comparison_sort<Sorter, Iterable, Compare>,
+                    decltype(Sorter::operator()(iterable, compare))
                 >
             {
-                return Sorter{}(std::begin(iterable), std::end(iterable), compare);
+                return Sorter::operator()(iterable, compare);
+            }
+
+            template<typename Iterable, typename Compare>
+            auto operator()(Iterable& iterable, Compare compare) const
+                -> std::enable_if_t<
+                    not detail::has_comparison_sort<Sorter, Iterable, Compare>
+                    &&  detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>,
+                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), compare))
+                >
+            {
+                return Sorter::operator()(std::begin(iterable), std::end(iterable), compare);
             }
 
             ////////////////////////////////////////////////////////////
-            // Automatic overloads for std::less<>
-
-            template<typename Iterable>
-            auto operator()(Iterable& iterable, std::less<>) const
-                -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<detail::wrapper<Sorter>, decltype(std::begin(iterable)), std::less<>>,
-                    decltype(std::declval<Sorter&>()(iterable))
-                >
-            {
-                return Sorter{}(iterable);
-            }
+            // std::less<> overloads
 
             template<typename Iterator>
             auto operator()(Iterator first, Iterator last, std::less<>) const
                 -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<detail::wrapper<Sorter>, Iterator, std::less<>>,
-                    decltype(std::declval<Sorter&>()(first, last))
+                    not detail::has_comparison_sort_iterator<Sorter, Iterator, std::less<>>,
+                    decltype(Sorter::operator()(first, last))
                 >
             {
-                return Sorter{}(first, last);
+                return Sorter::operator()(first, last);
+            }
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable, std::less<>) const
+                -> std::enable_if_t<
+                    not detail::has_comparison_sort_iterator<
+                        Sorter,
+                        decltype(std::begin(iterable)),
+                        std::less<>
+                    >,
+                    decltype(operator()(iterable))
+                >
+            {
+                return operator()(iterable);
             }
 
             ////////////////////////////////////////////////////////////
-            // Automatic overloads for std::less<T>
-
-            template<typename Iterable>
-            auto operator()(Iterable& iterable,
-                            std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
-                -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<
-                        detail::wrapper<Sorter>,
-                        decltype(std::begin(iterable)),
-                        std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>
-                    >,
-                    decltype(std::declval<Sorter&>()(iterable))
-                >
-            {
-                return Sorter{}(iterable);
-            }
+            // std::less<T> overloads
 
             template<typename Iterator>
             auto operator()(Iterator first, Iterator last,
                             std::less<typename std::iterator_traits<Iterator>::value_type>) const
                 -> std::enable_if_t<
                     not detail::has_comparison_sort_iterator<
-                        detail::wrapper<Sorter>,
-                        Iterator,
-                        std::less<typename std::iterator_traits<Iterator>::value_type>
-                    >,
-                    decltype(std::declval<Sorter&>()(first, last))
+                    Sorter, Iterator,
+                    std::less<typename std::iterator_traits<Iterator>::value_type>>,
+                    decltype(Sorter::operator()(first, last))
                 >
             {
-                return Sorter{}(first, last);
+                return Sorter::operator()(first, last);
+            }
+
+            template<typename Iterable>
+            auto operator()(Iterable& iterable,
+                            std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
+                -> std::enable_if_t<
+                    not detail::has_comparison_sort_iterator<
+                        Sorter,
+                        decltype(std::begin(iterable)),
+                        std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>
+                    >,
+                    decltype(operator()(iterable))
+                >
+            {
+                return operator()(iterable);
             }
     };
 }

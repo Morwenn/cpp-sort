@@ -39,42 +39,43 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct quick_sorter:
-        sorter_facade<quick_sorter>
+    namespace detail
     {
-        template<
-            typename ForwardIterable,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(ForwardIterable& iterable,
-                        Compare compare={}, Projection projection={}) const
-            -> void
+        struct quick_sorter_impl
         {
-            detail::quicksort(
-                std::begin(iterable),
-                std::end(iterable),
-                compare, projection,
-                utility::size(iterable)
-            );
-        }
+            template<
+                typename ForwardIterable,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
+            >
+            auto operator()(ForwardIterable& iterable,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                quicksort(std::begin(iterable), std::end(iterable),
+                          compare, projection,
+                          utility::size(iterable));
+            }
 
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}, Projection projection={}) const
-            -> void
-        {
-            detail::quicksort(
-                first, last,
-                compare, projection,
-                std::distance(first, last)
-            );
-        }
-    };
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                quicksort(first, last,
+                          compare, projection,
+                          std::distance(first, last));
+            }
+        };
+    }
+
+    struct quick_sorter:
+        sorter_facade<detail::quick_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

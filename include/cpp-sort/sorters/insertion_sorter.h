@@ -39,23 +39,27 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct insertion_sorter:
-        sorter_facade<insertion_sorter>
+    namespace detail
     {
-        using sorter_facade<insertion_sorter>::operator();
-
-        template<
-            typename ForwardIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        Compare compare={}, Projection projection={}) const
-            -> void
+        struct insertion_sorter_impl
         {
-            detail::insertion_sort(first, last, compare, projection);
-        }
-    };
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                insertion_sort(first, last, compare, projection);
+            }
+        };
+    }
+
+    struct insertion_sorter:
+        sorter_facade<detail::insertion_sorter_impl>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

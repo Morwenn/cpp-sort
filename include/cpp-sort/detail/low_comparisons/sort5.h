@@ -29,19 +29,17 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/identity.h>
 #include "../as_function.h"
 #include "../swap_if.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_comparisons_sorter<5u>:
-        sorter_facade<low_comparisons_sorter<5u>>
+    struct low_comparisons_sorter_impl<5u>
     {
-        using sorter_facade<low_comparisons_sorter<5u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
@@ -52,17 +50,17 @@ namespace cppsort
             -> void
         {
             using std::swap;
-            auto&& proj = detail::as_function(projection);
+            auto&& proj = as_function(projection);
 
-            detail::swap_if(first[0u], first[1u], compare, projection);
-            detail::swap_if(first[2u], first[3u], compare, projection);
+            swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[2u], first[3u], compare, projection);
             if (compare(proj(first[2u]), proj(first[0u]))) {
                 swap(first[0u], first[2u]);
                 swap(first[1u], first[3u]);
             }
 
             if (compare(proj(first[2u]), proj(first[4u]))) {
-                detail::swap_if(first[3u], first[4u], compare, projection);
+                swap_if(first[3u], first[4u], compare, projection);
             } else {
                 if (compare(proj(first[0u]), proj(first[4u]))) {
                     auto tmp = std::move(first[2u]);
@@ -92,10 +90,10 @@ namespace cppsort
                     first[3u] = std::move(tmp);
                 }
             } else {
-                detail::swap_if(first[1u], first[2u], compare, projection);
+                swap_if(first[1u], first[2u], compare, projection);
             }
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT5_H_

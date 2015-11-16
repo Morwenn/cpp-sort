@@ -29,18 +29,16 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
-#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/identity.h>
 #include "../min_element.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_moves_sorter<4u>:
-        sorter_facade<low_moves_sorter<4u>>
+    struct low_moves_sorter_impl<4u>
     {
-        using sorter_facade<low_moves_sorter<4u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
@@ -50,7 +48,7 @@ namespace cppsort
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            RandomAccessIterator min = detail::min_element(first, last, compare, projection);
+            RandomAccessIterator min = min_element(first, last, compare, projection);
             if (min != first)
             {
                 std::iter_swap(min, first);
@@ -58,6 +56,6 @@ namespace cppsort
             low_moves_sorter<3u>{}(first+1u, last, compare, projection);
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT4_H_

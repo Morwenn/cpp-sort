@@ -38,37 +38,47 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Adapter
 
+    namespace detail
+    {
+        template<typename ComparisonSorter, typename CountType>
+        struct counting_adapter_impl
+        {
+            template<
+                typename Iterable,
+                typename Compare = std::less<>
+            >
+            auto operator()(Iterable& iterable, Compare compare={}) const
+                -> CountType
+            {
+                comparison_counter<Compare, CountType> cmp(compare);
+                ComparisonSorter{}(iterable, cmp);
+                return cmp.count;
+            }
+
+            template<
+                typename Iterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(Iterator first, Iterator last, Compare compare={}) const
+                -> CountType
+            {
+                comparison_counter<Compare, CountType> cmp(compare);
+                ComparisonSorter{}(first, last, cmp);
+                return cmp.count;
+            }
+        };
+    }
+
     template<
         typename ComparisonSorter,
         typename CountType = std::size_t
     >
     struct counting_adapter:
-        sorter_facade<counting_adapter<ComparisonSorter, CountType>>
-    {
-        template<
-            typename Iterable,
-            typename Compare = std::less<>
-        >
-        auto operator()(Iterable& iterable, Compare compare={}) const
-            -> CountType
-        {
-            detail::comparison_counter<Compare, CountType> cmp(compare);
-            ComparisonSorter{}(iterable, cmp);
-            return cmp.count;
-        }
-
-        template<
-            typename Iterator,
-            typename Compare = std::less<>
-        >
-        auto operator()(Iterator first, Iterator last, Compare compare={}) const
-            -> CountType
-        {
-            detail::comparison_counter<Compare, CountType> cmp(compare);
-            ComparisonSorter{}(first, last, cmp);
-            return cmp.count;
-        }
-    };
+        sorter_facade<detail::counting_adapter_impl<
+            ComparisonSorter,
+            CountType
+        >>
+    {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

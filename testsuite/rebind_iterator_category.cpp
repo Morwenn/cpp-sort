@@ -32,37 +32,42 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
-enum struct sorter_type
+namespace
 {
-    foo,
-    bar
-};
-
-struct foo_sorter:
-    cppsort::sorter_facade<foo_sorter>
-{
-    using cppsort::sorter_facade<foo_sorter>::operator();
-
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator) const
-        -> sorter_type
+    enum struct sorter_type
     {
-        return sorter_type::foo;
-    }
-};
+        foo,
+        bar
+    };
 
-struct bar_sorter:
-    cppsort::sorter_facade<bar_sorter>
-{
-    using cppsort::sorter_facade<bar_sorter>::operator();
-
-    template<typename Iterator>
-    auto operator()(Iterator, Iterator) const
-        -> sorter_type
+    struct foo_sorter_impl
     {
-        return sorter_type::bar;
-    }
-};
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> sorter_type
+        {
+            return sorter_type::foo;
+        }
+    };
+
+    struct bar_sorter_impl
+    {
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> sorter_type
+        {
+            return sorter_type::bar;
+        }
+    };
+
+    struct foo_sorter:
+        cppsort::sorter_facade<foo_sorter_impl>
+    {};
+
+    struct bar_sorter:
+        cppsort::sorter_facade<bar_sorter_impl>
+    {};
+}
 
 namespace cppsort
 {

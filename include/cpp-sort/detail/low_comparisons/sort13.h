@@ -29,19 +29,17 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/identity.h>
 #include "../as_function.h"
 #include "../swap_if.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_comparisons_sorter<13u>:
-        sorter_facade<low_comparisons_sorter<13u>>
+    struct low_comparisons_sorter_impl<13u>
     {
-        using sorter_facade<low_comparisons_sorter<13u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
@@ -52,10 +50,10 @@ namespace cppsort
             -> void
         {
             using std::swap;
-            auto&& proj = detail::as_function(projection);
+            auto&& proj = as_function(projection);
 
             low_comparisons_sorter<11u>{}(first+1u, first+12u, compare, projection);
-            detail::swap_if(first[0u], first[12u], compare, projection);
+            swap_if(first[0u], first[12u], compare, projection);
 
             if (compare(proj(first[1u]), proj(first[0u]))) {
                 swap(first[0u], first[1u]);
@@ -126,6 +124,6 @@ namespace cppsort
             }
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT13_H_

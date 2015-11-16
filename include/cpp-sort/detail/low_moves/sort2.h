@@ -28,19 +28,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <utility>
-#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/identity.h>
 #include "../swap_if.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct low_moves_sorter<2u>:
-        sorter_facade<low_moves_sorter<2u>>
+    struct low_moves_sorter_impl<2u>
     {
-        using sorter_facade<low_moves_sorter<2u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
@@ -50,9 +47,9 @@ namespace cppsort
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            detail::swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[0u], first[1u], compare, projection);
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT2_H_

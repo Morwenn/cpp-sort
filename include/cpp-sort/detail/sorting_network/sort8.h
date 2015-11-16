@@ -28,18 +28,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/identity.h>
 #include "../swap_if.h"
 
 namespace cppsort
 {
+namespace detail
+{
     template<>
-    struct sorting_network_sorter<8u>:
-        sorter_facade<sorting_network_sorter<8u>>
+    struct sorting_network_sorter_impl<8u>
     {
-        using sorter_facade<sorting_network_sorter<8u>>::operator();
-
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
@@ -49,27 +47,27 @@ namespace cppsort
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            detail::swap_if(first[0u], first[1u], compare, projection);
-            detail::swap_if(first[2u], first[3u], compare, projection);
-            detail::swap_if(first[0u], first[2u], compare, projection);
-            detail::swap_if(first[1u], first[3u], compare, projection);
-            detail::swap_if(first[1u], first[2u], compare, projection);
-            detail::swap_if(first[4u], first[5u], compare, projection);
-            detail::swap_if(first[6u], first[7u], compare, projection);
-            detail::swap_if(first[4u], first[6u], compare, projection);
-            detail::swap_if(first[5u], first[7u], compare, projection);
-            detail::swap_if(first[5u], first[6u], compare, projection);
-            detail::swap_if(first[0u], first[4u], compare, projection);
-            detail::swap_if(first[1u], first[5u], compare, projection);
-            detail::swap_if(first[1u], first[4u], compare, projection);
-            detail::swap_if(first[2u], first[6u], compare, projection);
-            detail::swap_if(first[3u], first[7u], compare, projection);
-            detail::swap_if(first[3u], first[6u], compare, projection);
-            detail::swap_if(first[2u], first[4u], compare, projection);
-            detail::swap_if(first[3u], first[5u], compare, projection);
-            detail::swap_if(first[3u], first[4u], compare, projection);
+            swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[2u], first[3u], compare, projection);
+            swap_if(first[0u], first[2u], compare, projection);
+            swap_if(first[1u], first[3u], compare, projection);
+            swap_if(first[1u], first[2u], compare, projection);
+            swap_if(first[4u], first[5u], compare, projection);
+            swap_if(first[6u], first[7u], compare, projection);
+            swap_if(first[4u], first[6u], compare, projection);
+            swap_if(first[5u], first[7u], compare, projection);
+            swap_if(first[5u], first[6u], compare, projection);
+            swap_if(first[0u], first[4u], compare, projection);
+            swap_if(first[1u], first[5u], compare, projection);
+            swap_if(first[1u], first[4u], compare, projection);
+            swap_if(first[2u], first[6u], compare, projection);
+            swap_if(first[3u], first[7u], compare, projection);
+            swap_if(first[3u], first[6u], compare, projection);
+            swap_if(first[2u], first[4u], compare, projection);
+            swap_if(first[3u], first[5u], compare, projection);
+            swap_if(first[3u], first[4u], compare, projection);
         }
     };
-}
+}}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT8_H_
