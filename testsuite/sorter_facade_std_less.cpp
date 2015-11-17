@@ -114,16 +114,4 @@ TEST_CASE( "std::less<> forwarding to sorters",
         CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, std::less<>{}) );
         CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<>{}) );
     }
-
-    SECTION( "with std::less<T>" )
-    {
-        CHECK( cppsort::sort(vec, comparison_sorter{}, std::less<int>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, std::less<int>{}) );
-
-        CHECK( cppsort::sort(vec, non_comparison_sorter{}, std::less<int>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, std::less<int>{}) );
-
-        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, std::less<int>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<int>{}) );
-    }
 }

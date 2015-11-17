@@ -193,37 +193,6 @@ namespace cppsort
             }
 
             ////////////////////////////////////////////////////////////
-            // std::less<T> overloads
-
-            template<typename Iterator>
-            auto operator()(Iterator first, Iterator last,
-                            std::less<typename std::iterator_traits<Iterator>::value_type>) const
-                -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<
-                    Sorter, Iterator,
-                    std::less<typename std::iterator_traits<Iterator>::value_type>>,
-                    decltype(Sorter::operator()(first, last))
-                >
-            {
-                return Sorter::operator()(first, last);
-            }
-
-            template<typename Iterable>
-            auto operator()(Iterable& iterable,
-                            std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>) const
-                -> std::enable_if_t<
-                    not detail::has_comparison_sort_iterator<
-                        Sorter,
-                        decltype(std::begin(iterable)),
-                        std::less<typename std::iterator_traits<decltype(std::begin(iterable))>::value_type>
-                    >,
-                    decltype(operator()(iterable))
-                >
-            {
-                return operator()(iterable);
-            }
-
-            ////////////////////////////////////////////////////////////
             // Projection overloads
 
             template<typename Iterator, typename Projection>
