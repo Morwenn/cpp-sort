@@ -47,12 +47,11 @@ namespace detail
         if (first != last)
         {
             auto&& proj = as_function(projection);
-            auto&& first_proj = proj(*first);
 
             ForwardIterator next = first;
             while (++next != last)
             {
-                if (compare(proj(*next), first_proj))
+                if (compare(proj(*next), proj(*first)))
                 {
                     return next;
                 }
