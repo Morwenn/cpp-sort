@@ -55,18 +55,4 @@ TEST_CASE( "spread_sorter generate overloads",
         cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::less<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<>{}) );
     }
-
-    SECTION( "default operator() with std::less<int>" )
-    {
-        std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0u);
-
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{}, std::less<int>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<int>{}) );
-
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::less<int>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<int>{}) );
-    }
 }
