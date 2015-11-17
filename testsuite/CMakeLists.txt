@@ -31,7 +31,7 @@ add_executable(
     main.cpp
     rebind_iterator_category.cpp
     sorter_facade.cpp
-    sorter_facade_std_less.cpp
+    sorter_facade_defaults.cpp
     ${ADAPTER_TESTS}
     ${SORTERS_TESTS}
 )
