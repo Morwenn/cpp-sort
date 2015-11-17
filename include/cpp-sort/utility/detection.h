@@ -36,17 +36,8 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // std::void_t from C++17
 
-    namespace detail
-    {
-        template<typename...>
-        struct voider
-        {
-            using type = void;
-        };
-    }
-
-    template<typename... TT>
-    using void_t = typename detail::voider<TT...>::type;
+    template<typename...>
+    using void_t = void;
 
     ////////////////////////////////////////////////////////////
     // std::nonesuch from Library Fundamentals TS v2
