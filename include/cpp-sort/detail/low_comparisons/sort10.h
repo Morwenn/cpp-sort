@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <cpp-sort/utility/identity.h>
 #include "../front_insert.h"
 
 namespace cppsort
@@ -39,13 +40,15 @@ namespace detail
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            low_comparisons_sorter<9u>{}(first+1u, first+10u, compare);
-            front_insert<10u>(first, compare);
+            low_comparisons_sorter<9u>{}(first+1u, first+10u, compare, projection);
+            front_insert<10u>(first, compare, projection);
         }
     };
 }}

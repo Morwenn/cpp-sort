@@ -27,11 +27,55 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <functional>
+#include <iterator>
 #include <type_traits>
 #include <cpp-sort/utility/detection.h>
+#include <cpp-sort/utility/identity.h>
+#include "detail/as_function.h"
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Whether a type is a projection
+
+    namespace detail
+    {
+        template<
+            typename Projection, typename Iterable, typename Compare,
+            typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))
+        >
+        using is_projection_t = std::result_of_t<Compare(
+            std::result_of_t<ProjFunc(decltype(*std::begin(std::declval<Iterable&>())))>,
+            std::result_of_t<ProjFunc(decltype(*std::end(std::declval<Iterable&>())))>
+        )>;
+
+        template<
+            typename Projection, typename Iterator, typename Compare,
+            typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))
+        >
+        using is_projection_iterator_t = std::result_of_t<Compare(
+            std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>,
+            std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>
+        )>;
+    }
+
+    template<
+        typename Projection,
+        typename Iterable,
+        typename Compare = std::less<>
+    >
+    constexpr bool is_projection
+        = utility::is_detected_v<detail::is_projection_t, Projection, Iterable, Compare>;
+
+    template<
+        typename Projection,
+        typename Iterator,
+        typename Compare = std::less<>
+    >
+    constexpr bool is_projection_iterator
+        = utility::is_detected_v<detail::is_projection_iterator_t, Projection, Iterator, Compare>;
+
     ////////////////////////////////////////////////////////////
     // Sorter type categories
 
@@ -60,35 +104,125 @@ namespace cppsort
         };
 
         template<typename Sorter, typename Iterable>
-        using is_sorter_t = std::result_of_t<Sorter(Iterable&)>;
+        using has_sort_t = std::result_of_t<Sorter(Iterable&)>;
 
         template<typename Sorter, typename Iterable, typename Compare>
-        using is_comparison_sorter_t = std::result_of_t<Sorter(Iterable&, Compare)>;
+        using has_comparison_sort_t = std::result_of_t<Sorter(Iterable&, Compare)>;
+
+        template<typename Sorter, typename Iterable, typename Projection>
+        using has_projection_sort_t = std::result_of_t<Sorter(Iterable&, Projection)>;
+
+        template<
+            typename Sorter, typename Iterable,
+            typename Compare, typename Projection
+        >
+        using has_comparison_projection_sort_t
+            = std::result_of_t<Sorter(Iterable&, Compare, Projection)>;
 
         template<typename Sorter, typename Iterator>
-        using is_sorter_iterator_t = is_sorter_t<Sorter, range<Iterator>>;
+        using has_sort_iterator_t = std::result_of_t<Sorter(Iterator, Iterator)>;
 
         template<typename Sorter, typename Iterator, typename Compare>
-        using is_comparison_sorter_iterator_t = is_comparison_sorter_t<Sorter, range<Iterator>, Compare>;
+        using has_comparison_sort_iterator_t = std::result_of_t<Sorter(Iterator, Iterator, Compare)>;
+
+        template<typename Sorter, typename Iterator, typename Projection>
+        using has_projection_sort_iterator_t = std::result_of_t<Sorter(Iterator, Iterator, Projection)>;
+
+        template<
+            typename Sorter, typename Iterator,
+            typename Compare, typename Projection
+        >
+        using has_comparison_projection_sort_iterator_t
+            = std::result_of_t<Sorter(Iterator, Iterator, Compare, Projection)>;
+
+        template<typename Sorter, typename Iterable>
+        constexpr bool has_sort
+            = utility::is_detected_v<has_sort_t, Sorter, Iterable>;
+
+        template<typename Sorter, typename Iterable, typename Compare>
+        constexpr bool has_comparison_sort
+            = utility::is_detected_v<has_comparison_sort_t, Sorter, Iterable, Compare> &&
+              is_projection<utility::identity, Iterable, Compare>;
+
+        template<typename Sorter, typename Iterable, typename Projection>
+        constexpr bool has_projection_sort
+            = utility::is_detected_v<has_projection_sort_t, Sorter, Iterable, Projection> &&
+              is_projection<Projection, Iterable>;
+
+        template<
+            typename Sorter, typename Iterable,
+            typename Compare, typename Projection
+        >
+        constexpr bool has_comparison_projection_sort
+            = utility::is_detected_v<
+                has_comparison_projection_sort_t,
+                Sorter, Iterable, Compare, Projection
+            > &&
+            is_projection<Projection, Iterable, Compare>;
+
+        template<typename Sorter, typename Iterator>
+        constexpr bool has_sort_iterator
+            = utility::is_detected_v<has_sort_iterator_t, Sorter, Iterator>;
+
+        template<typename Sorter, typename Iterator, typename Compare>
+        constexpr bool has_comparison_sort_iterator
+            = utility::is_detected_v<has_comparison_sort_iterator_t, Sorter, Iterator, Compare> &&
+              is_projection_iterator<utility::identity, Iterator, Compare>;
+
+        template<typename Sorter, typename Iterator, typename Projection>
+        constexpr bool has_projection_sort_iterator
+            = utility::is_detected_v<has_projection_sort_iterator_t, Sorter, Iterator, Projection> &&
+              is_projection_iterator<Projection, Iterator>;
+
+        template<
+            typename Sorter, typename Iterator,
+            typename Compare, typename Projection
+        >
+        constexpr bool has_comparison_projection_sort_iterator
+            = utility::is_detected_v<
+                has_comparison_projection_sort_iterator_t,
+                Sorter, Iterator, Compare, Projection
+            > &&
+            is_projection_iterator<Projection, Iterator, Compare>;
     }
 
     template<typename Sorter, typename Iterable>
     constexpr bool is_sorter
-        = utility::is_detected_v<detail::is_sorter_t, Sorter, Iterable>;
+        = detail::has_sort<Sorter, Iterable>;
 
     template<typename Sorter, typename Iterable, typename Compare>
     constexpr bool is_comparison_sorter
-        = is_sorter<Sorter, Iterable> &&
-          utility::is_detected_v<detail::is_comparison_sorter_t, Sorter, Iterable, Compare>;
+        = detail::has_comparison_sort<Sorter, Iterable, Compare>;
+
+    template<typename Sorter, typename Iterable, typename Projection>
+    constexpr bool is_projection_sorter
+        = detail::has_projection_sort<Sorter, Iterable, Projection>;
+
+    template<typename Sorter, typename Iterable,
+             typename Compare, typename Projection>
+    constexpr bool is_comparison_projection_sorter
+        = detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection>;
 
     template<typename Sorter, typename Iterator>
     constexpr bool is_sorter_iterator
-        = utility::is_detected_v<detail::is_sorter_iterator_t, Sorter, Iterator>;
+        = is_sorter<Sorter, detail::range<Iterator>> &&
+          detail::has_sort_iterator<Sorter, Iterator>;
 
     template<typename Sorter, typename Iterator, typename Compare>
     constexpr bool is_comparison_sorter_iterator
-        = is_sorter_iterator<Sorter, Iterator> &&
-          utility::is_detected_v<detail::is_comparison_sorter_iterator_t, Sorter, Iterator, Compare>;
+        = is_comparison_sorter<Sorter, detail::range<Iterator>, Compare> &&
+          detail::has_comparison_sort_iterator<Sorter, Iterator, Compare>;
+
+    template<typename Sorter, typename Iterator, typename Projection>
+    constexpr bool is_projection_sorter_iterator
+        = is_projection_sorter<Sorter, detail::range<Iterator>, Projection> &&
+          detail::has_projection_sort_iterator<Sorter, Iterator, Projection>;
+
+    template<typename Sorter, typename Iterator,
+             typename Compare, typename Projection>
+    constexpr bool is_comparison_projection_sorter_iterator
+        = is_comparison_projection_sorter<Sorter, detail::range<Iterator>, Compare, Projection> &&
+          detail::has_comparison_projection_sort_iterator<Sorter, Iterator, Compare, Projection>;
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

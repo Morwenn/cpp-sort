@@ -29,8 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 #include "../detail/pdqsort.h"
 
 namespace cppsort
@@ -44,13 +46,17 @@ namespace cppsort
         {
             template<
                 typename RandomAccessIterator,
-                typename Compare = std::less<>
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_iterator<Projection, RandomAccessIterator, Compare>
+                >
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}) const
+                            Compare compare={}, Projection projection={}) const
                 -> void
             {
-                pdqsort(first, last, compare);
+                pdqsort(first, last, compare, projection);
             }
         };
     }

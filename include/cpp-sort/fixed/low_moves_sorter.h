@@ -34,6 +34,8 @@
 #include <tuple>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
+#include "../detail/minmax_element.h"
 
 namespace cppsort
 {
@@ -50,14 +52,15 @@ namespace cppsort
         {
             template<
                 typename RandomAccessIterator,
-                typename Compare = std::less<>
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}) const
+                            Compare compare={}, Projection projection={}) const
                 -> void
             {
                 RandomAccessIterator min, max;
-                std::tie(min, max) = std::minmax_element(first, last--, compare);
+                std::tie(min, max) = minmax_element(first, last--, compare, projection);
 
                 if (max == first && min == last)
                 {
@@ -86,7 +89,7 @@ namespace cppsort
                         std::iter_swap(last, max);
                     }
                 }
-                low_moves_sorter<N-2u>{}(++first, last, compare);
+                low_moves_sorter<N-2u>{}(++first, last, compare, projection);
             }
         };
     }

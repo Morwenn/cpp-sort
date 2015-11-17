@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <cpp-sort/utility/identity.h>
 
 namespace cppsort
 {
@@ -38,9 +39,11 @@ namespace detail
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
+        auto operator()(RandomAccessIterator, RandomAccessIterator,
+                        Compare={}, Projection={}) const
             -> void
         {}
     };

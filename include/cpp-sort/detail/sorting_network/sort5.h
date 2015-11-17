@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <cpp-sort/utility/identity.h>
 #include "../swap_if.h"
 
 namespace cppsort
@@ -39,20 +40,22 @@ namespace detail
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            swap_if(first[0u], first[1u], compare);
-            swap_if(first[3u], first[4u], compare);
-            swap_if(first[2u], first[4u], compare);
-            swap_if(first[2u], first[3u], compare);
-            swap_if(first[0u], first[3u], compare);
-            swap_if(first[0u], first[2u], compare);
-            swap_if(first[1u], first[4u], compare);
-            swap_if(first[1u], first[3u], compare);
-            swap_if(first[1u], first[2u], compare);
+            swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[3u], first[4u], compare, projection);
+            swap_if(first[2u], first[4u], compare, projection);
+            swap_if(first[2u], first[3u], compare, projection);
+            swap_if(first[0u], first[3u], compare, projection);
+            swap_if(first[0u], first[2u], compare, projection);
+            swap_if(first[1u], first[4u], compare, projection);
+            swap_if(first[1u], first[3u], compare, projection);
+            swap_if(first[1u], first[2u], compare, projection);
         }
     };
 }}

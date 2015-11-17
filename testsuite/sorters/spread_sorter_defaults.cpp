@@ -31,6 +31,7 @@
 #include <catch.hpp>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/spread_sorter.h>
+#include <cpp-sort/utility/identity.h>
 
 TEST_CASE( "spread_sorter generate overloads",
            "[spread_sorter][sorter_facade]" )
@@ -56,17 +57,31 @@ TEST_CASE( "spread_sorter generate overloads",
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<>{}) );
     }
 
-    SECTION( "default operator() with std::less<int>" )
+    SECTION( "default operator() with utility::identity" )
     {
         std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0u);
+        std::iota(std::begin(vec), std::end(vec), 0);
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{}, std::less<int>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<int>{}) );
+        cppsort::sort(vec, cppsort::spread_sorter{}, cppsort::utility::identity{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::less<int>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<int>{}) );
+        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, cppsort::utility::identity{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+
+    SECTION( "default operator() with both" )
+    {
+        std::vector<int> vec(100'000);
+        std::iota(std::begin(vec), std::end(vec), 0);
+
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(vec, cppsort::spread_sorter{}, std::less<>{}, cppsort::utility::identity{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::less<>{}, cppsort::utility::identity{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 }

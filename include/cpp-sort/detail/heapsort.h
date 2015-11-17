@@ -27,8 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <functional>
+#include <cpp-sort/utility/identity.h>
+#include "heap_operations.h"
 
 namespace cppsort
 {
@@ -36,14 +37,14 @@ namespace detail
 {
     template<
         typename RandomAccessIterator,
-        typename Compare = std::less<>
+        typename Compare = std::less<>,
+        typename Projection = utility::identity
     >
-    void heapsort(RandomAccessIterator first,
-                  RandomAccessIterator last,
-                  Compare compare={})
+    void heapsort(RandomAccessIterator first, RandomAccessIterator last,
+                  Compare compare={}, Projection projection={})
     {
-        std::make_heap(first, last, compare);
-        std::sort_heap(first, last, compare);
+        make_heap(first, last, compare, projection);
+        sort_heap(first, last, compare, projection);
     }
 }}
 

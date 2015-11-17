@@ -29,7 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include "../front_insert.h"
+#include <cpp-sort/utility/identity.h>
+#include "../as_function.h"
+#include "../swap_if.h"
 
 namespace cppsort
 {
@@ -40,38 +42,38 @@ namespace detail
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
             using std::swap;
+            auto&& proj = as_function(projection);
 
-            low_comparisons_sorter<10u>{}(first+1u, first+11u, compare);
+            low_comparisons_sorter<10u>{}(first+1u, first+11u, compare, projection);
+            swap_if(first[0u], first[11u], compare, projection);
 
-            if (compare(first[11u], first[0u])) {
-                swap(first[0u], first[11u]);
-            }
-
-            if (compare(first[1u], first[0u])) {
+            if (compare(proj(first[1u]), proj(first[0u]))) {
                 swap(first[0u], first[1u]);
-                if (compare(first[2u], first[1u])) {
+                if (compare(proj(first[2u]), proj(first[1u]))) {
                     swap(first[1u], first[2u]);
-                    if (compare(first[3u], first[2u])) {
+                    if (compare(proj(first[3u]), proj(first[2u]))) {
                         swap(first[2u], first[3u]);
-                        if (compare(first[4u], first[3u])) {
+                        if (compare(proj(first[4u]), proj(first[3u]))) {
                             swap(first[3u], first[4u]);
-                            if (compare(first[5u], first[4u])) {
+                            if (compare(proj(first[5u]), proj(first[4u]))) {
                                 swap(first[4u], first[5u]);
-                                if (compare(first[6u], first[5u])) {
+                                if (compare(proj(first[6u]), proj(first[5u]))) {
                                     swap(first[5u], first[6u]);
-                                    if (compare(first[7u], first[6u])) {
+                                    if (compare(proj(first[7u]), proj(first[6u]))) {
                                         swap(first[6u], first[7u]);
-                                        if (compare(first[8u], first[7u])) {
+                                        if (compare(proj(first[8u]), proj(first[7u]))) {
                                             swap(first[7u], first[8u]);
-                                            if (compare(first[9u], first[8u])) {
+                                            if (compare(proj(first[9u]), proj(first[8u]))) {
                                                 swap(first[8u], first[9u]);
-                                                if (compare(first[10u], first[9u])) {
+                                                if (compare(proj(first[10u]), proj(first[9u]))) {
                                                     swap(first[9u], first[10u]);
                                                 }
                                             }
@@ -84,25 +86,25 @@ namespace detail
                 }
             }
 
-            if (compare(first[11u], first[10u])) {
+            if (compare(proj(first[11u]), proj(first[10u]))) {
                 swap(first[10u], first[11u]);
-                if (compare(first[10u], first[9u])) {
+                if (compare(proj(first[10u]), proj(first[9u]))) {
                     swap(first[9u], first[10u]);
-                    if (compare(first[9u], first[8u])) {
+                    if (compare(proj(first[9u]), proj(first[8u]))) {
                         swap(first[8u], first[9u]);
-                        if (compare(first[8u], first[7u])) {
+                        if (compare(proj(first[8u]), proj(first[7u]))) {
                             swap(first[7u], first[8u]);
-                            if (compare(first[7u], first[6u])) {
+                            if (compare(proj(first[7u]), proj(first[6u]))) {
                                 swap(first[6u], first[7u]);
-                                if (compare(first[6u], first[5u])) {
+                                if (compare(proj(first[6u]), proj(first[5u]))) {
                                     swap(first[5u], first[6u]);
-                                    if (compare(first[5u], first[4u])) {
+                                    if (compare(proj(first[5u]), proj(first[4u]))) {
                                         swap(first[4u], first[5u]);
-                                        if (compare(first[4u], first[3u])) {
+                                        if (compare(proj(first[4u]), proj(first[3u]))) {
                                             swap(first[3u], first[4u]);
-                                            if (compare(first[3u], first[2u])) {
+                                            if (compare(proj(first[3u]), proj(first[2u]))) {
                                                 swap(first[2u], first[3u]);
-                                                if (compare(first[2u], first[1u])) {
+                                                if (compare(proj(first[2u]), proj(first[1u]))) {
                                                     swap(first[1u], first[2u]);
                                                 }
                                             }

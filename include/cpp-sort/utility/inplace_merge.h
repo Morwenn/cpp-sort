@@ -32,6 +32,9 @@
 #include <iterator>
 #include <memory>
 #include <utility>
+#include "../detail/as_function.h"
+#include "../detail/inplace_merge.h"
+#include "../detail/merge.h"
 
 namespace cppsort
 {
@@ -39,16 +42,17 @@ namespace utility
 {
     namespace detail
     {
-        template<typename ForwardIterator, typename Compare>
+        template<typename ForwardIterator, typename Compare, typename Projection>
         auto inplace_merge(ForwardIterator first, ForwardIterator middle,
-                           ForwardIterator last, Compare compare,
+                           ForwardIterator last, Compare compare, Projection projection,
                            std::forward_iterator_tag)
             -> void
         {
             using value_type = typename std::iterator_traits<ForwardIterator>::value_type;
+            auto&& proj = cppsort::detail::as_function(projection);
 
             // Shrink the problem size on the left side
-            while (compare(*first, *middle))
+            while (compare(proj(*first), proj(*middle)))
             {
                 ++first;
             }
@@ -61,7 +65,8 @@ namespace utility
             // If there is enough memory, use the buffer for the merge
             if (buffer != nullptr)
             {
-                std::merge(first, middle, middle, last, buffer.get(), compare);
+                cppsort::detail::merge(first, middle, middle, last, buffer.get(),
+                                       compare, projection, projection);
                 std::move(buffer.get(), buffer.get() + size, first);
             }
             else // Hand-made in-place merge algorithm
@@ -69,10 +74,11 @@ namespace utility
                 ForwardIterator insertion_point = middle;
                 for (; first != middle ; ++first)
                 {
-                    if (compare(*middle, *first))
+                    if (compare(proj(*middle), proj(*first)))
                     {
                         // *first should be in the right partition
                         value_type tmp = std::move(*first);
+                        auto&& tmp_proj = proj(tmp);
 
                         // Put *right in place
                         *first = std::move(*middle);
@@ -82,7 +88,7 @@ namespace utility
 
                         // Move everything smaller than tmp to the left
                         std::move(std::next(middle), next, middle);
-                        while (next != last && compare(*next, tmp))
+                        while (next != last && compare(proj(*next), tmp_proj))
                         {
                             *insertion_point++ = std::move(*next++);
                         }
@@ -94,26 +100,27 @@ namespace utility
             }
         }
 
-        template<typename BidirectionalIterator, typename Compare>
+        template<typename BidirectionalIterator, typename Compare, typename Projection>
         auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                           BidirectionalIterator last, Compare compare,
+                           BidirectionalIterator last, Compare compare, Projection projection,
                            std::bidirectional_iterator_tag)
             -> void
         {
-            std::inplace_merge(first, middle, last, compare);
+            cppsort::detail::inplace_merge(first, middle, last, compare, projection);
         }
     }
 
     template<
         typename ForwardIterator,
-        typename Compare = std::less<>
+        typename Compare = std::less<>,
+        typename Projection = utility::identity
     >
     auto inplace_merge(ForwardIterator first, ForwardIterator middle,
-                       ForwardIterator last, Compare compare={})
+                       ForwardIterator last, Compare compare={}, Projection projection={})
         -> void
     {
         using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
-        detail::inplace_merge(first, middle, last, compare, category{});
+        detail::inplace_merge(first, middle, last, compare, projection, category{});
     }
 }}
 

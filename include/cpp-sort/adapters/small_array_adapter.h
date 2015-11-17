@@ -55,30 +55,30 @@ namespace cppsort
             template<
                 typename T,
                 std::size_t N,
-                typename Compare = std::less<>
+                typename... Args
             >
-            auto operator()(std::array<T, N>& array, Compare compare={}) const
+            auto operator()(std::array<T, N>& array, Args... args) const
                 -> std::enable_if_t<
                     utility::is_in_pack<N, Indices...>,
-                    decltype(std::declval<Sorter<N>&>()(array, compare))
+                    decltype(std::declval<Sorter<N>&>()(array, args...))
                 >
             {
-                return Sorter<N>{}(array, compare);
+                return Sorter<N>{}(array, args...);
             }
 
             template<
                 typename T,
                 std::size_t N,
-                typename Compare = std::less<>,
+                typename... Args,
                 typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
             >
-            auto operator()(T (&array)[N], Compare compare={}) const
+            auto operator()(T (&array)[N], Args... args) const
                 -> std::enable_if_t<
                     utility::is_in_pack<N, Indices...>,
-                    decltype(std::declval<Sorter<N>&>()(array, compare))
+                    decltype(std::declval<Sorter<N>&>()(array, args...))
                 >
             {
-                return Sorter<N>{}(array, compare);
+                return Sorter<N>{}(array, args...);
             }
         };
 
@@ -88,23 +88,23 @@ namespace cppsort
             template<
                 typename T,
                 std::size_t N,
-                typename Compare = std::less<>
+                typename... Args
             >
-            auto operator()(std::array<T, N>& array, Compare compare={}) const
-                -> decltype(std::declval<Sorter<N>&>()(array, compare))
+            auto operator()(std::array<T, N>& array, Args... args) const
+                -> decltype(std::declval<Sorter<N>&>()(array, args...))
             {
-                return Sorter<N>{}(array, compare);
+                return Sorter<N>{}(array, args...);
             }
 
             template<
                 typename T,
                 std::size_t N,
-                typename Compare = std::less<>
+                typename... Args
             >
-            auto operator()(T (&array)[N], Compare compare={}) const
-                -> decltype(std::declval<Sorter<N>&>()(array, compare))
+            auto operator()(T (&array)[N], Args... args) const
+                -> decltype(std::declval<Sorter<N>&>()(array, args...))
             {
-                return Sorter<N>{}(array, compare);
+                return Sorter<N>{}(array, args...);
             }
         };
     }

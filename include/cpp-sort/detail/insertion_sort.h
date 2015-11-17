@@ -28,21 +28,25 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
+#include "as_function.h"
+#include "upper_bound.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename BidirectionalIterator, typename Compare>
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
     void insertion_sort(BidirectionalIterator first,
                         BidirectionalIterator last,
-                        Compare compare,
+                        Compare compare, Projection projection,
                         std::bidirectional_iterator_tag)
     {
         if (first == last)
         {
             return;
         }
+
+        auto&& proj = detail::as_function(projection);
 
         for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur)
         {
@@ -51,36 +55,39 @@ namespace detail
 
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
-            if (compare(*sift, *sift_1))
+            if (compare(proj(*sift), proj(*sift_1)))
             {
                 auto tmp = std::move(*sift);
+                auto&& tmp_proj = proj(tmp);
                 do
                 {
                     *sift-- = std::move(*sift_1);
                 }
-                while (sift != first && compare(tmp, *--sift_1));
+                while (sift != first && compare(tmp_proj, proj(*--sift_1)));
                 *sift = std::move(tmp);
             }
         }
     }
 
-    template<typename ForwardIterator, typename Compare>
+    template<typename ForwardIterator, typename Compare, typename Projection>
     void insertion_sort(ForwardIterator first, ForwardIterator last,
-                        Compare compare,
+                        Compare compare, Projection projection,
                         std::forward_iterator_tag)
     {
+        auto&& proj = as_function(projection);
+
         for (ForwardIterator it = first ; it != last ; ++it) {
-            ForwardIterator insertion_point = std::upper_bound(first, it, *it, compare);
+            ForwardIterator insertion_point = upper_bound(first, it, proj(*it), compare, projection);
             std::rotate(insertion_point, it, std::next(it));
         }
     }
 
-    template<typename ForwardIterator, typename Compare>
+    template<typename ForwardIterator, typename Compare, typename Projection>
     void insertion_sort(ForwardIterator first, ForwardIterator last,
-                        Compare compare)
+                        Compare compare, Projection projection)
     {
         using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
-        insertion_sort(first, last, compare, category{});
+        insertion_sort(first, last, compare, projection, category{});
     }
 }}
 

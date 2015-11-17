@@ -29,6 +29,7 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 
 namespace
 {
@@ -76,6 +77,16 @@ namespace
         }
     };
 
+    struct comparison_projection_sorter_impl
+    {
+        template<typename Iterator, typename Compare, typename Projection>
+        auto operator()(Iterator, Iterator, Compare, Projection) const
+            -> bool
+        {
+            return true;
+        }
+    };
+
     struct comparison_sorter:
         cppsort::sorter_facade<comparison_sorter_impl>
     {};
@@ -86,6 +97,10 @@ namespace
 
     struct non_comparison_iterable_sorter:
         cppsort::sorter_facade<non_comparison_iterable_sorter_impl>
+    {};
+
+    struct comparison_projection_sorter:
+        cppsort::sorter_facade<comparison_projection_sorter_impl>
     {};
 }
 
@@ -99,6 +114,9 @@ TEST_CASE( "std::less<> forwarding to sorters",
     // Make sure the iterator overload calls the operator() from
     // the sorter for iterators, and that the iterable overload
     // calls the original sorter's iterable operator() overload
+
+    // Equivalent tests are done for the automatic overloads
+    // of operator() for utility::identity
 
     // Vector to "sort"
     std::vector<int> vec(3);
@@ -115,15 +133,18 @@ TEST_CASE( "std::less<> forwarding to sorters",
         CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<>{}) );
     }
 
-    SECTION( "with std::less<T>" )
+    SECTION( "with utility::identity" )
     {
-        CHECK( cppsort::sort(vec, comparison_sorter{}, std::less<int>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, std::less<int>{}) );
+        CHECK( cppsort::sort(vec, comparison_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, cppsort::utility::identity{}) );
 
-        CHECK( cppsort::sort(vec, non_comparison_sorter{}, std::less<int>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, std::less<int>{}) );
+        CHECK( cppsort::sort(vec, non_comparison_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, cppsort::utility::identity{}) );
 
-        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, std::less<int>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<int>{}) );
+        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, cppsort::utility::identity{}) );
+
+        CHECK( cppsort::sort(vec, comparison_projection_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_projection_sorter{}, cppsort::utility::identity{}) );
     }
 }

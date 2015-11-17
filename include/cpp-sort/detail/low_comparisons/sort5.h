@@ -29,7 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include "../front_insert.h"
+#include <cpp-sort/utility/identity.h>
+#include "../as_function.h"
+#include "../swap_if.h"
 
 namespace cppsort
 {
@@ -40,30 +42,27 @@ namespace detail
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
             using std::swap;
+            auto&& proj = as_function(projection);
 
-            if (compare(first[1u], first[0u])) {
-                swap(first[0u], first[1u]);
-            }
-            if (compare(first[3u], first[2u])) {
-                swap(first[2u], first[3u]);
-            }
-            if (compare(first[2u], first[0u])) {
+            swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[2u], first[3u], compare, projection);
+            if (compare(proj(first[2u]), proj(first[0u]))) {
                 swap(first[0u], first[2u]);
                 swap(first[1u], first[3u]);
             }
 
-            if (compare(first[2u], first[4u])) {
-                if (compare(first[4u], first[3u])) {
-                    swap(first[3u], first[4u]);
-                }
+            if (compare(proj(first[2u]), proj(first[4u]))) {
+                swap_if(first[3u], first[4u], compare, projection);
             } else {
-                if (compare(first[0u], first[4u])) {
+                if (compare(proj(first[0u]), proj(first[4u]))) {
                     auto tmp = std::move(first[2u]);
                     first[2u] = std::move(first[4u]);
                     first[4u] = std::move(first[3u]);
@@ -77,8 +76,8 @@ namespace detail
                 }
             }
 
-            if (compare(first[3u], first[1u])) {
-                if (compare(first[4u], first[1u])) {
+            if (compare(proj(first[3u]), proj(first[1u]))) {
+                if (compare(proj(first[4u]), proj(first[1u]))) {
                     auto tmp = std::move(first[1u]);
                     first[1u] = std::move(first[2u]);
                     first[2u] = std::move(first[3u]);
@@ -91,9 +90,7 @@ namespace detail
                     first[3u] = std::move(tmp);
                 }
             } else {
-                if (compare(first[2u], first[1u])) {
-                    swap(first[1u], first[2u]);
-                }
+                swap_if(first[1u], first[2u], compare, projection);
             }
         }
     };

@@ -29,6 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
+#include <cpp-sort/utility/identity.h>
+#include "../min_element.h"
 
 namespace cppsort
 {
@@ -39,17 +41,19 @@ namespace detail
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = utility::identity
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last, Compare compare={}) const
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                        Compare compare={}, Projection projection={}) const
             -> void
         {
-            RandomAccessIterator min = std::min_element(first, last, compare);
+            RandomAccessIterator min = min_element(first, last, compare, projection);
             if (min != first)
             {
                 std::iter_swap(min, first);
             }
-            low_moves_sorter<3u>{}(first+1u, last, compare);
+            low_moves_sorter<3u>{}(first+1u, last, compare, projection);
         }
     };
 }}
