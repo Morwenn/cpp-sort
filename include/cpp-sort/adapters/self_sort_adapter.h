@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/has_sort_method.h>
@@ -44,60 +45,32 @@ namespace cppsort
         {
             template<
                 typename Iterable,
-                typename = std::enable_if_t<utility::has_sort_method<Iterable>>
+                typename... Args,
+                typename = std::enable_if_t<utility::has_sort_method<Iterable, Args...>>
             >
-            auto operator()(Iterable& iterable) const
-                -> decltype(iterable.sort())
+            auto operator()(Iterable& iterable, Args&&... args) const
+                -> decltype(iterable.sort(std::forward<Args>(args)...))
             {
-                return iterable.sort();
+                return iterable.sort(std::forward<Args>(args)...);
             }
 
             template<
                 typename Iterable,
+                typename... Args,
                 typename = std::enable_if_t<not utility::has_sort_method<Iterable>>,
                 typename = void // dummy parameter for ODR
             >
-            auto operator()(Iterable& iterable) const
-                -> decltype(Sorter{}(iterable))
+            auto operator()(Iterable& iterable, Args&&... args) const
+                -> decltype(Sorter{}(iterable, std::forward<Args>(args)...))
             {
-                return Sorter{}(iterable);
+                return Sorter{}(iterable, std::forward<Args>(args)...);
             }
 
-            template<
-                typename Iterable,
-                typename Compare,
-                typename = std::enable_if_t<utility::has_comparison_sort_method<Iterable, Compare>>
-            >
-            auto operator()(Iterable& iterable, Compare compare) const
-                -> decltype(iterable.sort(compare))
+            template<typename Iterator, typename... Args>
+            auto operator()(Iterator first, Iterator last,Args&&... args) const
+                -> decltype(Sorter{}(first, last, std::forward<Args>(args)...))
             {
-                return iterable.sort(compare);
-            }
-
-            template<
-                typename Iterable,
-                typename Compare,
-                typename = std::enable_if_t<not utility::has_comparison_sort_method<Iterable, Compare>>,
-                typename = void // dummy parameter for ODR
-            >
-            auto operator()(Iterable& iterable, Compare compare) const
-                -> decltype(Sorter{}(iterable, compare))
-            {
-                return Sorter{}(iterable, compare);
-            }
-
-            template<typename Iterator>
-            auto operator()(Iterator first, Iterator last) const
-                -> decltype(Sorter{}(first, last))
-            {
-                return Sorter{}(first, last);
-            }
-
-            template<typename Iterator, typename Compare>
-            auto operator()(Iterator first, Iterator last, Compare compare) const
-                -> decltype(Sorter{}(first, last, compare))
-            {
-                return Sorter{}(first, last, compare);
+                return Sorter{}(first, last, std::forward<Args>(args)...);
             }
         };
     }

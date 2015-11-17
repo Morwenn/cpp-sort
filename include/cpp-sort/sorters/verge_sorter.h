@@ -46,13 +46,16 @@ namespace cppsort
             template<
                 typename BidirectionalIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_iterator<Projection, BidirectionalIterator, Compare>
+                >
             >
             auto operator()(BidirectionalIterator first, BidirectionalIterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                detail::vergesort(first, last, compare, projection);
+                vergesort(first, last, compare, projection);
             }
         };
     }

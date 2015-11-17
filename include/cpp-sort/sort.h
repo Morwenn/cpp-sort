@@ -33,6 +33,9 @@
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // With default_sorter
+
     template<typename Iterable>
     auto sort(Iterable& iterable)
         -> void
@@ -49,6 +52,21 @@ namespace cppsort
         -> void
     {
         default_sorter{}(iterable, compare);
+    }
+
+    template<
+        typename Iterable,
+        typename Compare,
+        typename Projection,
+        typename = std::enable_if_t<
+            not is_comparison_sorter<Compare, Iterable, Projection> &&
+            not is_projection_sorter<Compare, Iterable, Projection>
+        >
+    >
+    auto sort(Iterable& iterable, Compare compare, Projection projection)
+        -> void
+    {
+        default_sorter{}(iterable, compare, projection);
     }
 
     template<typename Iterator>
@@ -70,6 +88,24 @@ namespace cppsort
     }
 
     template<
+        typename Iterator,
+        typename Compare,
+        typename Projection,
+        typename = std::enable_if_t<
+            not is_comparison_sorter_iterator<Compare, Iterator, Projection> &&
+            not is_projection_sorter_iterator<Compare, Iterator, Projection>
+        >
+    >
+    auto sort(Iterator first, Iterator last, Compare compare, Projection projection)
+        -> decltype(auto)
+    {
+        return default_sorter{}(first, last, compare, projection);
+    }
+
+    ////////////////////////////////////////////////////////////
+    // With a given sorter
+
+    template<
         typename Iterable,
         typename Sorter,
         typename = std::enable_if_t<is_sorter<Sorter, Iterable>>
@@ -82,13 +118,30 @@ namespace cppsort
 
     template<
         typename Iterable,
-        typename ComparisonSorter,
-        typename Compare
+        typename Sorter,
+        typename Func,
+        typename = std::enable_if_t<
+            is_comparison_sorter<Sorter, Iterable, Func> ||
+            is_projection_sorter<Sorter, Iterable, Func>
+        >
     >
-    auto sort(Iterable& iterable, const ComparisonSorter& sorter, Compare compare)
+    auto sort(Iterable& iterable, const Sorter& sorter, Func func)
         -> decltype(auto)
     {
-        return sorter(iterable, compare);
+        return sorter(iterable, func);
+    }
+
+    template<
+        typename Iterable,
+        typename Sorter,
+        typename Compare,
+        typename Projection
+    >
+    auto sort(Iterable& iterable, const Sorter& sorter,
+              Compare compare, Projection projection)
+        -> decltype(auto)
+    {
+        return sorter(iterable, compare, projection);
     }
 
     template<
@@ -104,13 +157,30 @@ namespace cppsort
 
     template<
         typename Iterator,
-        typename ComparisonSorter,
-        typename Compare
+        typename Sorter,
+        typename Func,
+        typename = std::enable_if_t<
+            is_comparison_sorter_iterator<Sorter, Iterator, Func> ||
+            is_projection_sorter_iterator<Sorter, Iterator, Func>
+        >
     >
-    auto sort(Iterator first, Iterator last, const ComparisonSorter& sorter, Compare compare)
+    auto sort(Iterator first, Iterator last, const Sorter& sorter, Func func)
         -> decltype(auto)
     {
-        return sorter(first, last, compare);
+        return sorter(first, last, func);
+    }
+
+    template<
+        typename Iterator,
+        typename Sorter,
+        typename Compare,
+        typename Projection
+    >
+    auto sort(Iterator first, Iterator last, const Sorter& sorter,
+              Compare compare, Projection projection)
+        -> decltype(auto)
+    {
+        return sorter(first, last, compare, projection);
     }
 }
 

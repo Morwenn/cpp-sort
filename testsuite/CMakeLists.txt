@@ -17,6 +17,9 @@ set(
 
     sorters/default_sorter.cpp
     sorters/default_sorter_fptr.cpp
+    sorters/default_sorter_projection.cpp
+    sorters/merge_sorter.cpp
+    sorters/merge_sorter_projection.cpp
     sorters/spread_sorter.cpp
     sorters/spread_sorter_defaults.cpp
 )

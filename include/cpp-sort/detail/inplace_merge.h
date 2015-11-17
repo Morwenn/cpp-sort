@@ -142,14 +142,14 @@ namespace detail
         if (len1 <= len2)
         {
             value_type* p = buff;
-            for (BidirectionalIterator i = first; i != middle; d.incr((value_type*)0), (void) ++i, ++p)
+            for (BidirectionalIterator i = first; i != middle; d.incr((value_type*)nullptr), (void) ++i, ++p)
                 ::new(p) value_type(std::move(*i));
             half_inplace_merge(buff, p, middle, last, first, comp, projection);
         }
         else
         {
             value_type* p = buff;
-            for (BidirectionalIterator i = middle; i != last; d.incr((value_type*)0), (void) ++i, ++p)
+            for (BidirectionalIterator i = middle; i != last; d.incr((value_type*)nullptr), (void) ++i, ++p)
                 ::new(p) value_type(std::move(*i));
             typedef std::reverse_iterator<BidirectionalIterator> RBi;
             typedef std::reverse_iterator<value_type*> Rv;

@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
@@ -46,7 +47,10 @@ namespace cppsort
             template<
                 typename ForwardIterable,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection<Projection, ForwardIterable, Compare>
+                >
             >
             auto operator()(ForwardIterable& iterable,
                             Compare compare={}, Projection projection={}) const
@@ -60,7 +64,10 @@ namespace cppsort
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_iterator<Projection, ForwardIterator, Compare>
+                >
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const

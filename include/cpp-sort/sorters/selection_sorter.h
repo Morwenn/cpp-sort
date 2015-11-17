@@ -46,7 +46,10 @@ namespace cppsort
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_iterator<Projection, ForwardIterator, Compare>
+                >
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
