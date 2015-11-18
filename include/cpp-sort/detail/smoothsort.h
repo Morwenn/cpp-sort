@@ -10,12 +10,7 @@
  *
  *              http://www.keithschwarz.com/smoothsort/
  *
- * This implementation is designed to work on a 32-bit machine and may
- * have portability issues on 64-bit computers.  In particular, I've only
- * precomputed the Leonardo numbers up 2^32, and so if you try to sort a
- * sequence of length greater than that you'll run into trouble.  Similarly,
- * I've used the tricky O(1) optimization to use a constant amount of space
- * given the fact that the machine is 32 bits.
+ * This implementation is designed to work on a 64-bit machine.
  */
 #ifndef CPPSORT_DETAIL_SMOOTHSORT_H_
 #define CPPSORT_DETAIL_SMOOTHSORT_H_
@@ -23,33 +18,45 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <algorithm>
 #include <bitset>
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
 
 namespace cppsort
 {
 namespace detail
 {
-    /* * * * * Implementation Below This Point * * * * */
     namespace smoothsort_detail {
       /* A constant containing the number of Leonardo numbers that can fit into
-       * 32 bits.  For a 64-bit machine, you'll need to update this value and the
-       * list below.
+       * 64 bits.
        */
-      const size_t kNumLeonardoNumbers = 46;
+      static constexpr std::size_t kNumLeonardoNumbers = 92;
 
-      /* A list of all the Leonardo numbers below 2^32, precomputed for
+      /* A list of all the Leonardo numbers below 2^64, precomputed for
        * efficiency.
-       * Source: http://oeis.org/classic/b001595.txt
        */
-      const size_t kLeonardoNumbers[kNumLeonardoNumbers] = {
+      static constexpr std::uint_fast64_t kLeonardoNumbers[kNumLeonardoNumbers] = {
         1u, 1u, 3u, 5u, 9u, 15u, 25u, 41u, 67u, 109u, 177u, 287u, 465u, 753u,
-        1219u, 1973u, 3193u, 5167u, 8361u, 13529u, 21891u, 35421u, 57313u, 92735u,
-        150049u, 242785u, 392835u, 635621u, 1028457u, 1664079u, 2692537u,
-        4356617u, 7049155u, 11405773u, 18454929u, 29860703u, 48315633u, 78176337u,
-        126491971u, 204668309u, 331160281u, 535828591u, 866988873u, 1402817465u,
-        2269806339u, 3672623805u
+        1219u, 1973u, 3193u, 5167u, 8361u, 13529u, 21891u, 35421u, 57313u,
+        92735u, 150049u, 242785u, 392835u, 635621u, 1028457u, 1664079u,
+        2692537u, 4356617u, 7049155u, 11405773u, 18454929u, 29860703u,
+        48315633u, 78176337u, 126491971u, 204668309u, 331160281u, 535828591u,
+        866988873u, 1402817465u, 2269806339u, 3672623805u, 5942430145u,
+        9615053951u, 15557484097u, 25172538049u, 40730022147u, 65902560197u,
+        106632582345u, 172535142543u, 279167724889u, 451702867433u,
+        730870592323u, 1182573459757u, 1913444052081u, 3096017511839u,
+        5009461563921u, 8105479075761u, 13114940639683u, 21220419715445u,
+        34335360355129u, 55555780070575u, 89891140425705u, 145446920496281u,
+        235338060921987u, 380784981418269u, 616123042340257u, 996908023758527u,
+        1613031066098785u, 2609939089857313u, 4222970155956099u, 6832909245813413u,
+        11055879401769513u, 17888788647582927u, 28944668049352441u,
+        46833456696935369u, 75778124746287811u, 122611581443223181u,
+        198389706189510993u, 321001287632734175u, 519390993822245169u,
+        840392281454979345u, 1359783275277224515u, 2200175556732203861u,
+        3559958832009428377u, 5760134388741632239u, 9320093220751060617u,
+        15080227609492692857u
       };
 
       /* A structure containing a bitvector encoding of the trees in a Leonardo
@@ -61,7 +68,7 @@ namespace detail
         std::bitset<kNumLeonardoNumbers> trees;
 
         /* The shift amount, which is also the size of the smallest tree. */
-        size_t smallestTreeSize;
+        std::size_t smallestTreeSize;
       };
 
       /*
@@ -78,14 +85,14 @@ namespace detail
       }
 
       /*
-       * Function: RandomIterator FirstChild(RandomIterator root, size_t size)
+       * Function: RandomIterator FirstChild(RandomIterator root, std::size_t size)
        * ---------------------------------------------------------------------
        * Given an iterator to the root of Leonardo heap, returns an iterator
        * to the root of that tree's first child.  It's assumed that the heap
        * is well-formed and that size > 1.
        */
       template <typename RandomIterator>
-      RandomIterator FirstChild(RandomIterator root, size_t size) {
+      RandomIterator FirstChild(RandomIterator root, std::size_t size) {
         /* Go to the second child, then step backwards L(size - 2) steps to
          * skip over it.
          */
@@ -93,7 +100,7 @@ namespace detail
       }
 
       /*
-       * Function: RandomIterator LargerChild(RandomIterator root, size_t size,
+       * Function: RandomIterator LargerChild(RandomIterator root, std::size_t size,
        *                                      Comparator comp);
        * --------------------------------------------------------------------
        * Given an iterator to the root of a max-heap Leonardo tree, returns
@@ -101,7 +108,7 @@ namespace detail
        * well-formatted and that the heap has order > 1.
        */
       template <typename RandomIterator, typename Comparator>
-      RandomIterator LargerChild(RandomIterator root, size_t size, Comparator comp) {
+      RandomIterator LargerChild(RandomIterator root, std::size_t size, Comparator comp) {
         /* Get pointers to the first and second child. */
         RandomIterator first  = FirstChild(root, size);
         RandomIterator second = SecondChild(root);
@@ -111,7 +118,7 @@ namespace detail
       }
 
       /*
-       * Function: RebalanceSingleHeap(RandomIterator root, size_t size,
+       * Function: RebalanceSingleHeap(RandomIterator root, std::size_t size,
        *                               Comparator comp);
        * --------------------------------------------------------------------
        * Given an iterator to the root of a single Leonardo tree that needs
@@ -119,7 +126,7 @@ namespace detail
        * approach.
        */
       template <typename RandomIterator, typename Comparator>
-      void RebalanceSingleHeap(RandomIterator root, size_t size, Comparator comp) {
+      void RebalanceSingleHeap(RandomIterator root, std::size_t size, Comparator comp) {
         /* Loop until the current node has no children, which happens when the order
          * of the tree is 0 or 1.
          */
@@ -130,7 +137,7 @@ namespace detail
 
           /* Determine which child is larger and remember the order of its tree. */
           RandomIterator largerChild;
-          size_t childSize;
+          std::size_t childSize;
           if (comp(*first, *second)) {
             largerChild = second; // Second child is larger...
             childSize = size - 2; // ... and has order k - 2.
@@ -172,7 +179,7 @@ namespace detail
          * this so that once we've positioned the new node atop the correct heap
          * we remember how large it is.
          */
-        size_t lastHeapSize;
+        std::size_t lastHeapSize;
 
         /* Starting at the last heap and working backward, check whether we need
          * to swap the root of the current heap with the previous root.
@@ -182,7 +189,7 @@ namespace detail
           lastHeapSize = shape.smallestTreeSize;
 
           /* If this is the very first heap in the tree, we're done. */
-          if (size_t(std::distance(begin, itr)) == kLeonardoNumbers[lastHeapSize] - 1)
+          if (std::size_t(std::distance(begin, itr)) == kLeonardoNumbers[lastHeapSize] - 1)
             break;
 
           /* We want to swap the previous root with this one if it's strictly
@@ -338,7 +345,7 @@ namespace detail
            * room for the next Leonardo number and one extra element.
            */
         default:
-          if (size_t(std::distance(end + 1, heapEnd)) < kLeonardoNumbers[shape.smallestTreeSize - 1] + 1)
+          if (std::size_t(std::distance(end + 1, heapEnd)) < kLeonardoNumbers[shape.smallestTreeSize - 1] + 1)
             isLast = true;
           break;
         }
@@ -387,7 +394,7 @@ namespace detail
          * k - 2 and k - 1.  This works by mapping the encoding (W1, n) to the
          * encoding (W011, n - 2).
          */
-        const size_t heapOrder = shape.smallestTreeSize;
+        const std::size_t heapOrder = shape.smallestTreeSize;
         shape.trees[0] = false;
         shape.trees <<= 2;
         shape.trees[1] = shape.trees[0] = true;
