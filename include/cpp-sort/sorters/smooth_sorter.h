@@ -21,24 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_SORTERS_SMOOTH_SORTER_H_
+#define CPPSORT_SORTERS_SMOOTH_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/heap_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/selection_sorter.h>
-#include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sorters/smooth_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/std_stable_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
-#include <cpp-sort/sorters/verge_sorter.h>
+#include <functional>
+#include <iterator>
+#include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
+#include "../detail/smoothsort.h"
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
+    namespace detail
+    {
+        struct smooth_sorter_impl
+        {
+            template<
+                typename RandomAccessIterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                smoothsort(first, last, compare);
+            }
+        };
+    }
+
+    struct smooth_sorter:
+        sorter_facade<detail::smooth_sorter_impl>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<>
+    struct sorter_traits<smooth_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        static constexpr bool is_stable = false;
+    };
+}
+
+#endif // CPPSORT_SORTERS_SMOOTH_SORTER_H_
