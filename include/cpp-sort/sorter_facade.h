@@ -31,9 +31,7 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/identity.h>
-#include "detail/as_function.h"
 
 namespace cppsort
 {

@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include "../as_function.h"
+#include <cpp-sort/utility/as_function.h>
 #include "../rotate_left.h"
 
 namespace cppsort
@@ -45,7 +45,7 @@ namespace detail
         auto operator()(RandomAccessIterator first, Compare compare, Projection projection) const
             -> void
         {
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             if (compare(proj(first[1u]), proj(first[0u]))) {
                 rotate_left<2u>(first);

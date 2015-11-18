@@ -30,8 +30,8 @@
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "as_function.h"
 #include "bubble_sort.h"
 #include "insertion_sort.h"
 #include "iter_sort3.h"
@@ -53,7 +53,7 @@ namespace detail
             return;
         }
 
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         // Choose pivot as median of 3
         ForwardIterator middle = std::next(first, size / 2);
@@ -96,7 +96,7 @@ namespace detail
             return;
         }
 
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         // Choose pivot as median of 3
         BidirectionalIterator middle = std::next(first, size / 2);

@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <iterator>
-#include "as_function.h"
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
@@ -46,7 +46,7 @@ namespace detail
     {
         if (first != last)
         {
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             ForwardIterator next = first;
             while (++next != last)

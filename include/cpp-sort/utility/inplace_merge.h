@@ -32,7 +32,7 @@
 #include <iterator>
 #include <memory>
 #include <utility>
-#include "../detail/as_function.h"
+#include <cpp-sort/utility/as_function.h>
 #include "../detail/inplace_merge.h"
 #include "../detail/merge.h"
 
@@ -49,7 +49,7 @@ namespace utility
             -> void
         {
             using value_type = typename std::iterator_traits<ForwardIterator>::value_type;
-            auto&& proj = cppsort::detail::as_function(projection);
+            auto&& proj = as_function(projection);
 
             // Shrink the problem size on the left side
             while (compare(proj(*first), proj(*middle)))

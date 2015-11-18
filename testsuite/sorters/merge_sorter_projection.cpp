@@ -32,12 +32,13 @@
 #include <catch.hpp>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sort.h>
+#include <cpp-sort/utility/as_function.h>
 
 template<typename Iterator, typename Compare, typename Projection>
 auto is_sorted(Iterator first, Iterator last, Compare compare, Projection projection)
     -> bool
 {
-    auto&& proj = cppsort::detail::as_function(projection);
+    auto&& proj = cppsort::utility::as_function(projection);
     for (auto it = std::next(first) ; it != last ; ++it)
     {
         if (compare(proj(it), proj(first)))

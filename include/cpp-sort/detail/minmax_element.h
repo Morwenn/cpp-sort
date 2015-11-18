@@ -20,8 +20,8 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "as_function.h"
 
 namespace cppsort
 {
@@ -36,8 +36,8 @@ namespace detail
                         Compare compare={}, Projection projection={})
         -> std::pair<ForwardIterator, ForwardIterator>
     {
-        auto && pred = as_function(compare);
-        auto && proj = as_function(projection);
+        auto && pred = utility::as_function(compare);
+        auto && proj = utility::as_function(projection);
         std::pair<ForwardIterator, ForwardIterator> result{begin, begin};
         if(begin == end || ++begin == end)
             return result;

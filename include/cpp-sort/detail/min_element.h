@@ -30,8 +30,8 @@
 #include <functional>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "as_function.h"
 
 namespace cppsort
 {
@@ -46,7 +46,7 @@ namespace detail
                      Compare compare={}, Projection projection={})
         -> ForwardIterator
     {
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         if (first == last) return last;
 

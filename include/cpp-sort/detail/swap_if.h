@@ -31,8 +31,8 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "as_function.h"
 
 namespace cppsort
 {
@@ -42,7 +42,7 @@ namespace detail
     auto swap_if(T& lhs, T& rhs, Compare compare, Projection projection)
         -> void
     {
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         if (compare(proj(rhs), proj(lhs)))
         {

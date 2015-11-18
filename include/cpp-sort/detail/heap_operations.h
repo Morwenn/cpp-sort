@@ -18,8 +18,8 @@
 #include <functional>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "as_function.h"
 
 namespace cppsort
 {
@@ -32,7 +32,7 @@ namespace detail
                    RandomAccessIterator start)
         -> void
     {
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         typedef typename std::iterator_traits<RandomAccessIterator>::value_type value_type;

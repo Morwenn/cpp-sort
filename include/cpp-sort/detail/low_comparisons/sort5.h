@@ -29,8 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "../as_function.h"
 #include "../swap_if.h"
 
 namespace cppsort
@@ -50,7 +50,7 @@ namespace detail
             -> void
         {
             using std::swap;
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             swap_if(first[0u], first[1u], compare, projection);
             swap_if(first[2u], first[3u], compare, projection);

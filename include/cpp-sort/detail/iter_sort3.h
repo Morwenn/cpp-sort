@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include "as_function.h"
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
@@ -37,7 +37,7 @@ namespace detail
     void iter_sort3(Iterator a, Iterator b, Iterator c,
                     Compare compare, Projection projection)
     {
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         if (!compare(proj(*b), proj(*a)))
         {

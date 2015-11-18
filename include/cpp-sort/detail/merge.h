@@ -16,7 +16,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include "as_function.h"
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
@@ -30,8 +30,8 @@ namespace detail
                Projection1 projection1={}, Projection2 projection2={})
         -> OutputIterator
     {
-        auto&& proj1 = as_function(projection1);
-        auto&& proj2 = as_function(projection2);
+        auto&& proj1 = utility::as_function(projection1);
+        auto&& proj2 = utility::as_function(projection2);
 
         for (; first1 != last1; ++result)
         {

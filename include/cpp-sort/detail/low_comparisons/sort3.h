@@ -29,8 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/identity.h>
-#include "../as_function.h"
 #include "../rotate_left.h"
 #include "../rotate_right.h"
 
@@ -51,7 +51,7 @@ namespace detail
             -> void
         {
             using std::swap;
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             if (compare(proj(first[1u]), proj(first[0u]))) {
                 if (compare(proj(first[2u]), proj(first[0u]))) {

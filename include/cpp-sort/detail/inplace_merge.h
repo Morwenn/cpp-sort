@@ -104,7 +104,7 @@ namespace detail
                             InputIterator2 first2, InputIterator2 last2,
                             OutputIterator result, Compare comp, Projection projection)
     {
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         for (; first1 != last1; ++result)
         {
@@ -169,7 +169,7 @@ namespace detail
         -> void
     {
         typedef typename std::iterator_traits<BidirectionalIterator>::difference_type difference_type;
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         while (true)
         {

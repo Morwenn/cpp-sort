@@ -26,8 +26,8 @@
 
 #include <algorithm>
 #include <iterator>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/log2.h>
-#include "as_function.h"
 #include "inplace_merge.h"
 #include "is_sorted_until.h"
 #include "pdqsort.h"
@@ -85,7 +85,7 @@ namespace detail
         BidirectionalIterator next = is_sorted_until(first, last, compare, projection);
         BidirectionalIterator current = std::prev(next);
 
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         while (true)
         {
@@ -201,7 +201,7 @@ namespace detail
         RandomAccessIterator current = is_sorted_until(first, last, compare, projection) - 1;
         RandomAccessIterator next = current + 1;
 
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         while (true)
         {

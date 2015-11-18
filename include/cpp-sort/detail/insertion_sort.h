@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
-#include "as_function.h"
+#include <cpp-sort/utility/as_function.h>
 #include "upper_bound.h"
 
 namespace cppsort
@@ -46,7 +46,7 @@ namespace detail
             return;
         }
 
-        auto&& proj = detail::as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur)
         {
@@ -74,7 +74,7 @@ namespace detail
                         Compare compare, Projection projection,
                         std::forward_iterator_tag)
     {
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         for (ForwardIterator it = first ; it != last ; ++it) {
             ForwardIterator insertion_point = upper_bound(first, it, proj(*it), compare, projection);

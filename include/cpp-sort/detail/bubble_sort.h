@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
-#include "as_function.h"
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
@@ -52,7 +52,7 @@ namespace detail
     {
         if (size < 2) return;
 
-        auto&& proj = as_function(projection);
+        auto&& proj = utility::as_function(projection);
 
         while (--size)
         {

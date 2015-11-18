@@ -28,8 +28,8 @@
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/log2.h>
-#include "as_function.h"
 #include "heap_operations.h"
 #include "insertion_sort.h"
 #include "iter_sort3.h"
@@ -56,7 +56,7 @@ namespace detail
             typedef typename std::iterator_traits<Iter>::value_type T;
             if (begin == end) return;
 
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             for (Iter cur = begin + 1; cur != end; ++cur) {
                 Iter sift = cur;
@@ -84,7 +84,7 @@ namespace detail
             typedef typename std::iterator_traits<Iter>::value_type T;
             if (begin == end) return true;
 
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             int limit = 0;
             for (Iter cur = begin + 1; cur != end; ++cur) {
@@ -119,7 +119,7 @@ namespace detail
             typedef typename std::iterator_traits<Iter>::value_type T;
             if (begin == end) return true;
 
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             int limit = 0;
             for (Iter cur = begin + 1; cur != end; ++cur) {
@@ -153,7 +153,7 @@ namespace detail
         std::pair<Iter, bool> partition_right(Iter begin, Iter end,
                                               Compare comp, Projection projection) {
             typedef typename std::iterator_traits<Iter>::value_type T;
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
             T pivot(std::move(*begin));
@@ -197,7 +197,7 @@ namespace detail
         template<class Iter, class Compare, class Projection>
         Iter partition_left(Iter begin, Iter end, Compare comp, Projection projection) {
             typedef typename std::iterator_traits<Iter>::value_type T;
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             T pivot(std::move(*begin));
             auto&& pivot_proj = proj(pivot);
@@ -227,7 +227,7 @@ namespace detail
         void pdqsort_loop(Iter begin, Iter end, Compare comp, Projection projection,
                           int bad_allowed, bool leftmost = true) {
             typedef typename std::iterator_traits<Iter>::difference_type diff_t;
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             // Use a while loop for tail recursion elimination.
             while (true) {

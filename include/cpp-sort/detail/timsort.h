@@ -37,7 +37,7 @@
 #include <iterator>
 #include <algorithm>
 #include <utility>
-#include "as_function.h"
+#include <cpp-sort/utility/as_function.h>
 #include "lower_bound.h"
 #include "upper_bound.h"
 
@@ -164,7 +164,7 @@ namespace detail
         void binarySort(iter_t const lo, iter_t const hi, iter_t start,
                         compare_t compare, Projection projection) {
             assert( lo <= start && start <= hi );
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
             if(start == lo) {
                 ++start;
             }
@@ -184,7 +184,7 @@ namespace detail
         diff_t countRunAndMakeAscending(iter_t const lo, iter_t const hi,
                                         compare_t compare, Projection projection) {
             assert( lo < hi );
-            auto&& proj = as_function(projection);
+            auto&& proj = utility::as_function(projection);
 
             iter_t runHi = lo + 1;
             if( runHi == hi ) {
@@ -306,7 +306,7 @@ namespace detail
         template <typename Iter>
         diff_t gallopLeft(ref_t key, Iter const base, diff_t const len, diff_t const hint) {
             assert( len > 0 && hint >= 0 && hint < len );
-            auto&& proj = as_function(proj_);
+            auto&& proj = utility::as_function(proj_);
             auto&& key_proj = proj(key);
 
             diff_t lastOfs = 0;
@@ -355,7 +355,7 @@ namespace detail
         template <typename Iter>
         diff_t gallopRight(ref_t key, Iter const base, diff_t const len, diff_t const hint) {
             assert( len > 0 && hint >= 0 && hint < len );
-            auto&& proj = as_function(proj_);
+            auto&& proj = utility::as_function(proj_);
             auto&& key_proj = proj(key);
 
             diff_t ofs = 1;
@@ -422,7 +422,7 @@ namespace detail
             }
 
             int minGallop(minGallop_);
-            auto&& proj = as_function(proj_);
+            auto&& proj = utility::as_function(proj_);
 
             // outer:
             while(true) {
@@ -544,7 +544,7 @@ namespace detail
             }
 
             int minGallop( minGallop_ );
-            auto&& proj = as_function(proj_);
+            auto&& proj = utility::as_function(proj_);
 
             // outer:
             while(true) {

@@ -30,9 +30,10 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/identity.h>
-#include "detail/as_function.h"
 
 namespace cppsort
 {
@@ -43,7 +44,7 @@ namespace cppsort
     {
         template<
             typename Projection, typename Iterable, typename Compare,
-            typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))
+            typename ProjFunc = decltype(utility::as_function(std::declval<Projection&>()))
         >
         using is_projection_t = std::result_of_t<Compare(
             std::result_of_t<ProjFunc(decltype(*std::begin(std::declval<Iterable&>())))>,
@@ -52,7 +53,7 @@ namespace cppsort
 
         template<
             typename Projection, typename Iterator, typename Compare,
-            typename ProjFunc = decltype(detail::as_function(std::declval<Projection&>()))
+            typename ProjFunc = decltype(utility::as_function(std::declval<Projection&>()))
         >
         using is_projection_iterator_t = std::result_of_t<Compare(
             std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>,
