@@ -53,32 +53,77 @@ namespace cppsort
 
             using this_class = sorter_facade<Sorter>;
 
-            template<typename Iterable, typename... Args>
-            using fptr_t
-                = std::result_of_t<this_class(Iterable&, Args...)>(*)(Iterable&, Args...);
+            template<typename Iterable>
+            using fptr_t = std::result_of_t<this_class(Iterable&)>(*)(Iterable&);
 
-            template<typename Iterator, typename... Args>
-            using fptr_iterator_t
-                = std::result_of_t<this_class(Iterator, Iterator, Args...)>(*)(Iterator, Iterator, Args...);
+            template<typename Iterable, typename Func>
+            using fptr_func_t = std::result_of_t<this_class(Iterable&, Func)>(*)(Iterable&, Func);
+
+            template<typename Iterable, typename Func1, typename Func2>
+            using fptr_func2_t
+                = std::result_of_t<this_class(Iterable&, Func1, Func2)>(*)(Iterable&, Func1, Func2);
+
+            template<typename Iterator>
+            using fptr_it_t = std::result_of_t<this_class(Iterator, Iterator)>(*)(Iterator, Iterator);
+
+            template<typename Iterator, typename Func>
+            using fptr_func_it_t
+                = std::result_of_t<this_class(Iterator, Iterator, Func)>(*)(Iterator, Iterator, Func);
+
+            template<typename Iterator, typename Func1, typename Func2>
+            using fptr_func2_it_t
+                = std::result_of_t<this_class(Iterator, Iterator, Func1, Func2)>(*)(Iterator, Iterator, Func1, Func2);
 
         public:
 
             ////////////////////////////////////////////////////////////
             // Conversion to function pointers
 
-            template<typename Iterable, typename... Args>
-            operator fptr_t<Iterable, Args...>() const
+            template<typename Iterable>
+            operator fptr_t<Iterable>() const
             {
-                return [](Iterable& iterable, Args... args) {
-                    return this_class{}(iterable, args...);
+                return [](Iterable& iterable) {
+                    return this_class{}(iterable);
                 };
             }
 
-            template<typename Iterator, typename... Args>
-            operator fptr_iterator_t<Iterator, Args...>() const
+            template<typename Iterable, typename Func>
+            operator fptr_func_t<Iterable, Func>() const
             {
-                return [](Iterator first, Iterator last, Args... args) {
-                    return this_class{}(first, last, args...);
+                return [](Iterable& iterable, Func func) {
+                    return this_class{}(iterable, func);
+                };
+            }
+
+            template<typename Iterable, typename Func1, typename Func2>
+            operator fptr_func2_t<Iterable, Func1, Func2>() const
+            {
+                return [](Iterable& iterable, Func1 func1, Func2 func2) {
+                    return this_class{}(iterable, func1, func2);
+                };
+            }
+
+            template<typename Iterator>
+            operator fptr_it_t<Iterator>() const
+            {
+                return [](Iterator first, Iterator last) {
+                    return this_class{}(first, last);
+                };
+            }
+
+            template<typename Iterator, typename Func>
+            operator fptr_func_it_t<Iterator, Func>() const
+            {
+                return [](Iterator first, Iterator last, Func func) {
+                    return this_class{}(first, last, func);
+                };
+            }
+
+            template<typename Iterator, typename Func1, typename Func2>
+            operator fptr_func2_it_t<Iterator, Func1, Func2>() const
+            {
+                return [](Iterator first, Iterator last, Func1 func1, Func2 func2) {
+                    return this_class{}(first, last, func1, func2);
                 };
             }
 
