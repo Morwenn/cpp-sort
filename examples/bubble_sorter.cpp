@@ -25,21 +25,27 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/identity.h>
 #include <cpp-sort/utility/size.h>
 
 namespace detail
 {
     template<
         typename ForwardIterator,
-        typename StrictWeakOrdering
+        typename StrictWeakOrdering,
+        typename Projection
     >
     auto bubble_sort(ForwardIterator first, StrictWeakOrdering compare,
-                     std::size_t size)
+                     Projection projection, std::size_t size)
         -> void
     {
         if (size < 2) return;
+
+        auto&& proj = cppsort::utility::as_function(projection);
 
         while (--size)
         {
@@ -47,7 +53,7 @@ namespace detail
             ForwardIterator next = std::next(current);
             for (std::size_t i = 0 ; i < size ; ++i)
             {
-                if (compare(*next, *current))
+                if (compare(proj(*next), proj(*current)))
                 {
                     std::iter_swap(current, next);
                 }
@@ -62,27 +68,39 @@ namespace detail
         // Pair of iterators overload
         template<
             typename ForwardIterator,
-            typename StrictWeakOrdering = std::less<>
+            typename StrictWeakOrdering = std::less<>,
+            typename Projection = cppsort::utility::identity,
+            typename = std::enable_if_t<cppsort::is_projection_iterator<
+                Projection, ForwardIterator, StrictWeakOrdering
+            >>
         >
         auto operator()(ForwardIterator first, ForwardIterator last,
-                        StrictWeakOrdering compare={}) const
+                        StrictWeakOrdering compare={}, Projection projection={}) const
             -> void
         {
-            bubble_sort(first, compare, std::distance(first, last));
+            bubble_sort(first,
+                        compare,
+                        projection,
+                        std::distance(first, last));
         }
 
         // Iterable overload
         template<
             typename ForwardIterable,
-            typename StrictWeakOrdering = std::less<>
+            typename StrictWeakOrdering = std::less<>,
+            typename Projection = cppsort::utility::identity,
+            typename = std::enable_if_t<cppsort::is_projection<
+                Projection, ForwardIterable, StrictWeakOrdering
+            >>
         >
-        auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={}) const
+        auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={},
+                        Projection projection={}) const
             -> void
         {
-            bubble_sort(
-                std::begin(iterable), compare,
-                cppsort::utility::size(iterable)
-            );
+            bubble_sort(std::begin(iterable),
+                        compare,
+                        projection,
+                        cppsort::utility::size(iterable));
         }
     };
 }
@@ -115,13 +133,16 @@ int main()
     std::array<int, 8> collection;
     std::iota(std::begin(collection), std::end(collection), 0);
 
+    // Projection to sort in descending order
+    auto projection = [](int n) { return -n; };
+
     // For each possible permutation of collection
     do
     {
         auto to_sort = collection;
         // Bubble sort the collection
-        cppsort::sort(to_sort, bubble_sorter{});
+        cppsort::sort(to_sort, bubble_sorter{}, projection);
         // Check that it is indeed sorted
-        assert(std::is_sorted(std::begin(to_sort), std::end(to_sort)));
+        assert(std::is_sorted(std::begin(to_sort), std::end(to_sort), std::greater<>{}));
     } while (std::next_permutation(std::begin(collection), std::end(collection)));
 }
