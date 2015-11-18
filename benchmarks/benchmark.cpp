@@ -143,12 +143,12 @@ auto time_distributions(std::size_t times)
 int main()
 {
     time_distributions<int, 14u,
-        shuffled,
+        shuffled/*,
         all_equal,
         ascending,
         descending,
         pipe_organ,
         push_front,
-        push_middle
+        push_middle*/
     >(1'000'000u);
 }

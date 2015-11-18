@@ -91,6 +91,13 @@ of a Timsort](https://github.com/gfx/cpp-TimSort).
 module](http://www.boost.org/doc/libs/1_59_0/libs/sort/doc/html/index.html) with
 some modifications so that they do not depend on Boost anymore.
 
+* [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function)
+and several projection-enhanced helper algorithms come from Eric Niebler's [Range
+v3](https://github.com/ericniebler/range-v3) library.
+
+* Many projection-enhanced standard algorithms are directly adapted from their
+counterparts in [libc++](http://libcxx.llvm.org/).
+
 * The merge insertion sort used by `low_comparison_sorter` algorithm 5 is a C++
 adaptation of a LISP implementation of the algorithm that I found in [an answer
 on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
