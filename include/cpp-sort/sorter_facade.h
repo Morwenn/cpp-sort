@@ -47,57 +47,23 @@ namespace cppsort
     {
         protected:
 
-            ////////////////////////////////////////////////////////////
-            // Function pointer types
+            // Function pointer type, a type alias is required
+            // for the function pointer conversion operator syntax
+            // to be valid
 
-            using this_class = sorter_facade<Sorter>;
-
-            template<typename Iterable>
-            using fptr_t = std::result_of_t<this_class(Iterable&)>(*)(Iterable&);
-
-            template<typename Iterable, typename Compare>
-            using fptr_cmp_t = std::result_of_t<this_class(Iterable&, Compare)>(*)(Iterable&, Compare);
-
-            template<typename Iterator>
-            using fptr_it_t = std::result_of_t<this_class(Iterator, Iterator)>(*)(Iterator, Iterator);
-
-            template<typename Iterator, typename Compare>
-            using fptr_cmp_it_t = std::result_of_t<this_class(Iterator, Iterator, Compare)>(*)(Iterator, Iterator, Compare);
+            template<typename... Args>
+            using fptr_t = std::result_of_t<sorter_facade<Sorter>(Args...)>(*)(Args...);
 
         public:
 
             ////////////////////////////////////////////////////////////
-            // Conversion to function pointers
+            // Conversion to function pointer
 
-            template<typename Iterable>
-            operator fptr_t<Iterable>() const
+            template<typename... Args>
+            operator fptr_t<Args...>() const
             {
-                return [](Iterable& iterable) {
-                    return this_class{}(iterable);
-                };
-            }
-
-            template<typename Iterable, typename Compare>
-            operator fptr_cmp_t<Iterable, Compare>() const
-            {
-                return [](Iterable& iterable, Compare compare) {
-                    return this_class{}(iterable, compare);
-                };
-            }
-
-            template<typename Iterator>
-            operator fptr_it_t<Iterator>() const
-            {
-                return [](Iterator first, Iterator last) {
-                    return this_class{}(first, last);
-                };
-            }
-
-            template<typename Iterator, typename Compare>
-            operator fptr_cmp_it_t<Iterator, Compare>() const
-            {
-                return [](Iterator first, Iterator last, Compare compare) {
-                    return this_class{}(first, last, compare);
+                return [](Args... args) {
+                    return sorter_facade<Sorter>{}(args...);
                 };
             }
 
