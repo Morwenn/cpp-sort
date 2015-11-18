@@ -47,23 +47,38 @@ namespace cppsort
     {
         protected:
 
-            // Function pointer type, a type alias is required
+            // Function pointer types, a type alias is required
             // for the function pointer conversion operator syntax
             // to be valid
 
-            template<typename... Args>
-            using fptr_t = std::result_of_t<sorter_facade<Sorter>(Args...)>(*)(Args...);
+            using this_class = sorter_facade<Sorter>;
+
+            template<typename Iterable, typename... Args>
+            using fptr_t
+                = std::result_of_t<this_class(Iterable&, Args...)>(*)(Iterable&, Args...);
+
+            template<typename Iterator, typename... Args>
+            using fptr_iterator_t
+                = std::result_of_t<this_class(Iterator, Iterator, Args...)>(*)(Iterator, Iterator, Args...);
 
         public:
 
             ////////////////////////////////////////////////////////////
-            // Conversion to function pointer
+            // Conversion to function pointers
 
-            template<typename... Args>
-            operator fptr_t<Args...>() const
+            template<typename Iterable, typename... Args>
+            operator fptr_t<Iterable, Args...>() const
             {
-                return [](Args... args) {
-                    return sorter_facade<Sorter>{}(args...);
+                return [](Iterable& iterable, Args... args) {
+                    return this_class{}(iterable, args...);
+                };
+            }
+
+            template<typename Iterator, typename... Args>
+            operator fptr_iterator_t<Iterator, Args...>() const
+            {
+                return [](Iterator first, Iterator last, Args... args) {
+                    return this_class{}(first, last, args...);
                 };
             }
 
