@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/identity.h>
@@ -55,6 +56,14 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        typename std::iterator_traits<ForwardIterator>::iterator_category
+                    >::value,
+                    "insertion_sorter requires at least forward iterators"
+                );
+
                 insertion_sort(first, last, compare, projection);
             }
         };

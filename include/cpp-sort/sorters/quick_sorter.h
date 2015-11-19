@@ -56,6 +56,14 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
+                    >::value,
+                    "quick_sorter requires at least forward iterators"
+                );
+
                 quicksort(std::begin(iterable), std::end(iterable),
                           compare, projection,
                           utility::size(iterable));
@@ -73,6 +81,14 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        typename std::iterator_traits<ForwardIterator>::iterator_category
+                    >::value,
+                    "quick_sorter requires at least forward iterators"
+                );
+
                 quicksort(first, last,
                           compare, projection,
                           std::distance(first, last));
