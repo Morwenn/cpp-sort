@@ -33,47 +33,23 @@
 
 namespace
 {
-    using namespace cppsort;
-
-    enum struct call
-    {
-        iterator_compare,
-        iterable_compare,
-        iterator_projection,
-        iterable_projection
-    };
-
     struct comparison_sorter_impl
     {
         template<typename Iterator, typename Compare=std::less<>>
         auto operator()(Iterator, Iterator, Compare={}) const
-            -> call
+            -> bool
         {
-            return call::iterator_compare;
-        }
-
-        template<typename Iterable, typename Compare=std::less<>>
-        auto operator()(Iterable&, Compare={}) const
-            -> call
-        {
-            return call::iterable_compare;
+            return true;
         }
     };
 
     struct projection_sorter_impl
     {
-        template<typename Iterator, typename Projection=utility::identity>
+        template<typename Iterator, typename Projection=cppsort::utility::identity>
         auto operator()(Iterator, Iterator, Projection={}) const
-            -> call
+            -> bool
         {
-            return call::iterator_projection;
-        }
-
-        template<typename Iterable, typename Projection=utility::identity>
-        auto operator()(Iterable&, Projection={}) const
-            -> call
-        {
-            return call::iterable_projection;
+            return true;
         }
     };
 
@@ -82,91 +58,93 @@ namespace
         template<
             typename Iterator,
             typename Compare = std::less<>,
-            typename Projection=utility::identity
+            typename Projection = cppsort::utility::identity,
+            typename = std::enable_if_t<cppsort::is_projection_iterator<
+                Projection, Iterator, Compare
+            >>
         >
         auto operator()(Iterator, Iterator, Compare={}, Projection={}) const
-            -> call
+            -> bool
         {
-            return call::iterator_projection;
-        }
-
-        template<
-            typename Iterable,
-            typename Compare = std::less<>,
-            typename Projection=utility::identity
-        >
-        auto operator()(Iterable&, Compare={}, Projection={}) const
-            -> call
-        {
-            return call::iterable_projection;
+            return true;
         }
     };
 
     struct comparison_sorter:
-        sorter_facade<comparison_sorter_impl>
+        cppsort::sorter_facade<comparison_sorter_impl>
     {};
 
     struct projection_sorter:
-        sorter_facade<projection_sorter_impl>
+        cppsort::sorter_facade<projection_sorter_impl>
     {};
 
     struct comparison_projection_sorter:
-        sorter_facade<comparison_projection_sorter_impl>
+        cppsort::sorter_facade<comparison_projection_sorter_impl>
     {};
 }
 
-TEST_CASE( "miscellaneous sorter_facade checks",
+TEST_CASE( "sorter_facade miscellaneous checks",
            "[sorter_facade][compare][projection]" )
 {
-    // Miscellaneous sorter_facade checks to make sure
-    // that no operator() ambiguity is introduced
+    // Some checks to make sure that sorter_facade always
+    // forwards the value correctly in the most common cases
 
-    SECTION( "conditional iterable operator() overload for comparison" )
+    struct wrapper { int value; };
+
+    // Collection to "sort"
+    std::vector<int> vec;
+    std::vector<wrapper> vec_wrap;
+
+    SECTION( "with comparison only" )
     {
-        std::vector<int> vec(3);
+        CHECK( cppsort::sort(vec, comparison_sorter{}, std::less<>{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             comparison_sorter{}, std::less<>{}) );
 
-        call res1 = cppsort::sort(vec, comparison_sorter{}, std::less<>{});
-        CHECK( res1 == call::iterable_compare );
-        call res2 = cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, std::less<>{});
-        CHECK( res2 == call::iterator_compare );
-
-        call res3 = cppsort::sort(vec, comparison_sorter{}, std::greater<>{});
-        CHECK( res3 == call::iterable_compare );
-        call res4 = cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, std::greater<>{});
-        CHECK( res4 == call::iterator_compare );
+        CHECK( cppsort::sort(vec, comparison_sorter{}, std::greater<>{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             comparison_sorter{}, std::greater<>{}) );
     }
 
-    SECTION( "conditional iterable operator() overload for projection" )
+    SECTION( "with projection only" )
     {
-        struct wrapper { int value; };
-        std::vector<wrapper> vec(3);
+        CHECK( cppsort::sort(vec, projection_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             projection_sorter{}, cppsort::utility::identity{}) );
 
-        call res1 = cppsort::sort(vec, projection_sorter{}, &wrapper::value);
-        CHECK( res1 == call::iterable_projection );
-        call res2 = cppsort::sort(std::begin(vec), std::end(vec), projection_sorter{}, &wrapper::value);
-        CHECK( res2 == call::iterator_projection );
+        CHECK( cppsort::sort(vec_wrap, projection_sorter{}, &wrapper::value) );
+        CHECK( cppsort::sort(std::begin(vec_wrap), std::end(vec_wrap),
+                             projection_sorter{}, &wrapper::value) );
     }
 
-    SECTION( "conditional iterable operator() when both are here" )
+    SECTION( "with both comparison and projection" )
     {
-        std::vector<int> vec;
+        CHECK( cppsort::sort(vec, comparison_projection_sorter{}, std::less<>{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             comparison_projection_sorter{}, std::less<>{}) );
 
-        call res1 = cppsort::sort(vec, comparison_projection_sorter{}, std::less<>{});
-        CHECK( res1 == call::iterable_projection );
-        call res2 = cppsort::sort(std::begin(vec), std::end(vec), comparison_projection_sorter{}, std::less<>{});
-        CHECK( res2 == call::iterator_projection );
+        CHECK( cppsort::sort(vec, comparison_projection_sorter{}, std::greater<>{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             comparison_projection_sorter{}, std::greater<>{}) );
 
-        call res3 = cppsort::sort(vec, comparison_projection_sorter{}, std::greater<>{});
-        CHECK( res3 == call::iterable_projection );
-        call res4 = cppsort::sort(std::begin(vec), std::end(vec), comparison_projection_sorter{}, std::greater<>{});
-        CHECK( res4 == call::iterator_projection );
+        CHECK( cppsort::sort(vec, comparison_projection_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             comparison_projection_sorter{}, cppsort::utility::identity{}) );
 
-        struct wrapper { int value; };
-        std::vector<wrapper> vec2(3);
+        CHECK( cppsort::sort(vec_wrap, comparison_projection_sorter{}, &wrapper::value) );
+        CHECK( cppsort::sort(std::begin(vec_wrap), std::end(vec_wrap),
+                             comparison_projection_sorter{}, &wrapper::value) );
 
-        call res5 = cppsort::sort(vec2, comparison_projection_sorter{}, &wrapper::value);
-        CHECK( res5 == call::iterable_projection );
-        call res6 = cppsort::sort(std::begin(vec2), std::end(vec2), comparison_projection_sorter{}, &wrapper::value);
-        CHECK( res6 == call::iterator_projection );
+        CHECK( cppsort::sort(vec, comparison_projection_sorter{},
+                             std::greater<>{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(std::begin(vec), std::end(vec),
+                             comparison_projection_sorter{},
+                             std::greater<>{}, cppsort::utility::identity{}) );
+
+        CHECK( cppsort::sort(vec_wrap, comparison_projection_sorter{},
+                             std::greater<>{}, &wrapper::value) );
+        CHECK( cppsort::sort(std::begin(vec_wrap), std::end(vec_wrap),
+                             comparison_projection_sorter{},
+                             std::greater<>{}, &wrapper::value) );
     }
 }
