@@ -23,6 +23,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
@@ -101,32 +102,40 @@ namespace detail
 
       /*
        * Function: RandomIterator LargerChild(RandomIterator root, std::size_t size,
-       *                                      Comparator comp);
+       *                                      Comparator comp, Projection projection);
        * --------------------------------------------------------------------
        * Given an iterator to the root of a max-heap Leonardo tree, returns
        * an iterator to its larger child.  It's assumed that the heap is
        * well-formatted and that the heap has order > 1.
        */
-      template <typename RandomIterator, typename Comparator>
-      RandomIterator LargerChild(RandomIterator root, std::size_t size, Comparator comp) {
+      template <typename RandomIterator, typename Comparator, typename Projection>
+      RandomIterator LargerChild(RandomIterator root, std::size_t size,
+                                 Comparator comp, Projection projection)
+      {
+        auto&& proj = utility::as_function(projection);
+
         /* Get pointers to the first and second child. */
         RandomIterator first  = FirstChild(root, size);
         RandomIterator second = SecondChild(root);
 
         /* Determine which is greater. */
-        return comp(*first, *second)? second : first;
+        return comp(proj(*first), proj(*second)) ? second : first;
       }
 
       /*
        * Function: RebalanceSingleHeap(RandomIterator root, std::size_t size,
-       *                               Comparator comp);
+       *                               Comparator comp, Projection proj);
        * --------------------------------------------------------------------
        * Given an iterator to the root of a single Leonardo tree that needs
        * rebalancing, rebalances that tree using the standard "bubble-down"
        * approach.
        */
-      template <typename RandomIterator, typename Comparator>
-      void RebalanceSingleHeap(RandomIterator root, std::size_t size, Comparator comp) {
+      template <typename RandomIterator, typename Comparator, typename Projection>
+      void RebalanceSingleHeap(RandomIterator root, std::size_t size,
+                               Comparator comp, Projection projection)
+      {
+        auto&& proj = utility::as_function(projection);
+
         /* Loop until the current node has no children, which happens when the order
          * of the tree is 0 or 1.
          */
@@ -138,7 +147,7 @@ namespace detail
           /* Determine which child is larger and remember the order of its tree. */
           RandomIterator largerChild;
           std::size_t childSize;
-          if (comp(*first, *second)) {
+          if (comp(proj(*first), proj(*second))) {
             largerChild = second; // Second child is larger...
             childSize = size - 2; // ... and has order k - 2.
           } else {
@@ -147,7 +156,7 @@ namespace detail
           }
 
           /* If the root is bigger than this child, we're done. */
-          if (!comp(*root, *largerChild))
+          if (not comp(proj(*root), proj(*largerChild)))
             return;
 
           /* Otherwise, swap down and update our order. */
@@ -159,7 +168,8 @@ namespace detail
 
       /*
        * Function: LeonardoHeapRectify(RandomIterator begin, RandomIterator end,
-       *                               HeapShape shape, Comparator comp);
+       *                               HeapShape shape, Comparator comp,
+       *                               Projection projection);
        * ---------------------------------------------------------------------
        * Given an implicit Leonardo heap spanning [begin, end) that has just
        * had an element inserted into it at the very end, along with the
@@ -167,9 +177,13 @@ namespace detail
        * the new root down to the proper position and rebalancing the target
        * heap.
        */
-      template <typename RandomIterator, typename Comparator>
+      template <typename RandomIterator, typename Comparator, typename Projection>
       void LeonardoHeapRectify(RandomIterator begin, RandomIterator end,
-                               HeapShape shape, Comparator comp) {
+                               HeapShape shape, Comparator comp,
+                               Projection projection)
+      {
+        auto&& proj = utility::as_function(projection);
+
         /* Back up the end iterator one step to get to the root of the rightmost
          * heap.
          */
@@ -208,10 +222,10 @@ namespace detail
              * comparing against.
              */
             RandomIterator largeChild = LargerChild(itr, shape.smallestTreeSize,
-                                                    comp);
+                                                    comp, projection);
 
             /* Update what element is being compared against. */
-            if (comp(*toCompare, *largeChild))
+            if (comp(proj(*toCompare), proj(*largeChild)))
               toCompare = largeChild;
           }
 
@@ -224,7 +238,7 @@ namespace detail
            * we're comparing, we now have the new node at the top of the correct
            * heap.
            */
-          if (!comp(*toCompare, *priorHeap))
+          if (not comp(proj(*toCompare), proj(*priorHeap)))
             break;
 
           /* Otherwise, do the swap and adjust our location. */
@@ -242,22 +256,23 @@ namespace detail
         }
 
         /* Finally, rebalance the current heap. */
-        RebalanceSingleHeap(itr, lastHeapSize, comp);
+        RebalanceSingleHeap(itr, lastHeapSize, comp, projection);
       }
 
       /*
        * Function: LeonardoHeapAdd(RandomIterator begin, RandomIterator end,
-       *                           RandomIterator heapEnd,
-       *                           HeapShape& shape, Comparator comp);
+       *                           RandomIterator heapEnd, HeapShape& shape,
+       *                           Comparator comp, Projection projection);
        * ----------------------------------------------------------------------
        * Given an implicit Leonardo heap spanning [begin, end) in a range spanned
-       * by [begin, heapEnd], along with the shape and a comparator, increases the
-       * size of that heap by one by inserting the element at *end.
+       * by [begin, heapEnd], along with the shape, a comparator and a projection,
+       * increases the size of that heap by one by inserting the element at *end.
        */
-      template <typename RandomIterator, typename Comparator>
+      template <typename RandomIterator, typename Comparator, typename Projection>
       void LeonardoHeapAdd(RandomIterator begin, RandomIterator end,
-                           RandomIterator heapEnd,
-                           HeapShape& shape, Comparator comp) {
+                           RandomIterator heapEnd, HeapShape& shape,
+                           Comparator comp, Projection projection)
+      {
         /* There are three cases to consider, which are analogous to the cases
          * in the proof that it is possible to partition the input into heaps
          * of decreasing size:
@@ -352,25 +367,27 @@ namespace detail
 
         /* If this isn't a final heap, then just rebalance the current heap. */
         if (!isLast)
-          RebalanceSingleHeap(end, shape.smallestTreeSize, comp);
+          RebalanceSingleHeap(end, shape.smallestTreeSize, comp, projection);
         /* Otherwise do a full rectify to put this node in its place. */
         else
-          LeonardoHeapRectify(begin, end + 1, shape, comp);
+          LeonardoHeapRectify(begin, end + 1, shape, comp, projection);
       }
 
       /*
        * Function: LeonardoHeapRemove(RandomIterator begin, RandomIterator end,
-       *                              HeapShape& shape,  Comparator comp);
+       *                              HeapShape& shape, Comparator comp,
+       *                              Projection projection);
        * ----------------------------------------------------------------------
        * Given an implicit Leonardo heap spanning [begin, end), along with the
-       * size list and a comparator, dequeues the element at end - 1 and
-       * rebalances the heap.  Since the largest element of the heap is already
-       * at end, this essentially keeps the max element in its place and does
-       * a rebalance if necessary.
+       * size list, a comparator and a projection, dequeues the element at the
+       * position end - 1 and rebalances the heap. Since the largest element of
+       * the heap is already at end, this essentially keeps the max element in
+       * its place and does a rebalance if necessary.
        */
-      template <typename RandomIterator, typename Comparator>
+      template <typename RandomIterator, typename Comparator, typename Projection>
       void LeonardoHeapRemove(RandomIterator begin, RandomIterator end,
-                              HeapShape& shape, Comparator comp) {
+                              HeapShape& shape, Comparator comp, Projection projection)
+      {
         /* There are two cases to consider:
          *
          * Case 1: The last heap is of order zero or one.  In this case,
@@ -420,14 +437,16 @@ namespace detail
          * assumes an exclusive range, while leftHeap is actually an iterator
          * directly to where the root is.
          */
-        LeonardoHeapRectify(begin, leftHeap + 1,  allButLast, comp);
-        LeonardoHeapRectify(begin, rightHeap + 1, shape, comp);
+        LeonardoHeapRectify(begin, leftHeap + 1,  allButLast, comp, projection);
+        LeonardoHeapRectify(begin, rightHeap + 1, shape, comp, projection);
       }
     }
 
     /* Actual smoothsort implementation. */
-    template <typename RandomIterator, typename Comparator>
-    void smoothsort(RandomIterator begin, RandomIterator end, Comparator comp) {
+    template <typename RandomIterator, typename Comparator, typename Projection>
+    void smoothsort(RandomIterator begin, RandomIterator end,
+                    Comparator comp, Projection projection)
+    {
       /* Edge case: Check that the range isn't empty or a singleton. */
       if (begin == end || begin + 1 == end) return;
 
@@ -437,13 +456,13 @@ namespace detail
 
       /* Convert the input into an implicit Leonardo heap. */
       for (RandomIterator itr = begin; itr != end; ++itr)
-        smoothsort_detail::LeonardoHeapAdd(begin, itr, end, shape, comp);
+        smoothsort_detail::LeonardoHeapAdd(begin, itr, end, shape, comp, projection);
 
       /* Continuously dequeue from the implicit Leonardo heap until we've
        * consumed all the elements.
        */
       for (RandomIterator itr = end; itr != begin; --itr)
-        smoothsort_detail::LeonardoHeapRemove(begin, itr, shape, comp);
+        smoothsort_detail::LeonardoHeapRemove(begin, itr, shape, comp, projection);
     }
 }}
 
