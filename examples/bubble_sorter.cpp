@@ -78,9 +78,16 @@ namespace detail
                         StrictWeakOrdering compare={}, Projection projection={}) const
             -> void
         {
+            static_assert(
+                std::is_base_of<
+                    std::forward_iterator_tag,
+                    typename std::iterator_traits<ForwardIterator>::iterator_category
+                >::value,
+                "bubble_sorter requires at least forward iterators"
+            );
+
             bubble_sort(first,
-                        compare,
-                        projection,
+                        compare, projection,
                         std::distance(first, last));
         }
 
@@ -97,9 +104,16 @@ namespace detail
                         Projection projection={}) const
             -> void
         {
+            static_assert(
+                std::is_base_of<
+                    std::forward_iterator_tag,
+                    typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
+                >::value,
+                "bubble_sorter requires at least forward iterators"
+            );
+
             bubble_sort(std::begin(iterable),
-                        compare,
-                        projection,
+                        compare, projection,
                         cppsort::utility::size(iterable));
         }
     };
