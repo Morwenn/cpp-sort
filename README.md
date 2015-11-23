@@ -102,6 +102,10 @@ counterparts in [libc++](http://libcxx.llvm.org/).
 adaptation of a LISP implementation of the algorithm that I found in [an answer
 on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
 
+* The implementation of Dijkstra's smoothsort used by `smooth_sorter` has been
+directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)
+of the algorithm.
+
 * The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
 found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
 *Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
