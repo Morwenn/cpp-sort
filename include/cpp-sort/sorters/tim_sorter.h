@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/identity.h>
@@ -55,6 +56,14 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        typename std::iterator_traits<RandomAccessIterator>::iterator_category
+                    >::value,
+                    "tim_sorter requires at least random-access iterators"
+                );
+
                 timsort(first, last, compare, projection);
             }
         };

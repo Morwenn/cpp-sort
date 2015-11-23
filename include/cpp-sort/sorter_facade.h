@@ -351,6 +351,22 @@ namespace cppsort
                 return Sorter::operator()(iterable, compare, projection);
             }
 
+            template<typename Iterable, typename Compare, typename Projection>
+            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+                -> std::enable_if_t<
+                    not detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection> &&
+                        detail::has_comparison_projection_sort_iterator<
+                        Sorter,
+                        decltype(std::begin(iterable)),
+                        Compare,
+                        Projection
+                        >,
+                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), compare, projection))
+                >
+            {
+                return Sorter::operator()(std::begin(iterable), std::end(iterable), compare, projection);
+            }
+
             ////////////////////////////////////////////////////////////
             // std::less<> and utility::identity overloads
 
