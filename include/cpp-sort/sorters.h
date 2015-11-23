@@ -35,6 +35,7 @@
 #include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>
+#include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/std_stable_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>
