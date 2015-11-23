@@ -16,6 +16,7 @@ addons:
     packages:
       - clang-3.8
       - g++-5
+      - valgrind
 
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
@@ -24,7 +25,7 @@ install:
 script: 
   - cmake .
   - make
-  - testsuite/cpp-sort-testsuite
+  - valgrind --leak-check=full testsuite/cpp-sort-testsuite
 
 notifications:
   email: false
