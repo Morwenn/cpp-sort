@@ -17,6 +17,7 @@
 #include <iterator>
 #include <limits>
 #include <cpp-sort/utility/as_function.h>
+#include "insertion_sort.h"
 #include "lower_bound.h"
 #include "upper_bound.h"
 
@@ -31,8 +32,17 @@ namespace detail
         std::size_t end;
 
         Range() {}
-        Range(std::size_t start, std::size_t end) : start(start), end(end) {}
-        std::size_t length() const { return end - start; }
+
+        Range(std::size_t start, std::size_t end):
+            start(start),
+            end(end)
+        {}
+
+        auto length() const
+            -> std::size_t
+        {
+            return end - start;
+        }
     };
 
     // toolbox functions used by the sorter
@@ -56,7 +66,7 @@ namespace detail
         -> std::size_t
     {
         auto&& proj = utility::as_function(projection);
-        return lower_bound(&array[range.start], &array[range.end], proj(value),
+        return lower_bound(array + range.start, array + range.end, proj(value),
                            compare, projection) - &array[0];
     }
 
@@ -67,7 +77,7 @@ namespace detail
         -> std::size_t
     {
         auto&& proj = utility::as_function(projection);
-        return upper_bound(&array[range.start], &array[range.end], proj(value),
+        return upper_bound(array + range.start, array + range.end, proj(value),
                            compare, projection) - &array[0];
     }
 
@@ -140,22 +150,6 @@ namespace detail
                 return BinaryLast(array, value, Range(range.start, index), compare, projection);
 
         return BinaryLast(array, value, Range(index, index + skip), compare, projection);
-    }
-
-    // n^2 sorting algorithm used to sort tiny chunks of the full array
-    template<typename T, typename Compare, typename Projection>
-    auto InsertionSort(T array[], const Range & range,
-                       Compare compare, Projection projection)
-        -> void
-    {
-        auto&& proj = utility::as_function(projection);
-
-        for (std::size_t j, i = range.start + 1; i < range.end; i++) {
-            const T temp = array[i];
-            for (j = i; j > range.start && compare(proj(temp), proj(array[j - 1])); j--)
-                array[j] = array[j - 1];
-            array[j] = temp;
-        }
     }
 
     // reverse a range of values within the array
@@ -335,26 +329,33 @@ namespace detail
         // calculate how to scale the index value to the range within the array
         // the bottom-up merge sort only operates on values that are powers of two,
         // so scale down to that power of two, then use a fraction to scale back again
-        class Iterator {
+        class Iterator
+        {
             std::size_t size, power_of_two;
             std::size_t decimal, numerator, denominator;
             std::size_t decimal_step, numerator_step;
 
         public:
-            Iterator(std::size_t size2, std::size_t min_level) {
-                size = size2;
-                power_of_two = FloorPowerOfTwo(size);
-                denominator = power_of_two/min_level;
-                numerator_step = size % denominator;
-                decimal_step = size/denominator;
-                begin();
-            }
 
-            void begin() {
+            Iterator(std::size_t size, std::size_t min_level):
+                size(size),
+                power_of_two(FloorPowerOfTwo(size)),
+                decimal(0),
+                numerator(0),
+                denominator(power_of_two / min_level),
+                decimal_step(size / denominator),
+                numerator_step(size % denominator)
+            {}
+
+            auto begin()
+                -> void
+            {
                 numerator = decimal = 0;
             }
 
-            Range nextRange() {
+            auto nextRange()
+                -> Range
+            {
                 std::size_t start = decimal;
 
                 decimal += decimal_step;
@@ -367,11 +368,15 @@ namespace detail
                 return Range(start, decimal);
             }
 
-            bool finished() {
+            auto finished() const
+                -> bool
+            {
                 return (decimal >= size);
             }
 
-            bool nextLevel() {
+            auto nextLevel()
+                -> bool
+            {
                 decimal_step += decimal_step;
                 numerator_step += numerator_step;
                 if (numerator_step >= denominator) {
@@ -382,7 +387,9 @@ namespace detail
                 return (decimal_step < size);
             }
 
-            std::size_t length() {
+            auto length() const
+                -> std::size_t
+            {
                 return decimal_step;
             }
         };
@@ -924,7 +931,8 @@ namespace detail
 
                     // while an unstable sort like std::sort could be applied here, in benchmarks it was consistently slightly slower than a simple insertion sort,
                     // even for tens of millions of items. this may be because insertion sort is quite fast when the data is already somewhat sorted, like it is here
-                    InsertionSort(array, buffer2, compare, projection);
+                    insertion_sort(array + buffer2.start, array + buffer2.end,
+                                   compare, projection);
 
                     for (pull_index = 0; pull_index < 2; pull_index++) {
                         std::size_t unique = pull[pull_index].count * 2;
