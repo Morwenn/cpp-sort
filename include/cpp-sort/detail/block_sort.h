@@ -23,9 +23,6 @@
 #include "lower_bound.h"
 #include "upper_bound.h"
 
-// whether to give WikiSort a full-size cache, to see how it performs when given more memory
-#define DYNAMIC_CACHE false
-
 namespace cppsort
 {
 namespace detail
@@ -393,45 +390,6 @@ namespace detail
             }
         };
 
-    #if DYNAMIC_CACHE
-        // use a class so the memory for the cache is freed when the object goes out of scope,
-        // regardless of whether exceptions were thrown (only needed in the C++ version)
-        template<typename T>
-        class Cache {
-        public:
-            T *cache;
-            std::size_t cache_size;
-
-            ~Cache() {
-                if (cache) delete[] cache;
-            }
-
-            Cache(std::size_t size) {
-                // good choices for the cache size are:
-                // (size + 1)/2 – turns into a full-speed standard merge sort since everything fits into the cache
-                cache_size = (size + 1)/2;
-                cache = new (std::nothrow) T[cache_size];
-                if (cache) return;
-
-                // sqrt((size + 1)/2) + 1 – this will be the size of the A blocks at the largest level of merges,
-                // so a buffer of this size would allow it to skip using internal or in-place merges for anything
-                cache_size = sqrt(cache_size) + 1;
-                cache = new (std::nothrow) T[cache_size];
-                if (cache) return;
-
-                // 512 – chosen from careful testing as a good balance between fixed-size memory use and run time
-                if (cache_size > 512) {
-                    cache_size = 512;
-                    cache = new (std::nothrow) T[cache_size];
-                    if (cache) return;
-                }
-
-                // 0 – if the system simply cannot allocate any extra memory whatsoever, no memory works just fine
-                cache_size = 0;
-            }
-        };
-    #endif
-
         // bottom-up merge sort combined with an in-place merge algorithm for O(1) memory use
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto sort(RandomAccessIterator first, RandomAccessIterator last,
@@ -528,18 +486,12 @@ namespace detail
             if (size < 8) return;
 
             // use a small cache to speed up some of the operations
-            #if DYNAMIC_CACHE
-                Cache<T> cache_obj (size);
-                T *cache = cache_obj.cache;
-                const std::size_t cache_size = cache_obj.cache_size;
-            #else
-                // since the cache size is fixed, it's still O(1) memory!
-                // just keep in mind that making it too small ruins the point (nothing will fit into it),
-                // and making it too large also ruins the point (so much for "low memory"!)
-                // removing the cache entirely still gives 75% of the performance of a standard merge
-                static constexpr std::size_t cache_size = 512;
-                T cache[cache_size];
-            #endif
+            // since the cache size is fixed, it's still O(1) memory!
+            // just keep in mind that making it too small ruins the point (nothing will fit into it),
+            // and making it too large also ruins the point (so much for "low memory"!)
+            // removing the cache entirely still gives 75% of the performance of a standard merge
+            static constexpr std::size_t cache_size = 512;
+            T cache[cache_size];
 
             // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
             while (true) {
