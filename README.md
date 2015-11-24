@@ -106,6 +106,9 @@ on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
 directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)
 of the algorithm.
 
+* The algorithm used by `block_sorter` has been adapted from BonzaiThePenguin's
+[WikiSort](https://github.com/BonzaiThePenguin/WikiSort).
+
 * The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
 found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
 *Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
