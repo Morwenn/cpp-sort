@@ -13,12 +13,9 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 #include <cstddef>
-#include <cstring>
-#include <ctime>
+#include <iterator>
 #include <limits>
-#include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include "lower_bound.h"
 #include "upper_bound.h"
