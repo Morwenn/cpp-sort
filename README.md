@@ -51,8 +51,8 @@ used to sort small arrays:
 ![shuffled int arrays](https://i.imgur.com/GaRHn9x.png)
 
 These results were generated with MinGW g++ 5.2 with the compiler options
-`-std=c++14 -O3 -fexpensive-optimizations -march=native`. More benchmarks will be
-made available in the future.
+`-std=c++14 -O3 -march=native`. More benchmarks will be made available in the
+future.
 
 # Compiler support
 
