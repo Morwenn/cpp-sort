@@ -29,7 +29,7 @@
 #include <functional>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/log2.h>
+#include <cpp-sort/utility/bitops.h>
 #include "heap_operations.h"
 #include "insertion_sort.h"
 #include "iter_sort3.h"

@@ -17,6 +17,7 @@
 #include <iterator>
 #include <limits>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/bitops.h>
 #include "insertion_sort.h"
 #include "lower_bound.h"
 #include "upper_bound.h"
@@ -44,20 +45,6 @@ namespace detail
             return end - start;
         }
     };
-
-    // toolbox functions used by the sorter
-
-    template<typename Unsigned>
-    auto FloorPowerOfTwo(Unsigned x)
-        -> Unsigned
-    {
-        static constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
-        for (std::size_t i = 1 ; i <= bound ; i <<= 1)
-        {
-            x |= (x >> i);
-        }
-        return x - (x >> 1);
-    }
 
     // find the index of the first value within the range that is equal to array[index]
     template<typename T, typename Compare, typename Projection>
@@ -339,7 +326,7 @@ namespace detail
 
             Iterator(std::size_t size, std::size_t min_level):
                 size(size),
-                power_of_two(FloorPowerOfTwo(size)),
+                power_of_two(utility::hyperfloor(size)),
                 decimal(0),
                 numerator(0),
                 denominator(power_of_two / min_level),
