@@ -91,7 +91,7 @@ namespace detail
 
         for (auto it = first ; it != last ; ++it)
         {
-            if (not sorted[it - first] && compare(proj(*it), proj(value)) && it != start)
+            if (not sorted[it - first] && compare(proj(*it), value) && it != start)
             {
                 ++count;
             }
@@ -105,6 +105,8 @@ namespace detail
         -> void
     {
         if (first == last) return;
+
+        auto&& proj = utility::as_function(projection);
 
         // Which elements are already sorted, and which ones still
         // need to be sorted
@@ -125,12 +127,12 @@ namespace detail
             if (positions.empty())
             {
                 dest = get_destination(first, last, compare, projection, sorted,
-                                       *start, start);
+                                       proj(*start), start);
             }
             else
             {
                 dest = get_destination(first, last, compare, projection, sorted,
-                                       *positions.top(), start);
+                                       proj(*positions.top()), start);
             }
 
             // There is nothing else to sort
