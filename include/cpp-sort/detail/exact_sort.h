@@ -40,8 +40,10 @@ namespace detail
 {
     // Returns the index of the position of the nth element of the
     // collection not already in its place
-    inline auto real_index(const std::vector<bool>& sorted, std::size_t n)
-        -> int
+    template<typename RandomAccessIterator>
+    auto real_index(RandomAccessIterator first, RandomAccessIterator last,
+                    const std::vector<bool>& sorted, std::size_t n)
+        -> RandomAccessIterator
     {
         // Number of encountered elements not already sorted
         std::size_t unsorted = 0;
@@ -55,18 +57,20 @@ namespace detail
 
             if (unsorted == n + 1)
             {
-                return i;
+                return first + i;
             }
         }
-        return -1;
+        return last;
     }
 
     // Returns the index of the first element in the collection
     // that hasn't been sorted yet
-    inline auto first_false(const std::vector<bool>& sorted)
-        -> int
+    template<typename RandomAccessIterator>
+    auto first_false(RandomAccessIterator first, RandomAccessIterator last,
+                     const std::vector<bool>& sorted)
+        -> RandomAccessIterator
     {
-        return real_index(sorted, 0);
+        return real_index(first, last, sorted, 0);
     }
 
     // Returns the destination of the given value, where the destination
@@ -77,22 +81,22 @@ namespace detail
     auto get_destination(RandomAccessIterator first, RandomAccessIterator last,
                          Compare compare, Projection projection,
                          const std::vector<bool>& sorted,
-                         const T& value, int start)
-        -> int
+                         const T& value, RandomAccessIterator start)
+        -> RandomAccessIterator
     {
         auto&& proj = utility::as_function(projection);
 
         // Number of unsorted elements smaller elements than value
         std::size_t count = 0;
 
-        for (int i = 0 ; i < std::distance(first, last) ; ++i)
+        for (auto it = first ; it != last ; ++it)
         {
-            if (not sorted[i] && compare(proj(first[i]), proj(value)) && i != start)
+            if (not sorted[it - first] && compare(proj(*it), proj(value)) && it != start)
             {
                 ++count;
             }
         }
-        return real_index(sorted, count);
+        return real_index(first, last, sorted, count);
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -106,32 +110,34 @@ namespace detail
         // need to be sorted
         std::vector<bool> sorted(std::distance(first, last), false);
 
-        // Position of the element where the current cycle starts
-        int start = 0;
+        // Element where the current cycle starts
+        RandomAccessIterator start = first;
 
-        // Stack of positions whose top corresponds to the position
-        // of the current element
-        std::stack<int> positions;
+        // Stack of elements, top is the current element
+        std::stack<
+            RandomAccessIterator,
+            std::vector<RandomAccessIterator>
+        > positions;
 
         while (true)
         {
-            int dest; // Final destination of the current element
+            RandomAccessIterator dest; // Final destination of the current element
             if (positions.empty())
             {
                 dest = get_destination(first, last, compare, projection, sorted,
-                                       first[start], start);
+                                       *start, start);
             }
             else
             {
                 dest = get_destination(first, last, compare, projection, sorted,
-                                       first[positions.top()], start);
+                                       *positions.top(), start);
             }
 
             // There is nothing else to sort
-            if (dest == -1) return;
+            if (dest == last) return;
 
             // Mark the destination as "sorted"
-            sorted[dest] = true;
+            sorted[dest - first] = true;
 
             // When the beginning of the current cycle is the same as the
             // destination of the element to sort, we have reached the end
@@ -144,23 +150,23 @@ namespace detail
                 if (not positions.empty())
                 {
                     // Move elements to their final positions
-                    auto tmp = std::move(first[dest]);
+                    auto tmp = std::move(*dest);
                     while (not positions.empty())
                     {
-                        first[dest] = std::move(first[positions.top()]);
+                        *dest = std::move(*positions.top());
                         dest = positions.top();
                         positions.pop();
                     }
-                    first[dest] = std::move(tmp);
+                    *dest = std::move(tmp);
                 }
 
                 // The next cycle starts at the first unsorted element
                 // of the collection
-                start = first_false(sorted);
+                start = first_false(first, last, sorted);
 
                 // If there is no such element, it means that the collection
                 // is already sorted
-                if (start == -1) return;
+                if (start == last) return;
             }
             else
             {
