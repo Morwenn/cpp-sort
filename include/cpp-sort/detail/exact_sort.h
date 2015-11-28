@@ -52,12 +52,11 @@ namespace detail
         {
             if (not sorted[i])
             {
+                if (unsorted == n)
+                {
+                    return std::next(first, i);
+                }
                 ++unsorted;
-            }
-
-            if (unsorted == n + 1)
-            {
-                return first + i;
             }
         }
         return last;
@@ -86,7 +85,7 @@ namespace detail
     {
         auto&& proj = utility::as_function(projection);
 
-        // Number of unsorted elements smaller elements than value
+        // Number of unsorted elements smaller than value
         std::size_t count = 0;
 
         for (auto it = first ; it != last ; ++it)
@@ -123,17 +122,9 @@ namespace detail
 
         while (true)
         {
-            RandomAccessIterator dest; // Final destination of the current element
-            if (positions.empty())
-            {
-                dest = get_destination(first, last, compare, projection, sorted,
-                                       proj(*start), start);
-            }
-            else
-            {
-                dest = get_destination(first, last, compare, projection, sorted,
-                                       proj(*positions.top()), start);
-            }
+            const auto& value = positions.empty() ? *start : *positions.top();
+            RandomAccessIterator dest = get_destination(first, last, compare, projection,
+                                                        sorted, proj(value), start);
 
             // There is nothing else to sort
             if (dest == last) return;
