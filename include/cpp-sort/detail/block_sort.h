@@ -27,15 +27,15 @@ namespace cppsort
 {
 namespace detail
 {
-    // structure to represent ranges within the array
+    template<typename Iterator>
     struct Range
     {
-        std::size_t start;
-        std::size_t end;
+        Iterator start;
+        Iterator end;
 
         Range() {}
 
-        Range(std::size_t start, std::size_t end):
+        Range(Iterator start, Iterator end):
             start(start),
             end(end)
         {}
@@ -43,118 +43,111 @@ namespace detail
         auto length() const
             -> std::size_t
         {
-            return end - start;
+            return std::distance(start, end);
         }
     };
-
-    // find the index of the first value within the range that is equal to array[index]
-    template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto BinaryFirst(RandomAccessIterator array, const T & value, const Range & range,
-                     Compare compare, Projection projection)
-        -> std::size_t
-    {
-        auto&& proj = utility::as_function(projection);
-        return lower_bound(array + range.start, array + range.end, proj(value),
-                           compare, projection) - array;
-    }
-
-    // find the index of the last value within the range that is equal to array[index], plus 1
-    template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto BinaryLast(RandomAccessIterator array, const T & value, const Range & range,
-                    Compare compare, Projection projection)
-        -> std::size_t
-    {
-        auto&& proj = utility::as_function(projection);
-        return upper_bound(array + range.start, array + range.end, proj(value),
-                           compare, projection) - array;
-    }
 
     // combine a linear search with a binary search to reduce the number of comparisons in situations
     // where have some idea as to how many unique values there are and where the next value might be
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindFirstForward(RandomAccessIterator array, const T & value, const Range & range,
-                          Compare compare, Projection projection, const std::size_t unique)
-        -> std::size_t
+    auto FindFirstForward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+                          Compare compare, Projection projection, std::size_t unique)
+        -> RandomAccessIterator
     {
-        if (range.length() == 0) return range.start;
-        std::size_t index, skip = std::max(range.length()/unique, (std::size_t)1);
+        std::size_t size = std::distance(first, last);
+        if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
+        auto&& value_proj = proj(value);
+        std::size_t skip = std::max(size / unique, (std::size_t)1);
 
-        for (index = range.start + skip; compare(proj(array[index - 1]), proj(value)); index += skip)
-            if (index >= range.end - skip)
-                return BinaryFirst(array, value, Range(index, range.end), compare, projection);
-
-        return BinaryFirst(array, value, Range(index - skip, index), compare, projection);
+        RandomAccessIterator index;
+        for (index = first + skip ; compare(proj(*std::prev(index)), value_proj) ; index += skip) {
+            if (index >= last - skip) {
+                return lower_bound(index, last, value_proj, compare, projection);
+            }
+        }
+        return lower_bound(index - skip, index, value_proj, compare, projection);
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindLastForward(RandomAccessIterator array, const T & value, const Range & range,
-                         Compare compare, Projection projection, const std::size_t unique)
-        -> std::size_t
+    auto FindLastForward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+                         Compare compare, Projection projection, std::size_t unique)
+        -> RandomAccessIterator
     {
-        if (range.length() == 0) return range.start;
-        std::size_t index, skip = std::max(range.length()/unique, (std::size_t)1);
+        std::size_t size = std::distance(first, last);
+        if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
+        auto&& value_proj = proj(value);
+        std::size_t skip = std::max(size / unique, (std::size_t)1);
 
-        for (index = range.start + skip; !compare(proj(value), proj(array[index - 1])); index += skip)
-            if (index >= range.end - skip)
-                return BinaryLast(array, value, Range(index, range.end), compare, projection);
-
-        return BinaryLast(array, value, Range(index - skip, index), compare, projection);
+        RandomAccessIterator index;
+        for (index = first + skip ; not compare(value_proj, proj(*std::prev(index))) ; index += skip) {
+            if (index >= last - skip) {
+                return upper_bound(index, last, value_proj, compare, projection);
+            }
+        }
+        return upper_bound(index - skip, index, value_proj, compare, projection);
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindFirstBackward(RandomAccessIterator array, const T & value, const Range & range,
-                           Compare compare, Projection projection, const std::size_t unique)
-        -> std::size_t
+    auto FindFirstBackward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+                           Compare compare, Projection projection, std::size_t unique)
+        -> RandomAccessIterator
     {
-        if (range.length() == 0) return range.start;
-        std::size_t index, skip = std::max(range.length()/unique, (std::size_t)1);
+        std::size_t size = std::distance(first, last);
+        if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
+        auto&& value_proj = proj(value);
+        std::size_t skip = std::max(size / unique, (std::size_t)1);
 
-        for (index = range.end - skip; index > range.start && !compare(proj(array[index - 1]), proj(value)); index -= skip)
-            if (index < range.start + skip)
-                return BinaryFirst(array, value, Range(range.start, index), compare, projection);
-
-        return BinaryFirst(array, value, Range(index, index + skip), compare, projection);
+        RandomAccessIterator index;
+        for (index = last - skip ; index > first && not compare(proj(*std::prev(index)), value_proj) ; index -= skip) {
+            if (index < first + skip) {
+                return lower_bound(first, index, value_proj, compare, projection);
+            }
+        }
+        return lower_bound(index, index + skip, value_proj, compare, projection);
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindLastBackward(RandomAccessIterator array, const T & value, const Range & range,
-                          Compare compare, Projection projection, const std::size_t unique)
-        -> std::size_t
+    auto FindLastBackward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+                          Compare compare, Projection projection, std::size_t unique)
+        -> RandomAccessIterator
     {
-
-        if (range.length() == 0) return range.start;
-        std::size_t index, skip = std::max(range.length()/unique, (std::size_t)1);
+        std::size_t size = std::distance(first, last);
+        if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
+        auto&& value_proj = proj(value);
+        std::size_t skip = std::max(size / unique, (std::size_t)1);
 
-        for (index = range.end - skip; index > range.start && compare(proj(value), proj(array[index - 1])); index -= skip)
-            if (index < range.start + skip)
-                return BinaryLast(array, value, Range(range.start, index), compare, projection);
-
-        return BinaryLast(array, value, Range(index, index + skip), compare, projection);
+        RandomAccessIterator index;
+        for (index = last - skip ; index > first && compare(value_proj, proj(*std::prev(index))) ; index -= skip) {
+            if (index < first + skip) {
+                return upper_bound(first, index, value_proj, compare, projection);
+            }
+        }
+        return upper_bound(index, index + skip, value_proj, compare, projection);
     }
 
     // swap a series of values in the array
     template<typename RandomAccessIterator>
-    auto BlockSwap(RandomAccessIterator array, const std::size_t start1, const std::size_t start2, const std::size_t block_size)
+    auto BlockSwap(RandomAccessIterator start1, RandomAccessIterator start2, std::size_t block_size)
         -> void
     {
-        std::swap_ranges(array + start1, array + start1 + block_size, array + start2);
+        std::swap_ranges(start1, start1 + block_size, start2);
     }
 
     // rotate the values in an array ([0 1 2 3] becomes [1 2 3 0] if we rotate by 1)
     // this assumes that 0 <= amount <= range.length()
     template<typename RandomAccessIterator>
-    auto Rotate(RandomAccessIterator first, std::size_t amount, Range range)
+    auto Rotate(RandomAccessIterator first, RandomAccessIterator last, std::size_t amount)
         -> void
     {
-        std::rotate(first + range.start, first + range.start + amount, first + range.end);
+        std::rotate(first, first + amount, last);
     }
 
     namespace Wiki
@@ -162,20 +155,21 @@ namespace detail
         // merge two ranges from one array and save the results into a different array
         template<typename RandomAccessIterator, typename OutputIterator,
                  typename Compare, typename Projection>
-        auto MergeInto(RandomAccessIterator from, const Range & A, const Range & B,
-                       Compare compare, Projection projection, OutputIterator into)
+        auto MergeInto(RandomAccessIterator first1, RandomAccessIterator last1,
+                       RandomAccessIterator first2, RandomAccessIterator last2,
+                       OutputIterator into, Compare compare, Projection projection)
             -> void
         {
-            RandomAccessIterator A_index = from + A.start;
-            RandomAccessIterator B_index = from + B.start;
-            RandomAccessIterator A_last = from + A.end;
-            RandomAccessIterator B_last = from + B.end;
+            RandomAccessIterator A_index = first1;
+            RandomAccessIterator B_index = first2;
+            RandomAccessIterator A_last = last1;
+            RandomAccessIterator B_last = last2;
             OutputIterator insert_index = into;
 
             auto&& proj = utility::as_function(projection);
 
             while (true) {
-                if (!compare(proj(*B_index), proj(*A_index))) {
+                if (not compare(proj(*B_index), proj(*A_index))) {
                     *insert_index = *A_index;
                     ++A_index;
                     ++insert_index;
@@ -200,30 +194,32 @@ namespace detail
         // merge operation using an external buffer
         template<typename RandomAccessIterator1, typename RandomAccessIterator2,
                  typename Compare, typename Projection>
-        auto MergeExternal(RandomAccessIterator1 array, const Range & A, const Range & B,
-                           Compare compare, Projection projection, RandomAccessIterator2 cache)
+        auto MergeExternal(RandomAccessIterator1 first1, RandomAccessIterator1 last1,
+                           RandomAccessIterator1 first2, RandomAccessIterator1 last2,
+                           RandomAccessIterator2 cache,
+                           Compare compare, Projection projection)
             -> void
         {
             // A fits into the cache, so use that instead of the internal buffer
             RandomAccessIterator2 A_index = cache;
-            RandomAccessIterator2 A_last = cache + A.length();
-            RandomAccessIterator1 B_index = array + B.start;
-            RandomAccessIterator1 B_last = array + B.end;
-            RandomAccessIterator1 insert_index = array + A.start;
+            RandomAccessIterator2 A_last = cache + std::distance(first1, last1);
+            RandomAccessIterator1 B_index = first2;
+            RandomAccessIterator1 B_last = last2;
+            RandomAccessIterator1 insert_index = first1;
 
             auto&& proj = utility::as_function(projection);
 
-            if (B.length() > 0 && A.length() > 0) {
+            if (last2 - first2 > 0 && last1 - first1 > 0) {
                 while (true) {
-                    if (!compare(proj(*B_index), proj(*A_index))) {
+                    if (not compare(proj(*B_index), proj(*A_index))) {
                         *insert_index = *A_index;
                         ++A_index;
-                        insert_index++;
+                        ++insert_index;
                         if (A_index == A_last) break;
                     } else {
                         *insert_index = *B_index;
                         ++B_index;
-                        insert_index++;
+                        ++insert_index;
                         if (B_index == B_last) break;
                     }
                 }
@@ -235,23 +231,25 @@ namespace detail
 
         // merge operation using an internal buffer
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto MergeInternal(RandomAccessIterator array, const Range & A, const Range & B,
-                           Compare compare, Projection projection, const Range & buffer)
+        auto MergeInternal(RandomAccessIterator first1, RandomAccessIterator last1,
+                           RandomAccessIterator first2, RandomAccessIterator last2,
+                           RandomAccessIterator buffer,
+                           Compare compare, Projection projection)
             -> void
         {
             // whenever we find a value to add to the final array, swap it with the value that's already in that spot
             // when this algorithm is finished, 'buffer' will contain its original contents, but in a different order
-            RandomAccessIterator A_index = array + buffer.start;
-            RandomAccessIterator B_index = array + B.start;
-            RandomAccessIterator A_last = array + buffer.start + A.length();
-            RandomAccessIterator B_last = array + B.end;
-            RandomAccessIterator insert_index = array + A.start;
+            RandomAccessIterator A_index = buffer;
+            RandomAccessIterator B_index = first2;
+            RandomAccessIterator A_last = buffer + std::distance(first1, last1);
+            RandomAccessIterator B_last = last2;
+            RandomAccessIterator insert_index = first1;
 
             auto&& proj = utility::as_function(projection);
 
-            if (B.length() > 0 && A.length() > 0) {
+            if (last2 - first2 > 0 && last1 - first1 > 0) {
                 while (true) {
-                    if (!compare(proj(*B_index), proj(*A_index))) {
+                    if (not compare(proj(*B_index), proj(*A_index))) {
                         std::iter_swap(insert_index, A_index);
                         ++A_index;
                         ++insert_index;
@@ -271,11 +269,12 @@ namespace detail
 
         // merge operation without a buffer
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto MergeInPlace(RandomAccessIterator array, Range A, Range B,
+        auto MergeInPlace(RandomAccessIterator first1, RandomAccessIterator last1,
+                          RandomAccessIterator first2, RandomAccessIterator last2,
                           Compare compare, Projection projection)
             -> void
         {
-            if (A.length() == 0 || B.length() == 0) return;
+            if (last1 - first1 == 0 || last2 - first2 == 0) return;
 
             /*
              this just repeatedly binary searches into B and rotates A into position.
@@ -296,21 +295,23 @@ namespace detail
              again, this is NOT a general-purpose solution – it only works well in this case!
              kind of like how the O(n^2) insertion sort is used in some places
              */
+            auto&& proj = utility::as_function(projection);
 
             while (true) {
                 // find the first place in B where the first item in A needs to be inserted
-                std::size_t mid = BinaryFirst(array, array[A.start], B, compare, projection);
+                RandomAccessIterator mid = lower_bound(first2, last2, proj(*first1), compare, projection);
 
                 // rotate A into place
-                std::size_t amount = mid - A.end;
-                Rotate(array, A.length(), Range(A.start, mid));
-                if (B.end == mid) break;
+                std::size_t amount = mid - last1;
+                Rotate(first1, mid, std::distance(first1, last1));
+                if (last2 == mid) break;
 
                 // calculate the new A and B ranges
-                B.start = mid;
-                A = Range(A.start + amount, B.start);
-                A.start = BinaryLast(array, array[A.start], A, compare, projection);
-                if (A.length() == 0) break;
+                first2 = mid;
+                first1 += amount;
+                last1 = first2;
+                first1 = upper_bound(first1, last1, proj(*first1), compare, projection);
+                if (std::distance(first1, last1) == 0) break;
             }
         }
 
@@ -341,8 +342,9 @@ namespace detail
                 numerator = decimal = 0;
             }
 
-            auto nextRange()
-                -> Range
+            template<typename Iterator>
+            auto nextRange(Iterator it)
+                -> Range<Iterator>
             {
                 std::size_t start = decimal;
 
@@ -350,10 +352,10 @@ namespace detail
                 numerator += numerator_step;
                 if (numerator >= denominator) {
                     numerator -= denominator;
-                    decimal++;
+                    ++decimal;
                 }
 
-                return Range(start, decimal);
+                return { it + start, it + decimal };
             }
 
             auto finished() const
@@ -369,7 +371,7 @@ namespace detail
                 numerator_step += numerator_step;
                 if (numerator_step >= denominator) {
                     numerator_step -= denominator;
-                    decimal_step++;
+                    ++decimal_step;
                 }
 
                 return decimal_step < size;
@@ -418,15 +420,15 @@ namespace detail
             // sort groups of 4-8 items at a time using an unstable sorting network,
             // but keep track of the original item orders to force it to be stable
             // http://pages.ripco.net/~jgamble/nw.html
-            Wiki::Iterator iterator (size, 4);
-            while (!iterator.finished()) {
+            Wiki::Iterator iterator(size, 4);
+            while (not iterator.finished()) {
                 uint8_t order[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
-                Range range = iterator.nextRange();
+                auto range = iterator.nextRange(first);
 
                 #define SWAP(x, y) \
-                    if (compare(proj(first[range.start + y]), proj(first[range.start + x])) || \
-                        (order[x] > order[y] && !compare(proj(first[range.start + x]), proj(first[range.start + y])))) { \
-                        std::iter_swap(first + range.start + x, first + range.start + y); \
+                    if (compare(proj(range.start[y]), proj(range.start[x])) || \
+                        (order[x] > order[y] && not compare(proj(range.start[x]), proj(range.start[y])))) { \
+                        std::iter_swap(range.start + x, range.start + y); \
                         std::iter_swap(order + x, order + y); }
 
                 if (range.length() == 8) {
@@ -491,61 +493,64 @@ namespace detail
                     // then merge the two merged subarrays from the cache back into the original array
                     if ((iterator.length() + 1) * 4 <= cache_size && iterator.length() * 4 <= size) {
                         iterator.begin();
-                        while (!iterator.finished()) {
+                        while (not iterator.finished()) {
                             // merge A1 and B1 into the cache
-                            Range A1 = iterator.nextRange();
-                            Range B1 = iterator.nextRange();
-                            Range A2 = iterator.nextRange();
-                            Range B2 = iterator.nextRange();
+                            auto A1 = iterator.nextRange(first);
+                            auto B1 = iterator.nextRange(first);
+                            auto A2 = iterator.nextRange(first);
+                            auto B2 = iterator.nextRange(first);
 
-                            if (compare(proj(first[B1.end - 1]), proj(first[A1.start]))) {
+                            if (compare(proj(*std::prev(B1.end)), proj(*A1.start))) {
                                 // the two ranges are in reverse order, so copy them in reverse order into the cache
-                                std::copy(first + A1.start, first + A1.end, cache + B1.length());
-                                std::copy(first + B1.start, first + B1.end, cache);
-                            } else if (compare(proj(first[B1.start]), proj(first[A1.end - 1]))) {
+                                std::copy(A1.start, A1.end, cache + B1.length());
+                                std::copy(B1.start, B1.end, cache);
+                            } else if (compare(proj(*B1.start), proj(*std::prev(A1.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
-                                MergeInto(first, A1, B1, compare, projection, cache);
+                                MergeInto(A1.start, A1.end, B1.start, B1.end, cache, compare, projection);
                             } else {
                                 // if A1, B1, A2, and B2 are all in order, skip doing anything else
-                                if (!compare(proj(first[B2.start]), proj(first[A2.end - 1])) &&
-                                    !compare(proj(first[A2.start]), proj(first[B1.end - 1]))) continue;
+                                if (not compare(proj(*B2.start), proj(*std::prev(A2.end))) &&
+                                    not compare(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
 
                                 // copy A1 and B1 into the cache in the same order
-                                std::copy(first + A1.start, first + A1.end, cache);
-                                std::copy(first + B1.start, first + B1.end, cache + A1.length());
+                                std::copy(A1.start, A1.end, cache);
+                                std::copy(B1.start, B1.end, cache + A1.length());
                             }
-                            A1 = Range(A1.start, B1.end);
+                            A1 = { A1.start, B1.end };
 
                             // merge A2 and B2 into the cache
-                            if (compare(proj(first[B2.end - 1]), proj(first[A2.start]))) {
+                            if (compare(proj(*std::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so copy them in reverse order into the cache
-                                std::copy(first + A2.start, first + A2.end, cache + A1.length() + B2.length());
-                                std::copy(first + B2.start, first + B2.end, cache + A1.length());
-                            } else if (compare(proj(first[B2.start]), proj(first[A2.end - 1]))) {
+                                std::copy(A2.start, A2.end, cache + A1.length() + B2.length());
+                                std::copy(B2.start, B2.end, cache + A1.length());
+                            } else if (compare(proj(*B2.start), proj(*std::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
-                                MergeInto(first, A2, B2, compare, projection, &cache[A1.length()]);
+                                MergeInto(A2.start, A2.end, B2.start, B2.end, cache + A1.length(), compare, projection);
                             } else {
                                 // copy A2 and B2 into the cache in the same order
-                                std::copy(first + A2.start, first + A2.end, cache + A1.length());
-                                std::copy(first + B2.start, first + B2.end, cache + A1.length() + A2.length());
+                                std::copy(A2.start, A2.end, cache + A1.length());
+                                std::copy(B2.start, B2.end, cache + A1.length() + A2.length());
                             }
-                            A2 = Range(A2.start, B2.end);
+                            A2 = { A2.start, B2.end };
 
                             // merge A1 and A2 from the cache into the array
-                            Range A3 = Range(0, A1.length());
-                            Range B3 = Range(A1.length(), A1.length() + A2.length());
+                            Range<T*> A3 = { cache, cache + A1.length() };
+                            Range<T*> B3 = {
+                                cache + A1.length(),
+                                cache + A1.length() + A2.length()
+                            };
 
-                            if (compare(proj(cache[B3.end - 1]), proj(cache[A3.start]))) {
+                            if (compare(proj(*(B3.end - 1)), proj(*A3.start))) {
                                 // the two ranges are in reverse order, so copy them in reverse order into the array
-                                std::copy(cache + A3.start, cache + A3.end, first + A1.start + A2.length());
-                                std::copy(cache + B3.start, cache + B3.end, first + A1.start);
-                            } else if (compare(proj(cache[B3.start]), proj(cache[A3.end - 1]))) {
+                                std::copy(A3.start, A3.end, A1.start + A2.length());
+                                std::copy(B3.start, B3.end, A1.start);
+                            } else if (compare(proj(*B3.start), proj(*std::prev(A3.end)))) {
                                 // these two ranges weren't already in order, so merge them back into the array
-                                MergeInto(cache, A3, B3, compare, projection, first + A1.start);
+                                MergeInto(A3.start, A3.end, B3.start, B3.end, A1.start, compare, projection);
                             } else {
                                 // copy A3 and B3 into the array in the same order
-                                std::copy(cache + A3.start, cache + A3.end, first + A1.start);
-                                std::copy(cache + B3.start, cache + B3.end, first + A1.start + A1.length());
+                                std::copy(A3.start, A3.end, A1.start);
+                                std::copy(B3.start, B3.end, A1.start + A1.length());
                             }
                         }
 
@@ -555,17 +560,17 @@ namespace detail
 
                     } else {
                         iterator.begin();
-                        while (!iterator.finished()) {
-                            Range A = iterator.nextRange();
-                            Range B = iterator.nextRange();
+                        while (not iterator.finished()) {
+                            auto A = iterator.nextRange(first);
+                            auto B = iterator.nextRange(first);
 
-                            if (compare(proj(first[B.end - 1]), proj(first[A.start]))) {
+                            if (compare(proj(*std::prev(B.end)), proj(*A.start))) {
                                 // the two ranges are in reverse order, so a simple rotation should fix it
-                                Rotate(first, A.length(), Range(A.start, B.end));
-                            } else if (compare(proj(first[B.start]), proj(first[A.end - 1]))) {
+                                Rotate(A.start, B.end, A.length());
+                            } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we'll need to merge them!
-                                std::copy(first + A.start, first + A.end, cache);
-                                MergeExternal(first, A, B, compare, projection, cache);
+                                std::copy(A.start, A.end, cache);
+                                MergeExternal(A.start, A.end, B.start, B.end, cache, compare, projection);
                             }
                         }
                     }
@@ -586,11 +591,18 @@ namespace detail
 
                     // as an optimization, we really only need to pull out the internal buffers once for each level of merges
                     // after that we can reuse the same buffers over and over, then redistribute it when we're finished with this level
-                    Range buffer1 = Range(0, 0), buffer2 = Range(0, 0);
-                    std::size_t index, last, count, pull_index = 0;
-                    struct { std::size_t from, to, count; Range range; } pull[2];
-                    pull[0].from = pull[0].to = pull[0].count = 0; pull[0].range = Range(0, 0);
-                    pull[1].from = pull[1].to = pull[1].count = 0; pull[1].range = Range(0, 0);
+                    Range<RandomAccessIterator> buffer1 = { first, first };
+                    Range<RandomAccessIterator> buffer2 = { first, first };
+                    RandomAccessIterator index, last;
+                    std::size_t count, pull_index = 0;
+                    struct
+                    {
+                        RandomAccessIterator from, to;
+                        std::size_t count;
+                        Range<RandomAccessIterator> range;
+                    } pull[2];
+                    pull[0].count = 0; pull[0].range = { first, first };
+                    pull[1].count = 0; pull[1].range = { first, first };
 
                     // find two internal buffers of size 'buffer_size' each
                     // let's try finding both buffers at the same time from a single A or B subarray
@@ -615,23 +627,22 @@ namespace detail
                     // all of the Merge steps must be replaced by a different merge algorithm (MergeInPlace)
 
                     iterator.begin();
-                    while (!iterator.finished()) {
-                        Range A = iterator.nextRange();
-                        Range B = iterator.nextRange();
+                    while (not iterator.finished()) {
+                        auto A = iterator.nextRange(first);
+                        auto B = iterator.nextRange(first);
 
                         // just store information about where the values will be pulled from and to,
                         // as well as how many values there are, to create the two internal buffers
                         #define PULL(_to) \
-                            pull[pull_index].range = Range(A.start, B.end); \
+                            pull[pull_index].range = { A.start, B.end }; \
                             pull[pull_index].count = count; \
                             pull[pull_index].from = index; \
                             pull[pull_index].to = _to
 
                         // check A for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the start of A
-                        for (last = A.start, count = 1; count < find; last = index, count++) {
-                            index = FindLastForward(first, first[last], Range(last + 1, A.end),
-                                                    compare, projection, find - count);
+                        for (last = A.start, count = 1; count < find; last = index, ++count) {
+                            index = FindLastForward(std::next(last), A.end, *last, compare, projection, find - count);
                             if (index == A.end) break;
                             assert(index < A.end);
                         }
@@ -645,38 +656,37 @@ namespace detail
                             if (count == buffer_size + buffer_size) {
                                 // we were able to find a single contiguous section containing 2√A unique values,
                                 // so this section can be used to contain both of the internal buffers we'll need
-                                buffer1 = Range(A.start, A.start + buffer_size);
-                                buffer2 = Range(A.start + buffer_size, A.start + count);
+                                buffer1 = { A.start, A.start + buffer_size };
+                                buffer2 = { A.start + buffer_size, A.start + count };
                                 break;
                             } else if (find == buffer_size + buffer_size) {
                                 // we found a buffer that contains at least √A unique values, but did not contain the full 2√A unique values,
                                 // so we still need to find a second separate buffer of at least √A unique values
-                                buffer1 = Range(A.start, A.start + count);
+                                buffer1 = { A.start, A.start + count };
                                 find = buffer_size;
                             } else if (block_size <= cache_size) {
                                 // we found the first and only internal buffer that we need, so we're done!
-                                buffer1 = Range(A.start, A.start + count);
+                                buffer1 = { A.start, A.start + count };
                                 break;
                             } else if (find_separately) {
                                 // found one buffer, but now find the other one
-                                buffer1 = Range(A.start, A.start + count);
+                                buffer1 = { A.start, A.start + count };
                                 find_separately = false;
                             } else {
                                 // we found a second buffer in an 'A' subarray containing √A unique values, so we're done!
-                                buffer2 = Range(A.start, A.start + count);
+                                buffer2 = { A.start, A.start + count };
                                 break;
                             }
                         } else if (pull_index == 0 && count > buffer1.length()) {
                             // keep track of the largest buffer we were able to find
-                            buffer1 = Range(A.start, A.start + count);
+                            buffer1 = { A.start, A.start + count };
                             PULL(A.start);
                         }
 
                         // check B for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the end of B
-                        for (last = B.end - 1, count = 1; count < find; last = index - 1, count++) {
-                            index = FindFirstBackward(first, first[last], Range(B.start, last),
-                                                      compare, projection, find - count);
+                        for (last = std::prev(B.end), count = 1; count < find; last = index - 1, ++count) {
+                            index = FindFirstBackward(B.start, last, *last, compare, projection, find - count);
                             if (index == B.start) break;
                             assert(index > B.start);
                         }
@@ -690,34 +700,36 @@ namespace detail
                             if (count == buffer_size + buffer_size) {
                                 // we were able to find a single contiguous section containing 2√A unique values,
                                 // so this section can be used to contain both of the internal buffers we'll need
-                                buffer1 = Range(B.end - count, B.end - buffer_size);
-                                buffer2 = Range(B.end - buffer_size, B.end);
+                                buffer1 = { B.end - count, B.end - buffer_size };
+                                buffer2 = { B.end - buffer_size, B.end };
                                 break;
                             } else if (find == buffer_size + buffer_size) {
                                 // we found a buffer that contains at least √A unique values, but did not contain the full 2√A unique values,
                                 // so we still need to find a second separate buffer of at least √A unique values
-                                buffer1 = Range(B.end - count, B.end);
+                                buffer1 = { B.end - count, B.end };
                                 find = buffer_size;
                             } else if (block_size <= cache_size) {
                                 // we found the first and only internal buffer that we need, so we're done!
-                                buffer1 = Range(B.end - count, B.end);
+                                buffer1 = { B.end - count, B.end };
                                 break;
                             } else if (find_separately) {
                                 // found one buffer, but now find the other one
-                                buffer1 = Range(B.end - count, B.end);
+                                buffer1 = { B.end - count, B.end };
                                 find_separately = false;
                             } else {
                                 // buffer2 will be pulled out from a 'B' subarray, so if the first buffer was pulled out from the corresponding 'A' subarray,
                                 // we need to adjust the end point for that A subarray so it knows to stop redistributing its values before reaching buffer2
-                                if (pull[0].range.start == A.start) pull[0].range.end -= pull[1].count;
+                                if (pull[0].range.start == A.start) {
+                                    pull[0].range.end -= pull[1].count;
+                                }
 
                                 // we found a second buffer in a 'B' subarray containing √A unique values, so we're done!
-                                buffer2 = Range(B.end - count, B.end);
+                                buffer2 = { B.end - count, B.end };
                                 break;
                             }
                         } else if (pull_index == 0 && count > buffer1.length()) {
                             // keep track of the largest buffer we were able to find
-                            buffer1 = Range(B.end - count, B.end);
+                            buffer1 = { B.end - count, B.end };
                             PULL(B.end);
                         }
 
@@ -725,36 +737,38 @@ namespace detail
                     }
 
                     // pull out the two ranges so we can use them as internal buffers
-                    for (pull_index = 0; pull_index < 2; pull_index++) {
+                    for (pull_index = 0; pull_index < 2; ++pull_index) {
                         std::size_t length = pull[pull_index].count;
 
                         if (pull[pull_index].to < pull[pull_index].from) {
                             // we're pulling the values out to the left, which means the start of an A subarray
                             index = pull[pull_index].from;
-                            for (count = 1; count < length; count++) {
-                                index = FindFirstBackward(first, first[index - 1],
-                                                          Range(pull[pull_index].to, pull[pull_index].from - (count - 1)),
-                                                          compare, projection, length - count);
-                                Range range = Range(index + 1, pull[pull_index].from + 1);
-                                Rotate(first, range.length() - count, range);
+                            for (count = 1; count < length; ++count) {
+                                index = FindFirstBackward(pull[pull_index].to, pull[pull_index].from - (count - 1),
+                                                          *std::prev(index), compare, projection, length - count);
+                                Range<RandomAccessIterator> range = {
+                                    std::next(index),
+                                    std::next(pull[pull_index].from)
+                                };
+                                Rotate(range.start, range.end, range.length() - count);
                                 pull[pull_index].from = index + count;
                             }
                         } else if (pull[pull_index].to > pull[pull_index].from) {
                             // we're pulling values out to the right, which means the end of a B subarray
-                            index = pull[pull_index].from + 1;
-                            for (count = 1; count < length; count++) {
-                                index = FindLastForward(first, first[index], Range(index, pull[pull_index].to),
+                            index = std::next(pull[pull_index].from);
+                            for (count = 1; count < length; ++count) {
+                                index = FindLastForward(index, pull[pull_index].to, *index,
                                                         compare, projection, length - count);
-                                Range range = Range(pull[pull_index].from, index - 1);
-                                Rotate(first, count, range);
-                                pull[pull_index].from = index - 1 - count;
+                                Range<RandomAccessIterator> range = { pull[pull_index].from, std::prev(index) };
+                                Rotate(range.start, range.end, count);
+                                pull[pull_index].from = std::prev(index - count);
                             }
                         }
                     }
 
                     // adjust block_size and buffer_size based on the values we were able to pull out
                     buffer_size = buffer1.length();
-                    block_size = iterator.length()/buffer_size + 1;
+                    block_size = iterator.length() / buffer_size + 1;
 
                     // the first buffer NEEDS to be large enough to tag each of the evenly sized A blocks,
                     // so this was originally here to test the math for adjusting block_size above
@@ -762,12 +776,12 @@ namespace detail
 
                     // now that the two internal buffers have been created, it's time to merge each A+B combination at this level of the merge sort!
                     iterator.begin();
-                    while (!iterator.finished()) {
-                        Range A = iterator.nextRange();
-                        Range B = iterator.nextRange();
+                    while (not iterator.finished()) {
+                        auto A = iterator.nextRange(first);
+                        auto B = iterator.nextRange(first);
 
                         // remove any parts of A or B that are being used by the internal buffers
-                        std::size_t start = A.start;
+                        RandomAccessIterator start = A.start;
                         if (start == pull[0].range.start) {
                             if (pull[0].from > pull[0].to) {
                                 A.start += pull[0].count;
@@ -791,122 +805,136 @@ namespace detail
                             }
                         }
 
-                        if (compare(proj(first[B.end - 1]), proj(first[A.start]))) {
+                        if (compare(proj(*std::prev(B.end)), proj(*A.start))) {
                             // the two ranges are in reverse order, so a simple rotation should fix it
-                            Rotate(first, A.length(), Range(A.start, B.end));
-                        } else if (compare(proj(first[A.end]), proj(first[A.end - 1]))) {
+                            Rotate(A.start, B.end, A.length());
+                        } else if (compare(proj(*A.end), proj(*std::prev(A.end)))) {
                             // these two ranges weren't already in order, so we'll need to merge them!
 
                             // break the remainder of A into blocks. firstA is the uneven-sized first A block
-                            Range blockA = Range(A.start, A.end);
-                            Range firstA = Range(A.start, A.start + blockA.length() % block_size);
+                            Range<RandomAccessIterator> blockA = { A.start, A.end };
+                            Range<RandomAccessIterator> firstA = { A.start, A.start + blockA.length() % block_size };
 
                             // swap the first value of each A block with the values in buffer1
-                            for (std::size_t indexA = buffer1.start, index = firstA.end; index < blockA.end; indexA++, index += block_size)
-                                std::iter_swap(first + indexA, first + index);
+                            for (auto indexA = buffer1.start, index = firstA.end ; index < blockA.end ; ++indexA, index += block_size) {
+                                std::iter_swap(indexA, index);
+                            }
 
                             // start rolling the A blocks through the B blocks!
                             // when we leave an A block behind we'll need to merge the previous A block with any B blocks that follow it, so track that information as well
-                            Range lastA = firstA;
-                            Range lastB = Range(0, 0);
-                            Range blockB = Range(B.start, B.start + std::min(block_size, B.length()));
+                            Range<RandomAccessIterator> lastA = firstA;
+                            Range<RandomAccessIterator> lastB = { first, first };
+                            Range<RandomAccessIterator> blockB = { B.start, B.start + std::min(block_size, B.length()) };
                             blockA.start += firstA.length();
-                            std::size_t indexA = buffer1.start;
+                            RandomAccessIterator indexA = buffer1.start;
 
                             // if the first unevenly sized A block fits into the cache, copy it there for when we go to Merge it
                             // otherwise, if the second buffer is available, block swap the contents into that
-                            if (lastA.length() <= cache_size)
-                                std::copy(first + lastA.start, first + lastA.end, &cache[0]);
-                            else if (buffer2.length() > 0)
-                                BlockSwap(first, lastA.start, buffer2.start, lastA.length());
+                            if (lastA.length() <= cache_size) {
+                                std::copy(lastA.start, lastA.end, cache);
+                            } else if (buffer2.length() > 0) {
+                                BlockSwap(lastA.start, buffer2.start, lastA.length());
+                            }
 
                             if (blockA.length() > 0) {
                                 while (true) {
                                     // if there's a previous B block and the first value of the minimum A block is <= the last value of the previous B block,
                                     // then drop that minimum A block behind. or if there are no B blocks left then keep dropping the remaining A blocks.
-                                    if ((lastB.length() > 0 && !compare(proj(first[lastB.end - 1]), proj(first[indexA]))) ||
+                                    if ((lastB.length() > 0 && not compare(proj(*std::prev(lastB.end)), proj(*indexA))) ||
                                         blockB.length() == 0) {
                                         // figure out where to split the previous B block, and rotate it at the split
-                                        std::size_t B_split = BinaryFirst(first, first[indexA], lastB, compare, projection);
-                                        std::size_t B_remaining = lastB.end - B_split;
+                                        RandomAccessIterator B_split = lower_bound(lastB.start, lastB.end, proj(*indexA),
+                                                                                   compare, projection);
+                                        std::size_t B_remaining = std::distance(B_split, lastB.end);
 
                                         // swap the minimum A block to the beginning of the rolling A blocks
-                                        std::size_t minA = blockA.start;
-                                        for (std::size_t findA = minA + block_size; findA < blockA.end; findA += block_size)
-                                            if (compare(proj(first[findA]), proj(first[minA])))
+                                        RandomAccessIterator minA = blockA.start;
+                                        for (auto findA = minA + block_size ; findA < blockA.end ; findA += block_size) {
+                                            if (compare(proj(*findA), proj(*minA))) {
                                                 minA = findA;
-                                        BlockSwap(first, blockA.start, minA, block_size);
+                                            }
+                                        }
+                                        BlockSwap(blockA.start, minA, block_size);
 
                                         // swap the first item of the previous A block back with its original value, which is stored in buffer1
-                                        std::iter_swap(first + blockA.start, first + indexA);
-                                        indexA++;
+                                        std::iter_swap(blockA.start, indexA);
+                                        ++indexA;
 
                                         // locally merge the previous A block with the B values that follow it
                                         // if lastA fits into the external cache we'll use that (with MergeExternal),
                                         // or if the second internal buffer exists we'll use that (with MergeInternal),
                                         // or failing that we'll use a strictly in-place merge algorithm (MergeInPlace)
-                                        if (lastA.length() <= cache_size)
-                                            MergeExternal(first, lastA, Range(lastA.end, B_split), compare, projection, cache);
-                                        else if (buffer2.length() > 0)
-                                            MergeInternal(first, lastA, Range(lastA.end, B_split), compare, projection, buffer2);
-                                        else
-                                            MergeInPlace(first, lastA, Range(lastA.end, B_split), compare, projection);
+                                        if (lastA.length() <= cache_size) {
+                                            MergeExternal(lastA.start, lastA.end, lastA.end, B_split,
+                                                          cache, compare, projection);
+                                        } else if (buffer2.length() > 0) {
+                                            MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
+                                                          buffer2.start, compare, projection);
+                                        } else {
+                                            MergeInPlace(lastA.start, lastA.end, lastA.end, B_split, compare, projection);
+                                        }
 
                                         if (buffer2.length() > 0 || block_size <= cache_size) {
                                             // copy the previous A block into the cache or buffer2, since that's where we need it to be when we go to merge it anyway
-                                            if (block_size <= cache_size)
-                                                std::copy(first + blockA.start, first + blockA.start + block_size, cache);
-                                            else
-                                                BlockSwap(first, blockA.start, buffer2.start, block_size);
+                                            if (block_size <= cache_size) {
+                                                std::copy(blockA.start, blockA.start + block_size, cache);
+                                            } else {
+                                                BlockSwap(blockA.start, buffer2.start, block_size);
+                                            }
 
                                             // this is equivalent to rotating, but faster
                                             // the area normally taken up by the A block is either the contents of buffer2, or data we don't need anymore since we memcopied it
                                             // either way we don't need to retain the order of those items, so instead of rotating we can just block swap B to where it belongs
-                                            BlockSwap(first, B_split, blockA.start + block_size - B_remaining, B_remaining);
+                                            BlockSwap(B_split, blockA.start + block_size - B_remaining, B_remaining);
                                         } else {
                                             // we are unable to use the 'buffer2' trick to speed up the rotation operation since buffer2 doesn't exist, so perform a normal rotation
-                                            Rotate(first, blockA.start - B_split, Range(B_split, blockA.start + block_size));
+                                            Rotate(B_split, blockA.start + block_size, blockA.start - B_split);
                                         }
 
                                         // update the range for the remaining A blocks, and the range remaining from the B block after it was split
-                                        lastA = Range(blockA.start - B_remaining, blockA.start - B_remaining + block_size);
-                                        lastB = Range(lastA.end, lastA.end + B_remaining);
+                                        lastA = { blockA.start - B_remaining, blockA.start - B_remaining + block_size };
+                                        lastB = { lastA.end, lastA.end + B_remaining };
 
                                         // if there are no more A blocks remaining, this step is finished!
                                         blockA.start += block_size;
-                                        if (blockA.length() == 0)
-                                            break;
+                                        if (blockA.length() == 0) break;
 
                                     } else if (blockB.length() < block_size) {
                                         // move the last B block, which is unevenly sized, to before the remaining A blocks, by using a rotation
-                                        Rotate(first, blockB.start - blockA.start, Range(blockA.start, blockB.end));
+                                        Rotate(blockA.start, blockB.end, blockB.start - blockA.start);
 
-                                        lastB = Range(blockA.start, blockA.start + blockB.length());
+                                        lastB = { blockA.start, blockA.start + blockB.length() };
                                         blockA.start += blockB.length();
                                         blockA.end += blockB.length();
                                         blockB.end = blockB.start;
                                     } else {
                                         // roll the leftmost A block to the end by swapping it with the next B block
-                                        BlockSwap(first, blockA.start, blockB.start, block_size);
-                                        lastB = Range(blockA.start, blockA.start + block_size);
+                                        BlockSwap(blockA.start, blockB.start, block_size);
+                                        lastB = { blockA.start, blockA.start + block_size };
 
                                         blockA.start += block_size;
                                         blockA.end += block_size;
                                         blockB.start += block_size;
 
-                                        if (blockB.end > B.end - block_size) blockB.end = B.end;
-                                        else blockB.end += block_size;
+                                        if (blockB.end > B.end - block_size) {
+                                            blockB.end = B.end;
+                                        } else {
+                                            blockB.end += block_size;
+                                        }
                                     }
                                 }
                             }
 
                             // merge the last A block with the remaining B values
-                            if (lastA.length() <= cache_size)
-                                MergeExternal(first, lastA, Range(lastA.end, B.end), compare, projection, cache);
-                            else if (buffer2.length() > 0)
-                                MergeInternal(first, lastA, Range(lastA.end, B.end), compare, projection, buffer2);
-                            else
-                                MergeInPlace(first, lastA, Range(lastA.end, B.end), compare, projection);
+                            if (lastA.length() <= cache_size) {
+                                MergeExternal(lastA.start, lastA.end, lastA.end, B.end,
+                                              cache, compare, projection);
+                            } else if (buffer2.length() > 0) {
+                                MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
+                                              buffer2.start, compare, projection);
+                            } else {
+                                MergeInPlace(lastA.start, lastA.end, lastA.end, B.end, compare, projection);
+                            }
                         }
                     }
 
@@ -915,33 +943,36 @@ namespace detail
 
                     // while an unstable sort like std::sort could be applied here, in benchmarks it was consistently slightly slower than a simple insertion sort,
                     // even for tens of millions of items. this may be because insertion sort is quite fast when the data is already somewhat sorted, like it is here
-                    insertion_sort(first + buffer2.start, first + buffer2.end,
-                                   compare, projection);
+                    insertion_sort(buffer2.start, buffer2.end, compare, projection);
 
-                    for (pull_index = 0; pull_index < 2; pull_index++) {
+                    for (pull_index = 0 ; pull_index < 2 ; ++pull_index) {
                         std::size_t unique = pull[pull_index].count * 2;
                         if (pull[pull_index].from > pull[pull_index].to) {
                             // the values were pulled out to the left, so redistribute them back to the right
-                            Range buffer = Range(pull[pull_index].range.start, pull[pull_index].range.start + pull[pull_index].count);
+                            Range<RandomAccessIterator> buffer = {
+                                pull[pull_index].range.start,
+                                pull[pull_index].range.start + pull[pull_index].count
+                            };
                             while (buffer.length() > 0) {
-                                index = FindFirstForward(first, first[buffer.start],
-                                                         Range(buffer.end, pull[pull_index].range.end),
-                                                         compare, projection, unique);
+                                index = FindFirstForward(buffer.end, pull[pull_index].range.end,
+                                                         *buffer.start, compare, projection, unique);
                                 std::size_t amount = index - buffer.end;
-                                Rotate(first, buffer.length(), Range(buffer.start, index));
+                                Rotate(buffer.start, index, buffer.length());
                                 buffer.start += (amount + 1);
                                 buffer.end += amount;
                                 unique -= 2;
                             }
                         } else if (pull[pull_index].from < pull[pull_index].to) {
                             // the values were pulled out to the right, so redistribute them back to the left
-                            Range buffer = Range(pull[pull_index].range.end - pull[pull_index].count, pull[pull_index].range.end);
+                            Range<RandomAccessIterator> buffer = {
+                                pull[pull_index].range.end - pull[pull_index].count,
+                                pull[pull_index].range.end
+                            };
                             while (buffer.length() > 0) {
-                                index = FindLastBackward(first, first[buffer.end - 1],
-                                                         Range(pull[pull_index].range.start, buffer.start),
-                                                         compare, projection, unique);
+                                index = FindLastBackward(pull[pull_index].range.start, buffer.start,
+                                                         *std::prev(buffer.end), compare, projection, unique);
                                 std::size_t amount = buffer.start - index;
-                                Rotate(first, amount, Range(index, buffer.end));
+                                Rotate(index, buffer.end, amount);
                                 buffer.start -= amount;
                                 buffer.end -= (amount + 1);
                                 unique -= 2;
@@ -951,7 +982,7 @@ namespace detail
                 }
 
                 // double the size of each A and B subarray that will be merged in the next level
-                if (!iterator.nextLevel()) break;
+                if (not iterator.nextLevel()) break;
             }
         }
     }
