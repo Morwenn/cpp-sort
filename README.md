@@ -109,6 +109,10 @@ of the algorithm.
 * The algorithm used by `block_sorter` has been adapted from BonzaiThePenguin's
 [WikiSort](https://github.com/BonzaiThePenguin/WikiSort).
 
+* Even though the algorithm is not the same anymore, the original idea and algorithm
+used by `exact_sorter` come from Ahmed Akkök's [Exact-Sort](http://www.geocities.ws/p356spt/).
+I kept the name since the philosophy of the algorithm remains the same.
+
 * The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
 found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
 *Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
