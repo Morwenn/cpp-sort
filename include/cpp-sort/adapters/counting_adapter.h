@@ -87,7 +87,7 @@ namespace cppsort
     struct sorter_traits<counting_adapter<ComparisonSorter, CountType>>
     {
         using iterator_category = cppsort::iterator_category<ComparisonSorter>;
-        static constexpr bool is_stable = is_stable<ComparisonSorter>;
+        using is_stable = cppsort::is_stable<ComparisonSorter>;
     };
 }
 

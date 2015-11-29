@@ -80,7 +80,7 @@ namespace cppsort
     struct sorter_traits<insertion_sorter>
     {
         using iterator_category = std::forward_iterator_tag;
-        static constexpr bool is_stable = true;
+        using is_stable = std::true_type;
     };
 }
 

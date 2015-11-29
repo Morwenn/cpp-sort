@@ -67,7 +67,7 @@ namespace cppsort
     struct sorter_traits<float_spread_sorter>
     {
         using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = false;
+        using is_stable = std::false_type;
     };
 }
 

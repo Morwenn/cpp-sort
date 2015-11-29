@@ -90,7 +90,7 @@ namespace cppsort
 
         // We can't guarantee the stability of the sort method,
         // therefore we default the stability to false
-        static constexpr bool is_stable = false;
+        using is_stable = std::false_type;
     };
 }
 

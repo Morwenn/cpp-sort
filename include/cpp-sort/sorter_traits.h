@@ -238,7 +238,7 @@ namespace cppsort
     using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 
     template<typename Sorter>
-    constexpr bool is_stable = sorter_traits<Sorter>::is_stable;
+    using is_stable = typename sorter_traits<Sorter>::is_stable;
 
     ////////////////////////////////////////////////////////////
     // Sorter traits modifiers
@@ -260,7 +260,7 @@ namespace cppsort
     struct sorter_traits<rebind_iterator_category<Sorter, Category>>
     {
         using iterator_category = Category;
-        static constexpr bool is_stable = cppsort::is_stable<Sorter>;
+        using is_stable = cppsort::is_stable<Sorter>;
     };
 }
 

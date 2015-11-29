@@ -81,14 +81,14 @@ namespace cppsort
     struct sorter_traits<partial_comparison_sorter>
     {
         using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = false;
+        using is_stable = std::false_type;
     };
 
     template<>
     struct sorter_traits<generic_sorter>
     {
         using iterator_category = std::forward_iterator_tag;
-        static constexpr bool is_stable = true;
+        using is_stable = std::true_type;
     };
 }
 

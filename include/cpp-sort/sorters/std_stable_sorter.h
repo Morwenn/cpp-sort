@@ -75,7 +75,7 @@ namespace cppsort
     struct sorter_traits<std_stable_sorter>
     {
         using iterator_category = std::random_access_iterator_tag;
-        static constexpr bool is_stable = true;
+        using is_stable = std::true_type;
     };
 }
 

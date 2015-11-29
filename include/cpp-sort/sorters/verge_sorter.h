@@ -80,7 +80,7 @@ namespace cppsort
     struct sorter_traits<verge_sorter>
     {
         using iterator_category = std::bidirectional_iterator_tag;
-        static constexpr bool is_stable = false;
+        using is_stable = std::false_type;
     };
 }
 

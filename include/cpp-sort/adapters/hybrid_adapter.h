@@ -208,7 +208,10 @@ namespace cppsort
 
         // The adapter is stable only if every aggregated sorter
         // is stable
-        static constexpr bool is_stable = utility::all(sorter_traits<Sorters>::is_stable...);
+        using is_stable = std::integral_constant<
+            bool,
+            utility::all(cppsort::is_stable<Sorters>::value...)
+        >;
     };
 }
 
