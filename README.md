@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
 **cpp-sort** is a generic C++14 header-only sorting library. It revolves
 around one main generic sorting interface and provides several small tools
