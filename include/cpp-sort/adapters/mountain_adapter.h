@@ -1,0 +1,131 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifndef CPPSORT_ADAPTERS_MOUNTAIN_ADAPTER_H_
+#define CPPSORT_ADAPTERS_MOUNTAIN_ADAPTER_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <functional>
+#include <iterator>
+#include <utility>
+#include <vector>
+#include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
+#include "../detail/indirect_compare.h"
+
+namespace cppsort
+{
+    ////////////////////////////////////////////////////////////
+    // Adapter
+
+    namespace detail
+    {
+        template<typename Sorter>
+        struct mountain_adapter_impl
+        {
+            template<
+                typename RandomAccessIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                ////////////////////////////////////////////////////////////
+                // Indirectly sort the iterators
+
+                // Copy the iterators in a vector
+                std::vector<RandomAccessIterator> iterators;
+                iterators.reserve(std::distance(first, last));
+                for (RandomAccessIterator it = first ; it != last ; ++it)
+                {
+                    iterators.push_back(it);
+                }
+                // Sort the iterators on pointed values
+                Sorter{}(std::begin(iterators), std::end(iterators),
+                         detail::indirect_compare<Compare, Projection>(compare, projection));
+
+                ////////////////////////////////////////////////////////////
+                // Move the values according the iterator's positions
+
+                if (first == last) return;
+
+                std::vector<bool> sorted(std::distance(first, last), false);
+
+                // Element where the current cycle starts
+                RandomAccessIterator start = first;
+
+                while (start != last)
+                {
+                    // Find the element to put in current's place
+                    RandomAccessIterator current = start;
+                    auto next_pos = std::distance(first, current);
+                    RandomAccessIterator next = iterators[next_pos];
+                    sorted[next_pos] = true;
+
+                    // Process the current cycle
+                    if (next != current)
+                    {
+                        auto tmp = std::move(*current);
+                        while (next != start)
+                        {
+                            *current = std::move(*next);
+                            current = next;
+                            auto next_pos = std::distance(first, next);
+                            next = iterators[next_pos];
+                            sorted[next_pos] = true;
+                        }
+                        *current = std::move(tmp);
+                    }
+
+                    // Find the next cycle
+                    do
+                    {
+                        ++start;
+                    }
+                    while (start != last && sorted[start - first]);
+                }
+            }
+        };
+    }
+
+    template<typename Sorter>
+    struct mountain_adapter:
+        sorter_facade<detail::mountain_adapter_impl<Sorter>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Sorter traits
+
+    template<typename Sorter>
+    struct sorter_traits<mountain_adapter<Sorter>>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        using is_stable = cppsort::is_stable<Sorter>;
+    };
+}
+
+#endif // CPPSORT_ADAPTERS_MOUNTAIN_ADAPTER_H_

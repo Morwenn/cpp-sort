@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/adapters/counting_adapter.h>
 #include <cpp-sort/adapters/hybrid_adapter.h>
+#include <cpp-sort/adapters/mountain_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
 
