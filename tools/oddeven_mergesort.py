@@ -37,6 +37,20 @@ def compare_and_swap(x, a, b):
         x[a], x[b] = x[b], x[a]
 
 
+def partner(index: int, merge: int, step: int) -> int:
+    if step == 1:
+        return index ^ (1 << (merge - 1))
+    else:
+        scale, box = 1 << (merge - step), 1 << step
+        sn = index / scale - (index / scale / box) * box
+
+        if sn == 0 or sn == box - 1:
+            return index # no exchange at this level
+        elif sn % 2 == 0:
+            return index - scale
+        return index + scale
+
+
 ###########################################################
 # Function adapted from Perl's Algorithm::Networksort
 
@@ -59,6 +73,22 @@ def oddeven_merge_sort2(length):
             q //= 2
             r = p
         p //= 2
+
+
+def oddeven_merge2(length):
+    t = math.ceil(math.log2(length))
+    q = 2 ** (t - 1)
+    r = 0
+    d = 1
+
+    while d > 0:
+        for i in range(length - d):
+            if i & 1 == r:
+                yield (i, i + d)
+
+        d = q - 1
+        q //= 2
+        r = 1
 
 
 ###########################################################
@@ -89,6 +119,6 @@ def oddeven_merge3(indices):
 
 
 if __name__ == '__main__':
-    for pair in oddeven_merge3(list(range(14))):
+    for pair in oddeven_merge2(30):
         print(list(pair))
 

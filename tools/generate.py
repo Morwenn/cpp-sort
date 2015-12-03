@@ -2,10 +2,10 @@ import sys
 
 
 def transform(line):
-    line = line.strip('[],\n ')
+    line = line.strip('[],\n SWAP();')
     if line:
         x, y = map(int, line.split(', '))
-        return 'detail::swap_if(first[{0}u], first[{1}u], compare);'.format(x, y)
+        return 'swap_if(first[{0}u], first[{1}u], compare, projection);'.format(x, y)
 
 
 if __name__ == '__main__':
