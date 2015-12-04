@@ -6,6 +6,7 @@ include_directories(${CATCH_INCLUDE_DIR})
 set(
     ADAPTER_TESTS
 
+    adapters/counting_adapter.cpp
     adapters/hybrid_adapter_partial_compare.cpp
     adapters/hybrid_adapter_sfinae.cpp
     adapters/self_sort_adapter_no_compare.cpp

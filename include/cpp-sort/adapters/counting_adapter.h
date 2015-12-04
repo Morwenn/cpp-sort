@@ -29,8 +29,11 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <functional>
+#include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/identity.h>
 #include "../detail/comparison_counter.h"
 
 namespace cppsort
@@ -45,7 +48,10 @@ namespace cppsort
         {
             template<
                 typename Iterable,
-                typename Compare = std::less<>
+                typename Compare = std::less<>,
+                typename = std::enable_if_t<
+                    not is_projection<Compare, Iterable>
+                >
             >
             auto operator()(Iterable& iterable, Compare compare={}) const
                 -> CountType
@@ -57,13 +63,50 @@ namespace cppsort
 
             template<
                 typename Iterator,
-                typename Compare = std::less<>
+                typename Compare = std::less<>,
+                typename = std::enable_if_t<
+                    not is_projection_iterator<Compare, Iterator>
+                >
             >
             auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> CountType
             {
                 comparison_counter<Compare, CountType> cmp(compare);
                 ComparisonSorter{}(first, last, cmp);
+                return cmp.count;
+            }
+
+            template<
+                typename Iterable,
+                typename Compare,
+                typename Projection,
+                typename = std::enable_if_t<
+                    is_projection<Projection, Iterable, Compare>
+                >
+            >
+            auto operator()(Iterable& iterable, Compare compare={},
+                            Projection projection={}) const
+                -> CountType
+            {
+                comparison_counter<Compare, CountType> cmp(compare);
+                ComparisonSorter{}(iterable, cmp, projection);
+                return cmp.count;
+            }
+
+            template<
+                typename Iterator,
+                typename Compare,
+                typename Projection,
+                typename = std::enable_if_t<
+                    is_projection_iterator<Projection, Iterator, Compare>
+                >
+            >
+            auto operator()(Iterator first, Iterator last,
+                            Compare compare, Projection projection) const
+                -> CountType
+            {
+                comparison_counter<Compare, CountType> cmp(compare);
+                ComparisonSorter{}(first, last, cmp, projection);
                 return cmp.count;
             }
         };
