@@ -33,21 +33,7 @@
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/utility/as_function.h>
-
-template<typename Iterator, typename Compare, typename Projection>
-auto is_sorted(Iterator first, Iterator last, Compare compare, Projection projection)
-    -> bool
-{
-    auto&& proj = cppsort::utility::as_function(projection);
-    for (auto it = std::next(first) ; it != last ; ++it)
-    {
-        if (compare(proj(it), proj(first)))
-        {
-            return false;
-        }
-    }
-    return true;
-}
+#include "../algorithm.h"
 
 TEST_CASE( "default sorter tests with projections",
            "[default_sorter][projection]" )
@@ -60,38 +46,34 @@ TEST_CASE( "default sorter tests with projections",
 
     // Collection to sort
     std::vector<wrapper> vec(80);
-    int value = 0;
-    for (auto& elem: vec)
-    {
-        elem.value = value++;
-    }
+    helpers::iota(std::begin(vec), std::end(vec), 0, &wrapper::value);
 
     SECTION( "sort with random-access iterable" )
     {
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(vec, &wrapper::value);
-        CHECK( is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(vec, std::greater<>{}, &wrapper::value);
-        CHECK( is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(std::begin(vec), std::end(vec), &wrapper::value);
-        CHECK( is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value);
-        CHECK( is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators" )
@@ -99,7 +81,7 @@ TEST_CASE( "default sorter tests with projections",
         std::shuffle(std::begin(vec), std::end(vec), engine);
         std::list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), &wrapper::value);
-        CHECK( is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators and compare" )
@@ -107,7 +89,7 @@ TEST_CASE( "default sorter tests with projections",
         std::shuffle(std::begin(vec), std::end(vec), engine);
         std::list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value);
-        CHECK( is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with forward iterators" )
@@ -115,7 +97,7 @@ TEST_CASE( "default sorter tests with projections",
         std::shuffle(std::begin(vec), std::end(vec), engine);
         std::forward_list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), &wrapper::value);
-        CHECK( is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with forward iterators and compare" )
@@ -123,6 +105,6 @@ TEST_CASE( "default sorter tests with projections",
         std::shuffle(std::begin(vec), std::end(vec), engine);
         std::forward_list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value);
-        CHECK( is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
     }
 }
