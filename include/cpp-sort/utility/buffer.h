@@ -50,6 +50,7 @@ namespace utility
 
             public:
 
+                buffer() = default;
                 explicit buffer(std::size_t /* size */) {}
 
                 auto size() const
