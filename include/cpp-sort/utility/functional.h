@@ -34,6 +34,22 @@ namespace cppsort
 {
 namespace utility
 {
+    ////////////////////////////////////////////////////////////
+    // Identity (mostly useful for projections)
+
+    struct identity
+    {
+        template<typename T>
+        constexpr auto operator()(T&& value) const noexcept
+            -> T&&
+        {
+            return std::forward<T>(value);
+        }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Math functions (mostly useful for buffer providers)
+
     struct half
     {
         template<typename T>

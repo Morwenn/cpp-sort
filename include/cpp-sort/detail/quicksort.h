@@ -31,7 +31,6 @@
 #include <cstddef>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/identity.h>
 #include "bubble_sort.h"
 #include "insertion_sort.h"
 #include "iter_sort3.h"

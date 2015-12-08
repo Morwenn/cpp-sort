@@ -25,7 +25,7 @@ Phil Endecott and Frank Gennari
 #include <iterator>
 #include <type_traits>
 #include <vector>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"

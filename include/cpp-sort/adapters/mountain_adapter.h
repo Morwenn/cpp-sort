@@ -33,6 +33,7 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/functional.h>
 #include "../detail/indirect_compare.h"
 
 namespace cppsort

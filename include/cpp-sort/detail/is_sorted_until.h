@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
-#include <iterator>
+#include <functional>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 
 namespace cppsort
 {

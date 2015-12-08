@@ -30,7 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 
 namespace cppsort
 {

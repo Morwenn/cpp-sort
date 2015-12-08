@@ -31,7 +31,7 @@
 #include <catch.hpp>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 
 TEST_CASE( "spread_sorter generate overloads",
            "[spread_sorter][sorter_facade]" )

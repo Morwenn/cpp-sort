@@ -24,7 +24,7 @@ Doxygen comments by Paul A. Bristow Jan 2015
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "detail/constants.h"
 #include "detail/integer_sort.h"
 #include "../pdqsort.h"
