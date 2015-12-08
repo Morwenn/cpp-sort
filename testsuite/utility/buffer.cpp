@@ -21,35 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT2_H_
-#define CPPSORT_DETAIL_LOW_COMPARISONS_SORT2_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <functional>
+#include <catch.hpp>
+#include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include "../swap_if.h"
 
-namespace cppsort
+TEST_CASE( "miscellaneous tests for buffer providers",
+           "[utility][buffer]" )
 {
-namespace detail
-{
-    template<>
-    struct low_comparisons_sorter_impl<2u>
+    using namespace cppsort;
+
+    SECTION( "fixed_buffer" )
     {
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity
-        >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator,
-                        Compare compare={}, Projection projection={}) const
-            -> void
-        {
-            swap_if(first[0u], first[1u], compare, projection);
-        }
-    };
-}}
+        utility::fixed_buffer<128>::buffer<int> buffer;
 
-#endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT2_H_
+        CHECK( buffer.size() == 128 );
+        CHECK( buffer.begin() == buffer.cbegin() );
+        CHECK( buffer.end() == buffer.cend() );
+        CHECK( buffer.end() == buffer.begin() + buffer.size() );
+    }
+
+    SECTION( "fixed_buffer of size 0" )
+    {
+        utility::fixed_buffer<0>::buffer<int> buffer;
+
+        CHECK( buffer.size() == 0 );
+        CHECK( buffer.begin() == buffer.cbegin() );
+        CHECK( buffer.end() == buffer.cend() );
+        CHECK( buffer.end() == buffer.begin() + buffer.size() );
+        CHECK( buffer.begin() == buffer.end() );
+    }
+
+    SECTION( "dynamic_buffer" )
+    {
+        utility::dynamic_buffer<utility::sqrt>::buffer<int> buffer(25);
+
+        CHECK( buffer.size() == 5 );
+        CHECK( buffer.begin() == buffer.cbegin() );
+        CHECK( buffer.end() == buffer.cend() );
+        CHECK( buffer.end() == buffer.begin() + buffer.size() );
+    }
+}

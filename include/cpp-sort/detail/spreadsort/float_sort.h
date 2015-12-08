@@ -25,7 +25,7 @@ Scott McMurray
 #include <cstring>
 #include <functional>
 #include <limits>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "detail/constants.h"
 #include "detail/float_sort.h"
 #include "../pdqsort.h"

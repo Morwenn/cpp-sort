@@ -29,7 +29,7 @@ Scott McMurray
 #include <limits>
 #include <type_traits>
 #include <vector>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
 #include "integer_sort.h"

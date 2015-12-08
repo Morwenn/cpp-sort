@@ -28,7 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "../front_insert.h"
 
 namespace cppsort

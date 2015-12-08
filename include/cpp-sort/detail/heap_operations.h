@@ -19,7 +19,6 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/identity.h>
 
 namespace cppsort
 {

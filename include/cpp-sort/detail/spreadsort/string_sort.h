@@ -21,7 +21,7 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "detail/constants.h"
 #include "detail/string_sort.h"
 #include "../pdqsort.h"

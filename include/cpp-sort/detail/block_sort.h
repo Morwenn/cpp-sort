@@ -330,7 +330,8 @@ namespace detail
         };
 
         // bottom-up merge sort combined with an in-place merge algorithm for O(1) memory use
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
+        template<typename BufferProvider, typename RandomAccessIterator,
+                 typename Compare, typename Projection>
         auto sort(RandomAccessIterator first, RandomAccessIterator last,
                   Compare compare, Projection projection)
             -> void
@@ -425,18 +426,17 @@ namespace detail
             // just keep in mind that making it too small ruins the point (nothing will fit into it),
             // and making it too large also ruins the point (so much for "low memory"!)
             // removing the cache entirely still gives 75% of the performance of a standard merge
-            static constexpr std::size_t cache_size = 512;
-            T cache[cache_size];
+            typename BufferProvider::template buffer<T> cache(size);
 
             // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
             while (true) {
                 // if every A and B block will fit into the cache, use a special branch specifically for merging with the cache
                 // (we use < rather than <= since the block size might be one more than iterator.length())
-                if (iterator.length() < cache_size) {
+                if (iterator.length() < cache.size()) {
 
                     // if four subarrays fit into the cache, it's faster to merge both pairs of subarrays into the cache,
                     // then merge the two merged subarrays from the cache back into the original array
-                    if ((iterator.length() + 1) * 4 <= cache_size && iterator.length() * 4 <= size) {
+                    if ((iterator.length() + 1) * 4 <= cache.size() && iterator.length() * 4 <= size) {
                         iterator.begin();
                         while (not iterator.finished()) {
                             // merge A1 and B1 into the cache
@@ -447,11 +447,11 @@ namespace detail
 
                             if (compare(proj(*std::prev(B1.end)), proj(*A1.start))) {
                                 // the two ranges are in reverse order, so copy them in reverse order into the cache
-                                std::copy(A1.start, A1.end, cache + B1.length());
-                                std::copy(B1.start, B1.end, cache);
+                                std::copy(A1.start, A1.end, cache.begin() + B1.length());
+                                std::copy(B1.start, B1.end, cache.begin());
                             } else if (compare(proj(*B1.start), proj(*std::prev(A1.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
-                                merge(A1.start, A1.end, B1.start, B1.end, cache,
+                                merge(A1.start, A1.end, B1.start, B1.end, cache.begin(),
                                       compare, projection, projection);
                             } else {
                                 // if A1, B1, A2, and B2 are all in order, skip doing anything else
@@ -459,32 +459,32 @@ namespace detail
                                     not compare(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
 
                                 // copy A1 and B1 into the cache in the same order
-                                std::copy(A1.start, A1.end, cache);
-                                std::copy(B1.start, B1.end, cache + A1.length());
+                                std::copy(A1.start, A1.end, cache.begin());
+                                std::copy(B1.start, B1.end, cache.begin() + A1.length());
                             }
                             A1 = { A1.start, B1.end };
 
                             // merge A2 and B2 into the cache
                             if (compare(proj(*std::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so copy them in reverse order into the cache
-                                std::copy(A2.start, A2.end, cache + A1.length() + B2.length());
-                                std::copy(B2.start, B2.end, cache + A1.length());
+                                std::copy(A2.start, A2.end, cache.begin() + A1.length() + B2.length());
+                                std::copy(B2.start, B2.end, cache.begin() + A1.length());
                             } else if (compare(proj(*B2.start), proj(*std::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
-                                merge(A2.start, A2.end, B2.start, B2.end, cache + A1.length(),
+                                merge(A2.start, A2.end, B2.start, B2.end, cache.begin() + A1.length(),
                                       compare, projection, projection);
                             } else {
                                 // copy A2 and B2 into the cache in the same order
-                                std::copy(A2.start, A2.end, cache + A1.length());
-                                std::copy(B2.start, B2.end, cache + A1.length() + A2.length());
+                                std::copy(A2.start, A2.end, cache.begin() + A1.length());
+                                std::copy(B2.start, B2.end, cache.begin() + A1.length() + A2.length());
                             }
                             A2 = { A2.start, B2.end };
 
                             // merge A1 and A2 from the cache into the array
-                            Range<T*> A3 = { cache, cache + A1.length() };
+                            Range<T*> A3 = { cache.begin(), cache.begin() + A1.length() };
                             Range<T*> B3 = {
-                                cache + A1.length(),
-                                cache + A1.length() + A2.length()
+                                cache.begin() + A1.length(),
+                                cache.begin() + A1.length() + A2.length()
                             };
 
                             if (compare(proj(*(B3.end - 1)), proj(*A3.start))) {
@@ -517,8 +517,9 @@ namespace detail
                                 std::rotate(A.start, A.end, B.end);
                             } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we'll need to merge them!
-                                std::copy(A.start, A.end, cache);
-                                MergeExternal(A.start, A.end, B.start, B.end, cache, compare, projection);
+                                std::copy(A.start, A.end, cache.begin());
+                                MergeExternal(A.start, A.end, B.start, B.end,
+                                              cache.begin(), compare, projection);
                             }
                         }
                     }
@@ -557,7 +558,7 @@ namespace detail
                     std::size_t find = buffer_size + buffer_size;
                     bool find_separately = false;
 
-                    if (block_size <= cache_size) {
+                    if (block_size <= cache.size()) {
                         // if every A block fits into the cache then we won't need the second internal buffer,
                         // so we really only need to find 'buffer_size' unique values
                         find = buffer_size;
@@ -612,7 +613,7 @@ namespace detail
                                 // so we still need to find a second separate buffer of at least √A unique values
                                 buffer1 = { A.start, A.start + count };
                                 find = buffer_size;
-                            } else if (block_size <= cache_size) {
+                            } else if (block_size <= cache.size()) {
                                 // we found the first and only internal buffer that we need, so we're done!
                                 buffer1 = { A.start, A.start + count };
                                 break;
@@ -656,7 +657,7 @@ namespace detail
                                 // so we still need to find a second separate buffer of at least √A unique values
                                 buffer1 = { B.end - count, B.end };
                                 find = buffer_size;
-                            } else if (block_size <= cache_size) {
+                            } else if (block_size <= cache.size()) {
                                 // we found the first and only internal buffer that we need, so we're done!
                                 buffer1 = { B.end - count, B.end };
                                 break;
@@ -736,7 +737,7 @@ namespace detail
 
                                 // if the internal buffer takes up the entire A or B subarray, then there's nothing to merge
                                 // this only happens for very small subarrays, like √4 = 2, 2 * (2 internal buffers) = 4,
-                                // which also only happens when cache_size is small or 0 since it'd otherwise use MergeExternal
+                                // which also only happens when cache size is small or 0 since it'd otherwise use MergeExternal
                                 if (A.length() == 0) continue;
                             } else if (pull[0].from < pull[0].to) {
                                 B.end -= pull[0].count;
@@ -778,8 +779,8 @@ namespace detail
 
                             // if the first unevenly sized A block fits into the cache, copy it there for when we go to Merge it
                             // otherwise, if the second buffer is available, block swap the contents into that
-                            if (lastA.length() <= cache_size) {
-                                std::copy(lastA.start, lastA.end, cache);
+                            if (lastA.length() <= cache.size()) {
+                                std::copy(lastA.start, lastA.end, cache.begin());
                             } else if (buffer2.length() > 0) {
                                 std::swap_ranges(lastA.start, lastA.end, buffer2.start);
                             }
@@ -812,9 +813,9 @@ namespace detail
                                         // if lastA fits into the external cache we'll use that (with MergeExternal),
                                         // or if the second internal buffer exists we'll use that (with MergeInternal),
                                         // or failing that we'll use a strictly in-place merge algorithm (MergeInPlace)
-                                        if (lastA.length() <= cache_size) {
+                                        if (lastA.length() <= cache.size()) {
                                             MergeExternal(lastA.start, lastA.end, lastA.end, B_split,
-                                                          cache, compare, projection);
+                                                          cache.begin(), compare, projection);
                                         } else if (buffer2.length() > 0) {
                                             MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
                                                           buffer2.start, compare, projection);
@@ -822,10 +823,10 @@ namespace detail
                                             MergeInPlace(lastA.start, lastA.end, lastA.end, B_split, compare, projection);
                                         }
 
-                                        if (buffer2.length() > 0 || block_size <= cache_size) {
+                                        if (buffer2.length() > 0 || block_size <= cache.size()) {
                                             // copy the previous A block into the cache or buffer2, since that's where we need it to be when we go to merge it anyway
-                                            if (block_size <= cache_size) {
-                                                std::copy(blockA.start, blockA.start + block_size, cache);
+                                            if (block_size <= cache.size()) {
+                                                std::copy(blockA.start, blockA.start + block_size, cache.begin());
                                             } else {
                                                 std::swap_ranges(blockA.start, blockA.start + block_size, buffer2.start);
                                             }
@@ -874,9 +875,9 @@ namespace detail
                             }
 
                             // merge the last A block with the remaining B values
-                            if (lastA.length() <= cache_size) {
+                            if (lastA.length() <= cache.size()) {
                                 MergeExternal(lastA.start, lastA.end, lastA.end, B.end,
-                                              cache, compare, projection);
+                                              cache.begin(), compare, projection);
                             } else if (buffer2.length() > 0) {
                                 MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
                                               buffer2.start, compare, projection);
@@ -935,12 +936,13 @@ namespace detail
         }
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    template<typename BufferProvider, typename RandomAccessIterator,
+             typename Compare, typename Projection>
     auto block_sort(RandomAccessIterator first, RandomAccessIterator last,
                     Compare compare, Projection projection)
         -> void
     {
-        Wiki::sort(first, last, compare, projection);
+        Wiki::sort<BufferProvider>(first, last, compare, projection);
     }
 }}
 

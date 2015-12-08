@@ -33,6 +33,7 @@
 #include <memory>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include "../detail/inplace_merge.h"
 #include "../detail/merge.h"
 

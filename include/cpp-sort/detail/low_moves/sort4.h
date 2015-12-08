@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
-#include <cpp-sort/utility/identity.h>
+#include <cpp-sort/utility/functional.h>
 #include "../min_element.h"
 
 namespace cppsort

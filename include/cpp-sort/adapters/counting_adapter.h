@@ -33,7 +33,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/identity.h>
 #include "../detail/comparison_counter.h"
 
 namespace cppsort

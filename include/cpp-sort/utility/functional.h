@@ -21,18 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_IDENTITY_H_
-#define CPPSORT_UTILITY_IDENTITY_H_
+#ifndef CPPSORT_UTILITY_FUNCTIONAL_H_
+#define CPPSORT_UTILITY_FUNCTIONAL_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cmath>
 #include <utility>
 
 namespace cppsort
 {
 namespace utility
 {
+    ////////////////////////////////////////////////////////////
+    // Identity (mostly useful for projections)
+
     struct identity
     {
         template<typename T>
@@ -42,6 +46,41 @@ namespace utility
             return std::forward<T>(value);
         }
     };
+
+    ////////////////////////////////////////////////////////////
+    // Math functions (mostly useful for buffer providers)
+
+    struct half
+    {
+        template<typename T>
+        constexpr auto operator()(T&& value) const
+            -> decltype(std::forward<T>(value) / 2)
+        {
+            return std::forward<T>(value) / 2;
+        }
+    };
+
+    struct log
+    {
+        template<typename T>
+        constexpr auto operator()(T&& value) const
+            -> decltype(auto)
+        {
+            using std::log;
+            return log(std::forward<T>(value));
+        }
+    };
+
+    struct sqrt
+    {
+        template<typename T>
+        constexpr auto operator()(T&& value) const
+            -> decltype(auto)
+        {
+            using std::sqrt;
+            return sqrt(std::forward<T>(value));
+        }
+    };
 }}
 
-#endif // CPPSORT_UTILITY_IDENTITY_H_
+#endif // CPPSORT_UTILITY_FUNCTIONAL_H_
