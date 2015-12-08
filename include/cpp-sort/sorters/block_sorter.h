@@ -32,6 +32,7 @@
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/identity.h>
 #include "../detail/block_sort.h"
 
@@ -42,6 +43,7 @@ namespace cppsort
 
     namespace detail
     {
+        template<typename BufferProvider>
         struct block_sorter_impl
         {
             template<
@@ -64,20 +66,23 @@ namespace cppsort
                     "block_sorter requires at least random-access iterators"
                 );
 
-                block_sort(first, last, compare, projection);
+                block_sort<BufferProvider>(first, last, compare, projection);
             }
         };
     }
 
+    template<
+        typename BufferProvider = utility::fixed_buffer<512>
+    >
     struct block_sorter:
-        sorter_facade<detail::block_sorter_impl>
+        sorter_facade<detail::block_sorter_impl<BufferProvider>>
     {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    template<>
-    struct sorter_traits<block_sorter>
+    template<typename BufferProvider>
+    struct sorter_traits<block_sorter<BufferProvider>>
     {
         using iterator_category = std::random_access_iterator_tag;
         using is_stable = std::true_type;
