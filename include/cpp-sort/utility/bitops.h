@@ -24,6 +24,12 @@
 #ifndef CPPSORT_UTILITY_BITOPS_H_
 #define CPPSORT_UTILITY_BITOPS_H_
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <cstddef>
+#include <limits>
+
 namespace cppsort
 {
 namespace utility
