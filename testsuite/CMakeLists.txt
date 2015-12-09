@@ -25,6 +25,12 @@ set(
     sorters/spread_sorter_defaults.cpp
 )
 
+set(
+    UTILITY_TESTS
+
+    utility/buffer.cpp
+)
+
 # Make one executable for the whole testsuite
 add_executable(
     cpp-sort-testsuite
@@ -36,6 +42,7 @@ add_executable(
     sorter_facade_iterable.cpp
     ${ADAPTER_TESTS}
     ${SORTERS_TESTS}
+    ${UTILITY_TESTS}
 )
 
 add_test(testsuite cpp-sort-testsuite)
