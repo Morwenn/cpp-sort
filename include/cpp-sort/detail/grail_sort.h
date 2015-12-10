@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
+#include "insertion_sort.h"
 
 namespace cppsort
 {
@@ -41,7 +42,7 @@ namespace detail
     {
         public:
 
-            three_way_compare(Compare compare):
+            constexpr three_way_compare(Compare compare):
                 compare(compare)
             {}
 
@@ -58,6 +59,12 @@ namespace detail
                     return 1;
                 }
                 return 0;
+            }
+
+            constexpr auto base() const noexcept
+                -> Compare
+            {
+                return compare;
             }
 
         private:
@@ -531,20 +538,6 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SortIns(RandomAccessIterator arr, int len,
-                       Compare compare, Projection projection)
-        -> void
-    {
-        auto&& proj = utility::as_function(projection);
-
-        for (int i = 1 ; i < len ; ++i) {
-            for (int j = i - 1 ; j >= 0 && compare(proj(arr[j+1]), proj(arr[j])) < 0 ; --j) {
-                std::iter_swap(arr + j, arr + j + 1);
-            }
-        }
-    }
-
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto grail_LazyStableSort(RandomAccessIterator arr, int L,
                               Compare compare, Projection projection)
         -> void
@@ -598,7 +591,8 @@ namespace detail
             if(b==M && lrest==0) break;
             arr1=arr+b*2*LL;
             NBlk=(b==M ? lrest : 2*LL)/lblock;
-            grail_SortIns(keys,NBlk+(b==M ? 1 : 0),compare,projection);
+            insertion_sort(keys, keys + NBlk + (b == M ? 1 : 0),
+                           compare.base(), projection);
             midkey=LL/lblock;
             for(u=1;u<NBlk;u++){
                 p=u-1;
@@ -645,8 +639,8 @@ namespace detail
         bool havebuf,chavebuf;
         long long s;
 
-        if(Len<16){
-            grail_SortIns(arr,Len,compare,projection);
+        if (Len < 16) {
+            insertion_sort(arr, arr + Len, compare.base(), projection);
             return;
         }
 
@@ -701,7 +695,7 @@ namespace detail
                                 chavebuf, chavebuf && lb<=LExtBuf ? extbuf : nullptr,
                                 compare, projection);
         }
-        grail_SortIns(arr,ptr,compare,projection);
+        insertion_sort(arr, arr + ptr, compare.base(), projection);
         grail_MergeWithoutBuffer(arr,ptr,Len-ptr,compare,projection);
     }
 
