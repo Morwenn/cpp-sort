@@ -32,6 +32,7 @@
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
 #include "insertion_sort.h"
+#include "lower_bound.h"
 
 namespace cppsort
 {
@@ -87,40 +88,6 @@ namespace detail
         }
     }
 
-    template<typename RandomAccessIterator, typename T,
-             typename Compare, typename Projection>
-    auto grail_BinSearchLeft(RandomAccessIterator arr, int len, const T& key,
-                             Compare compare, Projection projection)
-        -> int
-    {
-        auto&& proj = utility::as_function(projection);
-
-        int a=-1,b=len,c;
-        while(a<b-1){
-            c=a+((b-a)>>1);
-            if(compare(proj(arr[c]), key)>=0) b=c;
-            else a=c;
-        }
-        return b;
-    }
-
-    template<typename RandomAccessIterator, typename T,
-             typename Compare, typename Projection>
-    auto grail_BinSearchRight(RandomAccessIterator arr, int len, const T& key,
-                              Compare compare, Projection projection)
-        -> int
-    {
-        auto&& proj = utility::as_function(projection);
-
-        int a=-1,b=len,c;
-        while(a<b-1){
-            c=a+((b-a)>>1);
-            if(compare(proj(arr[c]), key)>0) b=c;
-            else a=c;
-        }
-        return b;
-    }
-
     // cost: 2*len+nk^2/2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto grail_FindKeys(RandomAccessIterator arr, int len, int nkeys,
@@ -132,7 +99,7 @@ namespace detail
         int h = 1, h0 = 0;  // first key is always here
         int u = 1, r;
         while (u < len && h < nkeys) {
-            r = grail_BinSearchLeft(arr+h0, h, proj(arr[u]), compare, projection);
+            r = lower_bound(arr+h0, arr+h0+h, proj(arr[u]), compare.base(), projection) - (arr+h0);
             if (r == h || compare(proj(arr[u]), proj(arr[h0+r])) != 0) {
                 grail_rotate(arr + h0, h, u - (h0+h));
                 h0 = u - h;
@@ -156,7 +123,7 @@ namespace detail
         int h;
         if(len1<len2){
             while(len1){
-                h=grail_BinSearchLeft(arr+len1,len2,proj(arr[0]),compare,projection);
+                h = lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1);
                 if(h!=0){
                     grail_rotate(arr,len1,h);
                     arr+=h;
@@ -170,7 +137,7 @@ namespace detail
             }
         } else{
             while(len2){
-                h=grail_BinSearchRight(arr,len1,proj(arr[len1+len2-1]),compare,projection);
+                h = upper_bound(arr, arr+len1, proj(arr[len1+len2-1]), compare.base(), projection) - arr;
                 if(h!=len1){
                     grail_rotate(arr+h,len1-h,len2);
                     len1=h;
@@ -269,8 +236,8 @@ namespace detail
         ftype=1-*atype;
         if (len1 && compare(proj(arr[len1-1]), proj(arr[len1])) - ftype >= 0) {
             while(len1){
-                h=ftype ? grail_BinSearchLeft(arr+len1,len2,proj(arr[0]),compare,projection)
-                        : grail_BinSearchRight(arr+len1,len2,proj(arr[0]),compare,projection);
+                h=ftype ? (lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1))
+                        : (upper_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1));
                 if(h!=0){
                     grail_rotate(arr,len1,h);
                     arr+=h;
