@@ -4,22 +4,8 @@
  * (c) 2013 by Andrey Astrelin
  * Modified in 2015 by Morwenn for inclusion into cpp-sort
  *
- *
  * Stable sorting that works in O(N*log(N)) worst time
  * and uses O(1) extra memory
- *
- * Define SORT_TYPE and SORT_CMP
- * and then call GrailSort() function
- *
- * For sorting with fixed external buffer (512 items)
- * use GrailSortWithBuffer()
- *
- * For sorting with dynamic external buffer (O(sqrt(N))
- * items)
- * use GrailSortWithDynBuffer()
- *
- * Also classic in-place merge sort is implemented
- * under the name of RecStableSort()
  *
  */
 #ifndef CPPSORT_DETAIL_GRAIL_SORT_H_
@@ -90,25 +76,26 @@ namespace detail
 
     // cost: 2*len+nk^2/2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_FindKeys(RandomAccessIterator arr, int len, int nkeys,
-                        Compare compare, Projection projection)
+    auto grail_FindKeys(RandomAccessIterator first, RandomAccessIterator last,
+                        int nkeys, Compare compare, Projection projection)
         -> int
     {
         auto&& proj = utility::as_function(projection);
 
-        int h = 1, h0 = 0;  // first key is always here
-        int u = 1, r;
-        while (u < len && h < nkeys) {
-            r = lower_bound(arr+h0, arr+h0+h, proj(arr[u]), compare.base(), projection) - (arr+h0);
-            if (r == h || compare(proj(arr[u]), proj(arr[h0+r])) != 0) {
-                grail_rotate(arr + h0, h, u - (h0+h));
-                h0 = u - h;
-                grail_rotate(arr + (h0+r), h - r, 1);
+        int r, h = 1;
+        RandomAccessIterator h0_it = first;
+        RandomAccessIterator u_it = std::next(first);
+        while (u_it != last && h < nkeys) {
+            r = lower_bound(h0_it, h0_it + h, proj(*u_it), compare.base(), projection) - h0_it;
+            if (r == h || compare(proj(*u_it), proj(h0_it[r])) != 0) {
+                grail_rotate(h0_it, h, u_it - (h0_it + h));
+                h0_it = u_it - h;
+                grail_rotate(h0_it + r, h - r, 1);
                 ++h;
             }
-            ++u;
+            ++u_it;
         }
-        grail_rotate(arr, h0, h);
+        grail_rotate(first, h0_it - first, h);
         return h;
     }
 
@@ -505,28 +492,31 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_LazyStableSort(RandomAccessIterator arr, int L,
+    auto grail_LazyStableSort(RandomAccessIterator first, RandomAccessIterator last,
                               Compare compare, Projection projection)
         -> void
     {
+        auto L = std::distance(first, last);
         auto&& proj = utility::as_function(projection);
 
-        int m,h,p0,p1,rest;
-        for (m=1;m<L;m+=2) {
-            if (compare(proj(arr[m-1]), proj(arr[m])) > 0) {
-                std::iter_swap(arr+(m-1),arr+m);
+        int h, rest;
+
+        for (RandomAccessIterator it = std::next(first) ; it < last ; it += 2) {
+            if (compare(proj(*std::prev(it)), proj(*it)) > 0) {
+                std::iter_swap(std::prev(it), it);
             }
         }
-        for (h=2;h<L;h*=2) {
-            p0=0;
-            p1=L-2*h;
-            while (p0<=p1) {
-                grail_MergeWithoutBuffer(arr+p0,h,h,compare,projection);
-                p0+=2*h;
+
+        for (h = 2 ; h < L ; h *= 2) {
+            RandomAccessIterator p0 = first;
+            RandomAccessIterator p1 = last - 2 * h;
+            while (p0 <= p1) {
+                grail_MergeWithoutBuffer(p0, h, h, compare, projection);
+                p0 += 2 * h;
             }
-            rest=L-p0;
+            rest = last - p0;
             if (rest > h) {
-                grail_MergeWithoutBuffer(arr+p0,h,rest-h,compare,projection);
+                grail_MergeWithoutBuffer(p0, h, rest-h, compare, projection);
             }
         }
     }
@@ -597,73 +587,80 @@ namespace detail
 
     template<typename RandomAccessIterator, typename BufferIterator,
              typename Compare, typename Projection>
-    auto grail_commonSort(RandomAccessIterator arr, int Len,
+    auto grail_commonSort(RandomAccessIterator first, RandomAccessIterator last,
                           BufferIterator extbuf, int LExtBuf,
                           Compare compare, Projection projection)
         -> void
     {
+        auto size = std::distance(first, last);
+
         int lblock,nkeys,findkeys,ptr,cbuf,lb,nk;
         bool havebuf,chavebuf;
         long long s;
 
-        if (Len < 16) {
-            insertion_sort(arr, arr + Len, compare.base(), projection);
+        if (size < 16) {
+            insertion_sort(first, last, compare.base(), projection);
             return;
         }
 
-        lblock=1;
-        while(lblock*lblock<Len) lblock*=2;
-        nkeys=(Len-1)/lblock+1;
-        findkeys=grail_FindKeys(arr,Len,nkeys+lblock,compare,projection);
-        havebuf=true;
-        if(findkeys<nkeys+lblock){
-            if(findkeys<4){
-                grail_LazyStableSort(arr,Len,compare,projection);
+        lblock = 1;
+        while (lblock * lblock < size) {
+            lblock *= 2;
+        }
+        nkeys = (size - 1) / lblock + 1;
+        findkeys = grail_FindKeys(first, last, nkeys + lblock, compare, projection);
+        havebuf = true;
+        if (findkeys < nkeys + lblock) {
+            if (findkeys < 4) {
+                grail_LazyStableSort(first, last, compare, projection);
                 return;
             }
-            nkeys=lblock;
-            while(nkeys>findkeys) nkeys/=2;
-            havebuf=false;
-            lblock=0;
+            nkeys = lblock;
+            while (nkeys > findkeys) {
+                nkeys /= 2;
+            }
+            havebuf = false;
+            lblock = 0;
         }
-        ptr=lblock+nkeys;
-        cbuf=havebuf ? lblock : nkeys;
+        ptr = lblock + nkeys;
+        cbuf = havebuf ? lblock : nkeys;
         if (havebuf) {
-            grail_BuildBlocks(arr+ptr,Len-ptr,cbuf,extbuf,LExtBuf,compare,projection);
+            grail_BuildBlocks(first + ptr, size - ptr, cbuf, extbuf, LExtBuf, compare, projection);
         } else {
             using T = typename std::iterator_traits<BufferIterator>::value_type;
-            grail_BuildBlocks(arr+ptr,Len-ptr,cbuf,static_cast<T*>(nullptr),0,compare,projection);
+            grail_BuildBlocks(first + ptr, size - ptr, cbuf, static_cast<T*>(nullptr), 0, compare, projection);
         }
 
         // 2*cbuf are built
-        while(Len-ptr>(cbuf*=2)){
-            lb=lblock;
-            chavebuf=havebuf;
-            if(!havebuf){
-                if(nkeys>4 && nkeys/8*nkeys>=cbuf){
-                    lb=nkeys/2;
-                    chavebuf=true;
-                } else{
-                    nk=1;
-                    s=(long long)cbuf*findkeys/2;
-                    while(nk<nkeys && s!=0){
-                        nk*=2; s/=8;
+        while (size - ptr > (cbuf *= 2)) {
+            lb = lblock;
+            chavebuf = havebuf;
+            if (!havebuf) {
+                if (nkeys > 4 && nkeys / 8 * nkeys >= cbuf) {
+                    lb = nkeys / 2;
+                    chavebuf = true;
+                } else {
+                    nk = 1;
+                    s = (long long) cbuf * findkeys / 2;
+                    while (nk < nkeys && s != 0) {
+                        nk *= 2;
+                        s /= 8;
                     }
-                    lb=(2*cbuf)/nk;
+                    lb = (2 * cbuf) / nk;
                 }
-            } else{
+            } else {
     #if 0
                 if(LExtBuf!=0){
                     while(lb>LExtBuf && lb*lb>2*cbuf) lb/=2;  // set size of block close to sqrt(new_block_length)
                 }
     #endif
             }
-            grail_CombineBlocks(arr, arr+ptr, Len-ptr, cbuf, lb,
-                                chavebuf, chavebuf && lb<=LExtBuf ? extbuf : nullptr,
+            grail_CombineBlocks(first, first + ptr, size - ptr, cbuf, lb,
+                                chavebuf, chavebuf && lb <= LExtBuf ? extbuf : nullptr,
                                 compare, projection);
         }
-        insertion_sort(arr, arr + ptr, compare.base(), projection);
-        grail_MergeWithoutBuffer(arr,ptr,Len-ptr,compare,projection);
+        insertion_sort(first, first + ptr, compare.base(), projection);
+        grail_MergeWithoutBuffer(first, ptr, size - ptr, compare, projection);
     }
 
     template<typename BufferProvider, typename RandomAccessIterator,
@@ -679,7 +676,7 @@ namespace detail
         typename BufferProvider::template buffer<T> buffer(size);
 
         three_way_compare<Compare> cmp(compare);
-        grail_commonSort(first, size, buffer.data(), buffer.size(),
+        grail_commonSort(first, last, buffer.data(), buffer.size(),
                          cmp, projection);
     }
 }}
