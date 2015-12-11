@@ -7,18 +7,18 @@ from matplotlib import pyplot as plt
 
 
 distribution_names = {
-    "shuffled_16_values_int": "Shuffled (16 values)",
-    "shuffled_int": "Shuffled",
-    "all_equal_int": "All equal",
-    "ascending_int": "Ascending",
-    "descending_int": "Descending",
-    "pipe_organ_int": "Pipe organ",
-    "push_front_int": "Push front",
-    "push_middle_int": "Push middle",
-    "ascending_sawtooth_int": "Ascending sawtooth",
-    "descending_sawtooth_int": "Descending sawtooth",
-    "alternating_int": "Alternating",
-    "alternating_16_values_int": "Alternating (16 values)"
+    "shuffled_16_values": "Shuffled (16 values)",
+    "shuffled": "Shuffled",
+    "all_equal": "All equal",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "pipe_organ": "Pipe organ",
+    "push_front": "Push front",
+    "push_middle": "Push middle",
+    "ascending_sawtooth": "Ascending sawtooth",
+    "descending_sawtooth": "Descending sawtooth",
+    "alternating": "Alternating",
+    "alternating_16_values": "Alternating (16 values)"
 }
 
 for filename in os.listdir("profiles"):

@@ -26,6 +26,8 @@
 #include <iterator>
 #include <numeric>
 #include <random>
+#include <vector>
+#include <cpp-sort/utility/bitops.h>
 
 ////////////////////////////////////////////////////////////
 // Distributions for benchmarks
@@ -37,116 +39,239 @@
 // actual data sets.
 //
 
-struct shuffled
+template<typename Derived>
+struct distribution
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    using fptr_t = void(*)(OutputIterator, std::size_t);
+
+    template<typename OutputIterator>
+    operator fptr_t<OutputIterator>() const
+    {
+        return [](OutputIterator out, std::size_t size)
+        {
+            return Derived{}(out, size);
+        };
+    }
+};
+
+struct shuffled:
+    distribution<shuffled>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
         // Pseudo-random number generator
         thread_local std::mt19937_64 engine(std::time(nullptr));
 
-        std::iota(begin, end, 0);
-        std::shuffle(begin, end, engine);
+        std::vector<int> vec;
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            vec.emplace_back(i);
+        }
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::move(std::begin(vec), std::end(vec), out);
     }
 
     static constexpr const char* output = "shuffled.txt";
 };
 
-struct all_equal
+struct shuffled_16_values:
+    distribution<shuffled_16_values>
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::fill(begin, end, 0);
+        // Pseudo-random number generator
+        thread_local std::mt19937_64 engine(std::time(nullptr));
+
+        std::vector<int> vec;
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            vec.emplace_back(i % 16);
+        }
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::move(std::begin(vec), std::end(vec), out);
+    }
+
+    static constexpr const char* output = "shuffled.txt";
+};
+
+struct all_equal:
+    distribution<all_equal>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            *out++ = 0;
+        }
     }
 
     static constexpr const char* output = "all_equal.txt";
 };
 
-struct ascending
+struct ascending:
+    distribution<ascending>
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::iota(begin, end, 0);
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            *out++ = i;
+        }
     }
 
     static constexpr const char* output = "ascending.txt";
 };
 
-struct descending
+struct descending:
+    distribution<descending>
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::iota(begin, end, 0);
-        std::reverse(begin, end);
+        while (size--)
+        {
+            *out++ = size;
+        }
     }
 
     static constexpr const char* output = "descending.txt";
 };
 
-struct pipe_organ
+struct pipe_organ:
+    distribution<pipe_organ>
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        int size = std::distance(begin, end);
-        int count = 0;
-        for (int i = 0 ; i < size / 2 ; ++i)
+        for (std::size_t i = 0 ; i < size / 2 ; ++i)
         {
-            begin[count++] = i;
+            *out++ = i;
         }
-        for (int i = size / 2 ; i < size ; ++i)
+        for (std::size_t i = size / 2 ; i < size ; ++i)
         {
-            begin[count++] = size - i;
+            *out++ = size - i;
         }
     }
 
     static constexpr const char* output = "pipe_organ.txt";
 };
 
-struct push_front
+struct push_front:
+    distribution<push_front>
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        if (std::distance(begin, end) > 0)
+        if (size > 0)
         {
-            std::iota(begin, end, 1);
-            *std::prev(end) = 0;
+            for (std::size_t i = 0 ; i < size - 1 ; ++i)
+            {
+                *out++ = i;
+            }
+            *out = 0;
         }
     }
 
     static constexpr const char* output = "push_front.txt";
 };
 
-struct push_middle
+struct push_middle:
+    distribution<push_middle>
 {
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end) const
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        int size = std::distance(begin, end);
         if (size > 0)
         {
-            int count = 0;
-            for (int i = 0 ; i < size ; ++i)
+            for (std::size_t i = 0 ; i < size ; ++i)
             {
                 if (i != size / 2)
                 {
-                    begin[count++] = i;
+                    *out++ = i;
                 }
             }
-            begin[count] = size / 2;
+            *out = size / 2;
         }
     }
 
     static constexpr const char* output = "push_middle.txt";
+};
+
+struct ascending_sawtooth:
+    distribution<ascending_sawtooth>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        std::size_t limit = size / cppsort::utility::log2(size) * 1.1;
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            *out++ = i % limit;
+        }
+    }
+
+    static constexpr const char* output = "ascending_sawtooth.txt";
+};
+
+struct descending_sawtooth:
+    distribution<descending_sawtooth>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        std::size_t limit = size / cppsort::utility::log2(size) * 1.1;
+        while (size--)
+        {
+            *out++ = size % limit;
+        }
+    }
+
+    static constexpr const char* output = "descending_sawtooth.txt";
+};
+
+struct alternating:
+    distribution<alternating>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            *out++ = (i % 2) ? i : -i;
+        }
+    }
+
+    static constexpr const char* output = "alternating.txt";
+};
+
+struct alternating_16_values:
+    distribution<alternating_16_values>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        for (std::size_t i = 0 ; i < size ; ++i)
+        {
+            *out++ = (i % 2) ? i % 16 : -(i % 16);
+        }
+    }
+
+    static constexpr const char* output = "alternating_16_values.txt";
 };
