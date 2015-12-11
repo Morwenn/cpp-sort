@@ -83,19 +83,19 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         int r, h = 1;
-        RandomAccessIterator h0_it = first;
-        RandomAccessIterator u_it = std::next(first);
-        while (u_it != last && h < nkeys) {
-            r = lower_bound(h0_it, h0_it + h, proj(*u_it), compare.base(), projection) - h0_it;
-            if (r == h || compare(proj(*u_it), proj(h0_it[r])) != 0) {
-                grail_rotate(h0_it, h, u_it - (h0_it + h));
-                h0_it = u_it - h;
-                grail_rotate(h0_it + r, h - r, 1);
+        RandomAccessIterator h0 = first;
+        RandomAccessIterator u = std::next(first);
+        while (u != last && h < nkeys) {
+            r = lower_bound(h0, h0 + h, proj(*u), compare.base(), projection) - h0;
+            if (r == h || compare(proj(*u), proj(h0[r])) != 0) {
+                grail_rotate(h0, h, u - (h0 + h));
+                h0 = u - h;
+                grail_rotate(h0 + r, h - r, 1);
                 ++h;
             }
-            ++u_it;
+            ++u;
         }
-        grail_rotate(first, h0_it - first, h);
+        grail_rotate(first, h0 - first, h);
         return h;
     }
 
@@ -139,23 +139,25 @@ namespace detail
 
     // arr[M..-1] - buffer, arr[0,L1-1]++arr[L1,L1+L2-1] -> arr[M,M+L1+L2-1]
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_MergeLeft(RandomAccessIterator arr, int L1, int L2, int M,
+    auto grail_MergeLeft(RandomAccessIterator first, int L1, int L2, int M,
                          Compare compare, Projection projection)
         -> void
     {
         auto&& proj = utility::as_function(projection);
 
-        int p0 = 0, p1 = L1;
+        RandomAccessIterator p0 = first;
+        RandomAccessIterator p1 = first + L1;
+
         L2 += L1;
-        while (p1 < L2) {
-            if (p0 == L1 || compare(proj(arr[p0]), proj(arr[p1])) > 0) {
-                std::iter_swap(arr+(M++), arr+(p1++));
+        while (p1 - first < L2) {
+            if (p0 - first == L1 || compare(proj(*p0), proj(*p1)) > 0) {
+                std::iter_swap(first+(M++), p1++);
             } else {
-                std::iter_swap(arr+(M++), arr+(p0++));
+                std::iter_swap(first+(M++), p0++);
             }
         }
-        if (M != p0) {
-            std::swap_ranges(arr+M, arr+M+L1-p0, arr+p0);
+        if (M != p0 - first) {
+            std::swap_ranges(first+M, first+M+L1-(p0-first), p0);
         }
     }
 
@@ -358,9 +360,11 @@ namespace detail
     {
         auto&& proj = utility::as_function(projection);
 
-        int m,u,h,p0,p1,rest,restk,p,kbuf;
-        kbuf=K<LExtBuf ? K : LExtBuf;
-        while(kbuf&(kbuf-1)) kbuf&=kbuf-1;  // max power or 2 - just in case
+        int m, u, h, p0, p1, rest, restk, p, kbuf;
+        kbuf = std::min(K, LExtBuf);
+        while (kbuf & (kbuf - 1)) {
+            kbuf &= kbuf - 1;  // max power or 2 - just in case
+        }
 
         if (kbuf) {
             std::copy(arr - kbuf, arr, extbuf);
@@ -496,7 +500,7 @@ namespace detail
                               Compare compare, Projection projection)
         -> void
     {
-        auto L = std::distance(first, last);
+        auto size = std::distance(first, last);
         auto&& proj = utility::as_function(projection);
 
         int h, rest;
@@ -507,7 +511,7 @@ namespace detail
             }
         }
 
-        for (h = 2 ; h < L ; h *= 2) {
+        for (h = 2 ; h < size ; h *= 2) {
             RandomAccessIterator p0 = first;
             RandomAccessIterator p1 = last - 2 * h;
             while (p0 <= p1) {
@@ -675,9 +679,8 @@ namespace detail
         std::size_t size = std::distance(first, last);
         typename BufferProvider::template buffer<T> buffer(size);
 
-        three_way_compare<Compare> cmp(compare);
         grail_commonSort(first, last, buffer.data(), buffer.size(),
-                         cmp, projection);
+                         three_way_compare<Compare>(compare), projection);
     }
 }}
 
