@@ -60,7 +60,7 @@ auto time_it(Sorter sorter, DistributionFunction dist, std::size_t times)
     std::vector<std::array<T, N>> arrays(times);
     for (auto&& array: arrays)
     {
-        dist(std::begin(array), std::end(array));
+        dist(std::begin(array), N);
     }
 
     // Time while sorting the arrays
