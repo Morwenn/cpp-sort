@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <iterator>
+#include <tuple>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "insertion_sort.h"
@@ -188,54 +189,62 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SmartMergeWithBuffer(RandomAccessIterator arr, int *alen1, int *atype,
+    auto grail_SmartMergeWithBuffer(RandomAccessIterator arr, int alen1, int atype,
                                     int len2, int lkeys, Compare compare, Projection projection)
-        -> void
+        -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
 
-        int p0=-lkeys,p1=0,p2=*alen1,q1=p2,q2=p2+len2;
-        int ftype=1-*atype;  // 1 if inverted
-        while(p1<q1 && p2<q2){
+        int p0 = -lkeys,
+            p1 = 0,
+            p2 = alen1,
+            q1 = p2,
+            q2 = p2 + len2;
+
+        int ftype = 1 - atype;  // 1 if inverted
+        while (p1 < q1 && p2 < q2) {
             if (compare(proj(arr[p1]), proj(arr[p2])) - ftype < 0) {
                 std::iter_swap(arr+(p0++), arr+(p1++));
             } else {
                 std::iter_swap(arr+(p0++), arr+(p2++));
             }
         }
-        if(p1<q1){
-            *alen1=q1-p1;
-            while(p1<q1) std::iter_swap(arr+(--q1),arr+(--q2));
-        } else{
-            *alen1=q2-p2;
-            *atype=ftype;
+        if (p1 < q1) {
+            alen1 = q1 - p1;
+            while (p1 < q1) {
+                std::iter_swap(arr+(--q1),arr+(--q2));
+            }
+        } else {
+            alen1 = q2 - p2;
+            atype = ftype;
         }
+        return { alen1, atype };
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SmartMergeWithoutBuffer(RandomAccessIterator arr, int *alen1, int *atype,
+    auto grail_SmartMergeWithoutBuffer(RandomAccessIterator arr, int alen1, int atype,
                                        int _len2, Compare compare, Projection projection)
-        -> void
+        -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
-        int len1,len2,ftype,h;
 
-        if(!_len2) return;
-        len1=*alen1;
-        len2=_len2;
-        ftype=1-*atype;
+        if (not _len2) {
+            return { alen1, atype };
+        }
+        int len1 = alen1;
+        int len2 = _len2;
+        int ftype = 1 - atype;
         if (len1 && compare(proj(arr[len1-1]), proj(arr[len1])) - ftype >= 0) {
-            while(len1){
-                h=ftype ? (lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1))
-                        : (upper_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1));
-                if(h!=0){
-                    grail_rotate(arr,len1,h);
-                    arr+=h;
-                    len2-=h;
+            while (len1) {
+                int h = ftype ? (lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1))
+                              : (upper_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1));
+                if (h != 0) {
+                    grail_rotate(arr, len1, h);
+                    arr += h;
+                    len2 -= h;
                 }
-                if(len2==0){
-                    *alen1=len1;
-                    return;
+                if (len2 == 0) {
+                    return { len1, atype };
                 }
                 do {
                     ++arr;
@@ -243,7 +252,7 @@ namespace detail
                 } while (len1 && compare(proj(arr[0]), proj(arr[len1])) - ftype < 0);
             }
         }
-        *alen1=len2; *atype=ftype;
+        return { len2, ftype };
     }
 
     /***** Sort With Extra Buffer *****/
@@ -273,30 +282,36 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SmartMergeWithXBuf(RandomAccessIterator arr, int *alen1, int *atype,
+    auto grail_SmartMergeWithXBuf(RandomAccessIterator arr, int alen1, int atype,
                                   int len2, int lkeys, Compare compare, Projection projection)
-        -> void
+        -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
 
-        int p0=-lkeys,p1=0,p2=*alen1,q1=p2,q2=p2+len2;
-        int ftype=1-*atype;  // 1 if inverted
-        while(p1<q1 && p2<q2){
+        int p0 = -lkeys,
+            p1 = 0,
+            p2 = alen1,
+            q1 = p2,
+            q2 = p2 + len2;
+
+        int ftype = 1 - atype;  // 1 if inverted
+        while (p1 < q1 && p2 < q2){
             if (compare(proj(arr[p1]), proj(arr[p2])) - ftype < 0) {
                 arr[p0++] = std::move(arr[p1++]);
             } else {
                 arr[p0++] = std::move(arr[p2++]);
             }
         }
-        if(p1<q1){
-            *alen1=q1-p1;
+        if (p1 < q1) {
+            alen1 = q1 - p1;
             while (p1 < q1) {
                 arr[--q2] = std::move(arr[--q1]);
             }
-        } else{
-            *alen1=q2-p2;
-            *atype=ftype;
+        } else {
+            alen1 = q2 - p2;
+            atype = ftype;
         }
+        return { alen1, atype };
     }
 
     // arr - starting array. arr[-lblock..-1] - buffer (if havebuf).
@@ -325,12 +340,14 @@ namespace detail
         for(cidx=1;cidx<nblock;cidx++,pidx+=lblock){
             prest = pidx - lrest;
             fnext = compare(proj(keys[cidx]), proj(*midkey)) < 0 ? 0 : 1;
-            if(fnext==frest){
+            if (fnext == frest) {
                 std::move(arr+prest, arr+prest+lrest, arr+prest-lblock);
-                prest=pidx;
-                lrest=lblock;
-            } else{
-                grail_SmartMergeWithXBuf(arr+prest,&lrest,&frest,lblock,lblock,compare,projection);
+                prest = pidx;
+                lrest = lblock;
+            } else {
+                std::tie(lrest, frest) = grail_SmartMergeWithXBuf(arr+prest, lrest, frest,
+                                                                  lblock, lblock,
+                                                                  compare, projection);
             }
         }
         prest = pidx - lrest;
@@ -464,17 +481,20 @@ namespace detail
         for(cidx=1;cidx<nblock;cidx++,pidx+=lblock){
             prest=pidx-lrest;
             fnext=compare(proj(keys[cidx]),proj(*midkey)) < 0 ? 0 : 1;
-            if(fnext==frest) {
+            if(fnext == frest) {
                 if (havebuf) {
-                    std::swap_ranges(arr+prest-lblock,arr+prest-lblock+lrest,arr+prest);
+                    std::swap_ranges(arr+prest-lblock, arr+prest-lblock+lrest, arr+prest);
                 }
-                prest=pidx;
-                lrest=lblock;
-            } else{
-                if(havebuf) {
-                    grail_SmartMergeWithBuffer(arr+prest,&lrest,&frest,lblock,lblock,compare,projection);
+                prest = pidx;
+                lrest = lblock;
+            } else {
+                if (havebuf) {
+                    std::tie(lrest, frest) = grail_SmartMergeWithBuffer(arr+prest, lrest, frest,
+                                                                        lblock, lblock,
+                                                                        compare, projection);
                 } else {
-                    grail_SmartMergeWithoutBuffer(arr+prest,&lrest,&frest,lblock,compare,projection);
+                    std::tie(lrest, frest) = grail_SmartMergeWithoutBuffer(arr+prest, lrest, frest,
+                                                                           lblock, compare, projection);
                 }
 
             }
