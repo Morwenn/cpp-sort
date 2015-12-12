@@ -61,21 +61,6 @@ namespace detail
             Compare compare;
     };
 
-    template<typename RandomAccessIterator>
-    auto grail_rotate(RandomAccessIterator arr, int l1, int l2)
-        -> void
-    {
-        while(l1 && l2){
-            if(l1<=l2){
-                std::swap_ranges(arr,arr+l1,arr+l1);
-                arr+=l1; l2-=l1;
-            } else{
-                std::swap_ranges(arr+(l1-l2),arr+l1,arr+l1);
-                l1-=l2;
-            }
-        }
-    }
-
     // cost: 2*len+nk^2/2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto grail_FindKeys(RandomAccessIterator first, RandomAccessIterator last,
@@ -90,14 +75,14 @@ namespace detail
         while (u != last && h < nkeys) {
             r = lower_bound(h0, h0 + h, proj(*u), compare.base(), projection) - h0;
             if (r == h || compare(proj(*u), proj(h0[r])) != 0) {
-                grail_rotate(h0, h, u - (h0 + h));
+                std::rotate(h0, h0 + h, u);
                 h0 = u - h;
-                grail_rotate(h0 + r, h - r, 1);
+                std::rotate(h0 + r, u, std::next(u));
                 ++h;
             }
             ++u;
         }
-        grail_rotate(first, h0 - first, h);
+        std::rotate(first, h0, h0 + h);
         return h;
     }
 
@@ -113,10 +98,10 @@ namespace detail
         if(len1<len2){
             while(len1){
                 h = lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1);
-                if(h!=0){
-                    grail_rotate(arr,len1,h);
-                    arr+=h;
-                    len2-=h;
+                if (h != 0) {
+                    std::rotate(arr, arr+len1, arr+len1+h);
+                    arr += h;
+                    len2 -= h;
                 }
                 if(len2==0) break;
                 do {
@@ -125,11 +110,11 @@ namespace detail
                 } while (len1 && compare(proj(arr[0]), proj(arr[len1])) <= 0);
             }
         } else{
-            while(len2){
+            while (len2) {
                 h = upper_bound(arr, arr+len1, proj(arr[len1+len2-1]), compare.base(), projection) - arr;
-                if(h!=len1){
-                    grail_rotate(arr+h,len1-h,len2);
-                    len1=h;
+                if (h != len1) {
+                    std::rotate(arr+h, arr+len1, arr+len1+len2);
+                    len1 = h;
                 }
                 if(len1==0) break;
                 do {
@@ -222,24 +207,22 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SmartMergeWithoutBuffer(RandomAccessIterator arr, int alen1, int atype,
-                                       int _len2, Compare compare, Projection projection)
+    auto grail_SmartMergeWithoutBuffer(RandomAccessIterator arr, int len1, int atype,
+                                       int len2, Compare compare, Projection projection)
         -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
 
-        if (not _len2) {
-            return { alen1, atype };
+        if (not len2) {
+            return { len1, atype };
         }
-        int len1 = alen1;
-        int len2 = _len2;
         int ftype = 1 - atype;
         if (len1 && compare(proj(arr[len1-1]), proj(arr[len1])) - ftype >= 0) {
             while (len1) {
                 int h = ftype ? (lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1))
                               : (upper_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1));
                 if (h != 0) {
-                    grail_rotate(arr, len1, h);
+                    std::rotate(arr, arr+len1, arr+len1+h);
                     arr += h;
                     len2 -= h;
                 }
@@ -439,15 +422,20 @@ namespace detail
                 p0+=2*h;
             }
             rest=L-p0;
-            if(rest>h){
-                grail_MergeLeft(arr+p0,h,rest-h,-h,compare,projection);
-            } else grail_rotate(arr+p0-h,h,rest);
+            if (rest > h) {
+                grail_MergeLeft(arr+p0, h, rest-h, -h, compare, projection);
+            } else {
+                std::rotate(arr+p0-h, arr+p0, arr+p0+rest);
+            }
             arr-=h;
         }
-        restk=L%(2*K);
-        p=L-restk;
-        if(restk<=K) grail_rotate(arr+p,restk,K);
-        else grail_MergeRight(arr+p,K,restk-K,K,compare,projection);
+        restk = L % (2 * K);
+        p = L - restk;
+        if (restk <= K) {
+            std::rotate(arr+p, arr+L, arr+L+K);
+        } else {
+            grail_MergeRight(arr+p, K, restk-K, K, compare, projection);
+        }
         while(p>0){
             p-=2*K;
             grail_MergeRight(arr+p,K,K,K,compare,projection);
