@@ -65,6 +65,13 @@ namespace cppsort
                     "quick_sorter requires at least forward iterators"
                 );
 
+                static_assert(
+                    std::is_copy_assignable<
+                        typename std::iterator_traits<decltype(std::begin(iterable))>::value_type
+                    >::value,
+                    "quick_sorter requires the types to sort to be copy-assignable"
+                );
+
                 quicksort(std::begin(iterable), std::end(iterable),
                           compare, projection,
                           utility::size(iterable));
@@ -88,6 +95,13 @@ namespace cppsort
                         typename std::iterator_traits<ForwardIterator>::iterator_category
                     >::value,
                     "quick_sorter requires at least forward iterators"
+                );
+
+                static_assert(
+                    std::is_copy_assignable<
+                        typename std::iterator_traits<ForwardIterator>::value_type
+                    >::value,
+                    "quick_sorter requires the types to sort to be copy-assignable"
                 );
 
                 quicksort(first, last,

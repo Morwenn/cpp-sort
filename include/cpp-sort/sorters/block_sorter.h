@@ -66,6 +66,13 @@ namespace cppsort
                     "block_sorter requires at least random-access iterators"
                 );
 
+                static_assert(
+                    std::is_copy_assignable<
+                        typename std::iterator_traits<RandomAccessIterator>::value_type
+                    >::value,
+                    "block_sorter requires the types to sort to be copy-assignable"
+                );
+
                 block_sort<BufferProvider>(first, last, compare, projection);
             }
         };
