@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <iterator>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "insertion_sort.h"
 #include "lower_bound.h"
@@ -259,14 +260,14 @@ namespace detail
         L2 += L1;
         while (p1 < L2) {
             if (p0 == L1 || compare(proj(arr[p0]), proj(arr[p1])) > 0) {
-                arr[M++] = arr[p1++];
+                arr[M++] = std::move(arr[p1++]);
             } else {
-                arr[M++] = arr[p0++];
+                arr[M++] = std::move(arr[p0++]);
             }
         }
         if (M != p0) {
             while (p0 < L1) {
-                arr[M++] = arr[p0++];
+                arr[M++] = std::move(arr[p0++]);
             }
         }
     }
@@ -282,14 +283,16 @@ namespace detail
         int ftype=1-*atype;  // 1 if inverted
         while(p1<q1 && p2<q2){
             if (compare(proj(arr[p1]), proj(arr[p2])) - ftype < 0) {
-                arr[p0++] = arr[p1++];
+                arr[p0++] = std::move(arr[p1++]);
             } else {
-                arr[p0++] = arr[p2++];
+                arr[p0++] = std::move(arr[p2++]);
             }
         }
         if(p1<q1){
             *alen1=q1-p1;
-            while(p1<q1) arr[--q2]=arr[--q1];
+            while (p1 < q1) {
+                arr[--q2] = std::move(arr[--q1]);
+            }
         } else{
             *alen1=q2-p2;
             *atype=ftype;
@@ -323,7 +326,7 @@ namespace detail
             prest = pidx - lrest;
             fnext = compare(proj(keys[cidx]), proj(*midkey)) < 0 ? 0 : 1;
             if(fnext==frest){
-                std::copy(arr+prest, arr+prest+lrest, arr+prest-lblock);
+                std::move(arr+prest, arr+prest+lrest, arr+prest-lblock);
                 prest=pidx;
                 lrest=lblock;
             } else{
@@ -333,7 +336,7 @@ namespace detail
         prest = pidx - lrest;
         if (llast) {
             if (frest) {
-                std::copy(arr+prest, arr+prest+lrest, arr+prest-lblock);
+                std::move(arr+prest, arr+prest+lrest, arr+prest-lblock);
                 prest = pidx;
                 lrest = lblock * nblock2;
                 frest = 0;
@@ -342,7 +345,7 @@ namespace detail
             }
             grail_MergeLeftWithXBuf(arr+prest, lrest, llast, -lblock, compare,projection);
         } else {
-            std::copy(arr+prest, arr+prest+lrest, arr+prest-lblock);
+            std::move(arr+prest, arr+prest+lrest, arr+prest-lblock);
         }
     }
 
@@ -367,16 +370,18 @@ namespace detail
         }
 
         if (kbuf) {
-            std::copy(arr - kbuf, arr, extbuf);
+            std::move(arr - kbuf, arr, extbuf);
             for(m=1;m<L;m+=2){
                 u=0;
                 if (compare(proj(arr[m-1]), proj(arr[m])) > 0) {
                     u = 1;
                 }
-                arr[m-3] = arr[m-1+u];
-                arr[m-2] = arr[m-u];
+                arr[m-3] = std::move(arr[m-1+u]);
+                arr[m-2] = std::move(arr[m-u]);
             }
-            if(L%2) arr[L-3]=arr[L-1];
+            if (L % 2) {
+                arr[L-3] = std::move(arr[L-1]);
+            }
             arr-=2;
             for(h=2;h<kbuf;h*=2){
                 p0=0;
@@ -385,15 +390,17 @@ namespace detail
                     grail_MergeLeftWithXBuf(arr+p0,h,h,-h,compare,projection);
                     p0+=2*h;
                 }
-                rest=L-p0;
-                if(rest>h){
+                rest = L - p0;
+                if (rest > h) {
                     grail_MergeLeftWithXBuf(arr+p0,h,rest-h,-h,compare,projection);
                 } else {
-                    for(;p0<L;p0++)	arr[p0-h]=arr[p0];
+                    for (; p0 < L ; ++p0) {
+                        arr[p0-h] = std::move(arr[p0]);
+                    }
                 }
                 arr-=h;
             }
-            std::copy(extbuf, extbuf + kbuf, arr + L);
+            std::move(extbuf, extbuf + kbuf, arr + L);
         } else{
             for(m=1;m<L;m+=2){
                 u=0;
@@ -546,7 +553,7 @@ namespace detail
             lrest=0;
         }
         if (xbuf) {
-            std::copy(arr - lblock, arr, xbuf);
+            std::move(arr - lblock, arr, xbuf);
         }
         for(b=0;b<=M;b++){
             if(b==M && lrest==0) break;
@@ -584,8 +591,10 @@ namespace detail
             }
         }
         if (xbuf) {
-            for (p=len;--p>=0;) arr[p]=arr[p-lblock];
-            std::copy(xbuf, xbuf + lblock, arr - lblock);
+            for (p = len ; --p >= 0;) {
+                arr[p] = std::move(arr[p-lblock]);
+            }
+            std::move(xbuf, xbuf + lblock, arr - lblock);
         } else if(havebuf) while(--len>=0) std::iter_swap(arr+len,arr+len-lblock);
     }
 
