@@ -15,6 +15,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <tuple>
 #include <utility>
@@ -90,38 +91,40 @@ namespace detail
 
     // cost: min(L1,L2)^2+max(L1,L2)
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_MergeWithoutBuffer(RandomAccessIterator arr, int len1, int len2,
+    auto grail_MergeWithoutBuffer(RandomAccessIterator first, RandomAccessIterator middle,
+                                  RandomAccessIterator last,
                                   Compare compare, Projection projection)
         -> void
     {
         auto&& proj = utility::as_function(projection);
 
-        int h;
-        if(len1<len2){
-            while(len1){
-                h = lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1);
-                if (h != 0) {
-                    std::rotate(arr, arr+len1, arr+len1+h);
-                    arr += h;
-                    len2 -= h;
+        if (std::distance(first, middle) < std::distance(middle, last)) {
+            while (first != middle) {
+                auto h = lower_bound(middle, last, proj(*first), compare.base(), projection);
+                if (h != middle) {
+                    std::rotate(first, middle, h);
+                    std::size_t delta = std::distance(middle, h);
+                    first += delta;
+                    middle += delta;
                 }
-                if(len2==0) break;
+                if (middle == last) break;
                 do {
-                    ++arr;
-                    --len1;
-                } while (len1 && compare(proj(arr[0]), proj(arr[len1])) <= 0);
+                    ++first;
+                } while (first != middle && compare(proj(*first), proj(*middle)) <= 0);
             }
-        } else{
-            while (len2) {
-                h = upper_bound(arr, arr+len1, proj(arr[len1+len2-1]), compare.base(), projection) - arr;
-                if (h != len1) {
-                    std::rotate(arr+h, arr+len1, arr+len1+len2);
-                    len1 = h;
+        } else {
+            while (middle != last) {
+                auto h = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
+                if (h != middle) {
+                    std::rotate(h, middle, last);
+                    std::size_t delta = std::distance(h, middle);
+                    middle -= delta;
+                    last -= delta;
                 }
-                if(len1==0) break;
+                if (first == middle) break;
                 do {
-                    --len2;
-                } while (len2 && compare(proj(arr[len1-1]), proj(arr[len1+len2-1])) <= 0);
+                    --last;
+                } while (middle != last && compare(proj(*std::prev(middle)), proj(*std::prev(last))) <= 0);
             }
         }
     }
@@ -177,36 +180,39 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SmartMergeWithBuffer(RandomAccessIterator arr, int len1, int len2,
-                                    int atype, int lkeys, Compare compare, Projection projection)
+    auto grail_SmartMergeWithBuffer(RandomAccessIterator first, RandomAccessIterator middle,
+                                    RandomAccessIterator last, int lkeys,
+                                    int atype, Compare compare, Projection projection)
         -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
 
-        int p0 = -lkeys,
-            p1 = 0,
-            p2 = len1,
-            q1 = p2,
-            q2 = p2 + len2;
+        RandomAccessIterator p0 = first - lkeys,
+                             p1 = first,
+                             p2 = middle,
+                             q1 = p2,
+                             q2 = last;
 
         int ftype = 1 - atype;  // 1 if inverted
         while (p1 < q1 && p2 < q2) {
-            if (compare(proj(arr[p1]), proj(arr[p2])) - ftype < 0) {
-                std::iter_swap(arr+(p0++), arr+(p1++));
+            if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
+                std::iter_swap(p0++, p1++);
             } else {
-                std::iter_swap(arr+(p0++), arr+(p2++));
+                std::iter_swap(p0++, p2++);
             }
         }
+
+        int len;
         if (p1 < q1) {
-            len1 = q1 - p1;
+            len = std::distance(p1, q1);
             while (p1 < q1) {
-                std::iter_swap(arr+(--q1),arr+(--q2));
+                std::iter_swap(--q1, --q2);
             }
         } else {
-            len1 = q2 - p2;
+            len = std::distance(p2, q2);
             atype = ftype;
         }
-        return { len1, atype };
+        return { len, atype };
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -299,12 +305,12 @@ namespace detail
         -> void
     {
         auto&& proj = utility::as_function(projection);
-        int l, lrest, frest, cidx, fnext;
+        int lrest, frest, cidx, fnext;
         RandomAccessIterator prest;
 
         if (nblock == 0) {
-            l = nblock2 * lblock;
-            grail_MergeLeftWithXBuf(arr, arr+l, arr+l+llast, arr-lblock, compare, projection);
+            RandomAccessIterator l = arr + nblock2 * lblock;
+            grail_MergeLeftWithXBuf(arr, l, l+llast, arr-lblock, compare, projection);
             return;
         }
 
@@ -453,7 +459,7 @@ namespace detail
             if (havebuf) {
                 grail_MergeLeft(arr, arr+l, arr+l+llast, arr-lblock, compare, projection);
             } else {
-                grail_MergeWithoutBuffer(arr, l, llast, compare, projection);
+                grail_MergeWithoutBuffer(arr, arr+l, arr+l+llast, compare, projection);
             }
             return;
         }
@@ -472,8 +478,8 @@ namespace detail
                 lrest = lblock;
             } else {
                 if (havebuf) {
-                    std::tie(lrest, frest) = grail_SmartMergeWithBuffer(prest, lrest, lblock,
-                                                                        frest, lblock,
+                    std::tie(lrest, frest) = grail_SmartMergeWithBuffer(prest, prest+lrest, prest+lrest+lblock,
+                                                                        lblock, frest,
                                                                         compare, projection);
                 } else {
                     std::tie(lrest, frest) = grail_SmartMergeWithoutBuffer(prest, prest+lrest, prest+lrest+lblock,
@@ -497,7 +503,7 @@ namespace detail
                 grail_MergeLeft(prest, prest+lrest, prest+lrest+llast,
                                 prest-lblock, compare, projection);
             } else {
-                grail_MergeWithoutBuffer(prest, lrest, llast, compare, projection);
+                grail_MergeWithoutBuffer(prest, prest+lrest, prest+lrest+llast, compare, projection);
             }
         } else {
             if (havebuf) {
@@ -524,12 +530,12 @@ namespace detail
             RandomAccessIterator p0 = first;
             RandomAccessIterator p1 = last - 2 * h;
             while (p0 <= p1) {
-                grail_MergeWithoutBuffer(p0, h, h, compare, projection);
+                grail_MergeWithoutBuffer(p0, p0+h, p0+h+h, compare, projection);
                 p0 += 2 * h;
             }
             int rest = last - p0;
             if (rest > h) {
-                grail_MergeWithoutBuffer(p0, h, rest-h, compare, projection);
+                grail_MergeWithoutBuffer(p0, p0+h, p0+rest, compare, projection);
             }
         }
     }
@@ -675,7 +681,7 @@ namespace detail
                                 compare, projection);
         }
         insertion_sort(first, first + ptr, compare.base(), projection);
-        grail_MergeWithoutBuffer(first, ptr, size - ptr, compare, projection);
+        grail_MergeWithoutBuffer(first, first+ptr, first+size, compare, projection);
     }
 
     template<typename BufferProvider, typename RandomAccessIterator,
