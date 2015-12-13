@@ -21,6 +21,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "insertion_sort.h"
 #include "lower_bound.h"
+#include "upper_bound.h"
 
 namespace cppsort
 {
@@ -126,49 +127,50 @@ namespace detail
 
     // arr[M..-1] - buffer, arr[0,L1-1]++arr[L1,L1+L2-1] -> arr[M,M+L1+L2-1]
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_MergeLeft(RandomAccessIterator first, int L1, int L2, int M,
+    auto grail_MergeLeft(RandomAccessIterator first, RandomAccessIterator middle,
+                         RandomAccessIterator last, RandomAccessIterator M,
                          Compare compare, Projection projection)
         -> void
     {
         auto&& proj = utility::as_function(projection);
 
         RandomAccessIterator p0 = first;
-        RandomAccessIterator p1 = first + L1;
+        RandomAccessIterator p1 = middle;
 
-        L2 += L1;
-        while (p1 - first < L2) {
-            if (p0 - first == L1 || compare(proj(*p0), proj(*p1)) > 0) {
-                std::iter_swap(first+(M++), p1++);
+        while (p1 < last) {
+            if (p0 == middle || compare(proj(*p0), proj(*p1)) > 0) {
+                std::iter_swap(M++, p1++);
             } else {
-                std::iter_swap(first+(M++), p0++);
+                std::iter_swap(M++, p0++);
             }
         }
-        if (M != p0 - first) {
-            std::swap_ranges(first+M, first+M+L1-(p0-first), p0);
+        if (M != p0) {
+            std::swap_ranges(M, M + std::distance(p0, middle), p0);
         }
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_MergeRight(RandomAccessIterator arr, int L1, int L2, int M,
+    auto grail_MergeRight(RandomAccessIterator first, RandomAccessIterator middle,
+                          RandomAccessIterator last, RandomAccessIterator M,
                           Compare compare, Projection projection)
         -> void
     {
         auto&& proj = utility::as_function(projection);
 
-        int p0 = L1 + L2 + M - 1;
-        int p1 = L1 - 1;
-        int p2 = L1 + L2 - 1;
+        RandomAccessIterator p0 = std::prev(M);
+        RandomAccessIterator p1 = std::prev(middle);
+        RandomAccessIterator p2 = std::prev(last);
 
-        while (p1 >= 0) {
-            if (p2 < L1 || compare(proj(arr[p1]), proj(arr[p2])) > 0) {
-                std::iter_swap(arr+(p0--), arr+(p1--));
+        while (p1 >= first) {
+            if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
+                std::iter_swap(p0--, p1--);
             } else {
-                std::iter_swap(arr+(p0--), arr+(p2--));
+                std::iter_swap(p0--, p2--);
             }
         }
         if (p2 != p0) {
-            while (p2 >= L1) {
-                std::iter_swap(arr+(p0--), arr+(p2--));
+            while (p2 >= middle) {
+                std::iter_swap(p0--, p2--);
             }
         }
     }
@@ -418,12 +420,12 @@ namespace detail
             p0=0;
             p1=L-2*h;
             while(p0<=p1){
-                grail_MergeLeft(arr+p0,h,h,-h,compare,projection);
+                grail_MergeLeft(arr+p0, arr+p0+h, arr+p0+h+h, arr+p0-h, compare, projection);
                 p0+=2*h;
             }
             rest=L-p0;
             if (rest > h) {
-                grail_MergeLeft(arr+p0, h, rest-h, -h, compare, projection);
+                grail_MergeLeft(arr+p0, arr+p0+h, arr+p0+rest, arr+p0-h, compare, projection);
             } else {
                 std::rotate(arr+p0-h, arr+p0, arr+p0+rest);
             }
@@ -434,11 +436,11 @@ namespace detail
         if (restk <= K) {
             std::rotate(arr+p, arr+L, arr+L+K);
         } else {
-            grail_MergeRight(arr+p, K, restk-K, K, compare, projection);
+            grail_MergeRight(arr+p, arr+p+K, arr+p+restk, arr+p+restk+K, compare, projection);
         }
-        while(p>0){
-            p-=2*K;
-            grail_MergeRight(arr+p,K,K,K,compare,projection);
+        while (p > 0) {
+            p -= 2 * K;
+            grail_MergeRight(arr+p, arr+p+K, arr+p+K+K, arr+p+K+K+K, compare, projection);
         }
     }
 
@@ -458,8 +460,11 @@ namespace detail
 
         if(nblock==0){
             l=nblock2*lblock;
-            if(havebuf) grail_MergeLeft(arr,l,llast,-lblock,compare,projection);
-            else grail_MergeWithoutBuffer(arr,l,llast,compare,projection);
+            if (havebuf) {
+                grail_MergeLeft(arr, arr+l, arr+l+llast, arr-lblock, compare, projection);
+            } else {
+                grail_MergeWithoutBuffer(arr, l, llast, compare, projection);
+            }
             return;
         }
 
@@ -500,7 +505,8 @@ namespace detail
                 lrest+=lblock*nblock2;
             }
             if (havebuf) {
-                grail_MergeLeft(arr+prest,lrest,llast,-lblock,compare,projection);
+                grail_MergeLeft(arr+prest, arr+prest+lrest, arr+prest+lrest+llast,
+                                arr+prest-lblock, compare, projection);
             }
             else grail_MergeWithoutBuffer(arr+prest,lrest,llast,compare,projection);
         } else {
