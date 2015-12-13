@@ -21,6 +21,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "insertion_sort.h"
 #include "lower_bound.h"
+#include "merge_move.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -209,61 +210,48 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_SmartMergeWithoutBuffer(RandomAccessIterator arr, int len1, int len2,
-                                       int atype, Compare compare, Projection projection)
+    auto grail_SmartMergeWithoutBuffer(RandomAccessIterator first, RandomAccessIterator middle,
+                                       RandomAccessIterator last, int atype,
+                                       Compare compare, Projection projection)
         -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
 
-        if (not len2) {
-            return { len1, atype };
+        if (middle == last) {
+            return { std::distance(first, middle), atype };
         }
+
         int ftype = 1 - atype;
-        if (len1 && compare(proj(arr[len1-1]), proj(arr[len1])) - ftype >= 0) {
-            while (len1) {
-                int h = ftype ? (lower_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1))
-                              : (upper_bound(arr+len1, arr+len1+len2, proj(arr[0]), compare.base(), projection) - (arr+len1));
+        if (first != middle && compare(proj(*std::prev(middle)), proj(*middle)) - ftype >= 0) {
+            while (first != middle) {
+                int h = ftype ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
+                              : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
                 if (h != 0) {
-                    std::rotate(arr, arr+len1, arr+len1+h);
-                    arr += h;
-                    len2 -= h;
+                    std::rotate(first, middle, middle + h);
+                    first += h;
+                    middle += h;
                 }
-                if (len2 == 0) {
-                    return { len1, atype };
+                if (middle == last) {
+                    return { std::distance(first, middle), atype };
                 }
                 do {
-                    ++arr;
-                    --len1;
-                } while (len1 && compare(proj(arr[0]), proj(arr[len1])) - ftype < 0);
+                    ++first;
+                } while (first != middle && compare(proj(*first), proj(*middle)) - ftype < 0);
             }
         }
-        return { len2, ftype };
+        return { std::distance(middle, last), ftype };
     }
 
-    /***** Sort With Extra Buffer *****/
+    // Sort With Extra Buffer
 
-    // arr[M..-1] - free, arr[0,L1-1]++arr[L1,L1+L2-1] -> arr[M,M+L1+L2-1]
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto grail_MergeLeftWithXBuf(RandomAccessIterator arr, int L1, int L2, int M,
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto grail_MergeLeftWithXBuf(ForwardIterator first, ForwardIterator middle,
+                                 ForwardIterator last, ForwardIterator out,
                                  Compare compare, Projection projection)
         -> void
     {
-        auto&& proj = utility::as_function(projection);
-
-        int p0 = 0, p1 = L1;
-        L2 += L1;
-        while (p1 < L2) {
-            if (p0 == L1 || compare(proj(arr[p0]), proj(arr[p1])) > 0) {
-                arr[M++] = std::move(arr[p1++]);
-            } else {
-                arr[M++] = std::move(arr[p0++]);
-            }
-        }
-        if (M != p0) {
-            while (p0 < L1) {
-                arr[M++] = std::move(arr[p0++]);
-            }
-        }
+        merge_move(first, middle, middle, last, out,
+                   compare.base(), projection, projection);
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -316,7 +304,7 @@ namespace detail
 
         if (nblock == 0) {
             l = nblock2 * lblock;
-            grail_MergeLeftWithXBuf(arr, l, llast, -lblock, compare, projection);
+            grail_MergeLeftWithXBuf(arr, arr+l, arr+l+llast, arr-lblock, compare, projection);
             return;
         }
 
@@ -345,7 +333,8 @@ namespace detail
             } else {
                 lrest += lblock * nblock2;
             }
-            grail_MergeLeftWithXBuf(prest, lrest, llast, -lblock, compare, projection);
+            grail_MergeLeftWithXBuf(prest, prest+lrest, prest+lrest+llast,
+                                    prest-lblock, compare, projection);
         } else {
             std::move(prest, prest+lrest, prest-lblock);
         }
@@ -389,12 +378,12 @@ namespace detail
                 p0=0;
                 p1=L-2*h;
                 while(p0<=p1){
-                    grail_MergeLeftWithXBuf(arr+p0,h,h,-h,compare,projection);
+                    grail_MergeLeftWithXBuf(arr+p0, arr+p0+h, arr+p0+h+h, arr+p0-h, compare, projection);
                     p0+=2*h;
                 }
                 rest = L - p0;
                 if (rest > h) {
-                    grail_MergeLeftWithXBuf(arr+p0,h,rest-h,-h,compare,projection);
+                    grail_MergeLeftWithXBuf(arr+p0, arr+p0+h, arr+p0+rest, arr+p0-h, compare, projection);
                 } else {
                     for (; p0 < L ; ++p0) {
                         arr[p0-h] = std::move(arr[p0]);
@@ -487,7 +476,7 @@ namespace detail
                                                                         frest, lblock,
                                                                         compare, projection);
                 } else {
-                    std::tie(lrest, frest) = grail_SmartMergeWithoutBuffer(prest, lrest, lblock,
+                    std::tie(lrest, frest) = grail_SmartMergeWithoutBuffer(prest, prest+lrest, prest+lrest+lblock,
                                                                            frest, compare, projection);
                 }
 
