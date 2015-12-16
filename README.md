@@ -61,15 +61,18 @@ future.
 recent (and not widely supported) C++14 features and will probably use the C++17
 features once they are available. The overall goal is to make sure that the library
 works with the latest g++ and clang++ versions, without going out of its way to
-support older releases.
+support older releases. 
 
-Note however that some foundation classes of the library rely on compiler-specific
-behaviour which doesn't seem to be standard *at all*. It is true black magic in the
-sense that I have no idea *why* it works but still managed to use it to get things
-to work with both g++ and clang++. I wouldn't be surprised if future versions of
-the compilers broke that, but I won't replace it because doing so would break the
-API and force users to write uglier things to get their sorters to work. I would
-rather have the ugly in the library's details than in the API.
+In the future, the branches will follow the following pattern: the master branch
+will remain C++14 and there will be a C++17 branch. There will be other branches
+forking the C++17 one for some of the published Technical Specifications (for
+example, there will likely be a branch for the parallelism TS and another one for
+the concepts TS); these branches will eventually be merged in the C++17 one when
+the corresponding technical specifications are merged into the current C++ working
+draft (or in a C++20 branch if the specifications do not make it in time for the
+C++17 release). Of course the creation of such branches will depend on compiler
+support: if a feature isn't supported by either the latest g++ or clang++, I won't
+use it before the following release.
 
 # Thanks
 
@@ -110,9 +113,8 @@ of the algorithm.
 * The algorithm used by `block_sorter` has been adapted from BonzaiThePenguin's
 [WikiSort](https://github.com/BonzaiThePenguin/WikiSort).
 
-* Even though the algorithm is not the same anymore, the original idea and algorithm
-used by `exact_sorter` come from Ahmed Akkök's [Exact-Sort](http://www.geocities.ws/p356spt/).
-I kept the name since the philosophy of the algorithm remains the same.
+* The algorithm used by `grail_sorter` has been adapted from Mrrl's
+[GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
 
 * The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
 found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
