@@ -101,12 +101,12 @@ namespace detail
         typedef typename std::iterator_traits<iter_t>::difference_type diff_t;
         typedef Compare<LessFunction> compare_t;
 
-        static const int MIN_MERGE = 32;
+        static constexpr int MIN_MERGE = 32;
 
         compare_t comp_;
         Projection proj_;
 
-        static const int MIN_GALLOP = 7;
+        static constexpr int MIN_GALLOP = 7;
 
         int minGallop_; // default to MIN_GALLOP
 
@@ -125,12 +125,12 @@ namespace detail
         void sort(iter_t const lo, iter_t const hi, compare_t c, Projection projection) {
             assert( lo <= hi );
 
-            diff_t nRemaining = (hi - lo);
-            if(nRemaining < 2) {
+            diff_t nRemaining = std::distance(lo, hi);
+            if (nRemaining < 2) {
                 return; // nothing to do
             }
 
-            if(nRemaining < MIN_MERGE) {
+            if (nRemaining < MIN_MERGE) {
                 diff_t const initRunLen = countRunAndMakeAscending(lo, hi, c, projection);
                 binarySort(lo, hi, lo + initRunLen, c, projection);
                 return;
@@ -170,11 +170,11 @@ namespace detail
             }
             for( ; start < hi; ++start ) {
                 assert(lo <= start);
-                /*const*/ value_t pivot = std::move(*start);
+                value_t pivot = std::move(*start);
 
                 iter_t const pos = upper_bound(lo, start, proj(pivot), compare.less_function(), projection);
                 for(iter_t p = start; p > pos; --p) {
-                    *p = std::move(*(p - 1));
+                    *p = std::move(*std::prev(p));
                 }
                 *pos = std::move(pivot);
             }
@@ -186,19 +186,19 @@ namespace detail
             assert( lo < hi );
             auto&& proj = utility::as_function(projection);
 
-            iter_t runHi = lo + 1;
+            iter_t runHi = std::next(lo);
             if( runHi == hi ) {
                 return 1;
             }
 
-            if(compare.lt(proj(*(runHi++)), proj(*lo))) { // descending
-                while(runHi < hi && compare.lt(proj(*runHi), proj(*(runHi - 1)))) {
+            if(compare.lt(proj(*runHi++), proj(*lo))) { // descending
+                while(runHi < hi && compare.lt(proj(*runHi), proj(*std::prev(runHi)))) {
                     ++runHi;
                 }
                 std::reverse(lo, runHi);
             }
             else { // ascending
-                while(runHi < hi && compare.ge(proj(*runHi), proj(*(runHi - 1)))) {
+                while(runHi < hi && compare.ge(proj(*runHi), proj(*std::prev(runHi)))) {
                     ++runHi;
                 }
             }
@@ -223,7 +223,7 @@ namespace detail
         }
 
         void pushRun(iter_t const runBase, diff_t const runLen) {
-            pending_.push_back(run(runBase, runLen));
+            pending_.emplace_back(runBase, runLen);
         }
 
         void mergeCollapse() {
@@ -289,7 +289,7 @@ namespace detail
                 return;
             }
 
-            len2 = gallopLeft(*(base1 + (len1 - 1)), base2, len2, len2 - 1);
+            len2 = gallopLeft(base1[len1 - 1], base2, len2, len2 - 1);
             assert( len2 >= 0 );
             if(len2 == 0) {
                 return;
@@ -312,9 +312,9 @@ namespace detail
             diff_t lastOfs = 0;
             diff_t ofs = 1;
 
-            if(comp_.gt(key_proj, proj(*(base + hint)))) {
+            if(comp_.gt(key_proj, proj(base[hint]))) {
                 diff_t const maxOfs = len - hint;
-                while(ofs < maxOfs && comp_.gt(key_proj, proj(*(base + (hint + ofs))))) {
+                while(ofs < maxOfs && comp_.gt(key_proj, proj(base[hint + ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
@@ -331,7 +331,7 @@ namespace detail
             }
             else {
                 diff_t const maxOfs = hint + 1;
-                while(ofs < maxOfs && comp_.le(key_proj, proj(*(base + (hint - ofs))))) {
+                while(ofs < maxOfs && comp_.le(key_proj, proj(base[hint - ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
@@ -349,7 +349,7 @@ namespace detail
             }
             assert( -1 <= lastOfs && lastOfs < ofs && ofs <= len );
 
-            return lower_bound(base+(lastOfs+1), base+ofs, key_proj, comp_.less_function(), proj_) - base;
+            return lower_bound(base+lastOfs+1, base+ofs, key_proj, comp_.less_function(), proj_) - base;
         }
 
         template <typename Iter>
@@ -361,9 +361,9 @@ namespace detail
             diff_t ofs = 1;
             diff_t lastOfs = 0;
 
-            if(comp_.lt(key_proj, proj(*(base + hint)))) {
+            if(comp_.lt(key_proj, proj(base[hint]))) {
                 diff_t const maxOfs = hint + 1;
-                while(ofs < maxOfs && comp_.lt(key_proj, proj(*(base + (hint - ofs))))) {
+                while(ofs < maxOfs && comp_.lt(key_proj, proj(base[hint - ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
@@ -381,7 +381,7 @@ namespace detail
             }
             else {
                 diff_t const maxOfs = len - hint;
-                while(ofs < maxOfs && comp_.ge(key_proj, proj(*(base + (hint + ofs))))) {
+                while(ofs < maxOfs && comp_.ge(key_proj, proj(base[hint + ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
@@ -398,7 +398,7 @@ namespace detail
             }
             assert( -1 <= lastOfs && lastOfs < ofs && ofs <= len );
 
-            return upper_bound(base+(lastOfs+1), base+ofs, key_proj, comp_.less_function(), proj_) - base;
+            return upper_bound(base+lastOfs+1, base+ofs, key_proj, comp_.less_function(), proj_) - base;
         }
 
         void mergeLo(iter_t const base1, diff_t len1, iter_t const base2, diff_t len2) {
@@ -410,14 +410,14 @@ namespace detail
             iter_t cursor2     = base2;
             iter_t dest        = base1;
 
-            *(dest++) = std::move(*(cursor2++));
+            *dest++ = std::move(*cursor2++);
             if(--len2 == 0) {
                 std::move(cursor1, cursor1 + len1, dest);
                 return;
             }
             if(len1 == 1) {
                 std::move(cursor2, cursor2 + len2, dest);
-                *(dest + len2) = std::move(*cursor1);
+                dest[len2] = std::move(*cursor1);
                 return;
             }
 
@@ -434,7 +434,7 @@ namespace detail
                     assert( len1 > 1 && len2 > 0 );
 
                     if(comp_.lt(proj(*cursor2), proj(*cursor1))) {
-                        *(dest++) = std::move(*(cursor2++));
+                        *dest++ = std::move(*cursor2++);
                         ++count2;
                         count1 = 0;
                         if(--len2 == 0) {
@@ -443,7 +443,7 @@ namespace detail
                         }
                     }
                     else {
-                        *(dest++) = std::move(*(cursor1++));
+                        *dest++ = std::move(*cursor1++);
                         ++count1;
                         count2 = 0;
                         if(--len1 == 1) {
@@ -471,7 +471,7 @@ namespace detail
                             break;
                         }
                     }
-                    *(dest++) = std::move(*(cursor2++));
+                    *dest++ = std::move(*cursor2++);
                     if(--len2 == 0) {
                         break_outer = true;
                         break;
@@ -488,7 +488,7 @@ namespace detail
                             break;
                         }
                     }
-                    *(dest++) = std::move(*(cursor1++));
+                    *dest++ = std::move(*cursor1++);
                     if(--len1 == 1) {
                         break_outer = true;
                         break;
@@ -511,7 +511,7 @@ namespace detail
             if(len1 == 1) {
                 assert( len2 > 0 );
                 std::move(cursor2, cursor2 + len2, dest);
-                *(dest + len2) = std::move(*cursor1);
+                dest[len2] = std::move(*cursor1);
             }
             else {
                 assert( len1 != 0 && "Comparison function violates its general contract" );
@@ -530,7 +530,7 @@ namespace detail
             tmp_iter_t cursor2 = tmp_.begin() + (len2 - 1);
             iter_t dest        = base2 + (len2 - 1);
 
-            *(dest--) = std::move(*(cursor1--));
+            *dest-- = std::move(*cursor1--);
             if(--len1 == 0) {
                 std::move(tmp_.begin(), tmp_.begin() + len2, dest - (len2 - 1));
                 return;
@@ -556,7 +556,7 @@ namespace detail
                     assert( len1 > 0 && len2 > 1 );
 
                     if(comp_.lt(proj(*cursor2), proj(*cursor1))) {
-                        *(dest--) = std::move(*(cursor1--));
+                        *dest-- = std::move(*cursor1--);
                         ++count1;
                         count2 = 0;
                         if(--len1 == 0) {
@@ -565,7 +565,7 @@ namespace detail
                         }
                     }
                     else {
-                        *(dest--) = std::move(*(cursor2--));
+                        *dest-- = std::move(*cursor2--);
                         ++count2;
                         count1 = 0;
                         if(--len2 == 1) {
@@ -593,7 +593,7 @@ namespace detail
                             break;
                         }
                     }
-                    *(dest--) = std::move(*(cursor2--));
+                    *dest-- = std::move(*cursor2--);
                     if(--len2 == 1) {
                         break_outer = true;
                         break;
@@ -610,7 +610,7 @@ namespace detail
                             break;
                         }
                     }
-                    *(dest--) = std::move(*(cursor1--));
+                    *dest-- = std::move(*cursor1--);
                     if(--len1 == 0) {
                         break_outer = true;
                         break;
