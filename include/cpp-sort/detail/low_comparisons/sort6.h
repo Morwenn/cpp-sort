@@ -28,8 +28,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
-#include "../front_insert.h"
+#include "../rotate_right.h"
+#include "../swap_if.h"
 
 namespace cppsort
 {
@@ -47,8 +50,75 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            low_comparisons_sorter<5u>{}(first+1u, first+6u, compare, projection);
-            front_insert<6u>(first, compare, projection);
+            using std::swap;
+            auto&& proj = utility::as_function(projection);
+
+            // Order elements pair-wise
+
+            swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[2u], first[3u], compare, projection);
+            swap_if(first[4u], first[5u], compare, projection);
+
+            // Order pairs of elements by max value
+
+            if (compare(proj(first[3u]), proj(first[1u]))) {
+                swap(first[0u], first[2u]);
+                swap(first[1u], first[3u]);
+            }
+
+            if (compare(proj(first[5u]), proj(first[3u]))) {
+                if (compare(proj(first[5u]), proj(first[1u]))) {
+                    {
+                        auto tmp = std::move(first[5u]);
+                        first[5u] = std::move(first[3u]);
+                        first[3u] = std::move(first[1u]);
+                        first[1u] = std::move(tmp);
+                    }
+                    {
+                        auto tmp = std::move(first[4u]);
+                        first[4u] = std::move(first[2u]);
+                        first[2u] = std::move(first[0u]);
+                        first[0u] = std::move(tmp);
+                    }
+                } else {
+                    swap(first[2u], first[4u]);
+                    swap(first[3u], first[5u]);
+                }
+            }
+
+            // Merge-insert minimal elements
+
+            if (compare(proj(first[4u]), proj(first[1u]))) {
+                // Insert last element in [0, 1, 3]
+                if (compare(proj(first[4u]), proj(first[0u]))) {
+                    rotate_right<5u>(first);
+                } else {
+                    rotate_right<4u>(first + 1u);
+                }
+            } else {
+                if (compare(proj(first[4u]), proj(first[3u]))) {
+                    rotate_right<3u>(first + 2u);
+                } else {
+                    // Insert 2 in [0, 1, 3]
+                    if (compare(proj(first[2u]), proj(first[0u]))) {
+                        rotate_right<3u>(first);
+                    } else {
+                        swap_if(first[1u], first[2u], compare, projection);
+                    }
+                    return;
+                }
+            }
+
+            // Insert 3 in [0, 1, 2]
+            if (compare(proj(first[3u]), proj(first[1u]))) {
+                if (compare(proj(first[3u]), proj(first[0u]))) {
+                    rotate_right<4u>(first);
+                } else {
+                    rotate_right<3u>(first + 1u);
+                }
+            } else {
+                swap_if(first[2u], first[3u], compare, projection);
+            }
         }
     };
 }}
