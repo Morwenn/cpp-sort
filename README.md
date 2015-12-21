@@ -52,8 +52,9 @@ used to sort small arrays:
 ![shuffled int arrays](https://i.imgur.com/GaRHn9x.png)
 
 These results were generated with MinGW g++ 5.2 with the compiler options
-`-std=c++14 -O3 -march=native`. More benchmarks will be made available in the
-future.
+`-std=c++14 -O3 -march=native`. This benchmark is just an example to make the
+introduction look good. You can find more commented benchmarks in the [dedicated
+wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
 # Compiler support
 
