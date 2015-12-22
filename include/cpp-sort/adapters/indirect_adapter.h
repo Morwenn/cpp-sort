@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_MOUNTAIN_ADAPTER_H_
-#define CPPSORT_ADAPTERS_MOUNTAIN_ADAPTER_H_
+#ifndef CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
+#define CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -44,7 +44,7 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter>
-        struct mountain_adapter_impl
+        struct indirect_adapter_impl
         {
             template<
                 typename RandomAccessIterator,
@@ -114,19 +114,19 @@ namespace cppsort
     }
 
     template<typename Sorter>
-    struct mountain_adapter:
-        sorter_facade<detail::mountain_adapter_impl<Sorter>>
+    struct indirect_adapter:
+        sorter_facade<detail::indirect_adapter_impl<Sorter>>
     {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
     template<typename Sorter>
-    struct sorter_traits<mountain_adapter<Sorter>>
+    struct sorter_traits<indirect_adapter<Sorter>>
     {
         using iterator_category = std::random_access_iterator_tag;
         using is_stable = cppsort::is_stable<Sorter>;
     };
 }
 
-#endif // CPPSORT_ADAPTERS_MOUNTAIN_ADAPTER_H_
+#endif // CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
