@@ -28,32 +28,43 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <utility>
 
 namespace cppsort
 {
 namespace detail
 {
     template<std::size_t N>
-    struct rotate_right_n;
+    struct rotate_right_n
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator first) const
+            -> void
+        {
+            auto tmp = std::move(first[N-1u]);
+            for (std::size_t i = N - 1u ; i > 0u ; --i)
+            {
+                first[i] = std::move(first[i-1u]);
+            }
+            first[0u] = std::move(tmp);
+        }
+    };
+
+    template<>
+    struct rotate_right_n<0u>
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator) const
+            -> void
+        {}
+    };
 
     template<std::size_t N, typename RandomAccessIterator>
     auto rotate_right(RandomAccessIterator first)
-        -> decltype(auto)
+        -> void
     {
         return rotate_right_n<N>{}(first);
     }
 }}
-
-// Specializations of rotate_right_n for some values of N
-#include "rotate_right/rotate0.h"
-#include "rotate_right/rotate1.h"
-#include "rotate_right/rotate2.h"
-#include "rotate_right/rotate3.h"
-#include "rotate_right/rotate4.h"
-#include "rotate_right/rotate5.h"
-#include "rotate_right/rotate6.h"
-#include "rotate_right/rotate7.h"
-#include "rotate_right/rotate8.h"
-#include "rotate_right/rotate9.h"
 
 #endif // CPPSORT_DETAIL_ROTATE_RIGHT_H_

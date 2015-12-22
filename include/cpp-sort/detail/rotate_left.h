@@ -28,34 +28,43 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <utility>
 
 namespace cppsort
 {
 namespace detail
 {
     template<std::size_t N>
-    struct rotate_left_n;
+    struct rotate_left_n
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator first) const
+            -> void
+        {
+            auto tmp = std::move(first[0u]);
+            for (std::size_t i = 0u ; i < N - 1u ; ++i)
+            {
+                first[i] = std::move(first[i+1u]);
+            }
+            first[N-1u] = std::move(tmp);
+        }
+    };
+
+    template<>
+    struct rotate_left_n<0u>
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator) const
+            -> void
+        {}
+    };
 
     template<std::size_t N, typename RandomAccessIterator>
     auto rotate_left(RandomAccessIterator first)
-        -> decltype(auto)
+        -> void
     {
         return rotate_left_n<N>{}(first);
     }
 }}
-
-// Specializations of rotate_left_n for some values of N
-#include "rotate_left/rotate0.h"
-#include "rotate_left/rotate1.h"
-#include "rotate_left/rotate2.h"
-#include "rotate_left/rotate3.h"
-#include "rotate_left/rotate4.h"
-#include "rotate_left/rotate5.h"
-#include "rotate_left/rotate6.h"
-#include "rotate_left/rotate7.h"
-#include "rotate_left/rotate8.h"
-#include "rotate_left/rotate9.h"
-#include "rotate_left/rotate10.h"
-#include "rotate_left/rotate11.h"
 
 #endif // CPPSORT_DETAIL_ROTATE_LEFT_H_
