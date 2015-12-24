@@ -39,6 +39,8 @@ using sort_f = void (*)(Collection<T>&);
 
 int main()
 {
+    using namespace std::chrono_literals;
+
     std::pair<std::string, distr_f<std::vector, int>> distributions[] = {
         { "shuffled",               shuffled()              },
         { "shuffled_16_values",     shuffled_16_values()    },
@@ -75,7 +77,7 @@ int main()
 
                 auto total_start = std::chrono::high_resolution_clock::now();
                 auto total_end = std::chrono::high_resolution_clock::now();
-                while (std::chrono::duration_cast<std::chrono::milliseconds>(total_end - total_start).count() < 10'000)
+                while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 10s)
                 {
                     std::vector<int> collection;
                     distribution.second(std::back_inserter(collection), size);
