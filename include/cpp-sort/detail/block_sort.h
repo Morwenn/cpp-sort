@@ -2,7 +2,7 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  *
- * Modified in 2015 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
  *
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -136,44 +136,6 @@ namespace detail
 
     namespace Wiki
     {
-        // merge operation using an external buffer
-        template<typename RandomAccessIterator1, typename RandomAccessIterator2,
-                 typename Compare, typename Projection>
-        auto MergeExternal(RandomAccessIterator1 first1, RandomAccessIterator1 last1,
-                           RandomAccessIterator1 first2, RandomAccessIterator1 last2,
-                           RandomAccessIterator2 cache,
-                           Compare compare, Projection projection)
-            -> void
-        {
-            // A fits into the cache, so use that instead of the internal buffer
-            RandomAccessIterator2 A_index = cache;
-            RandomAccessIterator2 A_last = cache + std::distance(first1, last1);
-            RandomAccessIterator1 B_index = first2;
-            RandomAccessIterator1 B_last = last2;
-            RandomAccessIterator1 insert_index = first1;
-
-            auto&& proj = utility::as_function(projection);
-
-            if (last2 - first2 > 0 && last1 - first1 > 0) {
-                while (true) {
-                    if (not compare(proj(*B_index), proj(*A_index))) {
-                        *insert_index = std::move(*A_index);
-                        ++A_index;
-                        ++insert_index;
-                        if (A_index == A_last) break;
-                    } else {
-                        *insert_index = std::move(*B_index);
-                        ++B_index;
-                        ++insert_index;
-                        if (B_index == B_last) break;
-                    }
-                }
-            }
-
-            // move the remainder of A into the final array
-            std::move(A_index, A_last, insert_index);
-        }
-
         // merge operation using an internal buffer
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto MergeInternal(RandomAccessIterator first1, RandomAccessIterator last1,
@@ -192,7 +154,7 @@ namespace detail
 
             auto&& proj = utility::as_function(projection);
 
-            if (last2 - first2 > 0 && last1 - first1 > 0) {
+            if (first1 != last1 && first2 != last2) {
                 while (true) {
                     if (not compare(proj(*B_index), proj(*A_index))) {
                         std::iter_swap(insert_index, A_index);
@@ -219,7 +181,7 @@ namespace detail
                           Compare compare, Projection projection)
             -> void
         {
-            if (last1 == first1 || last2 == first2) return;
+            if (first1 == last1 || first2 == last2) return;
 
             /*
              this just repeatedly binary searches into B and rotates A into position.
@@ -247,7 +209,7 @@ namespace detail
                 RandomAccessIterator mid = lower_bound(first2, last2, proj(*first1), compare, projection);
 
                 // rotate A into place
-                std::size_t amount = mid - last1;
+                std::size_t amount = std::distance(last1, mid);
                 std::rotate(first1, last1, mid);
                 if (last2 == mid) break;
 
@@ -337,31 +299,14 @@ namespace detail
             -> void
         {
             using T = typename std::iterator_traits<RandomAccessIterator>::value_type;
-            const std::size_t size = std::distance(first, last);
-            auto&& proj = utility::as_function(projection);
 
-            // if the array is of size 0, 1, 2, or 3, just sort them like so:
-            if (size < 4) {
-                if (size == 3) {
-                    // hard-coded insertion sort
-                    if (compare(proj(first[1]), proj(first[0]))) {
-                        std::iter_swap(first + 0, first + 1);
-                    }
-                    if (compare(proj(first[2]), proj(first[1]))) {
-                        std::iter_swap(first + 1, first + 2);
-                        if (compare(proj(first[1]), proj(first[0]))) {
-                            std::iter_swap(first + 0, first + 1);
-                        }
-                    }
-                } else if (size == 2) {
-                    // swap the items if they're out of order
-                    if (compare(proj(first[1]), proj(first[0]))) {
-                        std::iter_swap(first + 0, first + 1);
-                    }
-                }
-
+            std::size_t size = std::distance(first, last);
+            if (size < 15) {
+                insertion_sort(first, last, compare, projection);
                 return;
             }
+
+            auto&& proj = utility::as_function(projection);
 
             // sort groups of 4-8 items at a time using an unstable sorting network,
             // but keep track of the original item orders to force it to be stable
@@ -371,55 +316,55 @@ namespace detail
                 uint8_t order[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
                 auto range = iterator.nextRange(first);
 
-                #define SWAP(x, y) \
-                    if (compare(proj(range.start[y]), proj(range.start[x])) || \
-                        (order[x] > order[y] && not compare(proj(range.start[x]), proj(range.start[y])))) { \
-                        std::iter_swap(range.start + x, range.start + y); \
-                        std::iter_swap(order + x, order + y); }
+                auto do_swap = [&](std::size_t x, std::size_t y) {
+                    if (compare(proj(range.start[y]), proj(range.start[x])) ||
+                        (order[x] > order[y] && not compare(proj(range.start[x]), proj(range.start[y])))
+                    ) {
+                        std::iter_swap(range.start + x, range.start + y);
+                        std::iter_swap(order + x, order + y);
+                    }
+                };
 
                 if (range.length() == 8) {
-                    SWAP(0, 1); SWAP(2, 3); SWAP(4, 5); SWAP(6, 7);
-                    SWAP(0, 2); SWAP(1, 3); SWAP(4, 6); SWAP(5, 7);
-                    SWAP(1, 2); SWAP(5, 6); SWAP(0, 4); SWAP(3, 7);
-                    SWAP(1, 5); SWAP(2, 6);
-                    SWAP(1, 4); SWAP(3, 6);
-                    SWAP(2, 4); SWAP(3, 5);
-                    SWAP(3, 4);
+                    do_swap(0, 1); do_swap(2, 3); do_swap(4, 5); do_swap(6, 7);
+                    do_swap(0, 2); do_swap(1, 3); do_swap(4, 6); do_swap(5, 7);
+                    do_swap(1, 2); do_swap(5, 6); do_swap(0, 4); do_swap(3, 7);
+                    do_swap(1, 5); do_swap(2, 6);
+                    do_swap(1, 4); do_swap(3, 6);
+                    do_swap(2, 4); do_swap(3, 5);
+                    do_swap(3, 4);
 
                 } else if (range.length() == 7) {
-                    SWAP(1, 2); SWAP(3, 4); SWAP(5, 6);
-                    SWAP(0, 2); SWAP(3, 5); SWAP(4, 6);
-                    SWAP(0, 1); SWAP(4, 5); SWAP(2, 6);
-                    SWAP(0, 4); SWAP(1, 5);
-                    SWAP(0, 3); SWAP(2, 5);
-                    SWAP(1, 3); SWAP(2, 4);
-                    SWAP(2, 3);
+                    do_swap(1, 2); do_swap(3, 4); do_swap(5, 6);
+                    do_swap(0, 2); do_swap(3, 5); do_swap(4, 6);
+                    do_swap(0, 1); do_swap(4, 5); do_swap(2, 6);
+                    do_swap(0, 4); do_swap(1, 5);
+                    do_swap(0, 3); do_swap(2, 5);
+                    do_swap(1, 3); do_swap(2, 4);
+                    do_swap(2, 3);
 
                 } else if (range.length() == 6) {
-                    SWAP(1, 2); SWAP(4, 5);
-                    SWAP(0, 2); SWAP(3, 5);
-                    SWAP(0, 1); SWAP(3, 4); SWAP(2, 5);
-                    SWAP(0, 3); SWAP(1, 4);
-                    SWAP(2, 4); SWAP(1, 3);
-                    SWAP(2, 3);
+                    do_swap(1, 2); do_swap(4, 5);
+                    do_swap(0, 2); do_swap(3, 5);
+                    do_swap(0, 1); do_swap(3, 4); do_swap(2, 5);
+                    do_swap(0, 3); do_swap(1, 4);
+                    do_swap(2, 4); do_swap(1, 3);
+                    do_swap(2, 3);
 
                 } else if (range.length() == 5) {
-                    SWAP(0, 1); SWAP(3, 4);
-                    SWAP(2, 4);
-                    SWAP(2, 3); SWAP(1, 4);
-                    SWAP(0, 3);
-                    SWAP(0, 2); SWAP(1, 3);
-                    SWAP(1, 2);
+                    do_swap(0, 1); do_swap(3, 4);
+                    do_swap(2, 4);
+                    do_swap(2, 3); do_swap(1, 4);
+                    do_swap(0, 3);
+                    do_swap(0, 2); do_swap(1, 3);
+                    do_swap(1, 2);
 
                 } else if (range.length() == 4) {
-                    SWAP(0, 1); SWAP(2, 3);
-                    SWAP(0, 2); SWAP(1, 3);
-                    SWAP(1, 2);
+                    do_swap(0, 1); do_swap(2, 3);
+                    do_swap(0, 2); do_swap(1, 3);
+                    do_swap(1, 2);
                 }
-
-                #undef SWAP
             }
-            if (size < 8) return;
 
             // use a small cache to speed up some of the operations
             // just keep in mind that making it too small ruins the point (nothing will fit into it),
@@ -513,8 +458,9 @@ namespace detail
                             } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we'll need to merge them!
                                 std::move(A.start, A.end, cache.begin());
-                                MergeExternal(A.start, A.end, B.start, B.end,
-                                              cache.begin(), compare, projection);
+                                merge_move(cache.begin(), cache.begin() + A.length(),
+                                           B.start, B.end, A.start, compare,
+                                           projection, projection);
                             }
                         }
                     }
@@ -577,11 +523,12 @@ namespace detail
 
                         // just store information about where the values will be pulled from and to,
                         // as well as how many values there are, to create the two internal buffers
-                        #define PULL(_to) \
-                            pull[pull_index].range = { A.start, B.end }; \
-                            pull[pull_index].count = count; \
-                            pull[pull_index].from = index; \
-                            pull[pull_index].to = _to
+                        auto do_pull = [&](RandomAccessIterator to) {
+                            pull[pull_index].range = { A.start, B.end };
+                            pull[pull_index].count = count;
+                            pull[pull_index].from = index;
+                            pull[pull_index].to = to;
+                        };
 
                         // check A for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the start of A
@@ -594,7 +541,7 @@ namespace detail
 
                         if (count >= buffer_size) {
                             // keep track of the range within the array where we'll need to "pull out" these values to create the internal buffer
-                            PULL(A.start);
+                            do_pull(A.start);
                             pull_index = 1;
 
                             if (count == buffer_size + buffer_size) {
@@ -624,7 +571,7 @@ namespace detail
                         } else if (pull_index == 0 && count > buffer1.length()) {
                             // keep track of the largest buffer we were able to find
                             buffer1 = { A.start, A.start + count };
-                            PULL(A.start);
+                            do_pull(A.start);
                         }
 
                         // check B for the number of unique values we need to fill an internal buffer
@@ -638,7 +585,7 @@ namespace detail
 
                         if (count >= buffer_size) {
                             // keep track of the range within the array where we'll need to "pull out" these values to create the internal buffer
-                            PULL(B.end);
+                            do_pull(B.end);
                             pull_index = 1;
 
                             if (count == buffer_size + buffer_size) {
@@ -674,10 +621,8 @@ namespace detail
                         } else if (pull_index == 0 && count > buffer1.length()) {
                             // keep track of the largest buffer we were able to find
                             buffer1 = { B.end - count, B.end };
-                            PULL(B.end);
+                            do_pull(B.end);
                         }
-
-                        #undef PULL
                     }
 
                     // pull out the two ranges so we can use them as internal buffers
@@ -732,7 +677,7 @@ namespace detail
 
                                 // if the internal buffer takes up the entire A or B subarray, then there's nothing to merge
                                 // this only happens for very small subarrays, like √4 = 2, 2 * (2 internal buffers) = 4,
-                                // which also only happens when cache size is small or 0 since it'd otherwise use MergeExternal
+                                // which also only happens when cache size is small or 0 since it'd otherwise use merge_move
                                 if (A.length() == 0) continue;
                             } else if (pull[0].from < pull[0].to) {
                                 B.end -= pull[0].count;
@@ -805,12 +750,13 @@ namespace detail
                                         ++indexA;
 
                                         // locally merge the previous A block with the B values that follow it
-                                        // if lastA fits into the external cache we'll use that (with MergeExternal),
-                                        // or if the second internal buffer exists we'll use that (with MergeInternal),
-                                        // or failing that we'll use a strictly in-place merge algorithm (MergeInPlace)
+                                        // if lastA fits into the external cache we'll use it, else if the second
+                                        // internal buffer exists we'll use it, otherwise we'll use a strictly
+                                        // in-place merge algorithm
                                         if (lastA.length() <= cache.size()) {
-                                            MergeExternal(lastA.start, lastA.end, lastA.end, B_split,
-                                                          cache.begin(), compare, projection);
+                                            merge_move(cache.begin(), cache.begin() + lastA.length(),
+                                                       lastA.end, B_split, lastA.start, compare,
+                                                       projection, projection);
                                         } else if (buffer2.length() > 0) {
                                             MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
                                                           buffer2.start, compare, projection);
@@ -869,8 +815,9 @@ namespace detail
 
                             // merge the last A block with the remaining B values
                             if (lastA.length() <= cache.size()) {
-                                MergeExternal(lastA.start, lastA.end, lastA.end, B.end,
-                                              cache.begin(), compare, projection);
+                                merge_move(cache.begin(), cache.begin() + lastA.length(),
+                                           lastA.end, B.end, lastA.start, compare,
+                                           projection, projection);
                             } else if (buffer2.length() > 0) {
                                 MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
                                               buffer2.start, compare, projection);
