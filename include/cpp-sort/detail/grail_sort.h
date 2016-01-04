@@ -2,7 +2,7 @@
  * Grail sorting
  *
  * (c) 2013 by Andrey Astrelin
- * Modified in 2015 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
  *
  * Stable sorting that works in O(N*log(N)) worst time
  * and uses O(1) extra memory
@@ -23,47 +23,13 @@
 #include "insertion_sort.h"
 #include "lower_bound.h"
 #include "merge_move.h"
+#include "three_way_compare.h"
 #include "upper_bound.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename Compare>
-    struct three_way_compare
-    {
-        public:
-
-            constexpr three_way_compare(Compare compare):
-                compare(compare)
-            {}
-
-            template<typename T, typename U>
-            constexpr auto operator()(const T& lhs, const U& rhs) const
-                -> int
-            {
-                if (compare(lhs, rhs))
-                {
-                    return -1;
-                }
-                if (compare(rhs, lhs))
-                {
-                    return 1;
-                }
-                return 0;
-            }
-
-            constexpr auto base() const noexcept
-                -> Compare
-            {
-                return compare;
-            }
-
-        private:
-
-            Compare compare;
-    };
-
     // cost: 2*len+nk^2/2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto grail_FindKeys(RandomAccessIterator first, RandomAccessIterator last,
