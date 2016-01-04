@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -114,13 +114,23 @@ namespace detail
             [&](const auto& elem) { return not compare(pivot2, proj(elem)); }
         );
 
-        // Recursive call: heuristic trick here
-        // The "middle" partition is more likely to be smaller than the
-        // last one, so computing its size should generally be cheaper
+        // Recursive call: heuristic trick here: in real world cases,
+        // the middle partition is more likely to be smaller than the
+        // right one, so computing its size should generally be cheaper
         std::size_t size_left = std::distance(first, middle1);
+        std::size_t size_middle = std::distance(middle1, middle2);
+        std::size_t size_right = size - size_left - size_middle;
+
+        // Recurse in the smallest partition first to limit the call
+        // stack overhead
+        if (size_left > size_right)
+        {
+            std::swap(first, middle2);
+            std::swap(middle1, last);
+            std::swap(size_left, size_right);
+        }
         quicksort(first, middle1, compare, projection, size_left);
-        quicksort(middle2, last, compare, projection,
-                  size - size_left - std::distance(middle1, middle2));
+        quicksort(middle2, last, compare, projection, size_right);
     }
 }}
 

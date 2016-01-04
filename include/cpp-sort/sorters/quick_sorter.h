@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,13 +88,6 @@ namespace cppsort
                         typename std::iterator_traits<ForwardIterator>::iterator_category
                     >::value,
                     "quick_sorter requires at least forward iterators"
-                );
-
-                static_assert(
-                    std::is_copy_assignable<
-                        typename std::iterator_traits<ForwardIterator>::value_type
-                    >::value,
-                    "quick_sorter requires the types to sort to be copy-assignable"
                 );
 
                 quicksort(first, last,
