@@ -42,9 +42,10 @@ namespace detail
     // done in the order that should result in the smallest number
     // of comparisons
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    void inplace_merge3(BidirectionalIterator first, BidirectionalIterator middle1,
+    auto inplace_merge3(BidirectionalIterator first, BidirectionalIterator middle1,
                         BidirectionalIterator middle2, BidirectionalIterator last,
                         Compare compare, Projection projection)
+        -> void
     {
         if (std::distance(first, middle1) < std::distance(middle2, last))
         {
@@ -59,9 +60,10 @@ namespace detail
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    void vergesort(BidirectionalIterator first, BidirectionalIterator last,
+    auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
                    Compare compare, Projection projection,
                    std::bidirectional_iterator_tag)
+        -> void
     {
         auto dist = std::distance(first, last);
         if (dist < 80)
@@ -176,9 +178,10 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    void vergesort(RandomAccessIterator first, RandomAccessIterator last,
+    auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
                    Compare compare, Projection projection,
                    std::random_access_iterator_tag)
+        -> void
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         difference_type dist = std::distance(first, last);
@@ -198,8 +201,8 @@ namespace detail
         RandomAccessIterator begin_unstable = last;
 
         // Pair of iterators to iterate through the collection
-        RandomAccessIterator current = is_sorted_until(first, last, compare, projection) - 1;
-        RandomAccessIterator next = current + 1;
+        RandomAccessIterator next = is_sorted_until(first, last, compare, projection);
+        RandomAccessIterator current = std::prev(next);
 
         auto&& proj = utility::as_function(projection);
 
@@ -208,10 +211,18 @@ namespace detail
             // Beginning of the current range
             RandomAccessIterator begin_range = current;
 
+            if (std::distance(next, last) <= unstable_limit)
+            {
+                if (begin_unstable == last)
+                {
+                    begin_unstable = begin_range;
+                }
+                break;
+            }
+
             // Set backward iterators
-            difference_type limit = std::min(std::distance(next, last), unstable_limit);
-            std::advance(current, limit);
-            std::advance(next, limit);
+            std::advance(current, unstable_limit);
+            std::advance(next, unstable_limit);
 
             // Set forward iterators
             RandomAccessIterator current2 = current;
@@ -249,7 +260,7 @@ namespace detail
             }
             else
             {
-                // Found an decreasing range, move iterators
+                // Found a decreasing range, move iterators
                 // to the limits of the range
                 while (current != begin_range)
                 {
@@ -281,8 +292,8 @@ namespace detail
 
             if (next2 == last) break;
 
-            current = current2 + 1;
-            next = next2 + 1;
+            current = std::next(current2);
+            next = std::next(next2);
         }
 
         if (begin_unstable != last)
@@ -295,8 +306,9 @@ namespace detail
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    void vergesort(BidirectionalIterator first, BidirectionalIterator last,
+    auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
                    Compare compare, Projection projection)
+        -> void
     {
         using category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
         vergesort(first, last, compare, projection, category{});
