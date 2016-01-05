@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// //  Modified in 2015 by Morwenn for inclusion into cpp-sort
+// //  Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_INPLACE_MERGE_H_
@@ -49,7 +49,7 @@ namespace detail
 
         template <class Tp>
         void process(Tp* p, std::false_type) noexcept
-            {for (std::size_t i = 0; i < size; ++i, ++p) p->~Tp();}
+            {for (std::size_t i = 0; i < size; ++i, (void) ++p) p->~Tp();}
 
         template <class Tp>
         void process(Tp*, std::true_type) noexcept

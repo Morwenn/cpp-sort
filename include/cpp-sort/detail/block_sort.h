@@ -532,7 +532,7 @@ namespace detail
 
                         // check A for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the start of A
-                        for (last = A.start, count = 1; count < find; last = index, ++count) {
+                        for (last = A.start, count = 1; count < find; last = index, (void) ++count) {
                             index = FindLastForward(std::next(last), A.end, *last, compare, projection, find - count);
                             if (index == A.end) break;
                             assert(index < A.end);
@@ -576,7 +576,7 @@ namespace detail
 
                         // check B for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the end of B
-                        for (last = std::prev(B.end), count = 1; count < find; last = std::prev(index), ++count) {
+                        for (last = std::prev(B.end), count = 1; count < find; last = std::prev(index), (void) ++count) {
                             index = FindFirstBackward(B.start, last, *last, compare, projection, find - count);
                             if (index == B.start) break;
                             assert(index > B.start);
@@ -705,8 +705,9 @@ namespace detail
                             Range<RandomAccessIterator> firstA = { A.start, A.start + blockA.length() % block_size };
 
                             // swap the first value of each A block with the values in buffer1
-                            for (auto indexA = buffer1.start, index = firstA.end ; index < blockA.end ; ++indexA, index += block_size) {
+                            for (auto indexA = buffer1.start, index = firstA.end ; index < blockA.end ; ++indexA) {
                                 std::iter_swap(indexA, index);
+                                index += block_size;
                             }
 
                             // start rolling the A blocks through the B blocks!

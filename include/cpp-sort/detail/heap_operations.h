@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// //  Modified in 2015 by Morwenn for inclusion into cpp-sort
+// //  Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_HEAP_OPERATIONS_H_
@@ -115,9 +115,10 @@ namespace detail
     auto sort_heap(RandomAccessIterator first, RandomAccessIterator last,
                    Compare comp, Projection projection)
     {
-        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
-        for (difference_type n = last - first; n > 1; --last, --n)
+        using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+        for (difference_type n = last - first; n > 1; --last, (void) --n) {
             pop_heap<Compare>(first, last, comp, projection, n);
+        }
     }
 }}
 

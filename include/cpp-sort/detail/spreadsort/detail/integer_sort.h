@@ -12,7 +12,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_INTEGER_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_INTEGER_SORT_H_
@@ -186,7 +186,7 @@ namespace spreadsort
       //Recursing
       RandomAccessIter lastPos = first;
       for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
-          ++u) {
+          (void) ++u) {
         Size_type count = bin_cache[u] - lastPos;
         //don't sort unless there are at least two items to Compare
         if (count < 2)
@@ -293,7 +293,7 @@ namespace spreadsort
                           log_finishing_count>(log_divisor);
       RandomAccessIter lastPos = first;
       for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
-          ++u) {
+          (void) ++u) {
         size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;
@@ -349,7 +349,7 @@ namespace spreadsort
                           log_finishing_count>(log_divisor);
       RandomAccessIter lastPos = first;
       for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
-          ++u) {
+          (void) ++u) {
         size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;

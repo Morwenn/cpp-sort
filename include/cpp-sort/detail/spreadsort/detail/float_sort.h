@@ -14,7 +14,7 @@ float_mem_cast fix provided by:
 Scott McMurray
 */
 
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_
@@ -275,7 +275,7 @@ namespace spreadsort
                                        float_log_finishing_count>(log_divisor);
       RandomAccessIter lastPos = first;
       for (int ii = cache_end - 1; ii >= static_cast<int>(cache_offset);
-          lastPos = bin_cache[ii], --ii) {
+          lastPos = bin_cache[ii], (void) --ii) {
         size_t count = bin_cache[ii] - lastPos;
         if (count < 2)
           continue;
@@ -333,7 +333,7 @@ namespace spreadsort
                                        float_log_finishing_count>(log_divisor);
       RandomAccessIter lastPos = first;
       for (int ii = cache_end - 1; ii >= static_cast<int>(cache_offset);
-          lastPos = bin_cache[ii], --ii) {
+          lastPos = bin_cache[ii], (void) --ii) {
         size_t count = bin_cache[ii] - lastPos;
         if (count < 2)
           continue;
@@ -487,7 +487,7 @@ namespace spreadsort
       }
 
       for (unsigned u = cache_offset + first_positive; u < cache_end;
-          lastPos = bin_cache[u], ++u) {
+          lastPos = bin_cache[u], (void) ++u) {
         size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;
@@ -583,7 +583,7 @@ namespace spreadsort
       }
 
       for (unsigned u = cache_offset + first_positive; u < cache_end;
-          lastPos = bin_cache[u], ++u) {
+          lastPos = bin_cache[u], (void) ++u) {
         size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;
@@ -682,7 +682,7 @@ namespace spreadsort
       }
 
       for (unsigned u = cache_offset + first_positive; u < cache_end;
-          lastPos = bin_cache[u], ++u) {
+          lastPos = bin_cache[u], (void) ++u) {
         size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;

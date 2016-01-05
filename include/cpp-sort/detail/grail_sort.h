@@ -285,7 +285,7 @@ namespace detail
         int frest = compare(proj(*keys), proj(*midkey)) < 0 ? 0 : 1;
         RandomAccessIterator prest;
         RandomAccessIterator pidx = arr + lblock;
-        for (int cidx = 1 ; cidx < nblock ; ++cidx, pidx += lblock) {
+        for (int cidx = 1 ; cidx < nblock ; (void) ++cidx, pidx += lblock) {
             prest = pidx - lrest;
             int fnext = compare(proj(keys[cidx]), proj(*midkey)) < 0 ? 0 : 1;
             if (fnext == frest) {
@@ -442,7 +442,7 @@ namespace detail
         int frest = compare(proj(*keys), midkey_proj) < 0 ? 0 : 1;
         RandomAccessIterator prest;
         RandomAccessIterator pidx = arr + lblock;
-        for (int cidx = 1 ; cidx < nblock ; ++cidx, pidx += lblock) {
+        for (int cidx = 1 ; cidx < nblock ; (void) ++cidx, pidx += lblock) {
             prest = pidx - lrest;
             int fnext = compare(proj(keys[cidx]), midkey_proj) < 0 ? 0 : 1;
             if(fnext == frest) {
