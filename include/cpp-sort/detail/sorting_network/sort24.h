@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <type_traits>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include "../swap_if.h"
 
@@ -41,7 +43,10 @@ namespace detail
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = utility::identity
+            typename Projection = utility::identity,
+            typename = std::enable_if_t<is_projection_iterator<
+                Projection, RandomAccessIterator, Compare
+            >>
         >
         auto operator()(RandomAccessIterator first, RandomAccessIterator,
                         Compare compare={}, Projection projection={}) const
