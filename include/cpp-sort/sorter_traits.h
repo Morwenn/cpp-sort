@@ -228,11 +228,37 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    template<typename Sorter>
-    struct sorter_traits
+    namespace detail
     {
-        // Defined but empty for SFINAE friendliness
-    };
+        // This trait class is a bit different than usual traits
+        // classes: the goal is to decrease the coupling between
+        // the different traits and to make programs using one of
+        // the traits valid even if the other traits don't exist
+
+        template<typename T, typename=void>
+        struct check_iterator_category {};
+
+        template<typename T>
+        struct check_iterator_category<T, utility::void_t<typename T::iterator_category>>
+        {
+            using iterator_category = typename T::iterator_category;
+        };
+
+        template<typename T, typename=void>
+        struct check_is_stable {};
+
+        template<typename T>
+        struct check_is_stable<T, utility::void_t<typename T::is_stable>>
+        {
+            using is_stable = typename T::is_stable;
+        };
+    }
+
+    template<typename Sorter>
+    struct sorter_traits:
+        detail::check_iterator_category<Sorter>,
+        detail::check_is_stable<Sorter>
+    {};
 
     template<typename Sorter>
     using iterator_category = typename sorter_traits<Sorter>::iterator_category;
