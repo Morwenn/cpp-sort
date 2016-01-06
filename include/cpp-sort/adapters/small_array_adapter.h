@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/is_in_pack.h>
 
 namespace cppsort
@@ -80,6 +79,15 @@ namespace cppsort
             {
                 return Sorter<N>{}(array, args...);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            // Without more evolved tools, we can't assume much about
+            // fixed-size sorters in general, so we default these values
+            // to the most restrictive ones
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::false_type;
         };
 
         template<template<std::size_t> class Sorter>
@@ -106,6 +114,15 @@ namespace cppsort
             {
                 return Sorter<N>{}(array, args...);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            // Without more evolved tools, we can't assume much about
+            // fixed-size sorters in general, so we default these values
+            // to the most restrictive ones
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::false_type;
         };
     }
 
@@ -116,24 +133,6 @@ namespace cppsort
     struct small_array_adapter:
         sorter_facade<detail::small_array_adapter_impl<Sorter, Indices>>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<
-        template<std::size_t> class Sorter,
-        typename Indices
-    >
-    struct sorter_traits<small_array_adapter<Sorter, Indices>>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-
-        // Some of the algorithms are stable, some other are not,
-        // the stability *could* be documented depending on which
-        // fixed-size algorithms are used, but it would be lots of
-        // work...
-        using is_stable = std::false_type;
-    };
 }
 
 #endif // CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_

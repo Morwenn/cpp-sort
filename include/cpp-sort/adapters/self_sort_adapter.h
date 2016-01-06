@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/has_sort_method.h>
+#include "../detail/checkers.h"
 
 namespace cppsort
 {
@@ -41,7 +41,8 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter>
-        struct self_sort_adapter_impl
+        struct self_sort_adapter_impl:
+            check_iterator_category<Sorter>
         {
             template<
                 typename Iterable,
@@ -72,6 +73,13 @@ namespace cppsort
             {
                 return Sorter{}(first, last, std::forward<Args>(args)...);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            // We can't guarantee the stability of the sort method,
+            // therefore we default the stability to false
+            using is_stable = std::false_type;
         };
     }
 
@@ -79,19 +87,6 @@ namespace cppsort
     struct self_sort_adapter:
         sorter_facade<detail::self_sort_adapter_impl<Sorter>>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<typename Sorter>
-    struct sorter_traits<self_sort_adapter<Sorter>>
-    {
-        using iterator_category = cppsort::iterator_category<Sorter>;
-
-        // We can't guarantee the stability of the sort method,
-        // therefore we default the stability to false
-        using is_stable = std::false_type;
-    };
 }
 
 #endif // CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_

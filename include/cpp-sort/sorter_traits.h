@@ -255,18 +255,14 @@ namespace cppsort
     {
         static_assert(
             std::is_base_of<
-                iterator_category<Sorter>,
+                cppsort::iterator_category<Sorter>,
                 Category
             >::value,
             "the new iterator category should be more specific"
         );
-    };
 
-    template<typename Sorter, typename Category>
-    struct sorter_traits<rebind_iterator_category<Sorter, Category>>
-    {
+        // New category
         using iterator_category = Category;
-        using is_stable = cppsort::is_stable<Sorter>;
     };
 }
 
