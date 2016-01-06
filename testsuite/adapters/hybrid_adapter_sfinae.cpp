@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
 #include <catch.hpp>
 
 namespace
@@ -54,6 +53,8 @@ namespace
         {
             return sorter_type::integer;
         }
+
+        using iterator_category = std::random_access_iterator_tag;
     };
 
     struct float_sorter_impl
@@ -69,6 +70,8 @@ namespace
         {
             return sorter_type::floating_point;
         }
+
+        using iterator_category = std::random_access_iterator_tag;
     };
 
     struct generic_sorter_impl
@@ -79,6 +82,8 @@ namespace
         {
             return sorter_type::generic;
         }
+
+        using iterator_category = std::random_access_iterator_tag;
     };
 
     struct integer_sorter:
@@ -92,30 +97,6 @@ namespace
     struct generic_sorter:
         cppsort::sorter_facade<generic_sorter_impl>
     {};
-}
-
-namespace cppsort
-{
-    template<>
-    struct sorter_traits<integer_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::false_type;
-    };
-
-    template<>
-    struct sorter_traits<float_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::false_type;
-    };
-
-    template<>
-    struct sorter_traits<generic_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::false_type;
-    };
 }
 
 TEST_CASE( "sfinae forwarding in hybrid_adapter",

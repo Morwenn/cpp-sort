@@ -68,6 +68,12 @@ namespace cppsort
 
                 block_sort<BufferProvider>(first, last, compare, projection);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::true_type;
         };
     }
 
@@ -77,16 +83,6 @@ namespace cppsort
     struct block_sorter:
         sorter_facade<detail::block_sorter_impl<BufferProvider>>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<typename BufferProvider>
-    struct sorter_traits<block_sorter<BufferProvider>>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::true_type;
-    };
 }
 
 #endif // CPPSORT_SORTERS_BLOCK_SORTER_H_

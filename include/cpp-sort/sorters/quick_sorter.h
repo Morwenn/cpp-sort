@@ -94,22 +94,18 @@ namespace cppsort
                           compare, projection,
                           std::distance(first, last));
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::forward_iterator_tag;
+            using is_stable = std::false_type;
         };
     }
 
     struct quick_sorter:
         sorter_facade<detail::quick_sorter_impl>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<quick_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::false_type;
-    };
 }
 
 #endif // CPPSORT_SORTERS_QUICK_SORTER_H_

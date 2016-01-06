@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,22 +66,18 @@ namespace cppsort
 
                 timsort(first, last, compare, projection);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::true_type;
         };
     }
 
     struct tim_sorter:
         sorter_facade<detail::tim_sorter_impl>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<tim_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::true_type;
-    };
 }
 
 #endif // CPPSORT_SORTERS_TIM_SORTER_H_

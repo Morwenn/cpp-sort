@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include "../detail/checkers.h"
 #include "../detail/comparison_counter.h"
 
 namespace cppsort
@@ -43,7 +44,9 @@ namespace cppsort
     namespace detail
     {
         template<typename ComparisonSorter, typename CountType>
-        struct counting_adapter_impl
+        struct counting_adapter_impl:
+            check_iterator_category<ComparisonSorter>,
+            check_is_stable<ComparisonSorter>
         {
             template<
                 typename Iterable,
@@ -121,16 +124,6 @@ namespace cppsort
             CountType
         >>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<typename ComparisonSorter, typename CountType>
-    struct sorter_traits<counting_adapter<ComparisonSorter, CountType>>
-    {
-        using iterator_category = cppsort::iterator_category<ComparisonSorter>;
-        using is_stable = cppsort::is_stable<ComparisonSorter>;
-    };
 }
 
 #endif // CPPSORT_ADAPTERS_COUNTING_ADAPTER_H_

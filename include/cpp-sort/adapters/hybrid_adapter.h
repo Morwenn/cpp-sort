@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/any_all.h>
+#include "../detail/checkers.h"
 
 namespace cppsort
 {
@@ -77,7 +78,9 @@ namespace cppsort
         // Adapter
 
         template<typename... Sorters>
-        class hybrid_adapter_impl
+        class hybrid_adapter_impl:
+            public check_iterator_category<Sorters...>,
+            public check_is_stable<Sorters...>
         {
             private:
 
@@ -195,24 +198,6 @@ namespace cppsort
     struct hybrid_adapter:
         sorter_facade<detail::hybrid_adapter_impl<Sorters...>>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<typename... Sorters>
-    struct sorter_traits<hybrid_adapter<Sorters...>>
-    {
-        // The iterator category is the least constrained one
-        // among the aggregated sorters
-        using iterator_category = std::common_type_t<cppsort::iterator_category<Sorters>...>;
-
-        // The adapter is stable only if every aggregated sorter
-        // is stable
-        using is_stable = std::integral_constant<
-            bool,
-            utility::all(cppsort::is_stable<Sorters>::value...)
-        >;
-    };
 }
 
 #endif // CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_

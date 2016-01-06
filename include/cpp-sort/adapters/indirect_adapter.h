@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include "../detail/checkers.h"
 #include "../detail/indirect_compare.h"
 
 namespace cppsort
@@ -44,7 +45,8 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter>
-        struct indirect_adapter_impl
+        struct indirect_adapter_impl:
+            check_is_stable<Sorter>
         {
             template<
                 typename RandomAccessIterator,
@@ -110,6 +112,11 @@ namespace cppsort
                     while (start != last && sorted[start - first]);
                 }
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::random_access_iterator_tag;
         };
     }
 
@@ -117,16 +124,6 @@ namespace cppsort
     struct indirect_adapter:
         sorter_facade<detail::indirect_adapter_impl<Sorter>>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<typename Sorter>
-    struct sorter_traits<indirect_adapter<Sorter>>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = cppsort::is_stable<Sorter>;
-    };
 }
 
 #endif // CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_

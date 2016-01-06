@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,12 @@ namespace cppsort
 
                 grail_sort<BufferProvider>(first, last, compare, projection);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::true_type;
         };
     }
 
@@ -77,16 +83,6 @@ namespace cppsort
     struct grail_sorter:
         sorter_facade<detail::grail_sorter_impl<BufferProvider>>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<typename BufferProvider>
-    struct sorter_traits<grail_sorter<BufferProvider>>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::true_type;
-    };
 }
 
 #endif // CPPSORT_SORTERS_GRAIL_SORTER_H_

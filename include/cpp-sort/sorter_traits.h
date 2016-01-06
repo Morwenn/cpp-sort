@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/functional.h>
+#include "detail/raw_checkers.h"
 
 namespace cppsort
 {
@@ -228,11 +229,16 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
+    // This trait class is a bit different than usual traits
+    // classes: the goal is to decrease the coupling between
+    // the different traits and to make programs using one of
+    // the traits valid even if the other traits don't exist
+
     template<typename Sorter>
-    struct sorter_traits
-    {
-        // Defined but empty for SFINAE friendliness
-    };
+    struct sorter_traits:
+        detail::raw_check_iterator_category<Sorter>,
+        detail::raw_check_is_stable<Sorter>
+    {};
 
     template<typename Sorter>
     using iterator_category = typename sorter_traits<Sorter>::iterator_category;
@@ -249,18 +255,14 @@ namespace cppsort
     {
         static_assert(
             std::is_base_of<
-                iterator_category<Sorter>,
+                cppsort::iterator_category<Sorter>,
                 Category
             >::value,
             "the new iterator category should be more specific"
         );
-    };
 
-    template<typename Sorter, typename Category>
-    struct sorter_traits<rebind_iterator_category<Sorter, Category>>
-    {
+        // New category
         using iterator_category = Category;
-        using is_stable = cppsort::is_stable<Sorter>;
     };
 }
 

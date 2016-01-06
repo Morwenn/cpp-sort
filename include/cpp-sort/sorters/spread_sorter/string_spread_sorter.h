@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@
 #include <string>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
 #include "../../detail/spreadsort/string_sort.h"
 
 namespace cppsort
@@ -119,22 +118,18 @@ namespace cppsort
                 std::uint16_t unused = 0;
                 spreadsort::reverse_string_sort(first, last, compare, unused);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::false_type;
         };
     }
 
     struct string_spread_sorter:
         sorter_facade<detail::string_spread_sorter_impl>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<string_spread_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::false_type;
-    };
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_STRING_SPREAD_SORTER_H_

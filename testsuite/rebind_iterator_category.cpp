@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,8 @@ namespace
         {
             return sorter_type::foo;
         }
+
+        using iterator_category = std::forward_iterator_tag;
     };
 
     struct bar_sorter_impl
@@ -58,6 +60,8 @@ namespace
         {
             return sorter_type::bar;
         }
+
+        using iterator_category = std::forward_iterator_tag;
     };
 
     struct foo_sorter:
@@ -67,23 +71,6 @@ namespace
     struct bar_sorter:
         cppsort::sorter_facade<bar_sorter_impl>
     {};
-}
-
-namespace cppsort
-{
-    template<>
-    struct sorter_traits<bar_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::true_type;
-    };
-
-    template<>
-    struct sorter_traits<foo_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::false_type;
-    };
 }
 
 TEST_CASE( "iterator category rebinder",
