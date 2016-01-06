@@ -27,7 +27,6 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
@@ -116,22 +115,16 @@ namespace detail
                         compare, projection,
                         cppsort::utility::size(iterable));
         }
+
+        // Sorter traits
+        using iterator_category = std::forward_iterator_tag;
+        using is_stable = std::true_type;
     };
 }
 
 struct bubble_sorter:
     cppsort::sorter_facade<detail::bubble_sorter_impl>
 {};
-
-namespace cppsort
-{
-    template<>
-    struct sorter_traits<::bubble_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::true_type;
-    };
-}
 
 #include <array>
 #include <cassert>
