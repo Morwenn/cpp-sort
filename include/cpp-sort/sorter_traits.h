@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/functional.h>
+#include "detail/raw_checkers.h"
 
 namespace cppsort
 {
@@ -228,36 +229,15 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    namespace detail
-    {
-        // This trait class is a bit different than usual traits
-        // classes: the goal is to decrease the coupling between
-        // the different traits and to make programs using one of
-        // the traits valid even if the other traits don't exist
-
-        template<typename T, typename=void>
-        struct check_iterator_category {};
-
-        template<typename T>
-        struct check_iterator_category<T, utility::void_t<typename T::iterator_category>>
-        {
-            using iterator_category = typename T::iterator_category;
-        };
-
-        template<typename T, typename=void>
-        struct check_is_stable {};
-
-        template<typename T>
-        struct check_is_stable<T, utility::void_t<typename T::is_stable>>
-        {
-            using is_stable = typename T::is_stable;
-        };
-    }
+    // This trait class is a bit different than usual traits
+    // classes: the goal is to decrease the coupling between
+    // the different traits and to make programs using one of
+    // the traits valid even if the other traits don't exist
 
     template<typename Sorter>
     struct sorter_traits:
-        detail::check_iterator_category<Sorter>,
-        detail::check_is_stable<Sorter>
+        detail::raw_check_iterator_category<Sorter>,
+        detail::raw_check_is_stable<Sorter>
     {};
 
     template<typename Sorter>
