@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,8 @@ namespace
         {
             return sorter_type::descending;
         }
+
+        using iterator_category = std::random_access_iterator_tag;
     };
 
     struct generic_sorter_impl
@@ -64,6 +66,8 @@ namespace
         {
             return sorter_type::generic;
         }
+
+        using iterator_category = std::forward_iterator_tag;
     };
 
     struct partial_comparison_sorter:
@@ -73,23 +77,6 @@ namespace
     struct generic_sorter:
         cppsort::sorter_facade<generic_sorter_impl>
     {};
-}
-
-namespace cppsort
-{
-    template<>
-    struct sorter_traits<partial_comparison_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::false_type;
-    };
-
-    template<>
-    struct sorter_traits<generic_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::true_type;
-    };
 }
 
 TEST_CASE( "hybrid_adapter over partial comparison sorter",

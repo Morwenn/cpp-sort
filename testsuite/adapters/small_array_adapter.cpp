@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@ namespace
         {
             return std::distance(first, last) == N;
         }
+
+        using iterator_category = std::random_access_iterator_tag;
     };
 
     struct regular_sorter_impl
@@ -59,6 +61,8 @@ namespace
         {
             return false;
         }
+
+        using iterator_category = std::random_access_iterator_tag;
     };
 
     template<std::size_t N>
@@ -69,21 +73,6 @@ namespace
     struct regular_sorter:
         cppsort::sorter_facade<regular_sorter_impl>
     {};
-}
-
-namespace cppsort
-{
-    template<std::size_t N>
-    struct sorter_traits<fixed_sorter<N>>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-    };
-
-    template<>
-    struct sorter_traits<regular_sorter>
-    {
-        using iterator_category = std::random_access_iterator_tag;
-    };
 }
 
 TEST_CASE( "small array adapter",
