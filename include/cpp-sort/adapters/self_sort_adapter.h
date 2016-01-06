@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ namespace cppsort
             template<
                 typename Iterable,
                 typename... Args,
-                typename = std::enable_if_t<not utility::has_sort_method<Iterable>>,
+                typename = std::enable_if_t<not utility::has_sort_method<Iterable, Args...>>,
                 typename = void // dummy parameter for ODR
             >
             auto operator()(Iterable& iterable, Args&&... args) const
@@ -67,7 +67,7 @@ namespace cppsort
             }
 
             template<typename Iterator, typename... Args>
-            auto operator()(Iterator first, Iterator last,Args&&... args) const
+            auto operator()(Iterator first, Iterator last, Args&&... args) const
                 -> decltype(Sorter{}(first, last, std::forward<Args>(args)...))
             {
                 return Sorter{}(first, last, std::forward<Args>(args)...);
