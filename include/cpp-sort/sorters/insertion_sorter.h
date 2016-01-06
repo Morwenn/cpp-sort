@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,22 +66,18 @@ namespace cppsort
 
                 insertion_sort(first, last, compare, projection);
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::forward_iterator_tag;
+            using is_stable = std::true_type;
         };
     }
 
     struct insertion_sorter:
         sorter_facade<detail::insertion_sorter_impl>
     {};
-
-    ////////////////////////////////////////////////////////////
-    // Sorter traits
-
-    template<>
-    struct sorter_traits<insertion_sorter>
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::true_type;
-    };
 }
 
 #endif // CPPSORT_SORTERS_INSERTION_SORTER_H_
