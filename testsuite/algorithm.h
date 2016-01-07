@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ namespace helpers
         auto&& proj = cppsort::utility::as_function(projection);
         for (auto it = std::next(first) ; it != last ; ++it)
         {
-            if (compare(proj(it), proj(first)))
+            if (compare(proj(*it), proj(*first)))
             {
                 return false;
             }
