@@ -9,6 +9,7 @@ set(
     adapters/counting_adapter.cpp
     adapters/hybrid_adapter_partial_compare.cpp
     adapters/hybrid_adapter_sfinae.cpp
+    adapters/indirect_adapter.cpp
     adapters/indirect_adapter_every_sorter.cpp
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter.cpp
