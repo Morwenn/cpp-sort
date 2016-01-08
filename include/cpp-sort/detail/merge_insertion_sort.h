@@ -434,7 +434,7 @@ namespace detail
             // Find next index
             auto index = (std::pow(2, k+1) + std::pow(-1, k)) / 3;
             auto it = pend.begin();
-            while (it->value != index && it != pend.end()) ++it;
+            while (it != pend.end() && it->value != index) ++it;
 
             if (it == pend.end()) break;
 
