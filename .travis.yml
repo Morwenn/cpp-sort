@@ -25,7 +25,7 @@ install:
 script: 
   - cmake .
   - make
-  - valgrind --leak-check=full testsuite/cpp-sort-testsuite
+  - valgrind --leak-check=full --track-origins=yes testsuite/cpp-sort-testsuite
 
 notifications:
   email: false
