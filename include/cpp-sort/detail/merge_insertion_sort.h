@@ -362,20 +362,22 @@ namespace detail
     auto merge_insertion_sort(RandomAccessIterator first, RandomAccessIterator last,
                               Compare compare, Projection projection)
     {
-        // Cache all the Jacobsthal numbers that fit in 64 bits
-        static constexpr std::uint_least64_t jacobsthal[] = {
-            1u, 1u, 3u, 5u, 11u, 21u, 43u, 85u, 171u, 341u, 683u, 1365u,
-            2731u, 5461u, 10923u, 21845u, 43691u, 87381u, 174763u, 349525u,
-            699051u, 1398101u, 2796203u, 5592405u, 11184811u, 22369621u,
-            44739243u, 89478485u, 178956971u, 357913941u, 715827883u,
-            1431655765u, 2863311531u, 5726623061u, 11453246123u, 22906492245u,
-            45812984491u, 91625968981u, 183251937963u, 366503875925u, 733007751851u,
-            1466015503701u, 2932031007403u, 5864062014805u, 11728124029611u, 23456248059221u,
-            46912496118443u, 93824992236885u, 187649984473771u, 375299968947541u,
-            750599937895083u, 1501199875790165u, 3002399751580330u, 6004799503160661u,
-            12009599006321322u, 24019198012642644u, 48038396025285288u, 96076792050570576u,
-            192153584101141152u, 384307168202282304u, 768614336404564608u, 1537228672809129216u,
-            3074457345618258432u, 6148914691236516864u, 12297829382473033728u
+        // Cache all the differences between a Jacobsthal number and its
+        // predecessor that fit in 64 bits, starting with the difference
+        // between the Jacobsthal numbers 4 and 3 (the previous ones are
+        // unneeded)
+        static constexpr std::uint_least64_t jacobsthal_diff[] = {
+            2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
+            2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
+            1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
+            178956970u, 357913942u, 715827882u, 1431655766u, 2863311530u, 5726623062u,
+            11453246122u, 22906492246u, 45812984490u, 91625968982u, 183251937962u,
+            366503875926u, 733007751850u, 1466015503702u, 2932031007402u, 5864062014806u,
+            11728124029610u, 23456248059222u, 46912496118442u, 93824992236886u, 187649984473770u,
+            375299968947542u, 750599937895082u, 1501199875790165u, 3002399751580331u,
+            6004799503160661u, 12009599006321322u, 24019198012642644u, 48038396025285288u,
+            96076792050570576u, 192153584101141152u, 384307168202282304u, 768614336404564608u,
+            1537228672809129216u, 3074457345618258432u, 6148914691236516864u
         };
 
         using std::iter_swap;
@@ -418,23 +420,21 @@ namespace detail
         {
             RandomAccessIterator it;
             typename std::list<RandomAccessIterator>::iterator next;
-            std::size_t value;
         };
 
         std::list<RandomAccessIterator> chain;
         std::list<node> pend;
 
-        std::size_t count = 0;
         for (auto it = first ; it != end ; it += 2)
         {
             auto tmp = chain.insert(chain.end(), std::next(it));
-            pend.push_back({it, tmp, ++count});
+            pend.push_back({it, tmp});
         }
 
         // Add the last element to pend if it exists
         if (has_stray)
         {
-            pend.push_back({end, chain.end(), ++count});
+            pend.push_back({end, chain.end()});
         }
 
         // Move first element of pend in the main chain
@@ -444,14 +444,13 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Binary insertion into the main chain
 
-        for (int k = 2 ; ; ++k)
+        for (int k = 0 ; ; ++k)
         {
             // Find next index
-            auto index = jacobsthal[k];
+            auto dist = jacobsthal_diff[k];
+            if (dist >= pend.size()) break;
             auto it = pend.begin();
-            while (it != pend.end() && it->value != index) ++it;
-
-            if (it == pend.end()) break;
+            std::advance(it, dist);
 
             while (true)
             {
