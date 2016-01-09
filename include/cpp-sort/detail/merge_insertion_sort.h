@@ -353,24 +353,25 @@ namespace detail
             typename std::list<RandomAccessIterator>::iterator next;
         };
 
-        std::list<RandomAccessIterator> chain;
+        // The first pend element is always part of the main chain,
+        // so we can safely initialize the list with the first two
+        // elements of the sequence
+        std::list<RandomAccessIterator> chain = { first, std::next(first) };
         std::list<node> pend;
 
-        for (auto it = first ; it != end ; it += 2)
+        for (auto it = first + 2 ; it != end ; it += 2)
         {
             auto tmp = chain.insert(chain.end(), std::next(it));
             pend.push_back({it, tmp});
         }
 
-        // Add the last element to pend if it exists
+        // Add the last element to pend if it exists, when it
+        // exists, it always has to be inserted in the full chain,
+        // so giving it chain.end() as end insertion point is ok
         if (has_stray)
         {
             pend.push_back({end, chain.end()});
         }
-
-        // Move first element of pend in the main chain
-        chain.push_front(pend.front().it);
-        pend.pop_front();
 
         ////////////////////////////////////////////////////////////
         // Binary insertion into the main chain
