@@ -44,7 +44,7 @@ namespace detail
     // Iterator used to sort groups
 
     template<typename Iterator>
-    class quad_iterator
+    class group_iterator
     {
         private:
 
@@ -66,9 +66,9 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Constructors
 
-            quad_iterator() = default;
+            group_iterator() = default;
 
-            quad_iterator(Iterator it, std::size_t size):
+            group_iterator(Iterator it, std::size_t size):
                 _it(it),
                 _size(size)
             {}
@@ -76,8 +76,8 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Assignment operator
 
-            auto operator=(const quad_iterator& other)
-                -> quad_iterator&
+            auto operator=(const group_iterator& other)
+                -> group_iterator&
                 = default;
 
             ////////////////////////////////////////////////////////////
@@ -114,14 +114,14 @@ namespace detail
             // Increment/decrement operators
 
             auto operator++()
-                -> quad_iterator&
+                -> group_iterator&
             {
                 std::advance(_it, _size);
                 return *this;
             }
 
             auto operator++(int)
-                -> quad_iterator
+                -> group_iterator
             {
                 auto tmp = *this;
                 operator++();
@@ -129,14 +129,14 @@ namespace detail
             }
 
             auto operator--()
-                -> quad_iterator&
+                -> group_iterator&
             {
                 _it -= _size;
                 return *this;
             }
 
             auto operator--(int)
-                -> quad_iterator
+                -> group_iterator
             {
                 auto tmp = *this;
                 operator--();
@@ -144,14 +144,14 @@ namespace detail
             }
 
             auto operator+=(std::size_t increment)
-                -> quad_iterator&
+                -> group_iterator&
             {
                 std::advance(_it, _size * increment);
                 return *this;
             }
 
             auto operator-=(std::size_t increment)
-                -> quad_iterator&
+                -> group_iterator&
             {
                 _it -= _size * increment;
                 return *this;
@@ -174,7 +174,7 @@ namespace detail
     };
 
     template<typename Iterator1, typename Iterator2>
-    auto iter_swap(quad_iterator<Iterator1> lhs, quad_iterator<Iterator2> rhs)
+    auto iter_swap(group_iterator<Iterator1> lhs, group_iterator<Iterator2> rhs)
         -> void
     {
         std::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
@@ -184,16 +184,16 @@ namespace detail
     // Comparison operators
 
     template<typename Iterator1, typename Iterator2>
-    auto operator==(const quad_iterator<Iterator1>& lhs,
-                    const quad_iterator<Iterator2>& rhs)
+    auto operator==(const group_iterator<Iterator1>& lhs,
+                    const group_iterator<Iterator2>& rhs)
         -> bool
     {
         return lhs.base() == rhs.base();
     }
 
     template<typename Iterator1, typename Iterator2>
-    auto operator!=(const quad_iterator<Iterator1>& lhs,
-                    const quad_iterator<Iterator2>& rhs)
+    auto operator!=(const group_iterator<Iterator1>& lhs,
+                    const group_iterator<Iterator2>& rhs)
         -> bool
     {
         return lhs.base() != rhs.base();
@@ -203,32 +203,32 @@ namespace detail
     // Relational operators
 
     template<typename Iterator1, typename Iterator2>
-    auto operator<(const quad_iterator<Iterator1>& lhs,
-                   const quad_iterator<Iterator2>& rhs)
+    auto operator<(const group_iterator<Iterator1>& lhs,
+                   const group_iterator<Iterator2>& rhs)
         -> bool
     {
         return lhs.base() < rhs.base();
     }
 
     template<typename Iterator1, typename Iterator2>
-    auto operator<=(const quad_iterator<Iterator1>& lhs,
-                    const quad_iterator<Iterator2>& rhs)
+    auto operator<=(const group_iterator<Iterator1>& lhs,
+                    const group_iterator<Iterator2>& rhs)
         -> bool
     {
         return lhs.base() <= rhs.base();
     }
 
     template<typename Iterator1, typename Iterator2>
-    auto operator>(const quad_iterator<Iterator1>& lhs,
-                   const quad_iterator<Iterator2>& rhs)
+    auto operator>(const group_iterator<Iterator1>& lhs,
+                   const group_iterator<Iterator2>& rhs)
         -> bool
     {
         return lhs.base() > rhs.base();
     }
 
     template<typename Iterator1, typename Iterator2>
-    auto operator>=(const quad_iterator<Iterator1>& lhs,
-                    const quad_iterator<Iterator2>& rhs)
+    auto operator>=(const group_iterator<Iterator1>& lhs,
+                    const group_iterator<Iterator2>& rhs)
         -> bool
     {
         return lhs.base <= rhs.base();
@@ -238,28 +238,28 @@ namespace detail
     // Arithmetic operators
 
     template<typename Iterator>
-    auto operator+(quad_iterator<Iterator> it, std::size_t size)
-        -> quad_iterator<Iterator>
+    auto operator+(group_iterator<Iterator> it, std::size_t size)
+        -> group_iterator<Iterator>
     {
         return it += size;
     }
 
     template<typename Iterator>
-    auto operator+(std::size_t size, quad_iterator<Iterator> it)
-        -> quad_iterator<Iterator>
+    auto operator+(std::size_t size, group_iterator<Iterator> it)
+        -> group_iterator<Iterator>
     {
         return it += size;
     }
 
     template<typename Iterator>
-    auto operator-(quad_iterator<Iterator> it, std::size_t size)
-        -> quad_iterator<Iterator>
+    auto operator-(group_iterator<Iterator> it, std::size_t size)
+        -> group_iterator<Iterator>
     {
         return it -= size;
     }
 
     template<typename Iterator>
-    auto operator-(const quad_iterator<Iterator>& lhs, const quad_iterator<Iterator>& rhs)
+    auto operator-(const group_iterator<Iterator>& lhs, const group_iterator<Iterator>& rhs)
         -> std::size_t
     {
         return (lhs.base() - rhs.base()) / lhs.size();
@@ -269,98 +269,29 @@ namespace detail
     // Construction function
 
     template<typename Iterator>
-    auto make_quad_iterator(Iterator it, std::size_t size)
-        -> quad_iterator<Iterator>
+    auto make_group_iterator(Iterator it, std::size_t size)
+        -> group_iterator<Iterator>
     {
         return { it, size };
     }
 
     template<typename Iterator>
-    auto make_quad_iterator(quad_iterator<Iterator> it, std::size_t size)
-        -> quad_iterator<Iterator>
+    auto make_group_iterator(group_iterator<Iterator> it, std::size_t size)
+        -> group_iterator<Iterator>
     {
         return { it.base(), size * it.size() };
     }
 
     ////////////////////////////////////////////////////////////
-    // Nodes used by the sorting algorithm
-
-    template<typename Iterator>
-    struct node
-    {
-        Iterator it;
-        typename std::list<node>::iterator prev;
-        typename std::list<node>::iterator next;
-        bool sorted;
-    };
-
-    template<typename T>
-    auto operator<(const node<T>& lhs, const node<T>& rhs)
-        -> bool
-    {
-        return *(lhs.it) < *(rhs.it);
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Actual sorting algorithms
-
-    template<typename InputIterator, typename OutputIterator>
-    auto to_cache(InputIterator first, InputIterator last, OutputIterator out,
-                  std::false_type)
-        -> void
-    {
-        for (auto it = first ; it != last ; ++it)
-        {
-            *out++ = std::move(**it);
-        }
-    }
-
-    template<typename InputIterator, typename OutputIterator>
-    auto to_cache(InputIterator first, InputIterator last, OutputIterator out,
-                  std::true_type)
-        -> void
-    {
-        for (auto it = first ; it != last ; ++it)
-        {
-            auto begin = it->base();
-            auto end = it->base() + it->size();
-            std::move(begin, end, out);
-        }
-    }
-
-    template<typename InputIterator, typename OutputIterator>
-    auto from_cache(InputIterator first, InputIterator last, OutputIterator out,
-                    std::false_type)
-        -> void
-    {
-        std::move(first, last, out);
-    }
-
-    template<typename InputIterator, typename OutputIterator>
-    auto from_cache(InputIterator first, InputIterator last, OutputIterator out,
-                    std::true_type)
-        -> void
-    {
-        std::move(first, last, out.base());
-    }
-
-    template<typename T>
-    struct is_quad_it:
-        std::false_type
-    {};
-
-    template<typename Iterator>
-    struct is_quad_it<quad_iterator<Iterator>>:
-        std::true_type
-    {};
+    // Merge-insertion sort
 
     template<
         typename RandomAccessIterator,
         typename Compare,
         typename Projection
     >
-    auto merge_insertion_sort(RandomAccessIterator first, RandomAccessIterator last,
-                              Compare compare, Projection projection)
+    auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator last,
+                                   Compare compare, Projection projection)
     {
         // Cache all the differences between a Jacobsthal number and its
         // predecessor that fit in 64 bits, starting with the difference
@@ -407,8 +338,8 @@ namespace detail
         // Recursively sort the pairs by max
 
         merge_insertion_sort(
-            make_quad_iterator(first, 2),
-            make_quad_iterator(end, 2),
+            make_group_iterator(first, 2),
+            make_group_iterator(end, 2),
             compare, projection
         );
 
@@ -482,13 +413,35 @@ namespace detail
             pend.pop_back();
         }
 
-        // Move elements to new vector in chain order, move them back
+        ////////////////////////////////////////////////////////////
+        // Move values in order to a cache then back to origin
+
         std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
         cache.reserve(size);
 
-        using is_quad = is_quad_it<RandomAccessIterator>;
-        to_cache(chain.begin(), chain.end(), std::back_inserter(cache), is_quad{});
-        from_cache(cache.begin(), cache.end(), first, is_quad{});
+        for (auto&& it: chain)
+        {
+            auto begin = it.base();
+            auto end = begin + it.size();
+            std::move(begin, end, std::back_inserter(cache));
+        }
+        std::move(cache.begin(), cache.end(), first.base());
+    }
+
+    template<
+        typename RandomAccessIterator,
+        typename Compare,
+        typename Projection
+    >
+    auto merge_insertion_sort(RandomAccessIterator first, RandomAccessIterator last,
+                              Compare compare, Projection projection)
+        -> void
+    {
+        merge_insertion_sort_impl(
+            make_group_iterator(first, 1),
+            make_group_iterator(last, 1),
+            compare, projection
+        );
     }
 }}
 
