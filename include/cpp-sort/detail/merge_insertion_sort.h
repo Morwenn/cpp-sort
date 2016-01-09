@@ -28,9 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cassert>
-#include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <list>
 #include <iterator>
 #include <type_traits>
@@ -363,6 +362,22 @@ namespace detail
     auto merge_insertion_sort(RandomAccessIterator first, RandomAccessIterator last,
                               Compare compare, Projection projection)
     {
+        // Cache all the Jacobsthal numbers that fit in 64 bits
+        static constexpr std::uint_least64_t jacobsthal[] = {
+            1u, 1u, 3u, 5u, 11u, 21u, 43u, 85u, 171u, 341u, 683u, 1365u,
+            2731u, 5461u, 10923u, 21845u, 43691u, 87381u, 174763u, 349525u,
+            699051u, 1398101u, 2796203u, 5592405u, 11184811u, 22369621u,
+            44739243u, 89478485u, 178956971u, 357913941u, 715827883u,
+            1431655765u, 2863311531u, 5726623061u, 11453246123u, 22906492245u,
+            45812984491u, 91625968981u, 183251937963u, 366503875925u, 733007751851u,
+            1466015503701u, 2932031007403u, 5864062014805u, 11728124029611u, 23456248059221u,
+            46912496118443u, 93824992236885u, 187649984473771u, 375299968947541u,
+            750599937895083u, 1501199875790165u, 3002399751580330u, 6004799503160661u,
+            12009599006321322u, 24019198012642644u, 48038396025285288u, 96076792050570576u,
+            192153584101141152u, 384307168202282304u, 768614336404564608u, 1537228672809129216u,
+            3074457345618258432u, 6148914691236516864u, 12297829382473033728u
+        };
+
         using std::iter_swap;
 
         auto size = std::distance(first, last);
@@ -432,7 +447,7 @@ namespace detail
         for (int k = 2 ; ; ++k)
         {
             // Find next index
-            auto index = (std::pow(2, k+1) + std::pow(-1, k)) / 3;
+            auto index = jacobsthal[k];
             auto it = pend.begin();
             while (it != pend.end() && it->value != index) ++it;
 
