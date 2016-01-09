@@ -109,10 +109,6 @@ v3](https://github.com/ericniebler/range-v3) library.
 * Many projection-enhanced standard algorithms are directly adapted from their
 counterparts in [libc++](http://libcxx.llvm.org/).
 
-* The merge insertion sort used by `low_comparison_sorter` algorithm 5 is a C++
-adaptation of a LISP implementation of the algorithm that I found in [an answer
-on StackOverflow](http://stackoverflow.com/a/1935491/1364752).
-
 * The implementation of Dijkstra's smoothsort used by `smooth_sorter` has been
 directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)
 of the algorithm.
