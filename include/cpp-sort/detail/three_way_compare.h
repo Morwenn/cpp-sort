@@ -29,26 +29,82 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <string>
+#include <utility>
 
 namespace cppsort
 {
 namespace detail
 {
+    template<typename Derived>
+    struct three_way_compare_base
+    {
+        public:
+
+            template<typename T, typename U>
+            constexpr auto operator()(T&& lhs, U&& rhs) const
+                -> int
+            {
+                auto&& compare = derived().base();
+                return compare(std::forward<T>(lhs), std::forward<U>(rhs)) ? -1 :
+                       compare(std::forward<U>(rhs), std::forward<T>(lhs));
+            }
+
+            template<typename T, typename U>
+            auto lt(T&& x, U&& y) const
+                -> decltype(auto)
+            {
+                return derived().base()(std::forward<T>(x), std::forward<U>(y));
+            }
+
+            template<typename T, typename U>
+            auto le(T&& x, U&& y) const
+                -> decltype(auto)
+            {
+                auto&& compare = derived().base();
+                return compare(std::forward<T>(x), std::forward<U>(y))
+                    || not compare(std::forward<U>(y), std::forward<T>(x));
+            }
+
+            template<typename T, typename U>
+            auto gt(T&& x, U&& y) const
+                -> decltype(auto)
+            {
+                auto&& compare = derived().base();
+                return not compare(std::forward<T>(x), std::forward<U>(y))
+                    && compare(std::forward<U>(y), std::forward<T>(x));
+            }
+
+            template<typename T, typename U>
+            auto ge(T&& x, U&& y) const
+                -> decltype(auto)
+            {
+                return not derived().base()(std::forward<T>(x), std::forward<U>(y));
+            }
+
+        private:
+
+            auto derived() noexcept
+                -> Derived&
+            {
+                return static_cast<Derived&>(*this);
+            }
+
+            auto derived() const noexcept
+                -> const Derived&
+            {
+                return static_cast<const Derived&>(*this);
+            }
+    };
+
     template<typename Compare>
-    struct three_way_compare
+    struct three_way_compare:
+        three_way_compare_base<three_way_compare<Compare>>
     {
         public:
 
             constexpr three_way_compare(Compare compare):
                 compare(compare)
             {}
-
-            template<typename T, typename U>
-            constexpr auto operator()(const T& lhs, const U& rhs) const
-                -> int
-            {
-                return compare(lhs, rhs) ? -1 : compare(rhs, lhs);
-            }
 
             constexpr auto base() const noexcept
                 -> Compare
@@ -62,17 +118,12 @@ namespace detail
     };
 
     template<>
-    struct three_way_compare<std::less<>>
+    struct three_way_compare<std::less<>>:
+        three_way_compare_base<three_way_compare<std::less<>>>
     {
         constexpr three_way_compare(std::less<>) {}
 
-        template<typename T, typename U>
-        constexpr auto operator()(const T& lhs, const U& rhs) const
-            -> int
-        {
-            std::less<> compare;
-            return compare(lhs, rhs) ? -1 : compare(rhs, lhs);
-        }
+        using three_way_compare_base<three_way_compare<std::less<>>>::operator();
 
         template<
             typename CharT,
@@ -94,17 +145,12 @@ namespace detail
     };
 
     template<>
-    struct three_way_compare<std::greater<>>
+    struct three_way_compare<std::greater<>>:
+        three_way_compare_base<three_way_compare<std::greater<>>>
     {
         constexpr three_way_compare(std::greater<>) {}
 
-        template<typename T, typename U>
-        constexpr auto operator()(const T& lhs, const U& rhs) const
-            -> int
-        {
-            std::greater<> compare;
-            return compare(lhs, rhs) ? -1 : compare(rhs, lhs);
-        }
+        using three_way_compare_base<three_way_compare<std::greater<>>>::operator();
 
         template<
             typename CharT,

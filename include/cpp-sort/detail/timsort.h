@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Modified in 2015 by Morwenn for inclusion into cpp-sort.
+ * Modified in 2015-2016 by Morwenn for inclusion into cpp-sort.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -39,67 +39,20 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "lower_bound.h"
+#include "three_way_compare.h"
 #include "upper_bound.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename LessFunction>
-    class Compare
-    {
-        public:
-            typedef LessFunction func_type;
-
-            Compare(LessFunction f)
-                : less_(f) { }
-            Compare(const Compare<func_type>& other)
-                : less_(other.less_) { }
-
-            template<typename T, typename U>
-            auto lt(T&& x, U&& y)
-                -> decltype(auto)
-            {
-                return less_(std::forward<T>(x), std::forward<U>(y));
-            }
-
-            template<typename T, typename U>
-            auto le(T&& x, U&& y)
-                -> decltype(auto)
-            {
-                return less_(std::forward<T>(x), std::forward<U>(y))
-                    || !less_(std::forward<U>(y), std::forward<T>(x));
-            }
-
-            template<typename T, typename U>
-            auto gt(T&& x, U&& y)
-                -> decltype(auto)
-            {
-                return !less_(std::forward<T>(x), std::forward<U>(y))
-                    && less_(std::forward<U>(y), std::forward<T>(x));
-            }
-
-            template<typename T, typename U>
-            auto ge(T&& x, U&& y)
-                -> decltype(auto)
-            {
-                return !less_(std::forward<T>(x), std::forward<U>(y));
-            }
-
-            func_type& less_function() {
-                return less_;
-            }
-        private:
-            func_type less_;
-    };
-
     template <typename RandomAccessIterator, typename LessFunction, typename Projection>
     class TimSort {
         typedef RandomAccessIterator iter_t;
         typedef typename std::iterator_traits<iter_t>::value_type value_t;
         typedef typename std::iterator_traits<iter_t>::reference ref_t;
         typedef typename std::iterator_traits<iter_t>::difference_type diff_t;
-        typedef Compare<LessFunction> compare_t;
+        typedef three_way_compare<LessFunction> compare_t;
 
         static constexpr int MIN_MERGE = 32;
 
@@ -172,7 +125,7 @@ namespace detail
                 assert(lo <= start);
                 value_t pivot = std::move(*start);
 
-                iter_t const pos = upper_bound(lo, start, proj(pivot), compare.less_function(), projection);
+                iter_t const pos = upper_bound(lo, start, proj(pivot), compare.base(), projection);
                 for(iter_t p = start; p > pos; --p) {
                     *p = std::move(*std::prev(p));
                 }
@@ -349,7 +302,7 @@ namespace detail
             }
             assert( -1 <= lastOfs && lastOfs < ofs && ofs <= len );
 
-            return lower_bound(base+lastOfs+1, base+ofs, key_proj, comp_.less_function(), proj_) - base;
+            return lower_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
         template <typename Iter>
@@ -398,7 +351,7 @@ namespace detail
             }
             assert( -1 <= lastOfs && lastOfs < ofs && ofs <= len );
 
-            return upper_bound(base+lastOfs+1, base+ofs, key_proj, comp_.less_function(), proj_) - base;
+            return upper_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
         void mergeLo(iter_t const base1, diff_t len1, iter_t const base2, diff_t len2) {
