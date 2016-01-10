@@ -74,13 +74,6 @@ namespace detail
             {}
 
             ////////////////////////////////////////////////////////////
-            // Assignment operator
-
-            auto operator=(const group_iterator& other)
-                -> group_iterator&
-                = default;
-
-            ////////////////////////////////////////////////////////////
             // Members access
 
             auto base() const
@@ -231,7 +224,7 @@ namespace detail
                     const group_iterator<Iterator2>& rhs)
         -> bool
     {
-        return lhs.base <= rhs.base();
+        return lhs.base >= rhs.base();
     }
 
     ////////////////////////////////////////////////////////////
@@ -260,7 +253,7 @@ namespace detail
 
     template<typename Iterator>
     auto operator-(const group_iterator<Iterator>& lhs, const group_iterator<Iterator>& rhs)
-        -> std::size_t
+        -> typename group_iterator<Iterator>::difference_type
     {
         return (lhs.base() - rhs.base()) / lhs.size();
     }
