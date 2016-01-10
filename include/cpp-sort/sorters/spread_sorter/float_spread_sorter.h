@@ -47,7 +47,13 @@ namespace cppsort
                 -> std::enable_if_t<
                     std::numeric_limits<
                         typename std::iterator_traits<RandomAccessIterator>::value_type
-                    >::is_iec559
+                    >::is_iec559 && (
+                        sizeof(typename std::iterator_traits<RandomAccessIterator>::value_type)
+                            == sizeof(std::uint32_t) ||
+                        sizeof(typename std::iterator_traits<RandomAccessIterator>::value_type)
+                            == sizeof(std::uint64_t)
+                    )
+
                 >
             {
                 spreadsort::float_sort(first, last);
