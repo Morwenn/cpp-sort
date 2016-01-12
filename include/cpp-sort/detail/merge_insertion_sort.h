@@ -380,9 +380,9 @@ namespace detail
             while (true)
             {
                 auto insertion_point = std::upper_bound(
-                    chain.begin(), it->next, it->it,
-                    [=](auto lhs, auto rhs) {
-                        return compare(proj(*lhs), proj(*rhs));
+                    chain.begin(), it->next, proj(*(it->it)),
+                    [=](const auto& lhs, const auto& rhs) {
+                        return compare(lhs, proj(*rhs));
                     }
                 );
                 chain.insert(insertion_point, it->it);
@@ -393,18 +393,18 @@ namespace detail
             }
         }
 
-        // If there are elements left, insert them too
-        while (not pend.empty())
+        // If there are pend elements left, insert them into
+        // the main chain, the order of insertion does not
+        // matter so forward traversal is ok
+        for (auto&& elem: pend)
         {
-            auto it = std::prev(pend.end());
             auto insertion_point = std::upper_bound(
-                chain.begin(), it->next, it->it,
-                [=](auto lhs, auto rhs) {
-                    return compare(proj(*lhs), proj(*rhs));
+                chain.begin(), elem.next, proj(*(elem.it)),
+                [=](const auto& lhs, const auto& rhs) {
+                    return compare(lhs, proj(*rhs));
                 }
             );
-            chain.insert(insertion_point, it->it);
-            pend.pop_back();
+            chain.insert(insertion_point, elem.it);
         }
 
         ////////////////////////////////////////////////////////////
