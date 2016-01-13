@@ -75,6 +75,13 @@ TEST_CASE( "every sorter with indirect adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "merge_insertion_sorter" )
+    {
+        using sorter = cppsort::indirect_adapter<cppsort::merge_insertion_sorter>;
+        cppsort::sort(collection, sorter{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "merge_sorter" )
     {
         using sorter = cppsort::indirect_adapter<cppsort::merge_sorter>;
