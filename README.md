@@ -43,9 +43,45 @@ special class templates designed to adapt sorters and alter their behaviour in s
 specific manner. The library provides sorters implementing common and not-so-common
 sorting algorithms as well as some specific adapters. It also provides fixed-size
 sorters and tools such as sorter facade or sorter traits, designed to craft your
-own sorter.
+own sorters. Here is a more complete example of what the library can do:
 
-You can read more about all the availables tools and read some tutorial about using
+```cpp
+#include <algorithm>
+#include <cassert>
+#include <forward_list>
+#include <functional>
+#include <iterator>
+#include <vector>
+#include <cpp-sort/adapters.h>
+#include <cpp-sort/sort.h>
+#include <cpp-sort/sorters.h>
+
+int main()
+{
+    struct wrapper { int value; }
+
+    std::forward_list<wrapper> li = { {5}, {8}, {3}, {2}, {9} };
+    std::vector<wrapper> vec = { {5}, {8}, {3}, {2}, {9} };
+    
+    // When used, this sorter will use a pattern-defeating quicksort
+    // to sort random-access collections, and a mergesort otherwise
+    using sorter = cppsort::hybrid_adapter<
+        cppsort::pdq_sorter,
+        cppsort::merge_sorter
+    >;
+    
+    // Sort li and vec in reverse order using their member value
+    cppsort::sort(li, sorter{}, std::greater<>{}, &wrapper::value);
+    cppsort::sort(vec, sorter{}, std::greater<>{}, &wrapper::value);
+
+    assert(std::equal(
+        std::begin(li), std::end(li),
+        std::begin(vec), std::end(vec)
+    ));
+}
+```
+
+You can read more about all the available tools and find some tutorials about using
 and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wiki).
 
 # Benchmarks
@@ -68,7 +104,7 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 recent (and not widely supported) C++14 features and will probably use the C++17
 features once they are available. The overall goal is to make sure that the library
 works with the latest g++ and clang++ versions, without going out of its way to
-support older releases. 
+support older releases.
 
 In the future, the branches will follow the following pattern: the master branch
 will remain C++14 and there will be a C++17 branch. There will be other branches
@@ -120,7 +156,7 @@ of the algorithm.
 [GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
 
 * The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
-found by Symmetry and Evolution based Network Sort Optimization (SENSO) publihed in
+found by Symmetry and Evolution based Network Sort Optimization (SENSO) published in
 *Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
 and Miikkulainen.
 
