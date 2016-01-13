@@ -287,21 +287,21 @@ namespace detail
                                    Compare compare, Projection projection)
     {
         // Cache all the differences between a Jacobsthal number and its
-        // predecessor minus 1 that fit in 64 bits, starting with the
-        // difference between the Jacobsthal numbers 4 and 3 (the previous
-        // ones are unneeded)
-        static constexpr std::uint_least64_t jacobsthal_diff[] = {
-            1u, 1u, 5u, 9u, 21u, 41u, 85u, 169u, 341u, 681u, 1365u,
-            2729u, 5461u, 10921u, 21845u, 43689u, 87381u, 174761u, 349525u, 699049u,
-            1398101u, 2796201u, 5592405u, 11184809u, 22369621u, 44739241u, 89478485u,
-            178956969u, 357913941u, 715827881u, 1431655765u, 2863311529u, 5726623061u,
-            11453246121u, 22906492245u, 45812984489u, 91625968981u, 183251937961u,
-            366503875925u, 733007751849u, 1466015503701u, 2932031007401u, 5864062014805u,
-            11728124029609u, 23456248059221u, 46912496118441u, 93824992236885u, 187649984473769u,
-            375299968947541u, 750599937895081u, 1501199875790164u, 3002399751580330u,
-            6004799503160660u, 12009599006321321u, 24019198012642643u, 48038396025285287u,
-            96076792050570575u, 192153584101141151u, 384307168202282303u, 768614336404564607u,
-            1537228672809129215u, 3074457345618258431u, 6148914691236516863u
+        // predecessor that fit in 64 bits, starting with the difference
+        // between the Jacobsthal numbers 4 and 3 (the previous ones are
+        // unneeded)
+        static constexpr std::uint_fast64_t jacobsthal_diff[] = {
+            2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
+            2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
+            1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
+            178956970u, 357913942u, 715827882u, 1431655766u, 2863311530u, 5726623062u,
+            11453246122u, 22906492246u, 45812984490u, 91625968982u, 183251937962u,
+            366503875926u, 733007751850u, 1466015503702u, 2932031007402u, 5864062014806u,
+            11728124029610u, 23456248059222u, 46912496118442u, 93824992236886u, 187649984473770u,
+            375299968947542u, 750599937895082u, 1501199875790165u, 3002399751580331u,
+            6004799503160661u, 12009599006321322u, 24019198012642644u, 48038396025285288u,
+            96076792050570576u, 192153584101141152u, 384307168202282304u, 768614336404564608u,
+            1537228672809129216u, 3074457345618258432u, 6148914691236516864u
         };
 
         using std::iter_swap;
@@ -339,72 +339,83 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Separate main chain and pend elements
 
-        // Small node struct for pend elements
-        struct node
-        {
-            RandomAccessIterator it;
-            typename std::list<RandomAccessIterator>::iterator next;
-        };
-
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
         std::list<RandomAccessIterator> chain = { first, std::next(first) };
-        std::list<node> pend;
+
+        // Upper bounds for the insertion of pend elements
+        std::vector<typename std::list<RandomAccessIterator>::iterator> pend;
+        pend.reserve((size + 1) / 2 - 1);
 
         for (auto it = first + 2 ; it != end ; it += 2)
         {
-            auto tmp = chain.insert(chain.end(), std::next(it));
-            pend.push_back({it, tmp});
+            auto tmp = chain.insert(std::end(chain), std::next(it));
+            pend.push_back(tmp);
         }
 
-        // Add the last element to pend if it exists, when it
+        // Add the last element to pend if it exists; when it
         // exists, it always has to be inserted in the full chain,
         // so giving it chain.end() as end insertion point is ok
         if (has_stray)
         {
-            pend.push_back({end, chain.end()});
+            pend.push_back(std::end(chain));
         }
 
         ////////////////////////////////////////////////////////////
         // Binary insertion into the main chain
 
+        auto current_it = first + 2;
+        auto current_pend = std::begin(pend);
+
         for (int k = 0 ; ; ++k)
         {
+            // Should be safe: in this code, std::distance should always return
+            // a positive number, so there is of risk comparing funny values
+            using size_type = std::common_type_t<
+                std::uint_fast64_t,
+                typename std::list<RandomAccessIterator>::difference_type
+            >;
+
             // Find next index
             auto dist = jacobsthal_diff[k];
-            if (dist >= pend.size()) break;
-            auto it = pend.begin();
-            std::advance(it, dist);
+            if (dist > static_cast<size_type>(std::distance(current_pend, std::end(pend)))) break;
 
-            while (true)
+            auto it = std::next(current_it, dist * 2);
+            auto pe = std::next(current_pend, dist);
+
+            do
             {
+                --pe;
+                it -= 2;
+
                 auto insertion_point = std::upper_bound(
-                    chain.begin(), it->next, proj(*(it->it)),
+                    std::begin(chain), *pe, proj(*it),
                     [=](const auto& lhs, const auto& rhs) {
                         return compare(lhs, proj(*rhs));
                     }
                 );
-                chain.insert(insertion_point, it->it);
+                chain.insert(insertion_point, it);
+            } while (pe != current_pend);
 
-                it = pend.erase(it);
-                if (it == pend.begin()) break;
-                --it;
-            }
+            std::advance(current_it, dist * 2);
+            std::advance(current_pend, dist);
         }
 
         // If there are pend elements left, insert them into
         // the main chain, the order of insertion does not
         // matter so forward traversal is ok
-        for (auto&& elem: pend)
+        while (current_pend != std::end(pend))
         {
             auto insertion_point = std::upper_bound(
-                chain.begin(), elem.next, proj(*(elem.it)),
+                std::begin(chain), *current_pend, proj(*current_it),
                 [=](const auto& lhs, const auto& rhs) {
                     return compare(lhs, proj(*rhs));
                 }
             );
-            chain.insert(insertion_point, elem.it);
+            chain.insert(insertion_point, current_it);
+            current_it += 2;
+            ++current_pend;
         }
 
         ////////////////////////////////////////////////////////////
@@ -419,7 +430,7 @@ namespace detail
             auto end = begin + it.size();
             std::move(begin, end, std::back_inserter(cache));
         }
-        std::move(cache.begin(), cache.end(), first.base());
+        std::move(std::begin(cache), std::end(cache), first.base());
     }
 
     template<
