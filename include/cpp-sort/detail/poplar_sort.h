@@ -1,0 +1,161 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
+#define CPPSORT_DETAIL_POPLAR_SORT_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
+#include <vector>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/bitops.h>
+#include "insertion_sort.h"
+
+namespace cppsort
+{
+namespace detail
+{
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto sift(RandomAccessIterator first, int q,
+              Compare compare, Projection projection)
+        -> void
+    {
+        if (q < 2) return;
+
+        auto&& proj = utility::as_function(projection);
+
+        int x = q;
+        if (compare(proj(first[x]), proj(first[q - 1]))) x = q - 1;
+        if (compare(proj(first[x]), proj(first[q / 2]))) x = q / 2;
+        if (x != q)
+        {
+            std::iter_swap(first + x, first + q);
+            if (x == q - 1)
+            {
+                sift(first + q / 2, x - q / 2, compare, projection);
+            }
+            else
+            {
+                sift(first, x, compare, projection);
+            }
+        }
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto relocate(RandomAccessIterator first, const std::vector<int>& roots, int nb_poplars,
+                  Compare compare, Projection projection)
+        -> void
+    {
+        auto&& proj = utility::as_function(projection);
+
+        int m = nb_poplars;
+        for (int j = 1 ; j < nb_poplars ; ++j)
+        {
+            if (compare(proj(first[roots[m]]), proj(first[roots[j]])))
+            {
+                m = j;
+            }
+        }
+
+        if (m != nb_poplars)
+        {
+            std::iter_swap(first + roots[m], first + roots[nb_poplars]);
+            sift(first + roots[m-1], roots[m] - roots[m-1], compare, projection);
+        }
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto make_poplar(RandomAccessIterator first, RandomAccessIterator last,
+                     Compare compare, Projection projection)
+        -> void
+    {
+        auto size = std::distance(first, last);
+        if (size < 16)
+        {
+            // A sorted collection is a valid poplar heap,
+            // when the heap is small, using insertion sort
+            // should be faster
+            insertion_sort(first, last, compare, projection);
+            return;
+        }
+
+        auto middle = first + size / 2;
+        make_poplar(first, middle, compare, projection);
+        make_poplar(middle, std::prev(last), compare, projection);
+        sift(first - 1, size, compare, projection);
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto poplar_sort(RandomAccessIterator first, RandomAccessIterator last,
+                     Compare compare, Projection projection)
+        -> void
+    {
+        // Size of the unsorted subsequence
+        auto size = std::distance(first, last);
+        if (size < 2) return;
+
+        std::vector<int> roots(utility::log2(size) + 1, 0);
+        auto poplar_size = utility::hyperfloor(size) - 1;
+        std::size_t nb_poplars = 0;
+
+        // Make the poplar heap
+        auto it = first;
+        do
+        {
+            if (std::distance(it, last) >= poplar_size)
+            {
+                make_poplar(it, it + poplar_size, compare, projection);
+                roots[++nb_poplars] = std::distance(first, it + poplar_size);
+                it += poplar_size;
+            }
+            else
+            {
+                poplar_size = (poplar_size + 1) / 2 - 1;
+            }
+        } while (poplar_size > 0);
+
+        // Sort the poplar heap
+        while (size > 1)
+        {
+            relocate(first - 1, roots, nb_poplars, compare, projection);
+            if (roots[nb_poplars-1] == size - 1)
+            {
+                --nb_poplars;
+            }
+            else
+            {
+                roots[nb_poplars] = (roots[nb_poplars-1] + size) / 2;
+                ++nb_poplars;
+                roots[nb_poplars] = size - 1;
+            }
+
+            --size;
+        }
+    }
+}}
+
+#endif // CPPSORT_DETAIL_POPLAR_SORT_H_
