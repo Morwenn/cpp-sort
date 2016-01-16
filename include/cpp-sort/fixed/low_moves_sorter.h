@@ -115,7 +115,7 @@ namespace cppsort
         // the stability *could* be documented depending on which
         // fixed-size algorithms are used, but it would be lots of
         // work...
-        static constexpr bool is_stable = false;
+        using is_stable = std::false_type;
     };
 }
 

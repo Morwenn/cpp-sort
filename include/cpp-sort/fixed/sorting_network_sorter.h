@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,7 @@ namespace cppsort
         // the stability *could* be documented depending on which
         // fixed-size algorithms are used, but it would be lots of
         // work...
-        static constexpr bool is_stable = false;
+        using is_stable = std::false_type;
     };
 }
 
