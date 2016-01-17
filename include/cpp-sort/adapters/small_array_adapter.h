@@ -33,23 +33,49 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/is_in_pack.h>
 
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
+    // SFINAE helpers
+
+    namespace detail
+    {
+        template<typename T, typename=void>
+        struct has_domain:
+            std::false_type
+        {
+            using domain = void;
+        };
+
+        template<typename T>
+        struct has_domain<T, utility::void_t<typename T::domain>>:
+            std::true_type
+        {
+            using domain = typename T::domain;
+        };
+    }
+
+    ////////////////////////////////////////////////////////////
     // Adapter
 
     namespace detail
     {
-        template<template<std::size_t> class Sorter, typename Indices>
+        template<
+            template<std::size_t> class FixedSizeSorter,
+            typename Indices
+        >
         struct small_array_adapter_impl;
 
         template<
-            template<std::size_t> class Sorter,
+            template<std::size_t> class FixedSizeSorter,
             std::size_t... Indices
         >
-        struct small_array_adapter_impl<Sorter, std::index_sequence<Indices...>>
+        struct small_array_adapter_impl<FixedSizeSorter, std::index_sequence<Indices...>>:
+            fixed_sorter_traits<FixedSizeSorter>
         {
             template<
                 typename T,
@@ -59,10 +85,10 @@ namespace cppsort
             auto operator()(std::array<T, N>& array, Args... args) const
                 -> std::enable_if_t<
                     utility::is_in_pack<N, Indices...>,
-                    decltype(std::declval<Sorter<N>&>()(array, args...))
+                    decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
                 >
             {
-                return Sorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, args...);
             }
 
             template<
@@ -74,24 +100,16 @@ namespace cppsort
             auto operator()(T (&array)[N], Args... args) const
                 -> std::enable_if_t<
                     utility::is_in_pack<N, Indices...>,
-                    decltype(std::declval<Sorter<N>&>()(array, args...))
+                    decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
                 >
             {
-                return Sorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, args...);
             }
-
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
-
-            // Without more evolved tools, we can't assume much about
-            // fixed-size sorters in general, so we default these values
-            // to the most restrictive ones
-            using iterator_category = std::random_access_iterator_tag;
-            using is_stable = std::false_type;
         };
 
-        template<template<std::size_t> class Sorter>
-        struct small_array_adapter_impl<Sorter, void>
+        template<template<std::size_t> class FixedSizeSorter>
+        struct small_array_adapter_impl<FixedSizeSorter, void>:
+            fixed_sorter_traits<FixedSizeSorter>
         {
             template<
                 typename T,
@@ -99,9 +117,9 @@ namespace cppsort
                 typename... Args
             >
             auto operator()(std::array<T, N>& array, Args... args) const
-                -> decltype(std::declval<Sorter<N>&>()(array, args...))
+                -> decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
             {
-                return Sorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, args...);
             }
 
             template<
@@ -110,28 +128,25 @@ namespace cppsort
                 typename... Args
             >
             auto operator()(T (&array)[N], Args... args) const
-                -> decltype(std::declval<Sorter<N>&>()(array, args...))
+                -> decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
             {
-                return Sorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, args...);
             }
-
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
-
-            // Without more evolved tools, we can't assume much about
-            // fixed-size sorters in general, so we default these values
-            // to the most restrictive ones
-            using iterator_category = std::random_access_iterator_tag;
-            using is_stable = std::false_type;
         };
     }
 
+    // When no domain is given along with the fixed-size sorter,
+    // it is assumed that it works for small arrays of any size
+    // and thus void is given
+
     template<
-        template<std::size_t> class Sorter,
-        typename Indices = void
+        template<std::size_t> class FixedSizeSorter,
+        typename Indices = typename detail::has_domain<
+            fixed_sorter_traits<FixedSizeSorter>
+        >::domain
     >
     struct small_array_adapter:
-        sorter_facade<detail::small_array_adapter_impl<Sorter, Indices>>
+        sorter_facade<detail::small_array_adapter_impl<FixedSizeSorter, Indices>>
     {};
 }
 

@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstddef>
 #include <functional>
 #include <iterator>
 #include <type_traits>
@@ -245,6 +246,15 @@ namespace cppsort
 
     template<typename Sorter>
     using is_stable = typename sorter_traits<Sorter>::is_stable;
+
+    ////////////////////////////////////////////////////////////
+    // Fixed-size sorter traits
+
+    template<template<std::size_t> class FixedSizeSorter>
+    struct fixed_sorter_traits
+    {
+        // Empty for SFINAE-friendliness
+    };
 
     ////////////////////////////////////////////////////////////
     // Sorter traits modifiers

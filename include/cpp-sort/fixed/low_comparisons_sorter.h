@@ -68,6 +68,14 @@ namespace cppsort
         // work...
         using is_stable = std::false_type;
     };
+
+    template<>
+    struct fixed_sorter_traits<low_comparisons_sorter>
+    {
+        using domain = std::make_index_sequence<14>;
+        using iterator_category = std::random_access_iterator_tag;
+        using is_stable = std::false_type;
+    };
 }
 
 // Specializations of low_comparisons_sorter for some values of N
