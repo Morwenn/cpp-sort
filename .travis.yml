@@ -23,7 +23,7 @@ install:
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
 
 script: 
-  - cmake .
+  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" .
   - make
   - valgrind --leak-check=full --track-origins=yes testsuite/cpp-sort-testsuite
 
