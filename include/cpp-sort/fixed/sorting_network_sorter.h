@@ -68,6 +68,13 @@ namespace cppsort
         // work...
         using is_stable = std::false_type;
     };
+
+    template<>
+    struct fixed_sorter_traits<sorting_network_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        using is_stable = std::false_type;
+    };
 }
 
 // Specializations of sorting_network_sorter for some values of N
