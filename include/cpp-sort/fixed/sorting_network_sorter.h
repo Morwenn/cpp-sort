@@ -72,6 +72,7 @@ namespace cppsort
     template<>
     struct fixed_sorter_traits<sorting_network_sorter>
     {
+        using domain = std::make_index_sequence<33>;
         using iterator_category = std::random_access_iterator_tag;
         using is_stable = std::false_type;
     };

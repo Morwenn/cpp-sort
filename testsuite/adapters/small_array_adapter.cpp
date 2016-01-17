@@ -34,6 +34,13 @@
 
 namespace
 {
+    enum struct sorter_type
+    {
+        regular,
+        fixed_with_domain,
+        fixed_without_domain
+    };
+
     template<std::size_t N>
     struct fixed_sorter_impl
     {
@@ -41,13 +48,22 @@ namespace
             typename RandomAccessIterator,
             typename Compare = std::less<>
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last, Compare={}) const
-            -> bool
+        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
+            -> sorter_type
         {
-            return std::distance(first, last) == N;
+            return sorter_type::fixed_without_domain;
         }
+    };
 
-        using iterator_category = std::random_access_iterator_tag;
+    template<std::size_t N>
+    struct fixed_sorter_with_domain_impl
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator, RandomAccessIterator) const
+            -> sorter_type
+        {
+            return sorter_type::fixed_with_domain;
+        }
     };
 
     struct regular_sorter_impl
@@ -57,9 +73,9 @@ namespace
             typename Compare = std::less<>
         >
         auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
-            -> bool
+            -> sorter_type
         {
-            return false;
+            return sorter_type::regular;
         }
 
         using iterator_category = std::random_access_iterator_tag;
@@ -70,37 +86,69 @@ namespace
         cppsort::sorter_facade<fixed_sorter_impl<N>>
     {};
 
+    template<std::size_t N>
+    struct fixed_sorter_with_domain:
+        cppsort::sorter_facade<fixed_sorter_with_domain_impl<N>>
+    {};
+
     struct regular_sorter:
         cppsort::sorter_facade<regular_sorter_impl>
     {};
+}
+
+namespace cppsort
+{
+    template<>
+    struct fixed_sorter_traits<fixed_sorter>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+    };
+
+    template<>
+    struct fixed_sorter_traits<fixed_sorter_with_domain>
+    {
+        using domain = std::make_index_sequence<9>;
+        using iterator_category = std::random_access_iterator_tag;
+    };
 }
 
 TEST_CASE( "small array adapter",
            "[small_array_adapter][hybrid_adapter]" )
 {
     std::array<int, 6u> array;
+    std::array<int, 25u> big_array;
 
-    SECTION( "without indices" )
+    SECTION( "without explicit indices not domain" )
     {
         using sorter = cppsort::small_array_adapter<fixed_sorter>;
 
-        CHECK( cppsort::sort(array, sorter{}) );
+        auto res1 = cppsort::sort(array, sorter{});
+        CHECK( res1 == sorter_type::fixed_without_domain );
+        auto res2 = cppsort::sort(big_array, sorter{});
+        CHECK( res2 == sorter_type::fixed_without_domain );
     }
 
-    SECTION( "with indices" )
+    SECTION( "with domain without explicit indices" )
+    {
+        using sorter = cppsort::small_array_adapter<fixed_sorter_with_domain>;
+
+        auto res = cppsort::sort(array, sorter{});
+        CHECK( res == sorter_type::fixed_with_domain );
+    }
+
+    SECTION( "with explicit indices" )
     {
         using sorter = cppsort::small_array_adapter<
             fixed_sorter,
             std::make_index_sequence<14u>
         >;
 
-        CHECK( cppsort::sort(array, sorter{}) );
+        auto res = cppsort::sort(array, sorter{});
+        CHECK( res == sorter_type::fixed_without_domain );
     }
 
     SECTION( "with indices in hybrid_adapter" )
     {
-        std::array<int, 25u> big_array;
-
         using sorter = cppsort::hybrid_adapter<
             cppsort::small_array_adapter<
                 fixed_sorter,
@@ -109,7 +157,22 @@ TEST_CASE( "small array adapter",
             regular_sorter
         >;
 
-        CHECK( cppsort::sort(array, sorter{}) );
-        CHECK( not cppsort::sort(big_array, sorter{}) );
+        auto res1 = cppsort::sort(array, sorter{});
+        CHECK( res1 == sorter_type::fixed_without_domain );
+        auto res2 = cppsort::sort(big_array, sorter{});
+        CHECK( res2 == sorter_type::regular );
+    }
+
+    SECTION( "with domain in hybrid_adapter" )
+    {
+        using sorter = cppsort::hybrid_adapter<
+            cppsort::small_array_adapter<fixed_sorter_with_domain>,
+            regular_sorter
+        >;
+
+        auto res1 = cppsort::sort(array, sorter{});
+        CHECK( res1 == sorter_type::fixed_with_domain );
+        auto res2 = cppsort::sort(big_array, sorter{});
+        CHECK( res2 == sorter_type::regular );
     }
 }
