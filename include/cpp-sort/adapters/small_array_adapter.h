@@ -29,7 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <array>
 #include <cstddef>
-#include <functional>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
@@ -82,13 +81,13 @@ namespace cppsort
                 std::size_t N,
                 typename... Args
             >
-            auto operator()(std::array<T, N>& array, Args... args) const
+            auto operator()(std::array<T, N>& array, Args&&... args) const
                 -> std::enable_if_t<
                     utility::is_in_pack<N, Indices...>,
-                    decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
+                    decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
                 >
             {
-                return FixedSizeSorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
             }
 
             template<
@@ -97,13 +96,13 @@ namespace cppsort
                 typename... Args,
                 typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
             >
-            auto operator()(T (&array)[N], Args... args) const
+            auto operator()(T (&array)[N], Args&&... args) const
                 -> std::enable_if_t<
                     utility::is_in_pack<N, Indices...>,
-                    decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
+                    decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
                 >
             {
-                return FixedSizeSorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
             }
         };
 
@@ -116,10 +115,10 @@ namespace cppsort
                 std::size_t N,
                 typename... Args
             >
-            auto operator()(std::array<T, N>& array, Args... args) const
-                -> decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
+            auto operator()(std::array<T, N>& array, Args&&... args) const
+                -> decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
             {
-                return FixedSizeSorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
             }
 
             template<
@@ -127,10 +126,10 @@ namespace cppsort
                 std::size_t N,
                 typename... Args
             >
-            auto operator()(T (&array)[N], Args... args) const
-                -> decltype(std::declval<FixedSizeSorter<N>&>()(array, args...))
+            auto operator()(T (&array)[N], Args&&... args) const
+                -> decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
             {
-                return FixedSizeSorter<N>{}(array, args...);
+                return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
             }
         };
     }
