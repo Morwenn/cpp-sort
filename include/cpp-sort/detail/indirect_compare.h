@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <tuple>
 #include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
@@ -36,25 +37,24 @@ namespace detail
     template<typename Compare, typename Projection>
     class indirect_compare
     {
+        private:
+
+            // Pack compare and projection for EBCO
+            std::tuple<Compare, Projection> data;
+
         public:
 
             indirect_compare(Compare compare, Projection projection):
-                compare(compare),
-                projection(projection)
+                data(compare, projection)
             {}
 
             template<typename Iterator>
             auto operator()(Iterator lhs, Iterator rhs) const
                 -> bool
             {
-                auto&& proj = utility::as_function(projection);
-                return compare(proj(*lhs), proj(*rhs));
+                auto&& proj = utility::as_function(std::get<1>(data));
+                return std::get<0>(data)(proj(*lhs), proj(*rhs));
             }
-
-        private:
-
-            Compare compare;
-            Projection projection;
     };
 }}
 
