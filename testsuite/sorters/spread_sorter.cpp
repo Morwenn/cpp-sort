@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,13 +105,5 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
-
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{}, std::greater<std::string>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<std::string>{}) );
-
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<std::string>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<std::string>{}) );
     }
 }

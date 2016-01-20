@@ -84,31 +84,7 @@ namespace cppsort
 
             template<typename RandomAccessIterator>
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::greater<std::string> compare) const
-                -> std::enable_if_t<
-                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                                 typename std::string>::value
-                >
-            {
-                spreadsort::reverse_string_sort(first, last, compare);
-            }
-
-            template<typename RandomAccessIterator>
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare) const
-                -> std::enable_if_t<
-                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                                 typename std::wstring
-                    >::value && (sizeof(wchar_t) == 2)
-                >
-            {
-                std::uint16_t unused = 0;
-                spreadsort::reverse_string_sort(first, last, compare, unused);
-            }
-
-            template<typename RandomAccessIterator>
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::greater<std::wstring> compare) const
                 -> std::enable_if_t<
                     std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
                                  typename std::wstring
