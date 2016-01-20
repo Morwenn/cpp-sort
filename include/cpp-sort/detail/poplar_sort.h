@@ -103,9 +103,22 @@ namespace detail
             return;
         }
 
+        auto&& proj = utility::as_function(projection);
+
         auto middle = first + size / 2;
         make_poplar(first, middle, compare, projection);
         make_poplar(middle, std::prev(last), compare, projection);
+
+        // Make sure that the poplar on the right has a bigger root
+        // that the one on the left. Apparently, it makes things
+        // faster, probably helping the branch predictor or
+        // something...
+        if (compare(proj(*(last - 2)), proj(*std::prev(middle))))
+        {
+            std::iter_swap(std::prev(middle), last - 2);
+            sift(first - 1, middle - first, compare, projection);
+        }
+
         sift(first - 1, size, compare, projection);
     }
 
