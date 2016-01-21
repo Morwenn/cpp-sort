@@ -30,16 +30,33 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/utility/has_sort_method.h>
+#include <cpp-sort/utility/detection.h>
 #include "../detail/checkers.h"
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Adapter
-
     namespace detail
     {
+        ////////////////////////////////////////////////////////////
+        // Whether a class has a member sort method
+
+        template<
+            typename Iterable,
+            typename... Args
+        >
+        using has_sort_method_t
+            = decltype(std::declval<Iterable&>().sort(std::declval<Args&>()...));
+
+        template<
+            typename Iterable,
+            typename... Args
+        >
+        constexpr bool has_sort_method
+            = utility::is_detected_v<has_sort_method_t, Args...>;
+
+        ////////////////////////////////////////////////////////////
+        // Adapter
+
         template<typename Sorter>
         struct self_sort_adapter_impl:
             check_iterator_category<Sorter>
@@ -47,7 +64,7 @@ namespace cppsort
             template<
                 typename Iterable,
                 typename... Args,
-                typename = std::enable_if_t<utility::has_sort_method<Iterable, Args...>>
+                typename = std::enable_if_t<has_sort_method<Iterable, Args...>>
             >
             auto operator()(Iterable& iterable, Args&&... args) const
                 -> decltype(iterable.sort(std::forward<Args>(args)...))
@@ -58,7 +75,7 @@ namespace cppsort
             template<
                 typename Iterable,
                 typename... Args,
-                typename = std::enable_if_t<not utility::has_sort_method<Iterable, Args...>>,
+                typename = std::enable_if_t<not has_sort_method<Iterable, Args...>>,
                 typename = void // dummy parameter for ODR
             >
             auto operator()(Iterable& iterable, Args&&... args) const
