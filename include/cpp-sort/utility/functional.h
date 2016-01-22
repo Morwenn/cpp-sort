@@ -45,6 +45,8 @@ namespace utility
         {
             return std::forward<T>(value);
         }
+
+        using is_transparent = void;
     };
 
     ////////////////////////////////////////////////////////////
