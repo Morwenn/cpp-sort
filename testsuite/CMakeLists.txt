@@ -19,6 +19,7 @@ set(
     PROBES_TESTS
 
     probes/osc.cpp
+    probes/runs.cpp
 )
 
 set(

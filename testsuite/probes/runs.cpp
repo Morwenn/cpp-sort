@@ -21,13 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_PROBES_H_
-#define CPPSORT_PROBES_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <cpp-sort/probes/osc.h>
+#include <iterator>
+#include <vector>
+#include <catch.hpp>
 #include <cpp-sort/probes/runs.h>
 
-#endif // CPPSORT_PROBES_H_
+TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
+{
+    SECTION( "simple test" )
+    {
+        std::vector<int> vec = { 40, 49, 58, 99, 60, 70, 12, 87, 9, 8, 82, 91, 99, 67, 82, 92 };
+        CHECK( cppsort::probe::runs(vec) == 6 );
+        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 6 );
+    }
+
+    SECTION( "lower bound" )
+    {
+        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::runs(vec) == 1 );
+        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 1 );
+    }
+
+    SECTION( "upper bound" )
+    {
+        // The upper bound should correspond to the size of
+        // the input sequence
+
+        std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        CHECK( cppsort::probe::runs(vec) == 11 );
+        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 11 );
+    }
+}
