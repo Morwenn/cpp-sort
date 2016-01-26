@@ -18,6 +18,7 @@ set(
 set(
     PROBES_TESTS
 
+    probes/inv.cpp
     probes/osc.cpp
     probes/runs.cpp
 )
