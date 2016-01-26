@@ -20,6 +20,7 @@ set(
 
     probes/ham.cpp
     probes/inv.cpp
+    probes/max.cpp
     probes/osc.cpp
     probes/rem.cpp
     probes/runs.cpp
