@@ -28,18 +28,24 @@
 
 TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
 {
-    SECTION( "simple test" )
+    SECTION( "simple tests" )
     {
         std::vector<int> vec = { 40, 49, 58, 99, 60, 70, 12, 87, 9, 8, 82, 91, 99, 67, 82, 92 };
-        CHECK( cppsort::probe::runs(vec) == 6 );
-        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 6 );
+        CHECK( cppsort::probe::runs(vec) == 5 );
+        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 5 );
+
+        // From Right invariant metrics and measures of
+        // presortedness by Estivill-Castro, Mannila and Wood
+        std::vector<int> vec2 = { 4, 2, 6, 5, 3, 1, 9, 7, 10, 8 };
+        CHECK( cppsort::probe::runs(vec2) == 6 );
+        CHECK( cppsort::probe::runs(std::begin(vec2), std::end(vec2)) == 6 );
     }
 
     SECTION( "lower bound" )
     {
         std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::runs(vec) == 1 );
-        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 1 );
+        CHECK( cppsort::probe::runs(vec) == 0 );
+        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 0 );
     }
 
     SECTION( "upper bound" )
@@ -48,7 +54,7 @@ TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
         // the input sequence
 
         std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-        CHECK( cppsort::probe::runs(vec) == 11 );
-        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 11 );
+        CHECK( cppsort::probe::runs(vec) == 10 );
+        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 10 );
     }
 }

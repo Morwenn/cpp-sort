@@ -61,7 +61,7 @@ namespace probe
 
                 if (std::distance(first, last) < 2)
                 {
-                    return 1;
+                    return 0;
                 }
 
                 auto current = first;
@@ -76,8 +76,8 @@ namespace probe
                         ++next;
                     }
 
-                    ++count;
                     if (next == last) break;
+                    ++count;
                     ++current;
                     ++next;
                 }
