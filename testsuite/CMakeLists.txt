@@ -18,6 +18,7 @@ set(
 set(
     PROBES_TESTS
 
+    probes/ham.cpp
     probes/inv.cpp
     probes/osc.cpp
     probes/rem.cpp
