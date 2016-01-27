@@ -21,19 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_PROBES_H_
-#define CPPSORT_PROBES_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
+#include <iterator>
+#include <vector>
+#include <catch.hpp>
 #include <cpp-sort/probes/dis.h>
-#include <cpp-sort/probes/exc.h>
-#include <cpp-sort/probes/ham.h>
-#include <cpp-sort/probes/inv.h>
-#include <cpp-sort/probes/max.h>
-#include <cpp-sort/probes/osc.h>
-#include <cpp-sort/probes/rem.h>
-#include <cpp-sort/probes/runs.h>
 
-#endif // CPPSORT_PROBES_H_
+TEST_CASE( "presortedness measure: dis", "[probe][dis]" )
+{
+    SECTION( "simple test" )
+    {
+        std::vector<int> vec = { 47, 53, 46, 41, 59, 81, 74, 97, 100, 45 };
+        CHECK( cppsort::probe::dis(vec) == 9 );
+        CHECK( cppsort::probe::dis(std::begin(vec), std::end(vec)) == 9 );
+    }
+
+    SECTION( "lower bound" )
+    {
+        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::dis(vec) == 0 );
+        CHECK( cppsort::probe::dis(std::begin(vec), std::end(vec)) == 0 );
+    }
+
+    SECTION( "upper bound" )
+    {
+        // The upper bound should correspond to the size of
+        // the input sequence minus one
+
+        std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        CHECK( cppsort::probe::dis(vec) == 10 );
+        CHECK( cppsort::probe::dis(std::begin(vec), std::end(vec)) == 10 );
+    }
+}
