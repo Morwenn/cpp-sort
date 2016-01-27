@@ -4,7 +4,7 @@ include_directories(${CATCH_INCLUDE_DIR})
 # Define test files
 
 set(
-    ADAPTER_TESTS
+    ADAPTERS_TESTS
 
     adapters/counting_adapter.cpp
     adapters/hybrid_adapter_partial_compare.cpp
@@ -13,6 +13,19 @@ set(
     adapters/indirect_adapter_every_sorter.cpp
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter.cpp
+)
+
+set(
+    PROBES_TESTS
+
+    probes/dis.cpp
+    probes/exc.cpp
+    probes/ham.cpp
+    probes/inv.cpp
+    probes/max.cpp
+    probes/osc.cpp
+    probes/rem.cpp
+    probes/runs.cpp
 )
 
 set(
@@ -44,7 +57,8 @@ add_executable(
     sorter_facade.cpp
     sorter_facade_defaults.cpp
     sorter_facade_iterable.cpp
-    ${ADAPTER_TESTS}
+    ${ADAPTERS_TESTS}
+    ${PROBES_TESTS}
     ${SORTERS_TESTS}
     ${UTILITY_TESTS}
 )

@@ -19,6 +19,7 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include "../detail/static_const.h"
 
 namespace cppsort
 {
@@ -26,19 +27,6 @@ namespace utility
 {
     namespace detail
     {
-        // static_const
-
-        template<typename T>
-        struct static_const
-        {
-            static constexpr T value {};
-        };
-
-        template<typename T>
-        constexpr T static_const<T>::value;
-
-        // as_function
-
         struct as_function_fn
         {
         private:
@@ -82,8 +70,9 @@ namespace utility
 
     namespace
     {
-        constexpr auto&& as_function
-            = detail::static_const<detail::as_function_fn>::value;
+        constexpr auto&& as_function = cppsort::detail::static_const<
+            detail::as_function_fn
+        >::value;
     }
 }}
 
