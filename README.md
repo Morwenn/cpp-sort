@@ -9,14 +9,8 @@
 
 **cpp-sort** is a generic C++14 header-only sorting library. It revolves
 around one main generic sorting interface and provides several small tools
-to pick and/or design sorting algorithms. The library's main function,
-`cppsort::sort`, is available with the following include:
-
-```cpp
-#include <cpp-sort/sort.h>
-```
-
-Using it should be pretty trivial:
+to pick and/or design sorting algorithms. Using its basic sorting features
+should be trivial enough:
 
 ```cpp
 #include <array>
@@ -70,7 +64,7 @@ int main()
         cppsort::merge_sorter
     >;
     
-    // Sort li and vec in reverse order using their member value
+    // Sort li and vec in reverse order using their value member
     cppsort::sort(li, sorter{}, std::greater<>{}, &wrapper::value);
     cppsort::sort(vec, sorter{}, std::greater<>{}, &wrapper::value);
 
