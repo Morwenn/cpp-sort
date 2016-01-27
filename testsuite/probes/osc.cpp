@@ -48,7 +48,7 @@ TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
     SECTION( "upper bound" )
     {
         // Example from the paper Adaptative Heapsort
-        // by Levcopoulos and Petersson, that upper bound
+        // by Levcopoulos and Petersson, the upper bound
         // should be (size * (size - 2) - 1) / 2
 
         std::vector<int> vec = { 8, 5, 10, 3, 12, 1, 13, 2, 11, 4, 9, 6, 7 };

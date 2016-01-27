@@ -44,7 +44,7 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
 
     SECTION( "upper bound" )
     {
-        // The upper bound should correspond be:
+        // The upper bound should correspond to:
         // size * (size - 1) / 2
 
         std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };

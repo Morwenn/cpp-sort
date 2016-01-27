@@ -51,7 +51,7 @@ TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
     SECTION( "upper bound" )
     {
         // The upper bound should correspond to the size of
-        // the input sequence
+        // the input sequence minus one
 
         std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::runs(vec) == 10 );
