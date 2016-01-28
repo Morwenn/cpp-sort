@@ -52,7 +52,7 @@ namespace cppsort
             typename... Args
         >
         constexpr bool has_sort_method
-            = utility::is_detected_v<has_sort_method_t, Args...>;
+            = utility::is_detected_v<has_sort_method_t, Iterable, Args...>;
 
         ////////////////////////////////////////////////////////////
         // Adapter

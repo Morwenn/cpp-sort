@@ -26,31 +26,61 @@
 #include <iterator>
 #include <list>
 #include <random>
+#include <utility>
 #include <catch.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sort.h>
 
-// This class can sort itself but its sort method
-// does not accept a comparator
-struct non_comparison_self_sortable
+namespace
 {
-    std::list<int> elements;
+    enum struct sorter_type
+    {
+        dummy_sorter,
+        self_sortable
+    };
 
-    template<typename... Args>
-    explicit non_comparison_self_sortable(Args... args):
-        elements(args...)
-    {}
+    struct dummy_sorter_impl
+    {
+        template<typename... Args>
+        auto operator()(Args&&... args) const
+            -> sorter_type
+        {
+            cppsort::verge_sorter{}(std::forward<Args>(args)...);
+            return sorter_type::dummy_sorter;
+        }
+    };
 
-    auto begin() { return elements.begin(); }
-    auto end() { return elements.end(); }
-    auto begin() const { return elements.begin(); }
-    auto end() const { return elements.end(); }
+    struct dummy_sorter:
+        cppsort::sorter_facade<dummy_sorter_impl>
+    {};
 
-    // No comparison function
-    auto sort() { elements.sort(); }
-};
+    // This class can sort itself but its sort method
+    // does not accept a comparator
+    struct non_comparison_self_sortable
+    {
+        std::list<int> elements;
+
+        template<typename... Args>
+        explicit non_comparison_self_sortable(Args... args):
+            elements(args...)
+        {}
+
+        auto begin() { return elements.begin(); }
+        auto end() { return elements.end(); }
+        auto begin() const { return elements.begin(); }
+        auto end() const { return elements.end(); }
+
+        // No comparison function
+        auto sort()
+            -> sorter_type
+        {
+            elements.sort();
+            return sorter_type::self_sortable;
+        }
+    };
+}
 
 TEST_CASE( "self-sortable object without comparison",
            "[self_sort_adapter][no_compare]" )
@@ -67,7 +97,7 @@ TEST_CASE( "self-sortable object without comparison",
         // comparator is given
 
         using sorter = cppsort::self_sort_adapter<
-            cppsort::verge_sorter
+            dummy_sorter
         >;
 
         // Fill the collection
@@ -77,7 +107,8 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
-        cppsort::sort(collection, sorter{});
+        auto res = cppsort::sort(collection, sorter{});
+        CHECK( res == sorter_type::self_sortable );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
@@ -87,7 +118,7 @@ TEST_CASE( "self-sortable object without comparison",
         // comparator is given
 
         using sorter = cppsort::self_sort_adapter<
-            cppsort::quick_sorter
+            dummy_sorter
         >;
 
         // Fill the collection
@@ -97,7 +128,8 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
-        cppsort::sort(collection, sorter{}, std::less<>{});
+        auto res = cppsort::sort(collection, sorter{}, std::less<>{});
+        CHECK( res == sorter_type::dummy_sorter );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }
