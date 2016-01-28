@@ -49,18 +49,18 @@ namespace probe
         struct max_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> typename std::iterator_traits<RandomAccessIterator>::difference_type
+                -> typename std::iterator_traits<ForwardIterator>::difference_type
             {
-                using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
 
                 auto size = std::distance(first, last);
                 if (size < 2)
@@ -72,9 +72,9 @@ namespace probe
                 // Indirectly sort the iterators
 
                 // Copy the iterators in a vector
-                std::vector<RandomAccessIterator> iterators;
+                std::vector<ForwardIterator> iterators;
                 iterators.reserve(size);
-                for (RandomAccessIterator it = first ; it != last ; ++it)
+                for (ForwardIterator it = first ; it != last ; ++it)
                 {
                     iterators.push_back(it);
                 }
@@ -92,8 +92,8 @@ namespace probe
                 difference_type max_dist = 0;
                 for (difference_type i = 0 ; i < size ; ++i)
                 {
-                    auto dist = std::distance(first, iterators[i]);
-                    max_dist = std::max(std::abs(dist - i), max_dist);
+                    auto pos = std::distance(first, iterators[i]);
+                    max_dist = std::max(std::abs(pos - i), max_dist);
                 }
                 return max_dist;
             }

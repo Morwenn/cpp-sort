@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <forward_list>
 #include <iterator>
-#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/rem.h>
 
@@ -30,16 +30,16 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
 {
     SECTION( "simple test" )
     {
-        std::vector<int> vec = { 6, 9, 79, 41, 44, 49, 11, 16, 69, 15 };
-        CHECK( cppsort::probe::rem(vec) == 7 );
-        CHECK( cppsort::probe::rem(std::begin(vec), std::end(vec)) == 7 );
+        std::forward_list<int> li = { 6, 9, 79, 41, 44, 49, 11, 16, 69, 15 };
+        CHECK( cppsort::probe::rem(li) == 7 );
+        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 7 );
     }
 
     SECTION( "lower bound" )
     {
-        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::rem(vec) == 0 );
-        CHECK( cppsort::probe::rem(std::begin(vec), std::end(vec)) == 0 );
+        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::rem(li) == 0 );
+        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 0 );
     }
 
     SECTION( "upper bound" )
@@ -47,8 +47,8 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
         // The upper bound should correspond to the size of
         // the input sequence minus one
 
-        std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-        CHECK( cppsort::probe::rem(vec) == 10 );
-        CHECK( cppsort::probe::rem(std::begin(vec), std::end(vec)) == 10 );
+        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        CHECK( cppsort::probe::rem(li) == 10 );
+        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 10 );
     }
 }

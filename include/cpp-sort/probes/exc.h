@@ -49,18 +49,18 @@ namespace probe
         struct exc_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> typename std::iterator_traits<RandomAccessIterator>::difference_type
+                -> typename std::iterator_traits<ForwardIterator>::difference_type
             {
-                using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
 
                 auto size = std::distance(first, last);
                 if (size < 2)
@@ -72,9 +72,9 @@ namespace probe
                 // Indirectly sort the iterators
 
                 // Copy the iterators in a vector
-                std::vector<RandomAccessIterator> iterators;
+                std::vector<ForwardIterator> iterators;
                 iterators.reserve(size);
-                for (RandomAccessIterator it = first ; it != last ; ++it)
+                for (ForwardIterator it = first ; it != last ; ++it)
                 {
                     iterators.push_back(it);
                 }
@@ -91,15 +91,15 @@ namespace probe
                 std::vector<bool> sorted(size, false);
 
                 // Element where the current cycle starts
-                RandomAccessIterator start = first;
+                ForwardIterator start = first;
 
                 difference_type cycles = 0;
                 while (start != last)
                 {
                     // Find the element to put in current's place
-                    RandomAccessIterator current = start;
+                    ForwardIterator current = start;
                     auto next_pos = std::distance(first, current);
-                    RandomAccessIterator next = iterators[next_pos];
+                    ForwardIterator next = iterators[next_pos];
                     sorted[next_pos] = true;
 
                     // Process the current cycle
@@ -117,11 +117,13 @@ namespace probe
                     ++cycles;
 
                     // Find the next cycle
+                    auto&& sorted_it = std::begin(sorted) + std::distance(first, start);
                     do
                     {
                         ++start;
+                        ++sorted_it;
                     }
-                    while (start != last && sorted[start - first]);
+                    while (start != last && *sorted_it);
                 }
                 return size - cycles;
             }

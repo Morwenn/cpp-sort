@@ -46,21 +46,21 @@ namespace probe
         struct osc_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> typename std::iterator_traits<RandomAccessIterator>::difference_type
+                -> typename std::iterator_traits<ForwardIterator>::difference_type
             {
-                using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
                 auto&& proj = utility::as_function(projection);
 
-                if (std::distance(first, last) < 2)
+                if (first == last || std::next(first) == last)
                 {
                     return 0;
                 }

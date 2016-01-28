@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <forward_list>
 #include <iterator>
-#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/exc.h>
 
@@ -30,20 +30,20 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
 {
     SECTION( "simple test" )
     {
-        std::vector<int> vec = { 74, 59, 62, 23, 86, 69, 18, 52, 77, 68 };
-        CHECK( cppsort::probe::exc(vec) == 7 );
-        CHECK( cppsort::probe::exc(std::begin(vec), std::end(vec)) == 7 );
+        std::forward_list<int> li = { 74, 59, 62, 23, 86, 69, 18, 52, 77, 68 };
+        CHECK( cppsort::probe::exc(li) == 7 );
+        CHECK( cppsort::probe::exc(std::begin(li), std::end(li)) == 7 );
 
-        std::vector<int> vec2 = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-        CHECK( cppsort::probe::exc(vec2) == 5 );
-        CHECK( cppsort::probe::exc(std::begin(vec2), std::end(vec2)) == 5 );
+        std::forward_list<int> li2 = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        CHECK( cppsort::probe::exc(li2) == 5 );
+        CHECK( cppsort::probe::exc(std::begin(li2), std::end(li2)) == 5 );
     }
 
     SECTION( "lower bound" )
     {
-        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::exc(vec) == 0 );
-        CHECK( cppsort::probe::exc(std::begin(vec), std::end(vec)) == 0 );
+        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::exc(li) == 0 );
+        CHECK( cppsort::probe::exc(std::begin(li), std::end(li)) == 0 );
     }
 
     SECTION( "upper bound" )
@@ -51,8 +51,8 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         // The upper bound should correspond to the size of
         // the input sequence minus one
 
-        std::vector<int> vec = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        CHECK( cppsort::probe::exc(vec) == 10 );
-        CHECK( cppsort::probe::exc(std::begin(vec), std::end(vec)) == 10 );
+        std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        CHECK( cppsort::probe::exc(li) == 10 );
+        CHECK( cppsort::probe::exc(std::begin(li), std::end(li)) == 10 );
     }
 }

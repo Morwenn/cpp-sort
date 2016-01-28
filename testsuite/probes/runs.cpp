@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <forward_list>
 #include <iterator>
-#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/runs.h>
 
@@ -30,22 +30,22 @@ TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
 {
     SECTION( "simple tests" )
     {
-        std::vector<int> vec = { 40, 49, 58, 99, 60, 70, 12, 87, 9, 8, 82, 91, 99, 67, 82, 92 };
-        CHECK( cppsort::probe::runs(vec) == 5 );
-        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 5 );
+        std::forward_list<int> li = { 40, 49, 58, 99, 60, 70, 12, 87, 9, 8, 82, 91, 99, 67, 82, 92 };
+        CHECK( cppsort::probe::runs(li) == 5 );
+        CHECK( cppsort::probe::runs(std::begin(li), std::end(li)) == 5 );
 
         // From Right invariant metrics and measures of
         // presortedness by Estivill-Castro, Mannila and Wood
-        std::vector<int> vec2 = { 4, 2, 6, 5, 3, 1, 9, 7, 10, 8 };
-        CHECK( cppsort::probe::runs(vec2) == 6 );
-        CHECK( cppsort::probe::runs(std::begin(vec2), std::end(vec2)) == 6 );
+        std::forward_list<int> li2 = { 4, 2, 6, 5, 3, 1, 9, 7, 10, 8 };
+        CHECK( cppsort::probe::runs(li2) == 6 );
+        CHECK( cppsort::probe::runs(std::begin(li2), std::end(li2)) == 6 );
     }
 
     SECTION( "lower bound" )
     {
-        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::runs(vec) == 0 );
-        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 0 );
+        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::runs(li) == 0 );
+        CHECK( cppsort::probe::runs(std::begin(li), std::end(li)) == 0 );
     }
 
     SECTION( "upper bound" )
@@ -53,8 +53,8 @@ TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
         // The upper bound should correspond to the size of
         // the input sequence minus one
 
-        std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-        CHECK( cppsort::probe::runs(vec) == 10 );
-        CHECK( cppsort::probe::runs(std::begin(vec), std::end(vec)) == 10 );
+        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        CHECK( cppsort::probe::runs(li) == 10 );
+        CHECK( cppsort::probe::runs(std::begin(li), std::end(li)) == 10 );
     }
 }

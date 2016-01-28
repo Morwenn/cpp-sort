@@ -47,20 +47,21 @@ namespace probe
         struct ham_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> typename std::iterator_traits<RandomAccessIterator>::difference_type
+                -> typename std::iterator_traits<ForwardIterator>::difference_type
             {
-                using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
 
-                if (std::distance(first, last) < 2)
+                auto size = std::distance(first, last);
+                if (size < 2)
                 {
                     return 0;
                 }
@@ -69,9 +70,9 @@ namespace probe
                 // Indirectly sort the iterators
 
                 // Copy the iterators in a vector
-                std::vector<RandomAccessIterator> iterators;
-                iterators.reserve(std::distance(first, last));
-                for (RandomAccessIterator it = first ; it != last ; ++it)
+                std::vector<ForwardIterator> iterators;
+                iterators.reserve(size);
+                for (ForwardIterator it = first ; it != last ; ++it)
                 {
                     iterators.push_back(it);
                 }

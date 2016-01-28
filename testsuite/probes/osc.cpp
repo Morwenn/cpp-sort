@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <forward_list>
 #include <iterator>
-#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/osc.h>
 
@@ -33,16 +33,16 @@ TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
         // Example from the paper Adaptative Heapsort
         // by Levcopoulos and Petersson
 
-        std::vector<int> vec = { 6, 3, 9, 8, 4, 7, 1, 11 };
-        CHECK( cppsort::probe::osc(vec) == 17 );
-        CHECK( cppsort::probe::osc(std::begin(vec), std::end(vec)) == 17 );
+        std::forward_list<int> li = { 6, 3, 9, 8, 4, 7, 1, 11 };
+        CHECK( cppsort::probe::osc(li) == 17 );
+        CHECK( cppsort::probe::osc(std::begin(li), std::end(li)) == 17 );
     }
 
     SECTION( "lower bound" )
     {
-        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::osc(vec) == 0 );
-        CHECK( cppsort::probe::osc(std::begin(vec), std::end(vec)) == 0 );
+        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::osc(li) == 0 );
+        CHECK( cppsort::probe::osc(std::begin(li), std::end(li)) == 0 );
     }
 
     SECTION( "upper bound" )
@@ -51,8 +51,8 @@ TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
         // by Levcopoulos and Petersson, the upper bound
         // should be (size * (size - 2) - 1) / 2
 
-        std::vector<int> vec = { 8, 5, 10, 3, 12, 1, 13, 2, 11, 4, 9, 6, 7 };
-        CHECK( cppsort::probe::osc(vec) == 71 );
-        CHECK( cppsort::probe::osc(std::begin(vec), std::end(vec)) == 71 );
+        std::forward_list<int> li = { 8, 5, 10, 3, 12, 1, 13, 2, 11, 4, 9, 6, 7 };
+        CHECK( cppsort::probe::osc(li) == 71 );
+        CHECK( cppsort::probe::osc(std::begin(li), std::end(li)) == 71 );
     }
 }

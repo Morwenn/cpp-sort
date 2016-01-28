@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <forward_list>
 #include <iterator>
-#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/inv.h>
 
@@ -30,16 +30,16 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
 {
     SECTION( "simple test" )
     {
-        std::vector<int> vec = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
-        CHECK( cppsort::probe::inv(vec) == 19 );
-        CHECK( cppsort::probe::inv(std::begin(vec), std::end(vec)) == 19 );
+        std::forward_list<int> li = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
+        CHECK( cppsort::probe::inv(li) == 19 );
+        CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 19 );
     }
 
     SECTION( "lower bound" )
     {
-        std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::inv(vec) == 0 );
-        CHECK( cppsort::probe::inv(std::begin(vec), std::end(vec)) == 0 );
+        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::inv(li) == 0 );
+        CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 0 );
     }
 
     SECTION( "upper bound" )
@@ -47,8 +47,8 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
         // The upper bound should correspond to:
         // size * (size - 1) / 2
 
-        std::vector<int> vec = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
-        CHECK( cppsort::probe::inv(vec) == 55 );
-        CHECK( cppsort::probe::inv(std::begin(vec), std::end(vec)) == 55 );
+        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        CHECK( cppsort::probe::inv(li) == 55 );
+        CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 55 );
     }
 }
