@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,24 +27,20 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 
 namespace detail
 {
     template<
         typename ForwardIterator,
-        typename StrictWeakOrdering,
-        typename Projection
+        typename StrictWeakOrdering
     >
     auto bubble_sort(ForwardIterator first, StrictWeakOrdering compare,
-                     Projection projection, std::size_t size)
+                     std::size_t size)
         -> void
     {
         if (size < 2) return;
-
-        auto&& proj = cppsort::utility::as_function(projection);
 
         while (--size)
         {
@@ -52,7 +48,7 @@ namespace detail
             ForwardIterator next = std::next(current);
             for (std::size_t i = 0 ; i < size ; ++i)
             {
-                if (compare(proj(*next), proj(*current)))
+                if (compare(*next, *current))
                 {
                     std::iter_swap(current, next);
                 }
@@ -68,13 +64,12 @@ namespace detail
         template<
             typename ForwardIterator,
             typename StrictWeakOrdering = std::less<>,
-            typename Projection = cppsort::utility::identity,
-            typename = std::enable_if_t<cppsort::is_projection_iterator<
-                Projection, ForwardIterator, StrictWeakOrdering
+            typename = std::enable_if_t<not cppsort::is_projection_iterator<
+                StrictWeakOrdering, ForwardIterator
             >>
         >
         auto operator()(ForwardIterator first, ForwardIterator last,
-                        StrictWeakOrdering compare={}, Projection projection={}) const
+                        StrictWeakOrdering compare={}) const
             -> void
         {
             static_assert(
@@ -85,8 +80,7 @@ namespace detail
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(first,
-                        compare, projection,
+            bubble_sort(first, compare,
                         std::distance(first, last));
         }
 
@@ -94,13 +88,11 @@ namespace detail
         template<
             typename ForwardIterable,
             typename StrictWeakOrdering = std::less<>,
-            typename Projection = cppsort::utility::identity,
-            typename = std::enable_if_t<cppsort::is_projection<
-                Projection, ForwardIterable, StrictWeakOrdering
+            typename = std::enable_if_t<not cppsort::is_projection<
+                StrictWeakOrdering, ForwardIterable
             >>
         >
-        auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={},
-                        Projection projection={}) const
+        auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={}) const
             -> void
         {
             static_assert(
@@ -111,8 +103,7 @@ namespace detail
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(std::begin(iterable),
-                        compare, projection,
+            bubble_sort(std::begin(iterable), compare,
                         cppsort::utility::size(iterable));
         }
 
@@ -149,7 +140,7 @@ int main()
         auto to_sort = collection;
         // Bubble sort the collection
         cppsort::sort(to_sort, bubble_sorter{}, projection);
-        // Check that it is indeed sorted
+        // Check that it is sorted in descending order
         assert(std::is_sorted(std::begin(to_sort), std::end(to_sort), std::greater<>{}));
     } while (std::next_permutation(std::begin(collection), std::end(collection)));
 }
