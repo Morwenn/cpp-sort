@@ -32,6 +32,7 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
@@ -44,7 +45,10 @@ namespace cppsort
         {
             template<
                 typename RandomAccessIterator,
-                typename Compare = std::less<>
+                typename Compare = std::less<>,
+                typename = std::enable_if_t<not is_projection_iterator<
+                    Compare, RandomAccessIterator
+                >>
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Compare compare={}) const
