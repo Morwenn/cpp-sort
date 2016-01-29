@@ -35,6 +35,7 @@
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
+#include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/sorters/smooth_sorter.h>
