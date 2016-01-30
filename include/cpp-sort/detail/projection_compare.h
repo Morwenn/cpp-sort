@@ -27,8 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <tuple>
 #include <utility>
-#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
@@ -41,23 +41,23 @@ namespace detail
         private:
 
             using projection_t = decltype(utility::as_function(std::declval<Projection&>()));
-
-            Compare compare;
-            projection_t proj;
+            std::tuple<Compare, projection_t> data;
 
         public:
 
             projection_compare(Compare compare, Projection projection):
-                compare(compare),
-                proj(utility::as_function(projection))
+                data(compare, utility::as_function(projection))
             {}
 
             template<typename T, typename U>
             auto operator()(T&& lhs, U&& rhs)
-                noexcept(noexcept(compare(proj(std::forward<T>(lhs)), proj(std::forward<U>(rhs)))))
-                -> decltype(compare(proj(std::forward<T>(lhs)), proj(std::forward<U>(rhs))))
+                noexcept(noexcept(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
+                                                    std::get<1>(data)(std::forward<U>(rhs)))))
+                -> decltype(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
+                                              std::get<1>(data)(std::forward<U>(rhs))))
             {
-                return compare(proj(std::forward<T>(lhs)), proj(std::forward<U>(rhs)));
+                return std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
+                                         std::get<1>(data)(std::forward<U>(rhs)));
             }
     };
 
