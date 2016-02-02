@@ -85,6 +85,12 @@ TEST_CASE( "test every sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "neat_sorter" )
+    {
+        cppsort::sort(collection, cppsort::neat_sorter{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "pdq_sorter" )
     {
         cppsort::sort(collection, cppsort::pdq_sorter{});

@@ -89,6 +89,13 @@ TEST_CASE( "every sorter with indirect adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "neat_sorter" )
+    {
+        using sorter = cppsort::indirect_adapter<cppsort::neat_sorter>;
+        cppsort::sort(collection, sorter{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "pdq_sorter" )
     {
         using sorter = cppsort::indirect_adapter<cppsort::pdq_sorter>;
