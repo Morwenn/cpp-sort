@@ -34,6 +34,8 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include "../detail/count_inversions.h"
+#include "../detail/indirect_compare.h"
 #include "../detail/static_const.h"
 
 namespace cppsort
@@ -56,27 +58,24 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> typename std::iterator_traits<ForwardIterator>::difference_type
             {
-                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
-                auto&& proj = utility::as_function(projection);
-
-                if (first == last || std::next(first) == last)
+                auto size = std::distance(first, last);
+                if (size < 2)
                 {
                     return 0;
                 }
 
-                difference_type count = 0;
-                for (auto it1 = first ; it1 != last ; ++it1)
+                std::vector<ForwardIterator> iterators;
+                iterators.reserve(size);
+                for (ForwardIterator it = first ; it != last ; ++it)
                 {
-                    auto&& value = proj(*it1);
-                    for (auto it2 = std::next(it1) ; it2 != last ; ++it2)
-                    {
-                        if (compare(proj(*it2), value))
-                        {
-                            ++count;
-                        }
-                    }
+                    iterators.push_back(it);
                 }
-                return count;
+
+                return count_inversions(
+                    std::begin(iterators), std::end(iterators),
+                    cppsort::detail::indirect_compare<Compare, Projection>(compare, projection),
+                    size
+                );
             }
         };
     }

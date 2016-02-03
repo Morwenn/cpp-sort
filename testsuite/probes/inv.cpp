@@ -30,14 +30,14 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
 {
     SECTION( "simple test" )
     {
-        std::forward_list<int> li = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
+        const std::forward_list<int> li = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
         CHECK( cppsort::probe::inv(li) == 19 );
         CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 19 );
     }
 
     SECTION( "lower bound" )
     {
-        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        const std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         CHECK( cppsort::probe::inv(li) == 0 );
         CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 0 );
     }
@@ -47,7 +47,7 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
         // The upper bound should correspond to:
         // size * (size - 1) / 2
 
-        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        const std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::inv(li) == 55 );
         CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 55 );
     }
