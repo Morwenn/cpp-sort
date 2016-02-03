@@ -29,26 +29,34 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <iterator>
-#include <memory>
+#include <utility>
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename RandomAccessIterator, typename Compare>
-    auto count_inversions_merge(RandomAccessIterator first, RandomAccessIterator middle,
-                                RandomAccessIterator last, Compare compare,
-                                typename std::iterator_traits<RandomAccessIterator>::difference_type size)
-        -> typename std::iterator_traits<RandomAccessIterator>::difference_type
+    template<
+        typename ResultType,
+        typename RandomAccessIterator1,
+        typename RandomAccessIterator2,
+        typename Compare
+    >
+    auto count_inversions_merge(RandomAccessIterator1 first, RandomAccessIterator1 middle,
+                                RandomAccessIterator1 last, RandomAccessIterator2 cache,
+                                Compare compare)
+        -> ResultType
     {
-        using value_type = typename std::iterator_traits<RandomAccessIterator>::value_type;
-        using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+        ResultType inversions = 0;
 
-        std::unique_ptr<value_type[]> buffer(std::make_unique<value_type[]>(size));
-        difference_type inversions = 0;
+        // Shrink the problem size on the left side
+        while (compare(*first, *middle))
+        {
+            ++first;
+        }
 
-        auto result = buffer.get();
         auto first2 = middle;
+        auto result = cache;
         for (auto first1 = first ; first1 != middle ; ++result)
         {
             if (first2 == last)
@@ -69,34 +77,61 @@ namespace detail
                 ++first1;
             }
         }
-        std::move(first2, last, result);
 
-        // Move everything back to the original array
-        std::move(buffer.get(), buffer.get() + size, first);
+        // Move everything back to the original array, note that
+        // everything after first2 hasn't been moved to the cache
+        // since it's already in its final place
+        std::move(cache, cache + std::distance(first, first2), first);
+
         return inversions;
     }
 
-    template<typename RandomAccessIterator, typename Compare>
-    auto count_inversions(RandomAccessIterator first, RandomAccessIterator last,
-                          Compare compare,
-                          typename std::iterator_traits<RandomAccessIterator>::difference_type size)
-        -> typename std::iterator_traits<RandomAccessIterator>::difference_type
+    template<
+        typename ResultType,
+        typename RandomAccessIterator1,
+        typename RandomAccessIterator2,
+        typename Compare
+    >
+    auto count_inversions(RandomAccessIterator1 first, RandomAccessIterator1 last,
+                          RandomAccessIterator2 cache, Compare compare)
+        -> ResultType
     {
-        using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
-
+        auto size = std::distance(first, last);
         if (size < 2)
         {
             return 0;
         }
 
-        difference_type inversions = 0;
-        auto dist = size / 2;
-        auto middle = std::next(first, dist);
+        ResultType inversions = 0;
+        auto middle = std::next(first, size / 2);
 
-        inversions += count_inversions(first, middle, compare, dist);
-        inversions += count_inversions(middle, last, compare, size - dist);
-        inversions += count_inversions_merge(first, middle, last, compare, size);
+        inversions += count_inversions<ResultType>(first, middle, cache, compare);
+        inversions += count_inversions<ResultType>(middle, last, cache, compare);
+        inversions += count_inversions_merge<ResultType>(first, middle, last, cache, compare);
         return inversions;
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto count_inversions_quadratic(ForwardIterator first, ForwardIterator last,
+                                    Compare compare, Projection projection)
+        -> typename std::iterator_traits<ForwardIterator>::difference_type
+    {
+        using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
+        auto&& proj = utility::as_function(projection);
+
+        difference_type count = 0;
+        for (auto it1 = first ; it1 != last ; ++it1)
+        {
+            auto&& value = proj(*it1);
+            for (auto it2 = std::next(it1) ; it2 != last ; ++it2)
+            {
+                if (compare(proj(*it2), value))
+                {
+                    ++count;
+                }
+            }
+        }
+        return count;
     }
 }}
 

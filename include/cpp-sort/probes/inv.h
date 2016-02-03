@@ -29,10 +29,11 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <memory>
+#include <new>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/count_inversions.h"
 #include "../detail/indirect_compare.h"
@@ -58,24 +59,45 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> typename std::iterator_traits<ForwardIterator>::difference_type
             {
+                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
+
                 auto size = std::distance(first, last);
                 if (size < 2)
                 {
                     return 0;
                 }
 
-                std::vector<ForwardIterator> iterators;
-                iterators.reserve(size);
-                for (ForwardIterator it = first ; it != last ; ++it)
-                {
-                    iterators.push_back(it);
-                }
+                // Try to allocate enough memory to use a O(n log n) algorithm
+                std::unique_ptr<ForwardIterator[]> iterators(new (std::nothrow) ForwardIterator[size]);
+                std::unique_ptr<ForwardIterator[]> buffer(new (std::nothrow) ForwardIterator[size]);
 
-                return count_inversions(
-                    std::begin(iterators), std::end(iterators),
-                    cppsort::detail::indirect_compare<Compare, Projection>(compare, projection),
-                    size
-                );
+                if (iterators != nullptr && buffer != nullptr)
+                {
+                    ////////////////////////////////////////////////////////////
+                    // Use a O(n log n) algorithm if enough memory could be
+                    // allocated
+
+                    auto store = iterators.get();
+                    for (ForwardIterator it = first ; it != last ; ++it)
+                    {
+                        *store++ = it;
+                    }
+
+                    return cppsort::detail::count_inversions<difference_type>(
+                        iterators.get(), iterators.get() + size, buffer.get(),
+                        cppsort::detail::indirect_compare<Compare, Projection>(compare, projection)
+                    );
+                }
+                else
+                {
+                    ////////////////////////////////////////////////////////////
+                    // Use a O(n^2) algorithm if not enough memory could be
+                    // allocated
+
+                    return cppsort::detail::count_inversions_quadratic(
+                        first, last, compare, projection
+                    );
+                }
             }
         };
     }
