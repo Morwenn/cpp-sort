@@ -49,6 +49,18 @@ namespace detail
                 data(compare, utility::as_function(projection))
             {}
 
+            auto compare() const
+                -> Compare
+            {
+                return std::get<0>(data);
+            }
+
+            auto projection() const
+                -> projection_t
+            {
+                return std::get<1>(data);
+            }
+
             template<typename T, typename U>
             auto operator()(T&& lhs, U&& rhs)
                 noexcept(noexcept(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
