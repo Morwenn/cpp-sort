@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015 Orson Peters
-    Modified in 2015 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -29,6 +29,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -86,7 +87,7 @@ namespace detail
     void insertion_sort(ForwardIterator first, ForwardIterator last,
                         Compare compare, Projection projection)
     {
-        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        using category = iterator_category_t<ForwardIterator>;
         insertion_sort(first, last, compare, projection, category{});
     }
 }}

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,17 @@
 #include <cpp-sort/utility/inplace_merge.h>
 #include "bubble_sort.h"
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 
 namespace cppsort
 {
 namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void merge_sort(ForwardIterator first, ForwardIterator last,
+    auto merge_sort(ForwardIterator first, ForwardIterator last,
                     Compare compare, Projection projection, std::size_t size,
                     std::forward_iterator_tag category)
+        -> void
     {
         if (size < 18)
         {
@@ -61,9 +63,10 @@ namespace detail
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    void merge_sort(BidirectionalIterator first, BidirectionalIterator last,
+    auto merge_sort(BidirectionalIterator first, BidirectionalIterator last,
                     Compare compare, Projection projection, std::size_t size,
                     std::bidirectional_iterator_tag category)
+        -> void
     {
         if (size < 40)
         {
@@ -84,10 +87,11 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void merge_sort(ForwardIterator first, ForwardIterator last,
+    auto merge_sort(ForwardIterator first, ForwardIterator last,
                     Compare compare, Projection projection, std::size_t size)
+        -> void
     {
-        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        using category = iterator_category_t<ForwardIterator>;
         merge_sort(first, last, compare, projection, size, category{});
     }
 }}

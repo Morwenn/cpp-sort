@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include <cpp-sort/utility/bitops.h>
 #include "inplace_merge.h"
 #include "is_sorted_until.h"
+#include "iterator_traits.h"
 #include "pdqsort.h"
 #include "quicksort.h"
 
@@ -183,7 +184,7 @@ namespace detail
                    std::random_access_iterator_tag)
         -> void
     {
-        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
+        using difference_type = difference_type_t<RandomAccessIterator>;
         difference_type dist = std::distance(first, last);
 
         if (dist < 80)
@@ -310,7 +311,7 @@ namespace detail
                    Compare compare, Projection projection)
         -> void
     {
-        using category = typename std::iterator_traits<BidirectionalIterator>::iterator_category;
+        using category = iterator_category_t<BidirectionalIterator>;
         vergesort(first, last, compare, projection, category{});
     }
 }}

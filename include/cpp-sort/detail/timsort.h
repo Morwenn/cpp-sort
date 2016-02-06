@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 #include "lower_bound.h"
 #include "three_way_compare.h"
 #include "upper_bound.h"
@@ -48,11 +49,11 @@ namespace detail
 {
     template <typename RandomAccessIterator, typename LessFunction, typename Projection>
     class TimSort {
-        typedef RandomAccessIterator iter_t;
-        typedef typename std::iterator_traits<iter_t>::value_type value_t;
-        typedef typename std::iterator_traits<iter_t>::reference ref_t;
-        typedef typename std::iterator_traits<iter_t>::difference_type diff_t;
-        typedef three_way_compare<LessFunction> compare_t;
+        using iter_t = RandomAccessIterator;
+        using value_t = value_type_t<iter_t>;
+        using ref_t = reference_t<iter_t>;
+        using diff_t = difference_type_t<iter_t>;
+        using compare_t = three_way_compare<LessFunction>;
 
         static constexpr int MIN_MERGE = 32;
 

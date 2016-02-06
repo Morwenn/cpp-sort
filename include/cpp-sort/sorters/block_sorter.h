@@ -35,6 +35,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/block_sort.h"
+#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -61,7 +62,7 @@ namespace cppsort
                 static_assert(
                     std::is_base_of<
                         std::random_access_iterator_tag,
-                        typename std::iterator_traits<RandomAccessIterator>::iterator_category
+                        iterator_category_t<RandomAccessIterator>
                     >::value,
                     "block_sorter requires at least random-access iterators"
                 );

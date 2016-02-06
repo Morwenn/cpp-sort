@@ -33,6 +33,7 @@ Scott McMurray
 #include "common.h"
 #include "constants.h"
 #include "integer_sort.h"
+#include "../../iterator_traits.h"
 #include "../../pdqsort.h"
 
 namespace cppsort
@@ -46,8 +47,7 @@ namespace spreadsort
     template<class Cast_type, class RandomAccessIter>
     Cast_type cast_float_iter(const RandomAccessIter & floatiter)
     {
-      typedef typename std::iterator_traits<RandomAccessIter>::value_type
-        Data_type;
+      using Data_type = value_type_t<RandomAccessIter>;
       //Only cast IEEE floating-point numbers, and only to same-sized integers
       static_assert(sizeof(Cast_type) == sizeof(Data_type), "");
       static_assert(std::numeric_limits<Data_type>::is_iec559, "");
@@ -117,7 +117,7 @@ namespace spreadsort
                       log_divisor) - div_min));  target_bin != local_bin;
           target_bin = bins + ((cast_float_iter<Div_type, RandomAccessIter>
                                (current) >> log_divisor) - div_min)) {
-          typename std::iterator_traits<RandomAccessIter>::value_type tmp;
+          value_type_t<RandomAccessIter> tmp;
           RandomAccessIter b = (*target_bin)++;
           RandomAccessIter * b_bin = bins + ((cast_float_iter<Div_type,
                               RandomAccessIter>(b) >> log_divisor) - div_min);
@@ -700,9 +700,9 @@ namespace spreadsort
     //Checking whether the value type is a float, and trying a 32-bit integer
     template <class RandomAccessIter>
     std::enable_if_t< sizeof(std::uint32_t) ==
-      sizeof(typename std::iterator_traits<RandomAccessIter>::value_type)
-      && std::numeric_limits<typename
-      std::iterator_traits<RandomAccessIter>::value_type>::is_iec559,
+      sizeof(value_type_t<RandomAccessIter>)
+      && std::numeric_limits<
+      value_type_t<RandomAccessIter>>::is_iec559,
       void >
     float_sort(RandomAccessIter first, RandomAccessIter last)
     {
@@ -715,9 +715,9 @@ namespace spreadsort
     //Checking whether the value type is a double, and using a 64-bit integer
     template <class RandomAccessIter>
     std::enable_if_t< sizeof(std::uint64_t) ==
-      sizeof(typename std::iterator_traits<RandomAccessIter>::value_type)
-      && std::numeric_limits<typename
-      std::iterator_traits<RandomAccessIter>::value_type>::is_iec559,
+      sizeof(value_type_t<RandomAccessIter>)
+      && std::numeric_limits<
+      value_type_t<RandomAccessIter>>::is_iec559,
       void >
     float_sort(RandomAccessIter first, RandomAccessIter last)
     {
@@ -729,11 +729,11 @@ namespace spreadsort
 
     template <class RandomAccessIter>
     disable_if_t< (sizeof(std::uint64_t) ==
-      sizeof(typename std::iterator_traits<RandomAccessIter>::value_type)
+      sizeof(value_type_t<RandomAccessIter>)
       || sizeof(std::uint32_t) ==
-      sizeof(typename std::iterator_traits<RandomAccessIter>::value_type))
-      && std::numeric_limits<typename
-      std::iterator_traits<RandomAccessIter>::value_type>::is_iec559,
+      sizeof(value_type_t<RandomAccessIter>))
+      && std::numeric_limits<
+      value_type_t<RandomAccessIter>>::is_iec559,
       void >
     float_sort(RandomAccessIter first, RandomAccessIter last)
     {

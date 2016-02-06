@@ -28,6 +28,7 @@ Phil Endecott and Frank Gennari
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
+#include "../../iterator_traits.h"
 #include "../../pdqsort.h"
 
 namespace cppsort
@@ -157,7 +158,7 @@ namespace spreadsort
             //3-way swap; this is about 1% faster than a 2-way swap
             //The main advantage is less copies are involved per item
             //put in the correct place
-            typename std::iterator_traits<RandomAccessIter>::value_type tmp;
+            value_type_t<RandomAccessIter> tmp;
             RandomAccessIter b = (*target_bin)++;
             RandomAccessIter * b_bin = bins + ((*b >> log_divisor) - div_min);
             if (b_bin != local_bin) {
@@ -216,7 +217,7 @@ namespace spreadsort
             (bins + (rshift(*current, log_divisor) - div_min));
             target_bin != local_bin;
             target_bin = bins + (rshift(*current, log_divisor) - div_min)) {
-          typename std::iterator_traits<RandomAccessIter>::value_type tmp;
+          value_type_t<RandomAccessIter> tmp;
           RandomAccessIter b = (*target_bin)++;
           RandomAccessIter * b_bin =
             bins + (rshift(*b, log_divisor) - div_min);

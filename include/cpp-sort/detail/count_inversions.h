@@ -31,6 +31,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -114,9 +115,9 @@ namespace detail
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto count_inversions_quadratic(ForwardIterator first, ForwardIterator last,
                                     Compare compare, Projection projection)
-        -> typename std::iterator_traits<ForwardIterator>::difference_type
+        -> difference_type_t<ForwardIterator>
     {
-        using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
+        using difference_type = difference_type_t<ForwardIterator>;
         auto&& proj = utility::as_function(projection);
 
         difference_type count = 0;

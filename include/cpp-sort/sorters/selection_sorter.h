@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include "../detail/iterator_traits.h"
 #include "../detail/selection_sort.h"
 
 namespace cppsort
@@ -59,7 +60,7 @@ namespace cppsort
                 static_assert(
                     std::is_base_of<
                         std::forward_iterator_tag,
-                        typename std::iterator_traits<ForwardIterator>::iterator_category
+                        iterator_category_t<ForwardIterator>
                     >::value,
                     "selection_sorter requires at least forward iterators"
                 );

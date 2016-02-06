@@ -20,6 +20,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 #include "lower_bound.h"
 #include "merge_move.h"
 #include "upper_bound.h"
@@ -298,7 +299,7 @@ namespace detail
                   Compare compare, Projection projection)
             -> void
         {
-            using T = typename std::iterator_traits<RandomAccessIterator>::value_type;
+            using value_type = value_type_t<RandomAccessIterator>;
 
             std::size_t size = std::distance(first, last);
             if (size < 15) {
@@ -369,7 +370,7 @@ namespace detail
             // use a small cache to speed up some of the operations
             // just keep in mind that making it too small ruins the point (nothing will fit into it),
             // and making it too large also ruins the point (so much for "low memory"!)
-            typename BufferProvider::template buffer<T> cache(size);
+            typename BufferProvider::template buffer<value_type> cache(size);
 
             // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
             while (true) {
@@ -422,8 +423,8 @@ namespace detail
                             A2 = { A2.start, B2.end };
 
                             // merge A1 and A2 from the cache into the array
-                            Range<T*> A3 = { cache.begin(), cache.begin() + A1.length() };
-                            Range<T*> B3 = {
+                            Range<value_type*> A3 = { cache.begin(), cache.begin() + A1.length() };
+                            Range<value_type*> B3 = {
                                 cache.begin() + A1.length(),
                                 cache.begin() + A1.length() + A2.length()
                             };

@@ -21,6 +21,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 #include "lower_bound.h"
 #include "merge_move.h"
 #include "three_way_compare.h"
@@ -621,7 +622,7 @@ namespace detail
         if (havebuf) {
             grail_BuildBlocks(ptr, last, cbuf, extbuf, LExtBuf, compare, projection);
         } else {
-            using T = typename std::iterator_traits<BufferIterator>::value_type;
+            using T = value_type_t<BufferIterator>;
             grail_BuildBlocks(ptr, last, cbuf, static_cast<T*>(nullptr), 0, compare, projection);
         }
 
@@ -658,11 +659,11 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
-        using T = typename std::iterator_traits<RandomAccessIterator>::value_type;
+        using value_type = value_type_t<RandomAccessIterator>;
 
         // Allocate temporary buffer
         std::size_t size = std::distance(first, last);
-        typename BufferProvider::template buffer<T> buffer(size);
+        typename BufferProvider::template buffer<value_type> buffer(size);
 
         grail_commonSort(first, last, buffer.data(), buffer.size(),
                          three_way_compare<Compare>(compare), projection);

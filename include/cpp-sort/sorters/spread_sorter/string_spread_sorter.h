@@ -28,10 +28,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstdint>
+#include <functional>
 #include <iterator>
 #include <string>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/string_sort.h"
 
 namespace cppsort
@@ -49,8 +51,7 @@ namespace cppsort
             template<typename RandomAccessIterator>
             auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
                 -> std::enable_if_t<
-                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                                 typename std::string>::value
+                    std::is_same<value_type_t<RandomAccessIterator>, std::string>::value
                 >
             {
                 spreadsort::string_sort(first, last);
@@ -59,9 +60,8 @@ namespace cppsort
             template<typename RandomAccessIterator>
             auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
                 -> std::enable_if_t<
-                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                                 typename std::wstring
-                    >::value && (sizeof(wchar_t) == 2)
+                    std::is_same<value_type_t<RandomAccessIterator>, std::wstring>::value
+                    && (sizeof(wchar_t) == 2)
                 >
             {
                 std::uint16_t unused = 0;
@@ -75,8 +75,7 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare) const
                 -> std::enable_if_t<
-                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                                 typename std::string>::value
+                    std::is_same<value_type_t<RandomAccessIterator>, std::string>::value
                 >
             {
                 spreadsort::reverse_string_sort(first, last, compare);
@@ -86,9 +85,8 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare) const
                 -> std::enable_if_t<
-                    std::is_same<typename std::iterator_traits<RandomAccessIterator>::value_type,
-                                 typename std::wstring
-                    >::value && (sizeof(wchar_t) == 2)
+                    std::is_same<value_type_t<RandomAccessIterator>, std::wstring>::value
+                    && (sizeof(wchar_t) == 2)
                 >
             {
                 std::uint16_t unused = 0;

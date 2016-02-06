@@ -35,6 +35,7 @@
 #include <type_traits>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -56,12 +57,12 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Public types
 
-            using iterator_category = typename std::iterator_traits<Iterator>::iterator_category;
+            using iterator_category = iterator_category_t<Iterator>;
             using iterator_type     = Iterator;
-            using value_type        = typename std::iterator_traits<Iterator>::value_type;
-            using difference_type   = typename std::iterator_traits<Iterator>::difference_type;
-            using pointer           = typename std::iterator_traits<Iterator>::pointer;
-            using reference         = typename std::iterator_traits<Iterator>::reference;
+            using value_type        = value_type_t<Iterator>;
+            using difference_type   = difference_type_t<Iterator>;
+            using pointer           = pointer_t<Iterator>;
+            using reference         = reference_t<Iterator>;
 
             ////////////////////////////////////////////////////////////
             // Constructors
@@ -421,7 +422,7 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Move values in order to a cache then back to origin
 
-        std::vector<typename std::iterator_traits<RandomAccessIterator>::value_type> cache;
+        std::vector<value_type_t<RandomAccessIterator>> cache;
         cache.reserve(size);
 
         for (auto&& it: chain)

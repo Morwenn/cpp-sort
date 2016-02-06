@@ -35,6 +35,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/any_all.h>
 #include "../detail/checkers.h"
+#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -149,19 +150,16 @@ namespace cppsort
                 auto operator()(Iterable& iterable, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
                         choice<
-                            iterator_category_value<typename std::iterator_traits<
-                                decltype(std::begin(iterable))
-                            >::iterator_category> * categories_number
+                            iterator_category_value<
+                                iterator_category_t<decltype(std::begin(iterable))>
+                            > * categories_number
                         >{},
                         iterable,
                         std::forward<Args>(args)...
                     ))
                 {
                     // Iterator category of the iterable to sort
-                    using category =
-                        typename std::iterator_traits<
-                            decltype(std::begin(iterable))
-                        >::iterator_category;
+                    using category = iterator_category_t<decltype(std::begin(iterable))>;
 
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
@@ -175,7 +173,7 @@ namespace cppsort
                     -> decltype(dispatch_sorter{}(
                             choice<
                                 iterator_category_value<
-                                    typename std::iterator_traits<Iterator>::iterator_category
+                                    iterator_category_t<Iterator>
                                 > * categories_number
                             >{},
                             first, last,
@@ -183,7 +181,7 @@ namespace cppsort
                     ))
                 {
                     // Iterator category of the iterable to sort
-                    using category = typename std::iterator_traits<Iterator>::iterator_category;
+                    using category = iterator_category_t<Iterator>;
 
                     // Call the appropriate operator()
                     return dispatch_sorter{}(

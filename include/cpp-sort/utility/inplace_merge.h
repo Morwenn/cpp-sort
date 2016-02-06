@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/inplace_merge.h"
+#include "../detail/iterator_traits.h"
 #include "../detail/merge.h"
 
 namespace cppsort
@@ -49,7 +50,7 @@ namespace utility
                            std::forward_iterator_tag)
             -> void
         {
-            using value_type = typename std::iterator_traits<ForwardIterator>::value_type;
+            using value_type = cppsort::detail::value_type_t<ForwardIterator>;
             auto&& proj = as_function(projection);
 
             // Shrink the problem size on the left side
@@ -120,7 +121,7 @@ namespace utility
                        ForwardIterator last, Compare compare={}, Projection projection={})
         -> void
     {
-        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        using category = cppsort::detail::iterator_category_t<ForwardIterator>;
         detail::inplace_merge(first, middle, last, compare, projection, category{});
     }
 }}

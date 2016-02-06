@@ -27,10 +27,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstdint>
 #include <iterator>
 #include <limits>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/float_sort.h"
 
 namespace cppsort
@@ -45,13 +47,9 @@ namespace cppsort
             template<typename RandomAccessIterator>
             auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
                 -> std::enable_if_t<
-                    std::numeric_limits<
-                        typename std::iterator_traits<RandomAccessIterator>::value_type
-                    >::is_iec559 && (
-                        sizeof(typename std::iterator_traits<RandomAccessIterator>::value_type)
-                            == sizeof(std::uint32_t) ||
-                        sizeof(typename std::iterator_traits<RandomAccessIterator>::value_type)
-                            == sizeof(std::uint64_t)
+                    std::numeric_limits<value_type_t<RandomAccessIterator>>::is_iec559 && (
+                        sizeof(value_type_t<RandomAccessIterator>) == sizeof(std::uint32_t) ||
+                        sizeof(value_type_t<RandomAccessIterator>) == sizeof(std::uint64_t)
                     )
 
                 >

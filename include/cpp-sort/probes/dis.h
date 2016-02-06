@@ -35,6 +35,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include "../detail/iterator_traits.h"
 #include "../detail/static_const.h"
 
 namespace cppsort
@@ -55,9 +56,9 @@ namespace probe
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> typename std::iterator_traits<ForwardIterator>::difference_type
+                -> cppsort::detail::difference_type_t<ForwardIterator>
             {
-                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
+                using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
                 auto&& proj = utility::as_function(projection);
 
                 if (first == last || std::next(first) == last)

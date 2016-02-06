@@ -23,6 +23,7 @@
 #include <type_traits>
 #include <utility>
 #include "lower_bound.h"
+#include "iterator_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -131,12 +132,12 @@ namespace detail
     template <class Compare, class BidirectionalIterator, class Projection>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last, Compare comp, Projection projection,
-                                typename std::iterator_traits<BidirectionalIterator>::difference_type len1,
-                                typename std::iterator_traits<BidirectionalIterator>::difference_type len2,
-                                typename std::iterator_traits<BidirectionalIterator>::value_type* buff)
+                                difference_type_t<BidirectionalIterator> len1,
+                                difference_type_t<BidirectionalIterator> len2,
+                                value_type_t<BidirectionalIterator>* buff)
         -> void
     {
-        using value_type = typename std::iterator_traits<BidirectionalIterator>::value_type;
+        using value_type = value_type_t<BidirectionalIterator>;
         destruct_n d(0);
         std::unique_ptr<value_type, destruct_n&> h2(buff, d);
         if (len1 <= len2)
@@ -162,13 +163,13 @@ namespace detail
     template <class Compare, class BidirectionalIterator, class Projection>
     auto inplace_merge_impl(BidirectionalIterator first, BidirectionalIterator middle, BidirectionalIterator last,
                             Compare comp, Projection projection,
-                            typename std::iterator_traits<BidirectionalIterator>::difference_type len1,
-                            typename std::iterator_traits<BidirectionalIterator>::difference_type len2,
-                            typename std::iterator_traits<BidirectionalIterator>::value_type* buff,
+                            difference_type_t<BidirectionalIterator> len1,
+                            difference_type_t<BidirectionalIterator> len2,
+                            value_type_t<BidirectionalIterator>* buff,
                             std::ptrdiff_t buff_size)
         -> void
     {
-        typedef typename std::iterator_traits<BidirectionalIterator>::difference_type difference_type;
+        using difference_type = difference_type_t<BidirectionalIterator>;
         auto&& proj = utility::as_function(projection);
 
         while (true)
@@ -261,8 +262,8 @@ namespace detail
                        BidirectionalIterator last, Compare comp, Projection projection)
         -> void
     {
-        typedef typename std::iterator_traits<BidirectionalIterator>::value_type value_type;
-        typedef typename std::iterator_traits<BidirectionalIterator>::difference_type difference_type;
+        using value_type = value_type_t<BidirectionalIterator>;
+        using difference_type = difference_type_t<BidirectionalIterator>;
         difference_type len1 = std::distance(first, middle);
         difference_type len2 = std::distance(middle, last);
         difference_type buf_size = std::min(len1, len2);

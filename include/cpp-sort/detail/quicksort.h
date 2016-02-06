@@ -33,6 +33,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "bubble_sort.h"
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 #include "iter_sort3.h"
 
 namespace cppsort
@@ -77,7 +78,7 @@ namespace detail
     {
         // If the collection is small enough, fall back to
         // another sorting algorithm
-        using category = typename std::iterator_traits<ForwardIterator>::iterator_category;
+        using category = iterator_category_t<ForwardIterator>;
         bool sorted = quicksort_fallback(first, last, compare, projection, size, category{});
         if (sorted) return;
 

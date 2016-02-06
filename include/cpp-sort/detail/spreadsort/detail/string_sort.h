@@ -27,6 +27,7 @@ Phil Endecott and Frank Gennari
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
+#include "../../iterator_traits.h"
 
 namespace cppsort
 {
@@ -154,7 +155,7 @@ namespace spreadsort
         }
         return length(x) < length(y);
       }
-      size_t fchar_offset;
+      std::size_t fchar_offset;
       Get_char getchar;
       Get_length length;
     };
@@ -162,12 +163,11 @@ namespace spreadsort
     //String sorting recursive implementation
     template <class RandomAccessIter, class Unsigned_char_type>
     void string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                         size_t char_offset,
+                         std::size_t char_offset,
                          std::vector<RandomAccessIter> &bin_cache,
                          unsigned cache_offset, size_t *bin_sizes)
     {
-      typedef typename std::iterator_traits<RandomAccessIter>::value_type
-        Data_type;
+      using Data_type = value_type_t<RandomAccessIter>;
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
       //Iterate to the end of the empties.  If all empty, return
@@ -267,13 +267,12 @@ namespace spreadsort
     //Sorts strings in reverse order, with empties at the end
     template <class RandomAccessIter, class Unsigned_char_type>
     void reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                                 size_t char_offset,
+                                 std::size_t char_offset,
                                  std::vector<RandomAccessIter> &bin_cache,
                                  unsigned cache_offset,
-                                 size_t *bin_sizes)
+                                 std::size_t *bin_sizes)
     {
-      typedef typename std::iterator_traits<RandomAccessIter>::value_type
-        Data_type;
+      using Data_type = value_type_t<RandomAccessIter>;
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
       RandomAccessIter curr = first;
@@ -383,8 +382,7 @@ namespace spreadsort
                          unsigned cache_offset, size_t *bin_sizes,
                          Get_char getchar, Get_length length)
     {
-      typedef typename std::iterator_traits<RandomAccessIter>::value_type
-        Data_type;
+      using Data_type = value_type_t<RandomAccessIter>;
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
       //Iterate to the end of the empties.  If all empty, return

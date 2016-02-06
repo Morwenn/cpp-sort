@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015 Orson Peters
-    Modified in 2015 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -32,6 +32,7 @@
 #include <cpp-sort/utility/bitops.h>
 #include "heap_operations.h"
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 #include "iter_sort3.h"
 
 namespace cppsort
@@ -53,7 +54,7 @@ namespace detail
         template<class Iter, class Compare, class Projection>
         void unguarded_insertion_sort(Iter begin, Iter end,
                                       Compare comp, Projection projection) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
+            using value_type = value_type_t<Iter>;
             if (begin == end) return;
 
             auto&& proj = utility::as_function(projection);
@@ -64,7 +65,7 @@ namespace detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    T tmp = std::move(*sift);
+                    value_type tmp = std::move(*sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do { *sift-- = std::move(*sift_1); }
@@ -81,7 +82,7 @@ namespace detail
         template<class Iter, class Compare, class Projection>
         bool partial_insertion_sort(Iter begin, Iter end,
                                     Compare comp, Projection projection) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
+            using value_type = value_type_t<Iter>;
             if (begin == end) return true;
 
             auto&& proj = utility::as_function(projection);
@@ -95,7 +96,7 @@ namespace detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    T tmp = std::move(*sift);
+                    value_type tmp = std::move(*sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do { *sift-- = std::move(*sift_1); }
@@ -116,7 +117,7 @@ namespace detail
         template<class Iter, class Compare, class Projection>
         bool unguarded_partial_insertion_sort(Iter begin, Iter end,
                                               Compare comp, Projection projection) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
+            using value_type = value_type_t<Iter>;
             if (begin == end) return true;
 
             auto&& proj = utility::as_function(projection);
@@ -130,7 +131,7 @@ namespace detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    T tmp = std::move(*sift);
+                    value_type tmp = std::move(*sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do { *sift-- = std::move(*sift_1); }
@@ -152,11 +153,11 @@ namespace detail
         template<class Iter, class Compare, class Projection>
         std::pair<Iter, bool> partition_right(Iter begin, Iter end,
                                               Compare comp, Projection projection) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
+            using value_type = value_type_t<Iter>;
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
-            T pivot(std::move(*begin));
+            value_type pivot(std::move(*begin));
             auto&& pivot_proj = proj(pivot);
 
             Iter first = begin;
@@ -196,10 +197,10 @@ namespace detail
         // the pivot and it doesn't check or return if the passed sequence already was partitioned.
         template<class Iter, class Compare, class Projection>
         Iter partition_left(Iter begin, Iter end, Compare comp, Projection projection) {
-            typedef typename std::iterator_traits<Iter>::value_type T;
+            using value_type = value_type_t<Iter>;
             auto&& proj = utility::as_function(projection);
 
-            T pivot(std::move(*begin));
+            value_type pivot(std::move(*begin));
             auto&& pivot_proj = proj(pivot);
             Iter first = begin;
             Iter last = end;
@@ -226,12 +227,12 @@ namespace detail
         template<class Iter, class Compare, class Projection>
         void pdqsort_loop(Iter begin, Iter end, Compare comp, Projection projection,
                           int bad_allowed, bool leftmost = true) {
-            typedef typename std::iterator_traits<Iter>::difference_type diff_t;
+            using difference_type = difference_type_t<Iter>;
             auto&& proj = utility::as_function(projection);
 
             // Use a while loop for tail recursion elimination.
             while (true) {
-                diff_t size = end - begin;
+                difference_type size = std::distance(begin, end);
 
                 // Insertion sort is faster for small arrays.
                 if (size < insertion_sort_threshold) {
@@ -259,7 +260,7 @@ namespace detail
                 bool already_partitioned = part_result.second;
 
                 // Check for a highly unbalanced partition.
-                diff_t pivot_offset = pivot_pos - begin;
+                difference_type pivot_offset = std::distance(begin, pivot_pos);
                 bool highly_unbalanced = pivot_offset < size / 8 || pivot_offset > (size - size / 8);
 
                 // If we got a highly unbalanced partition we shuffle elements to break many patterns.
@@ -271,7 +272,7 @@ namespace detail
                         return;
                     }
 
-                    diff_t partition_size = pivot_pos - begin;
+                    difference_type partition_size = std::distance(begin, pivot_pos);
                     if (partition_size >= insertion_sort_threshold) {
                         std::iter_swap(begin, begin + partition_size / 4);
                         std::iter_swap(pivot_pos - 1, pivot_pos - partition_size / 4);
@@ -303,7 +304,7 @@ namespace detail
 
     template<class Iter, class Compare, class Projection>
     void pdqsort(Iter begin, Iter end, Compare comp, Projection projection) {
-        if (end - begin < 2) return;
+        if (std::distance(begin, end) < 2) return;
         pdqsort_detail::pdqsort_loop(begin, end,
                                      comp, projection,
                                      utility::log2(end - begin));

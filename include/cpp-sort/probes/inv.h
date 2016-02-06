@@ -37,6 +37,7 @@
 #include <cpp-sort/utility/functional.h>
 #include "../detail/count_inversions.h"
 #include "../detail/indirect_compare.h"
+#include "../detail/iterator_traits.h"
 #include "../detail/static_const.h"
 
 namespace cppsort
@@ -57,9 +58,9 @@ namespace probe
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> typename std::iterator_traits<ForwardIterator>::difference_type
+                -> cppsort::detail::difference_type_t<ForwardIterator>
             {
-                using difference_type = typename std::iterator_traits<ForwardIterator>::difference_type;
+                using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
 
                 auto size = std::distance(first, last);
                 if (size < 2)

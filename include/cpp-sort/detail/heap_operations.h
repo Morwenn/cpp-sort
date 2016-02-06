@@ -19,6 +19,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -27,14 +28,14 @@ namespace detail
     template<class Compare, class RandomAccessIterator, class Projection>
     auto sift_down(RandomAccessIterator first, RandomAccessIterator,
                    Compare comp, Projection projection,
-                   typename std::iterator_traits<RandomAccessIterator>::difference_type len,
+                   difference_type_t<RandomAccessIterator> len,
                    RandomAccessIterator start)
         -> void
     {
         auto&& proj = utility::as_function(projection);
 
-        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
-        typedef typename std::iterator_traits<RandomAccessIterator>::value_type value_type;
+        using difference_type = difference_type_t<RandomAccessIterator>;
+        using value_type = value_type_t<RandomAccessIterator>;
         // left-child of start is at 2 * start + 1
         // right-child of start is at 2 * start + 2
         difference_type child = start - first;
@@ -86,7 +87,7 @@ namespace detail
                    Compare comp, Projection projection)
         -> void
     {
-        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
+        using difference_type = difference_type_t<RandomAccessIterator>;
         difference_type n = std::distance(first, last);
         if (n > 1)
         {
@@ -101,7 +102,7 @@ namespace detail
     template<class Compare, class RandomAccessIterator, class Projection>
     auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
                   Compare comp, Projection projection,
-                  typename std::iterator_traits<RandomAccessIterator>::difference_type len)
+                  difference_type_t<RandomAccessIterator> len)
     {
         if (len > 1)
         {
@@ -115,7 +116,7 @@ namespace detail
     auto sort_heap(RandomAccessIterator first, RandomAccessIterator last,
                    Compare comp, Projection projection)
     {
-        using difference_type = typename std::iterator_traits<RandomAccessIterator>::difference_type;
+        using difference_type = difference_type_t<RandomAccessIterator>;
         for (difference_type n = last - first; n > 1; --last, (void) --n) {
             pop_heap<Compare>(first, last, comp, projection, n);
         }

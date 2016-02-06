@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,47 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_SPREAD_SORTER_INTEGER_SPREAD_SORTER_H_
-#define CPPSORT_SORTERS_SPREAD_SORTER_INTEGER_SPREAD_SORTER_H_
+#ifndef CPPSORT_DETAIL_ITERATOR_TRAITS_H_
+#define CPPSORT_DETAIL_ITERATOR_TRAITS_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <type_traits>
-#include <cpp-sort/sorter_facade.h>
-#include "../../detail/iterator_traits.h"
-#include "../../detail/spreadsort/integer_sort.h"
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorter
+namespace detail
+{
+    //
+    // A few type aliases to make it easier to write
+    // code that uses std::iterator_traits; there are
+    // equivalent aliases in the Ranges TS
+    //
 
-    namespace detail
-    {
-        struct integer_spread_sorter_impl
-        {
-            template<typename RandomAccessIterator>
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
-                -> std::enable_if_t<
-                    std::is_integral<value_type_t<RandomAccessIterator>>::value
-                >
-            {
-                spreadsort::integer_sort(first, last);
-            }
+    template<typename Iterator>
+    using difference_type_t = typename std::iterator_traits<Iterator>::difference_type;
 
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
+    template<typename Iterator>
+    using value_type_t = typename std::iterator_traits<Iterator>::value_type;
 
-            using iterator_category = std::random_access_iterator_tag;
-            using is_stable = std::false_type;
-        };
-    }
+    template<typename Iterator>
+    using pointer_t = typename std::iterator_traits<Iterator>::pointer;
 
-    struct integer_spread_sorter:
-        sorter_facade<detail::integer_spread_sorter_impl>
-    {};
-}
+    template<typename Iterator>
+    using reference_t = typename std::iterator_traits<Iterator>::reference;
 
-#endif // CPPSORT_SORTERS_SPREAD_SORTER_INTEGER_SPREAD_SORTER_H_
+    template<typename Iterator>
+    using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;
+}}
+
+#endif // CPPSORT_DETAIL_ITERATOR_TRAITS_H_
