@@ -22,6 +22,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/functional.h>
 #include "lower_bound.h"
 #include "iterator_traits.h"
 #include "upper_bound.h"
@@ -30,19 +31,6 @@ namespace cppsort
 {
 namespace detail
 {
-    struct temporary_buffer_deleter
-    {
-        template<typename T>
-        auto operator()(T* pointer) const
-            -> void
-        {
-            if (pointer)
-            {
-                std::return_temporary_buffer(pointer);
-            }
-        }
-    };
-
     struct destruct_n
     {
     private:
@@ -268,7 +256,7 @@ namespace detail
         difference_type len2 = std::distance(middle, last);
         difference_type buf_size = std::min(len1, len2);
         std::pair<value_type*, std::ptrdiff_t> buf = std::get_temporary_buffer<value_type>(buf_size);
-        std::unique_ptr<value_type, temporary_buffer_deleter> h(buf.first);
+        std::unique_ptr<value_type, utility::temporary_buffer_deleter> h(buf.first);
 
         typedef typename std::add_lvalue_reference<Compare>::type Comp_ref;
         return inplace_merge_impl<Comp_ref>(first, middle, last, comp, projection,
