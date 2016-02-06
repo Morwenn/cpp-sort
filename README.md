@@ -139,6 +139,11 @@ v3](https://github.com/ericniebler/range-v3) library.
 * Many projection-enhanced standard algorithms are directly adapted from their
 counterparts in [libc++](http://libcxx.llvm.org/).
 
+* The algorithm used by [`utility::inplace_merge`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#inplace_merge)
+is an implementation of a merge algorithm proposed by Dudziński and Dydek, and
+implemented by Alexander Stepanov and Paul McJones in their book [*Elements of
+Programming*](http://www.elementsofprogramming.com/).
+
 * The implementation of Dijkstra's smoothsort used by `smooth_sorter` has been
 directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)
 of the algorithm.
