@@ -67,8 +67,8 @@ namespace cppsort
                 );
 
                 merge_sort(std::begin(iterable), std::end(iterable),
-                           compare, projection,
-                           utility::size(iterable));
+                           utility::size(iterable),
+                           compare, projection);
             }
 
             template<
@@ -91,9 +91,8 @@ namespace cppsort
                     "merge_sorter requires at least forward iterators"
                 );
 
-                merge_sort(first, last,
-                           compare, projection,
-                           std::distance(first, last));
+                merge_sort(first, last, std::distance(first, last),
+                           compare, projection);
             }
 
             ////////////////////////////////////////////////////////////
