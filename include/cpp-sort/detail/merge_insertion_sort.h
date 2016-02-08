@@ -28,7 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
 #include <cstdint>
 #include <list>
 #include <iterator>
@@ -47,11 +46,6 @@ namespace detail
     template<typename Iterator>
     class group_iterator
     {
-        private:
-
-            Iterator _it;
-            std::size_t _size;
-
         public:
 
             ////////////////////////////////////////////////////////////
@@ -69,7 +63,7 @@ namespace detail
 
             group_iterator() = default;
 
-            group_iterator(Iterator it, std::size_t size):
+            group_iterator(Iterator it, difference_type size):
                 _it(it),
                 _size(size)
             {}
@@ -84,7 +78,7 @@ namespace detail
             }
 
             auto size() const
-                -> std::size_t
+                -> difference_type
             {
                 return _size;
             }
@@ -137,14 +131,14 @@ namespace detail
                 return tmp;
             }
 
-            auto operator+=(std::size_t increment)
+            auto operator+=(difference_type increment)
                 -> group_iterator&
             {
                 std::advance(_it, _size * increment);
                 return *this;
             }
 
-            auto operator-=(std::size_t increment)
+            auto operator-=(difference_type increment)
                 -> group_iterator&
             {
                 _it -= _size * increment;
@@ -154,17 +148,22 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Elements access operators
 
-            auto operator[](std::size_t pos)
-                -> decltype(_it[pos * _size + _size - 1])
+            auto operator[](difference_type pos)
+                -> decltype(base()[pos * size() + size() - 1])
             {
-                return _it[pos * _size + _size - 1];
+                return base()[pos * size() + size() - 1];
             }
 
-            auto operator[](std::size_t pos) const
-                -> decltype(_it[pos * _size + _size - 1])
+            auto operator[](difference_type pos) const
+                -> decltype(base()[pos * size() + size() - 1])
             {
-                return _it[pos * _size + _size - 1];
+                return base()[pos * size() + size() - 1];
             }
+
+        private:
+
+            Iterator _it;
+            difference_type _size;
     };
 
     template<typename Iterator1, typename Iterator2>
@@ -232,21 +231,21 @@ namespace detail
     // Arithmetic operators
 
     template<typename Iterator>
-    auto operator+(group_iterator<Iterator> it, std::size_t size)
+    auto operator+(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
         -> group_iterator<Iterator>
     {
         return it += size;
     }
 
     template<typename Iterator>
-    auto operator+(std::size_t size, group_iterator<Iterator> it)
+    auto operator+(difference_type_t<group_iterator<Iterator>> size, group_iterator<Iterator> it)
         -> group_iterator<Iterator>
     {
         return it += size;
     }
 
     template<typename Iterator>
-    auto operator-(group_iterator<Iterator> it, std::size_t size)
+    auto operator-(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
         -> group_iterator<Iterator>
     {
         return it -= size;
@@ -254,7 +253,7 @@ namespace detail
 
     template<typename Iterator>
     auto operator-(const group_iterator<Iterator>& lhs, const group_iterator<Iterator>& rhs)
-        -> typename group_iterator<Iterator>::difference_type
+        -> difference_type_t<group_iterator<Iterator>>
     {
         return (lhs.base() - rhs.base()) / lhs.size();
     }
@@ -263,14 +262,14 @@ namespace detail
     // Construction function
 
     template<typename Iterator>
-    auto make_group_iterator(Iterator it, std::size_t size)
+    auto make_group_iterator(Iterator it, difference_type_t<group_iterator<Iterator>> size)
         -> group_iterator<Iterator>
     {
         return { it, size };
     }
 
     template<typename Iterator>
-    auto make_group_iterator(group_iterator<Iterator> it, std::size_t size)
+    auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
         -> group_iterator<Iterator>
     {
         return { it.base(), size * it.size() };

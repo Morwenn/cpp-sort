@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,69 +51,69 @@ namespace utility
             public:
 
                 buffer() = default;
-                explicit buffer(std::size_t /* size */) {}
+                explicit constexpr buffer(std::size_t /* size */) {}
 
-                auto size() const
-                    -> std::size_t
+                constexpr auto size() const
+                    -> typename std::array<T, N>::size_type
                 {
                     return N;
                 }
 
-                auto operator[](std::size_t pos)
+                constexpr auto operator[](std::size_t pos)
                     -> decltype(_memory[pos])
                 {
                     return _memory[pos];
                 }
 
-                auto operator[](std::size_t pos) const
+                constexpr auto operator[](std::size_t pos) const
                     -> decltype(_memory[pos])
                 {
                     return _memory[pos];
                 }
 
-                auto begin()
+                constexpr auto begin()
                     -> decltype(_memory.begin())
                 {
                     return _memory.begin();
                 }
 
-                auto begin() const
+                constexpr auto begin() const
                     -> decltype(_memory.begin())
                 {
                     return _memory.begin();
                 }
 
-                auto cbegin() const
+                constexpr auto cbegin() const
                     -> decltype(_memory.cbegin())
                 {
                     return _memory.cbegin();
                 }
 
-                auto end()
+                constexpr auto end()
                     -> decltype(_memory.end())
                 {
                     return _memory.end();
                 }
 
-                auto end() const
+                constexpr auto end() const
                     -> decltype(_memory.end())
                 {
                     return _memory.end();
                 }
 
-                auto cend() const
+                constexpr auto cend() const
                     -> decltype(_memory.cend())
                 {
                     return _memory.cend();
                 }
 
-                auto data()
+                constexpr auto data()
                     -> decltype(_memory.data())
                 {
                     return _memory.data();
                 }
 
-                auto data() const
+                constexpr auto data() const
                     -> decltype(_memory.data())
                 {
                     return _memory.data();

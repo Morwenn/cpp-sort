@@ -67,8 +67,8 @@ namespace cppsort
                 );
 
                 quicksort(std::begin(iterable), std::end(iterable),
-                          compare, projection,
-                          utility::size(iterable));
+                          utility::size(iterable),
+                          compare, projection);
             }
 
             template<
@@ -91,9 +91,8 @@ namespace cppsort
                     "quick_sorter requires at least forward iterators"
                 );
 
-                quicksort(first, last,
-                          compare, projection,
-                          std::distance(first, last));
+                quicksort(first, last, std::distance(first, last),
+                          compare, projection);
             }
 
             ////////////////////////////////////////////////////////////

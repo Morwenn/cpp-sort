@@ -28,8 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
 #include <iterator>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "bubble_sort.h"
 #include "insertion_sort.h"
@@ -45,21 +45,23 @@ namespace detail
     // worth it
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto quicksort_fallback(ForwardIterator first, ForwardIterator,
-                            Compare compare, Projection projection, std::size_t size,
+                            difference_type_t<ForwardIterator> size,
+                            Compare compare, Projection projection,
                             std::forward_iterator_tag)
         -> bool
     {
         if (size < 10)
         {
-            bubble_sort(first, compare, projection, size);
+            bubble_sort(first, size, compare, projection);
             return true;
         }
         return false;
     }
 
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto quicksort_fallback(ForwardIterator first, ForwardIterator last,
-                            Compare compare, Projection projection, std::size_t size,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto quicksort_fallback(BidirectionalIterator first, BidirectionalIterator last,
+                            difference_type_t<BidirectionalIterator> size,
+                            Compare compare, Projection projection,
                             std::bidirectional_iterator_tag)
         -> bool
     {
@@ -73,13 +75,14 @@ namespace detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto quicksort(ForwardIterator first, ForwardIterator last,
-                   Compare compare, Projection projection, std::size_t size)
+                   difference_type_t<ForwardIterator> size,
+                   Compare compare, Projection projection)
         -> void
     {
         // If the collection is small enough, fall back to
         // another sorting algorithm
         using category = iterator_category_t<ForwardIterator>;
-        bool sorted = quicksort_fallback(first, last, compare, projection, size, category{});
+        bool sorted = quicksort_fallback(first, last, size, compare, projection, category{});
         if (sorted) return;
 
         auto&& proj = utility::as_function(projection);
@@ -118,9 +121,9 @@ namespace detail
         // Recursive call: heuristic trick here: in real world cases,
         // the middle partition is more likely to be smaller than the
         // right one, so computing its size should generally be cheaper
-        std::size_t size_left = std::distance(first, middle1);
-        std::size_t size_middle = std::distance(middle1, middle2);
-        std::size_t size_right = size - size_left - size_middle;
+        auto size_left = std::distance(first, middle1);
+        auto size_middle = std::distance(middle1, middle2);
+        auto size_right = size - size_left - size_middle;
 
         // Recurse in the smallest partition first to limit the call
         // stack overhead
@@ -130,8 +133,8 @@ namespace detail
             std::swap(middle1, last);
             std::swap(size_left, size_right);
         }
-        quicksort(first, middle1, compare, projection, size_left);
-        quicksort(middle2, last, compare, projection, size_right);
+        quicksort(first, middle1, size_left, compare, projection);
+        quicksort(middle2, last, size_right, compare, projection);
     }
 }}
 

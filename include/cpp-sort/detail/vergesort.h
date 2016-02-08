@@ -66,11 +66,13 @@ namespace detail
                    std::bidirectional_iterator_tag)
         -> void
     {
-        auto dist = std::distance(first, last);
+        using difference_type = difference_type_t<BidirectionalIterator>;
+        difference_type dist = std::distance(first, last);
+
         if (dist < 80)
         {
             // vergesort is inefficient for small collections
-            quicksort(first, last, compare, projection, dist);
+            quicksort(first, last, dist, compare, projection);
             return;
         }
 
@@ -82,7 +84,7 @@ namespace detail
         BidirectionalIterator begin_unstable = last;
 
         // Size of the unstable partition
-        std::size_t size_unstable = 0;
+        difference_type size_unstable = 0;
 
         // Pair of iterators to iterate through the collection
         BidirectionalIterator next = is_sorted_until(first, last, compare, projection);
@@ -108,7 +110,7 @@ namespace detail
             {
                 if (begin_unstable != last)
                 {
-                    quicksort(begin_unstable, begin_rng, compare, projection, size_unstable);
+                    quicksort(begin_unstable, begin_rng, size_unstable, compare, projection);
                     std::reverse(begin_rng, next);
                     detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
                     detail::inplace_merge(first, begin_unstable, next, compare, projection);
@@ -148,7 +150,7 @@ namespace detail
             {
                 if (begin_unstable != last)
                 {
-                    quicksort(begin_unstable, begin_rng, compare, projection, size_unstable);
+                    quicksort(begin_unstable, begin_rng, size_unstable, compare, projection);
                     detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
                     detail::inplace_merge(first, begin_unstable, next, compare, projection);
                     begin_unstable = last;
@@ -173,7 +175,7 @@ namespace detail
 
         if (begin_unstable != last)
         {
-            quicksort(begin_unstable, last, compare, projection, size_unstable);
+            quicksort(begin_unstable, last, size_unstable, compare, projection);
             detail::inplace_merge(first, begin_unstable, last, compare, projection);
         }
     }

@@ -14,8 +14,8 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <cstddef>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
@@ -43,7 +43,7 @@ namespace detail
         {}
 
         auto length() const
-            -> std::size_t
+            -> difference_type_t<Iterator>
         {
             return std::distance(start, end);
         }
@@ -53,15 +53,18 @@ namespace detail
     // where have some idea as to how many unique values there are and where the next value might be
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindFirstForward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
-                          Compare compare, Projection projection, std::size_t unique)
+                          Compare compare, Projection projection,
+                          difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        std::size_t size = std::distance(first, last);
+        using difference_type = difference_type_t<RandomAccessIterator>;
+
+        difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
-        std::size_t skip = std::max<std::size_t>(size / unique, 1);
+        difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
         for (index = first + skip ; compare(proj(*std::prev(index)), value_proj) ; index += skip) {
@@ -74,15 +77,18 @@ namespace detail
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindLastForward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
-                         Compare compare, Projection projection, std::size_t unique)
+                         Compare compare, Projection projection,
+                         difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        std::size_t size = std::distance(first, last);
+        using difference_type = difference_type_t<RandomAccessIterator>;
+
+        difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
-        std::size_t skip = std::max<std::size_t>(size / unique, 1);
+        difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
         for (index = first + skip ; not compare(value_proj, proj(*std::prev(index))) ; index += skip) {
@@ -95,15 +101,18 @@ namespace detail
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindFirstBackward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
-                           Compare compare, Projection projection, std::size_t unique)
+                           Compare compare, Projection projection,
+                           difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        std::size_t size = std::distance(first, last);
+        using difference_type = difference_type_t<RandomAccessIterator>;
+
+        difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
-        std::size_t skip = std::max<std::size_t>(size / unique, 1);
+        difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
         for (index = last - skip ; index > first && not compare(proj(*std::prev(index)), value_proj) ; index -= skip) {
@@ -116,15 +125,18 @@ namespace detail
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindLastBackward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
-                          Compare compare, Projection projection, std::size_t unique)
+                          Compare compare, Projection projection,
+                          difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        std::size_t size = std::distance(first, last);
+        using difference_type = difference_type_t<RandomAccessIterator>;
+
+        difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
-        std::size_t skip = std::max<std::size_t>(size / unique, 1);
+        difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
         for (index = last - skip ; index > first && compare(value_proj, proj(*std::prev(index))) ; index -= skip) {
@@ -210,7 +222,7 @@ namespace detail
                 RandomAccessIterator mid = lower_bound(first2, last2, proj(*first1), compare, projection);
 
                 // rotate A into place
-                std::size_t amount = std::distance(last1, mid);
+                auto amount = std::distance(last1, mid);
                 std::rotate(first1, last1, mid);
                 if (last2 == mid) break;
 
@@ -226,15 +238,19 @@ namespace detail
         // calculate how to scale the index value to the range within the array
         // the bottom-up merge sort only operates on values that are powers of two,
         // so scale down to that power of two, then use a fraction to scale back again
+        template<typename Iter>
         class Iterator
         {
-            std::size_t size, power_of_two;
-            std::size_t decimal, numerator, denominator;
-            std::size_t decimal_step, numerator_step;
+            using iterator = Iter;
+            using difference_type = difference_type_t<iterator>;
+
+            difference_type size, power_of_two;
+            difference_type decimal, numerator, denominator;
+            difference_type decimal_step, numerator_step;
 
         public:
 
-            Iterator(std::size_t size, std::size_t min_level):
+            Iterator(difference_type size, difference_type min_level):
                 size(size),
                 power_of_two(utility::hyperfloor(size)),
                 decimal(0),
@@ -250,11 +266,10 @@ namespace detail
                 numerator = decimal = 0;
             }
 
-            template<typename Iterator>
-            auto nextRange(Iterator it)
-                -> Range<Iterator>
+            auto nextRange(iterator it)
+                -> Range<iterator>
             {
-                std::size_t start = decimal;
+                difference_type start = decimal;
 
                 decimal += decimal_step;
                 numerator += numerator_step;
@@ -286,7 +301,7 @@ namespace detail
             }
 
             auto length() const
-                -> std::size_t
+                -> difference_type
             {
                 return decimal_step;
             }
@@ -300,8 +315,9 @@ namespace detail
             -> void
         {
             using value_type = value_type_t<RandomAccessIterator>;
+            using difference_type = difference_type_t<RandomAccessIterator>;
 
-            std::size_t size = std::distance(first, last);
+            difference_type size = std::distance(first, last);
             if (size < 15) {
                 insertion_sort(first, last, compare, projection);
                 return;
@@ -312,12 +328,12 @@ namespace detail
             // sort groups of 4-8 items at a time using an unstable sorting network,
             // but keep track of the original item orders to force it to be stable
             // http://pages.ripco.net/~jgamble/nw.html
-            Wiki::Iterator iterator(size, 4);
+            Wiki::Iterator<RandomAccessIterator> iterator(size, 4);
             while (not iterator.finished()) {
                 uint8_t order[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
                 auto range = iterator.nextRange(first);
 
-                auto do_swap = [&](std::size_t x, std::size_t y) {
+                auto do_swap = [&](difference_type x, difference_type y) {
                     if (compare(proj(range.start[y]), proj(range.start[x])) ||
                         (order[x] > order[y] && not compare(proj(range.start[x]), proj(range.start[y])))
                     ) {
@@ -371,16 +387,17 @@ namespace detail
             // just keep in mind that making it too small ruins the point (nothing will fit into it),
             // and making it too large also ruins the point (so much for "low memory"!)
             typename BufferProvider::template buffer<value_type> cache(size);
+            difference_type cache_size = cache.size();
 
             // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
             while (true) {
                 // if every A and B block will fit into the cache, use a special branch specifically for merging with the cache
                 // (we use < rather than <= since the block size might be one more than iterator.length())
-                if (iterator.length() < cache.size()) {
+                if (iterator.length() < cache_size) {
 
                     // if four subarrays fit into the cache, it's faster to merge both pairs of subarrays into the cache,
                     // then merge the two merged subarrays from the cache back into the original array
-                    if ((iterator.length() + 1) * 4 <= cache.size() && iterator.length() * 4 <= size) {
+                    if ((iterator.length() + 1) * 4 <= cache_size && iterator.length() * 4 <= size) {
                         iterator.begin();
                         while (not iterator.finished()) {
                             // merge A1 and B1 into the cache
@@ -477,19 +494,19 @@ namespace detail
                     // 7. sort the second internal buffer if it exists
                     // 8. redistribute the two internal buffers back into the array
 
-                    std::size_t block_size = std::sqrt(iterator.length());
-                    std::size_t buffer_size = iterator.length() / block_size + 1;
+                    difference_type block_size = std::sqrt(iterator.length());
+                    difference_type buffer_size = iterator.length() / block_size + 1;
 
                     // as an optimization, we really only need to pull out the internal buffers once for each level of merges
                     // after that we can reuse the same buffers over and over, then redistribute it when we're finished with this level
                     Range<RandomAccessIterator> buffer1 = { first, first };
                     Range<RandomAccessIterator> buffer2 = { first, first };
                     RandomAccessIterator index, last;
-                    std::size_t count, pull_index = 0;
+                    difference_type count, pull_index = 0;
                     struct
                     {
                         RandomAccessIterator from, to;
-                        std::size_t count;
+                        difference_type count;
                         Range<RandomAccessIterator> range;
                     } pull[2];
                     pull[0].count = 0; pull[0].range = { first, first };
@@ -497,10 +514,10 @@ namespace detail
 
                     // find two internal buffers of size 'buffer_size' each
                     // let's try finding both buffers at the same time from a single A or B subarray
-                    std::size_t find = buffer_size + buffer_size;
+                    difference_type find = buffer_size + buffer_size;
                     bool find_separately = false;
 
-                    if (block_size <= cache.size()) {
+                    if (block_size <= cache_size) {
                         // if every A block fits into the cache then we won't need the second internal buffer,
                         // so we really only need to find 'buffer_size' unique values
                         find = buffer_size;
@@ -556,7 +573,7 @@ namespace detail
                                 // so we still need to find a second separate buffer of at least √A unique values
                                 buffer1 = { A.start, A.start + count };
                                 find = buffer_size;
-                            } else if (block_size <= cache.size()) {
+                            } else if (block_size <= cache_size) {
                                 // we found the first and only internal buffer that we need, so we're done!
                                 buffer1 = { A.start, A.start + count };
                                 break;
@@ -600,7 +617,7 @@ namespace detail
                                 // so we still need to find a second separate buffer of at least √A unique values
                                 buffer1 = { B.end - count, B.end };
                                 find = buffer_size;
-                            } else if (block_size <= cache.size()) {
+                            } else if (block_size <= cache_size) {
                                 // we found the first and only internal buffer that we need, so we're done!
                                 buffer1 = { B.end - count, B.end };
                                 break;
@@ -628,7 +645,7 @@ namespace detail
 
                     // pull out the two ranges so we can use them as internal buffers
                     for (pull_index = 0; pull_index < 2; ++pull_index) {
-                        std::size_t length = pull[pull_index].count;
+                        difference_type length = pull[pull_index].count;
 
                         if (pull[pull_index].to < pull[pull_index].from) {
                             // we're pulling the values out to the left, which means the start of an A subarray
@@ -721,7 +738,7 @@ namespace detail
 
                             // if the first unevenly sized A block fits into the cache, move it there for when we go to Merge it
                             // otherwise, if the second buffer is available, block swap the contents into that
-                            if (lastA.length() <= cache.size()) {
+                            if (lastA.length() <= cache_size) {
                                 std::move(lastA.start, lastA.end, cache.begin());
                             } else if (buffer2.length() > 0) {
                                 std::swap_ranges(lastA.start, lastA.end, buffer2.start);
@@ -736,7 +753,7 @@ namespace detail
                                         // figure out where to split the previous B block, and rotate it at the split
                                         RandomAccessIterator B_split = lower_bound(lastB.start, lastB.end, proj(*indexA),
                                                                                    compare, projection);
-                                        std::size_t B_remaining = std::distance(B_split, lastB.end);
+                                        difference_type B_remaining = std::distance(B_split, lastB.end);
 
                                         // swap the minimum A block to the beginning of the rolling A blocks
                                         RandomAccessIterator minA = blockA.start;
@@ -755,7 +772,7 @@ namespace detail
                                         // if lastA fits into the external cache we'll use it, else if the second
                                         // internal buffer exists we'll use it, otherwise we'll use a strictly
                                         // in-place merge algorithm
-                                        if (lastA.length() <= cache.size()) {
+                                        if (lastA.length() <= cache_size) {
                                             merge_move(cache.begin(), cache.begin() + lastA.length(),
                                                        lastA.end, B_split, lastA.start, compare,
                                                        projection, projection);
@@ -766,10 +783,10 @@ namespace detail
                                             MergeInPlace(lastA.start, lastA.end, lastA.end, B_split, compare, projection);
                                         }
 
-                                        if (buffer2.length() > 0 || block_size <= cache.size()) {
+                                        if (buffer2.length() > 0 || block_size <= cache_size) {
                                             // move the previous A block into the cache or buffer2, since
                                             // that's where we need it to be when we go to merge it anyway
-                                            if (block_size <= cache.size()) {
+                                            if (block_size <= cache_size) {
                                                 std::move(blockA.start, blockA.start + block_size, cache.begin());
                                                 std::move(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
                                             } else {
@@ -816,7 +833,7 @@ namespace detail
                             }
 
                             // merge the last A block with the remaining B values
-                            if (lastA.length() <= cache.size()) {
+                            if (lastA.length() <= cache_size) {
                                 merge_move(cache.begin(), cache.begin() + lastA.length(),
                                            lastA.end, B.end, lastA.start, compare,
                                            projection, projection);
@@ -837,7 +854,7 @@ namespace detail
                     insertion_sort(buffer2.start, buffer2.end, compare, projection);
 
                     for (pull_index = 0 ; pull_index < 2 ; ++pull_index) {
-                        std::size_t unique = pull[pull_index].count * 2;
+                        difference_type unique = pull[pull_index].count * 2;
                         if (pull[pull_index].from > pull[pull_index].to) {
                             // the values were pulled out to the left, so redistribute them back to the right
                             Range<RandomAccessIterator> buffer = {
@@ -847,7 +864,7 @@ namespace detail
                             while (buffer.length() > 0) {
                                 index = FindFirstForward(buffer.end, pull[pull_index].range.end,
                                                          *buffer.start, compare, projection, unique);
-                                std::size_t amount = index - buffer.end;
+                                difference_type amount = index - buffer.end;
                                 std::rotate(buffer.start, buffer.end, index);
                                 buffer.start += (amount + 1);
                                 buffer.end += amount;
@@ -862,7 +879,7 @@ namespace detail
                             while (buffer.length() > 0) {
                                 index = FindLastBackward(pull[pull_index].range.start, buffer.start,
                                                          *std::prev(buffer.end), compare, projection, unique);
-                                std::size_t amount = buffer.start - index;
+                                difference_type amount = buffer.start - index;
                                 std::rotate(index, index + amount, buffer.end);
                                 buffer.start -= amount;
                                 buffer.end -= (amount + 1);

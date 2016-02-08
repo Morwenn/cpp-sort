@@ -28,19 +28,19 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
 #include <iterator>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 
 namespace cppsort
 {
 namespace detail
 {
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto sift(RandomAccessIterator first, int q,
+    auto sift(RandomAccessIterator first, difference_type_t<RandomAccessIterator> q,
               Compare compare, Projection projection)
         -> void
     {
@@ -48,7 +48,7 @@ namespace detail
 
         auto&& proj = utility::as_function(projection);
 
-        int x = q;
+        auto x = q;
         if (compare(proj(first[x]), proj(first[q - 1]))) x = q - 1;
         if (compare(proj(first[x]), proj(first[q / 2]))) x = q / 2;
         if (x != q)
@@ -66,14 +66,17 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto relocate(RandomAccessIterator first, const std::vector<int>& roots, int nb_poplars,
+    auto relocate(RandomAccessIterator first,
+                  const std::vector<difference_type_t<RandomAccessIterator>>& roots,
+                  difference_type_t<RandomAccessIterator> nb_poplars,
                   Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
         auto&& proj = utility::as_function(projection);
 
-        int m = nb_poplars;
-        for (int j = 1 ; j < nb_poplars ; ++j)
+        difference_type m = nb_poplars;
+        for (difference_type j = 1 ; j < nb_poplars ; ++j)
         {
             if (compare(proj(first[roots[m]]), proj(first[roots[j]])))
             {
@@ -127,13 +130,15 @@ namespace detail
                      Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
+
         // Size of the unsorted subsequence
         auto size = std::distance(first, last);
         if (size < 2) return;
 
-        std::vector<int> roots(utility::log2(size) + 1, 0);
+        std::vector<difference_type> roots(utility::log2(size) + 1, 0);
         auto poplar_size = utility::hyperfloor(size) - 1;
-        std::size_t nb_poplars = 0;
+        difference_type nb_poplars = 0;
 
         // Make the poplar heap
         auto it = first;

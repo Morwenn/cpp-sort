@@ -15,7 +15,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
 #include <iterator>
 #include <tuple>
 #include <utility>
@@ -70,7 +69,7 @@ namespace detail
                 auto h = lower_bound(middle, last, proj(*first), compare.base(), projection);
                 if (h != middle) {
                     std::rotate(first, middle, h);
-                    std::size_t delta = std::distance(middle, h);
+                    auto delta = std::distance(middle, h);
                     first += delta;
                     middle += delta;
                 }
@@ -84,7 +83,7 @@ namespace detail
                 auto h = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
                 if (h != middle) {
                     std::rotate(h, middle, last);
-                    std::size_t delta = std::distance(h, middle);
+                    auto delta = std::distance(h, middle);
                     middle -= delta;
                     last -= delta;
                 }
@@ -662,7 +661,7 @@ namespace detail
         using value_type = value_type_t<RandomAccessIterator>;
 
         // Allocate temporary buffer
-        std::size_t size = std::distance(first, last);
+        auto size = std::distance(first, last);
         typename BufferProvider::template buffer<value_type> buffer(size);
 
         grail_commonSort(first, last, buffer.data(), buffer.size(),

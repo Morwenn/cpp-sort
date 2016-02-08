@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <utility>
+#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -41,12 +42,16 @@ namespace detail
         auto operator()(RandomAccessIterator first) const
             -> void
         {
-            auto tmp = std::move(first[0u]);
-            for (std::size_t i = 0u ; i < N - 1u ; ++i)
+            using difference_type = difference_type_t<RandomAccessIterator>;
+
+            auto tmp = std::move(first[0]);
+            for (difference_type i = 0 ;
+                 i < static_cast<difference_type>(N - 1) ;
+                 ++i)
             {
-                first[i] = std::move(first[i+1u]);
+                first[i] = std::move(first[i+1]);
             }
-            first[N-1u] = std::move(tmp);
+            first[N-1] = std::move(tmp);
         }
     };
 

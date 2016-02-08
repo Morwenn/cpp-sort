@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -47,8 +47,8 @@ namespace detail
     //
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void bubble_sort(ForwardIterator first, Compare compare,
-                     Projection projection, std::size_t size)
+    void bubble_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
+                     Compare compare, Projection projection)
     {
         if (size < 2) return;
 
@@ -58,7 +58,7 @@ namespace detail
         {
             ForwardIterator current = first;
             ForwardIterator next = std::next(current);
-            for (std::size_t i = 0 ; i < size ; ++i)
+            for (difference_type_t<ForwardIterator> i = 0 ; i < size ; ++i)
             {
                 if (compare(proj(*next), proj(*current)))
                 {

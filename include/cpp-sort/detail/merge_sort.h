@@ -83,7 +83,7 @@ namespace detail
 
         if (size < 18)
         {
-            bubble_sort(first, compare, projection, size);
+            bubble_sort(first, size, compare, projection);
             return std::move(buffer);
         }
 
@@ -140,7 +140,7 @@ namespace detail
     {
         if (size < 18)
         {
-            bubble_sort(first, compare, projection, size);
+            bubble_sort(first, size, compare, projection);
             return;
         }
 
