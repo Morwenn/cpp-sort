@@ -1,5 +1,6 @@
 import math
 import os
+from textwrap import wrap
 
 import numpy
 from matplotlib import pyplot as plt
@@ -57,7 +58,7 @@ for filename in os.listdir("profiles"):
     spacing = 1
     groupwidth = groupsize * barwidth + spacing
 
-    colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080", "#3ADF00"]
+    colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080", "#3ADF00", "#800000"]
     for i, algo in enumerate(algos):
         heights = [numpy.median(data[size][distribution][algo]) for distribution in distributions]
         errors = [numpy.std(data[size][distribution][algo]) for distribution in distributions]
@@ -65,7 +66,8 @@ for filename in os.listdir("profiles"):
                  heights, 0.6, color = colors[i], label = algo)
 
     # Set axes limits and labels.
-    plt.yticks([barwidth * groupsize/2 + groupwidth*n for n in range(len(groupnames))], groupnames)
+    groupnames = ['\n'.join(wrap(l, 11)) for l in groupnames]
+    plt.yticks([barwidth * groupsize/2 + groupwidth*n for n in range(len(groupnames))], groupnames, horizontalalignment='center')
     plt.xlabel("Cycles per element")
 
     # Turn off ticks for y-axis.
@@ -74,7 +76,8 @@ for filename in os.listdir("profiles"):
         which="both",
         left="off",
         right="off",
-        labelleft="on"
+        labelleft="on",
+        pad=45
     )
 
     ax = plt.gca()
