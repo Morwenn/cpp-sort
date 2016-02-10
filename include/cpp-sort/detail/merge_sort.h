@@ -42,31 +42,6 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto merge_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    difference_type_t<BidirectionalIterator> size,
-                    Compare compare, Projection projection,
-                    std::bidirectional_iterator_tag category)
-        -> void
-    {
-        if (size < 40)
-        {
-            insertion_sort(first, last, compare, projection);
-            return;
-        }
-
-        // Divide the range into two partitions
-        auto size_left = size / 2;
-        auto middle = std::next(first, size_left);
-
-        // Recursively sort the partitions
-        merge_sort(first, middle, size_left, compare, projection, category);
-        merge_sort(middle, last, size - size_left, compare, projection, category);
-
-        // Merge the sorted partitions in-place
-        utility::inplace_merge(first, middle, last, compare, projection);
-    }
-
     // std::unique_ptr to handle memory allocated with
     // std::get_temporary_buffer
     template<typename T>
@@ -131,6 +106,68 @@ namespace detail
         return std::move(buffer);
     }
 
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto merge_sort_impl(BidirectionalIterator first, BidirectionalIterator last,
+                         difference_type_t<BidirectionalIterator> size,
+                         buffer_ptr<value_type_t<BidirectionalIterator>>&& buffer,
+                         std::ptrdiff_t& buff_size,
+                         Compare compare, Projection projection)
+        -> buffer_ptr<value_type_t<BidirectionalIterator>>
+    {
+        auto&& proj = utility::as_function(projection);
+
+        if (size < 40)
+        {
+            insertion_sort(first, last, compare, projection);
+            return std::move(buffer);
+        }
+
+        // Divide the range into two partitions
+        auto size_left = size / 2;
+        auto middle = std::next(first, size_left);
+
+        // Recursively sort the partitions
+        buffer = std::move(merge_sort_impl(
+            first, middle, size_left,
+            std::move(buffer), buff_size,
+            compare, projection
+        ));
+        buffer = std::move(merge_sort_impl(
+            middle, last, size - size_left,
+            std::move(buffer), buff_size,
+            compare, projection
+        ));
+
+        // Shrink the left partition to merge
+        auto&& middle_proj = proj(*middle);
+        while (first != middle && not compare(middle_proj, proj(*first)))
+        {
+            ++first;
+            --size_left;
+        }
+        if (first == middle)
+        {
+            return std::move(buffer);
+        }
+
+        // Try to increase the memory buffer if it not big enough
+        if (buff_size < size_left)
+        {
+            auto new_buffer = std::get_temporary_buffer<value_type_t<BidirectionalIterator>>(size_left);
+            buffer.reset(new_buffer.first);
+            buff_size = new_buffer.second;
+        }
+
+        // Merge the sorted partitions in-place
+        using comp_ref = std::add_lvalue_reference_t<Compare>;
+        inplace_merge_impl<comp_ref>(first, middle, last,
+                                     compare, projection,
+                                     size_left, size - size_left,
+                                     buffer.get(), buff_size);
+
+        return std::move(buffer);
+    }
+
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort(ForwardIterator first, ForwardIterator,
                     difference_type_t<ForwardIterator> size,
@@ -147,6 +184,26 @@ namespace detail
         buffer_ptr<value_type_t<ForwardIterator>> buffer(nullptr);
         std::ptrdiff_t buffer_size = 0;
         merge_sort_impl(first, size,
+                        std::move(buffer), buffer_size,
+                        compare, projection);
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto merge_sort(BidirectionalIterator first, BidirectionalIterator last,
+                    difference_type_t<BidirectionalIterator> size,
+                    Compare compare, Projection projection,
+                    std::bidirectional_iterator_tag)
+        -> void
+    {
+        if (size < 40)
+        {
+            insertion_sort(first, last, compare, projection);
+            return;
+        }
+
+        buffer_ptr<value_type_t<BidirectionalIterator>> buffer(nullptr);
+        std::ptrdiff_t buffer_size = 0;
+        merge_sort_impl(first, last, size,
                         std::move(buffer), buffer_size,
                         compare, projection);
     }
