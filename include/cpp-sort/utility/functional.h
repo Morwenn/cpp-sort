@@ -59,10 +59,7 @@ namespace utility
         auto operator()(T* pointer) const
             -> void
         {
-            if (pointer)
-            {
-                std::return_temporary_buffer(pointer);
-            }
+            std::return_temporary_buffer(pointer);
         }
     };
 
