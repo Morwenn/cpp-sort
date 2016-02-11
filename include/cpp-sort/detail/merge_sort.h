@@ -56,7 +56,7 @@ namespace detail
     {
         auto&& proj = utility::as_function(projection);
 
-        if (size < 18)
+        if (size < 14)
         {
             bubble_sort(first, size, compare, projection);
             return std::move(buffer);
@@ -175,7 +175,7 @@ namespace detail
                     std::forward_iterator_tag)
         -> void
     {
-        if (size < 18)
+        if (size < 14)
         {
             bubble_sort(first, size, compare, projection);
             return;
