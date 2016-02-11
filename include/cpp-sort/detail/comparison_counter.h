@@ -28,18 +28,23 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <functional>
 
 namespace cppsort
 {
 namespace detail
 {
     template<
-        typename Compare,
+        typename Compare = std::less<>,
         typename CountType = std::size_t
     >
     class comparison_counter
     {
         public:
+
+            comparison_counter():
+                comparison_counter(Compare{})
+            {}
 
             explicit comparison_counter(Compare compare):
                 compare(compare),
