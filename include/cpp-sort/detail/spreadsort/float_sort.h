@@ -14,7 +14,7 @@ float_mem_cast fix provided by:
 Scott McMurray
 */
 
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_
@@ -52,7 +52,8 @@ namespace spreadsort
   \endcode
   */
   template<class Data_type, class Cast_type>
-  Cast_type float_mem_cast(const Data_type & data)
+  auto float_mem_cast(const Data_type & data)
+      -> Cast_type
   {
     // Only cast IEEE floating-point numbers, and only to a same-sized integer.
     static_assert(sizeof(Cast_type) == sizeof(Data_type), "");
@@ -88,8 +89,9 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \par The sorted vector contains ascending values "1.0 1.3 2.3".
 
   */
-  template <class RandomAccessIter>
-  void float_sort(RandomAccessIter first, RandomAccessIter last)
+  template<class RandomAccessIter>
+  auto float_sort(RandomAccessIter first, RandomAccessIter last)
+      -> void
   {
     if (last - first < detail::min_sort_size)
       pdqsort(first, last, std::less<>{}, utility::identity{});
@@ -105,9 +107,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
     \param[in] rshift Functor that returns the result of shifting the value_type right a specified number of bits.
 
   */
-  template <class RandomAccessIter, class Right_shift>
-  void float_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Right_shift>
+  auto float_sort(RandomAccessIter first, RandomAccessIter last,
                   Right_shift rshift)
+      -> void
   {
     if (last - first < detail::min_sort_size)
       pdqsort(first, last, std::less<>{}, utility::identity{});
@@ -125,9 +128,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \param[in] comp A binary functor that returns whether the first element passed to it should go before the second in order.
   */
 
-  template <class RandomAccessIter, class Right_shift, class Compare>
-  void float_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Right_shift, class Compare>
+  auto float_sort(RandomAccessIter first, RandomAccessIter last,
                   Right_shift rshift, Compare comp)
+      -> void
   {
     if (last - first < detail::min_sort_size)
       pdqsort(first, last, comp, utility::identity{});

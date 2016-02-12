@@ -15,7 +15,7 @@ Doxygen comments by Paul A. Bristow Jan 2015
 
 */
 
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_INTEGER_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_INTEGER_SORT_H_
@@ -76,8 +76,9 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template <class RandomAccessIter>
-  void integer_sort(RandomAccessIter first, RandomAccessIter last)
+  template<class RandomAccessIter>
+  auto integer_sort(RandomAccessIter first, RandomAccessIter last)
+      -> void
   {
     // Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
@@ -126,9 +127,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 */
-  template <class RandomAccessIter, class Right_shift, class Compare>
-  void integer_sort(RandomAccessIter first, RandomAccessIter last,
-                    Right_shift shift, Compare comp) {
+  template<class RandomAccessIter, class Right_shift, class Compare>
+  auto integer_sort(RandomAccessIter first, RandomAccessIter last,
+                    Right_shift shift, Compare comp)
+      -> void
+  {
     if (last - first < detail::min_sort_size)
       pdqsort(first, last, comp, utility::identity{});
     else
@@ -175,9 +178,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template <class RandomAccessIter, class Right_shift>
-  void integer_sort(RandomAccessIter first, RandomAccessIter last,
-                    Right_shift shift) {
+  template<class RandomAccessIter, class Right_shift>
+  auto integer_sort(RandomAccessIter first, RandomAccessIter last,
+                    Right_shift shift)
+      -> void
+  {
     if (last - first < detail::min_sort_size)
       pdqsort(first, last, std::less<>{}, utility::identity{});
     else

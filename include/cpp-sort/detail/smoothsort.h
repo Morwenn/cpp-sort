@@ -1,7 +1,7 @@
 /*
  * File: Smoothsort.hh
  * Author: Keith Schwarz (htiek@cs.stanford.edu)
- *         Modified in 2015 by Morwenn for inclusion into cpp-sort
+ *         Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
  *
  * An implementation of Dijkstra's Smoothsort algorithm, a modification of
  * heapsort that runs in O(n lg n) in the worst case, but O(n) if the data
@@ -79,8 +79,10 @@ namespace detail
        * to the root of that tree's second child.  It's assumed that the heap
        * is well-formed and that size > 1.
        */
-      template <typename RandomIterator>
-      RandomIterator SecondChild(RandomIterator root) {
+      template<typename RandomIterator>
+      auto SecondChild(RandomIterator root)
+          -> RandomIterator
+      {
         /* The second child root is always one step before the root. */
         return root - 1;
       }
@@ -92,8 +94,10 @@ namespace detail
        * to the root of that tree's first child.  It's assumed that the heap
        * is well-formed and that size > 1.
        */
-      template <typename RandomIterator>
-      RandomIterator FirstChild(RandomIterator root, std::size_t size) {
+      template<typename RandomIterator>
+      auto FirstChild(RandomIterator root, std::size_t size)
+          -> RandomIterator
+      {
         /* Go to the second child, then step backwards L(size - 2) steps to
          * skip over it.
          */
@@ -108,9 +112,10 @@ namespace detail
        * an iterator to its larger child.  It's assumed that the heap is
        * well-formatted and that the heap has order > 1.
        */
-      template <typename RandomIterator, typename Comparator, typename Projection>
-      RandomIterator LargerChild(RandomIterator root, std::size_t size,
-                                 Comparator comp, Projection projection)
+      template<typename RandomIterator, typename Comparator, typename Projection>
+      auto LargerChild(RandomIterator root, std::size_t size,
+                       Comparator comp, Projection projection)
+          -> RandomIterator
       {
         auto&& proj = utility::as_function(projection);
 
@@ -130,9 +135,10 @@ namespace detail
        * rebalancing, rebalances that tree using the standard "bubble-down"
        * approach.
        */
-      template <typename RandomIterator, typename Comparator, typename Projection>
-      void RebalanceSingleHeap(RandomIterator root, std::size_t size,
+      template<typename RandomIterator, typename Comparator, typename Projection>
+      auto RebalanceSingleHeap(RandomIterator root, std::size_t size,
                                Comparator comp, Projection projection)
+          -> void
       {
         auto&& proj = utility::as_function(projection);
 
@@ -177,10 +183,11 @@ namespace detail
        * the new root down to the proper position and rebalancing the target
        * heap.
        */
-      template <typename RandomIterator, typename Comparator, typename Projection>
-      void LeonardoHeapRectify(RandomIterator begin, RandomIterator end,
+      template<typename RandomIterator, typename Comparator, typename Projection>
+      auto LeonardoHeapRectify(RandomIterator begin, RandomIterator end,
                                HeapShape shape, Comparator comp,
                                Projection projection)
+          -> void
       {
         auto&& proj = utility::as_function(projection);
 
@@ -268,10 +275,11 @@ namespace detail
        * by [begin, heapEnd], along with the shape, a comparator and a projection,
        * increases the size of that heap by one by inserting the element at *end.
        */
-      template <typename RandomIterator, typename Comparator, typename Projection>
-      void LeonardoHeapAdd(RandomIterator begin, RandomIterator end,
+      template<typename RandomIterator, typename Comparator, typename Projection>
+      auto LeonardoHeapAdd(RandomIterator begin, RandomIterator end,
                            RandomIterator heapEnd, HeapShape& shape,
                            Comparator comp, Projection projection)
+          -> void
       {
         /* There are three cases to consider, which are analogous to the cases
          * in the proof that it is possible to partition the input into heaps
@@ -384,9 +392,10 @@ namespace detail
        * the heap is already at end, this essentially keeps the max element in
        * its place and does a rebalance if necessary.
        */
-      template <typename RandomIterator, typename Comparator, typename Projection>
-      void LeonardoHeapRemove(RandomIterator begin, RandomIterator end,
+      template<typename RandomIterator, typename Comparator, typename Projection>
+      auto LeonardoHeapRemove(RandomIterator begin, RandomIterator end,
                               HeapShape& shape, Comparator comp, Projection projection)
+          -> void
       {
         /* There are two cases to consider:
          *
@@ -443,12 +452,13 @@ namespace detail
     }
 
     /* Actual smoothsort implementation. */
-    template <typename RandomIterator, typename Comparator, typename Projection>
-    void smoothsort(RandomIterator begin, RandomIterator end,
+    template<typename RandomIterator, typename Comparator, typename Projection>
+    auto smoothsort(RandomIterator begin, RandomIterator end,
                     Comparator comp, Projection projection)
+        -> void
     {
       /* Edge case: Check that the range isn't empty or a singleton. */
-      if (begin == end || begin + 1 == end) return;
+      if (std::distance(begin, end) < 2) return;
 
       /* Construct a shape object describing the empty heap. */
       smoothsort_detail::HeapShape shape;

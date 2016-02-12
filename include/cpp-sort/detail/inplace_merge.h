@@ -36,41 +36,69 @@ namespace detail
     private:
         std::size_t size;
 
-        template <class Tp>
-        void process(Tp* p, std::false_type) noexcept
-            {for (std::size_t i = 0; i < size; ++i, (void) ++p) p->~Tp();}
+        template<typename Tp>
+        auto process(Tp* p, std::false_type) noexcept
+            -> void
+        {
+            for (std::size_t i = 0; i < size; ++i, (void) ++p)
+            {
+                p->~Tp();
+            }
+        }
 
-        template <class Tp>
-        void process(Tp*, std::true_type) noexcept
-            {}
+        template<typename Tp>
+        auto process(Tp*, std::true_type) noexcept
+            -> void
+        {}
 
-        void incr(std::false_type) noexcept
-            {++size;}
-        void incr(std::true_type) noexcept
-            {}
+        auto incr(std::false_type) noexcept
+            -> void
+        {
+            ++size;
+        }
 
-        void set(std::size_t s, std::false_type) noexcept
-            {size = s;}
-        void set(std::size_t, std::true_type) noexcept
-            {}
+        auto incr(std::true_type) noexcept
+            -> void
+        {}
+
+        auto set(std::size_t s, std::false_type) noexcept
+            -> void
+        {
+            size = s;
+        }
+
+        auto set(std::size_t, std::true_type) noexcept
+            -> void
+        {}
+
     public:
-        explicit destruct_n(std::size_t s) noexcept
-            : size(s) {}
+        explicit destruct_n(std::size_t s) noexcept:
+            size(s)
+        {}
 
-        template <class Tp>
-        void incr(Tp*) noexcept
-            {incr(std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());}
+        template<typename Tp>
+        auto incr(Tp*) noexcept
+            -> void
+        {
+            incr(std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());
+        }
 
-        template <class Tp>
-        void set(std::size_t s, Tp*) noexcept
-            {set(s, std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());}
+        template<typename Tp>
+        auto set(std::size_t s, Tp*) noexcept
+            -> void
+        {
+            set(s, std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());
+        }
 
-        template <class Tp>
-        void operator()(Tp* p) noexcept
-            {process(p, std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());}
+        template<typename Tp>
+        auto operator()(Tp* p) noexcept
+            -> void
+        {
+            process(p, std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());
+        }
     };
 
-    template <class Predicate>
+    template<typename Predicate>
     class negate
     {
     private:
@@ -78,20 +106,31 @@ namespace detail
     public:
         negate() {}
 
-        explicit negate(Predicate p) : pred(p) {}
+        explicit negate(Predicate p):
+            pred(p)
+        {}
 
-        template <class T1>
-        bool operator()(const T1& x) {return !pred(x);}
+        template<typename T1>
+        auto operator()(const T1& x)
+            -> bool
+        {
+            return not pred(x);
+        }
 
-        template <class T1, class T2>
-        bool operator()(const T1& x, const T2& y) {return !pred(x, y);}
+        template<typename T1, typename T2>
+        auto operator()(const T1& x, const T2& y)
+            -> bool
+        {
+            return not pred(x, y);
+        }
     };
 
-    template <class Compare, class InputIterator1, class InputIterator2,
-              class OutputIterator, class Projection>
-    void half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
+    template<typename Compare, typename InputIterator1, typename InputIterator2,
+             typename OutputIterator, typename Projection>
+    auto half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
                             InputIterator2 first2, InputIterator2 last2,
                             OutputIterator result, Compare comp, Projection projection)
+        -> void
     {
         auto&& proj = utility::as_function(projection);
 
@@ -117,7 +156,7 @@ namespace detail
         // first2 through last2 are already in the right spot.
     }
 
-    template <class Compare, class BidirectionalIterator, class Projection>
+    template<typename Compare, typename BidirectionalIterator, typename Projection>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last, Compare comp, Projection projection,
                                 difference_type_t<BidirectionalIterator> len1,
@@ -148,7 +187,7 @@ namespace detail
         }
     }
 
-    template <class Compare, class BidirectionalIterator, class Projection>
+    template<typename Compare, typename BidirectionalIterator, typename Projection>
     auto inplace_merge_impl(BidirectionalIterator first, BidirectionalIterator middle, BidirectionalIterator last,
                             Compare comp, Projection projection,
                             difference_type_t<BidirectionalIterator> len1,

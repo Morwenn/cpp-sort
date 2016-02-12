@@ -37,10 +37,10 @@ namespace cppsort
 namespace detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    void insertion_sort(BidirectionalIterator first,
-                        BidirectionalIterator last,
+    auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
                         Compare compare, Projection projection,
                         std::bidirectional_iterator_tag)
+        -> void
     {
         if (first == last)
         {
@@ -71,9 +71,10 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void insertion_sort(ForwardIterator first, ForwardIterator last,
+    auto insertion_sort(ForwardIterator first, ForwardIterator last,
                         Compare compare, Projection projection,
                         std::forward_iterator_tag)
+        -> void
     {
         auto&& proj = utility::as_function(projection);
 
@@ -84,8 +85,9 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void insertion_sort(ForwardIterator first, ForwardIterator last,
+    auto insertion_sort(ForwardIterator first, ForwardIterator last,
                         Compare compare, Projection projection)
+        -> void
     {
         using category = iterator_category_t<ForwardIterator>;
         insertion_sort(first, last, compare, projection, category{});

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,9 @@ namespace cppsort
 namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void selection_sort(ForwardIterator first, ForwardIterator last,
+    auto selection_sort(ForwardIterator first, ForwardIterator last,
                         Compare compare, Projection projection)
+        -> void
     {
         for (ForwardIterator it = first ; it != last ; ++it)
         {

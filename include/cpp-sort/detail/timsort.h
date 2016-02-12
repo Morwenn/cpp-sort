@@ -47,13 +47,14 @@ namespace cppsort
 {
 namespace detail
 {
-    template <typename RandomAccessIterator, typename LessFunction, typename Projection>
-    class TimSort {
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    class TimSort
+    {
         using iter_t = RandomAccessIterator;
         using value_t = value_type_t<iter_t>;
         using ref_t = reference_t<iter_t>;
         using diff_t = difference_type_t<iter_t>;
-        using compare_t = three_way_compare<LessFunction>;
+        using compare_t = three_way_compare<Compare>;
 
         static constexpr int MIN_MERGE = 32;
 
@@ -65,9 +66,10 @@ namespace detail
         int minGallop_; // default to MIN_GALLOP
 
         std::vector<value_t> tmp_; // temp storage for merges
-        typedef typename std::vector<value_t>::iterator tmp_iter_t;
+        using tmp_iter_t = typename std::vector<value_t>::iterator;
 
-        struct run {
+        struct run
+        {
             iter_t base;
             diff_t len;
 
@@ -75,8 +77,9 @@ namespace detail
         };
         std::vector<run> pending_;
 
-        static
-        void sort(iter_t const lo, iter_t const hi, compare_t c, Projection projection) {
+        static auto sort(iter_t const lo, iter_t const hi, compare_t c, Projection projection)
+            -> void
+        {
             assert( lo <= hi );
 
             diff_t nRemaining = std::distance(lo, hi);
@@ -114,9 +117,10 @@ namespace detail
             assert( ts.pending_.size() == 1 );
         } // sort()
 
-        static
-        void binarySort(iter_t const lo, iter_t const hi, iter_t start,
-                        compare_t compare, Projection projection) {
+        static auto binarySort(iter_t const lo, iter_t const hi, iter_t start,
+                               compare_t compare, Projection projection)
+            -> void
+        {
             assert( lo <= start && start <= hi );
             auto&& proj = utility::as_function(projection);
             if(start == lo) {
@@ -134,9 +138,10 @@ namespace detail
             }
         }
 
-        static
-        diff_t countRunAndMakeAscending(iter_t const lo, iter_t const hi,
-                                        compare_t compare, Projection projection) {
+        static auto countRunAndMakeAscending(iter_t const lo, iter_t const hi,
+                                             compare_t compare, Projection projection)
+            -> diff_t
+        {
             assert( lo < hi );
             auto&& proj = utility::as_function(projection);
 
@@ -160,8 +165,9 @@ namespace detail
             return runHi - lo;
         }
 
-        static
-        diff_t minRunLength(diff_t n) {
+        static auto minRunLength(diff_t n)
+            -> diff_t
+        {
             assert( n >= 0 );
 
             diff_t r = 0;
@@ -172,15 +178,20 @@ namespace detail
             return n + r;
         }
 
-        TimSort(compare_t c, Projection projection)
-                : comp_(c), proj_(projection), minGallop_(MIN_GALLOP) {
-        }
+        TimSort(compare_t c, Projection projection):
+            comp_(c), proj_(projection),
+            minGallop_(MIN_GALLOP)
+        {}
 
-        void pushRun(iter_t const runBase, diff_t const runLen) {
+        auto pushRun(iter_t const runBase, diff_t const runLen)
+            -> void
+        {
             pending_.emplace_back(runBase, runLen);
         }
 
-        void mergeCollapse() {
+        auto mergeCollapse()
+            -> void
+        {
             while( pending_.size() > 1 ) {
                 diff_t n = pending_.size() - 2;
 
@@ -200,7 +211,9 @@ namespace detail
             }
         }
 
-        void mergeForceCollapse() {
+        auto mergeForceCollapse()
+            -> void
+        {
             while( pending_.size() > 1 ) {
                 diff_t n = pending_.size() - 2;
 
@@ -211,7 +224,9 @@ namespace detail
             }
         }
 
-        void mergeAt(diff_t const i) {
+        auto mergeAt(diff_t const i)
+            -> void
+        {
             diff_t const stackSize = pending_.size();
             assert( stackSize >= 2 );
             assert( i >= 0 );
@@ -257,8 +272,10 @@ namespace detail
             }
         }
 
-        template <typename Iter>
-        diff_t gallopLeft(ref_t key, Iter const base, diff_t const len, diff_t const hint) {
+        template<typename Iter>
+        auto gallopLeft(ref_t key, Iter const base, diff_t const len, diff_t const hint)
+            -> diff_t
+        {
             assert( len > 0 && hint >= 0 && hint < len );
             auto&& proj = utility::as_function(proj_);
             auto&& key_proj = proj(key);
@@ -306,8 +323,10 @@ namespace detail
             return lower_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
-        template <typename Iter>
-        diff_t gallopRight(ref_t key, Iter const base, diff_t const len, diff_t const hint) {
+        template<typename Iter>
+        auto gallopRight(ref_t key, Iter const base, diff_t const len, diff_t const hint)
+            -> diff_t
+        {
             assert( len > 0 && hint >= 0 && hint < len );
             auto&& proj = utility::as_function(proj_);
             auto&& key_proj = proj(key);
@@ -355,7 +374,9 @@ namespace detail
             return upper_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
-        void mergeLo(iter_t const base1, diff_t len1, iter_t const base2, diff_t len2) {
+        auto mergeLo(iter_t const base1, diff_t len1, iter_t const base2, diff_t len2)
+            -> void
+        {
             assert( len1 > 0 && len2 > 0 && base1 + len1 == base2 );
 
             copy_to_tmp(base1, len1);
@@ -475,7 +496,9 @@ namespace detail
             }
         }
 
-        void mergeHi(iter_t const base1, diff_t len1, iter_t const base2, diff_t len2) {
+        auto mergeHi(iter_t const base1, diff_t len1, iter_t const base2, diff_t len2)
+            -> void
+        {
             assert( len1 > 0 && len2 > 0 && base1 + len1 == base2 );
 
             copy_to_tmp(base2, len2);
@@ -599,24 +622,26 @@ namespace detail
             }
         }
 
-        void copy_to_tmp(iter_t const begin, diff_t const len) {
+        auto copy_to_tmp(iter_t const begin, diff_t const len)
+            -> void
+        {
             tmp_.clear();
             tmp_.reserve(len);
             std::move(begin, begin + len, std::back_inserter(tmp_));
         }
 
         // the only interface is the friend timsort() function
-        template <typename IterT, typename LessT, typename Proj>
+        template<typename IterT, typename LessT, typename Proj>
         friend void timsort(IterT, IterT, LessT, Proj);
     };
 
-    template<typename RandomAccessIterator, typename LessFunction, typename Projection>
-    void timsort(RandomAccessIterator const first, RandomAccessIterator const last,
-                 LessFunction compare, Projection projection) {
-        TimSort<RandomAccessIterator, LessFunction, Projection>::sort(first, last, compare, projection);
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto timsort(RandomAccessIterator const first, RandomAccessIterator const last,
+                 Compare compare, Projection projection)
+        -> void
+    {
+        TimSort<RandomAccessIterator, Compare, Projection>::sort(first, last, compare, projection);
     }
 }}
-
-#undef GFX_TIMSORT_LOG
 
 #endif // CPPSORT_DETAIL_TIMSORT_H_

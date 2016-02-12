@@ -47,8 +47,9 @@ namespace detail
     //
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    void bubble_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    auto bubble_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
                      Compare compare, Projection projection)
+        -> void
     {
         if (size < 2) return;
 

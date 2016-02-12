@@ -13,7 +13,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
@@ -22,6 +22,7 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <functional>
@@ -43,7 +44,8 @@ namespace detail
 
     //This only works on unsigned data types
     template <typename T>
-    unsigned rough_log_2_size(const T& input)
+    auto rough_log_2_size(const T& input)
+        -> unsigned
     {
       unsigned result = 0;
       //The && is necessary on some compilers to avoid infinite loops
@@ -60,9 +62,10 @@ namespace detail
     template<unsigned log_mean_bin_size,
              unsigned log_min_split_count,
              unsigned log_finishing_count>
-    size_t get_min_count(unsigned log_range)
+    auto get_min_count(unsigned log_range)
+        -> std::size_t
     {
-      const size_t typed_one = 1;
+      const std::size_t typed_one = 1;
       const unsigned min_size = log_mean_bin_size + log_min_split_count;
       //Assuring that constants have valid settings
       static_assert(log_min_split_count <= max_splits &&
@@ -95,8 +98,8 @@ namespace detail
         for (unsigned offset = min_size; offset < log_range;
           offset += ++result);
         //Preventing overflow; this situation shouldn't occur
-        if ((result + log_mean_bin_size) >= (8 * sizeof(size_t)))
-          return typed_one << ((8 * sizeof(size_t)) - 1);
+        if ((result + log_mean_bin_size) >= (8 * sizeof(std::size_t)))
+          return typed_one << ((8 * sizeof(std::size_t)) - 1);
         return typed_one << (result + log_mean_bin_size);
       }
       //A quick division can calculate the worst-case runtime for larger ranges
@@ -105,8 +108,8 @@ namespace detail
       unsigned bit_length = ((((max_splits - 1) + remainder)/max_splits)
         + base_iterations + min_size);
       //Preventing overflow; this situation shouldn't occur
-      if (bit_length >= (8 * sizeof(size_t)))
-        return typed_one << ((8 * sizeof(size_t)) - 1);
+      if (bit_length >= (8 * sizeof(std::size_t)))
+        return typed_one << ((8 * sizeof(std::size_t)) - 1);
       //n(log_range)/max_splits + C, optimizing worst-case performance
       return typed_one << bit_length;
     }
@@ -114,13 +117,14 @@ namespace detail
     // Resizes the bin cache and bin sizes, and initializes each bin size to 0.
     // This generates the memory overhead to use in radix sorting.
     template <class RandomAccessIter>
-    RandomAccessIter * size_bins(size_t *bin_sizes,
-                                 std::vector<RandomAccessIter> &bin_cache,
-                                 unsigned cache_offset, unsigned &cache_end,
-                                 unsigned bin_count)
+    auto size_bins(std::size_t *bin_sizes,
+                   std::vector<RandomAccessIter> &bin_cache,
+                   unsigned cache_offset, unsigned &cache_end,
+                   unsigned bin_count)
+        -> RandomAccessIter*
     {
       // Clear the bin sizes
-      for (size_t u = 0; u < bin_count; u++)
+      for (std::size_t u = 0; u < bin_count; u++)
         bin_sizes[u] = 0;
       //Make sure there is space for the bins
       cache_end = cache_offset + bin_count;

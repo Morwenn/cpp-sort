@@ -285,6 +285,7 @@ namespace detail
     >
     auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator last,
                                    Compare compare, Projection projection)
+        -> void
     {
         // Cache all the differences between a Jacobsthal number and its
         // predecessor that fit in 64 bits, starting with the difference

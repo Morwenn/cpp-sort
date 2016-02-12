@@ -1,7 +1,7 @@
 // Range v3 library
 //
 //  Copyright Eric Niebler 2013-2014
-//  Modified in 2015 by Morwenn for inclusion into cpp-sort
+//  Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 //
 //  Use, modification and distribution is subject to the
 //  Boost Software License, Version 1.0. (See accompanying
@@ -30,35 +30,44 @@ namespace utility
         struct as_function_fn
         {
         private:
-            template<typename R, typename...Args>
+            template<typename Ret, typename... Args>
             struct ptr_fn_
             {
             private:
-                R (*pfn_)(Args...);
+                Ret (*pfn_)(Args...);
+
             public:
                 ptr_fn_() = default;
-                constexpr explicit ptr_fn_(R (*pfn)(Args...))
-                  : pfn_(pfn)
+
+                constexpr explicit ptr_fn_(Ret (*pfn)(Args...)):
+                    pfn_(pfn)
                 {}
-                R operator()(Args...args) const
+
+                auto operator()(Args...args) const
+                    -> Ret
                 {
                     return (*pfn_)(std::forward<Args>(args)...);
                 }
             };
+
         public:
-            template<typename R, typename ...Args>
-            constexpr ptr_fn_<R, Args...> operator()(R (*p)(Args...)) const
+            template<typename Ret, typename... Args>
+            constexpr auto operator()(Ret (*p)(Args...)) const
+                -> ptr_fn_<Ret, Args...>
             {
-                return ptr_fn_<R, Args...>(p);
+                return ptr_fn_<Ret, Args...>(p);
             }
-            template<typename R, typename T>
-            auto operator()(R T::* p) const -> decltype(std::mem_fn(p))
+
+            template<typename Ret, typename T>
+            auto operator()(Ret T::* p) const
+                -> decltype(std::mem_fn(p))
             {
                 return std::mem_fn(p);
             }
+
             template<typename T, typename U = std::decay_t<T>>
-            constexpr auto operator()(T && t) const ->
-                std::enable_if_t<
+            constexpr auto operator()(T && t) const
+                -> std::enable_if_t<
                     !std::is_pointer<U>::value && !std::is_member_pointer<U>::value,
                     T
                 >

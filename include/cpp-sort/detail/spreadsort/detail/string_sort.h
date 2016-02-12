@@ -21,6 +21,7 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <type_traits>
 #include <vector>
@@ -42,11 +43,12 @@ namespace spreadsort
     //characters at a time for cache efficiency and optimal worst-case
     //performance.
     template<class RandomAccessIter, class Unsigned_char_type>
-    void update_offset(RandomAccessIter first, RandomAccessIter finish,
-                       size_t &char_offset)
+    auto update_offset(RandomAccessIter first, RandomAccessIter finish,
+                       std::size_t &char_offset)
+        -> void
     {
       const int char_size = sizeof(Unsigned_char_type);
-      size_t nextOffset = char_offset;
+      std::size_t nextOffset = char_offset;
       int step_size = max_step_size / char_size;
       while (true) {
         RandomAccessIter curr = first;
@@ -82,10 +84,11 @@ namespace spreadsort
     //Offsetting on identical characters.  This function works a character
     //at a time for optimal worst-case performance.
     template<class RandomAccessIter, class Get_char, class Get_length>
-    void update_offset(RandomAccessIter first, RandomAccessIter finish,
-                       size_t &char_offset, Get_char getchar, Get_length length)
+    auto update_offset(RandomAccessIter first, RandomAccessIter finish,
+                       std::size_t &char_offset, Get_char getchar, Get_length length)
+        -> void
     {
-      size_t nextOffset = char_offset;
+      std::size_t nextOffset = char_offset;
       while (true) {
         RandomAccessIter curr = first;
         do {
@@ -104,11 +107,12 @@ namespace spreadsort
     //This comparison functor assumes strings are identical up to char_offset
     template<class Data_type, class Unsigned_char_type>
     struct offset_less_than {
-      offset_less_than(size_t char_offset) : fchar_offset(char_offset){}
-      inline bool operator()(const Data_type &x, const Data_type &y) const
+      offset_less_than(std::size_t char_offset) : fchar_offset(char_offset){}
+      inline auto operator()(const Data_type &x, const Data_type &y) const
+          -> bool
       {
-        size_t minSize = (std::min)(x.size(), y.size());
-        for (size_t u = fchar_offset; u < minSize; ++u) {
+        std::size_t minSize = (std::min)(x.size(), y.size());
+        for (std::size_t u = fchar_offset; u < minSize; ++u) {
           static_assert(sizeof(x[u]) == sizeof(Unsigned_char_type), "");
           if (static_cast<Unsigned_char_type>(x[u]) !=
               static_cast<Unsigned_char_type>(y[u])) {
@@ -118,17 +122,18 @@ namespace spreadsort
         }
         return x.size() < y.size();
       }
-      size_t fchar_offset;
+      std::size_t fchar_offset;
     };
 
     //Compares strings assuming they are identical up to char_offset
     template<class Data_type, class Unsigned_char_type>
     struct offset_greater_than {
-      offset_greater_than(size_t char_offset) : fchar_offset(char_offset){}
-      inline bool operator()(const Data_type &x, const Data_type &y) const
+      offset_greater_than(std::size_t char_offset) : fchar_offset(char_offset){}
+      inline auto operator()(const Data_type &x, const Data_type &y) const
+          -> bool
       {
-        size_t minSize = (std::min)(x.size(), y.size());
-        for (size_t u = fchar_offset; u < minSize; ++u) {
+        std::size_t minSize = (std::min)(x.size(), y.size());
+        for (std::size_t u = fchar_offset; u < minSize; ++u) {
           static_assert(sizeof(x[u]) == sizeof(Unsigned_char_type), "");
           if (static_cast<Unsigned_char_type>(x[u]) !=
               static_cast<Unsigned_char_type>(y[u])) {
@@ -138,17 +143,18 @@ namespace spreadsort
         }
         return x.size() > y.size();
       }
-      size_t fchar_offset;
+      std::size_t fchar_offset;
     };
 
     //This comparison functor assumes strings are identical up to char_offset
     template<class Data_type, class Get_char, class Get_length>
     struct offset_char_less_than {
-      offset_char_less_than(size_t char_offset) : fchar_offset(char_offset){}
-      inline bool operator()(const Data_type &x, const Data_type &y) const
+      offset_char_less_than(std::size_t char_offset) : fchar_offset(char_offset){}
+      inline auto operator()(const Data_type &x, const Data_type &y) const
+          -> bool
       {
-        size_t minSize = (std::min)(length(x), length(y));
-        for (size_t u = fchar_offset; u < minSize; ++u) {
+        std::size_t minSize = (std::min)(length(x), length(y));
+        for (std::size_t u = fchar_offset; u < minSize; ++u) {
           if (getchar(x, u) != getchar(y, u)) {
             return getchar(x, u) < getchar(y, u);
           }
@@ -161,11 +167,12 @@ namespace spreadsort
     };
 
     //String sorting recursive implementation
-    template <class RandomAccessIter, class Unsigned_char_type>
-    void string_sort_rec(RandomAccessIter first, RandomAccessIter last,
+    template<class RandomAccessIter, class Unsigned_char_type>
+    auto string_sort_rec(RandomAccessIter first, RandomAccessIter last,
                          std::size_t char_offset,
                          std::vector<RandomAccessIter> &bin_cache,
-                         unsigned cache_offset, size_t *bin_sizes)
+                         unsigned cache_offset, std::size_t *bin_sizes)
+        -> void
     {
       using Data_type = value_type_t<RandomAccessIter>;
       //This section makes handling of long identical substrings much faster
@@ -249,7 +256,7 @@ namespace spreadsort
       //Skip this loop for empties
       for (unsigned u = cache_offset + 1; u < cache_offset + last_bin + 2;
           lastPos = bin_cache[u], (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
@@ -265,12 +272,13 @@ namespace spreadsort
     }
 
     //Sorts strings in reverse order, with empties at the end
-    template <class RandomAccessIter, class Unsigned_char_type>
-    void reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
+    template<class RandomAccessIter, class Unsigned_char_type>
+    auto reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
                                  std::size_t char_offset,
                                  std::vector<RandomAccessIter> &bin_cache,
                                  unsigned cache_offset,
                                  std::size_t *bin_sizes)
+        -> void
     {
       using Data_type = value_type_t<RandomAccessIter>;
       //This section makes handling of long identical substrings much faster
@@ -359,7 +367,7 @@ namespace spreadsort
       //Skip this loop for empties
       for (unsigned u = cache_offset; u <= cache_offset + last_bin;
           lastPos = bin_cache[u], (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
@@ -375,12 +383,13 @@ namespace spreadsort
     }
 
     //String sorting recursive implementation
-    template <class RandomAccessIter, class Unsigned_char_type, class Get_char,
-              class Get_length>
-    void string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                         size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
-                         unsigned cache_offset, size_t *bin_sizes,
+    template<class RandomAccessIter, class Unsigned_char_type, class Get_char,
+             class Get_length>
+    auto string_sort_rec(RandomAccessIter first, RandomAccessIter last,
+                         std::size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
+                         unsigned cache_offset, std::size_t *bin_sizes,
                          Get_char getchar, Get_length length)
+        -> void
     {
       using Data_type = value_type_t<RandomAccessIter>;
       //This section makes handling of long identical substrings much faster
@@ -460,7 +469,7 @@ namespace spreadsort
       //Skip this loop for empties
       for (unsigned u = cache_offset + 1; u < cache_offset + last_bin + 2;
           lastPos = bin_cache[u], (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
@@ -477,12 +486,13 @@ namespace spreadsort
     }
 
     //String sorting recursive implementation
-    template <class RandomAccessIter, class Unsigned_char_type, class Get_char,
-              class Get_length, class Compare>
-    void string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                         size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
-                         unsigned cache_offset, size_t *bin_sizes,
+    template<class RandomAccessIter, class Unsigned_char_type, class Get_char,
+             class Get_length, class Compare>
+    auto string_sort_rec(RandomAccessIter first, RandomAccessIter last,
+                         std::size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
+                         unsigned cache_offset, std::size_t *bin_sizes,
                          Get_char getchar, Get_length length, Compare comp)
+        -> void
     {
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
@@ -561,7 +571,7 @@ namespace spreadsort
       //Skip this loop for empties
       for (unsigned u = cache_offset + 1; u < cache_offset + last_bin + 2;
           lastPos = bin_cache[u], (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
@@ -577,12 +587,13 @@ namespace spreadsort
     }
 
     //Sorts strings in reverse order, with empties at the end
-    template <class RandomAccessIter, class Unsigned_char_type, class Get_char,
-              class Get_length, class Compare>
-    void reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                                 size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
-                                 unsigned cache_offset, size_t *bin_sizes,
+    template<class RandomAccessIter, class Unsigned_char_type, class Get_char,
+             class Get_length, class Compare>
+    auto reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
+                                 std::size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
+                                 unsigned cache_offset, std::size_t *bin_sizes,
                                  Get_char getchar, Get_length length, Compare comp)
+        -> void
     {
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
@@ -665,7 +676,7 @@ namespace spreadsort
       //Skip this loop for empties
       for (unsigned u = cache_offset; u <= cache_offset + last_bin;
           lastPos = bin_cache[u], (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         //don't sort unless there are at least two items to Compare
         if (count < 2)
           continue;
@@ -681,50 +692,51 @@ namespace spreadsort
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Unsigned_char_type>
-    std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    string_sort(RandomAccessIter first, RandomAccessIter last,
-                Unsigned_char_type)
+    template<class RandomAccessIter, class Unsigned_char_type>
+    auto string_sort(RandomAccessIter first, RandomAccessIter last,
+                     Unsigned_char_type)
+        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
     {
-      size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
+      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
       string_sort_rec<RandomAccessIter, Unsigned_char_type>
         (first, last, 0, bin_cache, 0, bin_sizes);
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Unsigned_char_type>
-    std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-                        Unsigned_char_type)
+    template<class RandomAccessIter, class Unsigned_char_type>
+    auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
+                             Unsigned_char_type)
+        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
     {
-      size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
+      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
       reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type>
         (first, last, 0, bin_cache, 0, bin_sizes);
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Get_char, class Get_length,
-              class Unsigned_char_type>
-    std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    string_sort(RandomAccessIter first, RandomAccessIter last,
-                Get_char getchar, Get_length length, Unsigned_char_type)
+    template<class RandomAccessIter, class Get_char, class Get_length,
+             class Unsigned_char_type>
+    auto string_sort(RandomAccessIter first, RandomAccessIter last,
+                     Get_char getchar, Get_length length, Unsigned_char_type)
+        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
     {
-      size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
+      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
       string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
         Get_length>(first, last, 0, bin_cache, 0, bin_sizes, getchar, length);
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Get_char, class Get_length,
-              class Compare, class Unsigned_char_type>
-    std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    string_sort(RandomAccessIter first, RandomAccessIter last,
-        Get_char getchar, Get_length length, Compare comp, Unsigned_char_type)
+    template<class RandomAccessIter, class Get_char, class Get_length,
+             class Compare, class Unsigned_char_type>
+    auto string_sort(RandomAccessIter first, RandomAccessIter last,
+                     Get_char getchar, Get_length length, Compare comp,
+                     Unsigned_char_type)
+        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
     {
-      size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
+      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
       string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char
         , Get_length, Compare>
@@ -732,13 +744,14 @@ namespace spreadsort
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Get_char, class Get_length,
-              class Compare, class Unsigned_char_type>
-    std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-        Get_char getchar, Get_length length, Compare comp, Unsigned_char_type)
+    template<class RandomAccessIter, class Get_char, class Get_length,
+             class Compare, class Unsigned_char_type>
+    auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
+                             Get_char getchar, Get_length length, Compare comp,
+                             Unsigned_char_type)
+        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
     {
-      size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
+      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
       reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
                               Get_length, Compare>

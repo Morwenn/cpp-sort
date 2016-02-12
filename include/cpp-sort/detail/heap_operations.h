@@ -103,6 +103,7 @@ namespace detail
     auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
                   Compare comp, Projection projection,
                   difference_type_t<RandomAccessIterator> len)
+        -> void
     {
         if (len > 1)
         {
@@ -115,6 +116,7 @@ namespace detail
     template<class RandomAccessIterator, class Compare, class Projection>
     auto sort_heap(RandomAccessIterator first, RandomAccessIterator last,
                    Compare comp, Projection projection)
+        -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
         for (difference_type n = last - first; n > 1; --last, (void) --n) {

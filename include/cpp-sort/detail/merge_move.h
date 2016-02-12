@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_MERGE_MOVE_H_
@@ -23,8 +23,8 @@ namespace cppsort
 {
 namespace detail
 {
-    template<class InputIterator1, class InputIterator2, class OutputIterator,
-             class Compare, class Projection1, class Projection2>
+    template<typename InputIterator1, typename InputIterator2, typename OutputIterator,
+             typename Compare, typename Projection1, typename Projection2>
     auto merge_move(InputIterator1 first1, InputIterator1 last1,
                     InputIterator2 first2, InputIterator2 last2,
                     OutputIterator result, Compare comp={},

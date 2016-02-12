@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,21 +27,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
-#include <cpp-sort/utility/functional.h>
 #include "heap_operations.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<
-        typename RandomAccessIterator,
-        typename Compare = std::less<>,
-        typename Projection = utility::identity
-    >
-    void heapsort(RandomAccessIterator first, RandomAccessIterator last,
-                  Compare compare={}, Projection projection={})
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto heapsort(RandomAccessIterator first, RandomAccessIterator last,
+                  Compare compare, Projection projection)
+        -> void
     {
         make_heap(first, last, compare, projection);
         sort_heap(first, last, compare, projection);

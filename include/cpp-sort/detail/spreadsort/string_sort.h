@@ -12,7 +12,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_STRING_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_STRING_SORT_H_
@@ -77,9 +77,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 */
 
-  template <class RandomAccessIter, class Unsigned_char_type>
-  void string_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Unsigned_char_type>
+  auto string_sort(RandomAccessIter first, RandomAccessIter last,
                    Unsigned_char_type unused)
+      -> void
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
@@ -129,8 +130,9 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template <class RandomAccessIter>
-  void string_sort(RandomAccessIter first, RandomAccessIter last)
+  template<class RandomAccessIter>
+  auto string_sort(RandomAccessIter first, RandomAccessIter last)
+      -> void
   {
     unsigned char unused = '\0';
     string_sort(first, last, unused);
@@ -186,9 +188,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 */
-  template <class RandomAccessIter, class Compare, class Unsigned_char_type>
-  void reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Compare, class Unsigned_char_type>
+  auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
                            Compare comp, Unsigned_char_type unused)
+      -> void
   {
     //Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
@@ -241,9 +244,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 */
-  template <class RandomAccessIter, class Compare>
-  void reverse_string_sort(RandomAccessIter first,
+  template<class RandomAccessIter, class Compare>
+  auto reverse_string_sort(RandomAccessIter first,
                            RandomAccessIter last, Compare comp)
+      -> void
   {
     unsigned char unused = '\0';
     reverse_string_sort(first, last, comp, unused);
@@ -295,9 +299,10 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template <class RandomAccessIter, class Get_char, class Get_length>
-  void string_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Get_char, class Get_length>
+  auto string_sort(RandomAccessIter first, RandomAccessIter last,
                    Get_char getchar, Get_length length)
+      -> void
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
@@ -361,10 +366,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template <class RandomAccessIter, class Get_char, class Get_length,
-            class Compare>
-  void string_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Get_char, class Get_length,
+           class Compare>
+  auto string_sort(RandomAccessIter first, RandomAccessIter last,
                    Get_char getchar, Get_length length, Compare comp)
+      -> void
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
@@ -428,10 +434,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template <class RandomAccessIter, class Get_char, class Get_length,
-            class Compare>
-  void reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
+  template<class RandomAccessIter, class Get_char, class Get_length,
+           class Compare>
+  auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
                            Get_char getchar, Get_length length, Compare comp)
+      -> void
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)

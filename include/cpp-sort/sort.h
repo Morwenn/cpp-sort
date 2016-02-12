@@ -97,7 +97,7 @@ namespace cppsort
         >
     >
     auto sort(Iterator first, Iterator last, Compare compare, Projection projection)
-        -> decltype(auto)
+        -> void
     {
         return default_sorter{}(first, last, compare, projection);
     }

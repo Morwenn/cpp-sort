@@ -20,6 +20,7 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <iterator>
@@ -40,9 +41,10 @@ namespace spreadsort
   namespace detail {
     // Return true if the list is sorted.  Otherwise, find the minimum and
     // maximum using <.
-    template <class RandomAccessIter>
-    bool is_sorted_or_find_extremes(RandomAccessIter current, RandomAccessIter last,
+    template<class RandomAccessIter>
+    auto is_sorted_or_find_extremes(RandomAccessIter current, RandomAccessIter last,
                                     RandomAccessIter & max, RandomAccessIter & min)
+        -> bool
     {
       min = max = current;
       //This assumes we have more than 1 element based on prior checks.
@@ -67,10 +69,11 @@ namespace spreadsort
     // Return true if the list is sorted.  Otherwise, find the minimum and
     // maximum.
     // Use a user-defined comparison operator
-    template <class RandomAccessIter, class Compare>
-    bool is_sorted_or_find_extremes(RandomAccessIter current, RandomAccessIter last,
+    template<class RandomAccessIter, class Compare>
+    auto is_sorted_or_find_extremes(RandomAccessIter current, RandomAccessIter last,
                                     RandomAccessIter & max, RandomAccessIter & min,
                                     Compare comp)
+        -> bool
     {
       min = max = current;
       while (!comp(*(current + 1), *current)) {
@@ -92,7 +95,8 @@ namespace spreadsort
 
     //Gets a non-negative right bit shift to operate as a logarithmic divisor
     template<unsigned log_mean_bin_size>
-    int get_log_divisor(size_t count, int log_range)
+    auto get_log_divisor(std::size_t count, int log_range)
+        -> int
     {
       int log_divisor;
       //If we can finish in one iteration without exceeding either
@@ -111,10 +115,11 @@ namespace spreadsort
     }
 
     //Implementation for recursive integer sorting
-    template <class RandomAccessIter, class Div_type, class Size_type>
-    void spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
+    template<class RandomAccessIter, class Div_type, class Size_type>
+    auto spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
                         std::vector<RandomAccessIter> &bin_cache, unsigned cache_offset,
-                        size_t *bin_sizes)
+                        std::size_t *bin_sizes)
+        -> void
     {
       //This step is roughly 10% of runtime, but it helps avoid worst-case
       //behavior and improve behavior with real data
@@ -135,7 +140,7 @@ namespace spreadsort
 
       //Calculating the size of each bin; this takes roughly 10% of runtime
       for (RandomAccessIter current = first; current != last;)
-        bin_sizes[size_t((*(current++) >> log_divisor) - div_min)]++;
+        bin_sizes[std::size_t((*(current++) >> log_divisor) - div_min)]++;
       //Assign the bin positions
       bins[0] = first;
       for (unsigned u = 0; u < bin_count - 1; u++)
@@ -180,7 +185,7 @@ namespace spreadsort
       if (!log_divisor)
         return;
       //log_divisor is the remaining range; calculating the comparison threshold
-      size_t max_count =
+      std::size_t max_count =
         get_min_count<int_log_mean_bin_size, int_log_min_split_count,
                       int_log_finishing_count>(log_divisor);
 
@@ -205,10 +210,11 @@ namespace spreadsort
     }
 
     //Generic bitshift-based 3-way swapping code
-    template <class RandomAccessIter, class Div_type, class Right_shift>
-    void inner_swap_loop(RandomAccessIter * bins, const RandomAccessIter & next_bin_start,
+    template<class RandomAccessIter, class Div_type, class Right_shift>
+    auto inner_swap_loop(RandomAccessIter * bins, const RandomAccessIter & next_bin_start,
                          unsigned ii, Right_shift &rshift,
                          const unsigned log_divisor, const Div_type div_min)
+        -> void
     {
       RandomAccessIter * local_bin = bins + ii;
       for (RandomAccessIter current = *local_bin; current < next_bin_start;
@@ -240,11 +246,12 @@ namespace spreadsort
     }
 
     //Standard swapping wrapper for ascending values
-    template <class RandomAccessIter, class Div_type, class Right_shift>
-    void swap_loop(RandomAccessIter * bins,
+    template<class RandomAccessIter, class Div_type, class Right_shift>
+    auto swap_loop(RandomAccessIter * bins,
                    RandomAccessIter & next_bin_start, unsigned ii, Right_shift &rshift,
-                   const size_t *bin_sizes,
+                   const std::size_t *bin_sizes,
                    const unsigned log_divisor, const Div_type div_min)
+        -> void
     {
       next_bin_start += bin_sizes[ii];
       inner_swap_loop<RandomAccessIter, Div_type, Right_shift>(bins,
@@ -252,12 +259,13 @@ namespace spreadsort
     }
 
     //Functor implementation for recursive sorting
-    template <class RandomAccessIter, class Div_type, class Right_shift,
-              class Compare, class Size_type, unsigned log_mean_bin_size,
-              unsigned log_min_split_count, unsigned log_finishing_count>
-    void spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
+    template<class RandomAccessIter, class Div_type, class Right_shift,
+             class Compare, class Size_type, unsigned log_mean_bin_size,
+             unsigned log_min_split_count, unsigned log_finishing_count>
+    auto spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
                         std::vector<RandomAccessIter> &bin_cache, unsigned cache_offset,
-                        size_t *bin_sizes, Right_shift rshift, Compare comp)
+                        std::size_t *bin_sizes, Right_shift rshift, Compare comp)
+        -> void
     {
       RandomAccessIter max, min;
       if (is_sorted_or_find_extremes(first, last, max, min, comp))
@@ -290,12 +298,12 @@ namespace spreadsort
         return;
 
       //Recursing
-      size_t max_count = get_min_count<log_mean_bin_size, log_min_split_count,
+      std::size_t max_count = get_min_count<log_mean_bin_size, log_min_split_count,
                           log_finishing_count>(log_divisor);
       RandomAccessIter lastPos = first;
       for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
           (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;
         if (count < max_count)
@@ -308,12 +316,13 @@ namespace spreadsort
     }
 
     //Functor implementation for recursive sorting with only Shift overridden
-    template <class RandomAccessIter, class Div_type, class Right_shift,
-              class Size_type, unsigned log_mean_bin_size,
-              unsigned log_min_split_count, unsigned log_finishing_count>
-    void spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
+    template<class RandomAccessIter, class Div_type, class Right_shift,
+             class Size_type, unsigned log_mean_bin_size,
+             unsigned log_min_split_count, unsigned log_finishing_count>
+    auto spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
                         std::vector<RandomAccessIter> &bin_cache, unsigned cache_offset,
-                        size_t *bin_sizes, Right_shift rshift)
+                        std::size_t *bin_sizes, Right_shift rshift)
+        -> void
     {
       RandomAccessIter max, min;
       if (is_sorted_or_find_extremes(first, last, max, min))
@@ -346,12 +355,12 @@ namespace spreadsort
         return;
 
       //Recursing
-      size_t max_count = get_min_count<log_mean_bin_size, log_min_split_count,
+      std::size_t max_count = get_min_count<log_mean_bin_size, log_min_split_count,
                           log_finishing_count>(log_divisor);
       RandomAccessIter lastPos = first;
       for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
           (void) ++u) {
-        size_t count = bin_cache[u] - lastPos;
+        std::size_t count = bin_cache[u] - lastPos;
         if (count < 2)
           continue;
         if (count < max_count)
@@ -364,35 +373,37 @@ namespace spreadsort
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Div_type>
-    //Only use spreadsort if the integer can fit in a size_t
-    std::enable_if_t< sizeof(Div_type) <= sizeof(size_t), void >
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
+    //Only use spreadsort if the integer can fit in a std::size_t
+    template<class RandomAccessIter, class Div_type>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
+        -> std::enable_if_t< sizeof(Div_type) <= sizeof(std::size_t), void >
     {
-      size_t bin_sizes[1 << max_finishing_splits];
+      std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, size_t>(first, last,
+      spreadsort_rec<RandomAccessIter, Div_type, std::size_t>(first, last,
           bin_cache, 0, bin_sizes);
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template <class RandomAccessIter, class Div_type>
-    //Only use spreadsort if the integer can fit in a uintmax_t
-    std::enable_if_t< (sizeof(Div_type) > sizeof(size_t))
-      && sizeof(Div_type) <= sizeof(std::uintmax_t), void >
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
+    //Only use spreadsort if the integer can fit in a std::uintmax_t
+    template<class RandomAccessIter, class Div_type>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
+        -> std::enable_if_t< (sizeof(Div_type) > sizeof(std::size_t))
+            && sizeof(Div_type) <= sizeof(std::uintmax_t), void
+        >
     {
-      size_t bin_sizes[1 << max_finishing_splits];
+      std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
       spreadsort_rec<RandomAccessIter, Div_type, std::uintmax_t>(first,
           last, bin_cache, 0, bin_sizes);
     }
 
-    template <class RandomAccessIter, class Div_type>
-    disable_if_t< sizeof(Div_type) <= sizeof(size_t)
-      || sizeof(Div_type) <= sizeof(std::uintmax_t), void >
     //defaulting to pdqsort when integer_sort won't work
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
+    template<class RandomAccessIter, class Div_type>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
+        -> disable_if_t< sizeof(Div_type) <= sizeof(std::size_t)
+            || sizeof(Div_type) <= sizeof(std::uintmax_t), void
+        >
     {
       //We're using pdqsort, even though integer_sort was called
       pdqsort(first, last, std::less<>{}, utility::identity{});
@@ -400,30 +411,31 @@ namespace spreadsort
 
 
     //Same for the full functor version
-    template <class RandomAccessIter, class Div_type, class Right_shift,
-              class Compare>
-    //Only use spreadsort if the integer can fit in a size_t
-    std::enable_if_t< sizeof(Div_type) <= sizeof(size_t), void >
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                Right_shift shift, Compare comp)
+    //Only use spreadsort if the integer can fit in a std::size_t
+    template<class RandomAccessIter, class Div_type, class Right_shift,
+             class Compare>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
+                      Right_shift shift, Compare comp)
+        -> std::enable_if_t< sizeof(Div_type) <= sizeof(std::size_t), void >
     {
-      size_t bin_sizes[1 << max_finishing_splits];
+      std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
       spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
-          size_t, int_log_mean_bin_size, int_log_min_split_count,
+          std::size_t, int_log_mean_bin_size, int_log_min_split_count,
                         int_log_finishing_count>
           (first, last, bin_cache, 0, bin_sizes, shift, comp);
     }
 
-    template <class RandomAccessIter, class Div_type, class Right_shift,
-              class Compare>
-    //Only use spreadsort if the integer can fit in a uintmax_t
-    std::enable_if_t< (sizeof(Div_type) > sizeof(size_t))
-      && sizeof(Div_type) <= sizeof(std::uintmax_t), void >
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                Right_shift shift, Compare comp)
+    //Only use spreadsort if the integer can fit in a std::uintmax_t
+    template<class RandomAccessIter, class Div_type, class Right_shift,
+             class Compare>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
+                      Right_shift shift, Compare comp)
+        -> std::enable_if_t< (sizeof(Div_type) > sizeof(std::size_t))
+            && sizeof(Div_type) <= sizeof(std::uintmax_t), void
+        >
     {
-      size_t bin_sizes[1 << max_finishing_splits];
+      std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
       spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
                         std::uintmax_t, int_log_mean_bin_size,
@@ -431,13 +443,14 @@ namespace spreadsort
           (first, last, bin_cache, 0, bin_sizes, shift, comp);
     }
 
-    template <class RandomAccessIter, class Div_type, class Right_shift,
-              class Compare>
-    disable_if_t< sizeof(Div_type) <= sizeof(size_t)
-      || sizeof(Div_type) <= sizeof(std::uintmax_t), void >
     //defaulting to pdqsort when integer_sort won't work
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                Right_shift shift, Compare comp)
+    template<class RandomAccessIter, class Div_type, class Right_shift,
+             class Compare>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
+                      Right_shift shift, Compare comp)
+        -> disable_if_t< sizeof(Div_type) <= sizeof(std::size_t)
+            || sizeof(Div_type) <= sizeof(std::uintmax_t), void
+        >
     {
       //We're using pdqsort, even though integer_sort was called
       pdqsort(first, last, comp, utility::identity{});
@@ -445,28 +458,29 @@ namespace spreadsort
 
 
     //Same for the right shift version
-    template <class RandomAccessIter, class Div_type, class Right_shift>
-    //Only use spreadsort if the integer can fit in a size_t
-    std::enable_if_t< sizeof(Div_type) <= sizeof(size_t), void >
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                Right_shift shift)
+    //Only use spreadsort if the integer can fit in a std::size_t
+    template<class RandomAccessIter, class Div_type, class Right_shift>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
+                      Right_shift shift)
+        -> std::enable_if_t< sizeof(Div_type) <= sizeof(std::size_t), void >
     {
-      size_t bin_sizes[1 << max_finishing_splits];
+      std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, Right_shift, size_t,
+      spreadsort_rec<RandomAccessIter, Div_type, Right_shift, std::size_t,
           int_log_mean_bin_size, int_log_min_split_count,
                         int_log_finishing_count>
           (first, last, bin_cache, 0, bin_sizes, shift);
     }
 
-    template <class RandomAccessIter, class Div_type, class Right_shift>
-    //Only use spreadsort if the integer can fit in a uintmax_t
-    std::enable_if_t< (sizeof(Div_type) > sizeof(size_t))
-      && sizeof(Div_type) <= sizeof(std::uintmax_t), void >
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                Right_shift shift)
+    //Only use spreadsort if the integer can fit in a std::uintmax_t
+    template<class RandomAccessIter, class Div_type, class Right_shift>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
+                      Right_shift shift)
+        -> std::enable_if_t< (sizeof(Div_type) > sizeof(std::size_t))
+            && sizeof(Div_type) <= sizeof(std::uintmax_t), void
+        >
     {
-      size_t bin_sizes[1 << max_finishing_splits];
+      std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
       spreadsort_rec<RandomAccessIter, Div_type, Right_shift,
                         std::uintmax_t, int_log_mean_bin_size,
@@ -474,12 +488,13 @@ namespace spreadsort
           (first, last, bin_cache, 0, bin_sizes, shift);
     }
 
-    template <class RandomAccessIter, class Div_type, class Right_shift>
-    disable_if_t< sizeof(Div_type) <= sizeof(size_t)
-      || sizeof(Div_type) <= sizeof(std::uintmax_t), void >
     //defaulting to pdqsort when integer_sort won't work
-    integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                Right_shift shift)
+    template<class RandomAccessIter, class Div_type, class Right_shift>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
+                      Right_shift shift)
+        -> disable_if_t< sizeof(Div_type) <= sizeof(std::size_t)
+            || sizeof(Div_type) <= sizeof(std::uintmax_t), void
+        >
     {
       //We're using pdqsort, even though integer_sort was called
       pdqsort(first, last, std::less<>{}, utility::identity{});
