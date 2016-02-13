@@ -26,6 +26,7 @@ set(
     probes/osc.cpp
     probes/rem.cpp
     probes/runs.cpp
+    probes/relations.cpp
 )
 
 set(
