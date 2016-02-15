@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -35,11 +36,21 @@
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
+    // Different ways for a network to be optimal
+
+    namespace optimal
+    {
+        struct size  {};
+        struct depth {};
+        struct swaps {};
+    }
+
+    ////////////////////////////////////////////////////////////
     // Adapter
 
     namespace detail
     {
-        template<std::size_t N>
+        template<std::size_t N, typename Optimal1, typename Optimal2>
         struct sorting_network_sorter_impl
         {
             static_assert(
@@ -49,16 +60,22 @@ namespace cppsort
         };
     }
 
-    template<std::size_t N>
+    template<
+        std::size_t N,
+        typename Optimal1 = optimal::size,
+        typename Optimal2 = optimal::depth
+    >
     struct sorting_network_sorter:
-        sorter_facade<detail::sorting_network_sorter_impl<N>>
+        sorter_facade<detail::sorting_network_sorter_impl<
+            N, Optimal1, Optimal2
+        >>
     {};
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
 
-    template<std::size_t N>
-    struct sorter_traits<sorting_network_sorter<N>>
+    template<std::size_t N, typename Optimal1, typename Optimal2>
+    struct sorter_traits<sorting_network_sorter<N, Optimal1, Optimal2>>
     {
         using iterator_category = std::random_access_iterator_tag;
 

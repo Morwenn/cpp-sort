@@ -37,8 +37,8 @@ namespace cppsort
 {
 namespace detail
 {
-    template<>
-    struct sorting_network_sorter_impl<13u>
+    template<typename Optimal1, typename Optimal2>
+    struct sorting_network_sorter_impl<13u, Optimal1, Optimal2>
     {
         template<
             typename RandomAccessIterator,
