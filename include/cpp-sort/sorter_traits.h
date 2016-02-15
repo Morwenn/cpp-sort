@@ -250,7 +250,10 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Fixed-size sorter traits
 
-    template<template<std::size_t> class FixedSizeSorter>
+    template<
+        template<std::size_t, typename...>
+        class FixedSizeSorter
+    >
     struct fixed_sorter_traits
     {
         // Empty for SFINAE-friendliness

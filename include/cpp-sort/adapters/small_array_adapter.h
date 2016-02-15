@@ -64,13 +64,13 @@ namespace cppsort
     namespace detail
     {
         template<
-            template<std::size_t> class FixedSizeSorter,
+            template<std::size_t, typename...> class FixedSizeSorter,
             typename Indices
         >
         struct small_array_adapter_impl;
 
         template<
-            template<std::size_t> class FixedSizeSorter,
+            template<std::size_t, typename...> class FixedSizeSorter,
             std::size_t... Indices
         >
         struct small_array_adapter_impl<FixedSizeSorter, std::index_sequence<Indices...>>:
@@ -106,7 +106,7 @@ namespace cppsort
             }
         };
 
-        template<template<std::size_t> class FixedSizeSorter>
+        template<template<std::size_t, typename...> class FixedSizeSorter>
         struct small_array_adapter_impl<FixedSizeSorter, void>:
             fixed_sorter_traits<FixedSizeSorter>
         {
@@ -139,7 +139,7 @@ namespace cppsort
     // and thus void is given
 
     template<
-        template<std::size_t> class FixedSizeSorter,
+        template<std::size_t, typename...> class FixedSizeSorter,
         typename Indices = typename detail::has_domain<
             fixed_sorter_traits<FixedSizeSorter>
         >::domain

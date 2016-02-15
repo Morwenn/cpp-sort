@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,13 +65,13 @@ struct sorter_name<selection_sorter>
     static constexpr const char* value = "selection_sorter";
 };
 
-template<std::size_t N>
-struct sorter_name<sorting_network_sorter<N>>
+template<std::size_t N, typename... Args>
+struct sorter_name<sorting_network_sorter<N, Args...>>
 {
     static constexpr const char* value = "sorting_network_sorter";
 };
 
-template<template<std::size_t> class Sorter, typename Indices>
+template<template<std::size_t, typename...> class Sorter, typename Indices>
 struct sorter_name<small_array_adapter<Sorter, Indices>>
 {
     static constexpr const char* value = sorter_name<Sorter<0u>>::value;
