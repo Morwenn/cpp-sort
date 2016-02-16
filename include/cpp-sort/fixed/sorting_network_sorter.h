@@ -30,6 +30,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
@@ -63,13 +64,22 @@ namespace cppsort
     template<
         std::size_t N,
         typename Optimal1 = optimal::size,
-        typename Optimal2 = optimal::depth
+        typename Optimal2 = std::conditional_t<
+            not std::is_same<Optimal1, optimal::depth>::value,
+            optimal::depth,
+            optimal::size
+        >
     >
     struct sorting_network_sorter:
         sorter_facade<detail::sorting_network_sorter_impl<
             N, Optimal1, Optimal2
         >>
-    {};
+    {
+        static_assert(
+            not std::is_same<Optimal1, Optimal2>::value,
+            "specifying the same optimality criterion twice is not allowed"
+        );
+    };
 
     ////////////////////////////////////////////////////////////
     // Sorter traits
