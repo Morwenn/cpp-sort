@@ -52,10 +52,10 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            swap_if(first[0u], first[1u], compare, projection);
-            swap_if(first[2u], first[3u], compare, projection);
             swap_if(first[0u], first[2u], compare, projection);
             swap_if(first[1u], first[3u], compare, projection);
+            swap_if(first[0u], first[1u], compare, projection);
+            swap_if(first[2u], first[3u], compare, projection);
             swap_if(first[1u], first[2u], compare, projection);
         }
     };
