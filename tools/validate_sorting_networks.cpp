@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,13 @@
 ////////////////////////////////////////////////////////////
 // Count the number of comparisons
 
-template<typename T, std::size_t N>
+template<typename T, std::size_t N, typename... Args>
 auto validate_sorting_network()
     -> void
 {
     std::cout << "sorting network of size " << N << ": ";
 
-    cppsort::sorting_network_sorter<N> sorter;
+    cppsort::sorting_network_sorter<N, Args...> sorter;
     std::array<T, N> collection;
 
     for (auto it = std::begin(collection) ; it != std::end(collection) ; ++it)
@@ -75,13 +75,13 @@ auto validate_sorting_network()
     std::cout << "ok\n";
 }
 
-template<typename T, std::size_t... Indices>
+template<typename T, typename... Args, std::size_t... Indices>
 auto validate_sorting_networks(std::index_sequence<Indices...>)
     -> void
 {
     // Variadic dispatch only works with expressions
     int dummy[] = {
-        (validate_sorting_network<T, Indices>(), 0)...
+        (validate_sorting_network<T, Indices, Args...>(), 0)...
     };
     (void) dummy;
 }

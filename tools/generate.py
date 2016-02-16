@@ -2,11 +2,14 @@ import sys
 
 
 def transform(line):
-    line = line.strip('[],\n SWAP();')
+    line = line.strip('[]{},\n SWAP();')
     if line:
-        x, y = map(int, line.split(', '))
-        return 'swap_if(first[{0}u], first[{1}u], compare, projection);'.format(x, y)
-
+        try:
+            x, y = map(int, line.split(', '))
+            return 'swap_if(first[{0}u], first[{1}u], compare, projection);'.format(x, y)
+        except ValueError:
+            x, y = map(int, line.split(','))
+            return 'swap_if(first[{0}u], first[{1}u], compare, projection);'.format(x, y)
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as source:
