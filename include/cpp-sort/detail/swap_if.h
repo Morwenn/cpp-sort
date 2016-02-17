@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -80,26 +80,6 @@ namespace detail
         Integer dx = x;
         x = std::max(x, y);
         y ^= dx ^ x;
-    }
-
-    template<
-        typename Integer,
-        typename = std::enable_if_t<std::is_integral<Integer>::value>
-    >
-    auto swap_if(Integer& x, Integer& y, std::less<Integer>, utility::identity)
-        -> void
-    {
-        swap_if(x, y, std::less<>{}, utility::identity{});
-    }
-
-    template<
-        typename Integer,
-        typename = std::enable_if_t<std::is_integral<Integer>::value>
-    >
-    auto swap_if(Integer& x, Integer& y, std::greater<Integer>)
-        -> void
-    {
-        swap_if(x, y, std::greater<>{}, utility::identity{});
     }
 }}
 
