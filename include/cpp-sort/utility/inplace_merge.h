@@ -53,7 +53,6 @@
 #include <cpp-sort/utility/functional.h>
 #include "../detail/inplace_merge.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/merge_move.h"
 
 namespace cppsort
 {
@@ -61,21 +60,6 @@ namespace utility
 {
     namespace detail
     {
-        template<typename InputIterator, typename Size, typename OutputIterator>
-        auto move_n(InputIterator first, Size count, OutputIterator result)
-            -> OutputIterator
-        {
-            if (count > 0)
-            {
-                *result++ = std::move(*first);
-                for (Size i = 1 ; i < count ; ++i)
-                {
-                    *result++ = std::move(*++first);
-                }
-            }
-            return result;
-        }
-
         template<typename ForwardIterator, typename Compare, typename Projection>
         auto merge_n_step_0(ForwardIterator f0, cppsort::detail::difference_type_t<ForwardIterator> n0,
                             ForwardIterator f1, cppsort::detail::difference_type_t<ForwardIterator> n1,
@@ -130,18 +114,26 @@ namespace utility
                                 Compare compare, Projection projection)
             -> void
         {
+            using value_type = cppsort::detail::value_type_t<ForwardIterator>;
             using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
 
             if (n0 == 0 || n1 == 0) return;
 
             if (n0 <= buff_size)
             {
-                move_n(f0, n0, buffer);
-                cppsort::detail::merge_move(
-                    buffer, buffer + n0,
-                    f1, std::next(f1, n1),
-                    f0, compare,
-                    projection, projection
+                cppsort::detail::destruct_n d(0);
+                std::unique_ptr<value_type, cppsort::detail::destruct_n&> h2(buffer, d);
+
+                value_type* buff_it = buffer;
+                for (auto it = f0 ; it != f1 ; d.incr((value_type*)nullptr), (void) ++it)
+                {
+                    ::new(buff_it) value_type(std::move(*it));
+                    ++buff_it;
+                }
+
+                cppsort::detail::half_inplace_merge(
+                    buffer, buff_it, f1, std::next(f1, n1), f0,
+                    compare, projection
                 );
                 return;
             }
