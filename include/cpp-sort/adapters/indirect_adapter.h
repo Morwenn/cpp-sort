@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
