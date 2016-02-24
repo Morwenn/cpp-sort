@@ -166,8 +166,8 @@ namespace detail
             difference_type _size;
     };
 
-    template<typename Iterator1, typename Iterator2>
-    auto iter_swap(group_iterator<Iterator1> lhs, group_iterator<Iterator2> rhs)
+    template<typename Iterator>
+    auto iter_swap(group_iterator<Iterator> lhs, group_iterator<Iterator> rhs)
         -> void
     {
         std::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
@@ -305,8 +305,6 @@ namespace detail
             1537228672809129216u, 3074457345618258432u, 6148914691236516864u
         };
 
-        using std::iter_swap;
-
         auto size = std::distance(first, last);
         if (size < 2) return;
 
@@ -324,6 +322,7 @@ namespace detail
         {
             if (compare(proj(it[1]), proj(it[0])))
             {
+                using std::iter_swap;
                 iter_swap(it, it + 1);
             }
         }
@@ -331,7 +330,7 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Recursively sort the pairs by max
 
-        merge_insertion_sort(
+        merge_insertion_sort_impl(
             make_group_iterator(first, 2),
             make_group_iterator(end, 2),
             compare, projection
