@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
+#include <cpp-sort/utility/iter_move.h>
 #include "min_element.h"
 
 namespace cppsort
@@ -41,7 +41,8 @@ namespace detail
     {
         for (ForwardIterator it = first ; it != last ; ++it)
         {
-            std::iter_swap(it, min_element(it, last, compare, projection));
+            using utility::iter_swap;
+            iter_swap(it, min_element(it, last, compare, projection));
         }
     }
 }}

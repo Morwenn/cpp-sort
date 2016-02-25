@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
 namespace cppsort
@@ -39,7 +39,7 @@ namespace detail
     //
     // This sorting algorithm isn't exposed to users of the
     // library, it's only intended to be used as a fallback
-    // by other algorithms to sort small collections
+    // by other stable algorithms to sort small collections
     //
     // These recursive algorithms tend to compute the size
     // of the collection, so bubble_sort can use it to have
@@ -53,6 +53,7 @@ namespace detail
     {
         if (size < 2) return;
 
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         while (--size)
@@ -63,7 +64,7 @@ namespace detail
             {
                 if (compare(proj(*next), proj(*current)))
                 {
-                    std::iter_swap(current, next);
+                    iter_swap(current, next);
                 }
                 ++next;
                 ++current;
