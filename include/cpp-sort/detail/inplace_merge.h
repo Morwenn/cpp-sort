@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// //  Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_INPLACE_MERGE_H_
@@ -17,14 +17,16 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
-#include <functional>
 #include <iterator>
 #include <memory>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "lower_bound.h"
 #include "iterator_traits.h"
+#include "move.h"
+#include "rotate.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -132,67 +134,76 @@ namespace detail
                             OutputIterator result, Compare comp, Projection projection)
         -> void
     {
+        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
         for (; first1 != last1; ++result)
         {
             if (first2 == last2)
             {
-                std::move(first1, last1, result);
+                detail::move(first1, last1, result);
                 return;
             }
 
             if (comp(proj(*first2), proj(*first1)))
             {
-                *result = std::move(*first2);
+                *result = iter_move(first2);
                 ++first2;
             }
             else
             {
-                *result = std::move(*first1);
+                *result = iter_move(first1);
                 ++first1;
             }
         }
         // first2 through last2 are already in the right spot.
     }
 
-    template<typename Compare, typename BidirectionalIterator, typename Projection>
+    template<typename Compare, typename BidirectionalIterator,
+             typename Projection, typename RandomAccessIterator>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last, Compare comp, Projection projection,
                                 difference_type_t<BidirectionalIterator> len1,
                                 difference_type_t<BidirectionalIterator> len2,
-                                value_type_t<BidirectionalIterator>* buff)
+                                RandomAccessIterator buff)
         -> void
     {
-        using value_type = value_type_t<BidirectionalIterator>;
+        using utility::iter_move;
+        using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
         destruct_n d(0);
-        std::unique_ptr<value_type, destruct_n&> h2(buff, d);
+        std::unique_ptr<rvalue_reference, destruct_n&> h2(buff, d);
         if (len1 <= len2)
         {
-            value_type* p = buff;
-            for (BidirectionalIterator i = first; i != middle; d.incr((value_type*)nullptr), (void) ++i, ++p)
-                ::new(p) value_type(std::move(*i));
+            rvalue_reference* p = buff;
+            for (BidirectionalIterator i = first; i != middle; d.incr((rvalue_reference*)nullptr), (void) ++i, ++p)
+            {
+                ::new(p) rvalue_reference(iter_move(i));
+            }
             half_inplace_merge(buff, p, middle, last, first, comp, projection);
         }
         else
         {
-            value_type* p = buff;
-            for (BidirectionalIterator i = middle; i != last; d.incr((value_type*)nullptr), (void) ++i, ++p)
-                ::new(p) value_type(std::move(*i));
-            typedef std::reverse_iterator<BidirectionalIterator> RBi;
-            typedef std::reverse_iterator<value_type*> Rv;
+            rvalue_reference* p = buff;
+            for (BidirectionalIterator i = middle; i != last; d.incr((rvalue_reference*)nullptr), (void) ++i, ++p)
+            {
+                ::new(p) rvalue_reference(iter_move(i));
+            }
+            using RBi = std::reverse_iterator<BidirectionalIterator>;
+            using Rv = std::reverse_iterator<rvalue_reference*>;
             half_inplace_merge(Rv(p), Rv(buff),
                                RBi(middle), RBi(first), RBi(last),
                                negate<Compare>(comp), projection);
         }
     }
 
-    template<typename Compare, typename BidirectionalIterator, typename Projection>
-    auto inplace_merge_impl(BidirectionalIterator first, BidirectionalIterator middle, BidirectionalIterator last,
+    template<typename Compare, typename BidirectionalIterator,
+             typename Projection, typename RandomAccessIterator>
+    auto inplace_merge_impl(BidirectionalIterator first, BidirectionalIterator middle,
+                            BidirectionalIterator last,
                             Compare comp, Projection projection,
                             difference_type_t<BidirectionalIterator> len1,
                             difference_type_t<BidirectionalIterator> len2,
-                            value_type_t<BidirectionalIterator>* buff,
+                            RandomAccessIterator buff,
                             std::ptrdiff_t buff_size)
         -> void
     {
@@ -241,8 +252,8 @@ namespace detail
                 if (len1 == 1)
                 {   // len1 >= len2 && len2 > 0, therefore len2 == 1
                     // It is known *first > *middle
-                    using std::swap;
-                    swap(*first, *middle);
+                    using utility::iter_swap;
+                    iter_swap(first, middle);
                     return;
                 }
                 // len1 >= 2, len2 >= 1
@@ -256,9 +267,9 @@ namespace detail
             difference_type len22 = len2 - len21;  // distance(m2, last)
             // [first, m1) [m1, middle) [middle, m2) [m2, last)
             // swap middle two partitions
-            middle = std::rotate(m1, middle, m2);
+            middle = detail::rotate(m1, middle, m2);
             // len12 and len21 now have swapped meanings
-            // merge smaller range with recurisve call and larger with tail recursion elimination
+            // merge smaller range with recursive call and larger with tail recursion elimination
             if (len11 + len21 < len12 + len22)
             {
                 inplace_merge_impl<Compare>(first, m1, middle, comp, projection,
@@ -289,17 +300,18 @@ namespace detail
                        BidirectionalIterator last, Compare comp, Projection projection)
         -> void
     {
-        using value_type = value_type_t<BidirectionalIterator>;
+        using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
         using difference_type = difference_type_t<BidirectionalIterator>;
         difference_type len1 = std::distance(first, middle);
         difference_type len2 = std::distance(middle, last);
-        difference_type buf_size = std::min(len1, len2);
-        std::pair<value_type*, std::ptrdiff_t> buf = std::get_temporary_buffer<value_type>(buf_size);
-        std::unique_ptr<value_type, utility::temporary_buffer_deleter> h(buf.first);
+        difference_type buff_size = std::min(len1, len2);
+        std::pair<rvalue_reference*, std::ptrdiff_t> buff
+            = std::get_temporary_buffer<rvalue_reference>(buff_size);
+        std::unique_ptr<rvalue_reference, utility::temporary_buffer_deleter> h(buff.first);
 
-        typedef typename std::add_lvalue_reference<Compare>::type Comp_ref;
+        using Comp_ref = std::add_lvalue_reference_t<Compare>;
         return inplace_merge_impl<Comp_ref>(first, middle, last, comp, projection,
-                                            len1, len2, buf.first, buf.second);
+                                            len1, len2, buff.first, buff.second);
     }
 }}
 

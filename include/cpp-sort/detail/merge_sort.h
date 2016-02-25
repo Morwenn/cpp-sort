@@ -30,6 +30,7 @@
 #include <cstddef>
 #include <iterator>
 #include <memory>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
@@ -45,14 +46,14 @@ namespace detail
     // std::unique_ptr to handle memory allocated with
     // std::get_temporary_buffer
     template<typename T>
-    using buffer_ptr = std::unique_ptr<T[], utility::temporary_buffer_deleter>;
+    using buffer_ptr = std::unique_ptr<std::decay_t<T>[], utility::temporary_buffer_deleter>;
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort_impl(ForwardIterator first, difference_type_t<ForwardIterator> size,
-                         buffer_ptr<value_type_t<ForwardIterator>>&& buffer,
+                         buffer_ptr<rvalue_reference_t<ForwardIterator>>&& buffer,
                          std::ptrdiff_t& buff_size,
                          Compare compare, Projection projection)
-        -> buffer_ptr<value_type_t<ForwardIterator>>
+        -> buffer_ptr<rvalue_reference_t<ForwardIterator>>
     {
         auto&& proj = utility::as_function(projection);
 
@@ -93,7 +94,8 @@ namespace detail
         // Try to increase the memory buffer if it not big enough
         if (buff_size < size - (size / 2))
         {
-            auto new_buffer = std::get_temporary_buffer<value_type_t<ForwardIterator>>(size - (size / 2));
+            using rvalue_reference = std::decay_t<rvalue_reference_t<ForwardIterator>>;
+            auto new_buffer = std::get_temporary_buffer<rvalue_reference>(size - (size / 2));
             buffer.reset(new_buffer.first);
             buff_size = new_buffer.second;
         }
@@ -109,10 +111,10 @@ namespace detail
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto merge_sort_impl(BidirectionalIterator first, BidirectionalIterator last,
                          difference_type_t<BidirectionalIterator> size,
-                         buffer_ptr<value_type_t<BidirectionalIterator>>&& buffer,
+                         buffer_ptr<rvalue_reference_t<BidirectionalIterator>>&& buffer,
                          std::ptrdiff_t& buff_size,
                          Compare compare, Projection projection)
-        -> buffer_ptr<value_type_t<BidirectionalIterator>>
+        -> buffer_ptr<rvalue_reference_t<BidirectionalIterator>>
     {
         auto&& proj = utility::as_function(projection);
 
@@ -153,7 +155,8 @@ namespace detail
         // Try to increase the memory buffer if it not big enough
         if (buff_size < size_left)
         {
-            auto new_buffer = std::get_temporary_buffer<value_type_t<BidirectionalIterator>>(size_left);
+            using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
+            auto new_buffer = std::get_temporary_buffer<rvalue_reference>(size_left);
             buffer.reset(new_buffer.first);
             buff_size = new_buffer.second;
         }
@@ -181,7 +184,7 @@ namespace detail
             return;
         }
 
-        buffer_ptr<value_type_t<ForwardIterator>> buffer(nullptr);
+        buffer_ptr<rvalue_reference_t<ForwardIterator>> buffer(nullptr);
         std::ptrdiff_t buffer_size = 0;
         merge_sort_impl(first, size,
                         std::move(buffer), buffer_size,
@@ -201,7 +204,7 @@ namespace detail
             return;
         }
 
-        buffer_ptr<value_type_t<BidirectionalIterator>> buffer(nullptr);
+        buffer_ptr<rvalue_reference_t<BidirectionalIterator>> buffer(nullptr);
         std::ptrdiff_t buffer_size = 0;
         merge_sort_impl(first, last, size,
                         std::move(buffer), buffer_size,

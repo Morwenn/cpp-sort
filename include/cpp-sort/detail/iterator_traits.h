@@ -28,6 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <utility>
+#include <cpp-sort/utility/iter_move.h>
 
 namespace cppsort
 {
@@ -53,6 +55,13 @@ namespace detail
 
     template<typename Iterator>
     using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;
+
+    //
+    // Addition used by proxy iterators from P0022
+    //
+
+    template<typename Iterator>
+    using rvalue_reference_t = utility::rvalue_reference_t<Iterator>;
 }}
 
 #endif // CPPSORT_DETAIL_ITERATOR_TRAITS_H_

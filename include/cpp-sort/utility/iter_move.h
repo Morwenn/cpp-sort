@@ -27,21 +27,24 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <type_traits>
 #include <utility>
-#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
 namespace utility
 {
+    ////////////////////////////////////////////////////////////
+    // Generic iter_move and iter_swap
+
     namespace detail
     {
         template<typename Iterator>
         using iter_move_t = std::conditional_t<
-            std::is_reference<cppsort::detail::reference_t<Iterator>>::value,
-            std::remove_reference_t<cppsort::detail::reference_t<Iterator>>&&,
-            std::decay_t<cppsort::detail::reference_t<Iterator>>
+            std::is_reference<typename std::iterator_traits<Iterator>::reference>::value,
+            std::remove_reference_t<typename std::iterator_traits<Iterator>::reference>&&,
+            std::decay_t<typename std::iterator_traits<Iterator>::reference>
         >;
     }
 
@@ -60,6 +63,40 @@ namespace utility
         auto tmp = iter_move(lhs);
         *lhs = iter_move(rhs);
         *rhs = std::move(tmp);
+    }
+
+    ////////////////////////////////////////////////////////////
+    // rvalue_reference_t type trait
+
+    namespace adl_trick
+    {
+        using utility::iter_move;
+
+        template<typename Iterator>
+        auto do_iter_move()
+            -> decltype(iter_move(std::declval<Iterator&>()));
+    }
+
+    template<typename Iterator>
+    using rvalue_reference_t = decltype(adl_trick::do_iter_move<Iterator>());
+
+    ////////////////////////////////////////////////////////////
+    // std::reverse_iterator overloads
+
+    template<typename Iterator>
+    auto iter_move(const std::reverse_iterator<Iterator>& it)
+        -> rvalue_reference_t<Iterator>
+    {
+        using utility::iter_move;
+        return iter_move(it.base());
+    }
+
+    template<typename Iterator>
+    auto iter_swap(std::reverse_iterator<Iterator> lhs, std::reverse_iterator<Iterator> rhs)
+        -> void
+    {
+        using utility::iter_swap;
+        iter_swap(lhs.base(), rhs.base());
     }
 }}
 
