@@ -24,7 +24,9 @@
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
 #define CPPSORT_DETAIL_VERGESORT_H_
 
-#include <algorithm>
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
@@ -33,6 +35,7 @@
 #include "iterator_traits.h"
 #include "pdqsort.h"
 #include "quicksort.h"
+#include "reverse.h"
 
 namespace cppsort
 {
@@ -111,7 +114,7 @@ namespace detail
                 if (begin_unstable != last)
                 {
                     quicksort(begin_unstable, begin_rng, size_unstable, compare, projection);
-                    std::reverse(begin_rng, next);
+                    detail::reverse(begin_rng, next);
                     detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
                     detail::inplace_merge(first, begin_unstable, next, compare, projection);
                     begin_unstable = last;
@@ -119,7 +122,7 @@ namespace detail
                 }
                 else
                 {
-                    std::reverse(begin_rng, next);
+                    detail::reverse(begin_rng, next);
                     detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
             }
@@ -287,7 +290,7 @@ namespace detail
                 if (std::distance(current, next2) >= unstable_limit)
                 {
                     pdqsort(begin_unstable, current, compare, projection);
-                    std::reverse(current, next2);
+                    detail::reverse(current, next2);
                     inplace_merge3(first, begin_unstable, current, next2, compare, projection);
                     begin_unstable = last;
                 }
