@@ -28,7 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <utility>
 #include <cpp-sort/utility/iter_move.h>
 
 namespace cppsort
