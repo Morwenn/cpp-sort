@@ -16,6 +16,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <memory>
 #include <new>
 #include <type_traits>
 
@@ -23,15 +24,35 @@ namespace cppsort
 {
 namespace detail
 {
+    ////////////////////////////////////////////////////////////
+    // Deleter for ::operator new(std::size_t)
+
     struct operator_deleter
     {
         template<typename T>
-        auto operator()(T* ptr) const noexcept
+        auto operator()(T* pointer) const noexcept
             -> void
         {
-            ::operator delete(ptr);
+            ::operator delete(pointer);
         }
     };
+
+    ////////////////////////////////////////////////////////////
+    // Deleter for std::get_temporary_buffer
+
+    struct temporary_buffer_deleter
+    {
+        template<typename T>
+        auto operator()(T* pointer) const
+            noexcept(noexcept(std::return_temporary_buffer(pointer)))
+            -> void
+        {
+            std::return_temporary_buffer(pointer);
+        }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Deleter for placement new-allocated memory
 
     struct destruct_n
     {
@@ -40,12 +61,12 @@ namespace detail
             std::size_t size;
 
             template<typename T>
-            auto process(T* ptr, std::false_type) noexcept
+            auto process(T* pointer, std::false_type) noexcept
                 -> void
             {
-                for (std::size_t i = 0 ; i < size ; ++i, (void) ++ptr)
+                for (std::size_t i = 0 ; i < size ; ++i, (void) ++pointer)
                 {
-                    ptr->~T();
+                    pointer->~T();
                 }
             }
 
@@ -95,10 +116,10 @@ namespace detail
             }
 
             template<typename T>
-            auto operator()(T* ptr) noexcept
+            auto operator()(T* pointer) noexcept
                 -> void
             {
-                process(ptr, std::integral_constant<bool, std::is_trivially_destructible<T>::value>{});
+                process(pointer, std::integral_constant<bool, std::is_trivially_destructible<T>::value>{});
             }
     };
 }}

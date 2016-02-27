@@ -53,9 +53,9 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "../detail/destruct_n.h"
 #include "../detail/inplace_merge.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/memory.h"
 #include "../detail/rotate.h"
 
 namespace cppsort
@@ -195,7 +195,10 @@ namespace utility
             ForwardIterator f1 = middle;
 
             auto buffer = std::get_temporary_buffer<rvalue_reference>(std::max(n0, n1));
-            std::unique_ptr<rvalue_reference, temporary_buffer_deleter> ptr(buffer.first);
+            std::unique_ptr<
+                rvalue_reference,
+                cppsort::detail::temporary_buffer_deleter
+            > ptr(buffer.first);
 
             merge_n_adaptative(f0, n0, f1, n1,
                                buffer.first, buffer.second,

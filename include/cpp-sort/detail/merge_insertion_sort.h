@@ -35,8 +35,8 @@
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "destruct_n.h"
 #include "iterator_traits.h"
+#include "memory.h"
 #include "move.h"
 #include "swap_ranges.h"
 

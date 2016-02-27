@@ -21,11 +21,10 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "destruct_n.h"
-#include "lower_bound.h"
 #include "iterator_traits.h"
+#include "lower_bound.h"
+#include "memory.h"
 #include "move.h"
 #include "rotate.h"
 #include "upper_bound.h"
@@ -241,7 +240,7 @@ namespace detail
         difference_type buff_size = std::min(len1, len2);
         std::pair<rvalue_reference*, std::ptrdiff_t> buff
             = std::get_temporary_buffer<rvalue_reference>(buff_size);
-        std::unique_ptr<rvalue_reference, utility::temporary_buffer_deleter> h(buff.first);
+        std::unique_ptr<rvalue_reference, temporary_buffer_deleter> h(buff.first);
 
         using Comp_ref = std::add_lvalue_reference_t<Compare>;
         return inplace_merge_impl<Comp_ref>(first, middle, last, comp, projection,

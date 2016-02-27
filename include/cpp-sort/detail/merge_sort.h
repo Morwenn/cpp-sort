@@ -33,7 +33,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/inplace_merge.h>
 #include "bubble_sort.h"
 #include "insertion_sort.h"
@@ -46,7 +45,7 @@ namespace detail
     // std::unique_ptr to handle memory allocated with
     // std::get_temporary_buffer
     template<typename T>
-    using buffer_ptr = std::unique_ptr<std::decay_t<T>[], utility::temporary_buffer_deleter>;
+    using buffer_ptr = std::unique_ptr<std::decay_t<T>[], temporary_buffer_deleter>;
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort_impl(ForwardIterator first, difference_type_t<ForwardIterator> size,
