@@ -23,6 +23,7 @@
 #include <utility>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "destruct_n.h"
 #include "lower_bound.h"
 #include "iterator_traits.h"
 #include "move.h"
@@ -33,73 +34,6 @@ namespace cppsort
 {
 namespace detail
 {
-    struct destruct_n
-    {
-    private:
-        std::size_t size;
-
-        template<typename Tp>
-        auto process(Tp* p, std::false_type) noexcept
-            -> void
-        {
-            for (std::size_t i = 0; i < size; ++i, (void) ++p)
-            {
-                p->~Tp();
-            }
-        }
-
-        template<typename Tp>
-        auto process(Tp*, std::true_type) noexcept
-            -> void
-        {}
-
-        auto incr(std::false_type) noexcept
-            -> void
-        {
-            ++size;
-        }
-
-        auto incr(std::true_type) noexcept
-            -> void
-        {}
-
-        auto set(std::size_t s, std::false_type) noexcept
-            -> void
-        {
-            size = s;
-        }
-
-        auto set(std::size_t, std::true_type) noexcept
-            -> void
-        {}
-
-    public:
-        explicit destruct_n(std::size_t s) noexcept:
-            size(s)
-        {}
-
-        template<typename Tp>
-        auto incr(Tp*) noexcept
-            -> void
-        {
-            incr(std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());
-        }
-
-        template<typename Tp>
-        auto set(std::size_t s, Tp*) noexcept
-            -> void
-        {
-            set(s, std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());
-        }
-
-        template<typename Tp>
-        auto operator()(Tp* p) noexcept
-            -> void
-        {
-            process(p, std::integral_constant<bool, std::is_trivially_destructible<Tp>::value>());
-        }
-    };
-
     template<typename Predicate>
     class negate
     {
