@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <algorithm>
 #include <cstddef>
 #include <functional>
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 
 namespace detail
@@ -36,8 +36,8 @@ namespace detail
         typename ForwardIterator,
         typename StrictWeakOrdering
     >
-    auto bubble_sort(ForwardIterator first, StrictWeakOrdering compare,
-                     std::size_t size)
+    auto bubble_sort(ForwardIterator first, std::size_t size,
+                     StrictWeakOrdering compare)
         -> void
     {
         if (size < 2) return;
@@ -50,7 +50,8 @@ namespace detail
             {
                 if (compare(*next, *current))
                 {
-                    std::iter_swap(current, next);
+                    using cppsort::utility::iter_swap;
+                    iter_swap(current, next);
                 }
                 ++next;
                 ++current;
@@ -80,8 +81,8 @@ namespace detail
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(first, compare,
-                        std::distance(first, last));
+            bubble_sort(first, std::distance(first, last),
+                        compare);
         }
 
         // Iterable overload
@@ -103,8 +104,9 @@ namespace detail
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(std::begin(iterable), compare,
-                        cppsort::utility::size(iterable));
+            bubble_sort(std::begin(iterable),
+                        cppsort::utility::size(iterable),
+                        compare);
         }
 
         // Sorter traits
@@ -117,6 +119,7 @@ struct bubble_sorter:
     cppsort::sorter_facade<detail::bubble_sorter_impl>
 {};
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <numeric>
