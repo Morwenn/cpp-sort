@@ -27,11 +27,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <functional>
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../min_element.h"
 
 namespace cppsort
@@ -53,10 +53,12 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
+            using utility::iter_swap;
+
             RandomAccessIterator min = min_element(first, last, compare, projection);
             if (min != first)
             {
-                std::iter_swap(min, first);
+                iter_swap(min, first);
             }
             low_moves_sorter<3u>{}(first+1u, last, compare, projection);
         }

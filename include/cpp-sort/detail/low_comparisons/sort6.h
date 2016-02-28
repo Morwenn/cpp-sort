@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../rotate_right.h"
 #include "../swap_if.h"
 
@@ -55,39 +56,40 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using std::swap;
+            using utility::iter_move;
+            using utility::iter_swap;
             auto&& proj = utility::as_function(projection);
 
             // Order elements pair-wise
 
-            swap_if(first[0u], first[1u], compare, projection);
-            swap_if(first[2u], first[3u], compare, projection);
-            swap_if(first[4u], first[5u], compare, projection);
+            iter_swap_if(first, first + 1u, compare, projection);
+            iter_swap_if(first + 2u, first + 3u, compare, projection);
+            iter_swap_if(first + 4u, first + 5u, compare, projection);
 
             // Order pairs of elements by max value
 
             if (compare(proj(first[3u]), proj(first[1u]))) {
-                swap(first[0u], first[2u]);
-                swap(first[1u], first[3u]);
+                iter_swap(first, first + 2u);
+                iter_swap(first + 1u, first + 3u);
             }
 
             if (compare(proj(first[5u]), proj(first[3u]))) {
                 if (compare(proj(first[5u]), proj(first[1u]))) {
                     {
-                        auto tmp = std::move(first[5u]);
-                        first[5u] = std::move(first[3u]);
-                        first[3u] = std::move(first[1u]);
+                        auto tmp = iter_move(first + 5u);
+                        first[5u] = iter_move(first + 3u);
+                        first[3u] = iter_move(first + 1u);
                         first[1u] = std::move(tmp);
                     }
                     {
-                        auto tmp = std::move(first[4u]);
-                        first[4u] = std::move(first[2u]);
-                        first[2u] = std::move(first[0u]);
+                        auto tmp = iter_move(first + 4u);
+                        first[4u] = iter_move(first + 2u);
+                        first[2u] = iter_move(first + 0u);
                         first[0u] = std::move(tmp);
                     }
                 } else {
-                    swap(first[2u], first[4u]);
-                    swap(first[3u], first[5u]);
+                    iter_swap(first + 2u, first + 4u);
+                    iter_swap(first + 3u, first + 5u);
                 }
             }
 
@@ -108,7 +110,7 @@ namespace detail
                     if (compare(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
-                        swap_if(first[1u], first[2u], compare, projection);
+                        iter_swap_if(first + 1u, first + 2u, compare, projection);
                     }
                     return;
                 }
@@ -122,7 +124,7 @@ namespace detail
                     rotate_right<3u>(first + 1u);
                 }
             } else {
-                swap_if(first[2u], first[3u], compare, projection);
+                iter_swap_if(first + 2u, first + 3u, compare, projection);
             }
         }
     };

@@ -36,6 +36,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../detail/minmax_element.h"
 
 namespace cppsort
@@ -63,34 +64,36 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
+                using utility::iter_swap;
+
                 RandomAccessIterator min, max;
                 std::tie(min, max) = minmax_element(first, last--, compare, projection);
 
                 if (max == first && min == last)
                 {
                     if (min == max) return;
-                    std::iter_swap(min, max);
+                    iter_swap(min, max);
                 }
                 else if (max == first)
                 {
                     if (last != max)
                     {
-                        std::iter_swap(last, max);
+                        iter_swap(last, max);
                     }
                     if (first != min)
                     {
-                        std::iter_swap(first, min);
+                        iter_swap(first, min);
                     }
                 }
                 else
                 {
                     if (first != min)
                     {
-                        std::iter_swap(first, min);
+                        iter_swap(first, min);
                     }
                     if (last != max)
                     {
-                        std::iter_swap(last, max);
+                        iter_swap(last, max);
                     }
                 }
                 low_moves_sorter<N-2u>{}(++first, last, compare, projection);
