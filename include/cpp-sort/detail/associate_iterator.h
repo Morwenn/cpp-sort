@@ -1,0 +1,369 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2016 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifndef CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_
+#define CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <iterator>
+#include <utility>
+#include <cpp-sort/utility/iter_move.h>
+#include "iterator_traits.h"
+
+namespace cppsort
+{
+namespace detail
+{
+    template<typename Iterator, typename Projected>
+    struct association;
+
+    template<typename Value, typename Projected>
+    struct associated_value;
+
+    template<typename Iterator, typename Projected>
+    struct association
+    {
+        // Public members
+        Iterator it;
+        Projected projected;
+
+        // Can't copy it, can't move-construct it either
+        association(const association&) = delete;
+        association(association&&) = delete;
+        association& operator=(const association&) = delete;
+
+        association(Iterator it, Projected projected):
+            it(std::move(it)),
+            projected(std::move(projected))
+        {}
+
+        auto operator=(associated_value<std::decay_t<decltype(*it)>, Projected>&& other)
+            -> association&
+        {
+            *it = std::move(other.value);
+            projected = std::move(other.projected);
+            return *this;
+        }
+    };
+
+    template<typename Iterator, typename Projected>
+    auto swap(association<Iterator, Projected>& lhs,
+              association<Iterator, Projected>& rhs)
+        -> void
+    {
+        using std::swap;
+        using utility::iter_swap;
+        iter_swap(lhs.it, rhs.it);
+        swap(lhs.projected, rhs.projected);
+    }
+
+    template<typename Value, typename Projected>
+    struct associated_value
+    {
+        // Public members
+        Value value;
+        Projected projected;
+
+        // Can't copy it, can't move-construct it either
+        associated_value(const associated_value&) = delete;
+        associated_value& operator=(const associated_value&) = delete;
+
+        associated_value(Value&& value, Projected&& projected):
+            value(std::move(value)),
+            projected(std::move(projected))
+        {}
+
+        associated_value(associated_value&& other):
+            value(std::move(other.value)),
+            projected(std::move(other.projected))
+        {}
+
+        auto operator=(associated_value&& other)
+            -> associated_value&
+        {
+            value = std::move(other.value);
+            projected = std::move(other.projected);
+            return *this;
+        }
+    };
+
+    template<typename Compare>
+    class association_compare
+    {
+        private:
+
+            Compare compare;
+
+        public:
+
+            explicit association_compare(Compare compare):
+                compare(compare)
+            {}
+
+            template<typename T, typename U>
+            auto operator()(T&& lhs, U&& rhs)
+                noexcept(noexcept(compare(std::forward<T>(lhs).projected, std::forward<U>(rhs).projected)))
+                -> decltype(compare(std::forward<T>(lhs).projected, std::forward<U>(rhs).projected))
+            {
+                return compare(std::forward<T>(lhs).projected, std::forward<U>(rhs).projected);
+            }
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Iterator used to sort groups
+
+    template<typename Iterator>
+    class associate_iterator
+    {
+        public:
+
+            ////////////////////////////////////////////////////////////
+            // Public types
+
+            using iterator_category = iterator_category_t<Iterator>;
+            using iterator_type     = Iterator;
+            using value_type        = value_type_t<Iterator>;
+            using difference_type   = difference_type_t<Iterator>;
+            using pointer           = pointer_t<Iterator>;
+            using reference         = reference_t<Iterator>;
+
+            ////////////////////////////////////////////////////////////
+            // Constructors
+
+            associate_iterator() = default;
+
+            explicit associate_iterator(Iterator it):
+                _it(it)
+            {}
+
+            ////////////////////////////////////////////////////////////
+            // Members access
+
+            auto base() const
+                -> iterator_type
+            {
+                return _it;
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Element access
+
+            auto operator*() const
+                -> decltype(*base())
+            {
+                return *base();
+            }
+
+            auto operator->() const
+                -> pointer
+            {
+                return &(operator*());
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Increment/decrement operators
+
+            auto operator++()
+                -> associate_iterator&
+            {
+                ++_it;
+                return *this;
+            }
+
+            auto operator++(int)
+                -> associate_iterator
+            {
+                auto tmp = *this;
+                operator++();
+                return tmp;
+            }
+
+            auto operator--()
+                -> associate_iterator&
+            {
+                --_it;
+                return *this;
+            }
+
+            auto operator--(int)
+                -> associate_iterator
+            {
+                auto tmp = *this;
+                operator--();
+                return tmp;
+            }
+
+            auto operator+=(difference_type increment)
+                -> associate_iterator&
+            {
+                std::advance(_it, increment);
+                return *this;
+            }
+
+            auto operator-=(difference_type increment)
+                -> associate_iterator&
+            {
+                _it -= increment;
+                return *this;
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Elements access operators
+
+            auto operator[](difference_type pos)
+                -> decltype(base()[pos])
+            {
+                return base()[pos];
+            }
+
+            auto operator[](difference_type pos) const
+                -> decltype(base()[pos])
+            {
+                return base()[pos];
+            }
+
+        private:
+
+            Iterator _it;
+    };
+
+    template<typename Iterator>
+    auto iter_swap(associate_iterator<Iterator> lhs, associate_iterator<Iterator> rhs)
+        -> void
+    {
+        using utility::iter_swap;
+        iter_swap(lhs.base(), rhs.base());
+    }
+
+    template<typename Iterator>
+    auto iter_move(associate_iterator<Iterator> it)
+        -> associated_value<
+            std::decay_t<decltype(*(it->it))>,
+            std::decay_t<decltype(it->projected)>
+        >
+    {
+        return {
+            std::move(*(it->it)),
+            std::move(it->projected)
+        };
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Comparison operators
+
+    template<typename Iterator1, typename Iterator2>
+    auto operator==(const associate_iterator<Iterator1>& lhs,
+                    const associate_iterator<Iterator2>& rhs)
+        -> bool
+    {
+        return lhs.base() == rhs.base();
+    }
+
+    template<typename Iterator1, typename Iterator2>
+    auto operator!=(const associate_iterator<Iterator1>& lhs,
+                    const associate_iterator<Iterator2>& rhs)
+        -> bool
+    {
+        return lhs.base() != rhs.base();
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Relational operators
+
+    template<typename Iterator1, typename Iterator2>
+    auto operator<(const associate_iterator<Iterator1>& lhs,
+                   const associate_iterator<Iterator2>& rhs)
+        -> bool
+    {
+        return lhs.base() < rhs.base();
+    }
+
+    template<typename Iterator1, typename Iterator2>
+    auto operator<=(const associate_iterator<Iterator1>& lhs,
+                    const associate_iterator<Iterator2>& rhs)
+        -> bool
+    {
+        return lhs.base() <= rhs.base();
+    }
+
+    template<typename Iterator1, typename Iterator2>
+    auto operator>(const associate_iterator<Iterator1>& lhs,
+                   const associate_iterator<Iterator2>& rhs)
+        -> bool
+    {
+        return lhs.base() > rhs.base();
+    }
+
+    template<typename Iterator1, typename Iterator2>
+    auto operator>=(const associate_iterator<Iterator1>& lhs,
+                    const associate_iterator<Iterator2>& rhs)
+        -> bool
+    {
+        return lhs.base() >= rhs.base();
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Arithmetic operators
+
+    template<typename Iterator>
+    auto operator+(associate_iterator<Iterator> it, difference_type_t<associate_iterator<Iterator>> size)
+        -> associate_iterator<Iterator>
+    {
+        return it += size;
+    }
+
+    template<typename Iterator>
+    auto operator+(difference_type_t<associate_iterator<Iterator>> size, associate_iterator<Iterator> it)
+        -> associate_iterator<Iterator>
+    {
+        return it += size;
+    }
+
+    template<typename Iterator>
+    auto operator-(associate_iterator<Iterator> it, difference_type_t<associate_iterator<Iterator>> size)
+        -> associate_iterator<Iterator>
+    {
+        return it -= size;
+    }
+
+    template<typename Iterator>
+    auto operator-(const associate_iterator<Iterator>& lhs, const associate_iterator<Iterator>& rhs)
+        -> difference_type_t<associate_iterator<Iterator>>
+    {
+        return lhs.base() - rhs.base();
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Construction function
+
+    template<typename Iterator>
+    auto make_associate_iterator(Iterator it)
+        -> associate_iterator<Iterator>
+    {
+        return associate_iterator<Iterator>(it);
+    }
+}}
+
+#endif // CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_

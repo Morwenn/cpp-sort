@@ -393,7 +393,7 @@ namespace detail
 
                 auto insertion_point = std::upper_bound(
                     std::begin(chain), *pe, proj(*it),
-                    [=](const auto& lhs, const auto& rhs) {
+                    [=](const auto& lhs, const auto& rhs) mutable {
                         return compare(lhs, proj(*rhs));
                     }
                 );
@@ -411,7 +411,7 @@ namespace detail
         {
             auto insertion_point = std::upper_bound(
                 std::begin(chain), *current_pend, proj(*current_it),
-                [=](const auto& lhs, const auto& rhs) {
+                [=](const auto& lhs, const auto& rhs) mutable {
                     return compare(lhs, proj(*rhs));
                 }
             );
