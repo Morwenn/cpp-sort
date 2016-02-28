@@ -30,6 +30,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/detection.h>
 
 namespace cppsort
 {
@@ -46,6 +47,42 @@ namespace utility
             std::remove_reference_t<typename std::iterator_traits<Iterator>::reference>&&,
             std::decay_t<typename std::iterator_traits<Iterator>::reference>
         >;
+
+        template<typename Iterator>
+        using has_iter_move_t = decltype(iter_move(std::declval<Iterator&>()));
+    }
+
+    template<
+        typename Iterator,
+        typename = std::enable_if_t<
+            is_detected_v<detail::has_iter_move_t, Iterator>
+        >
+    >
+    auto iter_swap(Iterator lhs, Iterator rhs)
+        -> void
+    {
+        auto tmp = iter_move(lhs);
+        *lhs = iter_move(rhs);
+        *rhs = std::move(tmp);
+    }
+
+    template<
+        typename Iterator,
+        typename = std::enable_if_t<
+            not is_detected_v<detail::has_iter_move_t, Iterator>
+        >,
+        typename = void // dummy parameter for ODR
+    >
+    auto iter_swap(Iterator lhs, Iterator rhs)
+        -> void
+    {
+        // While this overload is not strictly needed, it
+        // ensures that an ADL-found swap is used when the
+        // iterator type does not have a dedicated iter_move
+        // ADL-found overload
+
+        using std::swap;
+        swap(*lhs, *rhs);
     }
 
     template<typename Iterator>
@@ -54,15 +91,6 @@ namespace utility
         -> detail::iter_move_t<Iterator>
     {
         return std::move(*it);
-    }
-
-    template<typename Iterator>
-    auto iter_swap(Iterator lhs, Iterator rhs)
-        -> void
-    {
-        auto tmp = iter_move(lhs);
-        *lhs = iter_move(rhs);
-        *rhs = std::move(tmp);
     }
 
     ////////////////////////////////////////////////////////////

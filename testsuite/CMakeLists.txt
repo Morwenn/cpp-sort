@@ -46,6 +46,7 @@ set(
     UTILITY_TESTS
 
     utility/buffer.cpp
+    utility/iter_swap.cpp
 )
 
 # Make one executable for the whole testsuite
