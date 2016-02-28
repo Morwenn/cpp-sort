@@ -38,6 +38,7 @@
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
+#include "swap_if.h"
 #include "swap_ranges.h"
 
 namespace cppsort
@@ -325,11 +326,7 @@ namespace detail
         auto end = has_stray ? std::prev(last) : last;
         for (auto it = first ; it != end ; it += 2)
         {
-            if (compare(proj(it[1]), proj(it[0])))
-            {
-                using utility::iter_swap;
-                iter_swap(it, it + 1);
-            }
+            iter_swap_if(it, it + 1, compare, projection);
         }
 
         ////////////////////////////////////////////////////////////
