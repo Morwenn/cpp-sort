@@ -32,12 +32,17 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 
 namespace cppsort
 {
 namespace detail
 {
+    ////////////////////////////////////////////////////////////
+    // swap_if
+
     template<typename T, typename Compare, typename Projection>
     auto swap_if(T& lhs, T& rhs, Compare compare, Projection projection)
         -> void
@@ -80,6 +85,50 @@ namespace detail
         Integer dx = x;
         x = std::max(x, y);
         y ^= dx ^ x;
+    }
+
+    ////////////////////////////////////////////////////////////
+    // iter_swap_if
+
+    template<
+        typename Iterator,
+        typename Compare,
+        typename Projection,
+        typename = std::enable_if_t<
+            utility::is_detected_v<utility::detail::has_iter_move_t, Iterator> ||
+            utility::is_detected_v<utility::detail::has_iter_swap_t, Iterator>
+        >
+    >
+    auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
+        -> void
+    {
+        auto&& proj = utility::as_function(projection);
+
+        if (compare(proj(*rhs), proj(*lhs)))
+        {
+            using utility::iter_swap;
+            iter_swap(lhs, rhs);
+        }
+    }
+
+    template<
+        typename Iterator,
+        typename Compare,
+        typename Projection,
+        typename = std::enable_if_t<
+            not utility::is_detected_v<utility::detail::has_iter_move_t, Iterator> &&
+            not utility::is_detected_v<utility::detail::has_iter_swap_t, Iterator>
+        >,
+        typename = void // dummy parameter for ODR
+    >
+    auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
+        -> void
+    {
+        // Take advantage of the swap_if optimizations
+        // only when the iterators don't have dedicated
+        // iter_move or iter_swap ADL-found functions
+
+        swap_if(*lhs, *rhs, compare, projection);
     }
 }}
 

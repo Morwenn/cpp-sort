@@ -50,6 +50,11 @@ namespace utility
 
         template<typename Iterator>
         using has_iter_move_t = decltype(iter_move(std::declval<Iterator&>()));
+
+        template<typename Iterator>
+        using has_iter_swap_t = decltype(iter_swap(
+            std::declval<Iterator&>(), std::declval<Iterator&>())
+        );
     }
 
     template<
