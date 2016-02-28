@@ -25,11 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <functional>
+#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "heap_operations.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
@@ -56,9 +56,9 @@ namespace detail
                                       Compare comp, Projection projection)
             -> void
         {
-            using value_type = value_type_t<RandomAccessIterator>;
             if (begin == end) return;
 
+            using utility::iter_move;
             auto&& proj = utility::as_function(projection);
 
             for (RandomAccessIterator cur = begin + 1; cur != end; ++cur) {
@@ -67,10 +67,10 @@ namespace detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    value_type tmp = std::move(*sift);
+                    auto tmp = iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
-                    do { *sift-- = std::move(*sift_1); }
+                    do { *sift-- = iter_move(sift_1); }
                     while (comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
@@ -86,9 +86,9 @@ namespace detail
                                     Compare comp, Projection projection)
             -> bool
         {
-            using value_type = value_type_t<RandomAccessIterator>;
             if (begin == end) return true;
 
+            using utility::iter_move;
             auto&& proj = utility::as_function(projection);
 
             int limit = 0;
@@ -100,10 +100,10 @@ namespace detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    value_type tmp = std::move(*sift);
+                    auto tmp = iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
-                    do { *sift-- = std::move(*sift_1); }
+                    do { *sift-- = iter_move(sift_1); }
                     while (sift != begin && comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
@@ -123,9 +123,9 @@ namespace detail
                                               Compare comp, Projection projection)
             -> bool
         {
-            using value_type = value_type_t<RandomAccessIterator>;
             if (begin == end) return true;
 
+            using utility::iter_move;
             auto&& proj = utility::as_function(projection);
 
             int limit = 0;
@@ -137,10 +137,10 @@ namespace detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    value_type tmp = std::move(*sift);
+                    auto tmp = iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
-                    do { *sift-- = std::move(*sift_1); }
+                    do { *sift-- = iter_move(sift_1); }
                     while (comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
@@ -161,11 +161,12 @@ namespace detail
                              Compare comp, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
-            using value_type = value_type_t<RandomAccessIterator>;
+            using utility::iter_move;
+            using utility::iter_swap;
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
-            value_type pivot(std::move(*begin));
+            auto pivot = iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
             RandomAccessIterator first = begin;
@@ -188,14 +189,14 @@ namespace detail
             // swapped pairs guard the searches, which is why the first iteration is special-cased
             // above.
             while (first < last) {
-                std::iter_swap(first, last);
+                iter_swap(first, last);
                 while (comp(proj(*++first), pivot_proj));
                 while (!comp(proj(*--last), pivot_proj));
             }
 
             // Put the pivot in the right place.
             RandomAccessIterator pivot_pos = first - 1;
-            *begin = std::move(*pivot_pos);
+            *begin = iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
             return std::make_pair(pivot_pos, already_partitioned);
@@ -208,10 +209,11 @@ namespace detail
                             Compare comp, Projection projection)
             -> RandomAccessIterator
         {
-            using value_type = value_type_t<RandomAccessIterator>;
+            using utility::iter_move;
+            using utility::iter_swap;
             auto&& proj = utility::as_function(projection);
 
-            value_type pivot(std::move(*begin));
+            auto pivot = iter_move(begin);
             auto&& pivot_proj = proj(pivot);
             RandomAccessIterator first = begin;
             RandomAccessIterator last = end;
@@ -222,13 +224,13 @@ namespace detail
             else                 while (                !comp(pivot_proj, proj(*++first)));
 
             while (first < last) {
-                std::iter_swap(first, last);
+                iter_swap(first, last);
                 while (comp(pivot_proj, proj(*--last)));
                 while (!comp(pivot_proj, proj(*++first)));
             }
 
             RandomAccessIterator pivot_pos = last;
-            *begin = std::move(*pivot_pos);
+            *begin = iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
             return pivot_pos;
@@ -241,6 +243,7 @@ namespace detail
                           int bad_allowed, bool leftmost=true)
             -> void
         {
+            using utility::iter_swap;
             using difference_type = difference_type_t<RandomAccessIterator>;
             auto&& proj = utility::as_function(projection);
 
@@ -289,14 +292,14 @@ namespace detail
 
                     difference_type partition_size = std::distance(begin, pivot_pos);
                     if (partition_size >= insertion_sort_threshold) {
-                        std::iter_swap(begin, begin + partition_size / 4);
-                        std::iter_swap(pivot_pos - 1, pivot_pos - partition_size / 4);
+                        iter_swap(begin, begin + partition_size / 4);
+                        iter_swap(pivot_pos - 1, pivot_pos - partition_size / 4);
                     }
 
                     partition_size = end - pivot_pos;
                     if (partition_size >= insertion_sort_threshold) {
-                        std::iter_swap(pivot_pos + 1, pivot_pos + partition_size / 4);
-                        std::iter_swap(end - 1, end - partition_size / 4);
+                        iter_swap(pivot_pos + 1, pivot_pos + partition_size / 4);
+                        iter_swap(end - 1, end - partition_size / 4);
                     }
                 } else {
                     // If we were decently balanced and we tried to sort an already partitioned

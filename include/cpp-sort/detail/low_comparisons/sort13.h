@@ -58,7 +58,7 @@ namespace detail
             auto&& proj = utility::as_function(projection);
 
             low_comparisons_sorter<11u>{}(first+1u, first+12u, compare, projection);
-            swap_if(first[0u], first[12u], compare, projection);
+            iter_swap_if(first, first + 12u, compare, projection);
 
             if (compare(proj(first[1u]), proj(first[0u]))) {
                 swap(first[0u], first[1u]);

@@ -16,13 +16,16 @@
 #include <cmath>
 #include <iterator>
 #include <type_traits>
-#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "merge_move.h"
+#include "move.h"
+#include "rotate.h"
+#include "swap_ranges.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -157,6 +160,8 @@ namespace detail
                            Compare compare, Projection projection)
             -> void
         {
+            using utility::iter_swap;
+
             // whenever we find a value to add to the final array, swap it with the value that's already in that spot
             // when this algorithm is finished, 'buffer' will contain its original contents, but in a different order
             RandomAccessIterator A_index = buffer;
@@ -170,12 +175,12 @@ namespace detail
             if (first1 != last1 && first2 != last2) {
                 while (true) {
                     if (not compare(proj(*B_index), proj(*A_index))) {
-                        std::iter_swap(insert_index, A_index);
+                        iter_swap(insert_index, A_index);
                         ++A_index;
                         ++insert_index;
                         if (A_index == A_last) break;
                     } else {
-                        std::iter_swap(insert_index, B_index);
+                        iter_swap(insert_index, B_index);
                         ++B_index;
                         ++insert_index;
                         if (B_index == B_last) break;
@@ -184,7 +189,7 @@ namespace detail
             }
 
             // BlockSwap
-            std::swap_ranges(A_index, A_last, insert_index);
+            detail::swap_ranges(A_index, A_last, insert_index);
         }
 
         // merge operation without a buffer
@@ -223,7 +228,7 @@ namespace detail
 
                 // rotate A into place
                 auto amount = std::distance(last1, mid);
-                std::rotate(first1, last1, mid);
+                detail::rotate(first1, last1, mid);
                 if (last2 == mid) break;
 
                 // calculate the new A and B ranges
@@ -314,7 +319,8 @@ namespace detail
                   Compare compare, Projection projection)
             -> void
         {
-            using value_type = value_type_t<RandomAccessIterator>;
+            using utility::iter_swap;
+            using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
             using difference_type = difference_type_t<RandomAccessIterator>;
 
             difference_type size = std::distance(first, last);
@@ -337,8 +343,8 @@ namespace detail
                     if (compare(proj(range.start[y]), proj(range.start[x])) ||
                         (order[x] > order[y] && not compare(proj(range.start[x]), proj(range.start[y])))
                     ) {
-                        std::iter_swap(range.start + x, range.start + y);
-                        std::iter_swap(order + x, order + y);
+                        iter_swap(range.start + x, range.start + y);
+                        iter_swap(order + x, order + y);
                     }
                 };
 
@@ -386,7 +392,7 @@ namespace detail
             // use a small cache to speed up some of the operations
             // just keep in mind that making it too small ruins the point (nothing will fit into it),
             // and making it too large also ruins the point (so much for "low memory"!)
-            typename BufferProvider::template buffer<value_type> cache(size);
+            typename BufferProvider::template buffer<rvalue_reference> cache(size);
             difference_type cache_size = cache.size();
 
             // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
@@ -408,8 +414,8 @@ namespace detail
 
                             if (compare(proj(*std::prev(B1.end)), proj(*A1.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
-                                std::move(A1.start, A1.end, cache.begin() + B1.length());
-                                std::move(B1.start, B1.end, cache.begin());
+                                detail::move(A1.start, A1.end, cache.begin() + B1.length());
+                                detail::move(B1.start, B1.end, cache.begin());
                             } else if (compare(proj(*B1.start), proj(*std::prev(A1.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
                                 merge_move(A1.start, A1.end, B1.start, B1.end, cache.begin(),
@@ -420,43 +426,43 @@ namespace detail
                                     not compare(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
 
                                 // move A1 and B1 into the cache in the same order
-                                std::move(A1.start, B1.end, cache.begin());
+                                detail::move(A1.start, B1.end, cache.begin());
                             }
                             A1 = { A1.start, B1.end };
 
                             // merge A2 and B2 into the cache
                             if (compare(proj(*std::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
-                                std::move(A2.start, A2.end, cache.begin() + A1.length() + B2.length());
-                                std::move(B2.start, B2.end, cache.begin() + A1.length());
+                                detail::move(A2.start, A2.end, cache.begin() + A1.length() + B2.length());
+                                detail::move(B2.start, B2.end, cache.begin() + A1.length());
                             } else if (compare(proj(*B2.start), proj(*std::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
                                 merge_move(A2.start, A2.end, B2.start, B2.end, cache.begin() + A1.length(),
                                            compare, projection, projection);
                             } else {
                                 // move A2 and B2 into the cache in the same order
-                                std::move(A2.start, B2.end, cache.begin() + A1.length());
+                                detail::move(A2.start, B2.end, cache.begin() + A1.length());
                             }
                             A2 = { A2.start, B2.end };
 
                             // merge A1 and A2 from the cache into the array
-                            Range<value_type*> A3 = { cache.begin(), cache.begin() + A1.length() };
-                            Range<value_type*> B3 = {
+                            Range<rvalue_reference*> A3 = { cache.begin(), cache.begin() + A1.length() };
+                            Range<rvalue_reference*> B3 = {
                                 cache.begin() + A1.length(),
                                 cache.begin() + A1.length() + A2.length()
                             };
 
                             if (compare(proj(*std::prev(B3.end)), proj(*A3.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the array
-                                std::move(A3.start, A3.end, A1.start + A2.length());
-                                std::move(B3.start, B3.end, A1.start);
+                                detail::move(A3.start, A3.end, A1.start + A2.length());
+                                detail::move(B3.start, B3.end, A1.start);
                             } else if (compare(proj(*B3.start), proj(*std::prev(A3.end)))) {
                                 // these two ranges weren't already in order, so merge them back into the array
                                 merge_move(A3.start, A3.end, B3.start, B3.end, A1.start,
                                            compare, projection, projection);
                             } else {
                                 // move A3 and B3 into the array in the same order
-                                std::move(A3.start, B3.end, A1.start);
+                                detail::move(A3.start, B3.end, A1.start);
                             }
                         }
 
@@ -472,10 +478,10 @@ namespace detail
 
                             if (compare(proj(*std::prev(B.end)), proj(*A.start))) {
                                 // the two ranges are in reverse order, so a simple rotation should fix it
-                                std::rotate(A.start, A.end, B.end);
+                                detail::rotate(A.start, A.end, B.end);
                             } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we'll need to merge them!
-                                std::move(A.start, A.end, cache.begin());
+                                detail::move(A.start, A.end, cache.begin());
                                 merge_move(cache.begin(), cache.begin() + A.length(),
                                            B.start, B.end, A.start, compare,
                                            projection, projection);
@@ -657,7 +663,7 @@ namespace detail
                                     std::next(index),
                                     std::next(pull[pull_index].from)
                                 };
-                                std::rotate(range.start, range.end - count, range.end);
+                                detail::rotate(range.start, range.end - count, range.end);
                                 pull[pull_index].from = index + count;
                             }
                         } else if (pull[pull_index].to > pull[pull_index].from) {
@@ -667,7 +673,7 @@ namespace detail
                                 index = FindLastForward(index, pull[pull_index].to, *index,
                                                         compare, projection, length - count);
                                 Range<RandomAccessIterator> range = { pull[pull_index].from, std::prev(index) };
-                                std::rotate(range.start, range.start + count, range.end);
+                                detail::rotate(range.start, range.start + count, range.end);
                                 pull[pull_index].from = std::prev(index - count);
                             }
                         }
@@ -714,7 +720,7 @@ namespace detail
 
                         if (compare(proj(*std::prev(B.end)), proj(*A.start))) {
                             // the two ranges are in reverse order, so a simple rotation should fix it
-                            std::rotate(A.start, A.end, B.end);
+                            detail::rotate(A.start, A.end, B.end);
                         } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
                             // these two ranges weren't already in order, so we'll need to merge them!
 
@@ -724,7 +730,7 @@ namespace detail
 
                             // swap the first value of each A block with the values in buffer1
                             for (auto indexA = buffer1.start, index = firstA.end ; index < blockA.end ; ++indexA) {
-                                std::iter_swap(indexA, index);
+                                iter_swap(indexA, index);
                                 index += block_size;
                             }
 
@@ -739,9 +745,9 @@ namespace detail
                             // if the first unevenly sized A block fits into the cache, move it there for when we go to Merge it
                             // otherwise, if the second buffer is available, block swap the contents into that
                             if (lastA.length() <= cache_size) {
-                                std::move(lastA.start, lastA.end, cache.begin());
+                                detail::move(lastA.start, lastA.end, cache.begin());
                             } else if (buffer2.length() > 0) {
-                                std::swap_ranges(lastA.start, lastA.end, buffer2.start);
+                                detail::swap_ranges(lastA.start, lastA.end, buffer2.start);
                             }
 
                             if (blockA.length() > 0) {
@@ -762,10 +768,10 @@ namespace detail
                                                 minA = findA;
                                             }
                                         }
-                                        std::swap_ranges(blockA.start, blockA.start + block_size, minA);
+                                        detail::swap_ranges(blockA.start, blockA.start + block_size, minA);
 
                                         // swap the first item of the previous A block back with its original value, which is stored in buffer1
-                                        std::iter_swap(blockA.start, indexA);
+                                        iter_swap(blockA.start, indexA);
                                         ++indexA;
 
                                         // locally merge the previous A block with the B values that follow it
@@ -787,15 +793,15 @@ namespace detail
                                             // move the previous A block into the cache or buffer2, since
                                             // that's where we need it to be when we go to merge it anyway
                                             if (block_size <= cache_size) {
-                                                std::move(blockA.start, blockA.start + block_size, cache.begin());
-                                                std::move(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
+                                                detail::move(blockA.start, blockA.start + block_size, cache.begin());
+                                                detail::move(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
                                             } else {
-                                                std::swap_ranges(blockA.start, blockA.start + block_size, buffer2.start);
-                                                std::swap_ranges(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
+                                                detail::swap_ranges(blockA.start, blockA.start + block_size, buffer2.start);
+                                                detail::swap_ranges(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
                                             }
                                         } else {
                                             // we are unable to use the 'buffer2' trick to speed up the rotation operation since buffer2 doesn't exist, so perform a normal rotation
-                                            std::rotate(B_split, blockA.start, blockA.start + block_size);
+                                            detail::rotate(B_split, blockA.start, blockA.start + block_size);
                                         }
 
                                         // update the range for the remaining A blocks, and the range remaining from the B block after it was split
@@ -808,7 +814,7 @@ namespace detail
 
                                     } else if (blockB.length() < block_size) {
                                         // move the last B block, which is unevenly sized, to before the remaining A blocks, by using a rotation
-                                        std::rotate(blockA.start, blockB.start, blockB.end);
+                                        detail::rotate(blockA.start, blockB.start, blockB.end);
 
                                         lastB = { blockA.start, blockA.start + blockB.length() };
                                         blockA.start += blockB.length();
@@ -816,7 +822,7 @@ namespace detail
                                         blockB.end = blockB.start;
                                     } else {
                                         // roll the leftmost A block to the end by swapping it with the next B block
-                                        std::swap_ranges(blockA.start, blockA.start + block_size, blockB.start);
+                                        detail::swap_ranges(blockA.start, blockA.start + block_size, blockB.start);
                                         lastB = { blockA.start, blockA.start + block_size };
 
                                         blockA.start += block_size;
@@ -865,7 +871,7 @@ namespace detail
                                 index = FindFirstForward(buffer.end, pull[pull_index].range.end,
                                                          *buffer.start, compare, projection, unique);
                                 difference_type amount = index - buffer.end;
-                                std::rotate(buffer.start, buffer.end, index);
+                                detail::rotate(buffer.start, buffer.end, index);
                                 buffer.start += (amount + 1);
                                 buffer.end += amount;
                                 unique -= 2;
@@ -880,7 +886,7 @@ namespace detail
                                 index = FindLastBackward(pull[pull_index].range.start, buffer.start,
                                                          *std::prev(buffer.end), compare, projection, unique);
                                 difference_type amount = buffer.start - index;
-                                std::rotate(index, index + amount, buffer.end);
+                                detail::rotate(index, index + amount, buffer.end);
                                 buffer.start -= amount;
                                 buffer.end -= (amount + 1);
                                 unique -= 2;

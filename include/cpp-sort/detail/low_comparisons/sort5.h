@@ -60,8 +60,8 @@ namespace detail
 
             // Order elements pair-wise
 
-            swap_if(first[0u], first[1u], compare, projection);
-            swap_if(first[2u], first[3u], compare, projection);
+            iter_swap_if(first, first + 1u, compare, projection);
+            iter_swap_if(first + 2u, first + 3u, compare, projection);
 
             // Order pairs of elements by max value
 
@@ -87,7 +87,7 @@ namespace detail
                     if (compare(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
-                        swap_if(first[1u], first[2u], compare, projection);
+                        iter_swap_if(first + 1u, first + 2u, compare, projection);
                     }
                     return;
                 }
@@ -101,7 +101,7 @@ namespace detail
                     rotate_right<3u>(first + 1u);
                 }
             } else {
-                swap_if(first[2u], first[3u], compare, projection);
+                iter_swap_if(first + 2u, first + 3u, compare, projection);
             }
         }
     };

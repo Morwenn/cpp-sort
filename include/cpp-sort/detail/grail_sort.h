@@ -19,10 +19,14 @@
 #include <tuple>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "merge_move.h"
+#include "move.h"
+#include "rotate.h"
+#include "swap_ranges.h"
 #include "three_way_compare.h"
 #include "upper_bound.h"
 
@@ -44,14 +48,14 @@ namespace detail
         while (u != last && h < nkeys) {
             int r = lower_bound(h0, h0 + h, proj(*u), compare.base(), projection) - h0;
             if (r == h || compare(proj(*u), proj(h0[r])) != 0) {
-                std::rotate(h0, h0 + h, u);
+                detail::rotate(h0, h0 + h, u);
                 h0 = u - h;
-                std::rotate(h0 + r, u, std::next(u));
+                detail::rotate(h0 + r, u, std::next(u));
                 ++h;
             }
             ++u;
         }
-        std::rotate(first, h0, h0 + h);
+        detail::rotate(first, h0, h0 + h);
         return h;
     }
 
@@ -68,7 +72,7 @@ namespace detail
             while (first != middle) {
                 auto h = lower_bound(middle, last, proj(*first), compare.base(), projection);
                 if (h != middle) {
-                    std::rotate(first, middle, h);
+                    detail::rotate(first, middle, h);
                     auto delta = std::distance(middle, h);
                     first += delta;
                     middle += delta;
@@ -82,7 +86,7 @@ namespace detail
             while (middle != last) {
                 auto h = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
                 if (h != middle) {
-                    std::rotate(h, middle, last);
+                    detail::rotate(h, middle, last);
                     auto delta = std::distance(h, middle);
                     middle -= delta;
                     last -= delta;
@@ -102,6 +106,7 @@ namespace detail
                          Compare compare, Projection projection)
         -> void
     {
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         RandomAccessIterator p0 = first;
@@ -109,13 +114,13 @@ namespace detail
 
         while (p1 < last) {
             if (p0 == middle || compare(proj(*p0), proj(*p1)) > 0) {
-                std::iter_swap(M++, p1++);
+                iter_swap(M++, p1++);
             } else {
-                std::iter_swap(M++, p0++);
+                iter_swap(M++, p0++);
             }
         }
         if (M != p0) {
-            std::swap_ranges(M, M + std::distance(p0, middle), p0);
+            detail::swap_ranges(M, M + std::distance(p0, middle), p0);
         }
     }
 
@@ -125,6 +130,7 @@ namespace detail
                           Compare compare, Projection projection)
         -> void
     {
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         RandomAccessIterator p0 = std::prev(M);
@@ -133,14 +139,14 @@ namespace detail
 
         while (p1 >= first) {
             if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
-                std::iter_swap(p0--, p1--);
+                iter_swap(p0--, p1--);
             } else {
-                std::iter_swap(p0--, p2--);
+                iter_swap(p0--, p2--);
             }
         }
         if (p2 != p0) {
             while (p2 >= middle) {
-                std::iter_swap(p0--, p2--);
+                iter_swap(p0--, p2--);
             }
         }
     }
@@ -151,6 +157,7 @@ namespace detail
                                     int atype, Compare compare, Projection projection)
         -> std::pair<int, int>
     {
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         RandomAccessIterator p0 = first - lkeys,
@@ -162,9 +169,9 @@ namespace detail
         int ftype = 1 - atype;  // 1 if inverted
         while (p1 < q1 && p2 < q2) {
             if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
-                std::iter_swap(p0++, p1++);
+                iter_swap(p0++, p1++);
             } else {
-                std::iter_swap(p0++, p2++);
+                iter_swap(p0++, p2++);
             }
         }
 
@@ -172,7 +179,7 @@ namespace detail
         if (p1 < q1) {
             len = std::distance(p1, q1);
             while (p1 < q1) {
-                std::iter_swap(--q1, --q2);
+                iter_swap(--q1, --q2);
             }
         } else {
             len = std::distance(p2, q2);
@@ -199,7 +206,7 @@ namespace detail
                 int h = ftype ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
                               : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
                 if (h != 0) {
-                    std::rotate(first, middle, middle + h);
+                    detail::rotate(first, middle, middle + h);
                     first += h;
                     middle += h;
                 }
@@ -232,6 +239,7 @@ namespace detail
                                   Compare compare, Projection projection)
         -> std::pair<int, int>
     {
+        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
         RandomAccessIterator p0 = first - lkeys,
@@ -243,9 +251,9 @@ namespace detail
         int ftype = 1 - atype;  // 1 if inverted
         while (p1 < q1 && p2 < q2) {
             if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
-                *p0++ = std::move(*p1++);
+                *p0++ = iter_move(p1++);
             } else {
-                *p0++ = std::move(*p2++);
+                *p0++ = iter_move(p2++);
             }
         }
 
@@ -253,7 +261,7 @@ namespace detail
         if (p1 < q1) {
             len = std::distance(p1, q1);
             while (p1 < q1) {
-                *--q2 = std::move(*--q1);
+                *--q2 = iter_move(--q1);
             }
         } else {
             len = std::distance(p2, q2);
@@ -289,7 +297,7 @@ namespace detail
             prest = pidx - lrest;
             int fnext = compare(proj(keys[cidx]), proj(*midkey)) < 0 ? 0 : 1;
             if (fnext == frest) {
-                std::move(prest, prest+lrest, prest-lblock);
+                detail::move(prest, prest + lrest, prest - lblock);
                 prest = pidx;
                 lrest = lblock;
             } else {
@@ -301,7 +309,7 @@ namespace detail
         prest = pidx - lrest;
         if (llast) {
             if (frest) {
-                std::move(prest, prest+lrest, prest-lblock);
+                detail::move(prest, prest + lrest, prest - lblock);
                 prest = pidx;
                 lrest = lblock * nblock2;
             } else {
@@ -310,7 +318,7 @@ namespace detail
             grail_MergeLeftWithXBuf(prest, prest+lrest, prest+lrest+llast,
                                     prest-lblock, compare, projection);
         } else {
-            std::move(prest, prest+lrest, prest-lblock);
+            detail::move(prest, prest + lrest, prest - lblock);
         }
     }
 
@@ -326,6 +334,8 @@ namespace detail
                            Compare compare, Projection projection)
         -> void
     {
+        using utility::iter_move;
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
         auto size = std::distance(first, last);
 
@@ -336,17 +346,17 @@ namespace detail
 
         int h;
         if (kbuf) {
-            std::move(first - kbuf, first, extbuf);
+            detail::move(first - kbuf, first, extbuf);
             for (int m = 1 ; m < size ; m += 2) {
                 int u = 0;
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
-                first[m-3] = std::move(first[m-1+u]);
-                first[m-2] = std::move(first[m-u]);
+                first[m-3] = iter_move(first + m - 1 + u);
+                first[m-2] = iter_move(first + m - u);
             }
             if (size % 2) {
-                first[size-3] = std::move(first[size-1]);
+                first[size-3] = iter_move(first + size - 1);
             }
             first -= 2;
             last -= 2;
@@ -362,24 +372,24 @@ namespace detail
                     grail_MergeLeftWithXBuf(p0, p0+h, last, p0-h, compare, projection);
                 } else {
                     for (; p0 < last ; ++p0) {
-                        p0[-h] = std::move(*p0);
+                        p0[-h] = iter_move(p0);
                     }
                 }
                 first -= h;
                 last -= h;
             }
-            std::move(extbuf, extbuf + kbuf, last);
+            detail::move(extbuf, extbuf + kbuf, last);
         } else {
             for (int m = 1 ; m < size ; m += 2) {
                 int u = 0;
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
-                std::iter_swap(first+(m-3), first+(m-1+u));
-                std::iter_swap(first+(m-2), first+(m-u));
+                iter_swap(first+(m-3), first+(m-1+u));
+                iter_swap(first+(m-2), first+(m-u));
             }
             if (size % 2) {
-                std::iter_swap(last - 1, last - 3);
+                iter_swap(last - 1, last - 3);
             }
             first -= 2;
             last -= 2;
@@ -396,7 +406,7 @@ namespace detail
             if (rest > h) {
                 grail_MergeLeft(p0, p0+h, last, p0-h, compare, projection);
             } else {
-                std::rotate(p0-h, p0, last);
+                detail::rotate(p0-h, p0, last);
             }
             first -= h;
             last -= h;
@@ -404,7 +414,7 @@ namespace detail
         int restk = size % (2 * K);
         RandomAccessIterator p = last - restk;
         if (restk <= K) {
-            std::rotate(p, last, last+K);
+            detail::rotate(p, last, last+K);
         } else {
             grail_MergeRight(p, p+K, last, last+K, compare, projection);
         }
@@ -447,7 +457,7 @@ namespace detail
             int fnext = compare(proj(keys[cidx]), midkey_proj) < 0 ? 0 : 1;
             if(fnext == frest) {
                 if (havebuf) {
-                    std::swap_ranges(prest-lblock, prest-lblock+lrest, prest);
+                    detail::swap_ranges(prest-lblock, prest-lblock+lrest, prest);
                 }
                 prest = pidx;
                 lrest = lblock;
@@ -468,7 +478,7 @@ namespace detail
         if (llast) {
             if (frest) {
                 if (havebuf) {
-                    std::swap_ranges(prest-lblock, prest-lblock+lrest, prest);
+                    detail::swap_ranges(prest-lblock, prest-lblock+lrest, prest);
                 }
                 prest = pidx;
                 lrest = lblock * nblock2;
@@ -483,7 +493,7 @@ namespace detail
             }
         } else {
             if (havebuf) {
-                std::swap_ranges(prest, prest+lrest, prest-lblock);
+                detail::swap_ranges(prest, prest+lrest, prest-lblock);
             }
         }
     }
@@ -493,15 +503,16 @@ namespace detail
                               Compare compare, Projection projection)
         -> void
     {
-        auto size = std::distance(first, last);
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         for (auto it = std::next(first) ; it < last ; it += 2) {
             if (compare(proj(*std::prev(it)), proj(*it)) > 0) {
-                std::iter_swap(std::prev(it), it);
+                iter_swap(std::prev(it), it);
             }
         }
 
+        auto size = std::distance(first, last);
         for (int h = 2 ; h < size ; h *= 2) {
             RandomAccessIterator p0 = first;
             RandomAccessIterator p1 = last - 2 * h;
@@ -525,6 +536,8 @@ namespace detail
                              Compare compare, Projection projection)
         -> void
     {
+        using utility::iter_move;
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         int M = len / (2 * LL);
@@ -534,7 +547,7 @@ namespace detail
             lrest = 0;
         }
         if (xbuf) {
-            std::move(arr - lblock, arr, xbuf);
+            detail::move(arr - lblock, arr, xbuf);
         }
         for (int b = 0 ; b <= M ; ++b) {
             if (b == M && lrest == 0) break;
@@ -552,8 +565,8 @@ namespace detail
                     }
                 }
                 if (p != u - 1) {
-                    std::swap_ranges(arr1+(u-1)*lblock, arr1+u*lblock, arr1+p*lblock);
-                    std::iter_swap(keys+(u-1), keys+p);
+                    detail::swap_ranges(arr1+(u-1)*lblock, arr1+u*lblock, arr1+p*lblock);
+                    iter_swap(keys+(u-1), keys+p);
                     if (midkey == u - 1 || midkey == p) {
                         midkey ^= (u - 1) ^ p;
                     }
@@ -578,10 +591,14 @@ namespace detail
         }
         if (xbuf) {
             for (int p = len ; --p >= 0;) {
-                arr[p] = std::move(arr[p-lblock]);
+                arr[p] = iter_move(arr + p - lblock);
             }
-            std::move(xbuf, xbuf + lblock, arr - lblock);
-        } else if(havebuf) while(--len>=0) std::iter_swap(arr+len,arr+len-lblock);
+            detail::move(xbuf, xbuf + lblock, arr - lblock);
+        } else if (havebuf) {
+            while (--len >= 0) {
+                iter_swap(arr + len, arr + len - lblock);
+            }
+        }
     }
 
     template<typename RandomAccessIterator, typename BufferIterator,
@@ -658,11 +675,11 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
-        using value_type = value_type_t<RandomAccessIterator>;
+        using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
 
         // Allocate temporary buffer
         auto size = std::distance(first, last);
-        typename BufferProvider::template buffer<value_type> buffer(size);
+        typename BufferProvider::template buffer<rvalue_reference> buffer(size);
 
         grail_commonSort(first, last, buffer.data(), buffer.size(),
                          three_way_compare<Compare>(compare), projection);

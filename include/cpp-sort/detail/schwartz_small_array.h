@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,63 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
-#define CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
+#ifndef CPPSORT_ADAPTERS_SCHWARTZ_SMALL_ARRAY_H_
+#define CPPSORT_ADAPTERS_SCHWARTZ_SMALL_ARRAY_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <array>
-#include <cstddef>
+#include <functional>
+#include <iterator>
+#include <memory>
 #include <type_traits>
 #include <utility>
+#include <vector>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/detection.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/is_in_pack.h>
+#include "../detail/checkers.h"
 
 namespace cppsort
 {
-    namespace detail
-    {
-        ////////////////////////////////////////////////////////////
-        // SFINAE helpers
-
-        template<typename T, typename=void>
-        struct has_domain:
-            std::false_type
-        {
-            using domain = void;
-        };
-
-        template<typename T>
-        struct has_domain<T, utility::void_t<typename T::domain>>:
-            std::true_type
-        {
-            using domain = typename T::domain;
-        };
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Adapter
-
-    // When no domain is given along with the fixed-size sorter,
-    // it is assumed that it works for small arrays of any size
-    // and thus void is given
-
     template<
         template<std::size_t> class FixedSizeSorter,
-        typename Indices = typename detail::has_domain<
-            fixed_sorter_traits<FixedSizeSorter>
-        >::domain
+        size_t... Indices
     >
-    struct small_array_adapter;
-
-    template<
-        template<std::size_t> class FixedSizeSorter,
-        std::size_t... Indices
+    struct schwartz_adapter<
+        small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>
     >
-    struct small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>:
-        fixed_sorter_traits<FixedSizeSorter>
     {
         template<
             typename T,
@@ -87,10 +58,11 @@ namespace cppsort
         auto operator()(std::array<T, N>& array, Args&&... args) const
             -> std::enable_if_t<
                 utility::is_in_pack<N, Indices...>,
-                decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
+                decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
             >
         {
-            return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
+            using sorter = schwartz_adapter<FixedSizeSorter<N>>;
+            return sorter{}(array, std::forward<Args>(args)...);
         }
 
         template<
@@ -102,16 +74,16 @@ namespace cppsort
         auto operator()(T (&array)[N], Args&&... args) const
             -> std::enable_if_t<
                 utility::is_in_pack<N, Indices...>,
-                decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
+                decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
             >
         {
-            return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
+            using sorter = schwartz_adapter<FixedSizeSorter<N>>;
+            return sorter{}(array, std::forward<Args>(args)...);
         }
     };
 
     template<template<std::size_t> class FixedSizeSorter>
-    struct small_array_adapter<FixedSizeSorter, void>:
-        fixed_sorter_traits<FixedSizeSorter>
+    struct schwartz_adapter<small_array_adapter<FixedSizeSorter, void>>
     {
         template<
             typename T,
@@ -119,9 +91,10 @@ namespace cppsort
             typename... Args
         >
         auto operator()(std::array<T, N>& array, Args&&... args) const
-            -> decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
+            -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {
-            return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
+            using sorter = schwartz_adapter<FixedSizeSorter<N>>;
+            return sorter{}(array, std::forward<Args>(args)...);
         }
 
         template<
@@ -130,15 +103,12 @@ namespace cppsort
             typename... Args
         >
         auto operator()(T (&array)[N], Args&&... args) const
-            -> decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
+            -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {
-            return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
+            using sorter = schwartz_adapter<FixedSizeSorter<N>>;
+            return sorter{}(array, std::forward<Args>(args)...);
         }
     };
 }
 
-#ifdef CPPSORT_ADAPTERS_SCHWARTZ_ADAPTER_H_
-#include "../detail/schwartz_small_array.h"
-#endif
-
-#endif // CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
+#endif // CPPSORT_ADAPTERS_SCHWARTZ_SMALL_ARRAY_H_

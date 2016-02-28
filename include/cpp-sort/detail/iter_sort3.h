@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 
 namespace cppsort
 {
@@ -39,31 +40,32 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
-        using std::swap;
+        using utility::iter_move;
+        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         if (compare(proj(*b), proj(*a))) {
             if (compare(proj(*c), proj(*a))) {
                 if (compare(proj(*c), proj(*b))) {
-                    swap(*a, *c);
+                    iter_swap(a, c);
                 } else {
-                    auto tmp = std::move(*a);
-                    *a = std::move(*b);
-                    *b = std::move(*c);
+                    auto tmp = iter_move(a);
+                    *a = iter_move(b);
+                    *b = iter_move(c);
                     *c = std::move(tmp);
                 }
             } else {
-                swap(*a, *b);
+                iter_swap(a, b);
             }
         } else {
             if (compare(proj(*c), proj(*b))) {
                 if (compare(proj(*c), proj(*a))) {
-                    auto tmp = std::move(*c);
-                    *c = std::move(*b);
-                    *b = std::move(*a);
+                    auto tmp = iter_move(c);
+                    *c = iter_move(b);
+                    *b = iter_move(a);
                     *a = std::move(tmp);
                 } else {
-                    swap(*b, *c);
+                    iter_swap(b, c);
                 }
             }
         }
