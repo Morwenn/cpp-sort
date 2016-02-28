@@ -35,6 +35,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
 #include "../detail/indirect_compare.h"
 
@@ -61,6 +62,8 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
+                using utility::iter_move;
+
                 ////////////////////////////////////////////////////////////
                 // Indirectly sort the iterators
 
@@ -97,10 +100,10 @@ namespace cppsort
                     // Process the current cycle
                     if (next != current)
                     {
-                        auto tmp = std::move(*current);
+                        auto tmp = iter_move(current);
                         while (next != start)
                         {
-                            *current = std::move(*next);
+                            *current = iter_move(next);
                             current = next;
                             auto next_pos = std::distance(first, next);
                             next = iterators[next_pos];
