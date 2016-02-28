@@ -91,6 +91,12 @@ TEST_CASE( "test every sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "poplar_sorter" )
+    {
+        cppsort::sort(collection, cppsort::poplar_sorter{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "quick_sorter" )
     {
         cppsort::sort(collection, cppsort::quick_sorter{});

@@ -228,7 +228,7 @@ namespace detail
                     const group_iterator<Iterator2>& rhs)
         -> bool
     {
-        return lhs.base >= rhs.base();
+        return lhs.base() >= rhs.base();
     }
 
     ////////////////////////////////////////////////////////////
