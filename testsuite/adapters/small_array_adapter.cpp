@@ -31,6 +31,8 @@
 #include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/functional.h>
 
 namespace
 {
@@ -58,8 +60,16 @@ namespace
     template<std::size_t N>
     struct fixed_sorter_with_domain_impl
     {
-        template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator, RandomAccessIterator) const
+        template<
+            typename RandomAccessIterator,
+            typename Compare = std::less<>,
+            typename Projection = cppsort::utility::identity,
+            typename = std::enable_if_t<cppsort::is_projection_iterator<
+                Projection, RandomAccessIterator, Compare
+            >>
+        >
+        auto operator()(RandomAccessIterator, RandomAccessIterator,
+                        Compare={}, Projection={}) const
             -> sorter_type
         {
             return sorter_type::fixed_with_domain;
@@ -70,9 +80,14 @@ namespace
     {
         template<
             typename RandomAccessIterator,
-            typename Compare = std::less<>
+            typename Compare = std::less<>,
+            typename Projection = cppsort::utility::identity,
+            typename = std::enable_if_t<cppsort::is_projection_iterator<
+                Projection, RandomAccessIterator, Compare
+            >>
         >
-        auto operator()(RandomAccessIterator, RandomAccessIterator, Compare={}) const
+        auto operator()(RandomAccessIterator, RandomAccessIterator,
+                        Compare={}, Projection={}) const
             -> sorter_type
         {
             return sorter_type::regular;
@@ -174,5 +189,20 @@ TEST_CASE( "small array adapter",
         CHECK( res1 == sorter_type::fixed_with_domain );
         auto res2 = cppsort::sort(big_array, sorter{});
         CHECK( res2 == sorter_type::regular );
+    }
+
+    SECTION( "with domain and projections" )
+    {
+        struct wrapper { int value; };
+        std::array<wrapper, 7> collection;
+
+        using sorter = cppsort::small_array_adapter<
+            fixed_sorter_with_domain
+        >;
+
+        auto res1 = cppsort::sort(collection, sorter{}, std::greater<>{}, &wrapper::value);
+        CHECK( res1 == sorter_type::fixed_with_domain );
+        auto res2 = cppsort::sort(collection, sorter{}, &wrapper::value);
+        CHECK( res2 == sorter_type::fixed_with_domain );
     }
 }

@@ -96,6 +96,13 @@ TEST_CASE( "every sorter with indirect adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "poplar_sorter" )
+    {
+        using sorter = cppsort::indirect_adapter<cppsort::poplar_sorter>;
+        cppsort::sort(collection, sorter{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "quick_sorter" )
     {
         using sorter = cppsort::indirect_adapter<cppsort::quick_sorter>;

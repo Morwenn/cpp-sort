@@ -27,11 +27,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <iterator>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 
@@ -53,7 +53,8 @@ namespace detail
         if (compare(proj(first[x]), proj(first[q / 2]))) x = q / 2;
         if (x != q)
         {
-            std::iter_swap(first + x, first + q);
+            using utility::iter_swap;
+            iter_swap(first + x, first + q);
             if (x == q - 1)
             {
                 sift(first + q / 2, x - q / 2, compare, projection);
@@ -86,7 +87,8 @@ namespace detail
 
         if (m != nb_poplars)
         {
-            std::iter_swap(first + roots[m], first + roots[nb_poplars]);
+            using utility::iter_swap;
+            iter_swap(first + roots[m], first + roots[nb_poplars]);
             sift(first + roots[m-1], roots[m] - roots[m-1], compare, projection);
         }
     }
@@ -99,7 +101,7 @@ namespace detail
         auto size = std::distance(first, last);
         if (size < 16)
         {
-            // A sorted collection is a valid poplar heap,
+            // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
             // should be faster
             insertion_sort(first, last, compare, projection);
@@ -118,7 +120,8 @@ namespace detail
         // something...
         if (compare(proj(*(last - 2)), proj(*std::prev(middle))))
         {
-            std::iter_swap(std::prev(middle), last - 2);
+            using utility::iter_swap;
+            iter_swap(std::prev(middle), last - 2);
             sift(first - 1, middle - first, compare, projection);
         }
 

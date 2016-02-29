@@ -15,9 +15,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
+#include "move.h"
 
 namespace cppsort
 {
@@ -31,25 +31,26 @@ namespace detail
                     Projection1 projection1={}, Projection2 projection2={})
         -> OutputIterator
     {
+        using utility::iter_move;
         auto&& proj1 = utility::as_function(projection1);
         auto&& proj2 = utility::as_function(projection2);
 
         for (; first1 != last1; ++result)
         {
             if (first2 == last2)
-                return std::move(first1, last1, result);
+                return detail::move(first1, last1, result);
             if (comp(proj2(*first2), proj1(*first1)))
             {
-                *result = std::move(*first2);
+                *result = iter_move(first2);
                 ++first2;
             }
             else
             {
-                *result = std::move(*first1);
+                *result = iter_move(first1);
                 ++first1;
             }
         }
-        return std::move(first2, last2, result);
+        return detail::move(first2, last2, result);
     }
 }}
 

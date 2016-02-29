@@ -25,12 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "upper_bound.h"
+#include "rotate.h"
 
 namespace cppsort
 {
@@ -42,11 +43,9 @@ namespace detail
                         std::bidirectional_iterator_tag)
         -> void
     {
-        if (first == last)
-        {
-            return;
-        }
+        if (first == last) return;
 
+        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
         for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur)
@@ -58,11 +57,11 @@ namespace detail
             // an element already positioned correctly.
             if (compare(proj(*sift), proj(*sift_1)))
             {
-                auto tmp = std::move(*sift);
+                auto tmp = iter_move(sift);
                 auto&& tmp_proj = proj(tmp);
                 do
                 {
-                    *sift-- = std::move(*sift_1);
+                    *sift-- = iter_move(sift_1);
                 }
                 while (sift != first && compare(tmp_proj, proj(*--sift_1)));
                 *sift = std::move(tmp);
@@ -80,7 +79,7 @@ namespace detail
 
         for (ForwardIterator it = first ; it != last ; ++it) {
             ForwardIterator insertion_point = upper_bound(first, it, proj(*it), compare, projection);
-            std::rotate(insertion_point, it, std::next(it));
+            detail::rotate(insertion_point, it, std::next(it));
         }
     }
 

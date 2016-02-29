@@ -6,10 +6,10 @@ def transform(line):
     if line:
         try:
             x, y = map(int, line.split(', '))
-            return 'swap_if(first[{0}u], first[{1}u], compare, projection);'.format(x, y)
+            return 'iter_swap_if(first + {0}u, first + {1}u, compare, projection);'.format(x, y)
         except ValueError:
             x, y = map(int, line.split(','))
-            return 'swap_if(first[{0}u], first[{1}u], compare, projection);'.format(x, y)
+            return 'iter_swap_if(first + {0}u, first + {1}u, compare, projection);'.format(x, y)
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as source:

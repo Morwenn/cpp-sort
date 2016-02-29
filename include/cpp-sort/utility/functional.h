@@ -28,7 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
-#include <memory>
 #include <utility>
 
 namespace cppsort
@@ -48,19 +47,6 @@ namespace utility
         }
 
         using is_transparent = void;
-    };
-
-    ////////////////////////////////////////////////////////////
-    // Deleter for std::get_temporary_buffer
-
-    struct temporary_buffer_deleter
-    {
-        template<typename T>
-        auto operator()(T* pointer) const
-            -> void
-        {
-            std::return_temporary_buffer(pointer);
-        }
     };
 
     ////////////////////////////////////////////////////////////

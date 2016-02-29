@@ -52,7 +52,7 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            swap_if(first[0u], first[1u], compare, projection);
+            iter_swap_if(first, first + 1u, compare, projection);
         }
     };
 }}

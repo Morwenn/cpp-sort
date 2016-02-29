@@ -15,10 +15,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
 namespace cppsort
@@ -32,10 +32,10 @@ namespace detail
                    RandomAccessIterator start)
         -> void
     {
+        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
-
         using difference_type = difference_type_t<RandomAccessIterator>;
-        using value_type = value_type_t<RandomAccessIterator>;
+
         // left-child of start is at 2 * start + 1
         // right-child of start is at 2 * start + 2
         difference_type child = start - first;
@@ -57,11 +57,11 @@ namespace detail
             // we are, start is larger than it's largest child
             return;
 
-        value_type top(std::move(*start));
+        auto top = iter_move(start);
         do
         {
             // we are not in heap-order, swap the parent with it's largest child
-            *start = std::move(*child_i);
+            *start = iter_move(child_i);
             start = child_i;
 
             if ((len - 2) / 2 < child)
@@ -107,8 +107,8 @@ namespace detail
     {
         if (len > 1)
         {
-            using std::swap;
-            swap(*first, *--last);
+            using utility::iter_swap;
+            iter_swap(first, --last);
             sift_down<Compare>(first, last, comp, projection, len - 1, first);
         }
     }

@@ -45,15 +45,18 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <cstddef>
 #include <functional>
 #include <iterator>
 #include <memory>
-#include <utility>
+#include <type_traits>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../detail/inplace_merge.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/merge_move.h"
+#include "../detail/memory.h"
+#include "../detail/rotate.h"
 
 namespace cppsort
 {
@@ -61,21 +64,6 @@ namespace utility
 {
     namespace detail
     {
-        template<typename InputIterator, typename Size, typename OutputIterator>
-        auto move_n(InputIterator first, Size count, OutputIterator result)
-            -> OutputIterator
-        {
-            if (count > 0)
-            {
-                *result++ = std::move(*first);
-                for (Size i = 1 ; i < count ; ++i)
-                {
-                    *result++ = std::move(*++first);
-                }
-            }
-            return result;
-        }
-
         template<typename ForwardIterator, typename Compare, typename Projection>
         auto merge_n_step_0(ForwardIterator f0, cppsort::detail::difference_type_t<ForwardIterator> n0,
                             ForwardIterator f1, cppsort::detail::difference_type_t<ForwardIterator> n1,
@@ -92,7 +80,7 @@ namespace utility
             n0_0 = n0 / 2;
             f0_1 = std::next(f0_0, n0_0);
             f1_1 = cppsort::detail::lower_bound(f1, std::next(f1, n1), proj(*f0_1), compare, projection);
-            f1_0 = std::rotate(f0_1, f1, f1_1);
+            f1_0 = cppsort::detail::rotate(f0_1, f1, f1_1);
             n0_1 = std::distance(f0_1, f1_0);
             ++f1_0;
             n1_0 = n0 - n0_0 - 1;
@@ -116,7 +104,7 @@ namespace utility
             f1_1 = std::next(f1, n0_1);
             f0_1 = cppsort::detail::upper_bound(f0, std::next(f0, n0), proj(*f1_1), compare, projection);
             ++f1_1;
-            f1_0 = std::rotate(f0_1, f1, f1_1);
+            f1_0 = cppsort::detail::rotate(f0_1, f1, f1_1);
             n0_0 = std::distance(f0_0, f0_1);
             n1_0 = n0 - n0_0;
             n1_1 = n1 - n0_1 - 1;
@@ -130,18 +118,27 @@ namespace utility
                                 Compare compare, Projection projection)
             -> void
         {
+            using rvalue_reference = std::decay_t<cppsort::detail::rvalue_reference_t<ForwardIterator>>;
             using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
 
             if (n0 == 0 || n1 == 0) return;
 
             if (n0 <= buff_size)
             {
-                move_n(f0, n0, buffer);
-                cppsort::detail::merge_move(
-                    buffer, buffer + n0,
-                    f1, std::next(f1, n1),
-                    f0, compare,
-                    projection, projection
+                cppsort::detail::destruct_n d(0);
+                std::unique_ptr<rvalue_reference, cppsort::detail::destruct_n&> h2(buffer, d);
+
+                rvalue_reference* buff_it = buffer;
+                for (auto it = f0 ; it != f1 ; d.incr((rvalue_reference*)nullptr), (void) ++it)
+                {
+                    using utility::iter_move;
+                    ::new(buff_it) rvalue_reference(iter_move(it));
+                    ++buff_it;
+                }
+
+                cppsort::detail::half_inplace_merge(
+                    buffer, buff_it, f1, std::next(f1, n1), f0,
+                    compare, projection
                 );
                 return;
             }
@@ -181,7 +178,7 @@ namespace utility
                            std::forward_iterator_tag)
             -> void
         {
-            using value_type = cppsort::detail::value_type_t<ForwardIterator>;
+            using rvalue_reference = std::decay_t<cppsort::detail::rvalue_reference_t<ForwardIterator>>;
             auto&& proj = as_function(projection);
 
             // Shrink the problem size on the left side
@@ -197,8 +194,11 @@ namespace utility
             ForwardIterator f0 = first;
             ForwardIterator f1 = middle;
 
-            auto buffer = std::get_temporary_buffer<value_type>(std::max(n0, n1));
-            std::unique_ptr<value_type, temporary_buffer_deleter> ptr(buffer.first);
+            auto buffer = std::get_temporary_buffer<rvalue_reference>(std::max(n0, n1));
+            std::unique_ptr<
+                rvalue_reference,
+                cppsort::detail::temporary_buffer_deleter
+            > ptr(buffer.first);
 
             merge_n_adaptative(f0, n0, f1, n1,
                                buffer.first, buffer.second,

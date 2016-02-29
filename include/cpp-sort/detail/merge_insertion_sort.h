@@ -27,14 +27,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstdint>
-#include <list>
 #include <iterator>
+#include <list>
+#include <new>
 #include <type_traits>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
+#include "memory.h"
+#include "move.h"
+#include "swap_if.h"
+#include "swap_ranges.h"
 
 namespace cppsort
 {
@@ -166,11 +171,11 @@ namespace detail
             difference_type _size;
     };
 
-    template<typename Iterator1, typename Iterator2>
-    auto iter_swap(group_iterator<Iterator1> lhs, group_iterator<Iterator2> rhs)
+    template<typename Iterator>
+    auto iter_swap(group_iterator<Iterator> lhs, group_iterator<Iterator> rhs)
         -> void
     {
-        std::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
+        detail::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
     }
 
     ////////////////////////////////////////////////////////////
@@ -224,7 +229,7 @@ namespace detail
                     const group_iterator<Iterator2>& rhs)
         -> bool
     {
-        return lhs.base >= rhs.base();
+        return lhs.base() >= rhs.base();
     }
 
     ////////////////////////////////////////////////////////////
@@ -283,7 +288,8 @@ namespace detail
         typename Compare,
         typename Projection
     >
-    auto merge_insertion_sort_impl(RandomAccessIterator first, RandomAccessIterator last,
+    auto merge_insertion_sort_impl(group_iterator<RandomAccessIterator> first,
+                                   group_iterator<RandomAccessIterator> last,
                                    Compare compare, Projection projection)
         -> void
     {
@@ -305,8 +311,6 @@ namespace detail
             1537228672809129216u, 3074457345618258432u, 6148914691236516864u
         };
 
-        using std::iter_swap;
-
         auto size = std::distance(first, last);
         if (size < 2) return;
 
@@ -322,16 +326,13 @@ namespace detail
         auto end = has_stray ? std::prev(last) : last;
         for (auto it = first ; it != end ; it += 2)
         {
-            if (compare(proj(it[1]), proj(it[0])))
-            {
-                iter_swap(it, it + 1);
-            }
+            iter_swap_if(it, it + 1, compare, projection);
         }
 
         ////////////////////////////////////////////////////////////
         // Recursively sort the pairs by max
 
-        merge_insertion_sort(
+        merge_insertion_sort_impl(
             make_group_iterator(first, 2),
             make_group_iterator(end, 2),
             compare, projection
@@ -343,10 +344,10 @@ namespace detail
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
-        std::list<RandomAccessIterator> chain = { first, std::next(first) };
+        std::list<group_iterator<RandomAccessIterator>> chain = { first, std::next(first) };
 
         // Upper bounds for the insertion of pend elements
-        std::vector<typename std::list<RandomAccessIterator>::iterator> pend;
+        std::vector<typename std::list<group_iterator<RandomAccessIterator>>::iterator> pend;
         pend.reserve((size + 1) / 2 - 1);
 
         for (auto it = first + 2 ; it != end ; it += 2)
@@ -375,7 +376,7 @@ namespace detail
             // a positive number, so there is of risk comparing funny values
             using size_type = std::common_type_t<
                 std::uint_fast64_t,
-                typename std::list<RandomAccessIterator>::difference_type
+                typename std::list<group_iterator<RandomAccessIterator>>::difference_type
             >;
 
             // Find next index
@@ -392,7 +393,7 @@ namespace detail
 
                 auto insertion_point = std::upper_bound(
                     std::begin(chain), *pe, proj(*it),
-                    [=](const auto& lhs, const auto& rhs) {
+                    [=](const auto& lhs, const auto& rhs) mutable {
                         return compare(lhs, proj(*rhs));
                     }
                 );
@@ -410,7 +411,7 @@ namespace detail
         {
             auto insertion_point = std::upper_bound(
                 std::begin(chain), *current_pend, proj(*current_it),
-                [=](const auto& lhs, const auto& rhs) {
+                [=](const auto& lhs, const auto& rhs) mutable {
                     return compare(lhs, proj(*rhs));
                 }
             );
@@ -422,16 +423,29 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Move values in order to a cache then back to origin
 
-        std::vector<value_type_t<RandomAccessIterator>> cache;
-        cache.reserve(size);
+        // Number of sub-iterators
+        auto full_size = size * first.size();
 
+        using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
+        std::unique_ptr<rvalue_reference, operator_deleter> cache(
+            static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference)))
+        );
+        destruct_n d(0);
+        std::unique_ptr<rvalue_reference, destruct_n&> h2(cache.get(), d);
+
+        rvalue_reference* buff_it = cache.get();
         for (auto&& it: chain)
         {
             auto begin = it.base();
             auto end = begin + it.size();
-            std::move(begin, end, std::back_inserter(cache));
+            for (auto inner_it = begin ; inner_it != end ; d.incr((rvalue_reference*)nullptr), (void) ++inner_it)
+            {
+                using utility::iter_move;
+                ::new(buff_it) rvalue_reference(iter_move(inner_it));
+                ++buff_it;
+            }
         }
-        std::move(std::begin(cache), std::end(cache), first.base());
+        detail::move(cache.get(), cache.get() + full_size, first.base());
     }
 
     template<

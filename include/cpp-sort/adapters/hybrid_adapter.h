@@ -29,11 +29,9 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/any_all.h>
 #include "../detail/checkers.h"
 #include "../detail/iterator_traits.h"
 

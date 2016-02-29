@@ -27,14 +27,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "bubble_sort.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "iter_sort3.h"
+#include "partition.h"
 
 namespace cppsort
 {
@@ -79,6 +80,8 @@ namespace detail
                    Compare compare, Projection projection)
         -> void
     {
+        using utility::iter_swap;
+
         // If the collection is small enough, fall back to
         // another sorting algorithm
         using category = iterator_category_t<ForwardIterator>;
@@ -103,17 +106,17 @@ namespace detail
         iter_sort3(it1, middle, it4, compare, projection);
 
         // Put the pivot at position std::prev(last) and partition
-        std::iter_swap(middle, last_1);
+        iter_swap(middle, last_1);
         auto&& pivot1 = proj(*last_1);
-        ForwardIterator middle1 = std::partition(
+        ForwardIterator middle1 = detail::partition(
             first, last_1,
             [&](const auto& elem) { return compare(proj(elem), pivot1); }
         );
 
         // Put the pivot in its final position and partition
-        std::iter_swap(middle1, last_1);
+        iter_swap(middle1, last_1);
         auto&& pivot2 = proj(*middle1);
-        ForwardIterator middle2 = std::partition(
+        ForwardIterator middle2 = detail::partition(
             std::next(middle1), last,
             [&](const auto& elem) { return not compare(pivot2, proj(elem)); }
         );
