@@ -113,6 +113,10 @@ use it before the following release.
 
 # Thanks
 
+> *I got a new car. I just need to put it together. They’re easier to steal piece by
+> piece.*
+> — Jarod Kintz, $3.33
+
 Even though some parts of the library are [original research](https://github.com/Morwenn/cpp-sort/wiki/Original-research)
 and some others correspond to custom and rather naive implementations of standard
 sorting algorithms, **cpp-sort** also reuses a great deal of code from open-source
@@ -134,10 +138,12 @@ some modifications so that they do not depend on Boost anymore.
 
 * [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function)
 and several projection-enhanced helper algorithms come from Eric Niebler's [Range
-v3](https://github.com/ericniebler/range-v3) library.
+v3](https://github.com/ericniebler/range-v3) library. Many ideas and a few other
+utility functions also come from that library and the related C++ proposals.
 
-* Many projection-enhanced standard algorithms are directly adapted from their
-counterparts in [libc++](http://libcxx.llvm.org/).
+* Many enhanced standard algorithms are directly adapted from their counterparts
+in [libc++](http://libcxx.llvm.org/), enhanced to handle both projections and
+proxy iterators.
 
 * The algorithm used by [`utility::inplace_merge`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#inplace_merge)
 is an implementation of a merge algorithm proposed by Dudziński and Dydek, and
