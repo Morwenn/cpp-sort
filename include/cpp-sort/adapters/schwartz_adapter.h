@@ -35,6 +35,8 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/sorters/std_sorter.h>
+#include <cpp-sort/sorters/std_stable_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/associate_iterator.h"
@@ -53,6 +55,11 @@ namespace cppsort
             check_iterator_category<Sorter>,
             check_is_stable<Sorter>
         {
+            static_assert(not std::is_same<Sorter, std_sorter>::value,
+                          "std_sorter doesn't work with schwartz_adapter");
+            static_assert(not std::is_same<Sorter, std_stable_sorter>::value,
+                          "std_stable_sorter doesn't work with schwartz_adapter");
+
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
