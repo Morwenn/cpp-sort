@@ -164,7 +164,7 @@ namespace detail
         using comp_ref = std::add_lvalue_reference_t<Compare>;
         inplace_merge_impl<comp_ref>(first, middle, last,
                                      compare, projection,
-                                     size_left, size - size_left,
+                                     size_left, size - (size / 2),
                                      buffer.get(), buff_size);
 
         return std::move(buffer);
