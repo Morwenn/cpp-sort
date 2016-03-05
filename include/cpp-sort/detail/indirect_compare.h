@@ -49,7 +49,7 @@ namespace detail
             {}
 
             template<typename Iterator>
-            auto operator()(Iterator lhs, Iterator rhs) const
+            auto operator()(Iterator lhs, Iterator rhs)
                 -> bool
             {
                 auto&& proj = utility::as_function(std::get<1>(data));
