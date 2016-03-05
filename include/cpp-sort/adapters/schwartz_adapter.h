@@ -38,7 +38,6 @@
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/std_stable_sorter.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
 #include "../detail/memory.h"
@@ -55,23 +54,23 @@ namespace cppsort
             check_iterator_category<Sorter>,
             check_is_stable<Sorter>
         {
-            static_assert(not std::is_same<Sorter, std_sorter>::value,
-                          "std_sorter doesn't work with schwartz_adapter");
-            static_assert(not std::is_same<Sorter, std_stable_sorter>::value,
-                          "std_stable_sorter doesn't work with schwartz_adapter");
-
             template<
                 typename ForwardIterator,
-                typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Compare,
+                typename Projection,
                 typename = std::enable_if_t<is_projection_iterator<
                     Projection, ForwardIterator, Compare
                 >>
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}, Projection projection={}) const
+                            Compare compare, Projection projection) const
                 -> void
             {
+                static_assert(not std::is_same<Sorter, std_sorter>::value,
+                              "std_sorter doesn't work with schwartz_adapter");
+                static_assert(not std::is_same<Sorter, std_stable_sorter>::value,
+                              "std_stable_sorter doesn't work with schwartz_adapter");
+
                 auto&& proj = utility::as_function(projection);
                 using proj_t = std::decay_t<decltype(proj(*first))>;
                 using value_t = association<ForwardIterator, proj_t>;
@@ -97,6 +96,22 @@ namespace cppsort
                     detail::make_associate_iterator(projected.get() + size),
                     detail::association_compare<Compare>(compare)
                 );
+            }
+
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>,
+                typename = std::enable_if_t<not is_projection_iterator<
+                    Compare, ForwardIterator
+                >>
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                // No projection to handle, forward everything to
+                // the adapted sorter
+                Sorter{}(first, last, compare);
             }
         };
     }

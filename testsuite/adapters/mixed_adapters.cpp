@@ -48,9 +48,48 @@ TEST_CASE( "indirect sort with Schwartzian transform",
     std::mt19937 engine(std::time(nullptr));
     std::shuffle(std::begin(collection), std::end(collection), engine);
 
-    SECTION( "indirect_adapter in schwartz_adapter" )
+    SECTION( "schwartz_adapter over indirect_adapter" )
     {
         using sorter = cppsort::schwartz_adapter<
+            cppsort::indirect_adapter<
+                cppsort::selection_sorter
+            >
+        >;
+
+        cppsort::sort(collection, sorter{}, &wrapper::value);
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::less<>{}, &wrapper::value) );
+    }
+
+    SECTION( "indirect_adapter over schwartz_adapter" )
+    {
+        using sorter = cppsort::indirect_adapter<
+            cppsort::schwartz_adapter<
+                cppsort::selection_sorter
+            >
+        >;
+
+        cppsort::sort(collection, sorter{}, &wrapper::value);
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::less<>{}, &wrapper::value) );
+    }
+
+    SECTION( "schwartz_adapter over schwartz_adapter" )
+    {
+        using sorter = cppsort::schwartz_adapter<
+            cppsort::schwartz_adapter<
+                cppsort::selection_sorter
+            >
+        >;
+
+        cppsort::sort(collection, sorter{}, &wrapper::value);
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::less<>{}, &wrapper::value) );
+    }
+
+    SECTION( "indirect_adapter over indirect_adapter" )
+    {
+        using sorter = cppsort::indirect_adapter<
             cppsort::indirect_adapter<
                 cppsort::selection_sorter
             >
