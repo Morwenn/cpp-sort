@@ -80,6 +80,18 @@ namespace detail
             data = std::move(other.data);
             return *this;
         }
+
+        auto get()
+            -> decltype(*it)
+        {
+            return *it;
+        }
+
+        auto get() const
+            -> decltype(*it)
+        {
+            return *it;
+        }
     };
 
     template<typename Iterator, typename Data>
@@ -119,6 +131,18 @@ namespace detail
             value = std::move(other.value);
             data = std::move(other.data);
             return *this;
+        }
+
+        auto get()
+            -> Value&
+        {
+            return value;
+        }
+
+        auto get() const
+            -> const Value&
+        {
+            return value;
         }
     };
 
