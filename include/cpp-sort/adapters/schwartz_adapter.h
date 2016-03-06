@@ -32,7 +32,6 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/std_sorter.h>
@@ -44,11 +43,36 @@
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Adapter
-
     namespace detail
     {
+        ////////////////////////////////////////////////////////////
+        // Dedicated comparison function
+
+        template<typename Compare>
+        class schwartz_compare
+        {
+            private:
+
+                Compare compare;
+
+            public:
+
+                explicit schwartz_compare(Compare compare):
+                    compare(compare)
+                {}
+
+                template<typename T, typename U>
+                auto operator()(T&& lhs, U&& rhs)
+                    noexcept(noexcept(compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data)))
+                    -> decltype(compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data))
+                {
+                    return compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data);
+                }
+        };
+
+        ////////////////////////////////////////////////////////////
+        // Adapter
+
         template<typename Sorter>
         struct schwartz_adapter_impl:
             check_iterator_category<Sorter>,
@@ -92,9 +116,9 @@ namespace cppsort
 
                 // Indirectly sort the original sequence
                 Sorter{}(
-                    detail::make_associate_iterator(projected.get()),
-                    detail::make_associate_iterator(projected.get() + size),
-                    detail::association_compare<Compare>(compare)
+                    make_associate_iterator(projected.get()),
+                    make_associate_iterator(projected.get() + size),
+                    schwartz_compare<Compare>(compare)
                 );
             }
 

@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
@@ -36,99 +36,90 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename Iterator, typename Projected>
+    //
+    // This header contains utility classes used when an adapter
+    // needs to associate a value to every element of a collection
+    // and uses this value to sort the collection
+    //
+    // The iterator will be associated to a value in association,
+    // and the utility class associate_iterator will make sure that
+    // the changes are propagated to the original collection
+    //
+    // The class associated_value is used when an element is moved
+    // out of the original collection, to make sure that it is still
+    // associated to the additional data
+    //
+
+    template<typename Iterator, typename Data>
     struct association;
 
-    template<typename Value, typename Projected>
+    template<typename Value, typename Data>
     struct associated_value;
 
-    template<typename Iterator, typename Projected>
+    template<typename Iterator, typename Data>
     struct association
     {
         // Public members
         Iterator it;
-        Projected projected;
+        Data data;
 
         // Can't copy it, can't move-construct it either
         association(const association&) = delete;
         association(association&&) = delete;
         association& operator=(const association&) = delete;
 
-        association(Iterator it, Projected projected):
+        association(Iterator it, Data data):
             it(std::move(it)),
-            projected(std::move(projected))
+            data(std::move(data))
         {}
 
-        auto operator=(associated_value<std::decay_t<decltype(*it)>, Projected>&& other)
+        auto operator=(associated_value<std::decay_t<decltype(*it)>, Data>&& other)
             -> association&
         {
             *it = std::move(other.value);
-            projected = std::move(other.projected);
+            data = std::move(other.data);
             return *this;
         }
     };
 
-    template<typename Iterator, typename Projected>
-    auto swap(association<Iterator, Projected>& lhs,
-              association<Iterator, Projected>& rhs)
+    template<typename Iterator, typename Data>
+    auto swap(association<Iterator, Data>& lhs, association<Iterator, Data>& rhs)
         -> void
     {
         using std::swap;
         using utility::iter_swap;
         iter_swap(lhs.it, rhs.it);
-        swap(lhs.projected, rhs.projected);
+        swap(lhs.data, rhs.data);
     }
 
-    template<typename Value, typename Projected>
+    template<typename Value, typename Data>
     struct associated_value
     {
         // Public members
         Value value;
-        Projected projected;
+        Data data;
 
         // Can't copy it, can't move-construct it either
         associated_value(const associated_value&) = delete;
         associated_value& operator=(const associated_value&) = delete;
 
-        associated_value(Value&& value, Projected&& projected):
+        associated_value(Value&& value, Data&& data):
             value(std::move(value)),
-            projected(std::move(projected))
+            data(std::move(data))
         {}
 
         associated_value(associated_value&& other):
             value(std::move(other.value)),
-            projected(std::move(other.projected))
+            data(std::move(other.data))
         {}
 
         auto operator=(associated_value&& other)
             -> associated_value&
         {
             value = std::move(other.value);
-            projected = std::move(other.projected);
+            data = std::move(other.data);
             return *this;
         }
-    };
-
-    template<typename Compare>
-    class association_compare
-    {
-        private:
-
-            Compare compare;
-
-        public:
-
-            explicit association_compare(Compare compare):
-                compare(compare)
-            {}
-
-            template<typename T, typename U>
-            auto operator()(T&& lhs, U&& rhs)
-                noexcept(noexcept(compare(std::forward<T>(lhs).projected, std::forward<U>(rhs).projected)))
-                -> decltype(compare(std::forward<T>(lhs).projected, std::forward<U>(rhs).projected))
-            {
-                return compare(std::forward<T>(lhs).projected, std::forward<U>(rhs).projected);
-            }
     };
 
     ////////////////////////////////////////////////////////////
@@ -218,7 +209,7 @@ namespace detail
             auto operator+=(difference_type increment)
                 -> associate_iterator&
             {
-                std::advance(_it, increment);
+                _it += increment;
                 return *this;
             }
 
@@ -261,12 +252,12 @@ namespace detail
     auto iter_move(associate_iterator<Iterator> it)
         -> associated_value<
             std::decay_t<decltype(*(it->it))>,
-            std::decay_t<decltype(it->projected)>
+            std::decay_t<decltype(it->data)>
         >
     {
         return {
             std::move(*(it->it)),
-            std::move(it->projected)
+            std::move(it->data)
         };
     }
 
