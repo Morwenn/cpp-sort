@@ -25,7 +25,6 @@
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "memory.h"
-#include "move.h"
 #include "rotate.h"
 #include "upper_bound.h"
 
@@ -74,18 +73,18 @@ namespace detail
         {
             if (first2 == last2)
             {
-                detail::move(first1, last1, result);
+                std::move(first1, last1, result);
                 return;
             }
 
             if (comp(proj(*first2), proj(*first1)))
             {
-                *result = iter_move(first2);
+                *result = std::move(*first2);
                 ++first2;
             }
             else
             {
-                *result = iter_move(first1);
+                *result = std::move(*first1);
                 ++first1;
             }
         }

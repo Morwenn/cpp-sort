@@ -73,6 +73,14 @@ namespace detail
             data(std::move(data))
         {}
 
+        auto operator=(association&& other) noexcept
+            -> association&
+        {
+            *it = std::move(*other.it);
+            data = std::move(other.data);
+            return *this;
+        }
+
         auto operator=(associated_value<std::decay_t<decltype(*it)>, Data>&& other)
             -> association&
         {
