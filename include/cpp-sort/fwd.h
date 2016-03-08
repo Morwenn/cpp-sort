@@ -60,7 +60,6 @@ namespace cppsort
     struct smooth_sorter;
     struct spread_sorter;
     struct std_sorter;
-    struct std_stable_sorter;
     struct string_spread_sorter;
     struct tim_sorter;
     struct verge_sorter;

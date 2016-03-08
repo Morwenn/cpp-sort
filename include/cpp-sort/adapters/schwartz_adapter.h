@@ -91,8 +91,8 @@ namespace cppsort
             {
                 static_assert(not std::is_same<Sorter, std_sorter>::value,
                               "std_sorter doesn't work with schwartz_adapter");
-                static_assert(not std::is_same<Sorter, std_stable_sorter>::value,
-                              "std_stable_sorter doesn't work with schwartz_adapter");
+                static_assert(not std::is_same<Sorter, stable_adapter<std_sorter>>::value,
+                              "stable_adapter<std_sorter> doesn't work with schwartz_adapter");
 
                 auto&& proj = utility::as_function(projection);
                 using proj_t = std::decay_t<decltype(proj(*first))>;

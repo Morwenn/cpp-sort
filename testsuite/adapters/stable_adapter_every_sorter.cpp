@@ -161,6 +161,13 @@ TEST_CASE( "every sorter with stable adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "std_sorter" )
+    {
+        using sorter = cppsort::stable_adapter<cppsort::std_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "tim_sorter" )
     {
         using sorter = cppsort::stable_adapter<cppsort::tim_sorter>;

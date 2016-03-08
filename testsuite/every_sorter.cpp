@@ -121,12 +121,6 @@ TEST_CASE( "test every sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
-    SECTION( "std_stable_sorter" )
-    {
-        cppsort::sort(collection, cppsort::std_stable_sorter{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
     SECTION( "tim_sorter" )
     {
         cppsort::sort(collection, cppsort::tim_sorter{});

@@ -29,6 +29,7 @@
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
+#include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 
@@ -131,9 +132,11 @@ TEST_CASE( "every sorter with indirect adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
-    SECTION( "std_stable_sorter" )
+    SECTION( "stable_adapter<std_sorter>" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::std_stable_sorter>;
+        using sorter = cppsort::indirect_adapter<
+            cppsort::stable_adapter<cppsort::std_sorter>
+        >;
         cppsort::sort(collection, sorter{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
