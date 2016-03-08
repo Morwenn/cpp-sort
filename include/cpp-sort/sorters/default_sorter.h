@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,20 +40,22 @@
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        hybrid_adapter<
-            small_array_adapter<
-                low_comparisons_sorter,
-                std::make_index_sequence<14u>
-            >,
-            merge_sorter,
-            rebind_iterator_category<
-                quick_sorter,
-                std::bidirectional_iterator_tag
-            >,
-            pdq_sorter
+    struct default_sorter:
+        self_sort_adapter<
+            hybrid_adapter<
+                small_array_adapter<
+                    low_comparisons_sorter,
+                    std::make_index_sequence<14u>
+                >,
+                merge_sorter,
+                rebind_iterator_category<
+                    quick_sorter,
+                    std::bidirectional_iterator_tag
+                >,
+                pdq_sorter
+            >
         >
-    >;
+    {};
 }
 
 #endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_

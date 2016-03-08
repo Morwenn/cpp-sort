@@ -32,10 +32,9 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/std_stable_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
