@@ -154,12 +154,19 @@ namespace cppsort
         };
     }
 
+    // Expose the underlying mechanism
+    template<typename Sorter>
+    struct make_stable:
+        sorter_facade<detail::stable_adapter_impl<Sorter>>
+    {};
+
+    // Actual sorter
     template<typename Sorter>
     struct stable_adapter:
         std::conditional_t<
             is_stable<Sorter>::value,
             Sorter,
-            sorter_facade<detail::stable_adapter_impl<Sorter>>
+            make_stable<Sorter>
         >
     {};
 }
