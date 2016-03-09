@@ -151,6 +151,11 @@ namespace cppsort
                     make_stable_compare(compare, projection)
                 );
             }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using is_stable = std::true_type;
         };
     }
 
