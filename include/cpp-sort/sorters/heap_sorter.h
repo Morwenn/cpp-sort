@@ -79,6 +79,15 @@ namespace cppsort
     struct heap_sorter:
         sorter_facade<detail::heap_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& heap_sort
+            = detail::static_const<heap_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_HEAP_SORTER_H_

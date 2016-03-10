@@ -34,6 +34,9 @@
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // Sorter
+
     struct spread_sorter:
         hybrid_adapter<
             integer_spread_sorter,
@@ -41,6 +44,15 @@ namespace cppsort
             string_spread_sorter
         >
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& spread_sort
+            = detail::static_const<spread_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_H_

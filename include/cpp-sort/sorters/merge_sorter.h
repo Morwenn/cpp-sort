@@ -106,6 +106,15 @@ namespace cppsort
     struct merge_sorter:
         sorter_facade<detail::merge_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& merge_sort
+            = detail::static_const<merge_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_MERGE_SORTER_H_

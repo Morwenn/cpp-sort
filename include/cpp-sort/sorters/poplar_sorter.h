@@ -79,6 +79,15 @@ namespace cppsort
     struct poplar_sorter:
         sorter_facade<detail::poplar_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& poplar_sort
+            = detail::static_const<poplar_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_POPLAR_SORTER_H_

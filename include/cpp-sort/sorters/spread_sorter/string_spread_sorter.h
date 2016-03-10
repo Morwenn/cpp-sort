@@ -104,6 +104,15 @@ namespace cppsort
     struct string_spread_sorter:
         sorter_facade<detail::string_spread_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& string_spread_sort
+            = detail::static_const<string_spread_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_STRING_SPREAD_SORTER_H_

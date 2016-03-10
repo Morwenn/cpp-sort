@@ -85,6 +85,15 @@ namespace cppsort
     struct block_sorter:
         sorter_facade<detail::block_sorter_impl<BufferProvider>>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& block_sort
+            = detail::static_const<block_sorter<>>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_BLOCK_SORTER_H_

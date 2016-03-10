@@ -79,6 +79,15 @@ namespace cppsort
     struct smooth_sorter:
         sorter_facade<detail::smooth_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& smooth_sort
+            = detail::static_const<smooth_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SMOOTH_SORTER_H_

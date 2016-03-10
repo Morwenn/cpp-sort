@@ -79,6 +79,15 @@ namespace cppsort
     struct tim_sorter:
         sorter_facade<detail::tim_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& tim_sort
+            = detail::static_const<tim_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_TIM_SORTER_H_

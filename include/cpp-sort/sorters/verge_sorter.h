@@ -79,6 +79,15 @@ namespace cppsort
     struct verge_sorter:
         sorter_facade<detail::verge_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& verge_sort
+            = detail::static_const<verge_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_VERGE_SORTER_H_

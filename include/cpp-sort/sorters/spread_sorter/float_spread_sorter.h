@@ -68,6 +68,15 @@ namespace cppsort
     struct float_spread_sorter:
         sorter_facade<detail::float_spread_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& float_spread_sort
+            = detail::static_const<float_spread_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_FLOAT_SPREAD_SORTER_H_

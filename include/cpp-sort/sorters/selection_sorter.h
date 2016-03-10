@@ -79,6 +79,15 @@ namespace cppsort
     struct selection_sorter:
         sorter_facade<detail::selection_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& selection_sort
+            = detail::static_const<selection_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SELECTION_SORTER_H_

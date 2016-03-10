@@ -84,6 +84,15 @@ namespace cppsort
     struct grail_sorter:
         sorter_facade<detail::grail_sorter_impl<BufferProvider>>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& grail_sort
+            = detail::static_const<grail_sorter<>>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_GRAIL_SORTER_H_

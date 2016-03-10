@@ -79,6 +79,15 @@ namespace cppsort
     struct pdq_sorter:
         sorter_facade<detail::pdq_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& pdq_sort
+            = detail::static_const<pdq_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_PDQ_SORTER_H_

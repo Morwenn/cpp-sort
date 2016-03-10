@@ -58,6 +58,7 @@ add_executable(
     cpp-sort-testsuite
 
     main.cpp
+    every_instantiated_sorter.cpp
     every_sorter.cpp
     rebind_iterator_category.cpp
     sorter_facade.cpp

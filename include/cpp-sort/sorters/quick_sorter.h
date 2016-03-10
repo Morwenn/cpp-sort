@@ -106,6 +106,15 @@ namespace cppsort
     struct quick_sorter:
         sorter_facade<detail::quick_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& quick_sort
+            = detail::static_const<quick_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_QUICK_SORTER_H_
