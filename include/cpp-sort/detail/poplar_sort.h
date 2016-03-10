@@ -49,15 +49,15 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         auto x = q;
-        if (compare(proj(first[x]), proj(first[q - 1]))) x = q - 1;
-        if (compare(proj(first[x]), proj(first[q / 2]))) x = q / 2;
+        if (compare(proj(first[x - 1]), proj(first[q - 2]))) x = q - 1;
+        if (compare(proj(first[x - 1]), proj(first[q / 2 - 1]))) x = q / 2;
         if (x != q)
         {
             using utility::iter_swap;
-            iter_swap(first + x, first + q);
+            iter_swap(first + x - 1, first + q - 1);
             if (x == q - 1)
             {
-                sift(first + q / 2, x - q / 2, compare, projection);
+                sift(first + q / 2 - 1, x - (q / 2 - 1), compare, projection);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace detail
         difference_type m = nb_poplars;
         for (difference_type j = 1 ; j < nb_poplars ; ++j)
         {
-            if (compare(proj(first[roots[m]]), proj(first[roots[j]])))
+            if (compare(proj(first[roots[m]-1]), proj(first[roots[j]-1])))
             {
                 m = j;
             }
@@ -88,7 +88,7 @@ namespace detail
         if (m != nb_poplars)
         {
             using utility::iter_swap;
-            iter_swap(first + roots[m], first + roots[nb_poplars]);
+            iter_swap(first + roots[m] - 1, first + roots[nb_poplars] - 1);
             sift(first + roots[m-1], roots[m] - roots[m-1], compare, projection);
         }
     }
@@ -122,10 +122,10 @@ namespace detail
         {
             using utility::iter_swap;
             iter_swap(std::prev(middle), last - 2);
-            sift(first - 1, middle - first, compare, projection);
+            sift(first, middle - first, compare, projection);
         }
 
-        sift(first - 1, size, compare, projection);
+        sift(first, size, compare, projection);
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -162,7 +162,7 @@ namespace detail
         // Sort the poplar heap
         while (size > 1)
         {
-            relocate(first - 1, roots, nb_poplars, compare, projection);
+            relocate(first, roots, nb_poplars, compare, projection);
             if (roots[nb_poplars-1] == size - 1)
             {
                 --nb_poplars;
