@@ -16,6 +16,7 @@ set(
     adapters/schwartz_adapter_fixed_sorters.cpp
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter.cpp
+    adapters/stable_adapter_every_sorter.cpp
 )
 
 set(

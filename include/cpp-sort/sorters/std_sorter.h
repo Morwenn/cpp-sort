@@ -31,6 +31,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/iterator_traits.h"
@@ -76,6 +77,48 @@ namespace cppsort
 
     struct std_sorter:
         sorter_facade<detail::std_sorter_impl>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Stable sorter
+
+    namespace detail
+    {
+        struct std_stable_sorter_impl
+        {
+            template<
+                typename RandomAccessIterator,
+                typename Compare = std::less<>,
+                typename = std::enable_if_t<not is_projection_iterator<
+                    Compare, RandomAccessIterator
+                >>
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare={}) const
+                -> void
+            {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        iterator_category_t<RandomAccessIterator>
+                    >::value,
+                    "stable_adapter<std_sorter> requires at least random-access iterators"
+                );
+
+                std::stable_sort(first, last, compare);
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using iterator_category = std::random_access_iterator_tag;
+            using is_stable = std::true_type;
+        };
+    }
+
+    template<>
+    struct stable_adapter<std_sorter>:
+        sorter_facade<detail::std_stable_sorter_impl>
     {};
 }
 

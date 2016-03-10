@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,11 +34,13 @@
 
 namespace cppsort
 {
-    using spread_sorter = hybrid_adapter<
-        integer_spread_sorter,
-        float_spread_sorter,
-        string_spread_sorter
-    >;
+    struct spread_sorter:
+        hybrid_adapter<
+            integer_spread_sorter,
+            float_spread_sorter,
+            string_spread_sorter
+        >
+    {};
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_H_

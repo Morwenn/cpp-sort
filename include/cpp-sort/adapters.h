@@ -33,5 +33,6 @@
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
+#include <cpp-sort/adapters/stable_adapter.h>
 
 #endif // CPPSORT_ADAPTERS_H_

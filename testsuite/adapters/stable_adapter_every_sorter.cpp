@@ -22,136 +22,163 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
+#include <array>
 #include <ctime>
 #include <iterator>
-#include <numeric>
 #include <random>
 #include <vector>
 #include <catch.hpp>
-#include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
+#include <cpp-sort/utility/buffer.h>
 
-TEST_CASE( "every sorter with indirect adapter",
-           "[indirect_adapter]" )
+namespace
 {
-    std::vector<double> collection(412);
-    std::iota(std::begin(collection), std::end(collection), -125);
+    struct wrapper
+    {
+        int value;
+        int order;
+    };
+
+    auto operator<(const wrapper& lhs, const wrapper& rhs)
+        -> bool
+    {
+        if (lhs.value < rhs.value)
+        {
+            return true;
+        }
+        if (rhs.value < lhs.value)
+        {
+            return false;
+        }
+        return lhs.order < rhs.order;
+    }
+}
+
+TEST_CASE( "every sorter with stable adapter",
+           "[stable_adapter]" )
+{
+    std::vector<wrapper> collection(412);
+    std::size_t count = 0;
+    for (wrapper& wrap: collection)
+    {
+        wrap.value = count++ % 17;
+    }
     std::mt19937 engine(std::time(nullptr));
     std::shuffle(std::begin(collection), std::end(collection), engine);
+    count = 0;
+    for (wrapper& wrap: collection)
+    {
+        wrap.order = count++;
+    }
 
     SECTION( "block_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::block_sorter<>>;
-        cppsort::sort(collection, sorter{});
+        using namespace cppsort;
+
+        using sorter = stable_adapter<block_sorter<
+            utility::fixed_buffer<0>
+        >>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "default_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::default_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::default_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "grail_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::grail_sorter<>>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::grail_sorter<>>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "heap_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::heap_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::heap_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "insertion_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::insertion_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::insertion_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "merge_insertion_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::merge_insertion_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::merge_insertion_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "merge_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::merge_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::merge_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "pdq_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::pdq_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::pdq_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "poplar_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::poplar_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::poplar_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "quick_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::quick_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::quick_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "selection_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::selection_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::selection_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "smooth_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::smooth_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::smooth_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "std_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::std_sorter>;
-        cppsort::sort(collection, sorter{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "stable_adapter<std_sorter>" )
-    {
-        using sorter = cppsort::indirect_adapter<
-            cppsort::stable_adapter<cppsort::std_sorter>
-        >;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::std_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "tim_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::tim_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::tim_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "verge_sorter" )
     {
-        using sorter = cppsort::indirect_adapter<cppsort::verge_sorter>;
-        cppsort::sort(collection, sorter{});
+        using sorter = cppsort::stable_adapter<cppsort::verge_sorter>;
+        cppsort::sort(collection, sorter{}, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }

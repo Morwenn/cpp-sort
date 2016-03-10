@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,33 +27,41 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
+#include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/fixed/low_comparisons_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorter_traits.h>
 
 namespace cppsort
 {
-    using default_sorter = self_sort_adapter<
-        hybrid_adapter<
-            small_array_adapter<
-                low_comparisons_sorter,
-                std::make_index_sequence<14u>
-            >,
-            merge_sorter,
-            rebind_iterator_category<
+    ////////////////////////////////////////////////////////////
+    // Unstable sorter
+
+    struct default_sorter:
+        self_sort_adapter<
+            hybrid_adapter<
+                small_array_adapter<
+                    low_comparisons_sorter,
+                    std::make_index_sequence<14u>
+                >,
                 quick_sorter,
-                std::bidirectional_iterator_tag
-            >,
-            pdq_sorter
+                pdq_sorter
+            >
         >
-    >;
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Stable sorter
+
+    template<>
+    struct stable_adapter<default_sorter>:
+        merge_sorter
+    {};
 }
 
 #endif // CPPSORT_SORTERS_DEFAULT_SORTER_H_

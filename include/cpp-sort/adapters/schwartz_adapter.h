@@ -32,11 +32,9 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
-#include <vector>
+#include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/std_stable_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
@@ -44,11 +42,36 @@
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Adapter
-
     namespace detail
     {
+        ////////////////////////////////////////////////////////////
+        // Dedicated comparison function
+
+        template<typename Compare>
+        class schwartz_compare
+        {
+            private:
+
+                Compare compare;
+
+            public:
+
+                explicit schwartz_compare(Compare compare):
+                    compare(compare)
+                {}
+
+                template<typename T, typename U>
+                auto operator()(T&& lhs, U&& rhs)
+                    noexcept(noexcept(compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data)))
+                    -> decltype(compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data))
+                {
+                    return compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data);
+                }
+        };
+
+        ////////////////////////////////////////////////////////////
+        // Adapter
+
         template<typename Sorter>
         struct schwartz_adapter_impl:
             check_iterator_category<Sorter>,
@@ -68,8 +91,8 @@ namespace cppsort
             {
                 static_assert(not std::is_same<Sorter, std_sorter>::value,
                               "std_sorter doesn't work with schwartz_adapter");
-                static_assert(not std::is_same<Sorter, std_stable_sorter>::value,
-                              "std_stable_sorter doesn't work with schwartz_adapter");
+                static_assert(not std::is_same<Sorter, stable_adapter<std_sorter>>::value,
+                              "stable_adapter<std_sorter> doesn't work with schwartz_adapter");
 
                 auto&& proj = utility::as_function(projection);
                 using proj_t = std::decay_t<decltype(proj(*first))>;
@@ -92,9 +115,9 @@ namespace cppsort
 
                 // Indirectly sort the original sequence
                 Sorter{}(
-                    detail::make_associate_iterator(projected.get()),
-                    detail::make_associate_iterator(projected.get() + size),
-                    detail::association_compare<Compare>(compare)
+                    make_associate_iterator(projected.get()),
+                    make_associate_iterator(projected.get() + size),
+                    schwartz_compare<Compare>(compare)
                 );
             }
 
