@@ -49,7 +49,7 @@ for filename in os.listdir("profiles"):
         "Alternating (16 values)"
     )
 
-    algos = ("heapsort", "introsort", "pdqsort", "vergesort", "timsort", "spreadsort")
+    algos = ("heap_sort", "pdq_sort", "quick_sort", "spread_sort", "std_sort", "verge_sort")
 
     groupnames = distributions
     groupsize = len(algos)
