@@ -126,7 +126,9 @@ namespace detail
                                compare_type compare, Projection projection)
             -> void
         {
-            assert( lo <= start && start <= hi );
+            assert( lo <= start );
+            assert( start <= hi );
+
             using utility::iter_move;
             auto&& proj = utility::as_function(projection);
 
@@ -244,7 +246,8 @@ namespace detail
             iterator base2 = pending_[i + 1].base;
             difference_type len2  = pending_[i + 1].len;
 
-            assert( len1 > 0 && len2 > 0 );
+            assert( len1 > 0 );
+            assert( len2 > 0 );
             assert( base1 + len1 == base2 );
 
             pending_[i].len = len1 + len2;
@@ -283,7 +286,10 @@ namespace detail
         auto gallopLeft(const T& key, Iter const base, difference_type const len, difference_type const hint)
             -> difference_type
         {
-            assert( len > 0 && hint >= 0 && hint < len );
+            assert( len > 0 );
+            assert( hint >= 0 );
+            assert( hint < len );
+
             auto&& proj = utility::as_function(proj_);
             auto&& key_proj = proj(key);
 
@@ -325,7 +331,9 @@ namespace detail
                 lastOfs          = hint - ofs;
                 ofs              = hint - tmp;
             }
-            assert( -1 <= lastOfs && lastOfs < ofs && ofs <= len );
+            assert( -1 <= lastOfs );
+            assert( lastOfs < ofs );
+            assert( ofs <= len );
 
             return lower_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
         }
@@ -334,7 +342,10 @@ namespace detail
         auto gallopRight(const T& key, Iter const base, difference_type const len, difference_type const hint)
             -> difference_type
         {
-            assert( len > 0 && hint >= 0 && hint < len );
+            assert( len > 0 );
+            assert( hint >= 0 );
+            assert( hint < len );
+
             auto&& proj = utility::as_function(proj_);
             auto&& key_proj = proj(key);
 
@@ -376,7 +387,9 @@ namespace detail
                 lastOfs += hint;
                 ofs     += hint;
             }
-            assert( -1 <= lastOfs && lastOfs < ofs && ofs <= len );
+            assert( -1 <= lastOfs );
+            assert( lastOfs < ofs );
+            assert( ofs <= len );
 
             return upper_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
         }
@@ -384,7 +397,10 @@ namespace detail
         auto mergeLo(iterator const base1, difference_type len1, iterator const base2, difference_type len2)
             -> void
         {
-            assert( len1 > 0 && len2 > 0 && base1 + len1 == base2 );
+            assert( len1 > 0 );
+            assert( len2 > 0 );
+            assert( base1 + len1 == base2 );
+
             using utility::iter_move;
 
             std::unique_ptr<rvalue_reference, operator_deleter> buffer(
@@ -424,7 +440,8 @@ namespace detail
 
                 bool break_outer = false;
                 do {
-                    assert( len1 > 1 && len2 > 0 );
+                    assert( len1 > 1 );
+                    assert( len2 > 0 );
 
                     if(comp_.lt(proj(*cursor2), proj(*cursor1))) {
                         *dest++ = iter_move(cursor2++);
@@ -450,7 +467,8 @@ namespace detail
                 }
 
                 do {
-                    assert( len1 > 1 && len2 > 0 );
+                    assert( len1 > 1 );
+                    assert( len2 > 0 );
 
                     count1 = gallopRight(*cursor2, cursor1, len1, 0);
                     if(count1 != 0) {
@@ -517,7 +535,9 @@ namespace detail
         auto mergeHi(iterator const base1, difference_type len1, iterator const base2, difference_type len2)
             -> void
         {
-            assert( len1 > 0 && len2 > 0 && base1 + len1 == base2 );
+            assert( len1 > 0 );
+            assert( len2 > 0 );
+            assert( base1 + len1 == base2 );
             using utility::iter_move;
 
             std::unique_ptr<rvalue_reference, operator_deleter> buffer(
@@ -559,7 +579,8 @@ namespace detail
 
                 bool break_outer = false;
                 do {
-                    assert( len1 > 0 && len2 > 1 );
+                    assert( len1 > 0 );
+                    assert( len2 > 1 );
 
                     if(comp_.lt(proj(*cursor2), proj(*cursor1))) {
                         *dest-- = iter_move(cursor1--);
@@ -585,7 +606,8 @@ namespace detail
                 }
 
                 do {
-                    assert( len1 > 0 && len2 > 1 );
+                    assert( len1 > 0 );
+                    assert( len2 > 1 );
 
                     count1 = len1 - gallopRight(*cursor2, base1, len1, len1 - 1);
                     if(count1 != 0) {
