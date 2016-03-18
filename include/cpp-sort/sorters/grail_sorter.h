@@ -47,7 +47,6 @@ namespace cppsort
         struct grail_sorter_impl
         {
             template<
-                typename ActualBufferProvider = BufferProvider,
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
@@ -67,7 +66,7 @@ namespace cppsort
                     "grail_sorter requires at least random-access iterators"
                 );
 
-                grail_sort<ActualBufferProvider>(first, last, compare, projection);
+                grail_sort<BufferProvider>(first, last, compare, projection);
             }
 
             ////////////////////////////////////////////////////////////
