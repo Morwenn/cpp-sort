@@ -29,6 +29,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
+#include <cpp-sort/utility/static_const.h>
 
 namespace detail
 {
@@ -119,11 +120,16 @@ struct bubble_sorter:
     cppsort::sorter_facade<detail::bubble_sorter_impl>
 {};
 
+namespace
+{
+    constexpr auto&& bubble_sort
+        = cppsort::utility::static_const<bubble_sorter>::value;
+}
+
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <numeric>
-#include <cpp-sort/sort.h>
 
 int main()
 {
@@ -142,7 +148,7 @@ int main()
     {
         auto to_sort = collection;
         // Bubble sort the collection
-        cppsort::sort(to_sort, bubble_sorter{}, projection);
+        bubble_sort(to_sort, projection);
         // Check that it is sorted in descending order
         assert(std::is_sorted(std::begin(to_sort), std::end(to_sort), std::greater<>{}));
     } while (std::next_permutation(std::begin(collection), std::end(collection)));
