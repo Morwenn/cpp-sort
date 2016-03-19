@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/poplar_sort.h"
 
@@ -86,7 +87,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& poplar_sort
-            = detail::static_const<poplar_sorter>::value;
+            = utility::static_const<poplar_sorter>::value;
     }
 }
 

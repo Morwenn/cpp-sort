@@ -32,6 +32,7 @@
 #include <limits>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/float_sort.h"
 
@@ -75,7 +76,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& float_spread_sort
-            = detail::static_const<float_spread_sorter>::value;
+            = utility::static_const<float_spread_sorter>::value;
     }
 }
 

@@ -35,8 +35,8 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
-#include "../detail/static_const.h"
 
 namespace cppsort
 {
@@ -100,7 +100,7 @@ namespace probe
 
     namespace
     {
-        constexpr auto&& rem = cppsort::detail::static_const<
+        constexpr auto&& rem = utility::static_const<
             sorter_facade<detail::rem_impl>
         >::value;
     }

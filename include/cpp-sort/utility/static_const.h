@@ -11,22 +11,21 @@
 // Project home: https://github.com/ericniebler/range-v3
 //
 
-#ifndef CPPSORT_DETAIL_STATIC_CONST_H_
-#define CPPSORT_DETAIL_STATIC_CONST_H_
+#ifndef CPPSORT_UTILITY_STATIC_CONST_H_
+#define CPPSORT_UTILITY_STATIC_CONST_H_
 
 namespace cppsort
 {
-    namespace detail
+namespace utility
+{
+    template<typename T>
+    struct static_const
     {
-        template<typename T>
-        struct static_const
-        {
-            static constexpr T value {};
-        };
+        static constexpr T value{};
+    };
 
-        template<typename T>
-        constexpr T static_const<T>::value;
-    }
-}
+    template<typename T>
+    constexpr T static_const<T>::value;
+}}
 
-#endif // CPPSORT_DETAIL_STATIC_CONST_H_
+#endif // CPPSORT_UTILITY_STATIC_CONST_H_

@@ -35,10 +35,10 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/count_inversions.h"
 #include "../detail/indirect_compare.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/static_const.h"
 
 namespace cppsort
 {
@@ -105,7 +105,7 @@ namespace probe
 
     namespace
     {
-        constexpr auto&& inv = cppsort::detail::static_const<
+        constexpr auto&& inv = utility::static_const<
             sorter_facade<detail::inv_impl>
         >::value;
     }

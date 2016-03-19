@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/merge_sort.h"
 
@@ -113,7 +114,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& merge_sort
-            = detail::static_const<merge_sorter>::value;
+            = utility::static_const<merge_sorter>::value;
     }
 }
 

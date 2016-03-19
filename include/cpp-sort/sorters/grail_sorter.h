@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/grail_sort.h"
 
 namespace cppsort
@@ -90,7 +91,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& grail_sort
-            = detail::static_const<grail_sorter<>>::value;
+            = utility::static_const<grail_sorter<>>::value;
     }
 }
 

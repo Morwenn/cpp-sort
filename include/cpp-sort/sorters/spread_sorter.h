@@ -31,6 +31,7 @@
 #include <cpp-sort/sorters/spread_sorter/float_spread_sorter.h>
 #include <cpp-sort/sorters/spread_sorter/integer_spread_sorter.h>
 #include <cpp-sort/sorters/spread_sorter/string_spread_sorter.h>
+#include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
 {
@@ -51,7 +52,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& spread_sort
-            = detail::static_const<spread_sorter>::value;
+            = utility::static_const<spread_sorter>::value;
     }
 }
 

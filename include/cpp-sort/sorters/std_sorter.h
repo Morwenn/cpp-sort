@@ -34,6 +34,7 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 
 namespace cppsort
@@ -127,7 +128,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& std_sort
-            = detail::static_const<std_sorter>::value;
+            = utility::static_const<std_sorter>::value;
     }
 }
 

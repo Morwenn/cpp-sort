@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
@@ -86,7 +87,7 @@ namespace cppsort
     namespace
     {
         constexpr auto&& pdq_sort
-            = detail::static_const<pdq_sorter>::value;
+            = utility::static_const<pdq_sorter>::value;
     }
 }
 
