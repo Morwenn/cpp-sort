@@ -37,9 +37,9 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/indirect_compare.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/static_const.h"
 
 namespace cppsort
 {
@@ -103,7 +103,7 @@ namespace probe
 
     namespace
     {
-        constexpr auto&& max = cppsort::detail::static_const<
+        constexpr auto&& max = utility::static_const<
             sorter_facade<detail::max_impl>
         >::value;
     }

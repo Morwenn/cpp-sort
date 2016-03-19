@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/insertion_sort.h"
 #include "../detail/iterator_traits.h"
 
@@ -79,6 +80,15 @@ namespace cppsort
     struct insertion_sorter:
         sorter_facade<detail::insertion_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& insertion_sort
+            = utility::static_const<insertion_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_INSERTION_SORTER_H_

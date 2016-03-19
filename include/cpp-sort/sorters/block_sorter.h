@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/block_sort.h"
 #include "../detail/iterator_traits.h"
 
@@ -84,6 +85,15 @@ namespace cppsort
     struct block_sorter:
         sorter_facade<detail::block_sorter_impl<BufferProvider>>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& block_sort
+            = utility::static_const<block_sorter<>>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_BLOCK_SORTER_H_

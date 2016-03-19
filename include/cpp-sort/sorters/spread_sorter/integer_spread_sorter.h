@@ -30,6 +30,7 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/integer_sort.h"
 
@@ -62,6 +63,15 @@ namespace cppsort
     struct integer_spread_sorter:
         sorter_facade<detail::integer_spread_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& integer_spread_sort
+            = utility::static_const<integer_spread_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_INTEGER_SPREAD_SORTER_H_

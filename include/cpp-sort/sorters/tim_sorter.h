@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/timsort.h"
 
@@ -79,6 +80,15 @@ namespace cppsort
     struct tim_sorter:
         sorter_facade<detail::tim_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& tim_sort
+            = utility::static_const<tim_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_TIM_SORTER_H_

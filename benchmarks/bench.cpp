@@ -57,12 +57,12 @@ int main()
     };
 
     std::pair<std::string, sort_f<std::vector, int>> sorts[] = {
-        { "heapsort",   cppsort::heap_sorter()      },
-        { "introsort",  cppsort::std_sorter()       },
-        { "pdqsort",    cppsort::pdq_sorter()       },
-        { "vergesort",  cppsort::verge_sorter()     },
-        { "timsort",    cppsort::tim_sorter()       },
-        { "spreadsort", cppsort::spread_sorter()    }
+        { "heap_sort",      cppsort::heap_sort      },
+        { "pdq_sort",       cppsort::pdq_sort       },
+        { "quick_sort",     cppsort::quick_sort     },
+        { "spread_sort",    cppsort::spread_sort    },
+        { "std_sort",       cppsort::std_sort       },
+        { "verge_sort",     cppsort::verge_sort     }
     };
 
     std::size_t sizes[] = { 1'000'000 };

@@ -34,6 +34,7 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 
 namespace cppsort
@@ -120,6 +121,15 @@ namespace cppsort
     struct stable_adapter<std_sorter>:
         sorter_facade<detail::std_stable_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& std_sort
+            = utility::static_const<std_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_STD_SORTER_H_

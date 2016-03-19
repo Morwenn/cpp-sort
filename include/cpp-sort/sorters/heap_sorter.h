@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/heapsort.h"
 #include "../detail/iterator_traits.h"
 
@@ -79,6 +80,15 @@ namespace cppsort
     struct heap_sorter:
         sorter_facade<detail::heap_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& heap_sort
+            = utility::static_const<heap_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_HEAP_SORTER_H_

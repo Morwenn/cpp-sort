@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/selection_sort.h"
 
@@ -79,6 +80,15 @@ namespace cppsort
     struct selection_sorter:
         sorter_facade<detail::selection_sorter_impl>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& selection_sort
+            = utility::static_const<selection_sorter>::value;
+    }
 }
 
 #endif // CPPSORT_SORTERS_SELECTION_SORTER_H_

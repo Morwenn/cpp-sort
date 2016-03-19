@@ -19,7 +19,7 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include "../detail/static_const.h"
+#include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
 {
@@ -79,7 +79,7 @@ namespace utility
 
     namespace
     {
-        constexpr auto&& as_function = cppsort::detail::static_const<
+        constexpr auto&& as_function = static_const<
             detail::as_function_fn
         >::value;
     }
