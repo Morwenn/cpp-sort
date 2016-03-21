@@ -661,8 +661,7 @@ namespace detail
             if(len2 == 1) {
                 assert( len1 > 0 );
                 dest    -= len1;
-                cursor1 -= len1;
-                detail::move_backward(cursor1 + 1, cursor1 + (1 + len1), dest + (1 + len1));
+                detail::move_backward(cursor1 + (1 - len1), cursor1 + 1, dest + (1 + len1));
                 *dest = iter_move(cursor2);
             }
             else {
