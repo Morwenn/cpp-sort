@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
@@ -46,7 +48,10 @@ namespace cppsort
             template<typename RandomAccessIterator>
             auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
                 -> std::enable_if_t<
-                    std::is_integral<value_type_t<RandomAccessIterator>>::value
+                    std::is_integral<value_type_t<RandomAccessIterator>>::value && (
+                        sizeof(value_type_t<RandomAccessIterator>) <= sizeof(std::size_t) ||
+                        sizeof(value_type_t<RandomAccessIterator>) <= sizeof(std::uintmax_t)
+                    )
                 >
             {
                 spreadsort::integer_sort(first, last);

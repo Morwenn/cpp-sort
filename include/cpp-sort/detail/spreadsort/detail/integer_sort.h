@@ -398,18 +398,6 @@ namespace spreadsort
           last, bin_cache, 0, bin_sizes);
     }
 
-    //defaulting to pdqsort when integer_sort won't work
-    template<class RandomAccessIter, class Div_type>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
-        -> disable_if_t< sizeof(Div_type) <= sizeof(std::size_t)
-            || sizeof(Div_type) <= sizeof(std::uintmax_t), void
-        >
-    {
-      //We're using pdqsort, even though integer_sort was called
-      pdqsort(first, last, std::less<>{}, utility::identity{});
-    }
-
-
     //Same for the full functor version
     //Only use spreadsort if the integer can fit in a std::size_t
     template<class RandomAccessIter, class Div_type, class Right_shift,
@@ -443,20 +431,6 @@ namespace spreadsort
           (first, last, bin_cache, 0, bin_sizes, shift, comp);
     }
 
-    //defaulting to pdqsort when integer_sort won't work
-    template<class RandomAccessIter, class Div_type, class Right_shift,
-             class Compare>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                      Right_shift shift, Compare comp)
-        -> disable_if_t< sizeof(Div_type) <= sizeof(std::size_t)
-            || sizeof(Div_type) <= sizeof(std::uintmax_t), void
-        >
-    {
-      //We're using pdqsort, even though integer_sort was called
-      pdqsort(first, last, comp, utility::identity{});
-    }
-
-
     //Same for the right shift version
     //Only use spreadsort if the integer can fit in a std::size_t
     template<class RandomAccessIter, class Div_type, class Right_shift>
@@ -486,18 +460,6 @@ namespace spreadsort
                         std::uintmax_t, int_log_mean_bin_size,
                         int_log_min_split_count, int_log_finishing_count>
           (first, last, bin_cache, 0, bin_sizes, shift);
-    }
-
-    //defaulting to pdqsort when integer_sort won't work
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                      Right_shift shift)
-        -> disable_if_t< sizeof(Div_type) <= sizeof(std::size_t)
-            || sizeof(Div_type) <= sizeof(std::uintmax_t), void
-        >
-    {
-      //We're using pdqsort, even though integer_sort was called
-      pdqsort(first, last, std::less<>{}, utility::identity{});
     }
   }
 }}}

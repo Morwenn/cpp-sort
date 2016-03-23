@@ -741,20 +741,6 @@ namespace spreadsort
         (first, last, bin_cache, 0, bin_sizes);
     }
 
-    template<class RandomAccessIter>
-    auto float_sort(RandomAccessIter first, RandomAccessIter last)
-        -> disable_if_t< (sizeof(std::uint64_t) ==
-            sizeof(value_type_t<RandomAccessIter>)
-            || sizeof(std::uint32_t) ==
-            sizeof(value_type_t<RandomAccessIter>))
-            && std::numeric_limits<
-            value_type_t<RandomAccessIter>>::is_iec559,
-            void
-        >
-    {
-      pdqsort(first, last, std::less<>{}, utility::identity{});
-    }
-
     //These approaches require the user to do the typecast
     //with rshift but default comparision
     template<class RandomAccessIter, class Div_type, class Right_shift>
@@ -780,17 +766,6 @@ namespace spreadsort
       std::vector<RandomAccessIter> bin_cache;
       float_sort_rec<RandomAccessIter, Div_type, Right_shift, std::uintmax_t>
         (first, last, bin_cache, 0, bin_sizes, rshift);
-    }
-
-    //sizeof(Div_type) doesn't match, so use pdqsort
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto float_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-               Right_shift rshift)
-        -> disable_if_t< sizeof(std::uintmax_t) >=
-            sizeof(Div_type), void
-        >
-    {
-      pdqsort(first, last, std::less<>{}, utility::identity{});
     }
 
     //specialized comparison
@@ -821,16 +796,6 @@ namespace spreadsort
       float_sort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
         std::uintmax_t>
         (first, last, bin_cache, 0, bin_sizes, rshift, comp);
-    }
-
-    //sizeof(Div_type) doesn't match, so use pdqsort
-    template<class RandomAccessIter, class Div_type, class Right_shift,
-             class Compare>
-    auto float_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                    Right_shift rshift, Compare comp)
-        -> disable_if_t< sizeof(std::uintmax_t) >= sizeof(Div_type), void >
-    {
-      pdqsort(first, last, comp, utility::identity{});
     }
   }
 }}}
