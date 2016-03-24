@@ -106,18 +106,6 @@ namespace utility
                 {
                     return _memory.cend();
                 }
-
-                constexpr auto data()
-                    -> decltype(_memory.data())
-                {
-                    return _memory.data();
-                }
-
-                constexpr auto data() const
-                    -> decltype(_memory.data())
-                {
-                    return _memory.data();
-                }
         };
     };
 
@@ -194,18 +182,6 @@ namespace utility
                     -> decltype(_memory.get() + size())
                 {
                     return _memory.get() + size();
-                }
-
-                auto data()
-                    -> decltype(_memory.get())
-                {
-                    return _memory.get();
-                }
-
-                auto data() const
-                    -> decltype(_memory.get())
-                {
-                    return _memory.get();
                 }
         };
     };

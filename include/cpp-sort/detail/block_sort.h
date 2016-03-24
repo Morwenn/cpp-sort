@@ -395,6 +395,9 @@ namespace detail
             typename BufferProvider::template buffer<rvalue_reference> cache(size);
             difference_type cache_size = cache.size();
 
+            // may be pointer of something else
+            using cache_iterator = decltype(cache.begin());
+
             // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
             while (true) {
                 // if every A and B block will fit into the cache, use a special branch specifically for merging with the cache
@@ -446,8 +449,8 @@ namespace detail
                             A2 = { A2.start, B2.end };
 
                             // merge A1 and A2 from the cache into the array
-                            Range<rvalue_reference*> A3 = { cache.begin(), cache.begin() + A1.length() };
-                            Range<rvalue_reference*> B3 = {
+                            Range<cache_iterator> A3 = { cache.begin(), cache.begin() + A1.length() };
+                            Range<cache_iterator> B3 = {
                                 cache.begin() + A1.length(),
                                 cache.begin() + A1.length() + A2.length()
                             };

@@ -532,7 +532,7 @@ namespace detail
     template<typename RandomAccessIterator, typename BufferIterator,
              typename Compare, typename Projection>
     auto grail_CombineBlocks(RandomAccessIterator keys, RandomAccessIterator arr, int len, int LL,
-                             int lblock, bool havebuf, BufferIterator xbuf,
+                             int lblock, bool havebuf, BufferIterator xbuf, bool usexbuf,
                              Compare compare, Projection projection)
         -> void
     {
@@ -546,7 +546,7 @@ namespace detail
             len -= lrest;
             lrest = 0;
         }
-        if (xbuf) {
+        if (usexbuf) {
             detail::move(arr - lblock, arr, xbuf);
         }
         for (int b = 0 ; b <= M ; ++b) {
@@ -583,13 +583,13 @@ namespace detail
                     ++nbl2;
                 }
             }
-            if (xbuf) {
+            if (usexbuf) {
                 grail_MergeBuffersLeftWithXBuf(keys,keys+midkey,arr1,NBlk-nbl2,lblock,nbl2,llast,compare,projection);
             } else {
                 grail_MergeBuffersLeft(keys,keys+midkey,arr1,NBlk-nbl2,lblock,havebuf,nbl2,llast,compare,projection);
             }
         }
-        if (xbuf) {
+        if (usexbuf) {
             for (int p = len ; --p >= 0;) {
                 arr[p] = iter_move(arr + p - lblock);
             }
@@ -662,7 +662,7 @@ namespace detail
             }
 
             grail_CombineBlocks(first, ptr, std::distance(ptr, last), cbuf, lb,
-                                chavebuf, (chavebuf && lb <= LExtBuf) ? extbuf : nullptr,
+                                chavebuf, extbuf, chavebuf && lb <= LExtBuf,
                                 compare, projection);
         }
         insertion_sort(first, ptr, compare.base(), projection);
@@ -681,7 +681,7 @@ namespace detail
         auto size = std::distance(first, last);
         typename BufferProvider::template buffer<rvalue_reference> buffer(size);
 
-        grail_commonSort(first, last, buffer.data(), buffer.size(),
+        grail_commonSort(first, last, buffer.begin(), buffer.size(),
                          three_way_compare<Compare>(compare), projection);
     }
 }}

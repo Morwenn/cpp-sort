@@ -30,6 +30,8 @@
 #include <catch.hpp>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
+#include <cpp-sort/utility/buffer.h>
+#include <cpp-sort/utility/functional.h>
 
 TEST_CASE( "test every sorter", "[sorters]" )
 {
@@ -45,7 +47,14 @@ TEST_CASE( "test every sorter", "[sorters]" )
 
     SECTION( "block_sorter" )
     {
-        cppsort::sort(collection, cppsort::block_sorter<>{});
+        using namespace cppsort;
+
+        // Fixed buffer
+        sort(collection, block_sorter<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        // Dynamic buffer
+        sort(collection, block_sorter<utility::dynamic_buffer<utility::sqrt>>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
@@ -57,7 +66,14 @@ TEST_CASE( "test every sorter", "[sorters]" )
 
     SECTION( "grail_sorter" )
     {
-        cppsort::sort(collection, cppsort::grail_sorter<>{});
+        using namespace cppsort;
+
+        // Fixed buffer
+        sort(collection, grail_sorter<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        // Dynamic buffer
+        sort(collection, grail_sorter<utility::dynamic_buffer<utility::half>>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
