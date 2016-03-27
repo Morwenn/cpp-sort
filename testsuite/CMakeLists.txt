@@ -23,6 +23,7 @@ set(
     PROBES_TESTS
 
     probes/dis.cpp
+    probes/enc.cpp
     probes/exc.cpp
     probes/ham.cpp
     probes/inv.cpp

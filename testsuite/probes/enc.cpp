@@ -21,20 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_PROBES_H_
-#define CPPSORT_PROBES_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <cpp-sort/probes/dis.h>
+#include <forward_list>
+#include <iterator>
+#include <catch.hpp>
 #include <cpp-sort/probes/enc.h>
-#include <cpp-sort/probes/exc.h>
-#include <cpp-sort/probes/ham.h>
-#include <cpp-sort/probes/inv.h>
-#include <cpp-sort/probes/max.h>
-#include <cpp-sort/probes/osc.h>
-#include <cpp-sort/probes/rem.h>
-#include <cpp-sort/probes/runs.h>
 
-#endif // CPPSORT_PROBES_H_
+TEST_CASE( "presortedness measure: enc", "[probe][enc]" )
+{
+    SECTION( "simple test" )
+    {
+        std::forward_list<int> li = { 4, 6, 5, 2, 9, 1, 3, 8, 0, 7 };
+        CHECK( cppsort::probe::enc(li) == 2 );
+        CHECK( cppsort::probe::enc(std::begin(li), std::end(li)) == 2 );
+    }
+
+    SECTION( "lower bound" )
+    {
+        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        CHECK( cppsort::probe::enc(li) == 0 );
+        CHECK( cppsort::probe::enc(std::begin(li), std::end(li)) == 0 );
+    }
+
+    SECTION( "upper bound" )
+    {
+        // The upper bound should correspond to half the size
+        // of the input sequence minus one
+
+        std::forward_list<int> li = { 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 };
+        CHECK( cppsort::probe::enc(li) == 4 );
+        CHECK( cppsort::probe::enc(std::begin(li), std::end(li)) == 4 );
+    }
+}
