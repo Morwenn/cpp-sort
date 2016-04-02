@@ -5,8 +5,10 @@ compiler:
   - gcc
 
 env:
-  - BUILD_TYPE=Debug
-  - BUILD_TYPE=Release
+  - BUILD_TYPE=Debug    VALGRIND=true   SANITIZE='' 
+  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=undefined 
+  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=address 
+  - BUILD_TYPE=Release  VALGRIND=false  SANITIZE=''
 
 addons:
   apt:
@@ -26,9 +28,13 @@ install:
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
 
 script: 
-  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" .
+  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DSANITIZE="${SANITIZE}" .
   - make
-  - valgrind --leak-check=full --track-origins=yes testsuite/cpp-sort-testsuite
+  - if [ "${VALGRIND}" = "true" ]; then
+      valgrind --leak-check=full --track-origins=yes testsuite/cpp-sort-testsuite;
+    else
+      testsuite/cpp-sort-testsuite;
+    fi
 
 notifications:
   email: false
