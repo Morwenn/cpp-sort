@@ -44,22 +44,16 @@ namespace cppsort
 
     namespace detail
     {
-        template<
-            typename Projection, typename Iterable, typename Compare,
-            typename ProjFunc = decltype(utility::as_function(std::declval<Projection&>()))
-        >
+        template<typename Projection, typename Iterable, typename Compare>
         using is_projection_t = std::result_of_t<Compare(
-            std::result_of_t<ProjFunc(decltype(*std::begin(std::declval<Iterable&>())))>,
-            std::result_of_t<ProjFunc(decltype(*std::end(std::declval<Iterable&>())))>
+            std::result_of_t<Projection(decltype(*std::begin(std::declval<Iterable&>())))>,
+            std::result_of_t<Projection(decltype(*std::end(std::declval<Iterable&>())))>
         )>;
 
-        template<
-            typename Projection, typename Iterator, typename Compare,
-            typename ProjFunc = decltype(utility::as_function(std::declval<Projection&>()))
-        >
+        template<typename Projection, typename Iterator, typename Compare>
         using is_projection_iterator_t = std::result_of_t<Compare(
-            std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>,
-            std::result_of_t<ProjFunc(decltype(*std::declval<Iterator&>()))>
+            std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>,
+            std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>
         )>;
     }
 
@@ -70,6 +64,7 @@ namespace cppsort
     >
     constexpr bool is_projection
         = utility::is_detected_v<detail::is_projection_t, Projection, Iterable, Compare>;
+
 
     template<
         typename Projection,
