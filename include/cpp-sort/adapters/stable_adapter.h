@@ -113,7 +113,7 @@ namespace cppsort
                 typename Iterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator<
+                typename = std::enable_if_t<is_projection_iterator_v<
                     Projection, Iterator, Compare
                 >>
             >

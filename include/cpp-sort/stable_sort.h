@@ -47,7 +47,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter<Compare, Iterable>>
+        typename = std::enable_if_t<not is_sorter_v<Compare, Iterable>>
     >
     auto stable_sort(Iterable& iterable, Compare compare)
         -> void
@@ -60,8 +60,8 @@ namespace cppsort
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            not is_comparison_sorter<Compare, Iterable, Projection> &&
-            not is_projection_sorter<Compare, Iterable, Projection>
+            not is_comparison_sorter_v<Compare, Iterable, Projection> &&
+            not is_projection_sorter_v<Compare, Iterable, Projection>
         >
     >
     auto stable_sort(Iterable& iterable, Compare compare, Projection projection)
@@ -80,7 +80,7 @@ namespace cppsort
     template<
         typename Iterator,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter_iterator<Compare, Iterator>>
+        typename = std::enable_if_t<not is_sorter_iterator_v<Compare, Iterator>>
     >
     auto stable_sort(Iterator first, Iterator last, Compare compare)
         -> void
@@ -93,8 +93,8 @@ namespace cppsort
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            not is_comparison_sorter_iterator<Compare, Iterator, Projection> &&
-            not is_projection_sorter_iterator<Compare, Iterator, Projection>
+            not is_comparison_sorter_iterator_v<Compare, Iterator, Projection> &&
+            not is_projection_sorter_iterator_v<Compare, Iterator, Projection>
         >
     >
     auto stable_sort(Iterator first, Iterator last, Compare compare, Projection projection)
@@ -109,7 +109,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Sorter,
-        typename = std::enable_if_t<is_sorter<
+        typename = std::enable_if_t<is_sorter_v<
             stable_adapter<Sorter>, Iterable
         >>
     >
@@ -124,8 +124,8 @@ namespace cppsort
         typename Sorter,
         typename Func,
         typename = std::enable_if_t<
-            is_comparison_sorter<stable_adapter<Sorter>, Iterable, Func> ||
-            is_projection_sorter<stable_adapter<Sorter>, Iterable, Func>
+            is_comparison_sorter_v<stable_adapter<Sorter>, Iterable, Func> ||
+            is_projection_sorter_v<stable_adapter<Sorter>, Iterable, Func>
         >
     >
     auto stable_sort(Iterable& iterable, const Sorter&, Func func)
@@ -150,7 +150,7 @@ namespace cppsort
     template<
         typename Iterator,
         typename Sorter,
-        typename = std::enable_if_t<is_sorter_iterator<
+        typename = std::enable_if_t<is_sorter_iterator_v<
             stable_adapter<Sorter>, Iterator
         >>
     >
@@ -165,8 +165,8 @@ namespace cppsort
         typename Sorter,
         typename Func,
         typename = std::enable_if_t<
-            is_comparison_sorter_iterator<stable_adapter<Sorter>, Iterator, Func> ||
-            is_projection_sorter_iterator<stable_adapter<Sorter>, Iterator, Func>
+            is_comparison_sorter_iterator_v<stable_adapter<Sorter>, Iterator, Func> ||
+            is_projection_sorter_iterator_v<stable_adapter<Sorter>, Iterator, Func>
         >
     >
     auto stable_sort(Iterator first, Iterator last, const Sorter&, Func func)

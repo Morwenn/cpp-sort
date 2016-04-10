@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter<Compare, Iterable>>
+        typename = std::enable_if_t<not is_sorter_v<Compare, Iterable>>
     >
     auto sort(Iterable& iterable, Compare compare)
         -> void
@@ -59,8 +59,8 @@ namespace cppsort
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            not is_comparison_sorter<Compare, Iterable, Projection> &&
-            not is_projection_sorter<Compare, Iterable, Projection>
+            not is_comparison_sorter_v<Compare, Iterable, Projection> &&
+            not is_projection_sorter_v<Compare, Iterable, Projection>
         >
     >
     auto sort(Iterable& iterable, Compare compare, Projection projection)
@@ -79,7 +79,7 @@ namespace cppsort
     template<
         typename Iterator,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter_iterator<Compare, Iterator>>
+        typename = std::enable_if_t<not is_sorter_iterator_v<Compare, Iterator>>
     >
     auto sort(Iterator first, Iterator last, Compare compare)
         -> void
@@ -92,8 +92,8 @@ namespace cppsort
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            not is_comparison_sorter_iterator<Compare, Iterator, Projection> &&
-            not is_projection_sorter_iterator<Compare, Iterator, Projection>
+            not is_comparison_sorter_iterator_v<Compare, Iterator, Projection> &&
+            not is_projection_sorter_iterator_v<Compare, Iterator, Projection>
         >
     >
     auto sort(Iterator first, Iterator last, Compare compare, Projection projection)
@@ -108,7 +108,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Sorter,
-        typename = std::enable_if_t<is_sorter<Sorter, Iterable>>
+        typename = std::enable_if_t<is_sorter_v<Sorter, Iterable>>
     >
     auto sort(Iterable& iterable, const Sorter& sorter)
         -> decltype(auto)
@@ -121,8 +121,8 @@ namespace cppsort
         typename Sorter,
         typename Func,
         typename = std::enable_if_t<
-            is_comparison_sorter<Sorter, Iterable, Func> ||
-            is_projection_sorter<Sorter, Iterable, Func>
+            is_comparison_sorter_v<Sorter, Iterable, Func> ||
+            is_projection_sorter_v<Sorter, Iterable, Func>
         >
     >
     auto sort(Iterable& iterable, const Sorter& sorter, Func func)
@@ -147,7 +147,7 @@ namespace cppsort
     template<
         typename Iterator,
         typename Sorter,
-        typename = std::enable_if_t<is_sorter_iterator<Sorter, Iterator>>
+        typename = std::enable_if_t<is_sorter_iterator_v<Sorter, Iterator>>
     >
     auto sort(Iterator first, Iterator last, const Sorter& sorter)
         -> decltype(auto)
@@ -160,8 +160,8 @@ namespace cppsort
         typename Sorter,
         typename Func,
         typename = std::enable_if_t<
-            is_comparison_sorter_iterator<Sorter, Iterator, Func> ||
-            is_projection_sorter_iterator<Sorter, Iterator, Func>
+            is_comparison_sorter_iterator_v<Sorter, Iterator, Func> ||
+            is_projection_sorter_iterator_v<Sorter, Iterator, Func>
         >
     >
     auto sort(Iterator first, Iterator last, const Sorter& sorter, Func func)

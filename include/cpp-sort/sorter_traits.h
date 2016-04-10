@@ -36,6 +36,7 @@
 #include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/is_callable.h>
+#include <cpp-sort/utility/logical_traits.h>
 #include "detail/raw_checkers.h"
 
 namespace cppsort
@@ -63,17 +64,26 @@ namespace cppsort
         typename Iterable,
         typename Compare = std::less<>
     >
-    constexpr bool is_projection
-        = utility::is_detected_v<detail::is_projection_t, Projection, Iterable, Compare>;
+    struct is_projection:
+        utility::is_detected<detail::is_projection_t, Projection, Iterable, Compare>
+    {};
 
+    template<typename Projection, typename Iterable, typename Compare=std::less<>>
+    constexpr bool is_projection_v
+        = is_projection<Projection, Iterable, Compare>::value;
 
     template<
         typename Projection,
         typename Iterator,
         typename Compare = std::less<>
     >
-    constexpr bool is_projection_iterator
-        = utility::is_detected_v<detail::is_projection_iterator_t, Projection, Iterator, Compare>;
+    struct is_projection_iterator:
+        utility::is_detected<detail::is_projection_iterator_t, Projection, Iterator, Compare>
+    {};
+
+    template<typename Projection, typename Iterator, typename Compare=std::less<>>
+    constexpr bool is_projection_iterator_v
+        = is_projection_iterator<Projection, Iterator, Compare>::value;
 
     ////////////////////////////////////////////////////////////
     // Sorter type categories
@@ -103,81 +113,147 @@ namespace cppsort
         };
 
         template<typename Sorter, typename Iterable>
-        constexpr bool has_sort
-            = utility::is_callable<Sorter(Iterable&)>::value;
+        struct has_sort:
+            utility::is_callable<Sorter(Iterable&)>
+        {};
 
         template<typename Sorter, typename Iterable, typename Compare>
-        constexpr bool has_comparison_sort
-            = utility::is_callable<Sorter(Iterable&, Compare)>::value &&
-              is_projection<utility::identity, Iterable, Compare>;
+        struct has_comparison_sort:
+            utility::conjunction<
+                utility::is_callable<Sorter(Iterable&, Compare)>,
+                is_projection<utility::identity, Iterable, Compare>
+            >
+        {};
 
         template<typename Sorter, typename Iterable, typename Projection>
-        constexpr bool has_projection_sort
-            = utility::is_callable<Sorter(Iterable&, Projection)>::value &&
-              is_projection<Projection, Iterable>;
+        struct has_projection_sort:
+            utility::conjunction<
+                utility::is_callable<Sorter(Iterable&, Projection)>,
+                is_projection<Projection, Iterable>
+            >
+        {};
 
         template<typename Sorter, typename Iterable, typename Compare, typename Projection>
-        constexpr bool has_comparison_projection_sort
-            = utility::is_callable<Sorter(Iterable&, Compare, Projection)>::value &&
-              is_projection<Projection, Iterable, Compare>;
+        struct has_comparison_projection_sort:
+            utility::conjunction<
+                utility::is_callable<Sorter(Iterable&, Compare, Projection)>,
+                is_projection<Projection, Iterable, Compare>
+            >
+        {};
 
         template<typename Sorter, typename Iterator>
-        constexpr bool has_sort_iterator
-            = utility::is_callable<Sorter(Iterator, Iterator)>::value;
+        struct has_sort_iterator:
+            utility::is_callable<Sorter(Iterator, Iterator)>
+        {};
 
         template<typename Sorter, typename Iterator, typename Compare>
-        constexpr bool has_comparison_sort_iterator
-            = utility::is_callable<Sorter(Iterator, Iterator, Compare)>::value &&
-              is_projection_iterator<utility::identity, Iterator, Compare>;
+        struct has_comparison_sort_iterator:
+            utility::conjunction<
+                utility::is_callable<Sorter(Iterator, Iterator, Compare)>,
+                is_projection_iterator<utility::identity, Iterator, Compare>
+            >
+        {};
 
         template<typename Sorter, typename Iterator, typename Projection>
-        constexpr bool has_projection_sort_iterator
-            = utility::is_callable<Sorter(Iterator, Iterator, Projection)>::value &&
-              is_projection_iterator<Projection, Iterator>;
+        struct has_projection_sort_iterator:
+            utility::conjunction<
+                utility::is_callable<Sorter(Iterator, Iterator, Projection)>,
+                is_projection_iterator<Projection, Iterator>
+            >
+        {};
 
         template<typename Sorter, typename Iterator, typename Compare, typename Projection>
-        constexpr bool has_comparison_projection_sort_iterator
-            = utility::is_callable<Sorter(Iterator, Iterator, Compare, Projection)>::value &&
-              is_projection_iterator<Projection, Iterator, Compare>;
+        struct has_comparison_projection_sort_iterator:
+            utility::conjunction<
+                utility::is_callable<Sorter(Iterator, Iterator, Compare, Projection)>,
+                is_projection_iterator<Projection, Iterator, Compare>
+            >
+        {};
     }
 
     template<typename Sorter, typename Iterable>
-    constexpr bool is_sorter
-        = detail::has_sort<Sorter, Iterable>;
+    struct is_sorter:
+        detail::has_sort<Sorter, Iterable>
+    {};
+
+    template<typename Sorter, typename Iterable>
+    constexpr bool is_sorter_v
+        = is_sorter<Sorter, Iterable>::value;
 
     template<typename Sorter, typename Iterable, typename Compare>
-    constexpr bool is_comparison_sorter
-        = detail::has_comparison_sort<Sorter, Iterable, Compare>;
+    struct is_comparison_sorter:
+        detail::has_comparison_sort<Sorter, Iterable, Compare>
+    {};
+
+    template<typename Sorter, typename Iterable, typename Compare>
+    constexpr bool is_comparison_sorter_v
+        = is_comparison_sorter<Sorter, Iterable, Compare>::value;
 
     template<typename Sorter, typename Iterable, typename Projection>
-    constexpr bool is_projection_sorter
-        = detail::has_projection_sort<Sorter, Iterable, Projection>;
+    struct is_projection_sorter:
+        detail::has_projection_sort<Sorter, Iterable, Projection>
+    {};
 
-    template<typename Sorter, typename Iterable,
-             typename Compare, typename Projection>
-    constexpr bool is_comparison_projection_sorter
-        = detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection>;
+    template<typename Sorter, typename Iterable, typename Projection>
+    constexpr bool is_projection_sorter_v
+        = is_projection_sorter<Sorter, Iterable, Projection>::value;
+
+    template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+    struct is_comparison_projection_sorter:
+        detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection>
+    {};
+
+    template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+    constexpr bool is_comparison_projection_sorter_v
+        = is_comparison_projection_sorter<Sorter, Iterable, Compare, Projection>::value;
 
     template<typename Sorter, typename Iterator>
-    constexpr bool is_sorter_iterator
-        = is_sorter<Sorter, detail::range<Iterator>> &&
-          detail::has_sort_iterator<Sorter, Iterator>;
+    struct is_sorter_iterator:
+        utility::conjunction<
+            is_sorter<Sorter, detail::range<Iterator>>,
+            detail::has_sort_iterator<Sorter, Iterator>
+        >
+    {};
+
+    template<typename Sorter, typename Iterator>
+    constexpr bool is_sorter_iterator_v
+        = is_sorter_iterator<Sorter, Iterator>::value;
 
     template<typename Sorter, typename Iterator, typename Compare>
-    constexpr bool is_comparison_sorter_iterator
-        = is_comparison_sorter<Sorter, detail::range<Iterator>, Compare> &&
-          detail::has_comparison_sort_iterator<Sorter, Iterator, Compare>;
+    struct is_comparison_sorter_iterator:
+        utility::conjunction<
+            is_comparison_sorter<Sorter, detail::range<Iterator>, Compare>,
+            detail::has_comparison_sort_iterator<Sorter, Iterator, Compare>
+        >
+    {};
+
+    template<typename Sorter, typename Iterator, typename Compare>
+    constexpr bool is_comparison_sorter_iterator_v
+        = is_comparison_sorter_iterator<Sorter, Iterator, Compare>::value;
 
     template<typename Sorter, typename Iterator, typename Projection>
-    constexpr bool is_projection_sorter_iterator
-        = is_projection_sorter<Sorter, detail::range<Iterator>, Projection> &&
-          detail::has_projection_sort_iterator<Sorter, Iterator, Projection>;
+    struct is_projection_sorter_iterator:
+        utility::conjunction<
+            is_projection_sorter<Sorter, detail::range<Iterator>, Projection>,
+            detail::has_projection_sort_iterator<Sorter, Iterator, Projection>
+        >
+    {};
 
-    template<typename Sorter, typename Iterator,
-             typename Compare, typename Projection>
-    constexpr bool is_comparison_projection_sorter_iterator
-        = is_comparison_projection_sorter<Sorter, detail::range<Iterator>, Compare, Projection> &&
-          detail::has_comparison_projection_sort_iterator<Sorter, Iterator, Compare, Projection>;
+    template<typename Sorter, typename Iterator, typename Projection>
+    constexpr bool is_projection_sorter_iterator_v
+        = is_projection_sorter_iterator<Sorter, Iterator, Projection>::value;
+
+    template<typename Sorter, typename Iterator, typename Compare, typename Projection>
+    struct is_comparison_projection_sorter_iterator:
+        utility::conjunction<
+            is_comparison_projection_sorter<Sorter, detail::range<Iterator>, Compare, Projection>,
+            detail::has_comparison_projection_sort_iterator<Sorter, Iterator, Compare, Projection>
+        >
+    {};
+
+    template<typename Sorter, typename Iterator, typename Compare, typename Projection>
+    constexpr bool is_comparison_projection_sorter_iterator_v
+        = is_comparison_projection_sorter_iterator<Sorter, Iterator, Compare, Projection>::value;
 
     ////////////////////////////////////////////////////////////
     // Sorter traits

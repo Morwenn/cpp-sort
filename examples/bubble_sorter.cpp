@@ -66,7 +66,7 @@ namespace detail
         template<
             typename ForwardIterator,
             typename StrictWeakOrdering = std::less<>,
-            typename = std::enable_if_t<not cppsort::is_projection_iterator<
+            typename = std::enable_if_t<not cppsort::is_projection_iterator_v<
                 StrictWeakOrdering, ForwardIterator
             >>
         >
@@ -90,7 +90,7 @@ namespace detail
         template<
             typename ForwardIterable,
             typename StrictWeakOrdering = std::less<>,
-            typename = std::enable_if_t<not cppsort::is_projection<
+            typename = std::enable_if_t<not cppsort::is_projection_v<
                 StrictWeakOrdering, ForwardIterable
             >>
         >

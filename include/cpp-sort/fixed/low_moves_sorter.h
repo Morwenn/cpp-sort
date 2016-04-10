@@ -56,7 +56,7 @@ namespace cppsort
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator<
+                typename = std::enable_if_t<is_projection_iterator_v<
                     Projection, RandomAccessIterator, Compare
                 >>
             >

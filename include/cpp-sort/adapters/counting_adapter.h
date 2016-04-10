@@ -52,7 +52,7 @@ namespace cppsort
                 typename Iterable,
                 typename Compare = std::less<>,
                 typename = std::enable_if_t<
-                    not is_projection<Compare, Iterable>
+                    not is_projection_v<Compare, Iterable>
                 >
             >
             auto operator()(Iterable& iterable, Compare compare={}) const
@@ -67,7 +67,7 @@ namespace cppsort
                 typename Iterator,
                 typename Compare = std::less<>,
                 typename = std::enable_if_t<
-                    not is_projection_iterator<Compare, Iterator>
+                    not is_projection_iterator_v<Compare, Iterator>
                 >
             >
             auto operator()(Iterator first, Iterator last, Compare compare={}) const
@@ -83,7 +83,7 @@ namespace cppsort
                 typename Compare,
                 typename Projection,
                 typename = std::enable_if_t<
-                    is_projection<Projection, Iterable, Compare>
+                    is_projection_v<Projection, Iterable, Compare>
                 >
             >
             auto operator()(Iterable& iterable, Compare compare={},
@@ -100,7 +100,7 @@ namespace cppsort
                 typename Compare,
                 typename Projection,
                 typename = std::enable_if_t<
-                    is_projection_iterator<Projection, Iterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
             auto operator()(Iterator first, Iterator last,

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,48 +21,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_LOW_MOVES_SORT4_H_
-#define CPPSORT_DETAIL_LOW_MOVES_SORT4_H_
+#ifndef CPPSORT_UTILITY_LOGICAL_TRAITS_H_
+#define CPPSORT_UTILITY_LOGICAL_TRAITS_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
 #include <type_traits>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/iter_move.h>
-#include "../min_element.h"
 
 namespace cppsort
 {
-namespace detail
+namespace utility
 {
-    template<>
-    struct low_moves_sorter_impl<4u>
-    {
-        template<
-            typename RandomAccessIterator,
-            typename Compare = std::less<>,
-            typename Projection = utility::identity,
-            typename = std::enable_if_t<is_projection_iterator_v<
-                Projection, RandomAccessIterator, Compare
-            >>
-        >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare={}, Projection projection={}) const
-            -> void
-        {
-            using utility::iter_swap;
+    ////////////////////////////////////////////////////////////
+    // Conjunction
 
-            RandomAccessIterator min = min_element(first, last, compare, projection);
-            if (min != first)
-            {
-                iter_swap(min, first);
-            }
-            low_moves_sorter<3u>{}(first+1u, last, compare, projection);
-        }
-    };
+    template<typename...>
+    struct conjunction:
+        std::true_type
+    {};
+
+    template<typename Head>
+    struct conjunction<Head>:
+        Head
+    {};
+
+    template<typename Head, typename... Tail>
+    struct conjunction<Head, Tail...>:
+        std::conditional_t<Head::value != false, conjunction<Tail...>, Head>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Disjunction
+
+    template<typename...>
+    struct disjunction:
+        std::false_type
+    {};
+
+    template<typename Head>
+    struct disjunction<Head>:
+        Head
+    {};
+
+    template<typename Head, typename... Tail>
+    struct disjunction<Head, Tail...>:
+        std::conditional_t<Head::value != false, Head, disjunction<Tail...>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Negation
+
+    template<typename T>
+    struct negation:
+        std::integral_constant<bool, not T::value>
+    {};
 }}
 
-#endif // CPPSORT_DETAIL_LOW_MOVES_SORT4_H_
+#endif // CPPSORT_UTILITY_LOGICAL_TRAITS_H_

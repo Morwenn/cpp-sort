@@ -49,7 +49,7 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename = std::enable_if_t<not is_projection_iterator<
+                typename = std::enable_if_t<not is_projection_iterator_v<
                     Compare, RandomAccessIterator
                 >>
             >
@@ -90,7 +90,7 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename = std::enable_if_t<not is_projection_iterator<
+                typename = std::enable_if_t<not is_projection_iterator_v<
                     Compare, RandomAccessIterator
                 >>
             >

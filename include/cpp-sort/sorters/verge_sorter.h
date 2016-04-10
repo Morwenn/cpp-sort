@@ -51,7 +51,7 @@ namespace cppsort
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator<Projection, BidirectionalIterator, Compare>
+                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >
             auto operator()(BidirectionalIterator first, BidirectionalIterator last,

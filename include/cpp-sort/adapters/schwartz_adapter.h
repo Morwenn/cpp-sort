@@ -81,7 +81,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare,
                 typename Projection,
-                typename = std::enable_if_t<is_projection_iterator<
+                typename = std::enable_if_t<is_projection_iterator_v<
                     Projection, ForwardIterator, Compare
                 >>
             >
@@ -124,7 +124,7 @@ namespace cppsort
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename = std::enable_if_t<not is_projection_iterator<
+                typename = std::enable_if_t<not is_projection_iterator_v<
                     Compare, ForwardIterator
                 >>
             >
