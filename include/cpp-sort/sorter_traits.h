@@ -90,28 +90,6 @@ namespace cppsort
 
     namespace detail
     {
-        // Group two iterators as a range, used to discriminate
-        // sorters from comparison functions
-        template<typename Iterator>
-        class range
-        {
-            public:
-
-                range(Iterator begin, Iterator end):
-                    _begin(begin),
-                    _end(end)
-                {}
-
-                Iterator begin() { return _begin; }
-                Iterator end() { return _end; }
-                Iterator begin() const { return _begin; }
-                Iterator end() const { return _end; }
-
-            private:
-
-                Iterator _begin, _end;
-        };
-
         template<typename Sorter, typename Iterable>
         struct has_sort:
             utility::is_callable<Sorter(Iterable&)>
@@ -209,10 +187,7 @@ namespace cppsort
 
     template<typename Sorter, typename Iterator>
     struct is_sorter_iterator:
-        utility::conjunction<
-            is_sorter<Sorter, detail::range<Iterator>>,
-            detail::has_sort_iterator<Sorter, Iterator>
-        >
+        detail::has_sort_iterator<Sorter, Iterator>
     {};
 
     template<typename Sorter, typename Iterator>
@@ -221,10 +196,7 @@ namespace cppsort
 
     template<typename Sorter, typename Iterator, typename Compare>
     struct is_comparison_sorter_iterator:
-        utility::conjunction<
-            is_comparison_sorter<Sorter, detail::range<Iterator>, Compare>,
-            detail::has_comparison_sort_iterator<Sorter, Iterator, Compare>
-        >
+        detail::has_comparison_sort_iterator<Sorter, Iterator, Compare>
     {};
 
     template<typename Sorter, typename Iterator, typename Compare>
@@ -233,10 +205,7 @@ namespace cppsort
 
     template<typename Sorter, typename Iterator, typename Projection>
     struct is_projection_sorter_iterator:
-        utility::conjunction<
-            is_projection_sorter<Sorter, detail::range<Iterator>, Projection>,
-            detail::has_projection_sort_iterator<Sorter, Iterator, Projection>
-        >
+        detail::has_projection_sort_iterator<Sorter, Iterator, Projection>
     {};
 
     template<typename Sorter, typename Iterator, typename Projection>
@@ -245,10 +214,7 @@ namespace cppsort
 
     template<typename Sorter, typename Iterator, typename Compare, typename Projection>
     struct is_comparison_projection_sorter_iterator:
-        utility::conjunction<
-            is_comparison_projection_sorter<Sorter, detail::range<Iterator>, Compare, Projection>,
-            detail::has_comparison_projection_sort_iterator<Sorter, Iterator, Compare, Projection>
-        >
+        detail::has_comparison_projection_sort_iterator<Sorter, Iterator, Compare, Projection>
     {};
 
     template<typename Sorter, typename Iterator, typename Compare, typename Projection>
