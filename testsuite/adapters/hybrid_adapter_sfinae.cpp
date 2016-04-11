@@ -119,25 +119,25 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
 
     SECTION( "with iterators" )
     {
-        sorter_type res1 = cppsort::sort(std::begin(vec1), std::end(vec1), sorter{});
+        sorter_type res1 = cppsort::sort(sorter{}, std::begin(vec1), std::end(vec1));
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = cppsort::sort(std::begin(vec2), std::end(vec2), sorter{});
+        sorter_type res2 = cppsort::sort(sorter{}, std::begin(vec2), std::end(vec2));
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = cppsort::sort(std::begin(vec3), std::end(vec3), sorter{});
+        sorter_type res3 = cppsort::sort(sorter{}, std::begin(vec3), std::end(vec3));
         CHECK( res3 == sorter_type::generic );
     }
 
     SECTION( "with iterables" )
     {
-        sorter_type res1 = cppsort::sort(vec1, sorter{});
+        sorter_type res1 = cppsort::sort(sorter{}, vec1);
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = cppsort::sort(vec2, sorter{});
+        sorter_type res2 = cppsort::sort(sorter{}, vec2);
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = cppsort::sort(vec3, sorter{});
+        sorter_type res3 = cppsort::sort(sorter{}, vec3);
         CHECK( res3 == sorter_type::generic );
     }
 }
@@ -164,25 +164,25 @@ TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
 
     SECTION( "with iterators" )
     {
-        sorter_type res1 = cppsort::sort(std::begin(vec1), std::end(vec1), sorter{});
+        sorter_type res1 = cppsort::sort(sorter{}, std::begin(vec1), std::end(vec1));
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = cppsort::sort(std::begin(vec2), std::end(vec2), sorter{});
+        sorter_type res2 = cppsort::sort(sorter{}, std::begin(vec2), std::end(vec2));
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = cppsort::sort(std::begin(vec3), std::end(vec3), sorter{});
+        sorter_type res3 = cppsort::sort(sorter{}, std::begin(vec3), std::end(vec3));
         CHECK( res3 == sorter_type::generic );
     }
 
     SECTION( "with iterables" )
     {
-        sorter_type res1 = cppsort::sort(vec1, sorter{});
+        sorter_type res1 = cppsort::sort(sorter{}, vec1);
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = cppsort::sort(vec2, sorter{});
+        sorter_type res2 = cppsort::sort(sorter{}, vec2);
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = cppsort::sort(vec3, sorter{});
+        sorter_type res3 = cppsort::sort(sorter{}, vec3);
         CHECK( res3 == sorter_type::generic );
     }
 }

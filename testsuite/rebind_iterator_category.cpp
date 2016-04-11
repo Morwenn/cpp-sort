@@ -103,15 +103,15 @@ TEST_CASE( "iterator category rebinder",
         >;
 
         std::forward_list<float> collection1(3);
-        sorter_type res1 = cppsort::sort(collection1, sorter{});
+        sorter_type res1 = cppsort::sort(sorter{}, collection1);
         CHECK( res1 == sorter_type::foo );
 
         std::list<float> collection2(3);
-        sorter_type res2 = cppsort::sort(collection2, sorter{});
+        sorter_type res2 = cppsort::sort(sorter{}, collection2);
         CHECK( res2 == sorter_type::bar );
 
         std::vector<float> collection3(3);
-        sorter_type res3 = cppsort::sort(collection3, sorter{});
+        sorter_type res3 = cppsort::sort(sorter{}, collection3);
         CHECK( res3 == sorter_type::bar );
     }
 }

@@ -107,40 +107,40 @@ namespace cppsort
     // With a given sorter
 
     template<
-        typename Iterable,
         typename Sorter,
+        typename Iterable,
         typename = std::enable_if_t<is_sorter_v<
             stable_adapter<Sorter>, Iterable
         >>
     >
-    auto stable_sort(Iterable& iterable, const Sorter&)
+    auto stable_sort(const Sorter&, Iterable& iterable)
         -> decltype(auto)
     {
         return stable_adapter<Sorter>{}(iterable);
     }
 
     template<
-        typename Iterable,
         typename Sorter,
+        typename Iterable,
         typename Func,
         typename = std::enable_if_t<
             is_comparison_sorter_v<stable_adapter<Sorter>, Iterable, Func> ||
             is_projection_sorter_v<stable_adapter<Sorter>, Iterable, Func>
         >
     >
-    auto stable_sort(Iterable& iterable, const Sorter&, Func func)
+    auto stable_sort(const Sorter&, Iterable& iterable, Func func)
         -> decltype(auto)
     {
         return stable_adapter<Sorter>{}(iterable, func);
     }
 
     template<
-        typename Iterable,
         typename Sorter,
+        typename Iterable,
         typename Compare,
         typename Projection
     >
-    auto stable_sort(Iterable& iterable, const Sorter&,
+    auto stable_sort(const Sorter&, Iterable& iterable,
                      Compare compare, Projection projection)
         -> decltype(auto)
     {
@@ -148,40 +148,40 @@ namespace cppsort
     }
 
     template<
-        typename Iterator,
         typename Sorter,
+        typename Iterator,
         typename = std::enable_if_t<is_sorter_iterator_v<
             stable_adapter<Sorter>, Iterator
         >>
     >
-    auto stable_sort(Iterator first, Iterator last, const Sorter&)
+    auto stable_sort(const Sorter&, Iterator first, Iterator last)
         -> decltype(auto)
     {
         return stable_adapter<Sorter>{}(first, last);
     }
 
     template<
-        typename Iterator,
         typename Sorter,
+        typename Iterator,
         typename Func,
         typename = std::enable_if_t<
             is_comparison_sorter_iterator_v<stable_adapter<Sorter>, Iterator, Func> ||
             is_projection_sorter_iterator_v<stable_adapter<Sorter>, Iterator, Func>
         >
     >
-    auto stable_sort(Iterator first, Iterator last, const Sorter&, Func func)
+    auto stable_sort(const Sorter&, Iterator first, Iterator last, Func func)
         -> decltype(auto)
     {
         return stable_adapter<Sorter>{}(first, last, func);
     }
 
     template<
-        typename Iterator,
         typename Sorter,
+        typename Iterator,
         typename Compare,
         typename Projection
     >
-    auto stable_sort(Iterator first, Iterator last, const Sorter&,
+    auto stable_sort(const Sorter&, Iterator first, Iterator last,
                      Compare compare, Projection projection)
         -> decltype(auto)
     {

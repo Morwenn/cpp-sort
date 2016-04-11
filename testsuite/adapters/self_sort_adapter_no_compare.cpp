@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -107,7 +107,7 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
-        auto res = cppsort::sort(collection, sorter{});
+        auto res = cppsort::sort(sorter{}, collection);
         CHECK( res == sorter_type::self_sortable );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
@@ -128,7 +128,7 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
-        auto res = cppsort::sort(collection, sorter{}, std::less<>{});
+        auto res = cppsort::sort(sorter{}, collection, std::less<>{});
         CHECK( res == sorter_type::dummy_sorter );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }

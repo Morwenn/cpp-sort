@@ -48,34 +48,34 @@ TEST_CASE( "basic tests with indirect_adapter",
 
     SECTION( "with comparison" )
     {
-        cppsort::sort(collection, sorter{}, std::greater<>{});
+        cppsort::sort(sorter{}, collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(std::begin(collection), std::end(collection), sorter{}, std::greater<>{});
+        cppsort::sort(sorter{}, std::begin(collection), std::end(collection), std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
     }
 
     SECTION( "with projection" )
     {
-        cppsort::sort(collection, sorter{}, std::negate<>{});
+        cppsort::sort(sorter{}, collection, std::negate<>{});
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, std::negate<>{}) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(std::begin(collection), std::end(collection), sorter{}, std::negate<>{});
+        cppsort::sort(sorter{}, std::begin(collection), std::end(collection), std::negate<>{});
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, std::negate<>{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
-        cppsort::sort(collection, sorter{}, std::greater<>{}, std::negate<>{});
+        cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(std::begin(collection), std::end(collection),
-                      sorter{}, std::greater<>{}, std::negate<>{});
+        cppsort::sort(sorter{}, std::begin(collection), std::end(collection),
+                      std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }

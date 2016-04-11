@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -123,28 +123,28 @@ TEST_CASE( "std::less<> forwarding to sorters",
 
     SECTION( "with std::less<>" )
     {
-        CHECK( cppsort::sort(vec, comparison_sorter{}, std::less<>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, std::less<>{}) );
+        CHECK( cppsort::sort(comparison_sorter{}, vec, std::less<>{}) );
+        CHECK( cppsort::sort(comparison_sorter{}, std::begin(vec), std::end(vec), std::less<>{}) );
 
-        CHECK( cppsort::sort(vec, non_comparison_sorter{}, std::less<>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, std::less<>{}) );
+        CHECK( cppsort::sort(non_comparison_sorter{}, vec, std::less<>{}) );
+        CHECK( cppsort::sort(non_comparison_sorter{}, std::begin(vec), std::end(vec), std::less<>{}) );
 
-        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, std::less<>{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, std::less<>{}) );
+        CHECK( not cppsort::sort(non_comparison_iterable_sorter{}, vec, std::less<>{}) );
+        CHECK( cppsort::sort(non_comparison_iterable_sorter{}, std::begin(vec), std::end(vec), std::less<>{}) );
     }
 
     SECTION( "with utility::identity" )
     {
-        CHECK( cppsort::sort(vec, comparison_sorter{}, cppsort::utility::identity{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(comparison_sorter{}, vec, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(comparison_sorter{}, std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
 
-        CHECK( cppsort::sort(vec, non_comparison_sorter{}, cppsort::utility::identity{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(non_comparison_sorter{}, vec, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(non_comparison_sorter{}, std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
 
-        CHECK( not cppsort::sort(vec, non_comparison_iterable_sorter{}, cppsort::utility::identity{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), non_comparison_iterable_sorter{}, cppsort::utility::identity{}) );
+        CHECK( not cppsort::sort(non_comparison_iterable_sorter{}, vec, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(non_comparison_iterable_sorter{}, std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
 
-        CHECK( cppsort::sort(vec, comparison_projection_sorter{}, cppsort::utility::identity{}) );
-        CHECK( cppsort::sort(std::begin(vec), std::end(vec), comparison_projection_sorter{}, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(comparison_projection_sorter{}, vec, cppsort::utility::identity{}) );
+        CHECK( cppsort::sort(comparison_projection_sorter{}, std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
     }
 }

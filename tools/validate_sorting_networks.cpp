@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ auto validate_sorting_network()
         {
             // Copy then sort collection
             std::array<int, N> to_sort = collection;
-            cppsort::sort(to_sort, sorter);
+            cppsort::sort(sorter, to_sort);
 
             // Check whether it is sorted
             if (not std::is_sorted(std::begin(to_sort), std::end(to_sort)))

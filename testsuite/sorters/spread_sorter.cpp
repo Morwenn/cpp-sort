@@ -42,7 +42,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         std::vector<int> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{});
+        cppsort::sort(cppsort::spread_sorter{}, vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -51,7 +51,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         std::vector<unsigned> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0u);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{});
+        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -60,7 +60,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         std::vector<float> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0.0f);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{});
+        cppsort::sort(cppsort::spread_sorter{}, vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -69,7 +69,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         std::vector<double> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0.0);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{});
+        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -82,11 +82,11 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         }
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{});
+        cppsort::sort(cppsort::spread_sorter{}, vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{});
+        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -99,11 +99,11 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         }
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::spread_sorter{}, std::greater<>{});
+        cppsort::sort(cppsort::spread_sorter{}, vec, std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::spread_sorter{}, std::greater<>{});
+        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec), std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 }

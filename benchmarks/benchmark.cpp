@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ auto time_it(Sorter sorter, DistributionFunction dist, std::size_t times)
     auto start = clock_type::now();
     for (auto&& array: arrays)
     {
-        cppsort::sort(array, sorter);
+        cppsort::sort(sorter, array);
     }
     auto end = clock_type::now();
 
@@ -103,11 +103,11 @@ auto time_distribution(std::size_t times, std::index_sequence<Ind...>)
 
     // Compute results for the different sorting algorithms
     std::pair<const char*, std::array<std::chrono::milliseconds, sizeof...(Ind)>> results[] = {
-        { "insertion_sorter",       { time_it<T, Ind>(cppsort::insertion_sorter{},  Distribution{}, times)... } },
-        { "selection_sorter",       { time_it<T, Ind>(cppsort::selection_sorter{},  Distribution{}, times)... } },
-        { "low_moves_sorter",       { time_it<T, Ind>(low_moves_sorter{},           Distribution{}, times)... } },
-        { "low_comparisons_sorter", { time_it<T, Ind>(low_comparisons_sorter{},     Distribution{}, times)... } },
-        { "sorting_network_sorter", { time_it<T, Ind>(sorting_network_sorter{},     Distribution{}, times)... } },
+        { "insertion_sorter",       { time_it<T, Ind>(cppsort::insertion_sort,  Distribution{}, times)... } },
+        { "selection_sorter",       { time_it<T, Ind>(cppsort::selection_sort,  Distribution{}, times)... } },
+        { "low_moves_sorter",       { time_it<T, Ind>(low_moves_sorter{},       Distribution{}, times)... } },
+        { "low_comparisons_sorter", { time_it<T, Ind>(low_comparisons_sorter{}, Distribution{}, times)... } },
+        { "sorting_network_sorter", { time_it<T, Ind>(sorting_network_sorter{}, Distribution{}, times)... } },
     };
 
     // Output the results to their respective files

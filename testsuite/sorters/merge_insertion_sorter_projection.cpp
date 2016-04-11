@@ -51,25 +51,26 @@ TEST_CASE( "merge_insertion_sorter tests with projections",
 
     SECTION( "sort with random-access iterable" )
     {
-        cppsort::sort(vec, cppsort::merge_insertion_sorter{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_insertion_sorter{}, vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        cppsort::sort(vec, cppsort::merge_insertion_sorter{}, std::greater<>{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_insertion_sorter{}, vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::merge_insertion_sorter{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_insertion_sorter{}, std::begin(vec), std::end(vec), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::merge_insertion_sorter{},
+        cppsort::sort(cppsort::merge_insertion_sorter{},
+                      std::begin(vec), std::end(vec),
                       std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }

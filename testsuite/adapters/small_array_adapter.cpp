@@ -137,9 +137,9 @@ TEST_CASE( "small array adapter",
     {
         using sorter = cppsort::small_array_adapter<fixed_sorter>;
 
-        auto res1 = cppsort::sort(array, sorter{});
+        auto res1 = cppsort::sort(sorter{}, array);
         CHECK( res1 == sorter_type::fixed_without_domain );
-        auto res2 = cppsort::sort(big_array, sorter{});
+        auto res2 = cppsort::sort(sorter{}, big_array);
         CHECK( res2 == sorter_type::fixed_without_domain );
     }
 
@@ -147,7 +147,7 @@ TEST_CASE( "small array adapter",
     {
         using sorter = cppsort::small_array_adapter<fixed_sorter_with_domain>;
 
-        auto res = cppsort::sort(array, sorter{});
+        auto res = cppsort::sort(sorter{}, array);
         CHECK( res == sorter_type::fixed_with_domain );
     }
 
@@ -158,7 +158,7 @@ TEST_CASE( "small array adapter",
             std::make_index_sequence<14u>
         >;
 
-        auto res = cppsort::sort(array, sorter{});
+        auto res = cppsort::sort(sorter{}, array);
         CHECK( res == sorter_type::fixed_without_domain );
     }
 
@@ -172,9 +172,9 @@ TEST_CASE( "small array adapter",
             regular_sorter
         >;
 
-        auto res1 = cppsort::sort(array, sorter{});
+        auto res1 = cppsort::sort(sorter{}, array);
         CHECK( res1 == sorter_type::fixed_without_domain );
-        auto res2 = cppsort::sort(big_array, sorter{});
+        auto res2 = cppsort::sort(sorter{}, big_array);
         CHECK( res2 == sorter_type::regular );
     }
 
@@ -185,9 +185,9 @@ TEST_CASE( "small array adapter",
             regular_sorter
         >;
 
-        auto res1 = cppsort::sort(array, sorter{});
+        auto res1 = cppsort::sort(sorter{}, array);
         CHECK( res1 == sorter_type::fixed_with_domain );
-        auto res2 = cppsort::sort(big_array, sorter{});
+        auto res2 = cppsort::sort(sorter{}, big_array);
         CHECK( res2 == sorter_type::regular );
     }
 
@@ -200,9 +200,9 @@ TEST_CASE( "small array adapter",
             fixed_sorter_with_domain
         >;
 
-        auto res1 = cppsort::sort(collection, sorter{}, std::greater<>{}, &wrapper::value);
+        auto res1 = cppsort::sort(sorter{}, collection, std::greater<>{}, &wrapper::value);
         CHECK( res1 == sorter_type::fixed_with_domain );
-        auto res2 = cppsort::sort(collection, sorter{}, &wrapper::value);
+        auto res2 = cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( res2 == sorter_type::fixed_with_domain );
     }
 }

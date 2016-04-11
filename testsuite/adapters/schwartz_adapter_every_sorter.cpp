@@ -50,7 +50,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
         using sorter = schwartz_adapter<block_sorter<
             utility::fixed_buffer<0>
         >>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -58,7 +58,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "default_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::default_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -66,7 +66,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "grail_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::grail_sorter<>>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -74,7 +74,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "heap_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::heap_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -82,7 +82,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "insertion_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::insertion_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -90,7 +90,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "merge_insertion_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::merge_insertion_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -98,7 +98,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "merge_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::merge_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -106,7 +106,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "pdq_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::pdq_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -114,7 +114,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "poplar_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::poplar_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -122,7 +122,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "quick_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::quick_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -130,7 +130,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "selection_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::selection_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -138,7 +138,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "smooth_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::smooth_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -146,7 +146,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "tim_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::tim_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -154,7 +154,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
     SECTION( "verge_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::verge_sorter>;
-        cppsort::sort(collection, sorter{}, &wrapper::value);
+        cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }

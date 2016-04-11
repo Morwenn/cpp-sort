@@ -95,37 +95,37 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
 
     SECTION( "without a comparison function" )
     {
-        sorter_type res1 = cppsort::sort(vec, sorter{});
+        sorter_type res1 = cppsort::sort(sorter{}, vec);
         CHECK( res1 == sorter_type::ascending );
 
-        sorter_type res2 = cppsort::sort(std::begin(vec), std::end(vec), sorter{});
+        sorter_type res2 = cppsort::sort(sorter{}, std::begin(vec), std::end(vec));
         CHECK( res2 == sorter_type::ascending );
     }
 
     SECTION( "with std::less<>" )
     {
-        sorter_type res1 = cppsort::sort(vec, sorter{}, std::less<>{});
+        sorter_type res1 = cppsort::sort(sorter{}, vec, std::less<>{});
         CHECK( res1 == sorter_type::ascending );
 
-        sorter_type res2 = cppsort::sort(std::begin(vec), std::end(vec), sorter{}, std::less<>{});
+        sorter_type res2 = cppsort::sort(sorter{}, std::begin(vec), std::end(vec), std::less<>{});
         CHECK( res2 == sorter_type::ascending );
     }
 
     SECTION( "with std::greater<>" )
     {
-        sorter_type res1 = cppsort::sort(vec, sorter{}, std::greater<>{});
+        sorter_type res1 = cppsort::sort(sorter{}, vec, std::greater<>{});
         CHECK( res1 == sorter_type::descending );
 
-        sorter_type res2 = cppsort::sort(std::begin(vec), std::end(vec), sorter{}, std::greater<>{});
+        sorter_type res2 = cppsort::sort(sorter{}, std::begin(vec), std::end(vec), std::greater<>{});
         CHECK( res2 == sorter_type::descending );
     }
 
     SECTION( "with another functor" )
     {
-        sorter_type res1 = cppsort::sort(vec, sorter{}, std::less_equal<>{});
+        sorter_type res1 = cppsort::sort(sorter{}, vec, std::less_equal<>{});
         CHECK( res1 == sorter_type::generic );
 
-        sorter_type res2 = cppsort::sort(std::begin(vec), std::end(vec), sorter{}, std::less_equal<>{});
+        sorter_type res2 = cppsort::sort(sorter{}, std::begin(vec), std::end(vec), std::less_equal<>{});
         CHECK( res2 == sorter_type::generic );
     }
 }

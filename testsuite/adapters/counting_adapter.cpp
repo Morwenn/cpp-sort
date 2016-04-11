@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ TEST_CASE( "basic counting_adapter tests",
         std::list<int> collection(std::begin(tmp), std::end(tmp));
 
         // Sort and check it's sorted
-        std::size_t res = cppsort::sort(collection, sorter{});
+        std::size_t res = cppsort::sort(sorter{}, collection);
         CHECK( res == 2080 );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
@@ -73,7 +73,7 @@ TEST_CASE( "basic counting_adapter tests",
         std::list<wrapper> collection(std::begin(tmp), std::end(tmp));
 
         // Sort and check it's sorted
-        std::size_t res = cppsort::sort(collection, sorter{}, &wrapper::value);
+        std::size_t res = cppsort::sort(sorter{}, collection, &wrapper::value);
         CHECK( res == 3160 );
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
@@ -98,7 +98,7 @@ TEST_CASE( "counting_adapter tests with std_sorter",
         std::shuffle(std::begin(collection), std::end(collection), engine);
 
         // Sort and check it's sorted
-        cppsort::sort(collection, sorter{});
+        cppsort::sort(sorter{}, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }

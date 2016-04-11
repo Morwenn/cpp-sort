@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2016 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,69 +46,58 @@ TEST_CASE( "merge_sorter tests with projections",
 
     // Collection to sort
     std::vector<wrapper> vec(80);
-    int value = 0;
-    for (auto& elem: vec)
-    {
-        elem.value = value++;
-    }
+    helpers::iota(std::begin(vec), std::end(vec), 0, &wrapper::value);
+    std::shuffle(std::begin(vec), std::end(vec), engine);
 
     SECTION( "sort with random-access iterable" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::merge_sorter{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(vec, cppsort::merge_sorter{}, std::greater<>{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::merge_sorter{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, std::begin(vec), std::end(vec), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::merge_sorter{}, std::greater<>{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::list<wrapper> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li), cppsort::merge_sorter{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::list<wrapper> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li), cppsort::merge_sorter{}, std::greater<>{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with forward iterators" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::forward_list<wrapper> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li), cppsort::merge_sorter{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with forward iterators and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::forward_list<wrapper> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li), cppsort::merge_sorter{}, std::greater<>{}, &wrapper::value);
+        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
     }
 }
