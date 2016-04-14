@@ -77,6 +77,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorter adapters
 
+    template<typename Sorter>
+    struct container_aware_adapter;
     template<typename Sorter, typename CountType>
     struct counting_adapter;
     template<typename... Sorters>
