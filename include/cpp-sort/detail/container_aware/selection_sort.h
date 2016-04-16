@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <forward_list>
 #include <functional>
 #include <iterator>
 #include <list>
@@ -59,6 +60,32 @@ namespace cppsort
                 }
             }
         }
+
+        template<typename T, typename Compare, typename Projection>
+        auto flist_selection_sort(std::forward_list<T>& collection, Compare compare, Projection projection)
+            -> void
+        {
+            auto&& proj = utility::as_function(projection);
+
+            auto first = collection.before_begin();
+            auto last = collection.end();
+            while (std::next(first) != last)
+            {
+                auto min_it = first;
+                auto it = first;
+                while (std::next(it) != last)
+                {
+                    if (compare(proj(*std::next(it)), proj(*std::next(min_it))))
+                    {
+                        min_it = it;
+                    }
+                    ++it;
+                }
+
+                collection.splice_after(first, collection, min_it);
+                ++first;
+            }
+        }
     }
 
     template<>
@@ -66,6 +93,9 @@ namespace cppsort
         detail::container_aware_adapter_base<selection_sorter>
     {
         using detail::container_aware_adapter_base<selection_sorter>::operator();
+
+        ////////////////////////////////////////////////////////////
+        // std::list
 
         template<typename T>
         auto operator()(std::list<T>& iterable) const
@@ -104,6 +134,48 @@ namespace cppsort
             -> void
         {
             detail::list_selection_sort(iterable, compare, projection);
+        }
+
+        ////////////////////////////////////////////////////////////
+        // std::forward_list
+
+        template<typename T>
+        auto operator()(std::forward_list<T>& iterable) const
+            -> void
+        {
+            detail::flist_selection_sort(iterable, std::less<>{}, utility::identity{});
+        }
+
+        template<typename T, typename Compare>
+        auto operator()(std::forward_list<T>& iterable, Compare compare) const
+            -> std::enable_if_t<
+                is_projection_v<utility::identity, std::forward_list<T>, Compare>
+            >
+        {
+            detail::flist_selection_sort(iterable, compare, utility::identity{});
+        }
+
+        template<typename T, typename Projection>
+        auto operator()(std::forward_list<T>& iterable, Projection projection) const
+            -> std::enable_if_t<
+                is_projection_v<Projection, std::forward_list<T>>
+            >
+        {
+            detail::flist_selection_sort(iterable, std::less<>{}, projection);
+        }
+
+        template<
+            typename T,
+            typename Compare,
+            typename Projection,
+            typename = std::enable_if_t<
+                is_projection_v<Projection, std::forward_list<T>, Compare>
+            >
+        >
+        auto operator()(std::forward_list<T>& iterable, Compare compare, Projection projection) const
+            -> void
+        {
+            detail::flist_selection_sort(iterable, compare, projection);
         }
     };
 }
