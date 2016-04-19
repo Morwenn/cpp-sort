@@ -65,4 +65,32 @@ TEST_CASE( "spread_sorter tests with projections",
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<unsigned, float>::second) );
     }
+
+    SECTION( "sort with float iterable" )
+    {
+        std::vector<std::pair<int, float>> vec;
+        for (int i = 0 ; i < 100'000 ; ++i)
+        {
+            vec.emplace_back(i, i);
+        }
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(cppsort::spread_sorter{}, vec,
+                      &std::pair<int, float>::second);
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
+                                  std::less<>{}, &std::pair<int, float>::first) );
+    }
+
+    SECTION( "sort with double iterators" )
+    {
+        std::vector<std::pair<int, double>> vec;
+        for (int i = 0 ; i < 100'000 ; ++i)
+        {
+            vec.emplace_back(i, i);
+        }
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(cppsort::spread_sorter{}, vec,
+                      &std::pair<int, double>::second);
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
+                                  std::less<>{}, &std::pair<int, double>::first) );
+    }
 }
