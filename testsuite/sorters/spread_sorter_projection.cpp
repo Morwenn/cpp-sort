@@ -23,6 +23,7 @@
  */
 #include <algorithm>
 #include <ctime>
+#include <functional>
 #include <iterator>
 #include <random>
 #include <utility>
@@ -92,5 +93,35 @@ TEST_CASE( "spread_sorter tests with projections",
                       &std::pair<int, double>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, double>::first) );
+    }
+
+    SECTION( "sort with std::string iterators" )
+    {
+        struct wrapper { std::string value; };
+
+        std::vector<wrapper> vec;
+        for (int i = 0 ; i < 100'000 ; ++i)
+        {
+            vec.push_back({std::to_string(i)});
+        }
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(cppsort::spread_sorter{}, vec, &wrapper::value);
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
+                                  std::less<>{}, &wrapper::value) );
+    }
+
+    SECTION( "reverse sort with std::string iterators" )
+    {
+        struct wrapper { std::string value; };
+
+        std::vector<wrapper> vec;
+        for (int i = 0 ; i < 100'000 ; ++i)
+        {
+            vec.push_back({std::to_string(i)});
+        }
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(cppsort::spread_sorter{}, vec, std::greater<>{}, &wrapper::value);
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
+                                  std::greater<>{}, &wrapper::value) );
     }
 }

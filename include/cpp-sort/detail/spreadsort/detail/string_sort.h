@@ -23,6 +23,8 @@ Phil Endecott and Frank Gennari
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <memory>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 #include <cpp-sort/utility/functional.h>
@@ -42,11 +44,13 @@ namespace spreadsort
     //Offsetting on identical characters.  This function works a chunk of
     //characters at a time for cache efficiency and optimal worst-case
     //performance.
-    template<class RandomAccessIter, class Unsigned_char_type>
+    template<typename Unsigned_char_type, typename RandomAccessIter, typename Projection>
     auto update_offset(RandomAccessIter first, RandomAccessIter finish,
-                       std::size_t &char_offset)
+                       std::size_t &char_offset, Projection projection)
         -> void
     {
+      auto&& proj = utility::as_function(projection);
+
       const int char_size = sizeof(Unsigned_char_type);
       std::size_t nextOffset = char_offset;
       int step_size = max_step_size / char_size;
@@ -56,17 +60,17 @@ namespace spreadsort
           //Ignore empties, but if the nextOffset would exceed the length or
           //not match, exit; we've found the last matching character
           //This will reduce the step_size if the current step doesn't match.
-          if ((*curr).size() > char_offset) {
-            if((*curr).size() <= (nextOffset + step_size)) {
-              step_size = (*curr).size() - nextOffset - 1;
+          if (proj(*curr).size() > char_offset) {
+            if(proj(*curr).size() <= (nextOffset + step_size)) {
+              step_size = proj(*curr).size() - nextOffset - 1;
               if (step_size < 1) {
                 char_offset = nextOffset;
                 return;
               }
             }
             const int step_byte_size = step_size * char_size;
-            if (memcmp(curr->data() + nextOffset, first->data() + nextOffset,
-                       step_byte_size) != 0) {
+            if (std::memcmp(proj(*curr).data() + nextOffset, proj(*first).data() + nextOffset,
+                            step_byte_size) != 0) {
               if (step_size == 1) {
                 char_offset = nextOffset;
                 return;
@@ -81,115 +85,94 @@ namespace spreadsort
       }
     }
 
-    //Offsetting on identical characters.  This function works a character
-    //at a time for optimal worst-case performance.
-    template<class RandomAccessIter, class Get_char, class Get_length>
-    auto update_offset(RandomAccessIter first, RandomAccessIter finish,
-                       std::size_t &char_offset, Get_char getchar, Get_length length)
-        -> void
-    {
-      std::size_t nextOffset = char_offset;
-      while (true) {
-        RandomAccessIter curr = first;
-        do {
-          //ignore empties, but if the nextOffset would exceed the length or
-          //not match, exit; we've found the last matching character
-          if (length(*curr) > char_offset && (length(*curr) <= (nextOffset + 1)
-            || getchar((*curr), nextOffset) != getchar((*first), nextOffset))) {
-            char_offset = nextOffset;
-            return;
-          }
-        } while (++curr != finish);
-        ++nextOffset;
-      }
-    }
-
     //This comparison functor assumes strings are identical up to char_offset
-    template<class Data_type, class Unsigned_char_type>
-    struct offset_less_than {
-      offset_less_than(std::size_t char_offset) : fchar_offset(char_offset){}
-      inline auto operator()(const Data_type &x, const Data_type &y) const
-          -> bool
-      {
-        std::size_t minSize = (std::min)(x.size(), y.size());
-        for (std::size_t u = fchar_offset; u < minSize; ++u) {
-          static_assert(sizeof(x[u]) == sizeof(Unsigned_char_type), "");
-          if (static_cast<Unsigned_char_type>(x[u]) !=
-              static_cast<Unsigned_char_type>(y[u])) {
-            return static_cast<Unsigned_char_type>(x[u]) <
-              static_cast<Unsigned_char_type>(y[u]);
-          }
+    template<typename Data_type, typename Projection, typename Unsigned_char_type>
+    struct offset_less_than
+    {
+        offset_less_than(std::size_t char_offset, Projection projection):
+            data(char_offset, projection)
+        {}
+
+        auto operator()(const Data_type& x, const Data_type& y) const
+            -> bool
+        {
+            auto&& proj = utility::as_function(std::get<1>(data));
+
+            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
+            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
+            {
+                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
+                    static_cast<Unsigned_char_type>(proj(y)[u]))
+                {
+                    return static_cast<Unsigned_char_type>(proj(x)[u]) <
+                           static_cast<Unsigned_char_type>(proj(y)[u]);
+                }
+            }
+            return proj(x).size() < proj(y).size();
         }
-        return x.size() < y.size();
-      }
-      std::size_t fchar_offset;
+
+      // Pack fchar_offset and projection
+      std::tuple<std::size_t, Projection> data;
     };
 
     //Compares strings assuming they are identical up to char_offset
-    template<class Data_type, class Unsigned_char_type>
-    struct offset_greater_than {
-      offset_greater_than(std::size_t char_offset) : fchar_offset(char_offset){}
-      inline auto operator()(const Data_type &x, const Data_type &y) const
-          -> bool
-      {
-        std::size_t minSize = (std::min)(x.size(), y.size());
-        for (std::size_t u = fchar_offset; u < minSize; ++u) {
-          static_assert(sizeof(x[u]) == sizeof(Unsigned_char_type), "");
-          if (static_cast<Unsigned_char_type>(x[u]) !=
-              static_cast<Unsigned_char_type>(y[u])) {
-            return static_cast<Unsigned_char_type>(x[u]) >
-              static_cast<Unsigned_char_type>(y[u]);
-          }
-        }
-        return x.size() > y.size();
-      }
-      std::size_t fchar_offset;
-    };
+    template<typename Data_type, typename Projection, typename Unsigned_char_type>
+    struct offset_greater_than
+    {
+        offset_greater_than(std::size_t char_offset, Projection projection):
+            data(char_offset, projection)
+        {}
 
-    //This comparison functor assumes strings are identical up to char_offset
-    template<class Data_type, class Get_char, class Get_length>
-    struct offset_char_less_than {
-      offset_char_less_than(std::size_t char_offset) : fchar_offset(char_offset){}
-      inline auto operator()(const Data_type &x, const Data_type &y) const
-          -> bool
-      {
-        std::size_t minSize = (std::min)(length(x), length(y));
-        for (std::size_t u = fchar_offset; u < minSize; ++u) {
-          if (getchar(x, u) != getchar(y, u)) {
-            return getchar(x, u) < getchar(y, u);
-          }
+        auto operator()(const Data_type& x, const Data_type& y) const
+            -> bool
+        {
+            auto&& proj = utility::as_function(std::get<1>(data));
+
+            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
+            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
+            {
+                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
+                    static_cast<Unsigned_char_type>(proj(y)[u]))
+                {
+                    return static_cast<Unsigned_char_type>(proj(x)[u]) >
+                           static_cast<Unsigned_char_type>(proj(y)[u]);
+                }
+            }
+            return proj(x).size() > proj(y).size();
         }
-        return length(x) < length(y);
-      }
-      std::size_t fchar_offset;
-      Get_char getchar;
-      Get_length length;
+
+      // Pack fchar_offset and projection
+      std::tuple<std::size_t, Projection> data;
     };
 
     //String sorting recursive implementation
-    template<class RandomAccessIter, class Unsigned_char_type>
+    template<typename Unsigned_char_type, typename RandomAccessIter, typename Projection>
     auto string_sort_rec(RandomAccessIter first, RandomAccessIter last,
                          std::size_t char_offset,
                          std::vector<RandomAccessIter> &bin_cache,
-                         unsigned cache_offset, std::size_t *bin_sizes)
+                         unsigned cache_offset, std::size_t *bin_sizes,
+                         Projection projection)
         -> void
     {
       using Data_type = value_type_t<RandomAccessIter>;
+      auto&& proj = utility::as_function(projection);
+
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
       //Iterate to the end of the empties.  If all empty, return
-      while ((*first).size() <= char_offset) {
+      while (proj(*first).size() <= char_offset) {
         if (++first == last)
           return;
       }
-      RandomAccessIter finish = last - 1;
+      RandomAccessIter finish = std::prev(last);
       //Getting the last non-empty
-      for (;(*finish).size() <= char_offset; --finish);
+      for (;proj(*finish).size() <= char_offset; --finish);
       ++finish;
       //Offsetting on identical characters.  This section works
       //a few characters at a time for optimal worst-case performance.
-      update_offset<RandomAccessIter, Unsigned_char_type>(first, finish,
-                                                          char_offset);
+      update_offset<Unsigned_char_type>(first, finish, char_offset, projection);
 
       const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
       //Equal worst-case of radix and comparison is when bin_count = n*log(n).
@@ -201,11 +184,11 @@ namespace spreadsort
 
       //Calculating the size of each bin; this takes roughly 10% of runtime
       for (RandomAccessIter current = first; current != last; ++current) {
-        if ((*current).size() <= char_offset) {
+        if (proj(*current).size() <= char_offset) {
           bin_sizes[0]++;
         }
         else
-          bin_sizes[static_cast<Unsigned_char_type>((*current)[char_offset])
+          bin_sizes[static_cast<Unsigned_char_type>(proj(*current)[char_offset])
                     + 1]++;
       }
       //Assign the bin positions
@@ -224,9 +207,9 @@ namespace spreadsort
       for (RandomAccessIter current = *local_bin; current < next_bin_start;
           ++current) {
         //empties belong in this bin
-        while ((*current).size() > char_offset) {
+        while (proj(*current).size() > char_offset) {
           target_bin =
-            bins + static_cast<Unsigned_char_type>((*current)[char_offset]);
+            bins + static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
           iter_swap(current, (*target_bin)++);
         }
       }
@@ -244,9 +227,9 @@ namespace spreadsort
             ++current) {
           //Swapping into place until the correct element has been swapped in
           for (target_bin = bins + static_cast<Unsigned_char_type>
-              ((*current)[char_offset]);  target_bin != local_bin;
+              (proj(*current)[char_offset]);  target_bin != local_bin;
             target_bin = bins + static_cast<Unsigned_char_type>
-              ((*current)[char_offset])) iter_swap(current, (*target_bin)++);
+              (proj(*current)[char_offset])) iter_swap(current, (*target_bin)++);
         }
         *local_bin = next_bin_start;
       }
@@ -263,39 +246,41 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-                  offset_less_than<Data_type, Unsigned_char_type>(char_offset + 1),
+                  offset_less_than<Data_type, Projection, Unsigned_char_type>(
+                    char_offset + 1, projection),
                   utility::identity{});
         else
-          string_sort_rec<RandomAccessIter, Unsigned_char_type>(lastPos,
-              bin_cache[u], char_offset + 1, bin_cache, cache_end, bin_sizes);
+          string_sort_rec<Unsigned_char_type>(lastPos, bin_cache[u], char_offset + 1,
+                                              bin_cache, cache_end, bin_sizes, projection);
       }
     }
 
     //Sorts strings in reverse order, with empties at the end
-    template<class RandomAccessIter, class Unsigned_char_type>
+    template<typename Unsigned_char_type, typename RandomAccessIter, typename Projection>
     auto reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
                                  std::size_t char_offset,
                                  std::vector<RandomAccessIter> &bin_cache,
-                                 unsigned cache_offset,
-                                 std::size_t *bin_sizes)
+                                 unsigned cache_offset, std::size_t *bin_sizes,
+                                 Projection projection)
         -> void
     {
       using Data_type = value_type_t<RandomAccessIter>;
+      auto&& proj = utility::as_function(projection);
+
       //This section makes handling of long identical substrings much faster
       //with a mild average performance impact.
       RandomAccessIter curr = first;
       //Iterate to the end of the empties.  If all empty, return
-      while ((*curr).size() <= char_offset) {
+      while (proj(*curr).size() <= char_offset) {
         if (++curr == last)
           return;
       }
       //Getting the last non-empty
-      while ((*(--last)).size() <= char_offset);
+      while (proj(*(--last)).size() <= char_offset);
       ++last;
       //Offsetting on identical characters.  This section works
       //a few characters at a time for optimal worst-case performance.
-      update_offset<RandomAccessIter, Unsigned_char_type>(curr, last,
-                                                          char_offset);
+      update_offset<Unsigned_char_type>(curr, last, char_offset, projection);
       RandomAccessIter * target_bin;
 
       const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
@@ -306,16 +291,16 @@ namespace spreadsort
       unsigned cache_end;
       RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
                                           cache_end, membin_count);
-      RandomAccessIter * end_bin = &(bin_cache[cache_offset + max_bin]);
+      RandomAccessIter * end_bin = std::addressof(bin_cache[cache_offset + max_bin]);
 
       //Calculating the size of each bin; this takes roughly 10% of runtime
       for (RandomAccessIter current = first; current != last; ++current) {
-        if ((*current).size() <= char_offset) {
+        if (proj(*current).size() <= char_offset) {
           bin_sizes[bin_count]++;
         }
         else
           bin_sizes[max_bin - static_cast<Unsigned_char_type>
-            ((*current)[char_offset])]++;
+            (proj(*current)[char_offset])]++;
       }
       //Assign the bin positions
       bin_cache[cache_offset] = first;
@@ -332,9 +317,9 @@ namespace spreadsort
       for (RandomAccessIter current = *local_bin; current < next_bin_start;
           ++current) {
         //empties belong in this bin
-        while ((*current).size() > char_offset) {
+        while (proj(*current).size() > char_offset) {
           target_bin =
-            end_bin - static_cast<Unsigned_char_type>((*current)[char_offset]);
+            end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
           iter_swap(current, (*target_bin)++);
         }
       }
@@ -353,10 +338,10 @@ namespace spreadsort
             ++current) {
           //Swapping into place until the correct element has been swapped in
           for (target_bin =
-            end_bin - static_cast<Unsigned_char_type>((*current)[char_offset]);
+            end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
             target_bin != local_bin;
             target_bin =
-            end_bin - static_cast<Unsigned_char_type>((*current)[char_offset]))
+            end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]))
               iter_swap(current, (*target_bin)++);
         }
         *local_bin = next_bin_start;
@@ -374,388 +359,39 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-                  offset_greater_than<Data_type, Unsigned_char_type>(char_offset + 1),
+                  offset_greater_than<Data_type, Projection, Unsigned_char_type>(
+                    char_offset + 1, projection),
                   utility::identity{});
         else
-          reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type>
-    (lastPos, bin_cache[u], char_offset + 1, bin_cache, cache_end, bin_sizes);
-      }
-    }
-
-    //String sorting recursive implementation
-    template<class RandomAccessIter, class Unsigned_char_type, class Get_char,
-             class Get_length>
-    auto string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                         std::size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
-                         unsigned cache_offset, std::size_t *bin_sizes,
-                         Get_char getchar, Get_length length)
-        -> void
-    {
-      using Data_type = value_type_t<RandomAccessIter>;
-      //This section makes handling of long identical substrings much faster
-      //with a mild average performance impact.
-      //Iterate to the end of the empties.  If all empty, return
-      while (length(*first) <= char_offset) {
-        if (++first == last)
-          return;
-      }
-      RandomAccessIter finish = last - 1;
-      //Getting the last non-empty
-      for (;length(*finish) <= char_offset; --finish);
-      ++finish;
-      update_offset(first, finish, char_offset, getchar, length);
-
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
-      //Equal worst-case of radix and comparison is when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
-      unsigned cache_end;
-      RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
-                                          cache_end, membin_count) + 1;
-
-      //Calculating the size of each bin; this takes roughly 10% of runtime
-      for (RandomAccessIter current = first; current != last; ++current) {
-        if (length(*current) <= char_offset) {
-          bin_sizes[0]++;
-        }
-        else
-          bin_sizes[getchar((*current), char_offset) + 1]++;
-      }
-      //Assign the bin positions
-      bin_cache[cache_offset] = first;
-      for (unsigned u = 0; u < membin_count - 1; u++)
-        bin_cache[cache_offset + u + 1] =
-          bin_cache[cache_offset + u] + bin_sizes[u];
-
-      //Swap into place
-      RandomAccessIter next_bin_start = first;
-      //handling empty bins
-      RandomAccessIter * local_bin = &(bin_cache[cache_offset]);
-      next_bin_start +=  bin_sizes[0];
-      RandomAccessIter * target_bin;
-      //Iterating over each element in the bin of empties
-      for (RandomAccessIter current = *local_bin; current < next_bin_start;
-          ++current) {
-        //empties belong in this bin
-        while (length(*current) > char_offset) {
-          target_bin = bins + getchar((*current), char_offset);
-          iter_swap(current, (*target_bin)++);
-        }
-      }
-      *local_bin = next_bin_start;
-      //iterate backwards to find the last bin with elements in it
-      //this saves iterations in multiple loops
-      unsigned last_bin = bin_count - 1;
-      for (; last_bin && !bin_sizes[last_bin + 1]; --last_bin);
-      //This dominates runtime, mostly in the swap and bin lookups
-      for (unsigned ii = 0; ii < last_bin; ++ii) {
-        local_bin = bins + ii;
-        next_bin_start += bin_sizes[ii + 1];
-        //Iterating over each element in this bin
-        for (RandomAccessIter current = *local_bin; current < next_bin_start;
-            ++current) {
-          //Swapping into place until the correct element has been swapped in
-          for (target_bin = bins + getchar((*current), char_offset);
-              target_bin != local_bin;
-              target_bin = bins + getchar((*current), char_offset))
-            iter_swap(current, (*target_bin)++);
-        }
-        *local_bin = next_bin_start;
-      }
-      bins[last_bin] = last;
-
-      //Recursing
-      RandomAccessIter lastPos = bin_cache[cache_offset];
-      //Skip this loop for empties
-      for (unsigned u = cache_offset + 1; u < cache_offset + last_bin + 2;
-          lastPos = bin_cache[u], (void) ++u) {
-        std::size_t count = bin_cache[u] - lastPos;
-        //don't sort unless there are at least two items to Compare
-        if (count < 2)
-          continue;
-        //using pdqsort if its worst-case is better
-        if (count < max_size)
-          pdqsort(lastPos, bin_cache[u], offset_char_less_than<Data_type,
-                  Get_char, Get_length>(char_offset + 1),
-                  utility::identity{});
-        else
-          string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
-            Get_length>(lastPos, bin_cache[u], char_offset + 1, bin_cache,
-                        cache_end, bin_sizes, getchar, length);
-      }
-    }
-
-    //String sorting recursive implementation
-    template<class RandomAccessIter, class Unsigned_char_type, class Get_char,
-             class Get_length, class Compare>
-    auto string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                         std::size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
-                         unsigned cache_offset, std::size_t *bin_sizes,
-                         Get_char getchar, Get_length length, Compare comp)
-        -> void
-    {
-      //This section makes handling of long identical substrings much faster
-      //with a mild average performance impact.
-      //Iterate to the end of the empties.  If all empty, return
-      while (length(*first) <= char_offset) {
-        if (++first == last)
-          return;
-      }
-      RandomAccessIter finish = last - 1;
-      //Getting the last non-empty
-      for (;length(*finish) <= char_offset; --finish);
-      ++finish;
-      update_offset(first, finish, char_offset, getchar, length);
-
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
-      //Equal worst-case of radix and comparison is when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
-      unsigned cache_end;
-      RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
-                                          cache_end, membin_count) + 1;
-
-      //Calculating the size of each bin; this takes roughly 10% of runtime
-      for (RandomAccessIter current = first; current != last; ++current) {
-        if (length(*current) <= char_offset) {
-          bin_sizes[0]++;
-        }
-        else
-          bin_sizes[getchar((*current), char_offset) + 1]++;
-      }
-      //Assign the bin positions
-      bin_cache[cache_offset] = first;
-      for (unsigned u = 0; u < membin_count - 1; u++)
-        bin_cache[cache_offset + u + 1] =
-          bin_cache[cache_offset + u] + bin_sizes[u];
-
-      //Swap into place
-      RandomAccessIter next_bin_start = first;
-      //handling empty bins
-      RandomAccessIter * local_bin = &(bin_cache[cache_offset]);
-      next_bin_start +=  bin_sizes[0];
-      RandomAccessIter * target_bin;
-      //Iterating over each element in the bin of empties
-      for (RandomAccessIter current = *local_bin; current < next_bin_start;
-          ++current) {
-        //empties belong in this bin
-        while (length(*current) > char_offset) {
-          target_bin = bins + getchar((*current), char_offset);
-          iter_swap(current, (*target_bin)++);
-        }
-      }
-      *local_bin = next_bin_start;
-      //iterate backwards to find the last bin with elements in it
-      //this saves iterations in multiple loops
-      unsigned last_bin = bin_count - 1;
-      for (; last_bin && !bin_sizes[last_bin + 1]; --last_bin);
-      //This dominates runtime, mostly in the swap and bin lookups
-      for (unsigned u = 0; u < last_bin; ++u) {
-        local_bin = bins + u;
-        next_bin_start += bin_sizes[u + 1];
-        //Iterating over each element in this bin
-        for (RandomAccessIter current = *local_bin; current < next_bin_start;
-            ++current) {
-          //Swapping into place until the correct element has been swapped in
-          for (target_bin = bins + getchar((*current), char_offset);
-              target_bin != local_bin;
-              target_bin = bins + getchar((*current), char_offset))
-            iter_swap(current, (*target_bin)++);
-        }
-        *local_bin = next_bin_start;
-      }
-      bins[last_bin] = last;
-
-      //Recursing
-      RandomAccessIter lastPos = bin_cache[cache_offset];
-      //Skip this loop for empties
-      for (unsigned u = cache_offset + 1; u < cache_offset + last_bin + 2;
-          lastPos = bin_cache[u], (void) ++u) {
-        std::size_t count = bin_cache[u] - lastPos;
-        //don't sort unless there are at least two items to Compare
-        if (count < 2)
-          continue;
-        //using pdqsort if its worst-case is better
-        if (count < max_size)
-          pdqsort(lastPos, bin_cache[u], comp, utility::identity{});
-        else
-          string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
-                          Get_length, Compare>
-            (lastPos, bin_cache[u], char_offset + 1, bin_cache, cache_end,
-             bin_sizes, getchar, length, comp);
-      }
-    }
-
-    //Sorts strings in reverse order, with empties at the end
-    template<class RandomAccessIter, class Unsigned_char_type, class Get_char,
-             class Get_length, class Compare>
-    auto reverse_string_sort_rec(RandomAccessIter first, RandomAccessIter last,
-                                 std::size_t char_offset, std::vector<RandomAccessIter> &bin_cache,
-                                 unsigned cache_offset, std::size_t *bin_sizes,
-                                 Get_char getchar, Get_length length, Compare comp)
-        -> void
-    {
-      //This section makes handling of long identical substrings much faster
-      //with a mild average performance impact.
-      RandomAccessIter curr = first;
-      //Iterate to the end of the empties.  If all empty, return
-      while (length(*curr) <= char_offset) {
-        if (++curr == last)
-          return;
-      }
-      //Getting the last non-empty
-      while (length(*(--last)) <= char_offset);
-      ++last;
-      //Offsetting on identical characters.  This section works
-      //a character at a time for optimal worst-case performance.
-      update_offset(curr, last, char_offset, getchar, length);
-
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
-      //Equal worst-case of radix and comparison is when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
-      const unsigned max_bin = bin_count - 1;
-      unsigned cache_end;
-      RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
-                                          cache_end, membin_count);
-      RandomAccessIter *end_bin = &(bin_cache[cache_offset + max_bin]);
-
-      //Calculating the size of each bin; this takes roughly 10% of runtime
-      for (RandomAccessIter current = first; current != last; ++current) {
-        if (length(*current) <= char_offset) {
-          bin_sizes[bin_count]++;
-        }
-        else
-          bin_sizes[max_bin - getchar((*current), char_offset)]++;
-      }
-      //Assign the bin positions
-      bin_cache[cache_offset] = first;
-      for (unsigned u = 0; u < membin_count - 1; u++)
-        bin_cache[cache_offset + u + 1] =
-          bin_cache[cache_offset + u] + bin_sizes[u];
-
-      //Swap into place
-      RandomAccessIter next_bin_start = last;
-      //handling empty bins
-      RandomAccessIter * local_bin = &(bin_cache[cache_offset + bin_count]);
-      RandomAccessIter lastFull = *local_bin;
-      RandomAccessIter * target_bin;
-      //Iterating over each element in the bin of empties
-      for (RandomAccessIter current = *local_bin; current < next_bin_start;
-          ++current) {
-        //empties belong in this bin
-        while (length(*current) > char_offset) {
-          target_bin = end_bin - getchar((*current), char_offset);
-          iter_swap(current, (*target_bin)++);
-        }
-      }
-      *local_bin = next_bin_start;
-      next_bin_start = first;
-      //iterate backwards to find the last bin with elements in it
-      //this saves iterations in multiple loops
-      unsigned last_bin = max_bin;
-      for (; last_bin && !bin_sizes[last_bin]; --last_bin);
-      //This dominates runtime, mostly in the swap and bin lookups
-      for (unsigned u = 0; u < last_bin; ++u) {
-        local_bin = bins + u;
-        next_bin_start += bin_sizes[u];
-        //Iterating over each element in this bin
-        for (RandomAccessIter current = *local_bin; current < next_bin_start;
-            ++current) {
-          //Swapping into place until the correct element has been swapped in
-          for (target_bin = end_bin - getchar((*current), char_offset);
-              target_bin != local_bin;
-              target_bin = end_bin - getchar((*current), char_offset))
-            iter_swap(current, (*target_bin)++);
-        }
-        *local_bin = next_bin_start;
-      }
-      bins[last_bin] = lastFull;
-      //Recursing
-      RandomAccessIter lastPos = first;
-      //Skip this loop for empties
-      for (unsigned u = cache_offset; u <= cache_offset + last_bin;
-          lastPos = bin_cache[u], (void) ++u) {
-        std::size_t count = bin_cache[u] - lastPos;
-        //don't sort unless there are at least two items to Compare
-        if (count < 2)
-          continue;
-        //using pdqsort if its worst-case is better
-        if (count < max_size)
-          pdqsort(lastPos, bin_cache[u], comp, utility::identity{});
-        else
-          reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type,
-                                  Get_char, Get_length, Compare>
-            (lastPos, bin_cache[u], char_offset + 1, bin_cache, cache_end,
-             bin_sizes, getchar, length, comp);
+          reverse_string_sort_rec<Unsigned_char_type>(lastPos, bin_cache[u], char_offset + 1,
+                                                      bin_cache, cache_end, bin_sizes, projection);
       }
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template<class RandomAccessIter, class Unsigned_char_type>
+    template<typename RandomAccessIter, typename Projection,
+             typename Unsigned_char_type>
     auto string_sort(RandomAccessIter first, RandomAccessIter last,
-                     Unsigned_char_type)
-        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
+                     Projection projection, Unsigned_char_type)
+        -> std::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
     {
       std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
-      string_sort_rec<RandomAccessIter, Unsigned_char_type>
-        (first, last, 0, bin_cache, 0, bin_sizes);
+      string_sort_rec<Unsigned_char_type>(first, last, 0, bin_cache, 0,
+                                          bin_sizes, projection);
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template<class RandomAccessIter, class Unsigned_char_type>
+    template<typename RandomAccessIter, typename Projection,
+             typename Unsigned_char_type>
     auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-                             Unsigned_char_type)
-        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
+                             Projection projection, Unsigned_char_type)
+        -> std::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
     {
       std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
-      reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type>
-        (first, last, 0, bin_cache, 0, bin_sizes);
-    }
-
-    //Holds the bin vector and makes the initial recursive call
-    template<class RandomAccessIter, class Get_char, class Get_length,
-             class Unsigned_char_type>
-    auto string_sort(RandomAccessIter first, RandomAccessIter last,
-                     Get_char getchar, Get_length length, Unsigned_char_type)
-        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    {
-      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
-      std::vector<RandomAccessIter> bin_cache;
-      string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
-        Get_length>(first, last, 0, bin_cache, 0, bin_sizes, getchar, length);
-    }
-
-    //Holds the bin vector and makes the initial recursive call
-    template<class RandomAccessIter, class Get_char, class Get_length,
-             class Compare, class Unsigned_char_type>
-    auto string_sort(RandomAccessIter first, RandomAccessIter last,
-                     Get_char getchar, Get_length length, Compare comp,
-                     Unsigned_char_type)
-        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    {
-      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
-      std::vector<RandomAccessIter> bin_cache;
-      string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char
-        , Get_length, Compare>
-        (first, last, 0, bin_cache, 0, bin_sizes, getchar, length, comp);
-    }
-
-    //Holds the bin vector and makes the initial recursive call
-    template<class RandomAccessIter, class Get_char, class Get_length,
-             class Compare, class Unsigned_char_type>
-    auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-                             Get_char getchar, Get_length length, Compare comp,
-                             Unsigned_char_type)
-        -> std::enable_if_t< sizeof(Unsigned_char_type) <= 2, void >
-    {
-      std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
-      std::vector<RandomAccessIter> bin_cache;
-      reverse_string_sort_rec<RandomAccessIter, Unsigned_char_type, Get_char,
-                              Get_length, Compare>
-        (first, last, 0, bin_cache, 0, bin_sizes, getchar, length, comp);
+      reverse_string_sort_rec<Unsigned_char_type>(first, last, 0, bin_cache, 0,
+                                                  bin_sizes, projection);
     }
   }
 }}}

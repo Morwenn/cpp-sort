@@ -21,7 +21,6 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <cpp-sort/utility/functional.h>
 #include "detail/constants.h"
 #include "detail/string_sort.h"
 #include "../pdqsort.h"
@@ -77,67 +76,17 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 */
 
-  template<class RandomAccessIter, class Unsigned_char_type>
+  template<typename RandomAccessIter, typename Projection, typename Unsigned_char_type>
   auto string_sort(RandomAccessIter first, RandomAccessIter last,
-                   Unsigned_char_type unused)
+                   Projection projection, Unsigned_char_type unused)
       -> void
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{}, utility::identity{});
+      pdqsort(first, last, std::less<>{}, projection);
     else
-      detail::string_sort(first, last, unused);
+      detail::string_sort(first, last, projection, unused);
   }
-
-
-/*! \brief String sort algorithm using random access iterators, wraps using default of unsigned char.
-  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
-
-  \details @c string_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
-Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
-so @c integer_sort is asymptotically faster
-than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
-so its worst-case with default settings for 32-bit integers is
-<em> O(N * ((32/11) </em> slow radix-based iterations fast comparison-based iterations).\n\n
-Some performance plots of runtime vs. n and log(range) are provided:\n
-   <a href="../../doc/graph/windows_string_sort.htm"> windows_string_sort</a>
-   \n
-   <a href="../../doc/graph/osx_string_sort.htm"> osx_string_sort</a>
-
-   \param[in] first Iterator pointer to first element.
-   \param[in] last Iterator pointing to one beyond the end of data.
-
-   \pre [@c first, @c last) is a valid range.
-   \pre @c RandomAccessIter @c value_type is mutable.
-   \pre @c RandomAccessIter @c value_type is <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a>
-   \pre @c RandomAccessIter @c value_type supports the @c operator>>,
-   which returns an integer-type right-shifted a specified number of bits.
-   \post The elements in the range [@c first, @c last) are sorted in ascending order.
-
-   \throws std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
-   or any operations on iterators throw.
-
-   \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
-   \warning Invalid arguments cause undefined behaviour.
-   \note @c spreadsort function provides a wrapper that calls the fastest sorting algorithm available for a data type,
-   enabling faster generic-programming.
-
-   \remark The lesser of <em> O(N*log(N)) </em> comparisons and <em> O(N*log(K/S + S)) </em>operations worst-case, where:
-   \remark  *  N is @c last - @c first,
-   \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
-   \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
-
-*/
-  template<class RandomAccessIter>
-  auto string_sort(RandomAccessIter first, RandomAccessIter last)
-      -> void
-  {
-    unsigned char unused = '\0';
-    string_sort(first, last, unused);
-  }
-
 
 /*! \brief String sort algorithm using random access iterators, allowing character-type overloads.
 
@@ -188,273 +137,18 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 */
-  template<class RandomAccessIter, class Compare, class Unsigned_char_type>
+  template<typename RandomAccessIter, typename Compare,
+           typename Projection, typename Unsigned_char_type>
   auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-                           Compare comp, Unsigned_char_type unused)
+                           Compare comp, Projection projection,
+                           Unsigned_char_type unused)
       -> void
   {
     //Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp, utility::identity{});
+      pdqsort(first, last, comp, projection);
     else
-      detail::reverse_string_sort(first, last, unused);
-  }
-
-
-/*! \brief String sort algorithm using random access iterators,  wraps using default of @c unsigned char.
-
-  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
-
-  \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
-Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
-so @c integer_sort is asymptotically faster
-than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
-so its worst-case with default settings for 32-bit integers is
-<em> O(N * ((32/11) </em> slow radix-based iterations fast comparison-based iterations).\n\n
-Some performance plots of runtime vs. n and log(range) are provided:\n
-   <a href="../../doc/graph/windows_integer_sort.htm"> windows_integer_sort</a>
-   \n
-   <a href="../../doc/graph/osx_integer_sort.htm"> osx_integer_sort</a>
-
-   \param[in] first Iterator pointer to first element.
-   \param[in] last Iterator pointing to one beyond the end of data.
-   \param[in] comp A binary functor that returns whether the first element passed to it should go before the second in order.
-
-   \pre [@c first, @c last) is a valid range.
-   \pre @c RandomAccessIter @c value_type is mutable.
-   \pre @c RandomAccessIter @c value_type is <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a>
-   \pre @c RandomAccessIter @c value_type supports the @c operator>>,
-   which returns an integer-type right-shifted a specified number of bits.
-   \post The elements in the range [@c first, @c last) are sorted in ascending order.
-
-   \return @c void.
-
-   \throws  std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
-   or any operations on iterators throw.
-
-   \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
-   \warning Invalid arguments cause undefined behaviour.
-   \note @c spreadsort function provides a wrapper that calls the fastest sorting algorithm available for a data type,
-   enabling faster generic-programming.
-
-   \remark The lesser of <em> O(N*log(N)) </em> comparisons and <em> O(N*log(K/S + S)) </em>operations worst-case, where:
-   \remark  *  N is @c last - @c first,
-   \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
-   \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
-*/
-  template<class RandomAccessIter, class Compare>
-  auto reverse_string_sort(RandomAccessIter first,
-                           RandomAccessIter last, Compare comp)
-      -> void
-  {
-    unsigned char unused = '\0';
-    reverse_string_sort(first, last, comp, unused);
-  }
-
-
-/*! \brief String sort algorithm using random access iterators,  wraps using default of @c unsigned char.
-
-  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
-
-  \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
-Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
-so @c integer_sort is asymptotically faster
-than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
-so its worst-case with default settings for 32-bit integers is
-<em> O(N * ((32/11) </em> slow radix-based iterations fast comparison-based iterations).\n\n
-Some performance plots of runtime vs. n and log(range) are provided:\n
-   <a href="../../doc/graph/windows_integer_sort.htm"> windows_integer_sort</a>
-   \n
-   <a href="../../doc/graph/osx_integer_sort.htm"> osx_integer_sort</a>
-
-   \param[in] first Iterator pointer to first element.
-   \param[in] last Iterator pointing to one beyond the end of data.
-   \param[in] getchar Bracket functor equivalent to @c operator[], taking a number corresponding to the character offset.
-   \param[in] length Functor to get the length of the string in characters.
-
-   \pre [@c first, @c last) is a valid range.
-   \pre @c RandomAccessIter @c value_type is mutable.
-   \pre @c RandomAccessIter @c value_type is <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a>
-   \pre @c RandomAccessIter @c value_type supports the @c operator>>,
-   which returns an integer-type right-shifted a specified number of bits.
-   \post The elements in the range [@c first, @c last) are sorted in ascending order.
-
-   \return @c void.
-
-   \throws  std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
-   or any operations on iterators throw.
-
-   \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
-   \warning Invalid arguments cause undefined behaviour.
-   \note @c spreadsort function provides a wrapper that calls the fastest sorting algorithm available for a data type,
-   enabling faster generic-programming.
-
-   \remark The lesser of <em> O(N*log(N)) </em> comparisons and <em> O(N*log(K/S + S)) </em>operations worst-case, where:
-   \remark  *  N is @c last - @c first,
-   \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
-   \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
-
-*/
-  template<class RandomAccessIter, class Get_char, class Get_length>
-  auto string_sort(RandomAccessIter first, RandomAccessIter last,
-                   Get_char getchar, Get_length length)
-      -> void
-  {
-    //Don't sort if it's too small to optimize
-    if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{}, utility::identity{});
-    else {
-      //skipping past empties, which allows us to get the character type
-      //.empty() is not used so as not to require a user declaration of it
-      while (!length(*first)) {
-        if (++first == last)
-          return;
-      }
-      detail::string_sort(first, last, getchar, length, getchar((*first), 0));
-    }
-  }
-
-
-
-/*! \brief String sort algorithm using random access iterators,  wraps using default of @c unsigned char.
-
-  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
-
-  \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
-Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
-so @c integer_sort is asymptotically faster
-than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
-so its worst-case with default settings for 32-bit integers is
-<em> O(N * ((32/11) </em> slow radix-based iterations fast comparison-based iterations).\n\n
-Some performance plots of runtime vs. n and log(range) are provided:\n
-   <a href="../../doc/graph/windows_integer_sort.htm"> windows_integer_sort</a>
-   \n
-   <a href="../../doc/graph/osx_integer_sort.htm"> osx_integer_sort</a>
-
-
-   \param[in] first Iterator pointer to first element.
-   \param[in] last Iterator pointing to one beyond the end of data.
-   \param[in] getchar Bracket functor equivalent to @c operator[], taking a number corresponding to the character offset.
-   \param[in] length Functor to get the length of the string in characters.
-   \param[in] comp A binary functor that returns whether the first element passed to it should go before the second in order.
-
-
-   \pre [@c first, @c last) is a valid range.
-   \pre @c RandomAccessIter @c value_type is mutable.
-   \pre @c RandomAccessIter @c value_type is <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a>
-   \post The elements in the range [@c first, @c last) are sorted in ascending order.
-
-   \return @c void.
-
-   \throws std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
-   or any operations on iterators throw.
-
-   \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
-   \warning Invalid arguments cause undefined behaviour.
-   \note @c spreadsort function provides a wrapper that calls the fastest sorting algorithm available for a data type,
-   enabling faster generic-programming.
-
-   \remark The lesser of <em> O(N*log(N)) </em> comparisons and <em> O(N*log(K/S + S)) </em>operations worst-case, where:
-   \remark  *  N is @c last - @c first,
-   \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
-   \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
-
-*/
-  template<class RandomAccessIter, class Get_char, class Get_length,
-           class Compare>
-  auto string_sort(RandomAccessIter first, RandomAccessIter last,
-                   Get_char getchar, Get_length length, Compare comp)
-      -> void
-  {
-    //Don't sort if it's too small to optimize
-    if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp, utility::identity{});
-    else {
-      //skipping past empties, which allows us to get the character type
-      //.empty() is not used so as not to require a user declaration of it
-      while (!length(*first)) {
-        if (++first == last)
-          return;
-      }
-      detail::string_sort(first, last, getchar, length, comp,
-                          getchar((*first), 0));
-    }
-  }
-
-
-/*! \brief Reverse String sort algorithm using random access iterators.
-
-  (All variants fall back to @c pdqsort if the data size is too small, < @c detail::min_sort_size).
-
-  \details @c integer_sort is a fast templated in-place hybrid radix/comparison algorithm,
-which in testing tends to be roughly 50% to 2X faster than @c pdqsort for large tests (>=100kB).\n
-Worst-case performance is <em>  O(N * (lg(range)/s + s)) </em>,
-so @c integer_sort is asymptotically faster
-than pure comparison-based algorithms. @c s is @c max_splits, which defaults to 11,
-so its worst-case with default settings for 32-bit integers is
-<em> O(N * ((32/11) </em> slow radix-based iterations fast comparison-based iterations).\n\n
-Some performance plots of runtime vs. n and log(range) are provided:\n
-   <a href="../../doc/graph/windows_integer_sort.htm"> windows_integer_sort</a>
-   \n
-   <a href="../../doc/graph/osx_integer_sort.htm"> osx_integer_sort</a>
-
-
-   \param[in] first Iterator pointer to first element.
-   \param[in] last Iterator pointing to one beyond the end of data.
-   \param[in] getchar Bracket functor equivalent to @c operator[], taking a number corresponding to the character offset.
-   \param[in] length Functor to get the length of the string in characters.
-   \param[in] comp A binary functor that returns whether the first element passed to it should go before the second in order.
-
-
-   \pre [@c first, @c last) is a valid range.
-   \pre @c RandomAccessIter @c value_type is mutable.
-   \pre @c RandomAccessIter @c value_type is <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a>
-   \post The elements in the range [@c first, @c last) are sorted in ascending order.
-
-   \return @c void.
-
-   \throws std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
-   or any operations on iterators throw.
-
-   \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
-   \warning Invalid arguments cause undefined behaviour.
-   \note @c spreadsort function provides a wrapper that calls the fastest sorting algorithm available for a data type,
-   enabling faster generic-programming.
-
-   \remark The lesser of <em> O(N*log(N)) </em> comparisons and <em> O(N*log(K/S + S)) </em>operations worst-case, where:
-   \remark  *  N is @c last - @c first,
-   \remark  *  K is the log of the range in bits (32 for 32-bit integers using their full range),
-   \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
-
-*/
-  template<class RandomAccessIter, class Get_char, class Get_length,
-           class Compare>
-  auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
-                           Get_char getchar, Get_length length, Compare comp)
-      -> void
-  {
-    //Don't sort if it's too small to optimize
-    if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp, utility::identity{});
-    else {
-      //skipping past empties, which allows us to get the character type
-      //.empty() is not used so as not to require a user declaration of it
-      while (!length(*(--last))) {
-        //If there is just one non-empty at the beginning, this is sorted
-        if (first == last)
-          return;
-      }
-      //making last just after the end of the non-empty part of the array
-      detail::reverse_string_sort(first, last + 1, getchar, length, comp,
-                                  getchar((*last), 0));
-    }
+      detail::reverse_string_sort(first, last, projection, unused);
   }
 }}}
 

@@ -33,6 +33,7 @@
 #include <string>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/string_sort.h"
@@ -49,49 +50,75 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Ascending string sort
 
-            template<typename RandomAccessIterator>
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Projection projection={}) const
                 -> std::enable_if_t<
-                    std::is_same<value_type_t<RandomAccessIterator>, std::string>::value
+                    std::is_same<
+                        projected_t<RandomAccessIterator, Projection>,
+                        std::string
+                    >::value
                 >
             {
-                spreadsort::string_sort(first, last);
+                unsigned char unused = '\0';
+                spreadsort::string_sort(first, last, projection, unused);
             }
 
-            template<typename RandomAccessIterator>
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Projection projection={}) const
                 -> std::enable_if_t<
-                    std::is_same<value_type_t<RandomAccessIterator>, std::wstring>::value
-                    && (sizeof(wchar_t) == 2)
+                    std::is_same<
+                        projected_t<RandomAccessIterator, Projection>,
+                        std::wstring
+                    >::value && (sizeof(wchar_t) == 2)
                 >
             {
                 std::uint16_t unused = 0;
-                spreadsort::string_sort(first, last, unused);
+                spreadsort::string_sort(first, last, projection, unused);
             }
 
             ////////////////////////////////////////////////////////////
             // Descending string sort
 
-            template<typename RandomAccessIterator>
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::greater<> compare) const
+                            std::greater<> compare, Projection projection={}) const
                 -> std::enable_if_t<
-                    std::is_same<value_type_t<RandomAccessIterator>, std::string>::value
+                    std::is_same<
+                        projected_t<RandomAccessIterator, Projection>,
+                        std::string
+                    >::value
                 >
             {
-                spreadsort::reverse_string_sort(first, last, compare);
+                unsigned char unused = '\0';
+                spreadsort::reverse_string_sort(first, last, compare, projection, unused);
             }
 
-            template<typename RandomAccessIterator>
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::greater<> compare) const
+                            std::greater<> compare, Projection projection={}) const
                 -> std::enable_if_t<
-                    std::is_same<value_type_t<RandomAccessIterator>, std::wstring>::value
-                    && (sizeof(wchar_t) == 2)
+                    std::is_same<
+                        projected_t<RandomAccessIterator, Projection>,
+                        std::wstring
+                    >::value && (sizeof(wchar_t) == 2)
                 >
             {
                 std::uint16_t unused = 0;
-                spreadsort::reverse_string_sort(first, last, compare, unused);
+                spreadsort::reverse_string_sort(first, last, compare, projection, unused);
             }
 
             ////////////////////////////////////////////////////////////
