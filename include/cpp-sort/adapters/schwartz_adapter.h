@@ -45,31 +45,6 @@ namespace cppsort
     namespace detail
     {
         ////////////////////////////////////////////////////////////
-        // Dedicated comparison function
-
-        template<typename Compare>
-        class schwartz_compare
-        {
-            private:
-
-                Compare compare;
-
-            public:
-
-                explicit schwartz_compare(Compare compare):
-                    compare(compare)
-                {}
-
-                template<typename T, typename U>
-                auto operator()(T&& lhs, U&& rhs)
-                    noexcept(noexcept(compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data)))
-                    -> decltype(compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data))
-                {
-                    return compare(std::forward<T>(lhs).data, std::forward<U>(rhs).data);
-                }
-        };
-
-        ////////////////////////////////////////////////////////////
         // Adapter
 
         template<typename Sorter>
@@ -77,17 +52,12 @@ namespace cppsort
             check_iterator_category<Sorter>,
             check_is_stable<Sorter>
         {
-            template<
-                typename ForwardIterator,
-                typename Compare,
-                typename Projection,
-                typename = std::enable_if_t<is_projection_iterator_v<
-                    Projection, ForwardIterator, Compare
-                >>
-            >
+            template<typename ForwardIterator, typename Compare, typename Projection>
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare, Projection projection) const
-                -> void
+                -> std::enable_if_t<is_projection_iterator_v<
+                    Projection, ForwardIterator, Compare
+                >>
             {
                 static_assert(not std::is_same<Sorter, std_sorter>::value,
                               "std_sorter doesn't work with schwartz_adapter");
@@ -117,20 +87,56 @@ namespace cppsort
                 Sorter{}(
                     make_associate_iterator(projected.get()),
                     make_associate_iterator(projected.get() + size),
-                    schwartz_compare<Compare>(compare)
+                    compare,
+                    [](const auto& value) -> auto& { return value.data; }
                 );
             }
 
-            template<
-                typename ForwardIterator,
-                typename Compare = std::less<>,
-                typename = std::enable_if_t<not is_projection_iterator_v<
-                    Compare, ForwardIterator
+            template<typename ForwardIterator, typename Projection>
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Projection projection) const
+                -> std::enable_if_t<is_projection_iterator_v<
+                    Projection, ForwardIterator
                 >>
-            >
+            {
+                static_assert(not std::is_same<Sorter, std_sorter>::value,
+                              "std_sorter doesn't work with schwartz_adapter");
+                static_assert(not std::is_same<Sorter, stable_adapter<std_sorter>>::value,
+                              "stable_adapter<std_sorter> doesn't work with schwartz_adapter");
+
+                auto&& proj = utility::as_function(projection);
+                using proj_t = std::decay_t<decltype(proj(*first))>;
+                using value_t = association<ForwardIterator, proj_t>;
+
+                // Collection of projected elements
+                auto size = std::distance(first, last);
+                std::unique_ptr<value_t, operator_deleter> projected(
+                    static_cast<value_t*>(::operator new(size * sizeof(value_t)))
+                );
+                destruct_n d(0);
+                std::unique_ptr<value_t, destruct_n&> h2(projected.get(), d);
+
+                // Associate iterator to projected element
+                for (auto ptr = projected.get() ; first != last ; ++first, (void) ++ptr)
+                {
+                    ::new(ptr) value_t(first, proj(*first));
+                    d.incr((value_t*)nullptr);
+                }
+
+                // Indirectly sort the original sequence
+                Sorter{}(
+                    make_associate_iterator(projected.get()),
+                    make_associate_iterator(projected.get() + size),
+                    [](const auto& value) -> auto& { return value.data; }
+                );
+            }
+
+            template<typename ForwardIterator, typename Compare=std::less<>>
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}) const
-                -> void
+                -> std::enable_if_t<not is_projection_iterator_v<
+                    Compare, ForwardIterator
+                >>
             {
                 // No projection to handle, forward everything to
                 // the adapted sorter

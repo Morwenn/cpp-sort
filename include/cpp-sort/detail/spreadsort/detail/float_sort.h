@@ -28,8 +28,10 @@ Phil Endecott and Frank Gennari
 #include <limits>
 #include <memory>
 #include <type_traits>
+#include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "common.h"
 #include "constants.h"
 #include "integer_sort.h"
@@ -71,6 +73,8 @@ namespace detail
                                Projection projection)
         -> void
     {
+      using utility::iter_move;
+
       RandomAccessIter * local_bin = bins + ii;
       for (RandomAccessIter current = *local_bin; current < nextbinstart;
           ++current) {
@@ -79,7 +83,6 @@ namespace detail
                       log_divisor) - div_min));  target_bin != local_bin;
           target_bin = bins + ((cast_float_iter<Div_type>(current, projection) >> log_divisor)
                             - div_min)) {
-          value_type_t<RandomAccessIter> tmp;
           RandomAccessIter b = (*target_bin)++;
           RandomAccessIter * b_bin = bins + ((cast_float_iter<Div_type>(b, projection) >> log_divisor)
                                           - div_min);
@@ -87,13 +90,15 @@ namespace detail
           //current bin, swap it to where it belongs
           if (b_bin != local_bin) {
             RandomAccessIter c = (*b_bin)++;
-            tmp = *c;
-            *c = *b;
+            auto tmp = iter_move(c);
+            *c = iter_move(b);
+            *b = iter_move(current);
+            *current = std::move(tmp);
+          } else {
+            auto tmp = iter_move(b);
+            *b = iter_move(current);
+            *current = std::move(tmp);
           }
-          else
-            tmp = *b;
-          *b = *current;
-          *current = tmp;
         }
       }
       *local_bin = nextbinstart;

@@ -30,7 +30,6 @@ Phil Endecott and Frank Gennari
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
-#include "../../iterator_traits.h"
 
 namespace cppsort
 {
@@ -86,14 +85,15 @@ namespace spreadsort
     }
 
     //This comparison functor assumes strings are identical up to char_offset
-    template<typename Data_type, typename Projection, typename Unsigned_char_type>
+    template<typename Projection, typename Unsigned_char_type>
     struct offset_less_than
     {
         offset_less_than(std::size_t char_offset, Projection projection):
             data(char_offset, projection)
         {}
 
-        auto operator()(const Data_type& x, const Data_type& y) const
+        template<typename T, typename U>
+        auto operator()(const T& x, const U& y) const
             -> bool
         {
             auto&& proj = utility::as_function(std::get<1>(data));
@@ -117,14 +117,15 @@ namespace spreadsort
     };
 
     //Compares strings assuming they are identical up to char_offset
-    template<typename Data_type, typename Projection, typename Unsigned_char_type>
+    template<typename Projection, typename Unsigned_char_type>
     struct offset_greater_than
     {
         offset_greater_than(std::size_t char_offset, Projection projection):
             data(char_offset, projection)
         {}
 
-        auto operator()(const Data_type& x, const Data_type& y) const
+        template<typename T, typename U>
+        auto operator()(const T& x, const U& y) const
             -> bool
         {
             auto&& proj = utility::as_function(std::get<1>(data));
@@ -156,7 +157,6 @@ namespace spreadsort
                          Projection projection)
         -> void
     {
-      using Data_type = value_type_t<RandomAccessIter>;
       auto&& proj = utility::as_function(projection);
 
       //This section makes handling of long identical substrings much faster
@@ -246,7 +246,7 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-                  offset_less_than<Data_type, Projection, Unsigned_char_type>(
+                  offset_less_than<Projection, Unsigned_char_type>(
                     char_offset + 1, projection),
                   utility::identity{});
         else
@@ -264,7 +264,6 @@ namespace spreadsort
                                  Projection projection)
         -> void
     {
-      using Data_type = value_type_t<RandomAccessIter>;
       auto&& proj = utility::as_function(projection);
 
       //This section makes handling of long identical substrings much faster
@@ -359,7 +358,7 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-                  offset_greater_than<Data_type, Projection, Unsigned_char_type>(
+                  offset_greater_than<Projection, Unsigned_char_type>(
                     char_offset + 1, projection),
                   utility::identity{});
         else

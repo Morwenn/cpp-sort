@@ -152,6 +152,9 @@ namespace detail
         {
             return value;
         }
+
+        // Silence GCC -Winline warning
+        ~associated_value() noexcept {}
     };
 
     ////////////////////////////////////////////////////////////

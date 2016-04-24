@@ -25,11 +25,12 @@ Phil Endecott and Frank Gennari
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "common.h"
 #include "constants.h"
-#include "../../iterator_traits.h"
 #include "../../pdqsort.h"
 
 namespace cppsort
@@ -98,6 +99,7 @@ namespace spreadsort
                         std::size_t *bin_sizes, Projection projection)
         -> void
     {
+      using utility::iter_move;
       auto&& proj = utility::as_function(projection);
 
       //This step is roughly 10% of runtime, but it helps avoid worst-case
@@ -142,18 +144,19 @@ namespace spreadsort
             //3-way swap; this is about 1% faster than a 2-way swap
             //The main advantage is less copies are involved per item
             //put in the correct place
-            value_type_t<RandomAccessIter> tmp;
             RandomAccessIter b = (*target_bin)++;
             RandomAccessIter * b_bin = bins + ((proj(*b) >> log_divisor) - div_min);
             if (b_bin != local_bin) {
               RandomAccessIter c = (*b_bin)++;
-              tmp = *c;
-              *c = *b;
+              auto tmp = iter_move(c);
+              *c = iter_move(b);
+              *b = iter_move(current);
+              *current = std::move(tmp);
+            } else {
+              auto tmp = iter_move(b);
+              *b = iter_move(current);
+              *current = std::move(tmp);
             }
-            else
-              tmp = *b;
-            *b = *current;
-            *current = tmp;
           }
         }
         *local_bin = nextbinstart;
@@ -187,55 +190,6 @@ namespace spreadsort
                                                                 bin_sizes,
                                                                 projection);
       }
-    }
-
-    //Generic bitshift-based 3-way swapping code
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto inner_swap_loop(RandomAccessIter * bins, const RandomAccessIter & next_bin_start,
-                         unsigned ii, Right_shift &rshift,
-                         const unsigned log_divisor, const Div_type div_min)
-        -> void
-    {
-      RandomAccessIter * local_bin = bins + ii;
-      for (RandomAccessIter current = *local_bin; current < next_bin_start;
-          ++current) {
-        for (RandomAccessIter * target_bin =
-            (bins + (rshift(*current, log_divisor) - div_min));
-            target_bin != local_bin;
-            target_bin = bins + (rshift(*current, log_divisor) - div_min)) {
-          value_type_t<RandomAccessIter> tmp;
-          RandomAccessIter b = (*target_bin)++;
-          RandomAccessIter * b_bin =
-            bins + (rshift(*b, log_divisor) - div_min);
-          //Three-way swap; if the item to be swapped doesn't belong
-          //in the current bin, swap it to where it belongs
-          if (b_bin != local_bin) {
-            RandomAccessIter c = (*b_bin)++;
-            tmp = *c;
-            *c = *b;
-          }
-          //Note: we could increment current once the swap is done in this case
-          //but that seems to impair performance
-          else
-            tmp = *b;
-          *b = *current;
-          *current = tmp;
-        }
-      }
-      *local_bin = next_bin_start;
-    }
-
-    //Standard swapping wrapper for ascending values
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto swap_loop(RandomAccessIter * bins,
-                   RandomAccessIter & next_bin_start, unsigned ii, Right_shift &rshift,
-                   const std::size_t *bin_sizes,
-                   const unsigned log_divisor, const Div_type div_min)
-        -> void
-    {
-      next_bin_start += bin_sizes[ii];
-      inner_swap_loop<RandomAccessIter, Div_type, Right_shift>(bins,
-                              next_bin_start, ii, rshift, log_divisor, div_min);
     }
 
     //Holds the bin vector and makes the initial recursive call
