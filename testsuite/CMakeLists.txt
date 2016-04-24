@@ -45,6 +45,7 @@ set(
     sorters/merge_sorter_projection.cpp
     sorters/spread_sorter.cpp
     sorters/spread_sorter_defaults.cpp
+    sorters/spread_sorter_projection.cpp
 )
 
 set(

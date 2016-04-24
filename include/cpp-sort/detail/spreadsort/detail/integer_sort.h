@@ -25,11 +25,12 @@ Phil Endecott and Frank Gennari
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <vector>
-#include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "common.h"
 #include "constants.h"
-#include "../../iterator_traits.h"
 #include "../../pdqsort.h"
 
 namespace cppsort
@@ -41,14 +42,17 @@ namespace spreadsort
   namespace detail {
     // Return true if the list is sorted.  Otherwise, find the minimum and
     // maximum using <.
-    template<class RandomAccessIter>
+    template<typename RandomAccessIter, typename Projection>
     auto is_sorted_or_find_extremes(RandomAccessIter current, RandomAccessIter last,
-                                    RandomAccessIter & max, RandomAccessIter & min)
+                                    RandomAccessIter & max, RandomAccessIter & min,
+                                    Projection projection)
         -> bool
     {
+      auto&& proj = utility::as_function(projection);
+
       min = max = current;
       //This assumes we have more than 1 element based on prior checks.
-      while (!(*(current + 1) < *current)) {
+      while (!(proj(*(current + 1)) < proj(*current))) {
         //If everything is in sorted order, return
         if (++current == last - 1)
           return true;
@@ -58,36 +62,9 @@ namespace spreadsort
       max = current;
       //Start from the first unsorted element
       while (++current < last) {
-        if (*max < *current)
+        if (proj(*max) < proj(*current))
           max = current;
-        else if (*current < *min)
-          min = current;
-      }
-      return false;
-    }
-
-    // Return true if the list is sorted.  Otherwise, find the minimum and
-    // maximum.
-    // Use a user-defined comparison operator
-    template<class RandomAccessIter, class Compare>
-    auto is_sorted_or_find_extremes(RandomAccessIter current, RandomAccessIter last,
-                                    RandomAccessIter & max, RandomAccessIter & min,
-                                    Compare comp)
-        -> bool
-    {
-      min = max = current;
-      while (!comp(*(current + 1), *current)) {
-        //If everything is in sorted order, return
-        if (++current == last - 1)
-          return true;
-      }
-
-      //The maximum is the last sorted element
-      max = current;
-      while (++current < last) {
-        if (comp(*max, *current))
-          max = current;
-        else if (comp(*current, *min))
+        else if (proj(*current) < proj(*min))
           min = current;
       }
       return false;
@@ -115,24 +92,28 @@ namespace spreadsort
     }
 
     //Implementation for recursive integer sorting
-    template<class RandomAccessIter, class Div_type, class Size_type>
+    template<typename RandomAccessIter, typename Div_type,
+             typename Size_type, typename Projection>
     auto spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
                         std::vector<RandomAccessIter> &bin_cache, unsigned cache_offset,
-                        std::size_t *bin_sizes)
+                        std::size_t *bin_sizes, Projection projection)
         -> void
     {
+      using utility::iter_move;
+      auto&& proj = utility::as_function(projection);
+
       //This step is roughly 10% of runtime, but it helps avoid worst-case
       //behavior and improve behavior with real data
       //If you know the maximum and minimum ahead of time, you can pass those
       //values in and skip this step for the first iteration
       RandomAccessIter max, min;
-      if (is_sorted_or_find_extremes(first, last, max, min))
+      if (is_sorted_or_find_extremes(first, last, max, min, projection))
         return;
       RandomAccessIter * target_bin;
       unsigned log_divisor = get_log_divisor<int_log_mean_bin_size>(
-          last - first, rough_log_2_size(Size_type((*max >> 0) - (*min >> 0))));
-      Div_type div_min = *min >> log_divisor;
-      Div_type div_max = *max >> log_divisor;
+          last - first, rough_log_2_size(Size_type((proj(*max) >> 0) - (proj(*min) >> 0))));
+      Div_type div_min = proj(*min) >> log_divisor;
+      Div_type div_max = proj(*max) >> log_divisor;
       unsigned bin_count = unsigned(div_max - div_min) + 1;
       unsigned cache_end;
       RandomAccessIter * bins =
@@ -140,7 +121,7 @@ namespace spreadsort
 
       //Calculating the size of each bin; this takes roughly 10% of runtime
       for (RandomAccessIter current = first; current != last;)
-        bin_sizes[std::size_t((*(current++) >> log_divisor) - div_min)]++;
+        bin_sizes[std::size_t((proj(*(current++)) >> log_divisor) - div_min)]++;
       //Assign the bin positions
       bins[0] = first;
       for (unsigned u = 0; u < bin_count - 1; u++)
@@ -157,24 +138,25 @@ namespace spreadsort
             ++current) {
           //Swapping elements in current into place until the correct
           //element has been swapped in
-          for (target_bin = (bins + ((*current >> log_divisor) - div_min));
+          for (target_bin = (bins + ((proj(*current) >> log_divisor) - div_min));
               target_bin != local_bin;
-            target_bin = bins + ((*current >> log_divisor) - div_min)) {
+            target_bin = bins + ((proj(*current) >> log_divisor) - div_min)) {
             //3-way swap; this is about 1% faster than a 2-way swap
             //The main advantage is less copies are involved per item
             //put in the correct place
-            value_type_t<RandomAccessIter> tmp;
             RandomAccessIter b = (*target_bin)++;
-            RandomAccessIter * b_bin = bins + ((*b >> log_divisor) - div_min);
+            RandomAccessIter * b_bin = bins + ((proj(*b) >> log_divisor) - div_min);
             if (b_bin != local_bin) {
               RandomAccessIter c = (*b_bin)++;
-              tmp = *c;
-              *c = *b;
+              auto tmp = iter_move(c);
+              *c = iter_move(b);
+              *b = iter_move(current);
+              *current = std::move(tmp);
+            } else {
+              auto tmp = iter_move(b);
+              *b = iter_move(current);
+              *current = std::move(tmp);
             }
-            else
-              tmp = *b;
-            *b = *current;
-            *current = tmp;
           }
         }
         *local_bin = nextbinstart;
@@ -199,267 +181,48 @@ namespace spreadsort
           continue;
         //using pdqsort if its worst-case is better
         if (count < max_count)
-          pdqsort(lastPos, bin_cache[u], std::less<>{}, utility::identity{});
+          pdqsort(lastPos, bin_cache[u], std::less<>{}, projection);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Size_type>(lastPos,
-                                                                 bin_cache[u],
-                                                                 bin_cache,
-                                                                 cache_end,
-                                                                 bin_sizes);
-      }
-    }
-
-    //Generic bitshift-based 3-way swapping code
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto inner_swap_loop(RandomAccessIter * bins, const RandomAccessIter & next_bin_start,
-                         unsigned ii, Right_shift &rshift,
-                         const unsigned log_divisor, const Div_type div_min)
-        -> void
-    {
-      RandomAccessIter * local_bin = bins + ii;
-      for (RandomAccessIter current = *local_bin; current < next_bin_start;
-          ++current) {
-        for (RandomAccessIter * target_bin =
-            (bins + (rshift(*current, log_divisor) - div_min));
-            target_bin != local_bin;
-            target_bin = bins + (rshift(*current, log_divisor) - div_min)) {
-          value_type_t<RandomAccessIter> tmp;
-          RandomAccessIter b = (*target_bin)++;
-          RandomAccessIter * b_bin =
-            bins + (rshift(*b, log_divisor) - div_min);
-          //Three-way swap; if the item to be swapped doesn't belong
-          //in the current bin, swap it to where it belongs
-          if (b_bin != local_bin) {
-            RandomAccessIter c = (*b_bin)++;
-            tmp = *c;
-            *c = *b;
-          }
-          //Note: we could increment current once the swap is done in this case
-          //but that seems to impair performance
-          else
-            tmp = *b;
-          *b = *current;
-          *current = tmp;
-        }
-      }
-      *local_bin = next_bin_start;
-    }
-
-    //Standard swapping wrapper for ascending values
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto swap_loop(RandomAccessIter * bins,
-                   RandomAccessIter & next_bin_start, unsigned ii, Right_shift &rshift,
-                   const std::size_t *bin_sizes,
-                   const unsigned log_divisor, const Div_type div_min)
-        -> void
-    {
-      next_bin_start += bin_sizes[ii];
-      inner_swap_loop<RandomAccessIter, Div_type, Right_shift>(bins,
-                              next_bin_start, ii, rshift, log_divisor, div_min);
-    }
-
-    //Functor implementation for recursive sorting
-    template<class RandomAccessIter, class Div_type, class Right_shift,
-             class Compare, class Size_type, unsigned log_mean_bin_size,
-             unsigned log_min_split_count, unsigned log_finishing_count>
-    auto spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
-                        std::vector<RandomAccessIter> &bin_cache, unsigned cache_offset,
-                        std::size_t *bin_sizes, Right_shift rshift, Compare comp)
-        -> void
-    {
-      RandomAccessIter max, min;
-      if (is_sorted_or_find_extremes(first, last, max, min, comp))
-        return;
-      unsigned log_divisor = get_log_divisor<log_mean_bin_size>(last - first,
-            rough_log_2_size(Size_type(rshift(*max, 0) - rshift(*min, 0))));
-      Div_type div_min = rshift(*min, log_divisor);
-      Div_type div_max = rshift(*max, log_divisor);
-      unsigned bin_count = unsigned(div_max - div_min) + 1;
-      unsigned cache_end;
-      RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
-                                          cache_end, bin_count);
-
-      //Calculating the size of each bin
-      for (RandomAccessIter current = first; current != last;)
-        bin_sizes[unsigned(rshift(*(current++), log_divisor) - div_min)]++;
-      bins[0] = first;
-      for (unsigned u = 0; u < bin_count - 1; u++)
-        bins[u + 1] = bins[u] + bin_sizes[u];
-
-      //Swap into place
-      RandomAccessIter next_bin_start = first;
-      for (unsigned u = 0; u < bin_count - 1; ++u)
-        swap_loop<RandomAccessIter, Div_type, Right_shift>(bins, next_bin_start,
-                                  u, rshift, bin_sizes, log_divisor, div_min);
-      bins[bin_count - 1] = last;
-
-      //If we've bucketsorted, the array is sorted
-      if (!log_divisor)
-        return;
-
-      //Recursing
-      std::size_t max_count = get_min_count<log_mean_bin_size, log_min_split_count,
-                          log_finishing_count>(log_divisor);
-      RandomAccessIter lastPos = first;
-      for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
-          (void) ++u) {
-        std::size_t count = bin_cache[u] - lastPos;
-        if (count < 2)
-          continue;
-        if (count < max_count)
-          pdqsort(lastPos, bin_cache[u], comp, utility::identity{});
-        else
-          spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
-        Size_type, log_mean_bin_size, log_min_split_count, log_finishing_count>
-      (lastPos, bin_cache[u], bin_cache, cache_end, bin_sizes, rshift, comp);
-      }
-    }
-
-    //Functor implementation for recursive sorting with only Shift overridden
-    template<class RandomAccessIter, class Div_type, class Right_shift,
-             class Size_type, unsigned log_mean_bin_size,
-             unsigned log_min_split_count, unsigned log_finishing_count>
-    auto spreadsort_rec(RandomAccessIter first, RandomAccessIter last,
-                        std::vector<RandomAccessIter> &bin_cache, unsigned cache_offset,
-                        std::size_t *bin_sizes, Right_shift rshift)
-        -> void
-    {
-      RandomAccessIter max, min;
-      if (is_sorted_or_find_extremes(first, last, max, min))
-        return;
-      unsigned log_divisor = get_log_divisor<log_mean_bin_size>(last - first,
-            rough_log_2_size(Size_type(rshift(*max, 0) - rshift(*min, 0))));
-      Div_type div_min = rshift(*min, log_divisor);
-      Div_type div_max = rshift(*max, log_divisor);
-      unsigned bin_count = unsigned(div_max - div_min) + 1;
-      unsigned cache_end;
-      RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
-                                          cache_end, bin_count);
-
-      //Calculating the size of each bin
-      for (RandomAccessIter current = first; current != last;)
-        bin_sizes[unsigned(rshift(*(current++), log_divisor) - div_min)]++;
-      bins[0] = first;
-      for (unsigned u = 0; u < bin_count - 1; u++)
-        bins[u + 1] = bins[u] + bin_sizes[u];
-
-      //Swap into place
-      RandomAccessIter nextbinstart = first;
-      for (unsigned ii = 0; ii < bin_count - 1; ++ii)
-        swap_loop<RandomAccessIter, Div_type, Right_shift>(bins, nextbinstart,
-                                ii, rshift, bin_sizes, log_divisor, div_min);
-      bins[bin_count - 1] = last;
-
-      //If we've bucketsorted, the array is sorted
-      if (!log_divisor)
-        return;
-
-      //Recursing
-      std::size_t max_count = get_min_count<log_mean_bin_size, log_min_split_count,
-                          log_finishing_count>(log_divisor);
-      RandomAccessIter lastPos = first;
-      for (unsigned u = cache_offset; u < cache_end; lastPos = bin_cache[u],
-          (void) ++u) {
-        std::size_t count = bin_cache[u] - lastPos;
-        if (count < 2)
-          continue;
-        if (count < max_count)
-          pdqsort(lastPos, bin_cache[u], utility::identity{});
-        else
-          spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Size_type,
-          log_mean_bin_size, log_min_split_count, log_finishing_count>(lastPos,
-                      bin_cache[u], bin_cache, cache_end, bin_sizes, rshift);
+                                                                bin_cache[u],
+                                                                bin_cache,
+                                                                cache_end,
+                                                                bin_sizes,
+                                                                projection);
       }
     }
 
     //Holds the bin vector and makes the initial recursive call
     //Only use spreadsort if the integer can fit in a std::size_t
-    template<class RandomAccessIter, class Div_type>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
-        -> std::enable_if_t< sizeof(Div_type) <= sizeof(std::size_t), void >
+    template<typename RandomAccessIter, typename Div_type, typename Projection>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last,
+                      Div_type, Projection projection)
+        -> std::enable_if_t<
+            sizeof(Div_type) <= sizeof(std::size_t),
+            void
+        >
     {
       std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, std::size_t>(first, last,
-          bin_cache, 0, bin_sizes);
+      spreadsort_rec<RandomAccessIter, Div_type, std::size_t, Projection>(
+          first, last, bin_cache, 0, bin_sizes, projection);
     }
 
     //Holds the bin vector and makes the initial recursive call
     //Only use spreadsort if the integer can fit in a std::uintmax_t
-    template<class RandomAccessIter, class Div_type>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type)
-        -> std::enable_if_t< (sizeof(Div_type) > sizeof(std::size_t))
-            && sizeof(Div_type) <= sizeof(std::uintmax_t), void
+    template<typename RandomAccessIter, typename Div_type, typename Projection>
+    auto integer_sort(RandomAccessIter first, RandomAccessIter last,
+                      Div_type, Projection projection)
+        -> std::enable_if_t<
+            (sizeof(Div_type) > sizeof(std::size_t)) &&
+            sizeof(Div_type) <= sizeof(std::uintmax_t),
+            void
         >
     {
       std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, std::uintmax_t>(first,
-          last, bin_cache, 0, bin_sizes);
-    }
-
-    //Same for the full functor version
-    //Only use spreadsort if the integer can fit in a std::size_t
-    template<class RandomAccessIter, class Div_type, class Right_shift,
-             class Compare>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                      Right_shift shift, Compare comp)
-        -> std::enable_if_t< sizeof(Div_type) <= sizeof(std::size_t), void >
-    {
-      std::size_t bin_sizes[1 << max_finishing_splits];
-      std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
-          std::size_t, int_log_mean_bin_size, int_log_min_split_count,
-                        int_log_finishing_count>
-          (first, last, bin_cache, 0, bin_sizes, shift, comp);
-    }
-
-    //Only use spreadsort if the integer can fit in a std::uintmax_t
-    template<class RandomAccessIter, class Div_type, class Right_shift,
-             class Compare>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                      Right_shift shift, Compare comp)
-        -> std::enable_if_t< (sizeof(Div_type) > sizeof(std::size_t))
-            && sizeof(Div_type) <= sizeof(std::uintmax_t), void
-        >
-    {
-      std::size_t bin_sizes[1 << max_finishing_splits];
-      std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, Right_shift, Compare,
-                        std::uintmax_t, int_log_mean_bin_size,
-                        int_log_min_split_count, int_log_finishing_count>
-          (first, last, bin_cache, 0, bin_sizes, shift, comp);
-    }
-
-    //Same for the right shift version
-    //Only use spreadsort if the integer can fit in a std::size_t
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                      Right_shift shift)
-        -> std::enable_if_t< sizeof(Div_type) <= sizeof(std::size_t), void >
-    {
-      std::size_t bin_sizes[1 << max_finishing_splits];
-      std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, Right_shift, std::size_t,
-          int_log_mean_bin_size, int_log_min_split_count,
-                        int_log_finishing_count>
-          (first, last, bin_cache, 0, bin_sizes, shift);
-    }
-
-    //Only use spreadsort if the integer can fit in a std::uintmax_t
-    template<class RandomAccessIter, class Div_type, class Right_shift>
-    auto integer_sort(RandomAccessIter first, RandomAccessIter last, Div_type,
-                      Right_shift shift)
-        -> std::enable_if_t< (sizeof(Div_type) > sizeof(std::size_t))
-            && sizeof(Div_type) <= sizeof(std::uintmax_t), void
-        >
-    {
-      std::size_t bin_sizes[1 << max_finishing_splits];
-      std::vector<RandomAccessIter> bin_cache;
-      spreadsort_rec<RandomAccessIter, Div_type, Right_shift,
-                        std::uintmax_t, int_log_mean_bin_size,
-                        int_log_min_split_count, int_log_finishing_count>
-          (first, last, bin_cache, 0, bin_sizes, shift);
+      spreadsort_rec<RandomAccessIter, Div_type, std::uintmax_t, Projection>(
+          first, last, bin_cache, 0, bin_sizes, projection);
     }
   }
 }}}

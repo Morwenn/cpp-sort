@@ -32,6 +32,7 @@
 #include <limits>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/float_sort.h"
@@ -45,17 +46,21 @@ namespace cppsort
     {
         struct float_spread_sorter_impl
         {
-            template<typename RandomAccessIterator>
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last) const
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            Projection projection={}) const
                 -> std::enable_if_t<
-                    std::numeric_limits<value_type_t<RandomAccessIterator>>::is_iec559 && (
-                        sizeof(value_type_t<RandomAccessIterator>) == sizeof(std::uint32_t) ||
-                        sizeof(value_type_t<RandomAccessIterator>) == sizeof(std::uint64_t)
-                    )
-
+                    std::numeric_limits<projected_t<RandomAccessIterator, Projection>>::is_iec559 && (
+                        sizeof(projected_t<RandomAccessIterator, Projection>) == sizeof(std::uint32_t) ||
+                        sizeof(projected_t<RandomAccessIterator, Projection>) == sizeof(std::uint64_t)
+                    ) &&
+                    is_projection_iterator_v<Projection, RandomAccessIterator>
                 >
             {
-                spreadsort::float_sort(first, last);
+                spreadsort::float_sort(first, last, projection);
             }
 
             ////////////////////////////////////////////////////////////
