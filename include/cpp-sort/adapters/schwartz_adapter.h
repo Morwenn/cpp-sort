@@ -73,14 +73,13 @@ namespace cppsort
                 std::unique_ptr<value_t, operator_deleter> projected(
                     static_cast<value_t*>(::operator new(size * sizeof(value_t)))
                 );
-                destruct_n d(0);
-                std::unique_ptr<value_t, destruct_n&> h2(projected.get(), d);
+                destruct_n<value_t> d(0);
+                std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);
 
                 // Associate iterator to projected element
-                for (auto ptr = projected.get() ; first != last ; ++first, (void) ++ptr)
+                for (auto ptr = projected.get() ; first != last ; ++d, (void) ++first, ++ptr)
                 {
                     ::new(ptr) value_t(first, proj(*first));
-                    d.incr((value_t*)nullptr);
                 }
 
                 // Indirectly sort the original sequence
@@ -113,14 +112,13 @@ namespace cppsort
                 std::unique_ptr<value_t, operator_deleter> projected(
                     static_cast<value_t*>(::operator new(size * sizeof(value_t)))
                 );
-                destruct_n d(0);
-                std::unique_ptr<value_t, destruct_n&> h2(projected.get(), d);
+                destruct_n<value_t> d(0);
+                std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);
 
                 // Associate iterator to projected element
-                for (auto ptr = projected.get() ; first != last ; ++first, (void) ++ptr)
+                for (auto ptr = projected.get() ; first != last ; ++d, (void) ++first, ++ptr)
                 {
                     ::new(ptr) value_t(first, proj(*first));
-                    d.incr((value_t*)nullptr);
                 }
 
                 // Indirectly sort the original sequence

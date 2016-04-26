@@ -406,18 +406,18 @@ namespace detail
             std::unique_ptr<rvalue_reference, operator_deleter> buffer(
                 static_cast<rvalue_reference*>(::operator new(len1 * sizeof(rvalue_reference)))
             );
-            destruct_n d(0);
-            std::unique_ptr<rvalue_reference, destruct_n&> h2(buffer.get(), d);
+            destruct_n<rvalue_reference> d(0);
+            std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
 
             rvalue_reference* ptr = buffer.get();
-            for (auto it = base1 ; it != base1 + len1 ; d.incr((rvalue_reference*)nullptr), (void) ++it, ++ptr)
+            for (auto it = base1 ; it != base1 + len1 ; ++d, (void) ++it, ++ptr)
             {
                 ::new(ptr) rvalue_reference(iter_move(it));
             }
 
-            auto cursor1    = buffer.get();
-            iterator cursor2  = base2;
-            iterator dest     = base1;
+            auto cursor1 = buffer.get();
+            iterator cursor2 = base2;
+            iterator dest = base1;
 
             *dest++ = iter_move(cursor2++);
             if(--len2 == 0) {
@@ -543,11 +543,11 @@ namespace detail
             std::unique_ptr<rvalue_reference, operator_deleter> buffer(
                 static_cast<rvalue_reference*>(::operator new(len2 * sizeof(rvalue_reference)))
             );
-            destruct_n d(0);
-            std::unique_ptr<rvalue_reference, destruct_n&> h2(buffer.get(), d);
+            destruct_n<rvalue_reference> d(0);
+            std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
 
             rvalue_reference* ptr = buffer.get();
-            for (auto it = base2 ; it != base2 + len2 ; d.incr((rvalue_reference*)nullptr), (void) ++it, ++ptr)
+            for (auto it = base2 ; it != base2 + len2 ; ++d, (void) ++it, ++ptr)
             {
                 ::new(ptr) rvalue_reference(iter_move(it));
             }

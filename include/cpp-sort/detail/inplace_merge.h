@@ -102,12 +102,12 @@ namespace detail
     {
         using utility::iter_move;
         using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
-        destruct_n d(0);
-        std::unique_ptr<rvalue_reference, destruct_n&> h2(buff, d);
+        destruct_n<rvalue_reference> d(0);
+        std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buff, d);
         if (len1 <= len2)
         {
             rvalue_reference* p = buff;
-            for (BidirectionalIterator i = first; i != middle; d.incr((rvalue_reference*)nullptr), (void) ++i, ++p)
+            for (BidirectionalIterator i = first; i != middle; ++d, (void) ++i, ++p)
             {
                 ::new(p) rvalue_reference(iter_move(i));
             }
@@ -116,7 +116,7 @@ namespace detail
         else
         {
             rvalue_reference* p = buff;
-            for (BidirectionalIterator i = middle; i != last; d.incr((rvalue_reference*)nullptr), (void) ++i, ++p)
+            for (BidirectionalIterator i = middle; i != last; ++d, (void) ++i, ++p)
             {
                 ::new(p) rvalue_reference(iter_move(i));
             }

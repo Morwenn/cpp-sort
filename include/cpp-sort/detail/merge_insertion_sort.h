@@ -430,15 +430,15 @@ namespace detail
         std::unique_ptr<rvalue_reference, operator_deleter> cache(
             static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference)))
         );
-        destruct_n d(0);
-        std::unique_ptr<rvalue_reference, destruct_n&> h2(cache.get(), d);
+        destruct_n<rvalue_reference> d(0);
+        std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(cache.get(), d);
 
         rvalue_reference* buff_it = cache.get();
         for (auto&& it: chain)
         {
             auto begin = it.base();
             auto end = begin + it.size();
-            for (auto inner_it = begin ; inner_it != end ; d.incr((rvalue_reference*)nullptr), (void) ++inner_it)
+            for (auto inner_it = begin ; inner_it != end ; ++d, (void) ++inner_it)
             {
                 using utility::iter_move;
                 ::new(buff_it) rvalue_reference(iter_move(inner_it));

@@ -125,11 +125,14 @@ namespace utility
 
             if (n0 <= buff_size)
             {
-                cppsort::detail::destruct_n d(0);
-                std::unique_ptr<rvalue_reference, cppsort::detail::destruct_n&> h2(buffer, d);
+                cppsort::detail::destruct_n<rvalue_reference> d(0);
+                std::unique_ptr<
+                    rvalue_reference,
+                    cppsort::detail::destruct_n<rvalue_reference>&
+                > h2(buffer, d);
 
                 rvalue_reference* buff_it = buffer;
-                for (auto it = f0 ; it != f1 ; d.incr((rvalue_reference*)nullptr), (void) ++it)
+                for (auto it = f0 ; it != f1 ; ++d, (void) ++it)
                 {
                     using utility::iter_move;
                     ::new(buff_it) rvalue_reference(iter_move(it));

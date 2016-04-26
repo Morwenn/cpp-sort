@@ -54,73 +54,50 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Deleter for placement new-allocated memory
 
-    struct destruct_n
+    template<
+        typename T,
+        bool = std::is_trivially_destructible<T>::value
+    >
+    struct destruct_n;
+
+    template<typename T>
+    struct destruct_n<T, true>
     {
-        private:
+        explicit destruct_n(std::size_t) noexcept {}
 
-            std::size_t size;
+        auto operator++() noexcept
+            -> void
+        {}
 
-            template<typename T>
-            auto process(T* pointer, std::false_type) noexcept
-                -> void
+        auto operator()(T*) noexcept
+            -> void
+        {}
+    };
+
+    template<typename T>
+    struct destruct_n<T, false>
+    {
+        explicit destruct_n(std::size_t s) noexcept:
+            size(s)
+        {}
+
+        auto operator++() noexcept
+            -> void
+        {
+            ++size;
+        }
+
+        auto operator()(T* pointer) noexcept
+            -> void
+        {
+            for (std::size_t i = 0 ; i < size ; ++i, (void) ++pointer)
             {
-                for (std::size_t i = 0 ; i < size ; ++i, (void) ++pointer)
-                {
-                    pointer->~T();
-                }
+                pointer->~T();
             }
+        }
 
-            template<typename T>
-            auto process(T*, std::true_type) noexcept
-                -> void
-            {}
-
-            auto incr(std::false_type) noexcept
-                -> void
-            {
-                ++size;
-            }
-
-            auto incr(std::true_type) noexcept
-                -> void
-            {}
-
-            auto set(std::size_t s, std::false_type) noexcept
-                -> void
-            {
-                size = s;
-            }
-
-            auto set(std::size_t, std::true_type) noexcept
-                -> void
-            {}
-
-        public:
-
-            explicit destruct_n(std::size_t s) noexcept:
-                size(s)
-            {}
-
-            template<typename T>
-            auto incr(T*) noexcept
-                -> void
-            {
-                incr(std::integral_constant<bool, std::is_trivially_destructible<T>::value>{});
-            }
-
-            template<typename T>
-            auto set(std::size_t s, T*) noexcept
-                -> void
-            {
-                set(s, std::integral_constant<bool, std::is_trivially_destructible<T>::value>{});
-            }
-
-            template<typename T>
-            auto operator()(T* pointer) noexcept
-                -> void
-            {
-                process(pointer, std::integral_constant<bool, std::is_trivially_destructible<T>::value>{});
-            }
+        // Number of allocated objects to destroy
+        std::size_t size;
     };
 }}
 

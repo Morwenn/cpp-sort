@@ -131,15 +131,14 @@ namespace cppsort
                 std::unique_ptr<value_t, operator_deleter> iterators(
                     static_cast<value_t*>(::operator new(size * sizeof(value_t)))
                 );
-                destruct_n d(0);
-                std::unique_ptr<value_t, destruct_n&> h2(iterators.get(), d);
+                destruct_n<value_t> d(0);
+                std::unique_ptr<value_t, destruct_n<value_t>&> h2(iterators.get(), d);
 
                 // Associate iterators to their position
                 difference_type count = 0;
-                for (auto ptr = iterators.get() ; first != last ; ++first, (void) ++ptr)
+                for (auto ptr = iterators.get() ; first != last ; ++d, (void) ++first, ++ptr)
                 {
                     ::new(ptr) value_t(first, count++);
-                    d.incr((value_t*)nullptr);
                 }
 
                 ////////////////////////////////////////////////////////////
