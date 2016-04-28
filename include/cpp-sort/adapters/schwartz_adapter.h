@@ -91,44 +91,6 @@ namespace cppsort
                 );
             }
 
-            template<typename ForwardIterator, typename Projection>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Projection projection) const
-                -> std::enable_if_t<is_projection_iterator_v<
-                    Projection, ForwardIterator
-                >>
-            {
-                static_assert(not std::is_same<Sorter, std_sorter>::value,
-                              "std_sorter doesn't work with schwartz_adapter");
-                static_assert(not std::is_same<Sorter, stable_adapter<std_sorter>>::value,
-                              "stable_adapter<std_sorter> doesn't work with schwartz_adapter");
-
-                auto&& proj = utility::as_function(projection);
-                using proj_t = std::decay_t<decltype(proj(*first))>;
-                using value_t = association<ForwardIterator, proj_t>;
-
-                // Collection of projected elements
-                auto size = std::distance(first, last);
-                std::unique_ptr<value_t, operator_deleter> projected(
-                    static_cast<value_t*>(::operator new(size * sizeof(value_t)))
-                );
-                destruct_n<value_t> d(0);
-                std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);
-
-                // Associate iterator to projected element
-                for (auto ptr = projected.get() ; first != last ; ++d, (void) ++first, ++ptr)
-                {
-                    ::new(ptr) value_t(first, proj(*first));
-                }
-
-                // Indirectly sort the original sequence
-                Sorter{}(
-                    make_associate_iterator(projected.get()),
-                    make_associate_iterator(projected.get() + size),
-                    [](const auto& value) -> auto& { return value.data; }
-                );
-            }
-
             template<typename ForwardIterator, typename Compare=std::less<>>
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}) const
