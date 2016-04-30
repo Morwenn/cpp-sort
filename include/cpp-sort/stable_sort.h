@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/default_sorter.h>
@@ -38,10 +39,10 @@ namespace cppsort
     // With default_sorter
 
     template<typename Iterable>
-    auto stable_sort(Iterable& iterable)
+    auto stable_sort(Iterable&& iterable)
         -> void
     {
-        stable_adapter<default_sorter>{}(iterable);
+        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable));
     }
 
     template<
@@ -49,10 +50,10 @@ namespace cppsort
         typename Compare,
         typename = std::enable_if_t<not is_sorter_v<Compare, Iterable>>
     >
-    auto stable_sort(Iterable& iterable, Compare compare)
+    auto stable_sort(Iterable&& iterable, Compare compare)
         -> void
     {
-        stable_adapter<default_sorter>{}(iterable, compare);
+        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable), compare);
     }
 
     template<
@@ -60,14 +61,14 @@ namespace cppsort
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            not is_comparison_sorter_v<Compare, Iterable, Projection> &&
-            not is_projection_sorter_v<Compare, Iterable, Projection>
+            not is_comparison_sorter_v<Iterable, Compare, Projection> &&
+            not is_projection_sorter_v<Iterable, Compare, Projection>
         >
     >
-    auto stable_sort(Iterable& iterable, Compare compare, Projection projection)
+    auto stable_sort(Iterable&& iterable, Compare compare, Projection projection)
         -> void
     {
-        stable_adapter<default_sorter>{}(iterable, compare, projection);
+        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable), compare, projection);
     }
 
     template<typename Iterator>
@@ -113,10 +114,10 @@ namespace cppsort
             stable_adapter<Sorter>, Iterable
         >>
     >
-    auto stable_sort(const Sorter&, Iterable& iterable)
+    auto stable_sort(const Sorter&, Iterable&& iterable)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(iterable);
+        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable));
     }
 
     template<
@@ -128,10 +129,10 @@ namespace cppsort
             is_projection_sorter_v<stable_adapter<Sorter>, Iterable, Func>
         >
     >
-    auto stable_sort(const Sorter&, Iterable& iterable, Func func)
+    auto stable_sort(const Sorter&, Iterable&& iterable, Func func)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(iterable, func);
+        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), func);
     }
 
     template<
@@ -140,11 +141,11 @@ namespace cppsort
         typename Compare,
         typename Projection
     >
-    auto stable_sort(const Sorter&, Iterable& iterable,
+    auto stable_sort(const Sorter&, Iterable&& iterable,
                      Compare compare, Projection projection)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(iterable, compare, projection);
+        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), compare, projection);
     }
 
     template<
