@@ -145,14 +145,14 @@ namespace cppsort
             public:
 
                 template<typename Iterable, typename... Args>
-                auto operator()(Iterable& iterable, Args&&... args) const
+                auto operator()(Iterable&& iterable, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
                         choice<
                             iterator_category_value<
                                 iterator_category_t<decltype(std::begin(iterable))>
                             > * categories_number
                         >{},
-                        iterable,
+                        std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
                 {

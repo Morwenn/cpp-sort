@@ -63,6 +63,7 @@ add_executable(
     every_instantiated_sorter.cpp
     every_sorter.cpp
     every_sorter_move_only.cpp
+    every_sorter_span.cpp
     rebind_iterator_category.cpp
     sorter_facade.cpp
     sorter_facade_defaults.cpp

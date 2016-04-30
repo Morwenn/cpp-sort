@@ -30,8 +30,10 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include "detail/begin_end.h"
 #include "detail/projection_compare.h"
 
 namespace cppsort
@@ -55,12 +57,22 @@ namespace cppsort
             template<typename Iterable>
             using fptr_t = std::result_of_t<this_class(Iterable&)>(*)(Iterable&);
 
+            template<typename Iterable>
+            using fptr_rvalue_t = std::result_of_t<this_class(Iterable&&)>(*)(Iterable&&);
+
             template<typename Iterable, typename Func>
             using fptr_func_t = std::result_of_t<this_class(Iterable&, Func)>(*)(Iterable&, Func);
+
+            template<typename Iterable, typename Func>
+            using fptr_rvalue_func_t = std::result_of_t<this_class(Iterable&&, Func)>(*)(Iterable&&, Func);
 
             template<typename Iterable, typename Func1, typename Func2>
             using fptr_func2_t
                 = std::result_of_t<this_class(Iterable&, Func1, Func2)>(*)(Iterable&, Func1, Func2);
+
+            template<typename Iterable, typename Func1, typename Func2>
+            using fptr_rvalue_func2_t
+                = std::result_of_t<this_class(Iterable&&, Func1, Func2)>(*)(Iterable&&, Func1, Func2);
 
             template<typename Iterator>
             using fptr_it_t = std::result_of_t<this_class(Iterator, Iterator)>(*)(Iterator, Iterator);
@@ -86,6 +98,14 @@ namespace cppsort
                 };
             }
 
+            template<typename Iterable>
+            operator fptr_rvalue_t<Iterable>() const
+            {
+                return [](Iterable&& iterable) {
+                    return this_class{}(std::move(iterable));
+                };
+            }
+
             template<typename Iterable, typename Func>
             operator fptr_func_t<Iterable, Func>() const
             {
@@ -94,11 +114,27 @@ namespace cppsort
                 };
             }
 
+            template<typename Iterable, typename Func>
+            operator fptr_rvalue_func_t<Iterable, Func>() const
+            {
+                return [](Iterable&& iterable, Func func) {
+                    return this_class{}(std::move(iterable), func);
+                };
+            }
+
             template<typename Iterable, typename Func1, typename Func2>
             operator fptr_func2_t<Iterable, Func1, Func2>() const
             {
                 return [](Iterable& iterable, Func1 func1, Func2 func2) {
                     return this_class{}(iterable, func1, func2);
+                };
+            }
+
+            template<typename Iterable, typename Func1, typename Func2>
+            operator fptr_rvalue_func2_t<Iterable, Func1, Func2>() const
+            {
+                return [](Iterable&& iterable, Func1 func1, Func2 func2) {
+                    return this_class{}(std::move(iterable), func1, func2);
                 };
             }
 
@@ -137,23 +173,23 @@ namespace cppsort
             }
 
             template<typename Iterable>
-            auto operator()(Iterable& iterable) const
+            auto operator()(Iterable&& iterable) const
                 -> std::enable_if_t<
                     detail::has_sort<Sorter, Iterable>::value,
-                    decltype(Sorter::operator()(iterable))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable)))
                 >
             {
-                return Sorter::operator()(iterable);
+                return Sorter::operator()(std::forward<Iterable>(iterable));
             }
 
             template<typename Iterable>
-            auto operator()(Iterable& iterable) const
+            auto operator()(Iterable&& iterable) const
                 -> std::enable_if_t<
                     not detail::has_sort<Sorter, Iterable>::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable)))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable)))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable));
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable));
             }
 
             ////////////////////////////////////////////////////////////
@@ -170,24 +206,24 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Compare>
-            auto operator()(Iterable& iterable, Compare compare) const
+            auto operator()(Iterable&& iterable, Compare compare) const
                 -> std::enable_if_t<
                     detail::has_comparison_sort<Sorter, Iterable, Compare>::value,
-                    decltype(Sorter::operator()(iterable, compare))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), compare))
                 >
             {
-                return Sorter::operator()(iterable, compare);
+                return Sorter::operator()(std::forward<Iterable>(iterable), compare);
             }
 
             template<typename Iterable, typename Compare>
-            auto operator()(Iterable& iterable, Compare compare) const
+            auto operator()(Iterable&& iterable, Compare compare) const
                 -> std::enable_if_t<
                     not detail::has_comparison_sort<Sorter, Iterable, Compare>::value &&
-                    detail::has_comparison_sort_iterator<Sorter, decltype(std::begin(iterable)), Compare>::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), compare))
+                    detail::has_comparison_sort_iterator<Sorter, decltype(detail::begin(iterable)), Compare>::value,
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), compare))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), compare);
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), compare);
             }
 
             ////////////////////////////////////////////////////////////
@@ -215,54 +251,54 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
                     detail::has_projection_sort<Sorter, Iterable, Projection>::value,
-                    decltype(Sorter::operator()(iterable, projection))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), projection))
                 >
             {
-                return Sorter::operator()(iterable, projection);
+                return Sorter::operator()(std::forward<Iterable>(iterable), projection);
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_projection_sort<Sorter, Iterable, Projection>::value &&
                         detail::has_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value,
-                    decltype(Sorter::operator()(iterable, std::less<>{}, projection))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), std::less<>{}, projection))
                 >
             {
-                return Sorter::operator()(iterable, std::less<>{}, projection);
+                return Sorter::operator()(std::forward<Iterable>(iterable), std::less<>{}, projection);
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_projection_sort<Sorter, Iterable, Projection>::value &&
                     not detail::has_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
-                        detail::has_projection_sort_iterator<Sorter, decltype(std::begin(iterable)), Projection>::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), projection))
+                        detail::has_projection_sort_iterator<Sorter, decltype(detail::begin(iterable)), Projection>::value,
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), projection))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), projection);
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), projection);
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_projection_sort<Sorter, Iterable, Projection>::value &&
                     not detail::has_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
-                    not detail::has_projection_sort_iterator<Sorter, decltype(std::begin(iterable)), Projection>::value &&
+                    not detail::has_projection_sort_iterator<Sorter, decltype(detail::begin(iterable)), Projection>::value &&
                         detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         Projection
                     >::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), std::less<>{}, projection))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), std::less<>{}, projection))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), std::less<>{}, projection);
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), std::less<>{}, projection);
             }
 
             ////////////////////////////////////////////////////////////
@@ -279,17 +315,17 @@ namespace cppsort
             }
 
             template<typename Iterable>
-            auto operator()(Iterable& iterable, std::less<>) const
+            auto operator()(Iterable&& iterable, std::less<>) const
                 -> std::enable_if_t<
                     not detail::has_comparison_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>
                     >::value,
-                    decltype(operator()(iterable))
+                    decltype(operator()(std::forward<Iterable>(iterable)))
                 >
             {
-                return operator()(iterable);
+                return operator()(std::forward<Iterable>(iterable));
             }
 
             ////////////////////////////////////////////////////////////
@@ -312,23 +348,23 @@ namespace cppsort
             }
 
             template<typename Iterable>
-            auto operator()(Iterable& iterable, utility::identity) const
+            auto operator()(Iterable&& iterable, utility::identity) const
                 -> std::enable_if_t<
                     not detail::has_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                     utility::identity
                     >::value &&
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         utility::identity
                     >::value,
-                    decltype(operator()(iterable))
+                    decltype(operator()(std::forward<Iterable>(iterable)))
                 >
             {
-                return operator()(iterable);
+                return operator()(std::forward<Iterable>(iterable));
             }
 
             ////////////////////////////////////////////////////////////
@@ -351,29 +387,29 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Compare, typename Projection>
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
                 -> std::enable_if_t<
                     detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value,
-                    decltype(Sorter::operator()(iterable, compare, projection))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), compare, projection))
                 >
             {
-                return Sorter::operator()(iterable, compare, projection);
+                return Sorter::operator()(std::forward<Iterable>(iterable), compare, projection);
             }
 
             template<typename Iterable, typename Compare, typename Projection>
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value &&
                         detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         Compare,
                         Projection
                     >::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), compare, projection))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), compare, projection))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), compare, projection);
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), compare, projection);
             }
 
             ////////////////////////////////////////////////////////////
@@ -395,18 +431,18 @@ namespace cppsort
             }
 
             template<typename Iterable>
-            auto operator()(Iterable& iterable, std::less<>, utility::identity) const
+            auto operator()(Iterable&& iterable, std::less<>, utility::identity) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         utility::identity
                     >::value,
-                    decltype(operator()(iterable))
+                    decltype(operator()(std::forward<Iterable>(iterable)))
                 >
             {
-                return operator()(iterable);
+                return operator()(std::forward<Iterable>(iterable));
             }
 
             template<typename Iterator, typename Projection>
@@ -445,7 +481,7 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, std::less<>, Projection projection) const
+            auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
                 -> std::enable_if_t<
                     detail::has_comparison_projection_sort<
                         Sorter,
@@ -453,14 +489,14 @@ namespace cppsort
                         std::less<>,
                         Projection
                     >::value,
-                    decltype(Sorter::operator()(iterable, std::less<>{}, projection))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), std::less<>{}, projection))
                 >
             {
-                return Sorter::operator()(iterable, std::less<>{}, projection);
+                return Sorter::operator()(std::forward<Iterable>(iterable), std::less<>{}, projection);
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, std::less<>, Projection projection) const
+            auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort<
                         Sorter,
@@ -470,18 +506,18 @@ namespace cppsort
                     >::value &&
                     detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         Projection
                     >::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), std::less<>{}, projection))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), std::less<>{}, projection))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), std::less<>{}, projection);
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), std::less<>{}, projection);
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, std::less<>, Projection projection) const
+            auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort<
                         Sorter,
@@ -491,7 +527,7 @@ namespace cppsort
                     >::value &&
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         Projection
                     >::value &&
@@ -500,14 +536,14 @@ namespace cppsort
                         Iterable,
                         Projection
                     >::value,
-                    decltype(Sorter::operator()(iterable, projection))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), projection))
                 >
             {
-                return Sorter::operator()(iterable, projection);
+                return Sorter::operator()(std::forward<Iterable>(iterable), projection);
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, std::less<>, Projection projection) const
+            auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort<
                         Sorter,
@@ -517,7 +553,7 @@ namespace cppsort
                     >::value &&
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         Projection
                     >::value &&
@@ -528,13 +564,13 @@ namespace cppsort
                     >::value &&
                     detail::has_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         Projection
                     >::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), projection))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), projection))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), projection);
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), projection);
             }
 
             ////////////////////////////////////////////////////////////
@@ -583,16 +619,16 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         Projection
                     >::value &&
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         Projection
                     >::value &&
@@ -601,23 +637,23 @@ namespace cppsort
                         Iterable,
                         detail::projection_compare<std::less<>, Projection>
                     >::value,
-                    decltype(Sorter::operator()(iterable, detail::make_projection_compare(std::less<>{}, projection)))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(std::less<>{}, projection)))
                 >
             {
-                return Sorter::operator()(iterable, detail::make_projection_compare(std::less<>{}, projection));
+                return Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(std::less<>{}, projection));
             }
 
             template<typename Iterable, typename Projection>
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         Projection
                     >::value &&
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         std::less<>,
                         Projection
                     >::value &&
@@ -628,21 +664,21 @@ namespace cppsort
                     >::value &&
                     detail::has_comparison_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         detail::projection_compare<std::less<>, Projection>
                     >::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), detail::make_projection_compare(std::less<>{}, projection)))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), detail::make_projection_compare(std::less<>{}, projection)))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), detail::make_projection_compare(std::less<>{}, projection));
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), detail::make_projection_compare(std::less<>{}, projection));
             }
 
             template<typename Iterable, typename Compare, typename Projection>
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         Compare,
                         Projection
                     >::value &&
@@ -651,18 +687,18 @@ namespace cppsort
                         Iterable,
                         detail::projection_compare<Compare, Projection>
                     >::value,
-                    decltype(Sorter::operator()(iterable, detail::make_projection_compare(compare, projection)))
+                    decltype(Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(compare, projection)))
                 >
             {
-                return Sorter::operator()(iterable, detail::make_projection_compare(compare, projection));
+                return Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(compare, projection));
             }
 
             template<typename Iterable, typename Compare, typename Projection>
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
                 -> std::enable_if_t<
                     not detail::has_comparison_projection_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         Compare,
                         Projection
                     >::value &&
@@ -673,13 +709,13 @@ namespace cppsort
                     >::value &&
                     detail::has_comparison_sort_iterator<
                         Sorter,
-                        decltype(std::begin(iterable)),
+                        decltype(detail::begin(iterable)),
                         detail::projection_compare<Compare, Projection>
                     >::value,
-                    decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), detail::make_projection_compare(compare, projection)))
+                    decltype(Sorter::operator()(detail::begin(iterable), detail::end(iterable), detail::make_projection_compare(compare, projection)))
                 >
             {
-                return Sorter::operator()(std::begin(iterable), std::end(iterable), detail::make_projection_compare(compare, projection));
+                return Sorter::operator()(detail::begin(iterable), detail::end(iterable), detail::make_projection_compare(compare, projection));
             }
     };
 }
