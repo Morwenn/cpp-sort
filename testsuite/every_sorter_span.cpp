@@ -32,32 +32,7 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-
-template<typename Iterator>
-class span
-{
-    public:
-
-        template<typename Iterable>
-        span(Iterable& iterable):
-            _begin(std::begin(iterable)),
-            _end(std::end(iterable))
-        {}
-
-        auto begin() const { return _begin; }
-        auto end() const { return _end; }
-
-    private:
-
-        Iterator _begin, _end;
-};
-
-template<typename Iterable>
-auto make_span(Iterable& iterable)
-    -> span<decltype(std::begin(iterable))>
-{
-    return { iterable };
-}
+#include "span.h"
 
 TEST_CASE( "test every sorter with temporary span",
            "[sorters][span]" )

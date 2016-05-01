@@ -33,6 +33,7 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/quick_sorter.h>
 #include "../algorithm.h"
+#include "../span.h"
 
 TEST_CASE( "basic tests with indirect_adapter",
            "[indirect_adapter]" )
@@ -76,6 +77,38 @@ TEST_CASE( "basic tests with indirect_adapter",
         std::shuffle(std::begin(collection), std::end(collection), engine);
         cppsort::sort(sorter{}, std::begin(collection), std::end(collection),
                       std::greater<>{}, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+}
+
+TEST_CASE( "indirect_adapter with temporary span",
+           "[indirect_adapter][span]" )
+{
+    std::vector<int> collection(221);
+    std::iota(std::begin(collection), std::end(collection), -32);
+    std::mt19937 engine(std::time(nullptr));
+    std::shuffle(std::begin(collection), std::end(collection), engine);
+
+    using sorter = cppsort::indirect_adapter<
+        cppsort::quick_sorter
+    >;
+
+    SECTION( "with comparison" )
+    {
+        cppsort::sort(sorter{}, make_span(collection), std::greater<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+    }
+
+    SECTION( "with projection" )
+    {
+        cppsort::sort(sorter{}, make_span(collection), std::negate<>{});
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::less<>{}, std::negate<>{}) );
+    }
+
+    SECTION( "with comparison and projection" )
+    {
+        cppsort::sort(sorter{}, make_span(collection), std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }

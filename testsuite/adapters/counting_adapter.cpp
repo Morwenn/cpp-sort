@@ -34,6 +34,7 @@
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include "../algorithm.h"
+#include "../span.h"
 
 TEST_CASE( "basic counting_adapter tests",
            "[counting_adapter][selection_sorter]" )
@@ -100,5 +101,47 @@ TEST_CASE( "counting_adapter tests with std_sorter",
         // Sort and check it's sorted
         cppsort::sort(sorter{}, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+}
+
+TEST_CASE( "counting_adapter with span",
+           "[counting_adapter][span][selection_sorter]" )
+{
+    // Pseudo-random number engine
+    std::mt19937_64 engine(std::time(nullptr));
+
+    using sorter = cppsort::counting_adapter<
+        cppsort::selection_sorter
+    >;
+
+    SECTION( "without projections" )
+    {
+        // Fill the collection
+        std::vector<int> tmp(65);
+        std::iota(std::begin(tmp), std::end(tmp), 0);
+        std::shuffle(std::begin(tmp), std::end(tmp), engine);
+        std::list<int> collection(std::begin(tmp), std::end(tmp));
+
+        // Sort and check it's sorted
+        std::size_t res = cppsort::sort(sorter{}, make_span(collection));
+        CHECK( res == 2080 );
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "with projections" )
+    {
+        struct wrapper { int value; };
+
+        // Fill the collection
+        std::vector<wrapper> tmp(80);
+        helpers::iota(std::begin(tmp), std::end(tmp), 0, &wrapper::value);
+        std::shuffle(std::begin(tmp), std::end(tmp), engine);
+        std::list<wrapper> collection(std::begin(tmp), std::end(tmp));
+
+        // Sort and check it's sorted
+        std::size_t res = cppsort::sort(sorter{}, make_span(collection), &wrapper::value);
+        CHECK( res == 3160 );
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::less<>{}, &wrapper::value) );
     }
 }
