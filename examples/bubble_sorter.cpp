@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/begin_end.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
@@ -94,7 +95,7 @@ namespace detail
                 StrictWeakOrdering, ForwardIterable
             >>
         >
-        auto operator()(ForwardIterable& iterable, StrictWeakOrdering compare={}) const
+        auto operator()(ForwardIterable&& iterable, StrictWeakOrdering compare={}) const
             -> void
         {
             static_assert(
@@ -105,7 +106,7 @@ namespace detail
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(std::begin(iterable),
+            bubble_sort(cppsort::utility::begin(iterable),
                         cppsort::utility::size(iterable),
                         compare);
         }
