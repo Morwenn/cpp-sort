@@ -66,10 +66,10 @@ namespace cppsort
                 typename... Args,
                 typename = std::enable_if_t<has_sort_method<Iterable, Args...>>
             >
-            auto operator()(Iterable& iterable, Args&&... args) const
-                -> decltype(iterable.sort(std::forward<Args>(args)...))
+            auto operator()(Iterable&& iterable, Args&&... args) const
+                -> decltype(std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...))
             {
-                return iterable.sort(std::forward<Args>(args)...);
+                return std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...);
             }
 
             template<
@@ -78,10 +78,10 @@ namespace cppsort
                 typename = std::enable_if_t<not has_sort_method<Iterable, Args...>>,
                 typename = void // dummy parameter for ODR
             >
-            auto operator()(Iterable& iterable, Args&&... args) const
-                -> decltype(Sorter{}(iterable, std::forward<Args>(args)...))
+            auto operator()(Iterable&& iterable, Args&&... args) const
+                -> decltype(Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
             {
-                return Sorter{}(iterable, std::forward<Args>(args)...);
+                return Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
             }
 
             template<typename Iterator, typename... Args>

@@ -55,11 +55,11 @@ namespace cppsort
                     not is_projection_v<Compare, Iterable>
                 >
             >
-            auto operator()(Iterable& iterable, Compare compare={}) const
+            auto operator()(Iterable&& iterable, Compare compare={}) const
                 -> CountType
             {
                 comparison_counter<Compare, CountType> cmp(compare);
-                ComparisonSorter{}(iterable, cmp);
+                ComparisonSorter{}(std::forward<Iterable>(iterable), cmp);
                 return cmp.count;
             }
 
@@ -86,12 +86,12 @@ namespace cppsort
                     is_projection_v<Projection, Iterable, Compare>
                 >
             >
-            auto operator()(Iterable& iterable, Compare compare={},
+            auto operator()(Iterable&& iterable, Compare compare={},
                             Projection projection={}) const
                 -> CountType
             {
                 comparison_counter<Compare, CountType> cmp(compare);
-                ComparisonSorter{}(iterable, cmp, projection);
+                ComparisonSorter{}(std::forward<Iterable>(iterable), cmp, projection);
                 return cmp.count;
             }
 

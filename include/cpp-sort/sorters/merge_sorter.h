@@ -32,6 +32,7 @@
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/begin_end.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
@@ -55,19 +56,19 @@ namespace cppsort
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
-            auto operator()(ForwardIterable& iterable,
+            auto operator()(ForwardIterable&& iterable,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of<
                         std::forward_iterator_tag,
-                        iterator_category_t<decltype(std::begin(iterable))>
+                        iterator_category_t<decltype(utility::begin(iterable))>
                     >::value,
                     "merge_sorter requires at least forward iterators"
                 );
 
-                merge_sort(std::begin(iterable), std::end(iterable),
+                merge_sort(utility::begin(iterable), utility::end(iterable),
                            utility::size(iterable),
                            compare, projection);
             }
