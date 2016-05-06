@@ -1,4 +1,4 @@
-/// \file
+//
 // Range v3 library
 //
 //  Copyright Eric Niebler 2013-2014
@@ -12,8 +12,8 @@
 // Project home: https://github.com/ericniebler/range-v3
 //
 
-#ifndef CPPSORT_DETAIL_BEGIN_END_H_
-#define CPPSORT_DETAIL_BEGIN_END_H_
+#ifndef CPPSORT_UTILITY_BEGIN_END_H_
+#define CPPSORT_UTILITY_BEGIN_END_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -27,7 +27,7 @@
 
 namespace cppsort
 {
-namespace detail
+namespace utility
 {
     namespace adl_begin_end_detail
     {
@@ -344,4 +344,4 @@ namespace detail
     }
 }}
 
-#endif // CPPSORT_DETAIL_BEGIN_END_H_
+#endif // CPPSORT_UTILITY_BEGIN_END_H_

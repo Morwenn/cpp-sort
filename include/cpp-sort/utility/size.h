@@ -31,8 +31,8 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/begin_end.h>
 #include <cpp-sort/utility/detection.h>
-#include "../detail/begin_end.h"
 
 namespace cppsort
 {
@@ -59,11 +59,11 @@ namespace utility
         typename = std::enable_if_t<not is_detected_v<detail::has_size_method_t, Iterable>>
     >
     constexpr auto size(const Iterable& iterable)
-        -> decltype(std::distance(cppsort::detail::begin(iterable),
-                                  cppsort::detail::end(iterable)))
+        -> decltype(std::distance(utility::begin(iterable),
+                                  utility::end(iterable)))
     {
-        return std::distance(cppsort::detail::begin(iterable),
-                             cppsort::detail::end(iterable));
+        return std::distance(utility::begin(iterable),
+                             utility::end(iterable));
     }
 
     template<typename T, std::size_t N>
