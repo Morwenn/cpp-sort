@@ -45,6 +45,7 @@ namespace cppsort
 
     template<typename BufferProvider>
     struct block_sorter;
+    struct counting_sorter;
     struct default_sorter;
     struct float_spread_sorter;
     template<typename BufferProvider>

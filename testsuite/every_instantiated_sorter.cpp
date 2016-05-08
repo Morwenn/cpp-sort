@@ -40,14 +40,20 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     // Only default_sorter doesn't have a standard instance
     // since it is already used by default by cppsort::sort
 
-    std::vector<double> collection(35);
-    std::iota(std::begin(collection), std::end(collection), -47.0);
+    std::vector<long long int> collection(35);
+    std::iota(std::begin(collection), std::end(collection), -47);
     std::mt19937 engine(std::time(nullptr));
     std::shuffle(std::begin(collection), std::end(collection), engine);
 
     SECTION( "block_sort" )
     {
         cppsort::block_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "counting_sort" )
+    {
+        cppsort::counting_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 

@@ -39,8 +39,8 @@ TEST_CASE( "test every sorter with move-only types", "[sorters]" )
     // and works fine with move-only types, additionally checking
     // that no read-after-move operation is performed
 
-    std::vector<move_only<long>> collection;
-    for (long i = 0 ; i < 366 ; ++i)
+    std::vector<move_only<double>> collection;
+    for (long i = -56.0 ; i < 366.0 ; ++i)
     {
         collection.emplace_back(i);
     }

@@ -40,7 +40,7 @@ TEST_CASE( "test every sorter", "[sorters]" )
     // already tested in-depth somewhere else and needs specific
     // tests, so it's not included here.
 
-    std::vector<double> collection(491);
+    std::vector<int> collection(491);
     std::iota(std::begin(collection), std::end(collection), -125);
     std::mt19937 engine(std::time(nullptr));
     std::shuffle(std::begin(collection), std::end(collection), engine);
@@ -55,6 +55,12 @@ TEST_CASE( "test every sorter", "[sorters]" )
 
         // Dynamic buffer
         sort(block_sorter<utility::dynamic_buffer<utility::sqrt>>{}, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "counting_sorter" )
+    {
+        cppsort::sort(cppsort::counting_sorter{}, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
