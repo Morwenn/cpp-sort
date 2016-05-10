@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <functional>
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
@@ -50,6 +51,15 @@ namespace cppsort
                 >
             {
                 counting_sort(first, last);
+            }
+
+            template<typename ForwardIterator>
+            auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
+                -> std::enable_if_t<
+                    std::is_integral<value_type_t<ForwardIterator>>::value
+                >
+            {
+                reverse_counting_sort(first, last);
             }
 
             ////////////////////////////////////////////////////////////

@@ -59,6 +59,30 @@ namespace detail
             first = std::fill_n(first, count, min++);
         }
     }
+
+    template<typename ForwardIterator>
+    auto reverse_counting_sort(ForwardIterator first, ForwardIterator last)
+        -> void
+    {
+        auto info = minmax_element_and_is_sorted(first, last, std::greater<>{});
+        if (info.is_sorted) return;
+
+        using difference_type = difference_type_t<ForwardIterator>;
+        auto min = *info.max;
+        auto max = *info.min;
+        std::vector<difference_type> counts(max - min + 1, 0);
+
+        for (auto it = first ; it != last ; ++it)
+        {
+            ++counts[*it - min];
+        }
+
+        for (auto rit = std::rbegin(counts) ; rit != std::rend(counts) ; ++rit)
+        {
+            auto count = *rit;
+            first = std::fill_n(first, count, max--);
+        }
+    }
 }}
 
 #endif // CPPSORT_DETAIL_COUNTING_SORT_H_

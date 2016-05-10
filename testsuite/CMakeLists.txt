@@ -37,6 +37,7 @@ set(
 set(
     SORTERS_TESTS
 
+    sorters/counting_sorter.cpp
     sorters/default_sorter.cpp
     sorters/default_sorter_fptr.cpp
     sorters/default_sorter_projection.cpp
