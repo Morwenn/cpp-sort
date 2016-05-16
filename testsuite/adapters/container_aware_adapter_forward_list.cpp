@@ -32,6 +32,7 @@
 #include <cpp-sort/adapters/container_aware_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
+#include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 
 TEST_CASE( "container_aware_adapter and std::forward_list",
@@ -41,7 +42,7 @@ TEST_CASE( "container_aware_adapter and std::forward_list",
     // overloads for std::forward_list
 
     std::vector<double> vec(187.0);
-    std::iota(std::begin(vec), std::end(vec), -25.0);
+    std::iota(std::begin(vec), std::end(vec), -24.0);
     std::mt19937 engine(std::time(nullptr));
     std::shuffle(std::begin(vec), std::end(vec), engine);
 
@@ -49,6 +50,38 @@ TEST_CASE( "container_aware_adapter and std::forward_list",
     {
         using sorter = cppsort::container_aware_adapter<
             cppsort::insertion_sorter
+        >;
+        std::forward_list<double> collection(std::begin(vec), std::end(vec));
+
+        collection = { std::begin(vec), std::end(vec) };
+        sorter{}(collection, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        cppsort::sort(sorter{}, collection, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        sorter{}(collection, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        cppsort::sort(sorter{}, collection, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        sorter{}(collection, std::greater<>{}, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "merge_sorter" )
+    {
+        using sorter = cppsort::container_aware_adapter<
+            cppsort::merge_sorter
         >;
         std::forward_list<double> collection(std::begin(vec), std::end(vec));
 

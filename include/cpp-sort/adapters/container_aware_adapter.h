@@ -249,12 +249,18 @@ namespace cppsort
     {};
 }
 
-#ifdef CPPSORT_SORTERS_INSERTION_SORTER_H_
+#ifdef CPPSORT_SORTERS_INSERTION_SORTER_DONE_
 #include "../detail/container_aware/insertion_sort.h"
 #endif
 
-#ifdef CPPSORT_SORTERS_SELECTION_SORTER_H_
+#ifdef CPPSORT_SORTERS_MERGE_SORTER_DONE_
+#include "../detail/container_aware/merge_sort.h"
+#endif
+
+#ifdef CPPSORT_SORTERS_SELECTION_SORTER_DONE_
 #include "../detail/container_aware/selection_sort.h"
 #endif
+
+#define CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_
 
 #endif // CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_

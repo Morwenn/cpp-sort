@@ -118,4 +118,10 @@ namespace cppsort
     }
 }
 
+#ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_
+#include "../detail/container_aware/merge_sort.h"
+#endif
+
+#define CPPSORT_SORTERS_MERGE_SORTER_DONE_
+
 #endif // CPPSORT_SORTERS_MERGE_SORTER_H_

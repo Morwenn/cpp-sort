@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
-#define CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
+#ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MERGE_SORT_H_
+#define CPPSORT_DETAIL_CONTAINER_AWARE_MERGE_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -35,81 +35,56 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include "../upper_bound.h"
+#include <cpp-sort/utility/size.h>
+#include "../projection_compare.h"
 
 namespace cppsort
 {
     namespace detail
     {
         template<typename T, typename Compare, typename Projection>
-        auto list_insertion_sort(std::list<T>& collection, Compare compare, Projection projection)
+        auto list_merge_sort(std::list<T>& collection, Compare compare, Projection projection)
             -> void
         {
-            auto&& proj = utility::as_function(projection);
+            if (collection.size() < 2) return;
 
-            auto it = std::begin(collection);
-            auto last = std::end(collection);
-            if (it == last) return;
+            // Extract left part
+            auto first = std::begin(collection);
+            auto middle = std::next(first, collection.size() / 2);
+            std::list<T> left;
+            left.splice(std::begin(left), collection, first, middle);
 
-            ++it;
-            while (it != last)
-            {
-                auto insertion_point = upper_bound(std::begin(collection), it, proj(*it),
-                                                   compare, projection);
-                if (insertion_point == it)
-                {
-                    ++it;
-                }
-                else
-                {
-                    auto next = std::next(it);
-                    collection.splice(insertion_point, collection, it);
-                    it = next;
-                }
-            }
+            // Recursively sort, then merge
+            list_merge_sort(left, compare, projection);
+            list_merge_sort(collection, compare, projection);
+            collection.merge(std::move(left), make_projection_compare(compare, projection));
         }
 
-        template<typename T, typename Compare, typename Projection>
-        auto flist_insertion_sort(std::forward_list<T>& collection, Compare compare, Projection projection)
+        template<typename T, typename Size, typename Compare, typename Projection>
+        auto flist_merge_sort(std::forward_list<T>& collection, Size size,
+                              Compare compare, Projection projection)
             -> void
         {
-            auto&& proj = utility::as_function(projection);
+            if (size < 2) return;
 
-            auto it = collection.before_begin();
-            auto last = collection.end();
-            if (std::next(it) == last) return;
+            // Extract left part
+            auto first = collection.before_begin();
+            auto middle = std::next(first, size / 2 + 1);
+            std::forward_list<T> left;
+            left.splice_after(left.before_begin(), collection, first, middle);
 
-            ++it;
-            while (std::next(it) != last)
-            {
-                // Linear search in list
-                auto&& value = proj(*std::next(it));
-                auto insertion_point = collection.before_begin();
-                while (std::next(insertion_point) != last)
-                {
-                    if (not compare(proj(*std::next(insertion_point)), value)) break;
-                    ++insertion_point;
-                }
-
-                if (insertion_point == it)
-                {
-                    ++it;
-                }
-                else
-                {
-                    auto next = std::next(it);
-                    collection.splice_after(insertion_point, collection, it);
-                    it = next;
-                }
-            }
+            // Recursively sort, then merge
+            flist_merge_sort(left, size / 2, compare, projection);
+            flist_merge_sort(collection, size - size / 2, compare, projection);
+            collection.merge(std::move(left), make_projection_compare(compare, projection));
         }
     }
 
     template<>
-    struct container_aware_adapter<insertion_sorter>:
-        detail::container_aware_adapter_base<insertion_sorter>
+    struct container_aware_adapter<merge_sorter>:
+        detail::container_aware_adapter_base<merge_sorter>
     {
-        using detail::container_aware_adapter_base<insertion_sorter>::operator();
+        using detail::container_aware_adapter_base<merge_sorter>::operator();
 
         ////////////////////////////////////////////////////////////
         // std::list
@@ -118,7 +93,7 @@ namespace cppsort
         auto operator()(std::list<T>& iterable) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::less<>{}, utility::identity{});
+            detail::list_merge_sort(iterable, std::less<>{}, utility::identity{});
         }
 
         template<typename T, typename Compare>
@@ -127,7 +102,7 @@ namespace cppsort
                 is_projection_v<utility::identity, std::list<T>, Compare>
             >
         {
-            detail::list_insertion_sort(iterable, compare, utility::identity{});
+            detail::list_merge_sort(iterable, compare, utility::identity{});
         }
 
         template<typename T, typename Projection>
@@ -136,7 +111,7 @@ namespace cppsort
                 is_projection_v<Projection, std::list<T>>
             >
         {
-            detail::list_insertion_sort(iterable, std::less<>{}, projection);
+            detail::list_merge_sort(iterable, std::less<>{}, projection);
         }
 
         template<
@@ -150,7 +125,7 @@ namespace cppsort
         auto operator()(std::list<T>& iterable, Compare compare, Projection projection) const
             -> void
         {
-            detail::list_insertion_sort(iterable, compare, projection);
+            detail::list_merge_sort(iterable, compare, projection);
         }
 
         ////////////////////////////////////////////////////////////
@@ -160,7 +135,8 @@ namespace cppsort
         auto operator()(std::forward_list<T>& iterable) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::less<>{}, utility::identity{});
+            detail::flist_merge_sort(iterable, utility::size(iterable),
+                                     std::less<>{}, utility::identity{});
         }
 
         template<typename T, typename Compare>
@@ -169,7 +145,8 @@ namespace cppsort
                 is_projection_v<utility::identity, std::forward_list<T>, Compare>
             >
         {
-            detail::flist_insertion_sort(iterable, compare, utility::identity{});
+            detail::flist_merge_sort(iterable, utility::size(iterable),
+                                     compare, utility::identity{});
         }
 
         template<typename T, typename Projection>
@@ -178,7 +155,8 @@ namespace cppsort
                 is_projection_v<Projection, std::forward_list<T>>
             >
         {
-            detail::flist_insertion_sort(iterable, std::less<>{}, projection);
+            detail::flist_merge_sort(iterable, utility::size(iterable),
+                                     std::less<>{}, projection);
         }
 
         template<
@@ -192,9 +170,10 @@ namespace cppsort
         auto operator()(std::forward_list<T>& iterable, Compare compare, Projection projection) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, compare, projection);
+            detail::flist_merge_sort(iterable, utility::size(iterable),
+                                     compare, projection);
         }
     };
 }
 
-#endif // CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
+#endif // CPPSORT_DETAIL_CONTAINER_AWARE_MERGE_SORT_H_
