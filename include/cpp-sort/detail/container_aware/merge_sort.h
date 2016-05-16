@@ -42,8 +42,10 @@ namespace cppsort
 {
     namespace detail
     {
-        template<typename T, typename Compare, typename Projection>
-        auto list_merge_sort(std::list<T>& collection, Compare compare, Projection projection)
+        template<typename T, typename Allocator,
+                 typename Compare, typename Projection>
+        auto list_merge_sort(std::list<T, Allocator>& collection,
+                             Compare compare, Projection projection)
             -> void
         {
             if (collection.size() < 2) return;
@@ -51,7 +53,7 @@ namespace cppsort
             // Extract left part
             auto first = std::begin(collection);
             auto middle = std::next(first, collection.size() / 2);
-            std::list<T> left;
+            std::list<T, Allocator> left(collection.get_allocator());
             left.splice(std::begin(left), collection, first, middle);
 
             // Recursively sort, then merge
@@ -60,8 +62,9 @@ namespace cppsort
             collection.merge(std::move(left), make_projection_compare(compare, projection));
         }
 
-        template<typename T, typename Size, typename Compare, typename Projection>
-        auto flist_merge_sort(std::forward_list<T>& collection, Size size,
+        template<typename T, typename Allocator, typename Size,
+                 typename Compare, typename Projection>
+        auto flist_merge_sort(std::forward_list<T, Allocator>& collection, Size size,
                               Compare compare, Projection projection)
             -> void
         {
@@ -70,7 +73,7 @@ namespace cppsort
             // Extract left part
             auto first = collection.before_begin();
             auto middle = std::next(first, size / 2 + 1);
-            std::forward_list<T> left;
+            std::forward_list<T> left(collection.get_allocator());
             left.splice_after(left.before_begin(), collection, first, middle);
 
             // Recursively sort, then merge
@@ -89,26 +92,26 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::list
 
-        template<typename T>
-        auto operator()(std::list<T>& iterable) const
+        template<typename T, typename Allocator>
+        auto operator()(std::list<T, Allocator>& iterable) const
             -> void
         {
             detail::list_merge_sort(iterable, std::less<>{}, utility::identity{});
         }
 
-        template<typename T, typename Compare>
-        auto operator()(std::list<T>& iterable, Compare compare) const
+        template<typename T, typename Allocator, typename Compare>
+        auto operator()(std::list<T, Allocator>& iterable, Compare compare) const
             -> std::enable_if_t<
-                is_projection_v<utility::identity, std::list<T>, Compare>
+                is_projection_v<utility::identity, std::list<T, Allocator>, Compare>
             >
         {
             detail::list_merge_sort(iterable, compare, utility::identity{});
         }
 
-        template<typename T, typename Projection>
-        auto operator()(std::list<T>& iterable, Projection projection) const
+        template<typename T, typename Allocator, typename Projection>
+        auto operator()(std::list<T, Allocator>& iterable, Projection projection) const
             -> std::enable_if_t<
-                is_projection_v<Projection, std::list<T>>
+                is_projection_v<Projection, std::list<T, Allocator>>
             >
         {
             detail::list_merge_sort(iterable, std::less<>{}, projection);
@@ -116,13 +119,15 @@ namespace cppsort
 
         template<
             typename T,
+            typename Allocator,
             typename Compare,
             typename Projection,
             typename = std::enable_if_t<
-                is_projection_v<Projection, std::list<T>, Compare>
+                is_projection_v<Projection, std::list<T, Allocator>, Compare>
             >
         >
-        auto operator()(std::list<T>& iterable, Compare compare, Projection projection) const
+        auto operator()(std::list<T, Allocator>& iterable,
+                        Compare compare, Projection projection) const
             -> void
         {
             detail::list_merge_sort(iterable, compare, projection);
@@ -131,28 +136,28 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::forward_list
 
-        template<typename T>
-        auto operator()(std::forward_list<T>& iterable) const
+        template<typename T, typename Allocator>
+        auto operator()(std::forward_list<T, Allocator>& iterable) const
             -> void
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
                                      std::less<>{}, utility::identity{});
         }
 
-        template<typename T, typename Compare>
-        auto operator()(std::forward_list<T>& iterable, Compare compare) const
+        template<typename T, typename Allocator, typename Compare>
+        auto operator()(std::forward_list<T, Allocator>& iterable, Compare compare) const
             -> std::enable_if_t<
-                is_projection_v<utility::identity, std::forward_list<T>, Compare>
+                is_projection_v<utility::identity, std::forward_list<T, Allocator>, Compare>
             >
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
                                      compare, utility::identity{});
         }
 
-        template<typename T, typename Projection>
-        auto operator()(std::forward_list<T>& iterable, Projection projection) const
+        template<typename T, typename Allocator, typename Projection>
+        auto operator()(std::forward_list<T, Allocator>& iterable, Projection projection) const
             -> std::enable_if_t<
-                is_projection_v<Projection, std::forward_list<T>>
+                is_projection_v<Projection, std::forward_list<T, Allocator>>
             >
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
@@ -161,13 +166,15 @@ namespace cppsort
 
         template<
             typename T,
+            typename Allocator,
             typename Compare,
             typename Projection,
             typename = std::enable_if_t<
-                is_projection_v<Projection, std::forward_list<T>, Compare>
+                is_projection_v<Projection, std::forward_list<T, Allocator>, Compare>
             >
         >
-        auto operator()(std::forward_list<T>& iterable, Compare compare, Projection projection) const
+        auto operator()(std::forward_list<T, Allocator>& iterable,
+                        Compare compare, Projection projection) const
             -> void
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
