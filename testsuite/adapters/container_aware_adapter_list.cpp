@@ -31,6 +31,7 @@
 #include <catch.hpp>
 #include <cpp-sort/adapters/container_aware_adapter.h>
 #include <cpp-sort/sort.h>
+#include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 
 TEST_CASE( "container_aware_adapter and std::list",
@@ -39,17 +40,48 @@ TEST_CASE( "container_aware_adapter and std::list",
     // Tests for the sorters that have container-aware
     // overloads for std::list
 
-    using sorter = cppsort::container_aware_adapter<
-        cppsort::selection_sorter
-    >;
-
-    std::vector<double> vec(187);
-    std::iota(std::begin(vec), std::end(vec), -25);
+    std::vector<double> vec(187.0);
+    std::iota(std::begin(vec), std::end(vec), -25.0);
     std::mt19937 engine(std::time(nullptr));
     std::shuffle(std::begin(vec), std::end(vec), engine);
 
+    SECTION( "insertion_sorter" )
+    {
+        using sorter = cppsort::container_aware_adapter<
+            cppsort::insertion_sorter
+        >;
+        std::list<double> collection(std::begin(vec), std::end(vec));
+
+        collection = { std::begin(vec), std::end(vec) };
+        sorter{}(collection, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        cppsort::sort(sorter{}, collection, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        sorter{}(collection, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        cppsort::sort(sorter{}, collection, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        sorter{}(collection, std::greater<>{}, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        collection = { std::begin(vec), std::end(vec) };
+        cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "selection_sorter" )
     {
+        using sorter = cppsort::container_aware_adapter<
+            cppsort::selection_sorter
+        >;
         std::list<double> collection(std::begin(vec), std::end(vec));
 
         collection = { std::begin(vec), std::end(vec) };

@@ -249,6 +249,10 @@ namespace cppsort
     {};
 }
 
+#ifdef CPPSORT_SORTERS_INSERTION_SORTER_H_
+#include "../detail/container_aware/insertion_sort.h"
+#endif
+
 #ifdef CPPSORT_SORTERS_SELECTION_SORTER_H_
 #include "../detail/container_aware/selection_sort.h"
 #endif

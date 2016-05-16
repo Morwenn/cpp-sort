@@ -91,4 +91,8 @@ namespace cppsort
     }
 }
 
+#ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_
+#include "../detail/container_aware/insertion_sort.h"
+#endif
+
 #endif // CPPSORT_SORTERS_INSERTION_SORTER_H_
