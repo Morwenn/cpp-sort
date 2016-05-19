@@ -208,6 +208,7 @@ namespace detail
 
         // Pair of iterators to iterate through the collection
         RandomAccessIterator next = is_sorted_until(first, last, compare, projection);
+        if (next == last) return;
         RandomAccessIterator current = std::prev(next);
 
         auto&& proj = utility::as_function(projection);
