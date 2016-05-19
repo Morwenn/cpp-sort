@@ -87,6 +87,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "patience_sorter" )
+    {
+        cppsort::patience_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "pdq_sorter" )
     {
         cppsort::pdq_sort(collection);

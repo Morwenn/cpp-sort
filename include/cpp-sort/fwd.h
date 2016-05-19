@@ -55,6 +55,7 @@ namespace cppsort
     struct integer_spread_sorter;
     struct merge_insertion_sorter;
     struct merge_sorter;
+    struct patience_sorter;
     struct pdq_sorter;
     struct poplar_sorter;
     struct quick_sorter;
