@@ -1,23 +1,23 @@
 language: cpp
 
 compiler:
-  - clang
+#  - clang
   - gcc
 
 env:
   - BUILD_TYPE=Debug    VALGRIND=true   SANITIZE='' 
   - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=undefined 
-  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=address 
+#  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=address 
   - BUILD_TYPE=Release  VALGRIND=false  SANITIZE=''
 
 addons:
   apt:
     sources:
       - george-edison55-precise-backports
-      - llvm-toolchain-precise-3.8
+#      - llvm-toolchain-precise-3.8
       - ubuntu-toolchain-r-test
     packages:
-      - clang-3.8
+#      - clang-3.8
       - cmake
       - cmake-data
       - g++-5
