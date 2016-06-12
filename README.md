@@ -111,6 +111,9 @@ C++17 release). Of course the creation of such branches will depend on compiler
 support: if a feature isn't supported by either the latest g++ or clang++, I won't
 use it before the following release.
 
+*Note: since Clang's APT was switched off, I can't be sure that the latest things
+work too with it.*
+
 # Thanks
 
 > *I got a new car. I just need to put it together. They’re easier to steal piece by

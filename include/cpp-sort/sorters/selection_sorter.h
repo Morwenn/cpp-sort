@@ -91,4 +91,10 @@ namespace cppsort
     }
 }
 
+#ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_
+#include "../detail/container_aware/selection_sort.h"
+#endif
+
+#define CPPSORT_SORTERS_SELECTION_SORTER_DONE_
+
 #endif // CPPSORT_SORTERS_SELECTION_SORTER_H_
