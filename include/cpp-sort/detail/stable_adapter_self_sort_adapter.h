@@ -66,7 +66,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using is_stable = std::true_type;
+            using is_always_stable = std::true_type;
     };
 }
 

@@ -79,7 +79,7 @@ namespace cppsort
         template<typename... Sorters>
         class hybrid_adapter_impl:
             public check_iterator_category<Sorters...>,
-            public check_is_stable<Sorters...>
+            public check_is_always_stable<Sorters...>
         {
             private:
 

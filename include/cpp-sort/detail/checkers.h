@@ -60,21 +60,21 @@ namespace detail
     {};
 
     template<bool, typename...>
-    struct check_is_stable_impl {};
+    struct check_is_always_stable_impl {};
 
     template<typename... Sorters>
-    struct check_is_stable_impl<true, Sorters...>
+    struct check_is_always_stable_impl<true, Sorters...>
     {
-        using is_stable = std::integral_constant<
+        using is_always_stable = std::integral_constant<
             bool,
-            utility::all(typename sorter_traits<Sorters>::is_stable{}()...)
+            utility::all(typename sorter_traits<Sorters>::is_always_stable{}()...)
         >;
     };
 
     template<typename... Sorters>
-    struct check_is_stable:
-        check_is_stable_impl<
-            utility::all(has_is_stable<sorter_traits<Sorters>>::value...),
+    struct check_is_always_stable:
+        check_is_always_stable_impl<
+            utility::all(has_is_always_stable<sorter_traits<Sorters>>::value...),
             Sorters...
         >
     {};

@@ -48,7 +48,7 @@ namespace cppsort
     {
         template<typename Sorter>
         struct indirect_adapter_impl:
-            check_is_stable<Sorter>
+            check_is_always_stable<Sorter>
         {
             template<
                 typename RandomAccessIterator,

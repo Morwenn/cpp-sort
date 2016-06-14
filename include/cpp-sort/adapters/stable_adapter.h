@@ -154,7 +154,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using is_stable = std::true_type;
+            using is_always_stable = std::true_type;
         };
     }
 
@@ -168,7 +168,7 @@ namespace cppsort
     template<typename Sorter>
     struct stable_adapter:
         std::conditional_t<
-            is_stable<Sorter>::value,
+            is_always_stable<Sorter>::value,
             Sorter,
             make_stable<Sorter>
         >

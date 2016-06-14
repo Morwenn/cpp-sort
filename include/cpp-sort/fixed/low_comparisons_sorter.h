@@ -66,7 +66,7 @@ namespace cppsort
         // the stability *could* be documented depending on which
         // fixed-size algorithms are used, but it would be lots of
         // work...
-        using is_stable = std::false_type;
+        using is_always_stable = std::false_type;
     };
 
     template<>
@@ -74,7 +74,7 @@ namespace cppsort
     {
         using domain = std::make_index_sequence<14>;
         using iterator_category = std::random_access_iterator_tag;
-        using is_stable = std::false_type;
+        using is_always_stable = std::false_type;
     };
 }
 

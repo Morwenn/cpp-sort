@@ -50,7 +50,7 @@ namespace cppsort
         template<typename Sorter>
         struct schwartz_adapter_impl:
             check_iterator_category<Sorter>,
-            check_is_stable<Sorter>
+            check_is_always_stable<Sorter>
         {
             template<typename ForwardIterator, typename Compare, typename Projection>
             auto operator()(ForwardIterator first, ForwardIterator last,

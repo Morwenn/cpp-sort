@@ -113,7 +113,7 @@ namespace detail
 
         // Sorter traits
         using iterator_category = std::forward_iterator_tag;
-        using is_stable = std::true_type;
+        using is_always_stable = std::true_type;
     };
 }
 

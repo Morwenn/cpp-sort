@@ -77,7 +77,7 @@ namespace
             return kind::sorter;
         }
 
-        using is_stable = std::true_type;
+        using is_always_stable = std::true_type;
     };
 
     struct dumb_sorter:

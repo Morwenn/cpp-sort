@@ -119,7 +119,7 @@ namespace cppsort
 
             // We can't guarantee the stability of the sort method,
             // therefore we default the stability to false
-            using is_stable = std::false_type;
+            using is_always_stable = std::false_type;
         };
     }
 

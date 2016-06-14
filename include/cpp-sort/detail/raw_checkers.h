@@ -68,31 +68,31 @@ namespace detail
     {};
 
     template<typename T, typename=void>
-    struct has_is_stable:
+    struct has_is_always_stable:
         std::false_type
     {};
 
     template<typename T>
-    struct has_is_stable<T, utility::void_t<typename T::is_stable>>:
+    struct has_is_always_stable<T, utility::void_t<typename T::is_always_stable>>:
         std::true_type
     {};
 
     template<bool, typename...>
-    struct raw_check_is_stable_impl {};
+    struct raw_check_is_always_stable_impl {};
 
     template<typename... Sorters>
-    struct raw_check_is_stable_impl<true, Sorters...>
+    struct raw_check_is_always_stable_impl<true, Sorters...>
     {
-        using is_stable = std::integral_constant<
+        using is_always_stable = std::integral_constant<
             bool,
-            utility::all(typename Sorters::is_stable{}()...)
+            utility::all(typename Sorters::is_always_stable{}()...)
         >;
     };
 
     template<typename... Sorters>
-    struct raw_check_is_stable:
-        raw_check_is_stable_impl<
-            utility::all(has_is_stable<Sorters>::value...),
+    struct raw_check_is_always_stable:
+        raw_check_is_always_stable_impl<
+            utility::all(has_is_always_stable<Sorters>::value...),
             Sorters...
         >
     {};
