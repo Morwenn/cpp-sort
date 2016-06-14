@@ -54,6 +54,20 @@ namespace cppsort
         constexpr bool has_sort_method
             = utility::is_detected_v<has_sort_method_t, Iterable, Args...>;
 
+        template<
+            typename Iterable,
+            typename... Args
+        >
+        using has_stable_sort_method_t
+            = decltype(std::declval<Iterable&>().stable_sort(std::declval<Args&>()...));
+
+        template<
+            typename Iterable,
+            typename... Args
+        >
+        constexpr bool has_stable_sort_method
+            = utility::is_detected_v<has_stable_sort_method_t, Iterable, Args...>;
+
         ////////////////////////////////////////////////////////////
         // Adapter
 
@@ -61,25 +75,34 @@ namespace cppsort
         struct self_sort_adapter_impl:
             check_iterator_category<Sorter>
         {
-            template<
-                typename Iterable,
-                typename... Args,
-                typename = std::enable_if_t<has_sort_method<Iterable, Args...>>
-            >
+            template<typename Iterable, typename... Args>
             auto operator()(Iterable&& iterable, Args&&... args) const
-                -> decltype(std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...))
+                -> std::enable_if_t<
+                    has_sort_method<Iterable, Args...>,
+                    decltype(std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...))
+                >
             {
                 return std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...);
             }
 
-            template<
-                typename Iterable,
-                typename... Args,
-                typename = std::enable_if_t<not has_sort_method<Iterable, Args...>>,
-                typename = void // dummy parameter for ODR
-            >
+            template<typename Iterable, typename... Args>
             auto operator()(Iterable&& iterable, Args&&... args) const
-                -> decltype(Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                -> std::enable_if_t<
+                    not has_sort_method<Iterable, Args...> &&
+                    has_stable_sort_method<Iterable, Args...>,
+                    decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
+                >
+            {
+                return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
+            }
+
+            template<typename Iterable, typename... Args>
+            auto operator()(Iterable&& iterable, Args&&... args) const
+                -> std::enable_if_t<
+                    not has_sort_method<Iterable, Args...> &&
+                    not has_stable_sort_method<Iterable, Args...>,
+                    decltype(Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                >
             {
                 return Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
             }
