@@ -129,4 +129,10 @@ namespace cppsort
     {};
 }
 
+#ifdef CPPSORT_ADAPTERS_STABLE_ADAPTER_DONE_
+#include "../detail/stable_adapter_self_sort_adapter.h"
+#endif
+
+#define CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_DONE_
+
 #endif // CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_

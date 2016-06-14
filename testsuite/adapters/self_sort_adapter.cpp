@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include <type_traits>
 #include <catch.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/sort.h>
@@ -75,6 +76,8 @@ namespace
         {
             return kind::sorter;
         }
+
+        using is_stable = std::true_type;
     };
 
     struct dumb_sorter:
@@ -83,7 +86,7 @@ namespace
 }
 
 TEST_CASE( "self_sort_adapter and usual scenarios",
-           "[self_sort_adapter][no_compare]" )
+           "[self_sort_adapter]" )
 {
     cppsort::self_sort_adapter<dumb_sorter> sorter;
 
@@ -113,5 +116,41 @@ TEST_CASE( "self_sort_adapter and usual scenarios",
         container_both container;
         auto res = sorter(container);
         CHECK( res == kind::sort );
+    }
+}
+
+TEST_CASE( "stable_adapter<self_sort_adapter> tests",
+           "[self_sort_adapter][stable_adapter]" )
+{
+    cppsort::stable_adapter<
+        cppsort::self_sort_adapter<dumb_sorter>
+    > sorter;
+
+    SECTION( "container with no sort method" )
+    {
+        container_none container;
+        auto res = sorter(container);
+        CHECK( res == kind::sorter );
+    }
+
+    SECTION( "container with a sort method" )
+    {
+        container_sort container;
+        auto res = sorter(container);
+        CHECK( res == kind::sorter );
+    }
+
+    SECTION( "container with a stable_sort method" )
+    {
+        container_stable_sort container;
+        auto res = sorter(container);
+        CHECK( res == kind::stable_sort );
+    }
+
+    SECTION( "container with both a sort and a stable_sort method" )
+    {
+        container_both container;
+        auto res = sorter(container);
+        CHECK( res == kind::stable_sort );
     }
 }
