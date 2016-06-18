@@ -109,6 +109,14 @@ namespace cppsort
     struct schwartz_adapter:
         sorter_facade<detail::schwartz_adapter_impl<Sorter>>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    template<typename Sorter, typename... Args>
+    struct is_stable<schwartz_adapter<Sorter>(Args...)>:
+        is_stable<Sorter(Args...)>
+    {};
 }
 
 #ifdef CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_

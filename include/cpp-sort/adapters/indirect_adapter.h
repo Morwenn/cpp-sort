@@ -132,6 +132,14 @@ namespace cppsort
     struct indirect_adapter:
         sorter_facade<detail::indirect_adapter_impl<Sorter>>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    template<typename Sorter, typename... Args>
+    struct is_stable<indirect_adapter<Sorter>(Args...)>:
+        is_stable<Sorter(Args...)>
+    {};
 }
 
 #endif // CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
