@@ -117,8 +117,6 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            // We can't guarantee the stability of the sort method,
-            // therefore we default the stability to false
             using is_always_stable = std::false_type;
         };
     }
@@ -126,6 +124,27 @@ namespace cppsort
     template<typename Sorter>
     struct self_sort_adapter:
         sorter_facade<detail::self_sort_adapter_impl<Sorter>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specializations
+
+    template<typename Sorter, typename Iterator, typename... Args>
+    struct is_stable<self_sort_adapter<Sorter>(Iterator, Iterator, Args...)>:
+        is_stable<Sorter(Iterator, Iterator, Args...)>
+    {};
+
+    template<typename Sorter, typename... Args>
+    struct is_stable<self_sort_adapter<Sorter>(Args...)>:
+        std::conditional_t<
+            detail::has_sort_method<Args...>,
+            std::false_type,
+            std::conditional_t<
+                detail::has_stable_sort_method<Args...>,
+                std::true_type,
+                is_stable<Sorter(Args...)>
+            >
+        >
     {};
 }
 

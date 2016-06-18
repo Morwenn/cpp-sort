@@ -37,14 +37,16 @@ namespace
 
     struct container_none
     {
-        auto begin() -> int* { return nullptr; }
-        auto end() -> int* { return nullptr; }
-        auto begin() const -> int* { return nullptr; }
-        auto end() const -> int* { return nullptr; }
+        struct iterator {};
+
+        auto begin() -> iterator { return {}; }
+        auto end() -> iterator { return {}; }
+        auto begin() const -> iterator { return {}; }
+        auto end() const -> iterator { return {}; }
     };
 
     struct container_sort:
-        container_none
+        virtual container_none
     {
         auto sort()
             -> kind
@@ -54,7 +56,7 @@ namespace
     };
 
     struct container_stable_sort:
-        container_none
+        virtual container_none
     {
         auto stable_sort()
             -> kind
@@ -117,6 +119,13 @@ TEST_CASE( "self_sort_adapter and usual scenarios",
         auto res = sorter(container);
         CHECK( res == kind::sort );
     }
+
+    SECTION( "iterators" )
+    {
+        container_both container;
+        auto res = sorter(container.begin(), container.end());
+        CHECK( res == kind::sorter );
+    }
 }
 
 TEST_CASE( "stable_adapter<self_sort_adapter> tests",
@@ -152,5 +161,35 @@ TEST_CASE( "stable_adapter<self_sort_adapter> tests",
         container_both container;
         auto res = sorter(container);
         CHECK( res == kind::stable_sort );
+    }
+
+    SECTION( "iterators" )
+    {
+        container_both container;
+        auto res = sorter(container.begin(), container.end());
+        CHECK( res == kind::sorter );
+    }
+}
+
+TEST_CASE( "stability of self_sort_adapter",
+           "[self_sort_adapter][is_stable]" )
+{
+    using sorter = cppsort::self_sort_adapter<
+        dumb_sorter
+    >;
+
+    SECTION( "is_always_stable" )
+    {
+        CHECK( cppsort::is_always_stable<dumb_sorter>::value );
+        CHECK( not cppsort::is_always_stable<sorter>::value );
+    }
+
+    SECTION( "is_stable" )
+    {
+        CHECK( cppsort::is_stable<sorter(container_none&)>::value );
+        CHECK( not cppsort::is_stable<sorter(container_sort&)>::value );
+        CHECK( cppsort::is_stable<sorter(container_stable_sort&)>::value );
+        CHECK( not cppsort::is_stable<sorter(container_both&)>::value );
+        CHECK( cppsort::is_stable<sorter(container_both::iterator, container_both::iterator)>::value );
     }
 }
