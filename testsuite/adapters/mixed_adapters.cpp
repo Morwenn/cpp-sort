@@ -133,24 +133,32 @@ TEST_CASE( "stability of counting_adapter over self_sort_adapter",
 
     SECTION( "is_stable" )
     {
-        CHECK( not cppsort::is_stable<sorter1(std::list<int>&)>::value );
+        CHECK( cppsort::is_stable<sorter1(std::list<int>&)>::value );
         CHECK( not cppsort::is_stable<sorter1(std::vector<int>&)>::value );
-        CHECK( not cppsort::is_stable<sorter1(std::list<int>&, std::greater<>)>::value );
+        CHECK( cppsort::is_stable<sorter1(std::list<int>&, std::greater<>)>::value );
         CHECK( not cppsort::is_stable<sorter1(std::vector<int>&, std::greater<>)>::value );
+        CHECK( not cppsort::is_stable<sorter1(std::list<int>&, std::negate<>)>::value );
+        CHECK( not cppsort::is_stable<sorter1(std::vector<int>&, std::negate<>)>::value );
 
         CHECK( not cppsort::is_stable<sorter1(std::list<int>::iterator, std::list<int>::iterator)>::value );
         CHECK( not cppsort::is_stable<sorter1(std::vector<int>::iterator, std::vector<int>::iterator)>::value );
         CHECK( not cppsort::is_stable<sorter1(std::list<int>::iterator, std::list<int>::iterator, std::greater<>)>::value );
         CHECK( not cppsort::is_stable<sorter1(std::vector<int>::iterator, std::vector<int>::iterator, std::greater<>)>::value );
+        CHECK( not cppsort::is_stable<sorter1(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)>::value );
+        CHECK( not cppsort::is_stable<sorter1(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)>::value );
 
-        CHECK( not cppsort::is_stable<sorter2(std::list<int>&)>::value );
+        CHECK( cppsort::is_stable<sorter2(std::list<int>&)>::value );
         CHECK( cppsort::is_stable<sorter2(std::vector<int>&)>::value );
-        CHECK( not cppsort::is_stable<sorter2(std::list<int>&, std::greater<>)>::value );
+        CHECK( cppsort::is_stable<sorter2(std::list<int>&, std::greater<>)>::value );
         CHECK( cppsort::is_stable<sorter2(std::vector<int>&, std::greater<>)>::value );
+        CHECK( cppsort::is_stable<sorter2(std::list<int>&, std::negate<>)>::value );
+        CHECK( cppsort::is_stable<sorter2(std::vector<int>&, std::negate<>)>::value );
 
         CHECK( cppsort::is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator)>::value );
         CHECK( cppsort::is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator)>::value );
         CHECK( cppsort::is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::greater<>)>::value );
         CHECK( cppsort::is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::greater<>)>::value );
+        CHECK( cppsort::is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)>::value );
+        CHECK( cppsort::is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)>::value );
     }
 }

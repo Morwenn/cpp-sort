@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <forward_list>
+#include <list>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
@@ -144,6 +146,34 @@ namespace cppsort
                 std::true_type,
                 is_stable<Sorter(Args...)>
             >
+        >
+    {};
+
+    template<typename Sorter, typename T>
+    struct is_stable<self_sort_adapter<Sorter>(std::forward_list<T>&)>:
+        std::true_type
+    {};
+
+    template<typename Sorter, typename T, typename Function>
+    struct is_stable<self_sort_adapter<Sorter>(std::forward_list<T>&, Function)>:
+        std::conditional_t<
+            is_projection_v<Function, std::forward_list<T>&>,
+            is_stable<Sorter(std::forward_list<T>&, Function)>,
+            std::true_type
+        >
+    {};
+
+    template<typename Sorter, typename T>
+    struct is_stable<self_sort_adapter<Sorter>(std::list<T>&)>:
+        std::true_type
+    {};
+
+    template<typename Sorter, typename T, typename Function>
+    struct is_stable<self_sort_adapter<Sorter>(std::list<T>&, Function)>:
+        std::conditional_t<
+            is_projection_v<Function, std::list<T>&>,
+            is_stable<Sorter(std::list<T>&, Function)>,
+            std::true_type
         >
     {};
 }
