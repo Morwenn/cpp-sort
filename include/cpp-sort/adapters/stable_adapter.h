@@ -167,12 +167,34 @@ namespace cppsort
     // Actual sorter
     template<typename Sorter>
     struct stable_adapter:
-        std::conditional_t<
-            is_always_stable<Sorter>::value,
-            Sorter,
-            make_stable<Sorter>
+        detail::check_iterator_category<Sorter>
+    {
+        template<
+            typename... Args,
+            typename = std::enable_if_t<is_stable<Sorter(Args...)>::value>
         >
-    {};
+        auto operator()(Args&&... args) const
+            -> decltype(Sorter{}(std::forward<Args>(args)...))
+        {
+            return Sorter{}(std::forward<Args>(args)...);
+        }
+
+        template<
+            typename... Args,
+            typename = std::enable_if_t<not is_stable<Sorter(Args...)>::value>,
+            typename = void
+        >
+        auto operator()(Args&&... args) const
+            -> decltype(make_stable<Sorter>{}(std::forward<Args>(args)...))
+        {
+            return make_stable<Sorter>{}(std::forward<Args>(args)...);
+        }
+
+        ////////////////////////////////////////////////////////////
+        // Sorter traits
+
+        using is_always_stable = std::true_type;
+    };
 }
 
 #ifdef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_DONE_
