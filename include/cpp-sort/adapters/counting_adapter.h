@@ -124,6 +124,14 @@ namespace cppsort
             CountType
         >>
     {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    template<typename Sorter, typename CountType, typename... Args>
+    struct is_stable<counting_adapter<Sorter, CountType>(Args...)>:
+        is_stable<Sorter(Args...)>
+    {};
 }
 
 #endif // CPPSORT_ADAPTERS_COUNTING_ADAPTER_H_
