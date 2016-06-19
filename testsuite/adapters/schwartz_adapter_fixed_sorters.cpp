@@ -180,3 +180,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
                                   std::less<>{}, &wrapper::value) );
     }
 }
+
+TEST_CASE( "stability of Schwartzian transform adapter with fixed-size sorters",
+           "[schwartz_adapter][is_stable]" )
+{
+    struct wrapper { double value; };
+
+    using namespace cppsort;
+    using sorter = schwartz_adapter<
+        small_array_adapter<
+            low_moves_sorter
+        >
+    >;
+
+    SECTION( "is_always_stable" )
+    {
+        CHECK( not is_always_stable<small_array_adapter<low_moves_sorter>>::value );
+        CHECK( not is_always_stable<sorter>::value );
+    }
+}
