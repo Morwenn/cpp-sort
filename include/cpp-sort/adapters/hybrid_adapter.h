@@ -32,6 +32,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/is_callable.h>
 #include "../detail/checkers.h"
 #include "../detail/iterator_traits.h"
 
@@ -94,7 +95,10 @@ namespace cppsort
                     Head, sorters_merger<Tail...>
                 {
                     using Head::operator();
+                    using Head::detail_stability;
+
                     using sorters_merger<Tail...>::operator();
+                    using sorters_merger<Tail...>::detail_stability;
                 };
 
                 template<typename Head>
@@ -102,6 +106,7 @@ namespace cppsort
                     Head
                 {
                     using Head::operator();
+                    using Head::detail_stability;
                 };
 
                 ////////////////////////////////////////////////////////////
@@ -117,6 +122,16 @@ namespace cppsort
                         -> decltype(Sorter{}(std::forward<Args>(args)...))
                     {
                         return Sorter{}(std::forward<Args>(args)...);
+                    }
+
+                    template<typename... Args>
+                    static auto detail_stability(choice<Ind>, Args&&... args)
+                        -> std::enable_if_t<
+                            utility::is_callable<Sorter(Args...)>::value,
+                            cppsort::is_stable<Sorter(Args...)>
+                        >
+                    {
+                        return {};
                     }
                 };
 
@@ -187,12 +202,50 @@ namespace cppsort
                         first, last, std::forward<Args>(args)...
                     );
                 }
+
+                template<typename Iterable, typename... Args>
+                static auto detail_stability(Iterable&& iterable, Args&&... args)
+                    -> decltype(dispatch_sorter::detail_stability(
+                        choice<
+                            iterator_category_value<
+                                iterator_category_t<decltype(std::begin(iterable))>
+                            > * categories_number
+                        >{},
+                        std::forward<Iterable>(iterable),
+                        std::forward<Args>(args)...
+                    ))
+                {
+                    return {};
+                }
+
+                template<typename Iterator, typename... Args>
+                static auto detail_stability(Iterator first, Iterator last, Args&&... args)
+                    -> decltype(dispatch_sorter::detail_stability(
+                            choice<
+                                iterator_category_value<
+                                    iterator_category_t<Iterator>
+                                > * categories_number
+                            >{},
+                            first, last,
+                            std::forward<Args>(args)...
+                    ))
+                {
+                    return {};
+                }
         };
     }
 
     template<typename... Sorters>
     struct hybrid_adapter:
         sorter_facade<detail::hybrid_adapter_impl<Sorters...>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specializations
+
+    template<typename... Sorters, typename... Args>
+    struct is_stable<hybrid_adapter<Sorters...>(Args...)>:
+        decltype(hybrid_adapter<Sorters...>::detail_stability(std::declval<Args&>()...))
     {};
 }
 
