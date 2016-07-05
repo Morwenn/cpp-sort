@@ -26,7 +26,7 @@
 #include <catch.hpp>
 #include <cpp-sort/adapters/container_aware_adapter.h>
 #include <cpp-sort/sort.h>
-#include <cpp-sort/sorters/selection_sorter.h>
+#include <cpp-sort/sorters/merge_sorter.h>
 #include "../algorithm.h"
 
 namespace foobar
@@ -45,7 +45,7 @@ namespace foobar
             not cppsort::is_projection<Compare, T>::value
         >
     >
-    auto sort(cppsort::selection_sorter, cool_list<T>&, Compare)
+    auto sort(cppsort::merge_sorter, cool_list<T>&, Compare)
         -> bool
     {
         return true;
@@ -56,7 +56,7 @@ TEST_CASE( "basic tests with container_aware_adapter",
            "[container_aware_adapter]" )
 {
     using sorter = cppsort::container_aware_adapter<
-        cppsort::selection_sorter
+        cppsort::merge_sorter
     >;
 
     // Cool list to "sort"
@@ -66,17 +66,28 @@ TEST_CASE( "basic tests with container_aware_adapter",
     {
         CHECK( sorter{}(collection, std::greater<>{}) );
         CHECK( cppsort::sort(sorter{}, collection, std::greater<>{}) );
+        CHECK( not cppsort::is_stable<sorter(foobar::cool_list<int>&, std::greater<>)>::value );
     }
 
     SECTION( "with projection" )
     {
         CHECK( sorter{}(collection, std::negate<>{}) );
         CHECK( cppsort::sort(sorter{}, collection, std::negate<>{}) );
+        CHECK( not cppsort::is_stable<sorter(foobar::cool_list<int>&, std::negate<>)>::value );
     }
 
     SECTION( "with automagic comparison-projection" )
     {
         CHECK( sorter{}(collection, std::greater<>{}, std::negate<>{}) );
         CHECK( cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{}) );
+        CHECK( not cppsort::is_stable<sorter(foobar::cool_list<int>&, std::greater<>, std::negate<>)>::value );
+    }
+
+    SECTION( "more about stability" )
+    {
+        CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
+        CHECK( cppsort::is_stable<sorter(std::list<int>::iterator, std::list<int>::iterator)>::value );
+        CHECK( cppsort::is_stable<sorter(foobar::cool_list<int>::iterator,
+                                         foobar::cool_list<int>::iterator)>::value );
     }
 }
