@@ -232,14 +232,26 @@ namespace cppsort
     template<typename Sorter>
     struct sorter_traits:
         detail::raw_check_iterator_category<Sorter>,
-        detail::raw_check_is_stable<Sorter>
+        detail::raw_check_is_always_stable<Sorter>
     {};
 
     template<typename Sorter>
     using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 
     template<typename Sorter>
-    using is_stable = typename sorter_traits<Sorter>::is_stable;
+    using is_always_stable = typename sorter_traits<Sorter>::is_always_stable;
+
+    ////////////////////////////////////////////////////////////
+    // Whether a sorter is stable when called with parameter of
+    // specific types
+
+    template<typename>
+    struct is_stable;
+
+    template<typename Sorter, typename... Args>
+    struct is_stable<Sorter(Args...)>:
+        sorter_traits<Sorter>::is_always_stable
+    {};
 
     ////////////////////////////////////////////////////////////
     // Fixed-size sorter traits

@@ -135,6 +135,29 @@ namespace cppsort
             return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
         }
     };
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    template<
+        template<std::size_t> class FixedSizeSorter,
+        typename Indices,
+        typename T, std::size_t N,
+        typename... Args
+    >
+    struct is_stable<small_array_adapter<FixedSizeSorter, Indices>(std::array<T, N>&, Args...)>:
+        is_stable<FixedSizeSorter<N>(std::array<T, N>&, Args...)>
+    {};
+
+    template<
+        template<std::size_t> class FixedSizeSorter,
+        typename Indices,
+        typename T, std::size_t N,
+        typename... Args
+    >
+    struct is_stable<small_array_adapter<FixedSizeSorter, Indices>(T (&)[N], Args...)>:
+        is_stable<FixedSizeSorter<N>(T (&)[N], Args...)>
+    {};
 }
 
 #ifdef CPPSORT_ADAPTERS_SCHWARTZ_ADAPTER_H_

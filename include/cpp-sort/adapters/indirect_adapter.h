@@ -48,7 +48,7 @@ namespace cppsort
     {
         template<typename Sorter>
         struct indirect_adapter_impl:
-            check_is_stable<Sorter>
+            check_is_always_stable<Sorter>
         {
             template<
                 typename RandomAccessIterator,
@@ -131,6 +131,14 @@ namespace cppsort
     template<typename Sorter>
     struct indirect_adapter:
         sorter_facade<detail::indirect_adapter_impl<Sorter>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    template<typename Sorter, typename... Args>
+    struct is_stable<indirect_adapter<Sorter>(Args...)>:
+        is_stable<Sorter(Args...)>
     {};
 }
 

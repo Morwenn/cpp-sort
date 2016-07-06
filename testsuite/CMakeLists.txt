@@ -10,6 +10,7 @@ set(
     adapters/container_aware_adapter_list.cpp
     adapters/container_aware_adapter_forward_list.cpp
     adapters/counting_adapter.cpp
+    adapters/hybrid_adapter_is_stable.cpp
     adapters/hybrid_adapter_partial_compare.cpp
     adapters/hybrid_adapter_sfinae.cpp
     adapters/indirect_adapter.cpp
@@ -20,6 +21,7 @@ set(
     adapters/self_sort_adapter.cpp
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter.cpp
+    adapters/small_array_adapter_is_stable.cpp
     adapters/stable_adapter_every_sorter.cpp
 )
 
@@ -69,6 +71,7 @@ add_executable(
     every_sorter.cpp
     every_sorter_move_only.cpp
     every_sorter_span.cpp
+    is_stable.cpp
     rebind_iterator_category.cpp
     sorter_facade.cpp
     sorter_facade_defaults.cpp

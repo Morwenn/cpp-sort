@@ -46,7 +46,7 @@ namespace cppsort
         template<typename ComparisonSorter, typename CountType>
         struct counting_adapter_impl:
             check_iterator_category<ComparisonSorter>,
-            check_is_stable<ComparisonSorter>
+            check_is_always_stable<ComparisonSorter>
         {
             template<
                 typename Iterable,
@@ -123,6 +123,14 @@ namespace cppsort
             ComparisonSorter,
             CountType
         >>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    template<typename Sorter, typename CountType, typename... Args>
+    struct is_stable<counting_adapter<Sorter, CountType>(Args...)>:
+        is_stable<Sorter(Args...)>
     {};
 }
 

@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <forward_list>
+#include <list>
 #include <type_traits>
 #include <utility>
 
@@ -36,37 +38,80 @@ namespace cppsort
     struct stable_adapter<self_sort_adapter<Sorter>>:
         detail::check_iterator_category<Sorter>
     {
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable&& iterable, Args&&... args) const
-                -> std::enable_if_t<
-                    detail::has_stable_sort_method<Iterable, Args...>,
-                    decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
-                >
-            {
-                return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
-            }
+        ////////////////////////////////////////////////////////////
+        // Generic cases
 
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable&& iterable, Args&&... args) const
-                -> std::enable_if_t<
-                    not detail::has_stable_sort_method<Iterable, Args...>,
-                    decltype(stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
-                >
-            {
-                return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
-            }
+        template<typename Iterable, typename... Args>
+        auto operator()(Iterable&& iterable, Args&&... args) const
+            -> std::enable_if_t<
+                detail::has_stable_sort_method<Iterable, Args...>,
+                decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
+            >
+        {
+            return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
+        }
 
-            template<typename Iterator, typename... Args>
-            auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(stable_adapter<Sorter>{}(first, last, std::forward<Args>(args)...))
-            {
-                return stable_adapter<Sorter>{}(first, last, std::forward<Args>(args)...);
-            }
+        template<typename Iterable, typename... Args>
+        auto operator()(Iterable&& iterable, Args&&... args) const
+            -> std::enable_if_t<
+                not detail::has_stable_sort_method<Iterable, Args...>,
+                decltype(stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+            >
+        {
+            return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+        }
 
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
+        template<typename Iterator, typename... Args>
+        auto operator()(Iterator first, Iterator last, Args&&... args) const
+            -> decltype(stable_adapter<Sorter>{}(first, last, std::forward<Args>(args)...))
+        {
+            return stable_adapter<Sorter>{}(first, last, std::forward<Args>(args)...);
+        }
 
-            using is_stable = std::true_type;
+        ////////////////////////////////////////////////////////////
+        // Special cases for standard library lists whose sort
+        // method implements a stable sort
+
+        template<typename T>
+        auto operator()(std::forward_list<T>& iterable) const
+            -> void
+        {
+            return iterable.sort();
+        }
+
+        template<
+            typename T,
+            typename Compare,
+            typename = std::enable_if_t<not is_projection_v<Compare, std::forward_list<T>&>>
+        >
+        auto operator()(std::forward_list<T>& iterable, Compare compare) const
+            -> void
+        {
+            return iterable.sort(compare);
+        }
+
+        template<typename T>
+        auto operator()(std::list<T>& iterable) const
+            -> void
+        {
+            return iterable.sort();
+        }
+
+        template<
+            typename T,
+            typename Compare,
+            typename = std::enable_if_t<not is_projection_v<Compare, std::list<T>&>>
+        >
+        auto operator()(std::list<T>& iterable, Compare compare) const
+            -> void
+        {
+            return iterable.sort(compare);
+        }
+
+        ////////////////////////////////////////////////////////////
+        // Sorter traits
+
+        using is_always_stable = std::true_type;
     };
 }
 

@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <forward_list>
+#include <list>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
@@ -117,15 +119,62 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            // We can't guarantee the stability of the sort method,
-            // therefore we default the stability to false
-            using is_stable = std::false_type;
+            using is_always_stable = std::false_type;
         };
     }
 
     template<typename Sorter>
     struct self_sort_adapter:
         sorter_facade<detail::self_sort_adapter_impl<Sorter>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // is_stable specializations
+
+    template<typename Sorter, typename Iterator, typename... Args>
+    struct is_stable<self_sort_adapter<Sorter>(Iterator, Iterator, Args...)>:
+        is_stable<Sorter(Iterator, Iterator, Args...)>
+    {};
+
+    template<typename Sorter, typename... Args>
+    struct is_stable<self_sort_adapter<Sorter>(Args...)>:
+        std::conditional_t<
+            detail::has_sort_method<Args...>,
+            std::false_type,
+            std::conditional_t<
+                detail::has_stable_sort_method<Args...>,
+                std::true_type,
+                is_stable<Sorter(Args...)>
+            >
+        >
+    {};
+
+    template<typename Sorter, typename T>
+    struct is_stable<self_sort_adapter<Sorter>(std::forward_list<T>&)>:
+        std::true_type
+    {};
+
+    template<typename Sorter, typename T, typename Function>
+    struct is_stable<self_sort_adapter<Sorter>(std::forward_list<T>&, Function)>:
+        std::conditional_t<
+            is_projection_v<Function, std::forward_list<T>&>,
+            is_stable<Sorter(std::forward_list<T>&, Function)>,
+            std::true_type
+        >
+    {};
+
+    template<typename Sorter, typename T>
+    struct is_stable<self_sort_adapter<Sorter>(std::list<T>&)>:
+        std::true_type
+    {};
+
+    template<typename Sorter, typename T, typename Function>
+    struct is_stable<self_sort_adapter<Sorter>(std::list<T>&, Function)>:
+        std::conditional_t<
+            is_projection_v<Function, std::list<T>&>,
+            is_stable<Sorter(std::list<T>&, Function)>,
+            std::true_type
+        >
     {};
 }
 
