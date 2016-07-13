@@ -94,7 +94,7 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
 # Compiler support
 
-**cpp-sort** currently works with g++ 5 and clang++ 3.8. It uses some of the most
+**cpp-sort** currently works with g++5 and clang++3.8. It uses some of the most
 recent (and not widely supported) C++14 features and will probably use the C++17
 features once they are available. The overall goal is to make sure that the library
 works with the latest g++ and clang++ versions, without going out of its way to
@@ -103,16 +103,12 @@ support older releases.
 In the future, the branches will follow the following pattern: the master branch
 will remain C++14 and there will be a C++17 branch. There will be other branches
 forking the C++17 one for some of the published Technical Specifications (for
-example, there will likely be a branch for the parallelism TS and another one for
-the concepts TS); these branches will eventually be merged in the C++17 one when
-the corresponding technical specifications are merged into the current C++ working
-draft (or in a C++20 branch if the specifications do not make it in time for the
-C++17 release). Of course the creation of such branches will depend on compiler
-support: if a feature isn't supported by either the latest g++ or clang++, I won't
-use it before the following release.
-
-*Note: since Clang's APT was switched off, I can't be sure that the latest things
-work too with it.*
+example, there will likely be a branch for the concepts TS); these branches will
+eventually be merged in the C++17 one when the corresponding technical specifications
+are merged into the current C++ working draft (or in a C++20 branch if the
+specifications do not make it in time for the C++17 release). Of course the creation
+of such branches will depend on compiler support: if a feature isn't supported by
+either the latest g++ or clang++, I won't use it before the following release.
 
 # Thanks
 
