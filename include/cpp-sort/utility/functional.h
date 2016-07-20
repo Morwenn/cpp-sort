@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cmath>
 #include <utility>
+#include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
 {
@@ -48,6 +49,76 @@ namespace utility
 
         using is_transparent = void;
     };
+
+    ////////////////////////////////////////////////////////////
+    // Transform overload in unary or binary function
+
+    namespace detail
+    {
+        template<typename Function>
+        struct as_projection_fn
+        {
+            private:
+
+                Function _func;
+
+                template<typename Func>
+                explicit as_projection_fn(Func&& func):
+                    _func(std::forward<Func>(func))
+                {}
+
+            public:
+
+                as_projection_fn() = delete;
+                as_projection_fn(const as_projection_fn&) = default;
+                as_projection_fn(as_projection_fn&&) = default;
+
+                template<typename T>
+                auto operator()(T&& arg) &
+                    noexcept(noexcept(_func(std::forward<T>(arg))))
+                    -> decltype(_func(std::forward<T>(arg)))
+                {
+                    return _func(std::forward<T>(arg));
+                }
+
+                template<typename T>
+                auto operator()(T&& arg) &&
+                    noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
+                    -> decltype(std::move(_func)(std::forward<T>(arg)))
+                {
+                    return std::move(_func)(std::forward<T>(arg));
+                }
+
+                template<typename T>
+                auto operator()(T&& arg) const&
+                    noexcept(noexcept(_func(std::forward<T>(arg))))
+                    -> decltype(_func(std::forward<T>(arg)))
+                {
+                    return _func(std::forward<T>(arg));
+                }
+
+
+                template<typename T>
+                auto operator()(T&& arg) const&&
+                    noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
+                    -> decltype(std::move(_func)(std::forward<T>(arg)))
+                {
+                    return std::move(_func)(std::forward<T>(arg));
+                }
+        };
+
+        template<typename Function>
+        struct as_projection_fn<as_projection_fn<Function>>:
+            as_projection_fn<Function>
+        {};
+    }
+
+    template<typename Function>
+    auto as_projection(Function&& func)
+        -> detail::as_projection_fn<std::decay_t<Function>>
+    {
+        return detail::as_projection_fn<std::decay_t<Function>>(std::forward<Function>(func));
+    }
 
     ////////////////////////////////////////////////////////////
     // Math functions (mostly useful for buffer providers)
