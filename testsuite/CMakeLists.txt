@@ -26,6 +26,12 @@ set(
 )
 
 set(
+    COMPARATORS_TESTS
+
+    comparators/total_less.cpp
+)
+
+set(
     PROBES_TESTS
 
     probes/dis.cpp
@@ -77,6 +83,7 @@ add_executable(
     sorter_facade_defaults.cpp
     sorter_facade_iterable.cpp
     ${ADAPTERS_TESTS}
+    ${COMPARATORS_TESTS}
     ${PROBES_TESTS}
     ${SORTERS_TESTS}
     ${UTILITY_TESTS}
