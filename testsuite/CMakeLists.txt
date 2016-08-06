@@ -28,6 +28,7 @@ set(
 set(
     COMPARATORS_TESTS
 
+    comparators/natural_less.cpp
     comparators/total_less.cpp
 )
 
