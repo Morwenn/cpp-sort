@@ -61,6 +61,7 @@ set(
     sorters/spread_sorter.cpp
     sorters/spread_sorter_defaults.cpp
     sorters/spread_sorter_projection.cpp
+    sorters/std_sorter.cpp
 )
 
 set(
