@@ -36,11 +36,7 @@ namespace sub
         without_locale
     };
 
-    struct foo
-    {
-        auto begin() -> char*;
-        auto end() -> char*;
-    };
+    struct foo {};
 
     inline auto case_insensitive_less(const foo&, const foo&)
         -> res_t

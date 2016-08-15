@@ -32,6 +32,7 @@
 #include <locale>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/is_callable.h>
 #include <cpp-sort/utility/logical_traits.h>
 #include <cpp-sort/utility/static_const.h>
@@ -92,6 +93,14 @@ namespace cppsort
             struct refined_case_insensitive_less_locale_fn;
         }
 
+        template<typename T>
+        using can_be_refined_for_t
+            = decltype(*std::begin(std::declval<T&>()));
+
+        template<typename T>
+        constexpr bool can_be_refined_for
+            = utility::is_detected_v<can_be_refined_for_t, T>;
+
         struct case_insensitive_less_locale_fn
         {
             private:
@@ -112,7 +121,10 @@ namespace cppsort
                     return case_insensitive_less(std::forward<T>(lhs), std::forward<U>(rhs), loc);
                 }
 
-                template<typename T>
+                template<
+                    typename T,
+                    typename = std::enable_if_t<can_be_refined_for<T>>
+                >
                 auto refine() const
                     -> adl_barrier::refined_case_insensitive_less_locale_fn<T>
                 {
@@ -130,7 +142,10 @@ namespace cppsort
                 return case_insensitive_less(std::forward<T>(lhs), std::forward<U>(rhs));
             }
 
-            template<typename T>
+            template<
+                typename T,
+                typename = std::enable_if_t<can_be_refined_for<T>>
+            >
             auto refine() const
                 -> adl_barrier::refined_case_insensitive_less_fn<T>
             {
