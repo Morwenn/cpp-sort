@@ -74,6 +74,9 @@ namespace cppsort
     {
         return compare;
     }
+
+    template<typename T, typename Compare>
+    using refined_t = std::decay_t<decltype(refined<std::decay_t<T>>(std::declval<Compare&>()))>;
 }
 
 #endif // CPPSORT_REFINED_H_
