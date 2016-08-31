@@ -1,7 +1,7 @@
 /*
     pdqsort.h - Pattern-defeating quicksort.
 
-    Copyright (c) 2015 Orson Peters
+    Copyright (c) 2015-2016 Orson Peters
     Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
@@ -25,6 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
@@ -46,7 +49,13 @@ namespace detail
 
             // When we detect an already sorted partition, attempt an insertion sort that allows this
             // amount of element moves before giving up.
-            partial_insertion_sort_limit = 8
+            partial_insertion_sort_limit = 8,
+
+            // Must be multiple of 8 due to loop unrolling, and < 256 to fit in unsigned char.
+            block_size = 64,
+
+            // Cacheline size, assumes power of two.
+            cacheline_size = 64
         };
 
         // Sorts [begin, end) using insertion sort with the given comparison function. Assumes
@@ -151,6 +160,45 @@ namespace detail
             return true;
         }
 
+        template<typename T>
+        auto align_cacheline(T* ptr)
+            -> T*
+        {
+#ifdef UINTPTR_MAX
+            std::uintptr_t ip = reinterpret_cast<std::uintptr_t>(ptr);
+#else
+            std::size_t ip = reinterpret_cast<std::size_t>(ptr);
+#endif
+            ip = (ip + cacheline_size - 1) & -cacheline_size;
+            return reinterpret_cast<T*>(ip);
+        }
+
+        template<typename RandomAccessIterator>
+        auto swap_offsets(RandomAccessIterator first, RandomAccessIterator last,
+                          unsigned char* offsets_l, unsigned char* offsets_r,
+                          int num, bool use_swaps)
+            -> void
+        {
+            using utility::iter_move;
+            using utility::iter_swap;
+
+            if (use_swaps) {
+                // This case is needed for the descending distribution, where we need
+                // to have proper swapping for pdqsort to remain O(n).
+                for (int i = 0 ; i < num ; ++i) {
+                    iter_swap(first + offsets_l[i], last - 1 - offsets_r[i]);
+                }
+            } else if (num > 0) {
+                auto tmp = iter_move(first + offsets_l[0]);
+                *(first + offsets_l[0]) = iter_move(last - 1 - offsets_r[0]);
+                for (int i = 1 ; i < num ; ++i) {
+                    *(last - 1 - offsets_r[i - 1]) = iter_move(first + offsets_l[i]);
+                    *(first + offsets_l[i]) = iter_move(last - 1 - offsets_r[i]);
+                }
+                *(last - 1 - offsets_r[num - 1]) = std::move(tmp);
+            }
+        }
+
         // Partitions [begin, end) around pivot *begin using comparison function comp. Elements equal
         // to the pivot are put in the right-hand partition. Returns the position of the pivot after
         // partitioning and whether the passed sequence already was correctly partitioned. Assumes the
@@ -184,14 +232,105 @@ namespace detail
             // If the first pair of elements that should be swapped to partition are the same element,
             // the passed in sequence already was correctly partitioned.
             bool already_partitioned = first >= last;
-
-            // Keep swapping pairs of elements that are on the wrong side of the pivot. Previously
-            // swapped pairs guard the searches, which is why the first iteration is special-cased
-            // above.
-            while (first < last) {
+            if (!already_partitioned) {
                 iter_swap(first, last);
-                while (comp(proj(*++first), pivot_proj));
-                while (!comp(proj(*--last), pivot_proj));
+                ++first;
+            }
+
+            // The following branchless partitioning is derived from "BlockQuicksort: How Branch
+            // Mispredictions don’t affect Quicksort" by Stefan Edelkamp and Armin Weiss.
+            unsigned char offsets_l_storage[block_size + cacheline_size];
+            unsigned char offsets_r_storage[block_size + cacheline_size];
+            unsigned char* offsets_l = align_cacheline(offsets_l_storage);
+            unsigned char* offsets_r = align_cacheline(offsets_r_storage);
+            int num_l, num_r, start_l, start_r;
+            num_l = num_r = start_l = start_r = 0;
+
+            while (last - first > 2 * block_size) {
+                // Fill up offset blocks with elements that are on the wrong side.
+                if (num_l == 0) {
+                    start_l = 0;
+                    for (unsigned char i = 0 ; i < block_size ;) {
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                    }
+                }
+                if (num_r == 0) {
+                    start_r = 0;
+                    for (unsigned char i = 0; i < block_size;) {
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                    }
+                }
+
+                // Swap elements and update block sizes and first/last boundaries.
+                int num = std::min(num_l, num_r);
+                swap_offsets(first, last, offsets_l + start_l, offsets_r + start_r,
+                             num, num_l == num_r);
+                num_l -= num; num_r -= num;
+                start_l += num; start_r += num;
+                if (num_l == 0) first += block_size;
+                if (num_r == 0) last -= block_size;
+            }
+
+            int l_size = 0, r_size = 0;
+            int unknown_left = (last - first) - ((num_r || num_l) ? block_size : 0);
+            if (num_r) {
+                // Handle leftover block by assigning the unknown elements to the other block.
+                l_size = unknown_left;
+                r_size = block_size;
+            } else if (num_l) {
+                l_size = block_size;
+                r_size = unknown_left;
+            } else {
+                // No leftover block, split the unknown elements in two blocks.
+                l_size = unknown_left/2;
+                r_size = unknown_left - l_size;
+            }
+
+            // Fill offset buffers if needed.
+            if (unknown_left && !num_l) {
+                start_l = 0;
+                for (unsigned char i = 0 ; i < l_size ; ++i) {
+                    offsets_l[num_l] = i ; num_l += !comp(proj(*(first + i)), pivot_proj);
+                }
+            }
+            if (unknown_left && !num_r) {
+                start_r = 0;
+                for (unsigned char i = 0 ; i < r_size ; ++i) {
+                    offsets_r[num_r] = i ; num_r += comp(proj(*(last - 1 - i)), pivot_proj);
+                }
+            }
+
+            int num = std::min(num_l, num_r);
+            swap_offsets(first, last, offsets_l + start_l, offsets_r + start_r, num, num_l == num_r);
+            num_l -= num; num_r -= num;
+            start_l += num; start_r += num;
+            if (num_l == 0) first += l_size;
+            if (num_r == 0) last -= r_size;
+
+            // We have now fully identified [first, last)'s proper position. Swap the last elements.
+            if (num_l) {
+                offsets_l += start_l;
+                while (num_l--) iter_swap(first + offsets_l[num_l], --last);
+                first = last;
+            }
+            if (num_r) {
+                offsets_r += start_r;
+                while (num_r--) iter_swap(last - 1 - offsets_r[num_r], first), ++first;
+                last = first;
             }
 
             // Put the pivot in the right place.
@@ -201,6 +340,8 @@ namespace detail
 
             return std::make_pair(pivot_pos, already_partitioned);
         }
+
+
 
         // Similar function to the one above, except elements equal to the pivot are put to the left of
         // the pivot and it doesn't check or return if the passed sequence already was partitioned.
