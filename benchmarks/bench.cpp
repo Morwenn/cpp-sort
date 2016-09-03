@@ -14,7 +14,7 @@
     #include <intrin.h>
     #define rdtsc __rdtsc
 #else
-    #ifdef __i386__
+    #ifdef __i586__
         static __inline__ unsigned long long rdtsc() {
             unsigned long long int x;
             __asm__ volatile(".byte 0x0f, 0x31" : "=A" (x));
@@ -67,18 +67,14 @@ int main()
 
     std::size_t sizes[] = { 1'000'000 };
 
-    for (auto& distribution: distributions)
-    {
-        for (auto& sort: sorts)
-        {
-            for (auto size: sizes)
-            {
+    for (auto& distribution: distributions) {
+        for (auto& sort: sorts) {
+            for (auto size: sizes) {
                 std::vector<std::uint64_t> cycles;
 
                 auto total_start = std::chrono::high_resolution_clock::now();
                 auto total_end = std::chrono::high_resolution_clock::now();
-                while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 10s)
-                {
+                while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 5s) {
                     std::vector<int> collection;
                     distribution.second(std::back_inserter(collection), size);
                     std::uint64_t start = rdtsc();
@@ -91,13 +87,10 @@ int main()
 
                 std::sort(std::begin(cycles), std::end(cycles));
 
-                std::cerr << size << ' ' << distribution.first << ' ' << sort.first << '\n';
-                std::cout << size << ' ' << distribution.first << ' ' << sort.first << ' ';
-                for (std::uint64_t cycle: cycles)
-                {
-                    std::cout << cycle << ' ';
-                }
-                std::cout << '\n';
+                std::cerr << size << ' ' << distribution.first << ' ' << sort.first
+                          << ' ' << cycles[cycles.size() / 2] << '\n';
+                std::cout << size << ' ' << distribution.first << ' ' << sort.first
+                          << ' ' << cycles[cycles.size() / 2] << '\n';
             }
         }
     }

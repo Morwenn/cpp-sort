@@ -3,8 +3,7 @@ import os
 from textwrap import wrap
 
 import numpy
-from matplotlib import pyplot as plt
-
+from matplotlib import pyplot
 
 
 distribution_names = {
@@ -22,6 +21,8 @@ distribution_names = {
     "alternating_16_values": "Alternating (16 values)"
 }
 
+sort_order = ["heap_sort", "pdq_sort", "quick_sort", "spread_sort", "std_sort", "verge_sort"]
+
 for filename in os.listdir("profiles"):
     data = {}
     for line in open(os.path.join("profiles", filename)):
@@ -33,65 +34,66 @@ for filename in os.listdir("profiles"):
         if not distribution in data[size]: data[size][distribution] = {}
         data[size][distribution][algo] = results
 
-    size = 10**6
-    distributions = (
-        "Shuffled",
-        "Shuffled (16 values)",
-        "All equal",
-        "Ascending",
-        "Descending",
-        "Pipe organ",
-        "Push front",
-        "Push middle",
-        "Ascending sawtooth",
-        "Descending sawtooth",
-        "Alternating",
-        "Alternating (16 values)"
-    )
+    for size in data:
+        distributions = (
+            "Shuffled",
+            "Shuffled (16 values)",
+            "All equal",
+            "Ascending",
+            "Descending",
+            "Pipe organ",
+            "Push front",
+            "Push middle",
+            "Ascending sawtooth",
+            "Descending sawtooth",
+            "Alternating",
+            "Alternating (16 values)"
+        )
 
-    algos = ("heap_sort", "pdq_sort", "quick_sort", "spread_sort", "std_sort", "verge_sort")
+        algos = tuple(data[size]["Shuffled"].keys())
+        algos = tuple(sorted(algos, key=lambda a: sort_order.index(a)))
 
-    groupnames = distributions
-    groupsize = len(algos)
-    groups = [[data[size][distribution][algo] for algo in algos] for distribution in distributions]
-    barwidth = 0.6
-    spacing = 1
-    groupwidth = groupsize * barwidth + spacing
+        groupnames = distributions
+        groupsize = len(algos)
+        groups = [[data[size][distribution][algo] for algo in algos] for distribution in distributions]
+        barwidth = 0.6
+        spacing = 1
+        groupwidth = groupsize * barwidth + spacing
 
-    colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080", "#3ADF00", "#800000"]
-    for i, algo in enumerate(algos):
-        heights = [numpy.median(data[size][distribution][algo]) for distribution in distributions]
-        errors = [numpy.std(data[size][distribution][algo]) for distribution in distributions]
-        plt.barh([barwidth*i + groupwidth*n for n in range(len(distributions))],
-                 heights, 0.6, color = colors[i], label = algo)
+        colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080", "#3ADF00", "#800000"]
+        for i, algo in enumerate(algos):
+            heights = [numpy.median(data[size][distribution][algo]) for distribution in distributions]
+            errors = [numpy.std(data[size][distribution][algo]) for distribution in distributions]
+            pyplot.barh([barwidth*i + groupwidth*n for n in range(len(distributions))],
+                        heights, 0.6, color = colors[i], label = algo)
 
-    # Set axes limits and labels.
-    groupnames = ['\n'.join(wrap(l, 11)) for l in groupnames]
-    plt.yticks([barwidth * groupsize/2 + groupwidth*n for n in range(len(groupnames))], groupnames, horizontalalignment='center')
-    plt.xlabel("Cycles per element")
+        # Set axes limits and labels.
+        groupnames = ['\n'.join(wrap(l, 11)) for l in groupnames]
+        pyplot.yticks([barwidth * groupsize/2 + groupwidth*n for n in range(len(groupnames))],
+                      groupnames, horizontalalignment='center')
+        pyplot.xlabel("Cycles per element")
 
-    # Turn off ticks for y-axis.
-    plt.tick_params(
-        axis="y",
-        which="both",
-        left="off",
-        right="off",
-        labelleft="on",
-        pad=45
-    )
+        # Turn off ticks for y-axis.
+        pyplot.tick_params(
+               axis="y",
+               which="both",
+               left="off",
+               right="off",
+               labelleft="on",
+               pad=45)
 
-    ax = plt.gca()
-    ax.invert_yaxis()
-    ax.relim()
-    ax.autoscale_view()
-    plt.ylim(plt.ylim()[0]+1, plt.ylim()[1]-1)
-    plt.legend(loc="lower right")
+        ax = pyplot.gca()
+        ax.invert_yaxis()
+        ax.relim()
+        ax.autoscale_view()
+        pyplot.ylim(pyplot.ylim()[0]+1, pyplot.ylim()[1]-1)
+        pyplot.legend(loc="lower right", fontsize=12)
 
-    plt.title("Sorting $10^{}$elements".format(round(math.log(size, 10))))
+        pyplot.title("Sorting $10^{}$ elements".format(round(math.log(size, 10))))
 
-    figure = plt.gcf() # get current figure
-    figure.set_size_inches(8*.75, 6*.75)
-    plt.show()
-    plt.savefig(os.path.join("plots", os.path.splitext(filename)[0] + ".png"), dpi = 100, bbox_inches="tight")
+        figure = pyplot.gcf()
+        figure.set_size_inches(8 * .75, 6 * .75)
+        pyplot.show()
+        pyplot.savefig(os.path.join("plots", os.path.splitext(filename)[0] + ".png"), dpi = 100, bbox_inches="tight")
 
-    plt.clf()
+        pyplot.clf()
