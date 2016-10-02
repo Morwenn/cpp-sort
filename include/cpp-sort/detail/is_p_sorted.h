@@ -21,21 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_PROBES_H_
-#define CPPSORT_PROBES_H_
+#ifndef CPPSORT_DETAIL_IS_P_SORTED_H_
+#define CPPSORT_DETAIL_IS_P_SORTED_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/probes/dis.h>
-#include <cpp-sort/probes/enc.h>
-#include <cpp-sort/probes/exc.h>
-#include <cpp-sort/probes/ham.h>
-#include <cpp-sort/probes/inv.h>
-#include <cpp-sort/probes/max.h>
-#include <cpp-sort/probes/osc.h>
-#include <cpp-sort/probes/par.h>
-#include <cpp-sort/probes/rem.h>
-#include <cpp-sort/probes/runs.h>
+#include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 
-#endif // CPPSORT_PROBES_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto is_p_sorted(RandomAccessIterator first, RandomAccessIterator last,
+                     difference_type_t<RandomAccessIterator> p,
+                     Compare compare, Projection projection)
+        -> bool
+    {
+        auto&& proj = utility::as_function(projection);
+
+        for (auto it1 = first + p ; it1 != last ; ++it1) {
+            auto&& value = proj(*it1);
+            for (auto it2 = first ; it2 != it1 - p ; ++it2) {
+                if (compare(value, proj(*it2))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}}
+
+#endif // CPPSORT_DETAIL_IS_P_SORTED_H_

@@ -43,6 +43,7 @@ set(
     probes/inv.cpp
     probes/max.cpp
     probes/osc.cpp
+    probes/par.cpp
     probes/rem.cpp
     probes/runs.cpp
     probes/relations.cpp
