@@ -56,13 +56,20 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> cppsort::detail::difference_type_t<RandomAccessIterator>
             {
-                auto max = std::distance(first, last);
-                for (decltype(max) p = 0 ; p < max ; ++p) {
+                auto size = std::distance(first, last);
+
+                auto res = 0;
+                while (size > 0) {
+                    auto p = res;
+                    p += size / 2;
                     if (cppsort::detail::is_p_sorted(first, last, p, compare, projection)) {
-                        return p;
+                        size /= 2;
+                    } else {
+                        res = ++p;
+                        size -= size / 2 + 1;
                     }
                 }
-                return max - 1;
+                return res;
             }
         };
     }
