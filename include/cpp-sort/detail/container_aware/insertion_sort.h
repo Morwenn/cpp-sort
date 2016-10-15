@@ -35,15 +35,15 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include "../std_list_traits.h"
 #include "../upper_bound.h"
 
 namespace cppsort
 {
     namespace detail
     {
-        template<typename T, typename Allocator,
-                 typename Compare, typename Projection>
-        auto list_insertion_sort(std::list<T, Allocator>& collection,
+        template<typename Compare, typename Projection, typename... Args>
+        auto list_insertion_sort(std::list<Args...>& collection,
                                  Compare compare, Projection projection)
             -> void
         {
@@ -71,9 +71,8 @@ namespace cppsort
             }
         }
 
-        template<typename T, typename Allocator,
-                 typename Compare, typename Projection>
-        auto flist_insertion_sort(std::forward_list<T, Allocator>& collection,
+        template<typename Compare, typename Projection, typename... Args>
+        auto flist_insertion_sort(std::forward_list<Args...>& collection,
                                   Compare compare, Projection projection)
             -> void
         {
@@ -113,46 +112,43 @@ namespace cppsort
     struct container_aware_adapter<insertion_sorter>:
         detail::container_aware_adapter_base<insertion_sorter>
     {
-        using detail::container_aware_adapter_base<insertion_sorter>::operator();
-
         ////////////////////////////////////////////////////////////
         // std::list
 
-        template<typename T, typename Allocator>
-        auto operator()(std::list<T, Allocator>& iterable) const
+        template<typename... Args>
+        auto operator()(std::list<Args...>& iterable) const
             -> void
         {
             detail::list_insertion_sort(iterable, std::less<>{}, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Compare>
-        auto operator()(std::list<T, Allocator>& iterable, Compare compare) const
+        template<typename Compare, typename... Args>
+        auto operator()(std::list<Args...>& iterable, Compare compare) const
             -> std::enable_if_t<
-                is_projection_v<utility::identity, std::list<T, Allocator>, Compare>
+                is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
             detail::list_insertion_sort(iterable, compare, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Projection>
-        auto operator()(std::list<T, Allocator>& iterable, Projection projection) const
+        template<typename Projection, typename... Args>
+        auto operator()(std::list<Args...>& iterable, Projection projection) const
             -> std::enable_if_t<
-                is_projection_v<Projection, std::list<T, Allocator>>
+                is_projection_v<Projection, std::list<Args...>>
             >
         {
             detail::list_insertion_sort(iterable, std::less<>{}, projection);
         }
 
         template<
-            typename T,
-            typename Allocator,
             typename Compare,
             typename Projection,
+            typename... Args,
             typename = std::enable_if_t<
-                is_projection_v<Projection, std::list<T, Allocator>, Compare>
+                is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
-        auto operator()(std::list<T, Allocator>& iterable,
+        auto operator()(std::list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
         {
@@ -162,45 +158,62 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::forward_list
 
-        template<typename T, typename Allocator>
-        auto operator()(std::forward_list<T, Allocator>& iterable) const
+        template<typename... Args>
+        auto operator()(std::forward_list<Args...>& iterable) const
             -> void
         {
             detail::flist_insertion_sort(iterable, std::less<>{}, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Compare>
-        auto operator()(std::forward_list<T, Allocator>& iterable, Compare compare) const
+        template<typename Compare, typename... Args>
+        auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
             -> std::enable_if_t<
-                is_projection_v<utility::identity, std::forward_list<T, Allocator>, Compare>
+                is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
             detail::flist_insertion_sort(iterable, compare, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Projection>
-        auto operator()(std::forward_list<T, Allocator>& iterable, Projection projection) const
+        template<typename Projection, typename... Args>
+        auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
             -> std::enable_if_t<
-                is_projection_v<Projection, std::forward_list<T, Allocator>>
+                is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
             detail::flist_insertion_sort(iterable, std::less<>{}, projection);
         }
 
         template<
-            typename T,
-            typename Allocator,
             typename Compare,
             typename Projection,
+            typename... Args,
             typename = std::enable_if_t<
-                is_projection_v<Projection, std::forward_list<T, Allocator>, Compare>
+                is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >
-        auto operator()(std::forward_list<T, Allocator>& iterable,
+        auto operator()(std::forward_list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
         {
             detail::flist_insertion_sort(iterable, compare, projection);
+        }
+
+        ////////////////////////////////////////////////////////////
+        // Generic overload
+
+        template<typename First, typename... Args,
+                 typename = std::enable_if_t<
+                     not detail::is_std_list<std::decay_t<First>>::value &&
+                     not detail::is_std_forward_list<std::decay_t<First>>::value
+                >>
+        auto operator()(First&& first, Args&&... args) const
+            -> decltype(detail::container_aware_adapter_base<insertion_sorter>::operator()(
+                   std::forward<First>(first), std::forward<Args>(args)...
+               ))
+        {
+            return detail::container_aware_adapter_base<insertion_sorter>::operator()(
+                std::forward<First>(first), std::forward<Args>(args)...
+            );
         }
     };
 }

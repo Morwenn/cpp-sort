@@ -47,21 +47,21 @@ namespace cppsort
         struct insertion_sorter_impl
         {
             template<
-                typename ForwardIterator,
+                typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of<
-                        std::forward_iterator_tag,
-                        iterator_category_t<ForwardIterator>
+                        std::bidirectional_iterator_tag,
+                        iterator_category_t<BidirectionalIterator>
                     >::value,
                     "insertion_sorter requires at least forward iterators"
                 );
@@ -72,7 +72,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category = std::forward_iterator_tag;
+            using iterator_category = std::bidirectional_iterator_tag;
             using is_always_stable = std::true_type;
         };
     }

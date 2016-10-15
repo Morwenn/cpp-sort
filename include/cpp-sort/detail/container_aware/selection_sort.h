@@ -41,9 +41,8 @@ namespace cppsort
 {
     namespace detail
     {
-        template<typename T, typename Allocator,
-                 typename Compare, typename Projection>
-        auto list_selection_sort(std::list<T, Allocator>& collection,
+        template<typename Compare, typename Projection, typename... Args>
+        auto list_selection_sort(std::list<Args...>& collection,
                                  Compare compare, Projection projection)
             -> void
         {
@@ -63,9 +62,8 @@ namespace cppsort
             }
         }
 
-        template<typename T, typename Allocator,
-                 typename Compare, typename Projection>
-        auto flist_selection_sort(std::forward_list<T, Allocator>& collection,
+        template<typename Compare, typename Projection, typename... Args>
+        auto flist_selection_sort(std::forward_list<Args...>& collection,
                                   Compare compare, Projection projection)
             -> void
         {
@@ -101,41 +99,40 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::list
 
-        template<typename T, typename Allocator>
-        auto operator()(std::list<T, Allocator>& iterable) const
+        template<typename... Args>
+        auto operator()(std::list<Args...>& iterable) const
             -> void
         {
             detail::list_selection_sort(iterable, std::less<>{}, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Compare>
-        auto operator()(std::list<T, Allocator>& iterable, Compare compare) const
+        template<typename Compare, typename... Args>
+        auto operator()(std::list<Args...>& iterable, Compare compare) const
             -> std::enable_if_t<
-                is_projection_v<utility::identity, std::list<T, Allocator>, Compare>
+                is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
             detail::list_selection_sort(iterable, compare, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Projection>
-        auto operator()(std::list<T, Allocator>& iterable, Projection projection) const
+        template<typename Projection, typename... Args>
+        auto operator()(std::list<Args...>& iterable, Projection projection) const
             -> std::enable_if_t<
-                is_projection_v<Projection, std::list<T, Allocator>>
+                is_projection_v<Projection, std::list<Args...>>
             >
         {
             detail::list_selection_sort(iterable, std::less<>{}, projection);
         }
 
         template<
-            typename T,
-            typename Allocator,
             typename Compare,
             typename Projection,
+            typename... Args,
             typename = std::enable_if_t<
-                is_projection_v<Projection, std::list<T, Allocator>, Compare>
+                is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
-        auto operator()(std::list<T, Allocator>& iterable,
+        auto operator()(std::list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
         {
@@ -145,41 +142,40 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::forward_list
 
-        template<typename T, typename Allocator>
-        auto operator()(std::forward_list<T, Allocator>& iterable) const
+        template<typename... Args>
+        auto operator()(std::forward_list<Args...>& iterable) const
             -> void
         {
             detail::flist_selection_sort(iterable, std::less<>{}, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Compare>
-        auto operator()(std::forward_list<T, Allocator>& iterable, Compare compare) const
+        template<typename Compare, typename... Args>
+        auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
             -> std::enable_if_t<
-                is_projection_v<utility::identity, std::forward_list<T>, Compare>
+                is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
             detail::flist_selection_sort(iterable, compare, utility::identity{});
         }
 
-        template<typename T, typename Allocator, typename Projection>
-        auto operator()(std::forward_list<T, Allocator>& iterable, Projection projection) const
+        template<typename Projection, typename... Args>
+        auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
             -> std::enable_if_t<
-                is_projection_v<Projection, std::forward_list<T, Allocator>>
+                is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
             detail::flist_selection_sort(iterable, std::less<>{}, projection);
         }
 
         template<
-            typename T,
-            typename Allocator,
             typename Compare,
             typename Projection,
+            typename... Args,
             typename = std::enable_if_t<
-                is_projection_v<Projection, std::forward_list<T, Allocator>, Compare>
+                is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >
-        auto operator()(std::forward_list<T, Allocator>& iterable,
+        auto operator()(std::forward_list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
         {

@@ -76,6 +76,12 @@ TEST_CASE( "container_aware_adapter and std::list",
         collection = { std::begin(vec), std::end(vec) };
         cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        // Make sure that the generic overload is also called when needed
+
+        auto vec_copy = vec;
+        cppsort::sort(sorter{}, vec_copy);
+        CHECK( std::is_sorted(std::begin(vec_copy), std::end(vec_copy)) );
     }
 
     SECTION( "merge_sorter" )
@@ -108,6 +114,12 @@ TEST_CASE( "container_aware_adapter and std::list",
         collection = { std::begin(vec), std::end(vec) };
         cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        // Make sure that the generic overload is also called when needed
+
+        auto vec_copy = vec;
+        cppsort::sort(sorter{}, vec_copy);
+        CHECK( std::is_sorted(std::begin(vec_copy), std::end(vec_copy)) );
     }
 
     SECTION( "selection_sorter" )
@@ -140,5 +152,11 @@ TEST_CASE( "container_aware_adapter and std::list",
         collection = { std::begin(vec), std::end(vec) };
         cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        // Make sure that the generic overload is also called when needed
+
+        auto vec_copy = vec;
+        cppsort::sort(sorter{}, vec_copy);
+        CHECK( std::is_sorted(std::begin(vec_copy), std::end(vec_copy)) );
     }
 }

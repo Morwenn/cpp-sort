@@ -29,9 +29,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "iterator_traits.h"
-#include "upper_bound.h"
-#include "rotate.h"
 
 namespace cppsort
 {
@@ -39,8 +36,7 @@ namespace detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
-                        Compare compare, Projection projection,
-                        std::bidirectional_iterator_tag)
+                        Compare compare, Projection projection)
         -> void
     {
         if (first == last) return;
@@ -67,29 +63,6 @@ namespace detail
                 *sift = std::move(tmp);
             }
         }
-    }
-
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto insertion_sort(ForwardIterator first, ForwardIterator last,
-                        Compare compare, Projection projection,
-                        std::forward_iterator_tag)
-        -> void
-    {
-        auto&& proj = utility::as_function(projection);
-
-        for (ForwardIterator it = first ; it != last ; ++it) {
-            ForwardIterator insertion_point = upper_bound(first, it, proj(*it), compare, projection);
-            detail::rotate(insertion_point, it, std::next(it));
-        }
-    }
-
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto insertion_sort(ForwardIterator first, ForwardIterator last,
-                        Compare compare, Projection projection)
-        -> void
-    {
-        using category = iterator_category_t<ForwardIterator>;
-        insertion_sort(first, last, compare, projection, category{});
     }
 }}
 
