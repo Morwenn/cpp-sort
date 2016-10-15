@@ -58,9 +58,10 @@ namespace cppsort
             auto operator()(Iterable&& iterable, Compare compare={}) const
                 -> CountType
             {
-                comparison_counter<Compare, CountType> cmp(compare);
+                CountType count(0);
+                comparison_counter<Compare, CountType> cmp(compare, count);
                 ComparisonSorter{}(std::forward<Iterable>(iterable), cmp);
-                return cmp.count;
+                return count;
             }
 
             template<
@@ -73,9 +74,10 @@ namespace cppsort
             auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> CountType
             {
-                comparison_counter<Compare, CountType> cmp(compare);
+                CountType count(0);
+                comparison_counter<Compare, CountType> cmp(compare, count);
                 ComparisonSorter{}(first, last, cmp);
-                return cmp.count;
+                return count;
             }
 
             template<
@@ -90,9 +92,10 @@ namespace cppsort
                             Projection projection={}) const
                 -> CountType
             {
-                comparison_counter<Compare, CountType> cmp(compare);
+                CountType count(0);
+                comparison_counter<Compare, CountType> cmp(compare, count);
                 ComparisonSorter{}(std::forward<Iterable>(iterable), cmp, projection);
-                return cmp.count;
+                return count;
             }
 
             template<
@@ -107,9 +110,10 @@ namespace cppsort
                             Compare compare, Projection projection) const
                 -> CountType
             {
-                comparison_counter<Compare, CountType> cmp(compare);
+                CountType count(0);
+                comparison_counter<Compare, CountType> cmp(compare, count);
                 ComparisonSorter{}(first, last, cmp, projection);
-                return cmp.count;
+                return count;
             }
         };
     }

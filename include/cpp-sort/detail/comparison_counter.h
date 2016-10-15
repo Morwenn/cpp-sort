@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <functional>
+#include <utility>
 
 namespace cppsort
 {
@@ -42,34 +43,28 @@ namespace detail
     {
         public:
 
-            comparison_counter():
-                comparison_counter(Compare{})
-            {}
-
-            explicit comparison_counter(Compare compare):
+            comparison_counter(Compare compare, CountType& count):
                 compare(compare),
-                count(0),
-                counter(*this)
+                count(count)
             {}
 
             template<typename T, typename U>
             auto operator()(T&& lhs, U&& rhs)
                 -> decltype(auto)
             {
-                ++counter.count;
+                ++count;
                 return compare(std::forward<T>(lhs), std::forward<U>(rhs));
             }
 
             // Accessible member data
             Compare compare;
-            CountType count;
 
         private:
 
             // Comparison functions are generally passed by value,
-            // therefore we need to know which is the original counter
-            // in order to increment the right count
-            comparison_counter& counter;
+            // therefore we need to know where is the original counter
+            // in order to increment it
+            CountType& count;
     };
 }}
 
