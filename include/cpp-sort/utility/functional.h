@@ -111,9 +111,14 @@ namespace utility
                 }
         };
 
-        template<typename Function>
-        struct as_projection_fn<as_projection_fn<Function>>:
-            as_projection_fn<Function>
+        template<typename T>
+        struct is_as_projection_fn:
+            std::false_type
+        {};
+
+        template<typename T>
+        struct is_as_projection_fn<as_projection_fn<T>>:
+            std::true_type
         {};
 
         template<typename Function>
@@ -172,24 +177,55 @@ namespace utility
                 }
         };
 
-        template<typename Function>
-        struct as_comparison_fn<as_comparison_fn<Function>>:
-            as_comparison_fn<Function>
+        template<typename T>
+        struct is_as_comparison_fn:
+            std::false_type
+        {};
+
+        template<typename T>
+        struct is_as_comparison_fn<as_comparison_fn<T>>:
+            std::true_type
         {};
     }
 
     template<typename Function>
     auto as_projection(Function&& func)
-        -> detail::as_projection_fn<std::decay_t<Function>>
+        -> std::enable_if_t<
+            not detail::is_as_projection_fn<std::decay_t<Function>>::value,
+            detail::as_projection_fn<std::decay_t<Function>>
+        >
     {
         return detail::as_projection_fn<std::decay_t<Function>>(std::forward<Function>(func));
     }
 
     template<typename Function>
+    auto as_projection(Function&& func)
+        -> std::enable_if_t<
+            detail::is_as_projection_fn<std::decay_t<Function>>::value,
+            decltype(std::forward<Function>(func))
+        >
+    {
+        return std::forward<Function>(func);
+    }
+
+    template<typename Function>
     auto as_comparison(Function&& func)
-        -> detail::as_comparison_fn<std::decay_t<Function>>
+        -> std::enable_if_t<
+            not detail::is_as_comparison_fn<std::decay_t<Function>>::value,
+            detail::as_comparison_fn<std::decay_t<Function>>
+        >
     {
         return detail::as_comparison_fn<std::decay_t<Function>>(std::forward<Function>(func));
+    }
+
+    template<typename Function>
+    auto as_comparison(Function&& func)
+        -> std::enable_if_t<
+            detail::is_as_comparison_fn<std::decay_t<Function>>::value,
+            decltype(std::forward<Function>(func))
+        >
+    {
+        return std::forward<Function>(func);
     }
 
     ////////////////////////////////////////////////////////////

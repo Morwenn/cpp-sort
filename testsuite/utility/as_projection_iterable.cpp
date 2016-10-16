@@ -103,7 +103,8 @@ namespace
         auto operator()(Iterator first, Iterator last, Projection projection={}) const
             -> call
         {
-            cppsort::sort(first, last, projection);
+            // Use as_projection to make an actual projection-only sorter
+            cppsort::sort(first, last, cppsort::utility::as_projection(projection));
             return call::iterator;
         }
 
@@ -117,7 +118,8 @@ namespace
         auto operator()(Iterable& iterable, Projection projection={}) const
             -> call
         {
-            cppsort::sort(iterable, projection);
+            // Use as_projection to make an actual projection-only sorter
+            cppsort::sort(iterable, cppsort::utility::as_projection(projection));
             return call::iterable;
         }
     };
@@ -205,8 +207,8 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
         vec = collection;
         auto res10 = cppsort::sort(comp_sort, std::begin(vec), std::end(vec),
-                                  cppsort::utility::as_comparison(func),
-                                  cppsort::utility::as_projection(func));
+                                   cppsort::utility::as_comparison(func),
+                                   cppsort::utility::as_projection(func));
         CHECK( res10 == call::iterator );
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
@@ -222,6 +224,16 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
         auto res2 = cppsort::sort(proj_sort, std::begin(vec), std::end(vec),
                                   cppsort::utility::as_projection(func));
         CHECK( res2 == call::iterator );
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+
+        vec = collection;
+        auto res3 = cppsort::sort(proj_sort, vec, func);
+        CHECK( res3 == call::iterable );
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+
+        vec = collection;
+        auto res4 = cppsort::sort(proj_sort, std::begin(vec), std::end(vec), func);
+        CHECK( res4 == call::iterator );
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 }
