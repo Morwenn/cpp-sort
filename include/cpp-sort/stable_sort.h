@@ -32,6 +32,7 @@
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/default_sorter.h>
+#include <cpp-sort/utility/logical_traits.h>
 
 namespace cppsort
 {
@@ -48,7 +49,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter_v<Compare, Iterable>>
+        typename = std::enable_if_t<not is_sorter_v<Iterable, Compare>>
     >
     auto stable_sort(Iterable&& iterable, Compare compare)
         -> void
@@ -110,9 +111,9 @@ namespace cppsort
     template<
         typename Sorter,
         typename Iterable,
-        typename = std::enable_if_t<is_sorter_v<
-            stable_adapter<Sorter>, Iterable
-        >>
+        typename = std::enable_if_t<
+            is_sorter_v<Sorter, Iterable>
+        >
     >
     auto stable_sort(const Sorter&, Iterable&& iterable)
         -> decltype(auto)
@@ -124,10 +125,10 @@ namespace cppsort
         typename Sorter,
         typename Iterable,
         typename Func,
-        typename = std::enable_if_t<
-            is_comparison_sorter_v<stable_adapter<Sorter>, Iterable, Func> ||
-            is_projection_sorter_v<stable_adapter<Sorter>, Iterable, Func>
-        >
+        typename = std::enable_if_t<utility::disjunction<
+            is_comparison_sorter<Sorter, Iterable, Func>,
+            is_projection_sorter<Sorter, Iterable, Func>
+        >::value>
     >
     auto stable_sort(const Sorter&, Iterable&& iterable, Func func)
         -> decltype(auto)

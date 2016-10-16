@@ -68,7 +68,12 @@ namespace utility
                 as_projection_fn(const as_projection_fn&) = default;
                 as_projection_fn(as_projection_fn&&) = default;
 
-                template<typename Func>
+                template<
+                    typename Func,
+                    typename = std::enable_if_t<
+                        not std::is_same<std::decay_t<Func>, as_projection_fn>::value
+                    >
+                >
                 explicit as_projection_fn(Func&& func):
                     _func(std::forward<Func>(func))
                 {}
@@ -124,7 +129,12 @@ namespace utility
                 as_comparison_fn(const as_comparison_fn&) = default;
                 as_comparison_fn(as_comparison_fn&&) = default;
 
-                template<typename Func>
+                template<
+                    typename Func,
+                    typename = std::enable_if_t<
+                        not std::is_same<std::decay_t<Func>, as_comparison_fn>::value
+                    >
+                >
                 explicit as_comparison_fn(Func&& func):
                     _func(std::forward<Func>(func))
                 {}
