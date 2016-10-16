@@ -68,6 +68,8 @@ set(
 set(
     UTILITY_TESTS
 
+    utility/as_projection.cpp
+    utility/as_projection_iterable.cpp
     utility/buffer.cpp
     utility/iter_swap.cpp
 )

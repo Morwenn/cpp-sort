@@ -62,7 +62,8 @@ namespace cppsort
         typename = std::enable_if_t<
             not is_comparison_sorter_v<Iterable, Compare, Projection> &&
             not is_projection_sorter_v<Iterable, Compare, Projection> &&
-            not is_sorter_iterator_v<Iterable, Compare>
+            not is_sorter_iterator_v<Iterable, Compare> &&
+            is_projection_v<Projection, Iterable, Compare>
         >
     >
     auto sort(Iterable&& iterable, Compare compare, Projection projection)
@@ -80,13 +81,13 @@ namespace cppsort
 
     template<
         typename Iterator,
-        typename Compare,
-        typename = std::enable_if_t<not is_sorter_iterator_v<Iterator, Compare>>
+        typename Func,
+        typename = std::enable_if_t<not is_sorter_iterator_v<Iterator, Func>>
     >
-    auto sort(Iterator first, Iterator last, Compare compare)
+    auto sort(Iterator first, Iterator last, Func func)
         -> void
     {
-        default_sorter{}(first, last, compare);
+        default_sorter{}(first, last, func);
     }
 
     template<

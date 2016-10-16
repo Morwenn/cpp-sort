@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cmath>
 #include <utility>
+#include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
 {
@@ -48,6 +49,184 @@ namespace utility
 
         using is_transparent = void;
     };
+
+    ////////////////////////////////////////////////////////////
+    // Transform overload in unary or binary function
+
+    namespace detail
+    {
+        template<typename Function>
+        struct as_projection_fn
+        {
+            private:
+
+                Function _func;
+
+            public:
+
+                as_projection_fn() = delete;
+                as_projection_fn(const as_projection_fn&) = default;
+                as_projection_fn(as_projection_fn&&) = default;
+
+                template<
+                    typename Func,
+                    typename = std::enable_if_t<
+                        not std::is_same<std::decay_t<Func>, as_projection_fn>::value
+                    >
+                >
+                explicit as_projection_fn(Func&& func):
+                    _func(std::forward<Func>(func))
+                {}
+
+                template<typename T>
+                auto operator()(T&& arg) &
+                    noexcept(noexcept(_func(std::forward<T>(arg))))
+                    -> decltype(_func(std::forward<T>(arg)))
+                {
+                    return _func(std::forward<T>(arg));
+                }
+
+                template<typename T>
+                auto operator()(T&& arg) &&
+                    noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
+                    -> decltype(std::move(_func)(std::forward<T>(arg)))
+                {
+                    return std::move(_func)(std::forward<T>(arg));
+                }
+
+                template<typename T>
+                auto operator()(T&& arg) const&
+                    noexcept(noexcept(_func(std::forward<T>(arg))))
+                    -> decltype(_func(std::forward<T>(arg)))
+                {
+                    return _func(std::forward<T>(arg));
+                }
+
+                template<typename T>
+                auto operator()(T&& arg) const&&
+                    noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
+                    -> decltype(std::move(_func)(std::forward<T>(arg)))
+                {
+                    return std::move(_func)(std::forward<T>(arg));
+                }
+        };
+
+        template<typename T>
+        struct is_as_projection_fn:
+            std::false_type
+        {};
+
+        template<typename T>
+        struct is_as_projection_fn<as_projection_fn<T>>:
+            std::true_type
+        {};
+
+        template<typename Function>
+        struct as_comparison_fn
+        {
+            private:
+
+                Function _func;
+
+            public:
+
+                as_comparison_fn() = delete;
+                as_comparison_fn(const as_comparison_fn&) = default;
+                as_comparison_fn(as_comparison_fn&&) = default;
+
+                template<
+                    typename Func,
+                    typename = std::enable_if_t<
+                        not std::is_same<std::decay_t<Func>, as_comparison_fn>::value
+                    >
+                >
+                explicit as_comparison_fn(Func&& func):
+                    _func(std::forward<Func>(func))
+                {}
+
+                template<typename T, typename U>
+                auto operator()(T&& lhs, U&& rhs) &
+                    noexcept(noexcept(_func(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(_func(std::forward<T>(lhs), std::forward<U>(rhs)))
+                {
+                    return _func(std::forward<T>(lhs), std::forward<U>(rhs));
+                }
+
+                template<typename T, typename U>
+                auto operator()(T&& lhs, U&& rhs) &&
+                    noexcept(noexcept(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
+                {
+                    return std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
+                }
+
+                template<typename T, typename U>
+                auto operator()(T&& lhs, U&& rhs) const&
+                    noexcept(noexcept(_func(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(_func(std::forward<T>(lhs), std::forward<U>(rhs)))
+                {
+                    return _func(std::forward<T>(lhs), std::forward<U>(rhs));
+                }
+
+                template<typename T, typename U>
+                auto operator()(T&& lhs, U&& rhs) const&&
+                    noexcept(noexcept(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
+                {
+                    return std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
+                }
+        };
+
+        template<typename T>
+        struct is_as_comparison_fn:
+            std::false_type
+        {};
+
+        template<typename T>
+        struct is_as_comparison_fn<as_comparison_fn<T>>:
+            std::true_type
+        {};
+    }
+
+    template<typename Function>
+    auto as_projection(Function&& func)
+        -> std::enable_if_t<
+            not detail::is_as_projection_fn<std::decay_t<Function>>::value,
+            detail::as_projection_fn<std::decay_t<Function>>
+        >
+    {
+        return detail::as_projection_fn<std::decay_t<Function>>(std::forward<Function>(func));
+    }
+
+    template<typename Function>
+    auto as_projection(Function&& func)
+        -> std::enable_if_t<
+            detail::is_as_projection_fn<std::decay_t<Function>>::value,
+            decltype(std::forward<Function>(func))
+        >
+    {
+        return std::forward<Function>(func);
+    }
+
+    template<typename Function>
+    auto as_comparison(Function&& func)
+        -> std::enable_if_t<
+            not detail::is_as_comparison_fn<std::decay_t<Function>>::value,
+            detail::as_comparison_fn<std::decay_t<Function>>
+        >
+    {
+        return detail::as_comparison_fn<std::decay_t<Function>>(std::forward<Function>(func));
+    }
+
+    template<typename Function>
+    auto as_comparison(Function&& func)
+        -> std::enable_if_t<
+            detail::is_as_comparison_fn<std::decay_t<Function>>::value,
+            decltype(std::forward<Function>(func))
+        >
+    {
+        return std::forward<Function>(func);
+    }
 
     ////////////////////////////////////////////////////////////
     // Math functions (mostly useful for buffer providers)
