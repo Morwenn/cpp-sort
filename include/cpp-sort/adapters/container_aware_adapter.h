@@ -184,6 +184,7 @@ namespace cppsort
             >
             auto operator()(Iterable& iterable, Projection projection) const
                 -> std::enable_if_t<
+                    not detail::can_comparison_sort<Sorter, Iterable, Projection>::value &&
                     detail::can_projection_sort<Sorter, Iterable, Projection>::value,
                     std::conditional_t<
                         Stability,
