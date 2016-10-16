@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
+#include "assume.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "memory.h"
@@ -60,30 +61,38 @@ namespace detail
     };
 
     template<typename Compare, typename InputIterator1, typename InputIterator2,
-             typename OutputIterator, typename Projection>
+             typename OutputIterator, typename Size, typename Projection>
     auto half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
                             InputIterator2 first2, InputIterator2 last2,
-                            OutputIterator result, Compare comp, Projection projection)
+                            OutputIterator result, Size min_len,
+                            Compare comp, Projection projection)
         -> void
     {
-        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
-        for (; first1 != last1; ++result)
-        {
-            if (first2 == last2)
-            {
+        for (; min_len != 0 ; --min_len) {
+                CPPSORT_ASSUME(first1 != last1);
+                CPPSORT_ASSUME(first2 != last2);
+                if (comp(proj(*first2), proj(*first1))) {
+                    *result = std::move(*first2);
+                    ++first2;
+                } else {
+                    *result = std::move(*first1);
+                    ++first1;
+                }
+                ++result;
+            }
+
+        for (; first1 != last1 ; ++result) {
+            if (first2 == last2) {
                 std::move(first1, last1, result);
                 return;
             }
 
-            if (comp(proj(*first2), proj(*first1)))
-            {
+            if (comp(proj(*first2), proj(*first1))) {
                 *result = std::move(*first2);
                 ++first2;
-            }
-            else
-            {
+            } else {
                 *result = std::move(*first1);
                 ++first1;
             }
@@ -107,23 +116,22 @@ namespace detail
         if (len1 <= len2)
         {
             rvalue_reference* p = buff;
-            for (BidirectionalIterator i = first; i != middle; ++d, (void) ++i, ++p)
-            {
+            for (BidirectionalIterator i = first; i != middle; ++d, (void) ++i, ++p) {
                 ::new(p) rvalue_reference(iter_move(i));
             }
-            half_inplace_merge(buff, p, middle, last, first, comp, projection);
+            half_inplace_merge(buff, p, middle, last, first, len1, comp, projection);
         }
         else
         {
             rvalue_reference* p = buff;
-            for (BidirectionalIterator i = middle; i != last; ++d, (void) ++i, ++p)
-            {
+            for (BidirectionalIterator i = middle; i != last; ++d, (void) ++i, ++p) {
                 ::new(p) rvalue_reference(iter_move(i));
             }
             using RBi = std::reverse_iterator<BidirectionalIterator>;
             using Rv = std::reverse_iterator<rvalue_reference*>;
             half_inplace_merge(Rv(p), Rv(buff),
-                               RBi(middle), RBi(first), RBi(last),
+                               RBi(middle), RBi(first),
+                               RBi(last), len2,
                                negate<Compare>(comp), projection);
         }
     }

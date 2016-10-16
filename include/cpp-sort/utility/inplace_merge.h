@@ -141,7 +141,7 @@ namespace utility
 
                 cppsort::detail::half_inplace_merge(
                     buffer, buff_it, f1, std::next(f1, n1), f0,
-                    compare, projection
+                    n0, compare, projection
                 );
                 return;
             }
