@@ -25,7 +25,6 @@
 #include <iterator>
 #include <vector>
 #include <catch.hpp>
-#include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
