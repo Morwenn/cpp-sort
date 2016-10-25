@@ -22,6 +22,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 
@@ -265,7 +266,7 @@ namespace detail
         }
 
         /* Finally, rebalance the current heap. */
-        RebalanceSingleHeap(itr, lastHeapSize, comp, projection);
+        RebalanceSingleHeap(itr, lastHeapSize, std::move(comp), std::move(projection));
       }
 
       /*
@@ -377,10 +378,12 @@ namespace detail
 
         /* If this isn't a final heap, then just rebalance the current heap. */
         if (!isLast)
-          RebalanceSingleHeap(end, shape.smallestTreeSize, comp, projection);
+          RebalanceSingleHeap(end, shape.smallestTreeSize,
+                              std::move(comp), std::move(projection));
         /* Otherwise do a full rectify to put this node in its place. */
         else
-          LeonardoHeapRectify(begin, end + 1, shape, comp, projection);
+          LeonardoHeapRectify(begin, end + 1, shape,
+                              std::move(comp), std::move(projection));
       }
 
       /*

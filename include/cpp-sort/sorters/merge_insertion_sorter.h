@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -66,7 +67,8 @@ namespace cppsort
                     "merge_insertion_sorter requires at least random-access iterators"
                 );
 
-                merge_insertion_sort(first, last, compare, projection);
+                merge_insertion_sort(std::move(first), std::move(last),
+                                     std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/begin_end.h>
@@ -70,7 +71,7 @@ namespace cppsort
 
                 quicksort(utility::begin(iterable), utility::end(iterable),
                           utility::size(iterable),
-                          compare, projection);
+                          std::move(compare), std::move(projection));
             }
 
             template<
@@ -93,8 +94,9 @@ namespace cppsort
                     "quick_sorter requires at least forward iterators"
                 );
 
-                quicksort(first, last, std::distance(first, last),
-                          compare, projection);
+                auto dist = std::distance(first, last);
+                quicksort(std::move(first), std::move(last), dist,
+                          std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

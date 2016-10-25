@@ -189,7 +189,7 @@ namespace cppsort
                                     iterator_category_t<Iterator>
                                 > * categories_number
                             >{},
-                            first, last,
+                            std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
@@ -199,7 +199,7 @@ namespace cppsort
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
                         choice<iterator_category_value<category> * categories_number>{},
-                        first, last, std::forward<Args>(args)...
+                        std::move(first), std::move(last), std::forward<Args>(args)...
                     );
                 }
 
@@ -226,7 +226,7 @@ namespace cppsort
                                     iterator_category_t<Iterator>
                                 > * categories_number
                             >{},
-                            first, last,
+                            std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {

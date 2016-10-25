@@ -33,6 +33,7 @@
 #include <iterator>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -96,7 +97,10 @@ namespace cppsort
                         iter_swap(last, max);
                     }
                 }
-                low_moves_sorter<N-2u>{}(++first, last, compare, projection);
+
+                ++first;
+                low_moves_sorter<N-2u>{}(std::move(first), std::move(last),
+                                         std::move(compare), std::move(projection));
             }
         };
     }

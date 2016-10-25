@@ -111,9 +111,11 @@ namespace cppsort
 
             template<typename Iterator, typename... Args>
             auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(Sorter{}(first, last, std::forward<Args>(args)...))
+                -> decltype(Sorter{}(std::move(first), std::move(last),
+                                     std::forward<Args>(args)...))
             {
-                return Sorter{}(first, last, std::forward<Args>(args)...);
+                return Sorter{}(std::move(first), std::move(last),
+                                std::forward<Args>(args)...);
             }
 
             ////////////////////////////////////////////////////////////

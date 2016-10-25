@@ -103,7 +103,7 @@ namespace detail
         public:
 
             constexpr three_way_compare(Compare compare):
-                compare(compare)
+                compare(std::move(compare))
             {}
 
             constexpr auto base() const noexcept
@@ -131,7 +131,7 @@ namespace detail
             typename Traits2, typename Alloc2
         >
         auto operator()(const std::basic_string<CharT, Traits1, Alloc1>& lhs,
-                        const std::basic_string<CharT, Traits2, Alloc2>& rhs)
+                        const std::basic_string<CharT, Traits2, Alloc2>& rhs) const
             -> int
         {
             return lhs.compare(0, lhs.size(), rhs.data(), rhs.size());
@@ -158,7 +158,7 @@ namespace detail
             typename Traits2, typename Alloc2
         >
         auto operator()(const std::basic_string<CharT, Traits1, Alloc1>& lhs,
-                        const std::basic_string<CharT, Traits2, Alloc2>& rhs)
+                        const std::basic_string<CharT, Traits2, Alloc2>& rhs) const
             -> int
         {
             int res = lhs.compare(0, lhs.size(), rhs.data(), rhs.size());

@@ -86,7 +86,7 @@ namespace cppsort
                 Sorter{}(
                     make_associate_iterator(projected.get()),
                     make_associate_iterator(projected.get() + size),
-                    compare,
+                    std::move(compare),
                     [](const auto& value) -> auto& { return value.data; }
                 );
             }
@@ -100,7 +100,7 @@ namespace cppsort
             {
                 // No projection to handle, forward everything to
                 // the adapted sorter
-                Sorter{}(first, last, compare);
+                Sorter{}(std::move(first), std::move(last), std::move(compare));
             }
         };
     }

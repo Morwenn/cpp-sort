@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/counting_sort.h"
@@ -50,7 +51,7 @@ namespace cppsort
                     std::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
-                counting_sort(first, last);
+                counting_sort(std::move(first), std::move(last));
             }
 
             template<typename ForwardIterator>
@@ -59,7 +60,7 @@ namespace cppsort
                     std::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
-                reverse_counting_sort(first, last);
+                reverse_counting_sort(std::move(first), std::move(last));
             }
 
             ////////////////////////////////////////////////////////////

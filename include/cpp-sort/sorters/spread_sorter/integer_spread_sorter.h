@@ -31,6 +31,7 @@
 #include <cstdint>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -61,7 +62,7 @@ namespace cppsort
                     is_projection_iterator_v<Projection, RandomAccessIterator>
                 >
             {
-                spreadsort::integer_sort(first, last, projection);
+                spreadsort::integer_sort(std::move(first), std::move(last), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

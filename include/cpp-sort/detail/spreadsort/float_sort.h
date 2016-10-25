@@ -23,6 +23,7 @@ Phil Endecott and Frank Gennari
 #include <cstring>
 #include <functional>
 #include <limits>
+#include <utility>
 #include "detail/constants.h"
 #include "detail/float_sort.h"
 #include "../pdqsort.h"
@@ -62,9 +63,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
       -> void
   {
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{}, projection);
+      pdqsort(std::move(first), std::move(last),
+              std::less<>{}, std::move(projection));
     else
-      detail::float_sort(first, last, projection);
+      detail::float_sort(std::move(first), std::move(last),
+                         std::move(projection));
   }
 }}}
 

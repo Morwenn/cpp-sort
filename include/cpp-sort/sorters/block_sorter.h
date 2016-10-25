@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/buffer.h>
@@ -68,7 +69,8 @@ namespace cppsort
                     "block_sorter requires at least random-access iterators"
                 );
 
-                block_sort<BufferProvider>(first, last, compare, projection);
+                block_sort<BufferProvider>(std::move(first), std::move(last),
+                                           std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

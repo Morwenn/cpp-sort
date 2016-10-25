@@ -32,6 +32,7 @@
 #include <list>
 #include <new>
 #include <type_traits>
+#include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -69,7 +70,7 @@ namespace detail
             group_iterator() = default;
 
             group_iterator(Iterator it, difference_type size):
-                _it(it),
+                _it(std::move(it)),
                 _size(size)
             {}
 
@@ -458,9 +459,9 @@ namespace detail
         -> void
     {
         merge_insertion_sort_impl(
-            make_group_iterator(first, 1),
-            make_group_iterator(last, 1),
-            compare, projection
+            make_group_iterator(std::move(first), 1),
+            make_group_iterator(std::move(last), 1),
+            std::move(compare), std::move(projection)
         );
     }
 }}

@@ -71,17 +71,17 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         for (; min_len != 0 ; --min_len) {
-                CPPSORT_ASSUME(first1 != last1);
-                CPPSORT_ASSUME(first2 != last2);
-                if (comp(proj(*first2), proj(*first1))) {
-                    *result = std::move(*first2);
-                    ++first2;
-                } else {
-                    *result = std::move(*first1);
-                    ++first1;
-                }
-                ++result;
+            CPPSORT_ASSUME(first1 != last1);
+            CPPSORT_ASSUME(first2 != last2);
+            if (comp(proj(*first2), proj(*first1))) {
+                *result = std::move(*first2);
+                ++first2;
+            } else {
+                *result = std::move(*first1);
+                ++first1;
             }
+            ++result;
+        }
 
         for (; first1 != last1 ; ++result) {
             if (first2 == last2) {
@@ -119,7 +119,8 @@ namespace detail
             for (BidirectionalIterator i = first; i != middle; ++d, (void) ++i, ++p) {
                 ::new(p) rvalue_reference(iter_move(i));
             }
-            half_inplace_merge(buff, p, middle, last, first, len1, comp, projection);
+            half_inplace_merge(buff, p, middle, last, first, len1,
+                               std::move(comp), std::move(projection));
         }
         else
         {
@@ -132,7 +133,7 @@ namespace detail
             half_inplace_merge(Rv(p), Rv(buff),
                                RBi(middle), RBi(first),
                                RBi(last), len2,
-                               negate<Compare>(comp), projection);
+                               negate<Compare>(comp), std::move(projection));
         }
     }
 
@@ -250,7 +251,8 @@ namespace detail
         std::unique_ptr<rvalue_reference, temporary_buffer_deleter> h(buff.first);
 
         using Comp_ref = std::add_lvalue_reference_t<Compare>;
-        return inplace_merge_impl<Comp_ref>(first, middle, last, comp, projection,
+        return inplace_merge_impl<Comp_ref>(std::move(first), std::move(middle), std::move(last),
+                                            comp, std::move(projection),
                                             len1, len2, buff.first, buff.second);
     }
 }}

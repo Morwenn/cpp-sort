@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
@@ -80,7 +81,8 @@ namespace detail
         -> ForwardIterator
     {
         return partition_impl<std::add_lvalue_reference_t<Predicate>>(
-            first, last, pred, iterator_category_t<ForwardIterator>{}
+            std::move(first), std::move(last), pred,
+            iterator_category_t<ForwardIterator>{}
         );
     }
 }}

@@ -21,6 +21,7 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <utility>
 #include "detail/constants.h"
 #include "detail/string_sort.h"
 #include "../pdqsort.h"
@@ -83,9 +84,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{}, projection);
+      pdqsort(std::move(first), std::move(last),
+              std::less<>{}, std::move(projection));
     else
-      detail::string_sort(first, last, projection, unused);
+      detail::string_sort(std::move(first), std::move(last),
+                          std::move(projection), unused);
   }
 
 /*! \brief String sort algorithm using random access iterators, allowing character-type overloads.
@@ -146,9 +149,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
   {
     //Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, comp, projection);
+      pdqsort(std::move(first), std::move(last),
+              std::move(comp), std::move(projection));
     else
-      detail::reverse_string_sort(first, last, projection, unused);
+      detail::reverse_string_sort(std::move(first), std::move(last),
+                                  std::move(projection), unused);
   }
 }}}
 

@@ -32,6 +32,7 @@
 #include <iterator>
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
@@ -64,7 +65,8 @@ namespace cppsort
                 >
             {
                 unsigned char unused = '\0';
-                spreadsort::string_sort(first, last, projection, unused);
+                spreadsort::string_sort(std::move(first), std::move(last),
+                                        std::move(projection), unused);
             }
 
             template<
@@ -81,7 +83,8 @@ namespace cppsort
                 >
             {
                 std::uint16_t unused = 0;
-                spreadsort::string_sort(first, last, projection, unused);
+                spreadsort::string_sort(std::move(first), std::move(last),
+                                        std::move(projection), unused);
             }
 
             ////////////////////////////////////////////////////////////
@@ -101,7 +104,9 @@ namespace cppsort
                 >
             {
                 unsigned char unused = '\0';
-                spreadsort::reverse_string_sort(first, last, compare, projection, unused);
+                spreadsort::reverse_string_sort(std::move(first), std::move(last),
+                                                std::move(compare), std::move(projection),
+                                                unused);
             }
 
             template<
@@ -118,7 +123,9 @@ namespace cppsort
                 >
             {
                 std::uint16_t unused = 0;
-                spreadsort::reverse_string_sort(first, last, compare, projection, unused);
+                spreadsort::reverse_string_sort(std::move(first), std::move(last),
+                                                std::move(compare), std::move(projection),
+                                                unused);
             }
 
             ////////////////////////////////////////////////////////////

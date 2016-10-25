@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
@@ -110,7 +111,9 @@ namespace detail
 
         inversions += count_inversions<ResultType>(first, middle, cache, compare);
         inversions += count_inversions<ResultType>(middle, last, cache, compare);
-        inversions += count_inversions_merge<ResultType>(first, middle, last, cache, compare);
+        inversions += count_inversions_merge<ResultType>(std::move(first), std::move(middle),
+                                                         std::move(last), std::move(cache),
+                                                         std::move(compare));
         return inversions;
     }
 

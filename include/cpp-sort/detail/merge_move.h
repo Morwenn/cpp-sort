@@ -15,6 +15,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "move.h"
@@ -50,7 +51,7 @@ namespace detail
                 ++first1;
             }
         }
-        return detail::move(first2, last2, result);
+        return detail::move(std::move(first2), std::move(last2), std::move(result));
     }
 }}
 

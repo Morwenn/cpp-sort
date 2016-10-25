@@ -30,6 +30,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -81,7 +82,8 @@ namespace probe
                 // Sort the iterators on pointed values
                 pdq_sorter{}(
                     iterators,
-                    cppsort::detail::indirect_compare<Compare, Projection>(compare, projection)
+                    cppsort::detail::indirect_compare<Compare, Projection>(std::move(compare),
+                                                                           std::move(projection))
                 );
 
                 ////////////////////////////////////////////////////////////

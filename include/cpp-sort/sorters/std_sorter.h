@@ -31,6 +31,7 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -65,7 +66,7 @@ namespace cppsort
                     "std_sorter requires at least random-access iterators"
                 );
 
-                std::sort(first, last, compare);
+                std::sort(std::move(first), std::move(last), std::move(compare));
             }
 
             ////////////////////////////////////////////////////////////
@@ -106,7 +107,7 @@ namespace cppsort
                     "stable_adapter<std_sorter> requires at least random-access iterators"
                 );
 
-                std::stable_sort(first, last, compare);
+                std::stable_sort(std::move(first), std::move(last), std::move(compare));
             }
 
             ////////////////////////////////////////////////////////////

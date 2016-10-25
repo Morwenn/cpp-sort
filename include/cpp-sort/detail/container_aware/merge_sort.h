@@ -32,6 +32,7 @@
 #include <iterator>
 #include <list>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -58,7 +59,8 @@ namespace cppsort
             // Recursively sort, then merge
             list_merge_sort(left, compare, projection);
             list_merge_sort(collection, compare, projection);
-            collection.merge(std::move(left), make_projection_compare(compare, projection));
+            collection.merge(std::move(left), make_projection_compare(std::move(compare),
+                                                                      std::move(projection)));
         }
 
         template<typename Compare, typename Projection,
@@ -78,7 +80,8 @@ namespace cppsort
             // Recursively sort, then merge
             flist_merge_sort(left, size / 2, compare, projection);
             flist_merge_sort(collection, size - size / 2, compare, projection);
-            collection.merge(std::move(left), make_projection_compare(compare, projection));
+            collection.merge(std::move(left), make_projection_compare(std::move(compare),
+                                                                      std::move(projection)));
         }
     }
 
@@ -104,7 +107,7 @@ namespace cppsort
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
-            detail::list_merge_sort(iterable, compare, utility::identity{});
+            detail::list_merge_sort(iterable, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -113,7 +116,7 @@ namespace cppsort
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
-            detail::list_merge_sort(iterable, std::less<>{}, projection);
+            detail::list_merge_sort(iterable, std::less<>{}, std::move(projection));
         }
 
         template<
@@ -128,7 +131,7 @@ namespace cppsort
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::list_merge_sort(iterable, compare, projection);
+            detail::list_merge_sort(iterable, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////
@@ -149,7 +152,7 @@ namespace cppsort
             >
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
-                                     compare, utility::identity{});
+                                     std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -159,7 +162,7 @@ namespace cppsort
             >
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
-                                     std::less<>{}, projection);
+                                     std::less<>{}, std::move(projection));
         }
 
         template<
@@ -175,7 +178,7 @@ namespace cppsort
             -> void
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
-                                     compare, projection);
+                                     std::move(compare), std::move(projection));
         }
     };
 }

@@ -16,6 +16,7 @@
 #include <cmath>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -41,8 +42,8 @@ namespace detail
         Range() {}
 
         Range(Iterator start, Iterator end):
-            start(start),
-            end(end)
+            start(std::move(start)),
+            end(std::move(end))
         {}
 
         auto length() const
@@ -72,10 +73,12 @@ namespace detail
         RandomAccessIterator index;
         for (index = first + skip ; compare(proj(*std::prev(index)), value_proj) ; index += skip) {
             if (index >= last - skip) {
-                return lower_bound(index, last, value_proj, compare, projection);
+                return lower_bound(index, last, value_proj,
+                                   std::move(compare), std::move(projection));
             }
         }
-        return lower_bound(index - skip, index, value_proj, compare, projection);
+        return lower_bound(index - skip, index, value_proj,
+                           std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
@@ -96,10 +99,12 @@ namespace detail
         RandomAccessIterator index;
         for (index = first + skip ; not compare(value_proj, proj(*std::prev(index))) ; index += skip) {
             if (index >= last - skip) {
-                return upper_bound(index, last, value_proj, compare, projection);
+                return upper_bound(index, last, value_proj,
+                                   std::move(compare), std::move(projection));
             }
         }
-        return upper_bound(index - skip, index, value_proj, compare, projection);
+        return upper_bound(index - skip, index, value_proj,
+                           std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
@@ -120,10 +125,12 @@ namespace detail
         RandomAccessIterator index;
         for (index = last - skip ; index > first && not compare(proj(*std::prev(index)), value_proj) ; index -= skip) {
             if (index < first + skip) {
-                return lower_bound(first, index, value_proj, compare, projection);
+                return lower_bound(first, index, value_proj,
+                                   std::move(compare), std::move(projection));
             }
         }
-        return lower_bound(index, index + skip, value_proj, compare, projection);
+        return lower_bound(index, index + skip, value_proj,
+                           std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
@@ -144,10 +151,12 @@ namespace detail
         RandomAccessIterator index;
         for (index = last - skip ; index > first && compare(value_proj, proj(*std::prev(index))) ; index -= skip) {
             if (index < first + skip) {
-                return upper_bound(first, index, value_proj, compare, projection);
+                return upper_bound(first, index, value_proj,
+                                   std::move(compare), std::move(projection));
             }
         }
-        return upper_bound(index, index + skip, value_proj, compare, projection);
+        return upper_bound(index, index + skip, value_proj,
+                           std::move(compare), std::move(projection));
     }
 
     namespace Wiki
@@ -189,7 +198,7 @@ namespace detail
             }
 
             // BlockSwap
-            detail::swap_ranges(A_index, A_last, insert_index);
+            detail::swap_ranges(std::move(A_index), std::move(A_last), std::move(insert_index));
         }
 
         // merge operation without a buffer
@@ -325,7 +334,8 @@ namespace detail
 
             difference_type size = std::distance(first, last);
             if (size < 15) {
-                insertion_sort(first, last, compare, projection);
+                insertion_sort(std::move(first), std::move(last),
+                               std::move(compare), std::move(projection));
                 return;
             }
 
@@ -910,7 +920,8 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
-        Wiki::sort<BufferProvider>(first, last, compare, projection);
+        Wiki::sort<BufferProvider>(std::move(first), std::move(last),
+                                   std::move(compare), std::move(projection));
     }
 }}
 

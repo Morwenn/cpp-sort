@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include "../front_insert.h"
@@ -53,7 +54,7 @@ namespace detail
             -> void
         {
             low_comparisons_sorter<10u>{}(first+1u, first+11u, compare, projection);
-            front_insert<11u>(first, compare, projection);
+            front_insert<11u>(std::move(first), std::move(compare), std::move(projection));
         }
     };
 }}

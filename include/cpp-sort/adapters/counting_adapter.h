@@ -59,8 +59,8 @@ namespace cppsort
                 -> CountType
             {
                 CountType count(0);
-                comparison_counter<Compare, CountType> cmp(compare, count);
-                ComparisonSorter{}(std::forward<Iterable>(iterable), cmp);
+                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                ComparisonSorter{}(std::forward<Iterable>(iterable), std::move(cmp));
                 return count;
             }
 
@@ -75,8 +75,8 @@ namespace cppsort
                 -> CountType
             {
                 CountType count(0);
-                comparison_counter<Compare, CountType> cmp(compare, count);
-                ComparisonSorter{}(first, last, cmp);
+                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                ComparisonSorter{}(std::move(first), std::move(last), std::move(cmp));
                 return count;
             }
 
@@ -93,8 +93,8 @@ namespace cppsort
                 -> CountType
             {
                 CountType count(0);
-                comparison_counter<Compare, CountType> cmp(compare, count);
-                ComparisonSorter{}(std::forward<Iterable>(iterable), cmp, projection);
+                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                ComparisonSorter{}(std::forward<Iterable>(iterable), std::move(cmp), projection);
                 return count;
             }
 
@@ -111,8 +111,9 @@ namespace cppsort
                 -> CountType
             {
                 CountType count(0);
-                comparison_counter<Compare, CountType> cmp(compare, count);
-                ComparisonSorter{}(first, last, cmp, projection);
+                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                ComparisonSorter{}(std::move(first), std::move(last),
+                                   std::move(cmp), std::move(projection));
                 return count;
             }
         };

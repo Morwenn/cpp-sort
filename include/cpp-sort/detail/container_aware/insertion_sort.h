@@ -32,6 +32,7 @@
 #include <iterator>
 #include <list>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -128,7 +129,7 @@ namespace cppsort
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
-            detail::list_insertion_sort(iterable, compare, utility::identity{});
+            detail::list_insertion_sort(iterable, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -137,7 +138,7 @@ namespace cppsort
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
-            detail::list_insertion_sort(iterable, std::less<>{}, projection);
+            detail::list_insertion_sort(iterable, std::less<>{}, std::move(projection));
         }
 
         template<
@@ -152,7 +153,7 @@ namespace cppsort
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::list_insertion_sort(iterable, compare, projection);
+            detail::list_insertion_sort(iterable, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////
@@ -171,7 +172,7 @@ namespace cppsort
                 is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
-            detail::flist_insertion_sort(iterable, compare, utility::identity{});
+            detail::flist_insertion_sort(iterable, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -180,7 +181,7 @@ namespace cppsort
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
-            detail::flist_insertion_sort(iterable, std::less<>{}, projection);
+            detail::flist_insertion_sort(iterable, std::less<>{}, std::move(projection));
         }
 
         template<
@@ -195,7 +196,7 @@ namespace cppsort
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, compare, projection);
+            detail::flist_insertion_sort(iterable, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////

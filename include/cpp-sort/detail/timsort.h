@@ -76,8 +76,8 @@ namespace detail
             difference_type len;
 
             run(iterator base, difference_type len):
-                base(base),
-                len(len)
+                base(std::move(base)),
+                len(std::move(len))
             {}
         };
         std::vector<run> pending_;
@@ -94,7 +94,7 @@ namespace detail
 
             if (nRemaining < min_merge) {
                 difference_type const initRunLen = countRunAndMakeAscending(lo, hi, c, projection);
-                binarySort(lo, hi, lo + initRunLen, c, projection);
+                binarySort(lo, hi, lo + initRunLen, std::move(c), std::move(projection));
                 return;
             }
 
@@ -188,7 +188,7 @@ namespace detail
         }
 
         TimSort(compare_type comp, Projection projection):
-            comp_(comp), proj_(projection),
+            comp_(std::move(comp)), proj_(std::move(projection)),
             minGallop_(min_gallop)
         {}
 
@@ -682,7 +682,8 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
-        TimSort<RandomAccessIterator, Compare, Projection>::sort(first, last, compare, projection);
+        TimSort<RandomAccessIterator, Compare, Projection>::sort(std::move(first), std::move(last),
+                                                                 std::move(compare), std::move(projection));
     }
 }}
 

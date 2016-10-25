@@ -466,8 +466,8 @@ namespace detail
         -> void
     {
         if (std::distance(begin, end) < 2) return;
-        pdqsort_detail::pdqsort_loop(begin, end,
-                                     comp, projection,
+        pdqsort_detail::pdqsort_loop(std::move(begin), std::move(end),
+                                     std::move(comp), std::move(projection),
                                      utility::log2(end - begin));
     }
 }}

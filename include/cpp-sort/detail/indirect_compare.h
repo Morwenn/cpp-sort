@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <tuple>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
@@ -45,7 +46,7 @@ namespace detail
         public:
 
             indirect_compare(Compare compare, Projection projection):
-                data(compare, projection)
+                data(std::move(compare), std::move(projection))
             {}
 
             template<typename Iterator>

@@ -16,6 +16,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
@@ -57,7 +58,8 @@ namespace detail
     auto reverse(BidirectionalIterator first, BidirectionalIterator last)
         -> void
     {
-        reverse_impl(first, last, iterator_category_t<BidirectionalIterator>{});
+        reverse_impl(std::move(first), std::move(last),
+                     iterator_category_t<BidirectionalIterator>{});
     }
 }}
 

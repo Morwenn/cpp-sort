@@ -62,7 +62,7 @@ namespace cppsort
             public:
 
                 stable_compare(Compare compare, Projection projection={}):
-                    data(compare, utility::as_function(projection))
+                    data(std::move(compare), utility::as_function(projection))
                 {}
 
                 auto compare() const
@@ -147,7 +147,7 @@ namespace cppsort
                 return Sorter{}(
                     make_associate_iterator(iterators.get()),
                     make_associate_iterator(iterators.get() + size),
-                    make_stable_compare(compare, projection)
+                    make_stable_compare(std::move(compare), std::move(projection))
                 );
             }
 

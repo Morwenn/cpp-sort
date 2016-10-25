@@ -112,7 +112,7 @@ namespace cppsort
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
-            detail::list_selection_sort(iterable, compare, utility::identity{});
+            detail::list_selection_sort(iterable, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -121,7 +121,7 @@ namespace cppsort
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
-            detail::list_selection_sort(iterable, std::less<>{}, projection);
+            detail::list_selection_sort(iterable, std::less<>{}, std::move(projection));
         }
 
         template<
@@ -136,7 +136,7 @@ namespace cppsort
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::list_selection_sort(iterable, compare, projection);
+            detail::list_selection_sort(iterable, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ namespace cppsort
                 is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
-            detail::flist_selection_sort(iterable, compare, utility::identity{});
+            detail::flist_selection_sort(iterable, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -164,7 +164,7 @@ namespace cppsort
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
-            detail::flist_selection_sort(iterable, std::less<>{}, projection);
+            detail::flist_selection_sort(iterable, std::less<>{}, std::move(projection));
         }
 
         template<
@@ -179,7 +179,7 @@ namespace cppsort
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::flist_selection_sort(iterable, compare, projection);
+            detail::flist_selection_sort(iterable, std::move(compare), std::move(projection));
         }
     };
 }

@@ -44,7 +44,7 @@ namespace detail
         public:
 
             comparison_counter(Compare compare, CountType& count):
-                compare(compare),
+                compare(std::move(compare)),
                 count(count)
             {}
 

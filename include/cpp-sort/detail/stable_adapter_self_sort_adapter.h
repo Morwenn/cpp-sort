@@ -87,7 +87,7 @@ namespace cppsort
         auto operator()(std::forward_list<T>& iterable, Compare compare) const
             -> void
         {
-            return iterable.sort(compare);
+            return iterable.sort(std::move(compare));
         }
 
         template<typename T>
@@ -105,7 +105,7 @@ namespace cppsort
         auto operator()(std::list<T>& iterable, Compare compare) const
             -> void
         {
-            return iterable.sort(compare);
+            return iterable.sort(std::move(compare));
         }
 
         ////////////////////////////////////////////////////////////

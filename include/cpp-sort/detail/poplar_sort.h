@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
@@ -66,7 +67,8 @@ namespace detail
         {
             using utility::iter_swap;
             iter_swap(root, max_root);
-            sift(max_root - (size / 2 - 1), size / 2, compare, projection);
+            sift(max_root - (size / 2 - 1), size / 2,
+                 std::move(compare), std::move(projection));
         }
     }
 
@@ -93,7 +95,8 @@ namespace detail
         {
             using utility::iter_swap;
             iter_swap(first + roots[m] - 1, first + roots[nb_poplars] - 1);
-            sift(first + roots[m-1], roots[m] - roots[m-1], compare, projection);
+            sift(first + roots[m-1], roots[m] - roots[m-1],
+                 std::move(compare), std::move(projection));
         }
     }
 
@@ -108,7 +111,8 @@ namespace detail
             // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
             // should be faster
-            insertion_sort(first, last, compare, projection);
+            insertion_sort(std::move(first), std::move(last),
+                           std::move(compare), std::move(projection));
             return;
         }
 
@@ -129,7 +133,7 @@ namespace detail
             sift(first, middle - first, compare, projection);
         }
 
-        sift(first, size, compare, projection);
+        sift(std::move(first), size, std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>

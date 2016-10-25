@@ -54,7 +54,7 @@ namespace cppsort
     auto stable_sort(Iterable&& iterable, Compare compare)
         -> void
     {
-        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable), compare);
+        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable), std::move(compare));
     }
 
     template<
@@ -69,14 +69,15 @@ namespace cppsort
     auto stable_sort(Iterable&& iterable, Compare compare, Projection projection)
         -> void
     {
-        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable), compare, projection);
+        stable_adapter<default_sorter>{}(std::forward<Iterable>(iterable),
+                                         std::move(compare), std::move(projection));
     }
 
     template<typename Iterator>
     auto stable_sort(Iterator first, Iterator last)
         -> void
     {
-        stable_adapter<default_sorter>{}(first, last);
+        stable_adapter<default_sorter>{}(std::move(first), std::move(last));
     }
 
     template<
@@ -87,7 +88,8 @@ namespace cppsort
     auto stable_sort(Iterator first, Iterator last, Compare compare)
         -> void
     {
-        stable_adapter<default_sorter>{}(first, last, compare);
+        stable_adapter<default_sorter>{}(std::move(first), std::move(last),
+                                         std::move(compare));
     }
 
     template<
@@ -102,7 +104,8 @@ namespace cppsort
     auto stable_sort(Iterator first, Iterator last, Compare compare, Projection projection)
         -> void
     {
-        return stable_adapter<default_sorter>{}(first, last, compare, projection);
+        return stable_adapter<default_sorter>{}(std::move(first), std::move(last),
+                                                std::move(compare), std::move(projection));
     }
 
     ////////////////////////////////////////////////////////////
@@ -133,7 +136,7 @@ namespace cppsort
     auto stable_sort(const Sorter&, Iterable&& iterable, Func func)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), func);
+        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::move(func));
     }
 
     template<
@@ -146,7 +149,8 @@ namespace cppsort
                      Compare compare, Projection projection)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), compare, projection);
+        return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable),
+                                        std::move(compare), std::move(projection));
     }
 
     template<
@@ -159,7 +163,7 @@ namespace cppsort
     auto stable_sort(const Sorter&, Iterator first, Iterator last)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(first, last);
+        return stable_adapter<Sorter>{}(std::move(first), std::move(last));
     }
 
     template<
@@ -174,7 +178,7 @@ namespace cppsort
     auto stable_sort(const Sorter&, Iterator first, Iterator last, Func func)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(first, last, func);
+        return stable_adapter<Sorter>{}(std::move(first), std::move(last), std::move(func));
     }
 
     template<
@@ -187,7 +191,8 @@ namespace cppsort
                      Compare compare, Projection projection)
         -> decltype(auto)
     {
-        return stable_adapter<Sorter>{}(first, last, compare, projection);
+        return stable_adapter<Sorter>{}(std::move(first), std::move(last),
+                                        std::move(compare), std::move(projection));
     }
 }
 

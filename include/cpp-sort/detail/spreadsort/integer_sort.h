@@ -24,6 +24,7 @@ Doxygen comments by Paul A. Bristow Jan 2015
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "detail/constants.h"
@@ -89,9 +90,11 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
     // Don't sort if it's too small to optimize.
     if (last - first < detail::min_sort_size)
-      pdqsort(first, last, std::less<>{}, projection);
+      pdqsort(std::move(first), std::move(last),
+              std::less<>{}, std::move(projection));
     else
-      detail::integer_sort(first, last, proj(*first) >> 0, projection);
+      detail::integer_sort(std::move(first), std::move(last),
+                           proj(*first) >> 0, std::move(projection));
   }
 }}}
 
