@@ -32,6 +32,9 @@
 #include <locale>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/detection.h>
+#include <cpp-sort/utility/is_callable.h>
+#include <cpp-sort/utility/logical_traits.h>
 #include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
@@ -80,11 +83,29 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Customization point
 
-        class case_insensitive_less_locale_fn
+        struct case_insensitive_less_fn;
+        struct case_insensitive_less_locale_fn;
+        namespace adl_barrier
+        {
+            template<typename T>
+            struct refined_case_insensitive_less_fn;
+            template<typename T>
+            struct refined_case_insensitive_less_locale_fn;
+        }
+
+        template<typename T>
+        using can_be_refined_for_t
+            = decltype(*std::begin(std::declval<T&>()));
+
+        template<typename T>
+        constexpr bool can_be_refined_for
+            = utility::is_detected_v<can_be_refined_for_t, T>;
+
+        struct case_insensitive_less_locale_fn
         {
             private:
 
-                const std::locale& loc;
+                std::locale loc;
 
             public:
 
@@ -99,6 +120,16 @@ namespace cppsort
                 {
                     return case_insensitive_less(std::forward<T>(lhs), std::forward<U>(rhs), loc);
                 }
+
+                template<
+                    typename T,
+                    typename = std::enable_if_t<can_be_refined_for<T>>
+                >
+                auto refine() const
+                    -> adl_barrier::refined_case_insensitive_less_locale_fn<T>
+                {
+                    return adl_barrier::refined_case_insensitive_less_locale_fn<T>(loc);
+                }
         };
 
         struct case_insensitive_less_fn
@@ -111,12 +142,154 @@ namespace cppsort
                 return case_insensitive_less(std::forward<T>(lhs), std::forward<U>(rhs));
             }
 
+            template<
+                typename T,
+                typename = std::enable_if_t<can_be_refined_for<T>>
+            >
+            auto refine() const
+                -> adl_barrier::refined_case_insensitive_less_fn<T>
+            {
+                return adl_barrier::refined_case_insensitive_less_fn<T>();
+            }
+
             inline auto operator()(const std::locale& loc) const
                 -> case_insensitive_less_locale_fn
             {
                 return case_insensitive_less_locale_fn(loc);
             }
         };
+
+        namespace adl_barrier
+        {
+            // Hide the generic case_insensitive_less from the enclosing namespace
+            struct nope_type {};
+            template<typename T>
+            auto case_insensitive_less(const T& lhs, const T& rhs, const std::locale loc)
+                -> nope_type;
+            template<typename T>
+            auto case_insensitive_less(const T& lhs, const T& rhs)
+                -> nope_type;
+
+            // It makes is_callable easier to work with
+            struct caller
+            {
+                template<typename T>
+                auto operator()(const T& lhs, const T& rhs, const std::locale loc) const
+                    -> decltype(case_insensitive_less(lhs, rhs, loc))
+                {
+                    return case_insensitive_less(lhs, rhs, loc);
+                }
+
+                template<typename T>
+                auto operator()(const T& lhs, const T& rhs) const
+                    -> decltype(case_insensitive_less(lhs, rhs))
+                {
+                    return case_insensitive_less(lhs, rhs);
+                }
+            };
+
+            template<typename T>
+            struct refined_case_insensitive_less_locale_fn
+            {
+                private:
+
+                    using char_type = std::decay_t<decltype(*std::begin(std::declval<T&>()))>;
+
+                    std::locale loc;
+                    const std::ctype<char_type>& ct;
+
+                public:
+
+                    explicit refined_case_insensitive_less_locale_fn(std::locale loc):
+                        loc(loc),
+                        ct(std::use_facet<std::ctype<char_type>>(loc))
+                    {}
+
+                    template<typename U=T>
+                    auto operator()(const T& lhs, const T& rhs) const
+                        -> std::enable_if_t<
+                            not utility::is_callable<caller(U, U, std::locale), nope_type>::value,
+                            decltype(case_insensitive_less(lhs, rhs, loc))
+                        >
+                    {
+                        return case_insensitive_less(lhs, rhs, loc);
+                    }
+
+                    template<typename U=T>
+                    auto operator()(const T& lhs, const T& rhs) const
+                        -> std::enable_if_t<
+                            utility::is_callable<caller(U, U, std::locale), nope_type>::value,
+                            bool
+                        >
+                    {
+                        return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
+                                                            std::begin(rhs), std::end(rhs),
+                                                            char_less<char_type>(ct));
+                    }
+            };
+
+            template<typename T>
+            struct refined_case_insensitive_less_fn
+            {
+                private:
+
+                    using char_type = std::decay_t<decltype(*std::begin(std::declval<T&>()))>;
+
+                    std::locale loc;
+                    const std::ctype<char_type>& ct;
+
+                public:
+
+                    refined_case_insensitive_less_fn():
+                        loc(),
+                        ct(std::use_facet<std::ctype<char_type>>(loc))
+                    {}
+
+                    template<typename U=T>
+                    auto operator()(const T& lhs, const T& rhs) const
+                        -> std::enable_if_t<
+                            utility::negation<utility::is_callable<caller(U, U), nope_type>>::value,
+                            decltype(case_insensitive_less(lhs, rhs))
+                        >
+                    {
+                        return case_insensitive_less(lhs, rhs);
+                    }
+
+                    template<typename U=T>
+                    auto operator()(const T& lhs, const T& rhs) const
+                        -> std::enable_if_t<
+                            utility::conjunction<
+                                utility::is_callable<caller(U, U), nope_type>,
+                                utility::negation<utility::is_callable<caller(U, U, std::locale), nope_type>>
+                            >::value,
+                            decltype(case_insensitive_less(lhs, rhs, loc))
+                        >
+                    {
+                        return case_insensitive_less(lhs, rhs, loc);
+                    }
+
+                    template<typename U=T>
+                    auto operator()(const T& lhs, const T& rhs) const
+                        -> std::enable_if_t<
+                            utility::conjunction<
+                                utility::is_callable<caller(U, U), nope_type>,
+                                utility::is_callable<caller(U, U, std::locale), nope_type>
+                            >::value,
+                            bool
+                        >
+                    {
+                        return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
+                                                            std::begin(rhs), std::end(rhs),
+                                                            char_less<char_type>(ct));
+                    }
+
+                    auto operator()(const std::locale& loc) const
+                        -> refined_case_insensitive_less_locale_fn<T>
+                    {
+                        return refined_case_insensitive_less_locale_fn<T>(loc);
+                    }
+            };
+        }
     }
 
     namespace
