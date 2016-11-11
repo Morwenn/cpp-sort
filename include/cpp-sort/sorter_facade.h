@@ -255,6 +255,11 @@ namespace cppsort
             template<typename Iterator, typename Projection>
             auto operator()(Iterator first, Iterator last, Projection projection) const
                 -> std::enable_if_t<
+                    not detail::has_comparison_sort_iterator<
+                        Sorter,
+                        Iterator,
+                        refined_t<decltype(*first), Projection>
+                    >::value &&
                     detail::has_projection_sort_iterator<
                         Sorter,
                         Iterator,
@@ -293,6 +298,11 @@ namespace cppsort
             template<typename Iterable, typename Projection>
             auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
+                    not detail::has_comparison_sort<
+                        Sorter,
+                        Iterable,
+                        refined_t<decltype(*utility::begin(iterable)), Projection>
+                    >::value &&
                     detail::has_projection_sort<
                         Sorter,
                         Iterable,
@@ -309,6 +319,11 @@ namespace cppsort
             template<typename Iterable, typename Projection>
             auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
+                    not detail::has_comparison_sort<
+                        Sorter,
+                        Iterable,
+                        refined_t<decltype(*utility::begin(iterable)), Projection>
+                    >::value &&
                     not detail::has_projection_sort<
                         Sorter,
                         Iterable,
@@ -331,6 +346,16 @@ namespace cppsort
             template<typename Iterable, typename Projection>
             auto operator()(Iterable&& iterable, Projection projection) const
                 -> std::enable_if_t<
+                    not detail::has_comparison_sort<
+                        Sorter,
+                        Iterable,
+                        refined_t<decltype(*utility::begin(iterable)), Projection>
+                    >::value &&
+                    not detail::has_comparison_sort_iterator<
+                        Sorter,
+                        decltype(utility::begin(iterable)),
+                        refined_t<decltype(*utility::begin(iterable)), Projection>
+                    >::value &&
                     not detail::has_projection_sort<
                         Sorter,
                         Iterable,
@@ -381,7 +406,7 @@ namespace cppsort
                         refined_t<decltype(*utility::begin(iterable)), Projection>
                     >::value,
                     decltype(Sorter::operator()(utility::begin(iterable), utility::end(iterable), std::less<>{},
-                                                refined<decltype(*utility::begin(iterable))>(pstd::move(rojection))))
+                                                refined<decltype(*utility::begin(iterable))>(std::move(projection))))
                 >
             {
                 return Sorter::operator()(utility::begin(iterable), utility::end(iterable), std::less<>{},
