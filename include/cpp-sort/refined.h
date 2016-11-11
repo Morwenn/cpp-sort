@@ -38,13 +38,13 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Whether a comparator has a member refine method
 
-        template<typename Compare, typename T>
+        template<typename Function, typename T>
         using has_refine_method_t
-            = decltype(std::declval<Compare&>().template refine<T>());
+            = decltype(std::declval<Function&>().template refine<T>());
 
-        template<typename Compare, typename T>
+        template<typename Function, typename T>
         constexpr bool has_refine_method
-            = utility::is_detected_v<has_refine_method_t, Compare, T>;
+            = utility::is_detected_v<has_refine_method_t, Function, T>;
     }
 
     ////////////////////////////////////////////////////////////
@@ -53,30 +53,29 @@ namespace cppsort
 
     template<
         typename T,
-        typename Compare,
-        typename = std::enable_if_t<detail::has_refine_method<Compare, T>>
+        typename Function,
+        typename = std::enable_if_t<detail::has_refine_method<Function, T>>
     >
-    auto refined(Compare compare)
-        noexcept(noexcept(compare.template refine<T>()))
-        -> decltype(compare.template refine<T>())
+    auto refined(Function func)
+        noexcept(noexcept(func.template refine<T>()))
+        -> decltype(func.template refine<T>())
     {
-        return compare.template refine<T>();
+        return func.template refine<T>();
     }
 
     template<
         typename T,
-        typename Compare,
-        typename = std::enable_if_t<not detail::has_refine_method<Compare, T>>
+        typename Function,
+        typename = std::enable_if_t<not detail::has_refine_method<Function, T>>
     >
-    auto refined(Compare compare)
-        noexcept(noexcept(compare))
-        -> decltype(compare)
+    constexpr auto refined(Function&& func) noexcept
+        -> Function&&
     {
-        return compare;
+        return std::forward<Function>(func);
     }
 
-    template<typename T, typename Compare>
-    using refined_t = std::decay_t<decltype(refined<std::decay_t<T>>(std::declval<Compare&>()))>;
+    template<typename T, typename Function>
+    using refined_t = std::decay_t<decltype(refined<std::decay_t<T>>(std::declval<Function&>()))>;
 }
 
 #endif // CPPSORT_REFINED_H_
