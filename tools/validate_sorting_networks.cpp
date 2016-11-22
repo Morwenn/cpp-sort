@@ -101,7 +101,7 @@ int main()
     // the slower O(n!).
 
     // Sizes of the sorting networks to validate
-    using indices = std::index_sequence<24>;
+    using indices = std::make_index_sequence<25>;
 
     validate_sorting_networks<int>(indices{});
 }
