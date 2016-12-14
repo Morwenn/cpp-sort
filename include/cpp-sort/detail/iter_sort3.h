@@ -28,8 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
-#include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
+#include "swap_if.h"
 
 namespace cppsort
 {
@@ -40,35 +39,9 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_move;
-        using utility::iter_swap;
-        auto&& proj = utility::as_function(projection);
-
-        if (compare(proj(*b), proj(*a))) {
-            if (compare(proj(*c), proj(*a))) {
-                if (compare(proj(*c), proj(*b))) {
-                    iter_swap(a, c);
-                } else {
-                    auto tmp = iter_move(a);
-                    *a = iter_move(b);
-                    *b = iter_move(c);
-                    *c = std::move(tmp);
-                }
-            } else {
-                iter_swap(a, b);
-            }
-        } else {
-            if (compare(proj(*c), proj(*b))) {
-                if (compare(proj(*c), proj(*a))) {
-                    auto tmp = iter_move(c);
-                    *c = iter_move(b);
-                    *b = iter_move(a);
-                    *a = std::move(tmp);
-                } else {
-                    iter_swap(b, c);
-                }
-            }
-        }
+        iter_swap_if(b, c, compare, projection);
+        iter_swap_if(a, c, compare, projection);
+        iter_swap_if(a, b, compare, projection);
     }
 }}
 

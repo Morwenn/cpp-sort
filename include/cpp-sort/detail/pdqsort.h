@@ -47,6 +47,9 @@ namespace detail
             // Partitions below this size are sorted using insertion sort.
             insertion_sort_threshold = 24,
 
+            // Partitions above this size use Tukey's ninther to select the pivot.
+            ninther_threshold = 80,
+
             // When we detect an already sorted partition, attempt an insertion sort that allows this
             // amount of element moves before giving up.
             partial_insertion_sort_limit = 8,
@@ -186,16 +189,20 @@ namespace detail
                 // This case is needed for the descending distribution, where we need
                 // to have proper swapping for pdqsort to remain O(n).
                 for (int i = 0 ; i < num ; ++i) {
-                    iter_swap(first + offsets_l[i], last - 1 - offsets_r[i]);
+                    iter_swap(first + offsets_l[i], last - offsets_r[i]);
                 }
             } else if (num > 0) {
-                auto tmp = iter_move(first + offsets_l[0]);
-                *(first + offsets_l[0]) = iter_move(last - 1 - offsets_r[0]);
+                RandomAccessIterator l = first + offsets_l[0];
+                RandomAccessIterator r = last - offsets_r[0];
+                auto tmp = iter_move(l);
+                *l = iter_move(r);
                 for (int i = 1 ; i < num ; ++i) {
-                    *(last - 1 - offsets_r[i - 1]) = iter_move(first + offsets_l[i]);
-                    *(first + offsets_l[i]) = iter_move(last - 1 - offsets_r[i]);
+                    l = first + offsets_l[i];
+                    *r = iter_move(l);
+                    r = last - offsets_r[i];
+                    *l = iter_move(r);
                 }
-                *(last - 1 - offsets_r[num - 1]) = std::move(tmp);
+                *r = std::move(tmp);
             }
         }
 
@@ -250,28 +257,30 @@ namespace detail
                 // Fill up offset blocks with elements that are on the wrong side.
                 if (num_l == 0) {
                     start_l = 0;
+                    RandomAccessIterator it = first;
                     for (unsigned char i = 0 ; i < block_size ;) {
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
-                        offsets_l[num_l] = i; num_l += !comp(proj(*(first + i)), pivot_proj); ++i;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
                     }
                 }
                 if (num_r == 0) {
                     start_r = 0;
-                    for (unsigned char i = 0; i < block_size;) {
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
-                        offsets_r[num_r] = i; num_r += comp(proj(*(last - 1 - i)), pivot_proj); ++i;
+                    RandomAccessIterator it = last;
+                    for (unsigned char i = 0 ; i < block_size;) {
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
                     }
                 }
 
@@ -303,14 +312,19 @@ namespace detail
             // Fill offset buffers if needed.
             if (unknown_left && !num_l) {
                 start_l = 0;
-                for (unsigned char i = 0 ; i < l_size ; ++i) {
-                    offsets_l[num_l] = i ; num_l += !comp(proj(*(first + i)), pivot_proj);
+                RandomAccessIterator it = first;
+                for (unsigned char i = 0 ; i < l_size ;) {
+                    offsets_l[num_l] = i++;
+                    num_l += !comp(proj(*it), pivot_proj);
+                    ++it;
                 }
             }
             if (unknown_left && !num_r) {
                 start_r = 0;
-                for (unsigned char i = 0 ; i < r_size ; ++i) {
-                    offsets_r[num_r] = i ; num_r += comp(proj(*(last - 1 - i)), pivot_proj);
+                RandomAccessIterator it = last;
+                for (unsigned char i = 0 ; i < r_size ;) {
+                    offsets_r[num_r] = ++i;
+                    num_r += comp(proj(*--it), pivot_proj);
                 }
             }
 
@@ -324,12 +338,16 @@ namespace detail
             // We have now fully identified [first, last)'s proper position. Swap the last elements.
             if (num_l) {
                 offsets_l += start_l;
-                while (num_l--) iter_swap(first + offsets_l[num_l], --last);
+                while (num_l--) {
+                    iter_swap(first + offsets_l[num_l], --last);
+                }
                 first = last;
             }
             if (num_r) {
                 offsets_r += start_r;
-                while (num_r--) iter_swap(last - 1 - offsets_r[num_r], first), ++first;
+                while (num_r--) {
+                    iter_swap(last - offsets_r[num_r], first), ++first;
+                }
                 last = first;
             }
 
@@ -399,8 +417,17 @@ namespace detail
                     return;
                 }
 
-                // Choose pivot as median of 3.
-                iter_sort3(begin + size / 2, begin, end - 1, comp, projection);
+                // Choose pivot as median of 3 or pseudomedian of 9.
+                difference_type s2 = size / 2;
+                if (size > ninther_threshold) {
+                    iter_sort3(begin, begin + s2, end - 1, comp, projection);
+                    iter_sort3(begin + 1, begin + (s2 - 1), end - 2, comp, projection);
+                    iter_sort3(begin + 2, begin + (s2 + 1), end - 3, comp, projection);
+                    iter_sort3(begin + (s2 - 1), begin + s2, begin + (s2 + 1), comp, projection);
+                    iter_swap(begin, begin + s2);
+                } else {
+                    iter_sort3(begin + s2, begin, end - 1, comp, projection);
+                }
 
                 // If *(begin - 1) is the end of the right partition of a previous partition operation
                 // there is no element in [begin, end) that is smaller than *(begin - 1). Then if our
@@ -435,11 +462,25 @@ namespace detail
                     if (l_size >= insertion_sort_threshold) {
                         iter_swap(begin,             begin + l_size / 4);
                         iter_swap(pivot_pos - 1, pivot_pos - l_size / 4);
+
+                        if (l_size > ninther_threshold) {
+                            iter_swap(begin + 1,         begin + (l_size / 4 + 1));
+                            iter_swap(begin + 2,         begin + (l_size / 4 + 2));
+                            iter_swap(pivot_pos - 2, pivot_pos - (l_size / 4 + 1));
+                            iter_swap(pivot_pos - 3, pivot_pos - (l_size / 4 + 2));
+                        }
                     }
 
                     if (r_size >= insertion_sort_threshold) {
-                        iter_swap(pivot_pos + 1, pivot_pos + 1 + r_size / 4);
-                        iter_swap(end - 1,                 end - r_size / 4);
+                        iter_swap(pivot_pos + 1, pivot_pos + (1 + r_size / 4));
+                        iter_swap(end - 1,                   end - r_size / 4);
+
+                        if (r_size > ninther_threshold) {
+                            iter_swap(pivot_pos + 2, pivot_pos + (2 + r_size / 4));
+                            iter_swap(pivot_pos + 3, pivot_pos + (3 + r_size / 4));
+                            iter_swap(end - 2,             end - (1 + r_size / 4));
+                            iter_swap(end - 3,             end - (2 + r_size / 4));
+                        }
                     }
                 } else {
                     // If we were decently balanced and we tried to sort an already partitioned
