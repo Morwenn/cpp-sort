@@ -23,8 +23,7 @@ int main()
     cppsort::sort(arr);
     
     // prints 2 3 5 8 9
-    for (int val: arr)
-    {
+    for (int val: arr) {
         std::cout << val << ' ';
     }
 }
@@ -85,10 +84,10 @@ directory. It shows the time needed for one sorting algorithm to sort one millio
 shuffled `std::array<int, N>` of sizes 0 to 15. It compares the sorters generally
 used to sort small arrays:
 
-![shuffled int arrays](https://i.imgur.com/GaRHn9x.png)
+![small shuffled int arrays](https://i.imgur.com/mpV0Qur.png)
 
-These results were generated with MinGW g++ 5.2 with the compiler options
-`-std=c++14 -O3 -march=native`. This benchmark is just an example to make the
+These results were generated with MinGW g++ 6.1.0 with the compiler options
+`-std=c++1z -O2 -march=native`. That benchmark is just an example to make this
 introduction look good. You can find more commented benchmarks in the [dedicated
 wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
