@@ -33,7 +33,7 @@
 
 TEST_CASE( "test sorter with descending_sawtooth distribution", "[distributions]" )
 {
-    std::vector<int> collection(100'000);
+    std::vector<int> collection(10'000);
     auto distribution = dist::descending_sawtooth{};
     distribution(std::back_inserter(collection), collection.size());
 

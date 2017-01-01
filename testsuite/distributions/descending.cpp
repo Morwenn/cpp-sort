@@ -33,7 +33,7 @@
 
 TEST_CASE( "test sorter with descending distribution", "[distributions]" )
 {
-    std::vector<int> collection(100'000);
+    std::vector<int> collection(10'000);
     auto distribution = dist::descending{};
     distribution(std::back_inserter(collection), collection.size());
 

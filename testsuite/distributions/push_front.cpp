@@ -33,7 +33,7 @@
 
 TEST_CASE( "test sorter with push_front distribution", "[distributions]" )
 {
-    std::vector<int> collection(100'000);
+    std::vector<int> collection(10'000);
     auto distribution = dist::push_front{};
     distribution(std::back_inserter(collection), collection.size());
 
