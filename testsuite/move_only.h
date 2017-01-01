@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef CPPSORT_TESTSUITE_MOVE_ONLY_H_
+#define CPPSORT_TESTSUITE_MOVE_ONLY_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <stdexcept>
 #include <utility>
 
@@ -93,3 +99,5 @@ auto operator<(const move_only<T>& lhs, const move_only<T>& rhs)
 {
     return lhs.value < rhs.value;
 }
+
+#endif // CPPSORT_TESTSUITE_MOVE_ONLY_H_

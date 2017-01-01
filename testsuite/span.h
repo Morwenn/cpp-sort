@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef CPPSORT_TESTSUITE_SPAN_H_
+#define CPPSORT_TESTSUITE_SPAN_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
 #include <iterator>
 
 ////////////////////////////////////////////////////////////
@@ -60,3 +66,5 @@ auto make_span(Iterable& iterable)
 {
     return { iterable };
 }
+
+#endif // CPPSORT_TESTSUITE_SPAN_H_
