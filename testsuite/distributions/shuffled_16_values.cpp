@@ -33,7 +33,8 @@
 
 TEST_CASE( "test sorter with shuffled_16_values distribution", "[distributions]" )
 {
-    std::vector<int> collection(10'000);
+    std::vector<int> collection;
+    collection.reserve(10'000);
     auto distribution = dist::shuffled_16_values{};
     distribution(std::back_inserter(collection), collection.size());
 

@@ -28,12 +28,17 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <ctime>
+#include <cstddef>
 #include <iterator>
 #include <numeric>
 #include <random>
 #include <vector>
 #include <cpp-sort/utility/bitops.h>
+
+#ifdef __MINGW32__
+    // Poor seed for the pseudo-random number generation
+#   include <ctime>
+#endif
 
 namespace dist
 {
@@ -55,15 +60,22 @@ namespace dist
     struct shuffled:
         distribution<shuffled>
     {
-        template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        template<typename OutputIterator, typename T=long long int>
+        auto operator()(OutputIterator out, long long int size, T start=T(0)) const
             -> void
         {
             // Pseudo-random number generator
-            thread_local std::mt19937_64 engine(std::time(nullptr));
+#ifdef __MINGW32__
+            thread_local std::mt19937 engine(std::time(nullptr));
+#else
+            thread_local std::mt19937 engine(std::random_device{}());
+#endif
 
-            std::vector<int> vec;
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            std::vector<T> vec;
+            vec.reserve(size);
+
+            T end = start + size;
+            for (auto i = start ; i < end ; ++i) {
                 vec.emplace_back(i);
             }
             std::shuffle(std::begin(vec), std::end(vec), engine);
@@ -79,9 +91,15 @@ namespace dist
             -> void
         {
             // Pseudo-random number generator
-            thread_local std::mt19937_64 engine(std::time(nullptr));
+#ifdef __MINGW32__
+            thread_local std::mt19937 engine(std::time(nullptr));
+#else
+            thread_local std::mt19937 engine(std::random_device{}());
+#endif
 
             std::vector<int> vec;
+            vec.reserve(size);
+
             for (std::size_t i = 0 ; i < size ; ++i) {
                 vec.emplace_back(i % 16);
             }

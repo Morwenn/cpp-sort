@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,57 +22,50 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <forward_list>
 #include <iterator>
 #include <list>
-#include <numeric>
-#include <random>
-#include <string>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sort.h>
+#include "../distributions.h"
 
 TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
+    // Distribution used to generate the data to sort
+    auto distribution = dist::shuffled{};
+    // Size of the collections to sort
+    auto size = 100'000;
 
     SECTION( "sort with int iterable" )
     {
-        std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), -1568);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::vector<int> vec; vec.reserve(size);
+        distribution(std::back_inserter(vec), size, -1568);
         cppsort::sort(cppsort::counting_sorter{}, vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "sort with unsigned int iterators" )
     {
-        std::vector<unsigned> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0u);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        std::list<unsigned> li(std::begin(vec), std::end(vec));
+        std::list<unsigned> li;;
+        distribution(std::back_inserter(li), size, 0u);
         cppsort::sort(cppsort::counting_sorter{}, std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
 
     SECTION( "reverse sort with long long iterable" )
     {
-        std::vector<long long> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 1568);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::vector<long long> vec; vec.reserve(size);
+        distribution(std::back_inserter(vec), size, 1568);
         cppsort::sort(cppsort::counting_sorter{}, vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "reverse sort with unsigned long long iterators" )
     {
-        std::vector<unsigned long long> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0u);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        std::forward_list<unsigned long long> li(std::begin(vec), std::end(vec));
+        std::forward_list<unsigned long long> li;
+        distribution(std::front_inserter(li), size, 0ULL);
         cppsort::sort(cppsort::counting_sorter{}, std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }

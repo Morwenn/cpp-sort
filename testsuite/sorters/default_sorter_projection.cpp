@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,38 +47,34 @@ TEST_CASE( "default sorter tests with projections",
     // Collection to sort
     std::vector<wrapper> vec(80);
     helpers::iota(std::begin(vec), std::end(vec), 0, &wrapper::value);
+    std::shuffle(std::begin(vec), std::end(vec), engine);
 
     SECTION( "sort with random-access iterable" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(std::begin(vec), std::end(vec), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::sort(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
@@ -86,7 +82,6 @@ TEST_CASE( "default sorter tests with projections",
 
     SECTION( "sort with bidirectional iterators and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );
@@ -94,7 +89,6 @@ TEST_CASE( "default sorter tests with projections",
 
     SECTION( "sort with forward iterators" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::forward_list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::less<>{}, &wrapper::value) );
@@ -102,7 +96,6 @@ TEST_CASE( "default sorter tests with projections",
 
     SECTION( "sort with forward iterators and compare" )
     {
-        std::shuffle(std::begin(vec), std::end(vec), engine);
         std::forward_list<wrapper> li(std::begin(vec), std::end(vec));
         cppsort::sort(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(li), std::end(li), std::greater<>{}, &wrapper::value) );

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,11 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <iterator>
-#include <numeric>
-#include <random>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/sorters.h>
+#include "distributions.h"
 
 TEST_CASE( "test every instantiated sorter", "[sorters]" )
 {
@@ -40,10 +38,9 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     // Only default_sorter doesn't have a standard instance
     // since it is already used by default by cppsort::sort
 
-    std::vector<long long int> collection(35);
-    std::iota(std::begin(collection), std::end(collection), -47);
-    std::mt19937 engine(std::time(nullptr));
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::vector<long long int> collection; collection.reserve(35);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 35, -47);
 
     SECTION( "block_sort" )
     {

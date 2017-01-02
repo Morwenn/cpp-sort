@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,15 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <iterator>
 #include <list>
-#include <random>
 #include <utility>
 #include <catch.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sort.h>
+#include "../distributions.h"
 
 namespace
 {
@@ -85,11 +84,9 @@ namespace
 TEST_CASE( "self-sortable object without comparison",
            "[self_sort_adapter][no_compare]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
-
     // Collection to sort
-    non_comparison_self_sortable collection(80);
+    auto size = 80;
+    non_comparison_self_sortable collection(size);
 
     SECTION( "without a comparator" )
     {
@@ -101,9 +98,9 @@ TEST_CASE( "self-sortable object without comparison",
         >;
 
         // Fill the collection
-        std::vector<int> tmp(std::distance(std::begin(collection), std::end(collection)));
-        std::iota(std::begin(tmp), std::end(tmp), 0);
-        std::shuffle(std::begin(tmp), std::end(tmp), engine);
+        std::vector<int> tmp; tmp.reserve(size);
+        auto distribution = dist::shuffled{};
+        distribution(std::back_inserter(tmp), size, 0);
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
@@ -122,9 +119,9 @@ TEST_CASE( "self-sortable object without comparison",
         >;
 
         // Fill the collection
-        std::vector<int> tmp(std::distance(std::begin(collection), std::end(collection)));
-        std::iota(std::begin(tmp), std::end(tmp), 0);
-        std::shuffle(std::begin(tmp), std::end(tmp), engine);
+        std::vector<int> tmp; tmp.reserve(size);
+        auto distribution = dist::shuffled{};
+        distribution(std::back_inserter(tmp), size, 0);
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
