@@ -36,7 +36,7 @@ TEST_CASE( "test sorter with push_middle distribution", "[distributions]" )
     std::vector<int> collection;
     collection.reserve(10'000);
     auto distribution = dist::push_middle{};
-    distribution(std::back_inserter(collection), collection.size());
+    distribution(std::back_inserter(collection), 10'000);
 
     SECTION( "block_sorter" )
     {

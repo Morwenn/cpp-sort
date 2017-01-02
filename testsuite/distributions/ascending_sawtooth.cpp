@@ -36,7 +36,7 @@ TEST_CASE( "test sorter with ascending_sawtooth distribution", "[distributions]"
     std::vector<int> collection;
     collection.reserve(10'000);
     auto distribution = dist::ascending_sawtooth{};
-    distribution(std::back_inserter(collection), collection.size());
+    distribution(std::back_inserter(collection), 10'000);
 
     SECTION( "block_sorter" )
     {
