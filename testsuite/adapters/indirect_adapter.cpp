@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,26 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
-#include <numeric>
-#include <random>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/quick_sorter.h>
 #include "../algorithm.h"
+#include "../distributions.h"
 #include "../span.h"
 
 TEST_CASE( "basic tests with indirect_adapter",
            "[indirect_adapter]" )
 {
-    std::vector<int> collection(221);
-    std::iota(std::begin(collection), std::end(collection), -32);
-    std::mt19937 engine(std::time(nullptr));
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::vector<int> vec; vec.reserve(221);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(vec), 221, -32);
+
+    // Working shuffled copy
+    auto collection = vec;
 
     using sorter = cppsort::indirect_adapter<
         cppsort::quick_sorter
@@ -52,7 +52,7 @@ TEST_CASE( "basic tests with indirect_adapter",
         cppsort::sort(sorter{}, collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
 
-        std::shuffle(std::begin(collection), std::end(collection), engine);
+        collection = vec;
         cppsort::sort(sorter{}, std::begin(collection), std::end(collection), std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
     }
@@ -63,7 +63,7 @@ TEST_CASE( "basic tests with indirect_adapter",
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, std::negate<>{}) );
 
-        std::shuffle(std::begin(collection), std::end(collection), engine);
+        collection = vec;
         cppsort::sort(sorter{}, std::begin(collection), std::end(collection), std::negate<>{});
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, std::negate<>{}) );
@@ -74,7 +74,7 @@ TEST_CASE( "basic tests with indirect_adapter",
         cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 
-        std::shuffle(std::begin(collection), std::end(collection), engine);
+        collection = vec;
         cppsort::sort(sorter{}, std::begin(collection), std::end(collection),
                       std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
@@ -84,10 +84,9 @@ TEST_CASE( "basic tests with indirect_adapter",
 TEST_CASE( "indirect_adapter with temporary span",
            "[indirect_adapter][span]" )
 {
-    std::vector<int> collection(221);
-    std::iota(std::begin(collection), std::end(collection), -32);
-    std::mt19937 engine(std::time(nullptr));
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::vector<int> collection; collection.reserve(221);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 221, -32);
 
     using sorter = cppsort::indirect_adapter<
         cppsort::quick_sorter

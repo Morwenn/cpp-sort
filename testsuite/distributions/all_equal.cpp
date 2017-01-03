@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,116 +25,102 @@
 #include <iterator>
 #include <vector>
 #include <catch.hpp>
+#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
-#include "distributions.h"
+#include <cpp-sort/utility/buffer.h>
+#include <cpp-sort/utility/functional.h>
+#include "../distributions.h"
 
-TEST_CASE( "test every instantiated sorter", "[sorters]" )
+TEST_CASE( "test sorter with all_equal distribution", "[distributions]" )
 {
-    // Sorters are great, but if we can hide the abstraction
-    // under instantiated sorters that look like regular
-    // functions, then it's even better, but we need to test
-    // them to, just to be sure
-    //
-    // Only default_sorter doesn't have a standard instance
-    // since it is already used by default by cppsort::sort
+    std::vector<int> collection;
+    collection.reserve(10'000);
+    auto distribution = dist::all_equal{};
+    distribution(std::back_inserter(collection), 10'000);
 
-    std::vector<long long int> collection; collection.reserve(35);
-    auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 35, -47);
-
-    SECTION( "block_sort" )
+    SECTION( "block_sorter" )
     {
-        cppsort::block_sort(collection);
+        using namespace cppsort;
+
+        // Fixed buffer
+        cppsort::sort(block_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
 
-    SECTION( "counting_sort" )
-    {
-        cppsort::counting_sort(collection);
+        // Dynamic buffer
+        cppsort::sort(block_sorter<utility::dynamic_buffer<utility::sqrt>>{}, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "grail_sorter" )
     {
-        cppsort::grail_sort(collection);
+        using namespace cppsort;
+
+        // Fixed buffer
+        cppsort::sort(grail_sort, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        // Dynamic buffer
+        cppsort::sort(grail_sorter<utility::dynamic_buffer<utility::half>>{}, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "heap_sorter" )
     {
-        cppsort::heap_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "insertion_sorter" )
-    {
-        cppsort::insertion_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_insertion_sorter" )
-    {
-        cppsort::merge_insertion_sort(collection);
+        cppsort::sort(cppsort::heap_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "merge_sorter" )
     {
-        cppsort::merge_sort(collection);
+        cppsort::sort(cppsort::merge_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "pdq_sorter" )
     {
-        cppsort::pdq_sort(collection);
+        cppsort::sort(cppsort::pdq_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "poplar_sorter" )
     {
-        cppsort::poplar_sort(collection);
+        cppsort::sort(cppsort::poplar_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "quick_sorter" )
     {
-        cppsort::quick_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "selection_sorter" )
-    {
-        cppsort::selection_sort(collection);
+        cppsort::sort(cppsort::quick_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "smooth_sorter" )
     {
-        cppsort::smooth_sort(collection);
+        cppsort::sort(cppsort::smooth_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "spread_sorter" )
     {
-        cppsort::spread_sort(collection);
+        cppsort::sort(cppsort::spread_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "std_sorter" )
     {
-        cppsort::std_sort(collection);
+        cppsort::sort(cppsort::std_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "tim_sorter" )
     {
-        cppsort::tim_sort(collection);
+        cppsort::sort(cppsort::tim_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
     SECTION( "verge_sorter" )
     {
-        cppsort::verge_sort(collection);
+        cppsort::sort(cppsort::verge_sort, collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }

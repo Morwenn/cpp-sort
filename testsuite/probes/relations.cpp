@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,21 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <algorithm>
-#include <ctime>
 #include <iterator>
-#include <numeric>
-#include <random>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes.h>
+#include "../distributions.h"
 
 TEST_CASE( "relations between measures of presortedness", "[probe]" )
 {
-    std::vector<int> sequence(100);
-    std::iota(std::begin(sequence), std::end(sequence), 0);
-    std::mt19937 engine(std::time(nullptr));
-    std::shuffle(std::begin(sequence), std::end(sequence), engine);
+    std::vector<int> sequence; sequence.reserve(100);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(sequence), 100, 0);
 
     // The computer science literature lists a number of
     // relations between the results of different measures

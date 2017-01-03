@@ -34,6 +34,23 @@ set(
 )
 
 set(
+    DISTRIBUTIONS_TESTS
+
+    distributions/all_equal.cpp
+    distributions/alternating.cpp
+    distributions/alternating_16_values.cpp
+    distributions/ascending.cpp
+    distributions/ascending_sawtooth.cpp
+    distributions/descending.cpp
+    distributions/descending_sawtooth.cpp
+    distributions/pipe_organ.cpp
+    distributions/push_front.cpp
+    distributions/push_middle.cpp
+    distributions/shuffled.cpp
+    distributions/shuffled_16_values.cpp
+)
+
+set(
     PROBES_TESTS
 
     probes/dis.cpp
@@ -90,6 +107,7 @@ add_executable(
     sorter_facade_iterable.cpp
     ${ADAPTERS_TESTS}
     ${COMPARATORS_TESTS}
+    ${DISTRIBUTIONS_TESTS}
     ${PROBES_TESTS}
     ${SORTERS_TESTS}
     ${UTILITY_TESTS}

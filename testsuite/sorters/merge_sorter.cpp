@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,22 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <forward_list>
 #include <functional>
 #include <iterator>
 #include <list>
-#include <numeric>
-#include <random>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sort.h>
+#include "../distributions.h"
 
 TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
-
     // Collection to sort
-    std::vector<int> vec(80);
-    std::iota(std::begin(vec), std::end(vec), 0);
-    std::shuffle(std::begin(vec), std::end(vec), engine);
+    std::vector<int> vec; vec.reserve(80);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(vec), 80, 0);
 
     SECTION( "sort with random-access iterable" )
     {

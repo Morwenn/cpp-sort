@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,21 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <iterator>
-#include <numeric>
-#include <random>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
+#include "../distributions.h"
 
 TEST_CASE( "every sorter with indirect adapter",
            "[indirect_adapter]" )
 {
-    std::vector<double> collection(412);
-    std::iota(std::begin(collection), std::end(collection), -125);
-    std::mt19937 engine(std::time(nullptr));
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::vector<double> collection; collection.reserve(412);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 412, -125.0);
 
     SECTION( "block_sorter" )
     {

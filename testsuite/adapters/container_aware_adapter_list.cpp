@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,11 +22,9 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
 #include <list>
-#include <random>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/adapters/container_aware_adapter.h>
@@ -34,6 +32,7 @@
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
+#include "../distributions.h"
 
 TEST_CASE( "container_aware_adapter and std::list",
            "[container_aware_adapter]" )
@@ -41,10 +40,9 @@ TEST_CASE( "container_aware_adapter and std::list",
     // Tests for the sorters that have container-aware
     // overloads for std::list
 
-    std::vector<double> vec(187.0);
-    std::iota(std::begin(vec), std::end(vec), -24.0);
-    std::mt19937 engine(std::time(nullptr));
-    std::shuffle(std::begin(vec), std::end(vec), engine);
+    std::vector<double> vec; vec.reserve(187);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(vec), 187, -24.0);
 
     SECTION( "insertion_sorter" )
     {
