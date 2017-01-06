@@ -259,28 +259,44 @@ namespace detail
                     start_l = 0;
                     RandomAccessIterator it = first;
                     for (unsigned char i = 0 ; i < block_size ;) {
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        bool c0 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c1 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c2 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c3 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c4 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c5 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c6 = !comp(proj(*it), pivot_proj); ++it;
+                        bool c7 = !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += c0;
+                        offsets_l[num_l] = i++; num_l += c1;
+                        offsets_l[num_l] = i++; num_l += c2;
+                        offsets_l[num_l] = i++; num_l += c3;
+                        offsets_l[num_l] = i++; num_l += c4;
+                        offsets_l[num_l] = i++; num_l += c5;
+                        offsets_l[num_l] = i++; num_l += c6;
+                        offsets_l[num_l] = i++; num_l += c7;
                     }
                 }
                 if (num_r == 0) {
                     start_r = 0;
                     RandomAccessIterator it = last;
                     for (unsigned char i = 0 ; i < block_size;) {
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        bool c0 = comp(proj(*--it), pivot_proj);
+                        bool c1 = comp(proj(*--it), pivot_proj);
+                        bool c2 = comp(proj(*--it), pivot_proj);
+                        bool c3 = comp(proj(*--it), pivot_proj);
+                        bool c4 = comp(proj(*--it), pivot_proj);
+                        bool c5 = comp(proj(*--it), pivot_proj);
+                        bool c6 = comp(proj(*--it), pivot_proj);
+                        bool c7 = comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += c0;
+                        offsets_r[num_r] = ++i; num_r += c1;
+                        offsets_r[num_r] = ++i; num_r += c2;
+                        offsets_r[num_r] = ++i; num_r += c3;
+                        offsets_r[num_r] = ++i; num_r += c4;
+                        offsets_r[num_r] = ++i; num_r += c5;
+                        offsets_r[num_r] = ++i; num_r += c6;
+                        offsets_r[num_r] = ++i; num_r += c7;
                     }
                 }
 
