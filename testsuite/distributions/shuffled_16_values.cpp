@@ -94,6 +94,12 @@ TEST_CASE( "test sorter with shuffled_16_values distribution", "[distributions]"
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "ska_sorter" )
+    {
+        cppsort::sort(cppsort::ska_sort, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "smooth_sorter" )
     {
         cppsort::sort(cppsort::smooth_sort, collection);
