@@ -32,6 +32,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
@@ -55,7 +56,9 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> void
+                -> std::enable_if_t<detail::is_ska_sortable_v<
+                    std::decay_t<decltype(utility::as_function(projection)(*first))>
+                >>
             {
                 static_assert(
                     std::is_base_of<

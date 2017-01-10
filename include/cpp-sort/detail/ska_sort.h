@@ -14,16 +14,22 @@
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
+#include <limits>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/detection.h>
+#include <cpp-sort/utility/logical_traits.h>
 
 namespace cppsort
 {
 namespace detail
 {
+    ////////////////////////////////////////////////////////////
+    // ska_sort algorithm
+
     inline auto to_unsigned_or_bool(bool b)
         -> bool
     {
@@ -952,6 +958,72 @@ namespace detail
         detail::inplace_radix_sort<128, 1024>(std::move(begin), std::move(end),
                                               std::move(projection));
     }
+
+    ////////////////////////////////////////////////////////////
+    // Whether a type is sortable with ska_sort
+
+    template<typename T>
+    struct is_ska_sortable;
+
+    template<typename T>
+    using has_indexing_operator_t
+        = std::decay_t<decltype(std::declval<T&>()[0])>;
+
+    template<template<typename...> class Op, typename... Args>
+    using is_index_ska_sortable = is_ska_sortable<utility::detected_t<Op, Args...>>;
+
+    // A bit hackish, but I'm bad at workarounds...
+    template<>
+    struct is_ska_sortable<utility::nonesuch>:
+        std::false_type
+    {};
+
+    template<typename T>
+    struct is_ska_sortable:
+        utility::disjunction<
+            std::is_integral<T>,
+            is_index_ska_sortable<has_indexing_operator_t, T>
+        >
+    {};
+
+    template<typename T>
+    struct is_ska_sortable<T*>:
+        std::true_type
+    {};
+
+    template<>
+    struct is_ska_sortable<float>:
+        std::integral_constant<bool,
+            sizeof(float) == sizeof(std::uint32_t) &&
+            std::numeric_limits<float>::is_iec559
+        >
+    {};
+
+    template<>
+    struct is_ska_sortable<double>:
+        std::integral_constant<bool,
+            sizeof(double) == sizeof(std::uint64_t) &&
+            std::numeric_limits<double>::is_iec559
+        >
+    {};
+
+    template<typename T, typename U>
+    struct is_ska_sortable<std::pair<T, U>>:
+        utility::conjunction<
+            is_ska_sortable<T>,
+            is_ska_sortable<U>
+        >
+    {};
+
+    template<typename... Args>
+    struct is_ska_sortable<std::tuple<Args...>>:
+        utility::conjunction<
+            is_ska_sortable<Args>...
+        >
+    {};
+
+    template<typename T>
+    constexpr bool is_ska_sortable_v = is_ska_sortable<T>::value;
 }}
 
 #endif // CPPSORT_DETAIL_SKA_SORT_H_
