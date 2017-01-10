@@ -129,9 +129,21 @@ TEST_CASE( "test every sorter with temporary span",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "ska_sorter" )
+    {
+        cppsort::sort(cppsort::ska_sorter{}, make_span(collection));
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "smooth_sorter" )
     {
         cppsort::sort(cppsort::smooth_sorter{}, make_span(collection));
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "spread_sorter" )
+    {
+        cppsort::sort(cppsort::spread_sorter{}, make_span(collection));
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 

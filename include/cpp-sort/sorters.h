@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
+#include <cpp-sort/sorters/ska_sorter.h>
 #include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>

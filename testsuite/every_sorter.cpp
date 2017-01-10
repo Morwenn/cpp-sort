@@ -128,6 +128,12 @@ TEST_CASE( "test every sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "ska_sorter" )
+    {
+        cppsort::sort(cppsort::ska_sorter{}, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "smooth_sorter" )
     {
         cppsort::sort(cppsort::smooth_sorter{}, collection);
