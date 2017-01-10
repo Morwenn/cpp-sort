@@ -13,6 +13,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <iterator>
 #include <limits>
 #include <tuple>
@@ -123,25 +124,19 @@ namespace detail
     inline auto to_unsigned_or_bool(float f)
         -> std::uint32_t
     {
-        union
-        {
-            float f;
-            std::uint32_t u;
-        } as_union = { f };
-        std::uint32_t sign_bit = -std::int32_t(as_union.u >> 31);
-        return as_union.u ^ (sign_bit | 0x80000000);
+        std::uint32_t u;
+        std::memcpy(&u, &f, sizeof f);
+        std::uint32_t sign_bit = -std::int32_t(u >> 31);
+        return u ^ (sign_bit | 0x80000000);
     }
 
     inline auto to_unsigned_or_bool(double f)
         -> std::uint64_t
     {
-        union
-        {
-            double d;
-            std::uint64_t u;
-        } as_union = { f };
-        std::uint64_t sign_bit = -std::int64_t(as_union.u >> 63);
-        return as_union.u ^ (sign_bit | 0x8000000000000000);
+        std::uint64_t u;
+        std::memcpy(&u, &f, sizeof f);
+        std::uint64_t sign_bit = -std::int64_t(u >> 63);
+        return u ^ (sign_bit | 0x8000000000000000);
     }
 
     template<typename T>
