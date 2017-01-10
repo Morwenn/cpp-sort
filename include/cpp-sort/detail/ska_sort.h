@@ -949,8 +949,8 @@ namespace detail
                   Projection projection)
         -> void
     {
-        detail::inplace_radix_sort<128, 128>(std::move(begin), std::move(end),
-                                             std::move(projection));
+        detail::inplace_radix_sort<128, 1024>(std::move(begin), std::move(end),
+                                              std::move(projection));
     }
 }}
 
