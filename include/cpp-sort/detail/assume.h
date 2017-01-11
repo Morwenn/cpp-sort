@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,12 @@
 // Some parts of the library may be significantly slower if this
 // assumption mechanism isn't supported
 
-#if defined(__GNUC__) || defined(__clang__)
-#   define CPPSORT_ASSUME(cond) do { if (!(cond)) __builtin_unreachable(); } while(0)
+#if defined(__GNUC__)
+#   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
+#elif defined(__clang__)
+#   define CPPSORT_ASSUME(expression) __builtin_assume(expression)
+#elif defined(_MSC_VER)
+#   define CPPSORT_ASSUME(expression) __assume(expression)
 #else
 #   define CPPSORT_ASSUME(cond)
 #endif
