@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,10 +39,9 @@ namespace detail
                         Compare compare, Projection projection)
         -> void
     {
-        for (ForwardIterator it = first ; it != last ; ++it)
-        {
+        for (ForwardIterator it = first ; it != last ; ++it) {
             using utility::iter_swap;
-            iter_swap(it, min_element(it, last, compare, projection));
+            iter_swap(it, unchecked_min_element(it, last, compare, projection));
         }
     }
 }}

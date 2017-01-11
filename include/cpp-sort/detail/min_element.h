@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,37 +27,42 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
+#include "assume.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<
-        typename ForwardIterator,
-        typename Compare = std::less<>,
-        typename Projection = utility::identity
-    >
-    auto min_element(ForwardIterator first, ForwardIterator last,
-                     Compare compare={}, Projection projection={})
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto unchecked_min_element(ForwardIterator first, ForwardIterator last,
+                               Compare compare, Projection projection)
         -> ForwardIterator
     {
+        // Same algorithm as min_element, but assumes that the
+        // the input range is never empty
+        CPPSORT_ASSUME(first != last);
+
         auto&& proj = utility::as_function(projection);
 
-        if (first == last) return last;
-
-        auto min = first++;
-        while (first != last)
-        {
-            if (compare(proj(*first), proj(*min)))
-            {
+        auto min = first;
+        while (++first != last) {
+            if (compare(proj(*first), proj(*min))) {
                 min = first;
             }
-            ++first;
         }
         return min;
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto min_element(ForwardIterator first, ForwardIterator last,
+                     Compare compare, Projection projection)
+        -> ForwardIterator
+    {
+        if (first == last) return last;
+        return unchecked_min_element(std::move(first), std::move(last),
+                                     std::move(compare), std::move(projection));
     }
 }}
 
