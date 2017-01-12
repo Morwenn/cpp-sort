@@ -30,6 +30,7 @@
 #include <cpp-sort/sorters/block_sorter.h>
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
+#include <cpp-sort/sorters/drop_merge_sorter.h>
 #include <cpp-sort/sorters/grail_sorter.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>

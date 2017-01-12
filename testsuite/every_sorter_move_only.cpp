@@ -59,6 +59,12 @@ TEST_CASE( "test every sorter with move-only types", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "drop_merge_sorter" )
+    {
+        cppsort::sort(cppsort::drop_merge_sorter{}, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "grail_sorter" )
     {
         sort(cppsort::grail_sorter<cppsort::utility::fixed_buffer<0>>{}, collection);

@@ -54,6 +54,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "drop_merge_sort" )
+    {
+        cppsort::drop_merge_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "grail_sorter" )
     {
         cppsort::grail_sort(collection);

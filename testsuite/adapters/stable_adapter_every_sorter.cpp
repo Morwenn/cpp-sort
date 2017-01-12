@@ -86,6 +86,13 @@ TEST_CASE( "every sorter with stable adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "drop_merge_sorter" )
+    {
+        using sorter = cppsort::drop_merge_sorter;
+        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "grail_sorter" )
     {
         using sorter = cppsort::grail_sorter<>;

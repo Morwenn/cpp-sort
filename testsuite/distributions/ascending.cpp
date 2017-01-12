@@ -38,6 +38,12 @@ TEST_CASE( "test sorter with ascending distribution", "[distributions]" )
     auto distribution = dist::ascending{};
     distribution(std::back_inserter(collection), collection.size());
 
+    SECTION( "drop_merge_sorter" )
+    {
+        cppsort::sort(cppsort::drop_merge_sort, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "block_sorter" )
     {
         using namespace cppsort;
