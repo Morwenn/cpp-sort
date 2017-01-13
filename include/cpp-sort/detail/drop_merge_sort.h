@@ -77,8 +77,9 @@ namespace detail
                     ++read;
                     ++num_dropped_in_row;
                 } else {
-                    std::size_t trunc_to_length = dropped.size() - num_dropped_in_row;
-                    dropped.resize(trunc_to_length);
+                    for (std::size_t i = 0 ; i < num_dropped_in_row ; ++i) {
+                        dropped.pop_back();
+                    }
                     read -= num_dropped_in_row;
 
                     --write;
@@ -152,15 +153,11 @@ namespace detail
                     ++read;
                     ++num_dropped_in_row;
                 } else {
-                    std::size_t trunc_to_length = dropped.size() - num_dropped_in_row;
                     for (std::size_t i = 0 ; i < num_dropped_in_row ; ++i) {
                         --read;
-                        *read = std::move(*(dropped.end() - (i+1)));
-                    }
-                    for (std::size_t i = 0 ; i < num_dropped_in_row ; ++i) {
+                        *read = std::move(*std::prev(dropped.end()));
                         dropped.pop_back();
                     }
-                    //dropped.resize(trunc_to_length);
 
                     --write;
                     dropped.push_back(iter_move(write));
