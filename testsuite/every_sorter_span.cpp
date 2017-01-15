@@ -68,6 +68,12 @@ TEST_CASE( "test every sorter with temporary span",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "drop_merge_sorter" )
+    {
+        cppsort::sort(cppsort::drop_merge_sorter{}, make_span(collection));
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "grail_sorter" )
     {
         using namespace cppsort;

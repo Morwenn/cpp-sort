@@ -71,6 +71,14 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
                                   std::less<>{}, &wrapper<>::value) );
     }
 
+    SECTION( "drop_merge_sorter" )
+    {
+        using sorter = cppsort::schwartz_adapter<cppsort::drop_merge_sorter>;
+        cppsort::sort(sorter{}, collection, &wrapper<>::value);
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::less<>{}, &wrapper<>::value) );
+    }
+
     SECTION( "grail_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::grail_sorter<>>;

@@ -145,6 +145,10 @@ C++ proposals.
 * The algorithm used by `ska_sorter` comes from Malte Skarupke's [implementation](https://github.com/skarupke/ska_sort)
 of his own [ska_sort](https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/) algorithm.
 
+* The algorithm used by `drop_merge_sorter` comes from Adrian Wielgosik [C++
+reimplementation](https://github.com/adrian17/cpp-drop-merge-sort) of Emil Ernerfeldt's
+[drop-merge sort](https://github.com/emilk/drop-merge-sort).
+
 * Many enhanced standard algorithms are directly adapted from their counterparts
 in [libc++](http://libcxx.llvm.org/), enhanced to handle both projections and
 proxy iterators.
