@@ -48,23 +48,23 @@ namespace cppsort
         struct drop_merge_sorter_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of<
-                        std::random_access_iterator_tag,
-                        iterator_category_t<RandomAccessIterator>
+                        std::bidirectional_iterator_tag,
+                        iterator_category_t<BidirectionalIterator>
                     >::value,
-                    "drop_merge_sorter requires at least random-access iterators"
+                    "drop_merge_sorter requires at least bidirectional iterators"
                 );
 
                 drop_merge_sort(std::move(first), std::move(last),
@@ -74,7 +74,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category = std::random_access_iterator_tag;
+            using iterator_category = std::bidirectional_iterator_tag;
             using is_always_stable = std::false_type;
         };
     }

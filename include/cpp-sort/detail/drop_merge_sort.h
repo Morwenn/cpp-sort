@@ -24,7 +24,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -41,33 +40,34 @@ namespace detail
     constexpr static bool double_comparison = true;
 
     // with-trivial-copies version
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto drop_merge_sort(RandomAccessIterator begin, RandomAccessIterator end,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
                          Compare compare, Projection projection,
                          std::true_type)
         -> void
     {
-        std::size_t size = std::distance(begin, end);
+        auto size = std::distance(begin, end);
         if (size < 2) return;
 
         auto&& proj = utility::as_function(projection);
 
-        using value_type = value_type_t<RandomAccessIterator>;
+        using difference_type = difference_type_t<BidirectionalIterator>;
+        using value_type = value_type_t<BidirectionalIterator>;
         std::vector<value_type> dropped;
 
-        std::size_t num_dropped_in_row = 0;
+        difference_type num_dropped_in_row = 0;
         auto write = begin;
         auto read = begin;
 
-        static constexpr std::size_t recency = 8;
+        static constexpr difference_type recency = 8;
 
         while (read != end) {
             if (begin != write && compare(proj(*read), proj(*std::prev(write)))) {
 
-                if (double_comparison && num_dropped_in_row == 0 && write > begin+1 &&
-                    not compare(proj(*read), proj(*(write-2)))) {
-                    dropped.push_back(*(write-1));
-                    *(write-1) = *read;
+                if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
+                    not compare(proj(*read), proj(*std::prev(write, 2)))) {
+                    dropped.push_back(*std::prev(write));
+                    *std::prev(write) = *read;
                     ++read;
                     continue;
                 }
@@ -77,10 +77,10 @@ namespace detail
                     ++read;
                     ++num_dropped_in_row;
                 } else {
-                    for (std::size_t i = 0 ; i < num_dropped_in_row ; ++i) {
+                    for (difference_type i = 0 ; i < num_dropped_in_row ; ++i) {
+                        --read;
                         dropped.pop_back();
                     }
-                    read -= num_dropped_in_row;
 
                     --write;
                     dropped.push_back(*write);
@@ -115,35 +115,36 @@ namespace detail
     }
 
     // move-only version
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto drop_merge_sort(RandomAccessIterator begin, RandomAccessIterator end,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
                          Compare compare, Projection projection,
                          std::false_type)
         -> void
     {
         using utility::iter_move;
 
-        std::size_t size = std::distance(begin, end);
+        auto size = std::distance(begin, end);
         if (size < 2) return;
 
         auto&& proj = utility::as_function(projection);
 
-        using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
+        using difference_type = difference_type_t<BidirectionalIterator>;
+        using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
         std::vector<rvalue_reference> dropped;
 
-        std::size_t num_dropped_in_row = 0;
+        difference_type num_dropped_in_row = 0;
         auto write = begin;
         auto read = begin;
 
-        static constexpr std::size_t recency = 8;
+        static constexpr difference_type recency = 8;
 
         while (read != end) {
             if (begin != write && compare(proj(*read), proj(*std::prev(write)))) {
 
-                if (double_comparison && num_dropped_in_row == 0 && write > begin + 1 &&
-                    not compare(proj(*read), proj(*(write-2)))) {
+                if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
+                    not compare(proj(*read), proj(*std::prev(write, 2)))) {
                     dropped.push_back(iter_move(std::prev(write)));
-                    *(write-1) = iter_move(read);
+                    *std::prev(write) = iter_move(read);
                     ++read;
                     continue;
                 }
@@ -153,7 +154,7 @@ namespace detail
                     ++read;
                     ++num_dropped_in_row;
                 } else {
-                    for (std::size_t i = 0 ; i < num_dropped_in_row ; ++i) {
+                    for (difference_type i = 0 ; i < num_dropped_in_row ; ++i) {
                         --read;
                         *read = std::move(*std::prev(dropped.end()));
                         dropped.pop_back();
@@ -191,12 +192,12 @@ namespace detail
         }
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto drop_merge_sort(RandomAccessIterator first, RandomAccessIterator last,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto drop_merge_sort(BidirectionalIterator first, BidirectionalIterator last,
                          Compare compare, Projection projection)
         -> void
     {
-        using value_type = value_type_t<RandomAccessIterator>;
+        using value_type = value_type_t<BidirectionalIterator>;
         drop_merge_sort(std::move(first), std::move(last),
                         std::move(compare), std::move(projection),
                         std::is_trivially_copyable<value_type>{});
