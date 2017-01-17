@@ -30,12 +30,13 @@
 #include <iterator>
 #include <list>
 #include <utility>
+#include <cpp-sort/sorters/quick_sorter.h>
+#include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
 #include "inplace_merge.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
-#include "pdqsort.h"
 #include "quicksort.h"
 #include "reverse.h"
 
@@ -165,19 +166,20 @@ namespace detail
         }
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    template<typename RandomAccessIterator, typename Compare,
+             typename Projection, typename Fallback>
     auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
-                   Compare compare, Projection projection,
+                   Compare compare, Projection projection, Fallback fallback,
                    std::random_access_iterator_tag)
         -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
         difference_type dist = std::distance(first, last);
 
-        if (dist < 80) {
+        if (dist < 128) {
             // Vergesort is inefficient for small collections
-            pdqsort(std::move(first), std::move(last),
-                    std::move(compare), std::move(projection));
+            fallback(std::move(first), std::move(last),
+                     std::move(compare), std::move(projection));
             return;
         }
 
@@ -223,11 +225,11 @@ namespace detail
             if (compare(proj(*next), proj(*current))) {
                 // Found a decreasing sequence, move iterators
                 // to the limits of the sequence
-                while (current != begin_range) {
+                do {
                     --current;
                     --next;
                     if (compare(proj(*current), proj(*next))) break;
-                }
+                } while (current != begin_range);
                 if (compare(proj(*current), proj(*next))) ++current;
 
                 ++current2;
@@ -245,7 +247,7 @@ namespace detail
                         begin_unstable = begin_range;
                     }
                     if (begin_unstable != last) {
-                        pdqsort(begin_unstable, current, compare, projection);
+                        fallback(begin_unstable, current, compare, projection);
                         runs.push_back(current);
                         begin_unstable = last;
                     }
@@ -259,11 +261,11 @@ namespace detail
             } else {
                 // Found an increasing sequence, move iterators
                 // to the limits of the sequence
-                while (current != begin_range) {
+                do {
                     --current;
                     --next;
                     if (compare(proj(*next), proj(*current))) break;
-                }
+                } while (current != begin_range);
                 if (compare(proj(*next), proj(*current))) ++current;
 
                 ++current2;
@@ -280,7 +282,7 @@ namespace detail
                         begin_unstable = begin_range;
                     }
                     if (begin_unstable != last) {
-                        pdqsort(begin_unstable, current, compare, projection);
+                        fallback(begin_unstable, current, compare, projection);
                         runs.push_back(current);
                         begin_unstable = last;
                     }
@@ -302,7 +304,7 @@ namespace detail
         if (begin_unstable != last) {
             // If there are unsorted elements left, sort them
             runs.push_back(last);
-            pdqsort(begin_unstable, last, compare, projection);
+            fallback(begin_unstable, last, compare, projection);
         }
 
         if (runs.size() < 2) return;
@@ -319,6 +321,29 @@ namespace detail
                 begin = *it;
             }
         } while (runs.size() > 1);
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
+                   Compare compare, Projection projection,
+                   std::random_access_iterator_tag category)
+        -> void
+    {
+        using sorter = cppsort::pdq_sorter;
+        vergesort(std::move(first), std::move(last),
+                  std::move(compare), std::move(projection),
+                  sorter{}, category);
+    }
+
+    template<typename BidirectionalIterator, typename Compare,
+             typename Projection, typename Fallback>
+    auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
+                   Compare compare, Projection projection, Fallback fallback)
+        -> void
+    {
+        vergesort(std::move(first), std::move(last),
+                  std::move(compare), std::move(projection),
+                  std::move(fallback), std::random_access_iterator_tag{});
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
