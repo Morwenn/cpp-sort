@@ -101,6 +101,7 @@ add_executable(
     every_instantiated_sorter.cpp
     every_sorter.cpp
     every_sorter_move_only.cpp
+    every_sorter_no_post_iterator.cpp
     every_sorter_span.cpp
     is_stable.cpp
     rebind_iterator_category.cpp

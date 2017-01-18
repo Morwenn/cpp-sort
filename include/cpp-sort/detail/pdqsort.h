@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015-2016 Orson Peters
-    Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -82,8 +82,10 @@ namespace detail
                     auto tmp = iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
-                    do { *sift-- = iter_move(sift_1); }
-                    while (comp(tmp_proj, proj(*--sift_1)));
+                    do {
+                        *sift = iter_move(sift_1);
+                        --sift;
+                    } while (comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
                 }
@@ -115,8 +117,9 @@ namespace detail
                     auto tmp = iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
-                    do { *sift-- = iter_move(sift_1); }
-                    while (sift != begin && comp(tmp_proj, proj(*--sift_1)));
+                    do {
+                        *sift = iter_move(sift_1);
+                    } while (--sift != begin && comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
                     limit += cur - sift;
@@ -152,8 +155,10 @@ namespace detail
                     auto tmp = iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
-                    do { *sift-- = iter_move(sift_1); }
-                    while (comp(tmp_proj, proj(*--sift_1)));
+                    do {
+                        *sift = iter_move(sift_1);
+                        --sift;
+                    } while (comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
                     limit += cur - sift;
