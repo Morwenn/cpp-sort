@@ -68,7 +68,8 @@ namespace cppsort
                 using utility::iter_swap;
 
                 RandomAccessIterator min, max;
-                std::tie(min, max) = minmax_element(first, last--, compare, projection);
+                std::tie(min, max) = minmax_element(first, last, compare, projection);
+                --last;
 
                 if (max == first && min == last)
                 {
