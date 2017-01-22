@@ -13,7 +13,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
@@ -21,12 +21,8 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstddef>
-#include <cstdint>
-#include <cstring>
-#include <functional>
-#include <limits>
+#include <type_traits>
 #include <vector>
 #include "constants.h"
 

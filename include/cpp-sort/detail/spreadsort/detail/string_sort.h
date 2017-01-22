@@ -22,6 +22,7 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 #include <iterator>
 #include <memory>
 #include <tuple>
