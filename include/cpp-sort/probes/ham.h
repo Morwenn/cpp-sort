@@ -63,8 +63,7 @@ namespace probe
                 using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
 
                 auto size = std::distance(first, last);
-                if (size < 2)
-                {
+                if (size < 2) {
                     return 0;
                 }
 
@@ -74,8 +73,7 @@ namespace probe
                 // Copy the iterators in a vector
                 std::vector<ForwardIterator> iterators;
                 iterators.reserve(size);
-                for (ForwardIterator it = first ; it != last ; ++it)
-                {
+                for (ForwardIterator it = first ; it != last ; ++it) {
                     iterators.push_back(it);
                 }
 
@@ -90,12 +88,11 @@ namespace probe
                 // Count the number of values not in place
 
                 difference_type count = 0;
-                for (auto&& it: iterators)
-                {
-                    if (it != first++)
-                    {
+                for (auto&& it: iterators) {
+                    if (it != first) {
                         ++count;
                     }
+                    ++first;
                 }
                 return count;
             }

@@ -12,7 +12,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_
@@ -83,13 +83,15 @@ namespace detail
                       log_divisor) - div_min));  target_bin != local_bin;
           target_bin = bins + ((cast_float_iter<Div_type>(current, projection) >> log_divisor)
                             - div_min)) {
-          RandomAccessIter b = (*target_bin)++;
+          RandomAccessIter b = *target_bin;
+          ++(*target_bin);
           RandomAccessIter * b_bin = bins + ((cast_float_iter<Div_type>(b, projection) >> log_divisor)
                                           - div_min);
           //Three-way swap; if the item to be swapped doesn't belong in the
           //current bin, swap it to where it belongs
           if (b_bin != local_bin) {
-            RandomAccessIter c = (*b_bin)++;
+            RandomAccessIter c = *b_bin;
+            ++(*b_bin);
             auto tmp = iter_move(c);
             *c = iter_move(b);
             *b = iter_move(current);
@@ -165,9 +167,11 @@ namespace detail
                                           cache_end, bin_count);
 
       //Calculating the size of each bin
-      for (RandomAccessIter current = first; current != last;)
+      for (RandomAccessIter current = first; current != last;) {
         bin_sizes[unsigned((cast_float_iter<Div_type>(
-            current++, projection) >> log_divisor) - div_min)]++;
+            current, projection) >> log_divisor) - div_min)]++;
+        ++current;
+      }
       bins[0] = first;
       for (unsigned u = 0; u < bin_count - 1; u++)
         bins[u + 1] = bins[u] + bin_sizes[u];
@@ -227,9 +231,11 @@ namespace detail
                                           cache_end, bin_count);
 
       //Calculating the size of each bin
-      for (RandomAccessIter current = first; current != last;)
+      for (RandomAccessIter current = first; current != last;) {
         bin_sizes[unsigned((cast_float_iter<Div_type>(
-            current++, projection) >> log_divisor) - div_min)]++;
+            current, projection) >> log_divisor) - div_min)]++;
+        ++current;
+      }
       bins[bin_count - 1] = first;
       for (int ii = bin_count - 2; ii >= 0; --ii)
         bins[ii] = bins[ii + 1] + bin_sizes[ii + 1];
@@ -287,9 +293,11 @@ namespace detail
                                           cache_end, bin_count);
 
       //Calculating the size of each bin
-      for (RandomAccessIter current = first; current != last;)
+      for (RandomAccessIter current = first; current != last;) {
         bin_sizes[unsigned((cast_float_iter<Div_type>(
-            current++, projection) >> log_divisor) - div_min)]++;
+            current, projection) >> log_divisor) - div_min)]++;
+        ++current;
+      }
       //The index of the first positive bin
       //Must be divided small enough to fit into an integer
       unsigned first_positive = (div_min < 0) ? unsigned(-div_min) : 0;

@@ -12,7 +12,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_STRING_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_STRING_SORT_H_
@@ -22,6 +22,7 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 #include <iterator>
 #include <memory>
 #include <tuple>
@@ -208,9 +209,9 @@ namespace spreadsort
           ++current) {
         //empties belong in this bin
         while (proj(*current).size() > char_offset) {
-          target_bin =
-            bins + static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
-          iter_swap(current, (*target_bin)++);
+          target_bin = bins + static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
+          iter_swap(current, *target_bin);
+          ++(*target_bin);
         }
       }
       *local_bin = next_bin_start;
@@ -227,9 +228,12 @@ namespace spreadsort
             ++current) {
           //Swapping into place until the correct element has been swapped in
           for (target_bin = bins + static_cast<Unsigned_char_type>
-              (proj(*current)[char_offset]);  target_bin != local_bin;
-            target_bin = bins + static_cast<Unsigned_char_type>
-              (proj(*current)[char_offset])) iter_swap(current, (*target_bin)++);
+               (proj(*current)[char_offset]); target_bin != local_bin;
+               target_bin = bins + static_cast<Unsigned_char_type>
+               (proj(*current)[char_offset])) {
+            iter_swap(current, *target_bin);
+            ++(*target_bin);
+          }
         }
         *local_bin = next_bin_start;
       }
@@ -317,9 +321,9 @@ namespace spreadsort
           ++current) {
         //empties belong in this bin
         while (proj(*current).size() > char_offset) {
-          target_bin =
-            end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
-          iter_swap(current, (*target_bin)++);
+          target_bin = end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
+          iter_swap(current, *target_bin);
+          ++(*target_bin);
         }
       }
       *local_bin = next_bin_start;
@@ -337,11 +341,13 @@ namespace spreadsort
             ++current) {
           //Swapping into place until the correct element has been swapped in
           for (target_bin =
-            end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
-            target_bin != local_bin;
-            target_bin =
-            end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]))
-              iter_swap(current, (*target_bin)++);
+               end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
+               target_bin != local_bin;
+               target_bin =
+               end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset])) {
+            iter_swap(current, *target_bin);
+            ++(*target_bin);
+          }
         }
         *local_bin = next_bin_start;
       }

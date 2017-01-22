@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Modified in 2015-2016 by Morwenn for inclusion into cpp-sort.
+ * Modified in 2015-2017 by Morwenn for inclusion into cpp-sort.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -104,7 +104,7 @@ namespace detail
             do {
                 difference_type runLen = countRunAndMakeAscending(cur, hi, c, projection);
 
-                if(runLen < minRun) {
+                if (runLen < minRun) {
                     difference_type const force  = std::min(nRemaining, minRun);
                     binarySort(cur, cur + force, cur + runLen, c, projection);
                     runLen = force;
@@ -115,7 +115,7 @@ namespace detail
 
                 cur        += runLen;
                 nRemaining -= runLen;
-            } while(nRemaining != 0);
+            } while (nRemaining != 0);
 
             assert( cur == hi );
             ts.mergeForceCollapse();
@@ -132,15 +132,15 @@ namespace detail
             using utility::iter_move;
             auto&& proj = utility::as_function(projection);
 
-            if(start == lo) {
+            if (start == lo) {
                 ++start;
             }
-            for( ; start < hi; ++start ) {
+            for ( ; start < hi; ++start ) {
                 assert(lo <= start);
                 auto pivot = iter_move(start);
 
                 iterator const pos = upper_bound(lo, start, proj(pivot), compare.base(), projection);
-                for(iterator p = start; p > pos; --p) {
+                for (iterator p = start; p > pos; --p) {
                     *p = iter_move(std::prev(p));
                 }
                 *pos = std::move(pivot);
@@ -155,20 +155,19 @@ namespace detail
             auto&& proj = utility::as_function(projection);
 
             iterator runHi = std::next(lo);
-            if( runHi == hi ) {
+            if ( runHi == hi ) {
                 return 1;
             }
 
-            if(compare.lt(proj(*runHi++), proj(*lo))) { // descending
-                while(runHi < hi && compare.lt(proj(*runHi), proj(*std::prev(runHi)))) {
+            if (compare.lt(proj(*runHi), proj(*lo))) { // descending
+                do {
                     ++runHi;
-                }
+                } while (runHi < hi && compare.lt(proj(*runHi), proj(*std::prev(runHi))));
                 detail::reverse(lo, runHi);
-            }
-            else { // ascending
-                while(runHi < hi && compare.ge(proj(*runHi), proj(*std::prev(runHi)))) {
+            } else { // ascending
+                do {
                     ++runHi;
-                }
+                } while (runHi < hi && compare.ge(proj(*runHi), proj(*std::prev(runHi))));
             }
 
             return runHi - lo;
@@ -180,7 +179,7 @@ namespace detail
             assert( n >= 0 );
 
             difference_type r = 0;
-            while(n >= min_merge) {
+            while (n >= min_merge) {
                 r |= (n & 1);
                 n >>= 1;
             }
@@ -201,17 +200,17 @@ namespace detail
         auto mergeCollapse()
             -> void
         {
-            while( pending_.size() > 1 ) {
+            while ( pending_.size() > 1 ) {
                 difference_type n = pending_.size() - 2;
 
-                if((n > 0 && pending_[n - 1].len <= pending_[n].len + pending_[n + 1].len)
+                if ((n > 0 && pending_[n - 1].len <= pending_[n].len + pending_[n + 1].len)
                     || (n > 1 && pending_[n - 2].len <= pending_[n - 1].len + pending_[n].len)){
-                    if(pending_[n - 1].len < pending_[n + 1].len) {
+                    if (pending_[n - 1].len < pending_[n + 1].len) {
                         --n;
                     }
                     mergeAt(n);
                 }
-                else if(pending_[n].len <= pending_[n + 1].len) {
+                else if (pending_[n].len <= pending_[n + 1].len) {
                     mergeAt(n);
                 }
                 else {
@@ -223,10 +222,10 @@ namespace detail
         auto mergeForceCollapse()
             -> void
         {
-            while( pending_.size() > 1 ) {
+            while ( pending_.size() > 1 ) {
                 difference_type n = pending_.size() - 2;
 
-                if(n > 0 && pending_[n - 1].len < pending_[n + 1].len) {
+                if (n > 0 && pending_[n - 1].len < pending_[n + 1].len) {
                     --n;
                 }
                 mergeAt(n);
@@ -252,7 +251,7 @@ namespace detail
 
             pending_[i].len = len1 + len2;
 
-            if(i == stackSize - 3) {
+            if (i == stackSize - 3) {
                 pending_[i + 1] = pending_[i + 2];
             }
 
@@ -264,17 +263,17 @@ namespace detail
             base1 += k;
             len1  -= k;
 
-            if(len1 == 0) {
+            if (len1 == 0) {
                 return;
             }
 
             len2 = gallopLeft(base1[len1 - 1], base2, len2, len2 - 1);
             assert( len2 >= 0 );
-            if(len2 == 0) {
+            if (len2 == 0) {
                 return;
             }
 
-            if(len1 <= len2) {
+            if (len1 <= len2) {
                 mergeLo(base1, len1, base2, len2);
             }
             else {
@@ -296,17 +295,17 @@ namespace detail
             difference_type lastOfs = 0;
             difference_type ofs = 1;
 
-            if(comp_.gt(key_proj, proj(base[hint]))) {
+            if (comp_.gt(key_proj, proj(base[hint]))) {
                 difference_type const maxOfs = len - hint;
-                while(ofs < maxOfs && comp_.gt(key_proj, proj(base[hint + ofs]))) {
+                while (ofs < maxOfs && comp_.gt(key_proj, proj(base[hint + ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
-                    if(ofs <= 0) { // int overflow
+                    if (ofs <= 0) { // int overflow
                         ofs = maxOfs;
                     }
                 }
-                if(ofs > maxOfs) {
+                if (ofs > maxOfs) {
                     ofs = maxOfs;
                 }
 
@@ -315,15 +314,15 @@ namespace detail
             }
             else {
                 difference_type const maxOfs = hint + 1;
-                while(ofs < maxOfs && comp_.le(key_proj, proj(base[hint - ofs]))) {
+                while (ofs < maxOfs && comp_.le(key_proj, proj(base[hint - ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
-                    if(ofs <= 0) {
+                    if (ofs <= 0) {
                         ofs = maxOfs;
                     }
                 }
-                if(ofs > maxOfs) {
+                if (ofs > maxOfs) {
                     ofs = maxOfs;
                 }
 
@@ -352,17 +351,17 @@ namespace detail
             difference_type ofs = 1;
             difference_type lastOfs = 0;
 
-            if(comp_.lt(key_proj, proj(base[hint]))) {
+            if (comp_.lt(key_proj, proj(base[hint]))) {
                 difference_type const maxOfs = hint + 1;
-                while(ofs < maxOfs && comp_.lt(key_proj, proj(base[hint - ofs]))) {
+                while (ofs < maxOfs && comp_.lt(key_proj, proj(base[hint - ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
-                    if(ofs <= 0) {
+                    if (ofs <= 0) {
                         ofs = maxOfs;
                     }
                 }
-                if(ofs > maxOfs) {
+                if (ofs > maxOfs) {
                     ofs = maxOfs;
                 }
 
@@ -372,15 +371,15 @@ namespace detail
             }
             else {
                 difference_type const maxOfs = len - hint;
-                while(ofs < maxOfs && comp_.ge(key_proj, proj(base[hint + ofs]))) {
+                while (ofs < maxOfs && comp_.ge(key_proj, proj(base[hint + ofs]))) {
                     lastOfs = ofs;
                     ofs     = (ofs << 1) + 1;
 
-                    if(ofs <= 0) { // int overflow
+                    if (ofs <= 0) { // int overflow
                         ofs = maxOfs;
                     }
                 }
-                if(ofs > maxOfs) {
+                if (ofs > maxOfs) {
                     ofs = maxOfs;
                 }
 
@@ -410,8 +409,7 @@ namespace detail
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
 
             rvalue_reference* ptr = buffer.get();
-            for (auto it = base1 ; it != base1 + len1 ; ++d, (void) ++it, ++ptr)
-            {
+            for (auto it = base1 ; it != base1 + len1 ; ++d, (void) ++it, ++ptr) {
                 ::new(ptr) rvalue_reference(iter_move(it));
             }
 
@@ -419,12 +417,14 @@ namespace detail
             iterator cursor2 = base2;
             iterator dest = base1;
 
-            *dest++ = iter_move(cursor2++);
-            if(--len2 == 0) {
+            *dest = iter_move(cursor2);
+            ++dest;
+            ++cursor2;
+            if (--len2 == 0) {
                 detail::move(cursor1, cursor1 + len1, dest);
                 return;
             }
-            if(len1 == 1) {
+            if (len1 == 1) {
                 detail::move(cursor2, cursor2 + len2, dest);
                 dest[len2] = iter_move(cursor1);
                 return;
@@ -434,7 +434,7 @@ namespace detail
             auto&& proj = utility::as_function(proj_);
 
             // outer:
-            while(true) {
+            while (true) {
                 int count1 = 0;
                 int count2 = 0;
 
@@ -443,26 +443,30 @@ namespace detail
                     assert( len1 > 1 );
                     assert( len2 > 0 );
 
-                    if(comp_.lt(proj(*cursor2), proj(*cursor1))) {
-                        *dest++ = iter_move(cursor2++);
+                    if (comp_.lt(proj(*cursor2), proj(*cursor1))) {
+                        *dest = iter_move(cursor2);
+                        ++dest;
+                        ++cursor2;
                         ++count2;
                         count1 = 0;
-                        if(--len2 == 0) {
+                        if (--len2 == 0) {
                             break_outer = true;
                             break;
                         }
                     }
                     else {
-                        *dest++ = iter_move(cursor1++);
+                        *dest = iter_move(cursor1);
+                        ++dest;
+                        ++cursor1;
                         ++count1;
                         count2 = 0;
-                        if(--len1 == 1) {
+                        if (--len1 == 1) {
                             break_outer = true;
                             break;
                         }
                     }
-                } while( (count1 | count2) < minGallop );
-                if(break_outer) {
+                } while ( (count1 | count2) < minGallop );
+                if (break_outer) {
                     break;
                 }
 
@@ -471,47 +475,51 @@ namespace detail
                     assert( len2 > 0 );
 
                     count1 = gallopRight(*cursor2, cursor1, len1, 0);
-                    if(count1 != 0) {
+                    if (count1 != 0) {
                         detail::move_backward(cursor1, cursor1 + count1, dest + count1);
                         dest    += count1;
                         cursor1 += count1;
                         len1    -= count1;
 
-                        if(len1 <= 1) {
+                        if (len1 <= 1) {
                             break_outer = true;
                             break;
                         }
                     }
-                    *dest++ = iter_move(cursor2++);
-                    if(--len2 == 0) {
+                    *dest = iter_move(cursor2);
+                    ++dest;
+                    ++cursor2;
+                    if (--len2 == 0) {
                         break_outer = true;
                         break;
                     }
 
                     count2 = gallopLeft(*cursor1, cursor2, len2, 0);
-                    if(count2 != 0) {
+                    if (count2 != 0) {
                         detail::move(cursor2, cursor2 + count2, dest);
                         dest    += count2;
                         cursor2 += count2;
                         len2    -= count2;
-                        if(len2 == 0) {
+                        if (len2 == 0) {
                             break_outer = true;
                             break;
                         }
                     }
-                    *dest++ = iter_move(cursor1++);
-                    if(--len1 == 1) {
+                    *dest = iter_move(cursor1);
+                    ++dest;
+                    ++cursor1;
+                    if (--len1 == 1) {
                         break_outer = true;
                         break;
                     }
 
                     --minGallop;
-                } while( (count1 >= min_gallop) | (count2 >= min_gallop) );
-                if(break_outer) {
+                } while ( (count1 >= min_gallop) | (count2 >= min_gallop) );
+                if (break_outer) {
                     break;
                 }
 
-                if(minGallop < 0) {
+                if (minGallop < 0) {
                     minGallop = 0;
                 }
                 minGallop += 2;
@@ -519,7 +527,7 @@ namespace detail
 
             minGallop_ = std::min(minGallop, 1);
 
-            if(len1 == 1) {
+            if (len1 == 1) {
                 assert( len2 > 0 );
                 detail::move(cursor2, cursor2 + len2, dest);
                 dest[len2] = iter_move(cursor1);
@@ -556,12 +564,14 @@ namespace detail
             auto cursor2    = buffer.get() + (len2 - 1);
             iterator dest     = base2 + (len2 - 1);
 
-            *dest-- = iter_move(cursor1--);
-            if(--len1 == 0) {
+            *dest = iter_move(cursor1);
+            --dest;
+            --cursor1;
+            if (--len1 == 0) {
                 detail::move(buffer.get(), buffer.get() + len2, dest - (len2 - 1));
                 return;
             }
-            if(len2 == 1) {
+            if (len2 == 1) {
                 dest    -= len1;
                 cursor1 -= len1;
                 detail::move_backward(cursor1 + 1, cursor1 + (1 + len1), dest + (1 + len1));
@@ -573,7 +583,7 @@ namespace detail
             auto&& proj = utility::as_function(proj_);
 
             // outer:
-            while(true) {
+            while (true) {
                 int count1 = 0;
                 int count2 = 0;
 
@@ -582,26 +592,30 @@ namespace detail
                     assert( len1 > 0 );
                     assert( len2 > 1 );
 
-                    if(comp_.lt(proj(*cursor2), proj(*cursor1))) {
-                        *dest-- = iter_move(cursor1--);
+                    if (comp_.lt(proj(*cursor2), proj(*cursor1))) {
+                        *dest = iter_move(cursor1);
+                        --dest;
+                        --cursor1;
                         ++count1;
                         count2 = 0;
-                        if(--len1 == 0) {
+                        if (--len1 == 0) {
                             break_outer = true;
                             break;
                         }
                     }
                     else {
-                        *dest-- = iter_move(cursor2--);
+                        *dest = iter_move(cursor2);
+                        --dest;
+                        --cursor2;
                         ++count2;
                         count1 = 0;
-                        if(--len2 == 1) {
+                        if (--len2 == 1) {
                             break_outer = true;
                             break;
                         }
                     }
-                } while( (count1 | count2) < minGallop );
-                if(break_outer) {
+                } while ( (count1 | count2) < minGallop );
+                if (break_outer) {
                     break;
                 }
 
@@ -610,47 +624,51 @@ namespace detail
                     assert( len2 > 1 );
 
                     count1 = len1 - gallopRight(*cursor2, base1, len1, len1 - 1);
-                    if(count1 != 0) {
+                    if (count1 != 0) {
                         dest    -= count1;
                         cursor1 -= count1;
                         len1    -= count1;
                         detail::move_backward(cursor1 + 1, cursor1 + (1 + count1), dest + (1 + count1));
 
-                        if(len1 == 0) {
+                        if (len1 == 0) {
                             break_outer = true;
                             break;
                         }
                     }
-                    *dest-- = iter_move(cursor2--);
-                    if(--len2 == 1) {
+                    *dest = iter_move(cursor2);
+                    --dest;
+                    --cursor2;
+                    if (--len2 == 1) {
                         break_outer = true;
                         break;
                     }
 
                     count2 = len2 - gallopLeft(*cursor1, buffer.get(), len2, len2 - 1);
-                    if(count2 != 0) {
+                    if (count2 != 0) {
                         dest    -= count2;
                         cursor2 -= count2;
                         len2    -= count2;
                         detail::move(cursor2 + 1, cursor2 + (1 + count2), dest + 1);
-                        if(len2 <= 1) {
+                        if (len2 <= 1) {
                             break_outer = true;
                             break;
                         }
                     }
-                    *dest-- = iter_move(cursor1--);
-                    if(--len1 == 0) {
+                    *dest = iter_move(cursor1);
+                    --dest;
+                    --cursor1;
+                    if (--len1 == 0) {
                         break_outer = true;
                         break;
                     }
 
                     minGallop--;
-                } while( (count1 >= min_gallop) | (count2 >= min_gallop) );
-                if(break_outer) {
+                } while ( (count1 >= min_gallop) | (count2 >= min_gallop) );
+                if (break_outer) {
                     break;
                 }
 
-                if(minGallop < 0) {
+                if (minGallop < 0) {
                     minGallop = 0;
                 }
                 minGallop += 2;
@@ -658,7 +676,7 @@ namespace detail
 
             minGallop_ = std::min(minGallop, 1);
 
-            if(len2 == 1) {
+            if (len2 == 1) {
                 assert( len1 > 0 );
                 dest    -= len1;
                 detail::move_backward(cursor1 + (1 - len1), cursor1 + 1, dest + (1 + len1));

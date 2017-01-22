@@ -12,7 +12,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_INTEGER_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_INTEGER_SORT_H_
@@ -120,8 +120,10 @@ namespace spreadsort
         size_bins(bin_sizes, bin_cache, cache_offset, cache_end, bin_count);
 
       //Calculating the size of each bin; this takes roughly 10% of runtime
-      for (RandomAccessIter current = first; current != last;)
-        bin_sizes[std::size_t((proj(*(current++)) >> log_divisor) - div_min)]++;
+      for (RandomAccessIter current = first; current != last;) {
+        bin_sizes[std::size_t((proj(*current) >> log_divisor) - div_min)]++;
+        ++current;
+      }
       //Assign the bin positions
       bins[0] = first;
       for (unsigned u = 0; u < bin_count - 1; u++)
@@ -144,10 +146,12 @@ namespace spreadsort
             //3-way swap; this is about 1% faster than a 2-way swap
             //The main advantage is less copies are involved per item
             //put in the correct place
-            RandomAccessIter b = (*target_bin)++;
+            RandomAccessIter b = *target_bin;
+            ++(*target_bin);
             RandomAccessIter * b_bin = bins + ((proj(*b) >> log_divisor) - div_min);
             if (b_bin != local_bin) {
-              RandomAccessIter c = (*b_bin)++;
+              RandomAccessIter c = *b_bin;
+              ++(*b_bin);
               auto tmp = iter_move(c);
               *c = iter_move(b);
               *b = iter_move(current);

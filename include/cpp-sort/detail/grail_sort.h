@@ -2,7 +2,7 @@
  * Grail sorting
  *
  * (c) 2013 by Andrey Astrelin
- * Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
  *
  * Stable sorting that works in O(N*log(N)) worst time
  * and uses O(1) extra memory
@@ -114,10 +114,13 @@ namespace detail
 
         while (p1 < last) {
             if (p0 == middle || compare(proj(*p0), proj(*p1)) > 0) {
-                iter_swap(M++, p1++);
+                iter_swap(M, p1);
+                ++p1;
             } else {
-                iter_swap(M++, p0++);
+                iter_swap(M, p0);
+                ++p0;
             }
+            ++M;
         }
         if (M != p0) {
             detail::swap_ranges(M, M + std::distance(p0, middle), p0);
@@ -139,14 +142,19 @@ namespace detail
 
         while (p1 >= first) {
             if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
-                iter_swap(p0--, p1--);
+                iter_swap(p0, p1);
+                --p1;
             } else {
-                iter_swap(p0--, p2--);
+                iter_swap(p0, p2);
+                --p2;
             }
+            --p0;
         }
         if (p2 != p0) {
             while (p2 >= middle) {
-                iter_swap(p0--, p2--);
+                iter_swap(p0, p2);
+                --p0;
+                --p2;
             }
         }
     }
@@ -169,10 +177,13 @@ namespace detail
         int ftype = 1 - atype;  // 1 if inverted
         while (p1 < q1 && p2 < q2) {
             if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
-                iter_swap(p0++, p1++);
+                iter_swap(p0, p1);
+                ++p1;
             } else {
-                iter_swap(p0++, p2++);
+                iter_swap(p0, p2);
+                ++p2;
             }
+            ++p0;
         }
 
         int len;
@@ -251,10 +262,13 @@ namespace detail
         int ftype = 1 - atype;  // 1 if inverted
         while (p1 < q1 && p2 < q2) {
             if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
-                *p0++ = iter_move(p1++);
+                *p0 = iter_move(p1);
+                ++p1;
             } else {
-                *p0++ = iter_move(p2++);
+                *p0 = iter_move(p2);
+                ++p2;
             }
+            ++p0;
         }
 
         int len;
