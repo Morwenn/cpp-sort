@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -217,9 +217,25 @@ struct ascending_sawtooth:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::size_t limit = size / cppsort::utility::log2(size) * 1.1;
+        std::size_t limit = size / cppsort::utility::log2(size) + 50;
         for (std::size_t i = 0 ; i < size ; ++i)
         {
+            *out++ = i % limit;
+        }
+    }
+
+    static constexpr const char* output = "ascending_sawtooth.txt";
+};
+
+struct ascending_sawtooth_bad:
+    distribution<ascending_sawtooth_bad>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        std::size_t limit = size / cppsort::utility::log2(size) - 50;
+        for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = i % limit;
         }
     }
@@ -234,9 +250,25 @@ struct descending_sawtooth:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::size_t limit = size / cppsort::utility::log2(size) * 1.1;
+        std::size_t limit = size / cppsort::utility::log2(size) + 50;
         while (size--)
         {
+            *out++ = size % limit;
+        }
+    }
+
+    static constexpr const char* output = "descending_sawtooth.txt";
+};
+
+struct descending_sawtooth_bad:
+    distribution<descending_sawtooth_bad>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        std::size_t limit = size / cppsort::utility::log2(size) - 50;
+        while (size--) {
             *out++ = size % limit;
         }
     }
@@ -274,4 +306,53 @@ struct alternating_16_values:
     }
 
     static constexpr const char* output = "alternating_16_values.txt";
+};
+
+struct sparse_inversions:
+    distribution<sparse_inversions>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        const auto size_run = size / cppsort::utility::log2(size) + 30;
+
+        for (std::size_t i = 0 ; i < size ; ++i) {
+            *out++ = (i % size_run) == 0 ? 0 : i;
+        }
+    }
+
+    static constexpr const char* output = "alternating_16_values.txt";
+};
+
+struct vergesort_killer:
+    distribution<vergesort_killer>
+{
+    template<typename OutputIterator>
+    auto operator()(OutputIterator out, std::size_t size) const
+        -> void
+    {
+        // WARNING: not for small collections, mostly because I'm lazy...
+
+        const auto size_run = size / cppsort::utility::log2(size);
+        auto desc = descending{};
+        auto killer = pipe_organ{};
+
+        auto size_output_left = size;
+        while (true) {
+            killer(out, size_run - 50);
+            size_output_left -= size_run - 50;
+            if (size_output_left < size_run + 50) break;
+            desc(out, size_run + 50);
+            size_output_left -= size_run + 50;
+            if (size_output_left < size_run - 50) break;
+        };
+
+        // Just in case
+        if (size_output_left) {
+            shuffled{}(out, size_output_left);
+        }
+    }
+
+    static constexpr const char* output = "vergesort_killer.txt";
 };
