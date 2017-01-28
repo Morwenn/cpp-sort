@@ -97,6 +97,8 @@ namespace cppsort
     struct small_array_adapter;
     template<typename Sorter>
     struct stable_adapter;
+    template<typename Sorter>
+    struct verge_adapter;
 }
 
 #endif // CPPSORT_FWD_H_
