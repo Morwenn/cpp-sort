@@ -315,7 +315,7 @@ namespace detail
                 prest = pidx;
                 lrest = lblock;
             } else {
-                std::tie(lrest, frest) = grail_SmartMergeWithXBuf(prest, prest+lrest, prest+lrest+lblock,
+                std::tie(lrest, frest) = grail_SmartMergeWithXBuf(prest, prest+lrest, prest+(lrest+lblock),
                                                                   frest, lblock,
                                                                   compare, projection);
             }
@@ -329,7 +329,7 @@ namespace detail
             } else {
                 lrest += lblock * nblock2;
             }
-            grail_MergeLeftWithXBuf(prest, prest+lrest, prest+lrest+llast,
+            grail_MergeLeftWithXBuf(prest, prest+lrest, prest+(lrest+llast),
                                     prest-lblock, std::move(compare), std::move(projection));
         } else {
             detail::move(prest, prest + lrest, prest - lblock);
@@ -366,11 +366,11 @@ namespace detail
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
-                first[m-3] = iter_move(first + m - 1 + u);
-                first[m-2] = iter_move(first + m - u);
+                first[m-3] = iter_move(first + (m - 1 + u));
+                first[m-2] = iter_move(first + (m - u));
             }
             if (size % 2) {
-                first[size-3] = iter_move(first + size - 1);
+                first[size-3] = iter_move(first + (size - 1));
             }
             first -= 2;
             last -= 2;
@@ -378,7 +378,7 @@ namespace detail
                 RandomAccessIterator p0 = first;
                 RandomAccessIterator p1 = last - 2 * h;
                 while (p0 <= p1) {
-                    grail_MergeLeftWithXBuf(p0, p0+h, p0+h+h, p0-h, compare, projection);
+                    grail_MergeLeftWithXBuf(p0, p0+h, p0+(h+h), p0-h, compare, projection);
                     p0 += 2 * h;
                 }
                 int rest = std::distance(p0, last);
@@ -413,7 +413,7 @@ namespace detail
             RandomAccessIterator p0 = first;
             RandomAccessIterator p1 = last - 2 * h;
             while (p0 <= p1) {
-                grail_MergeLeft(p0, p0+h, p0+h+h, p0-h, compare, projection);
+                grail_MergeLeft(p0, p0+h, p0+(h+h), p0-h, compare, projection);
                 p0 += 2 * h;
             }
             int rest = std::distance(p0, last);
@@ -434,7 +434,7 @@ namespace detail
         }
         while (p > first) {
             p -= 2 * K;
-            grail_MergeRight(p, p+K, p+K+K, p+K+K+K, compare, projection);
+            grail_MergeRight(p, p+K, p+(K+K), p+(K+K+K), compare, projection);
         }
     }
 
@@ -473,17 +473,17 @@ namespace detail
             int fnext = compare(proj(keys[cidx]), midkey_proj) < 0 ? 0 : 1;
             if(fnext == frest) {
                 if (havebuf) {
-                    detail::swap_ranges(prest-lblock, prest-lblock+lrest, prest);
+                    detail::swap_ranges(prest-lblock, prest-(lblock-lrest), prest);
                 }
                 prest = pidx;
                 lrest = lblock;
             } else {
                 if (havebuf) {
-                    std::tie(lrest, frest) = grail_SmartMergeWithBuffer(prest, prest+lrest, prest+lrest+lblock,
+                    std::tie(lrest, frest) = grail_SmartMergeWithBuffer(prest, prest+lrest, prest+(lrest+lblock),
                                                                         lblock, frest,
                                                                         compare, projection);
                 } else {
-                    std::tie(lrest, frest) = grail_SmartMergeWithoutBuffer(prest, prest+lrest, prest+lrest+lblock,
+                    std::tie(lrest, frest) = grail_SmartMergeWithoutBuffer(prest, prest+lrest, prest+(lrest+lblock),
                                                                            frest, compare, projection);
                 }
 
@@ -494,7 +494,7 @@ namespace detail
         if (llast) {
             if (frest) {
                 if (havebuf) {
-                    detail::swap_ranges(prest-lblock, prest-lblock+lrest, prest);
+                    detail::swap_ranges(prest-lblock, prest-(lblock-lrest), prest);
                 }
                 prest = pidx;
                 lrest = lblock * nblock2;
@@ -502,10 +502,10 @@ namespace detail
                 lrest += lblock * nblock2;
             }
             if (havebuf) {
-                grail_MergeLeft(prest, prest+lrest, prest+lrest+llast, prest-lblock,
+                grail_MergeLeft(prest, prest+lrest, prest+(lrest+llast), prest-lblock,
                                 std::move(compare), std::move(projection));
             } else {
-                grail_MergeWithoutBuffer(prest, prest+lrest, prest+lrest+llast,
+                grail_MergeWithoutBuffer(prest, prest+lrest, prest+(lrest+llast),
                                          std::move(compare), std::move(projection));
             }
         } else {
@@ -534,7 +534,7 @@ namespace detail
             RandomAccessIterator p0 = first;
             RandomAccessIterator p1 = last - 2 * h;
             while (p0 <= p1) {
-                grail_MergeWithoutBuffer(p0, p0+h, p0+h+h, compare, projection);
+                grail_MergeWithoutBuffer(p0, p0+h, p0+(h+h), compare, projection);
                 p0 += 2 * h;
             }
             int rest = std::distance(p0, last);
@@ -570,7 +570,7 @@ namespace detail
             if (b == M && lrest == 0) break;
             RandomAccessIterator arr1 = arr + b * 2 * LL;
             int NBlk = (b == M ? lrest : 2 * LL) / lblock;
-            insertion_sort(keys, keys + NBlk + (b == M ? 1 : 0),
+            insertion_sort(keys, keys + (NBlk + (b == M ? 1 : 0)),
                            compare.base(), projection);
             int midkey = LL / lblock;
             for (int u = 1 ; u < NBlk ; ++u) {
@@ -608,12 +608,12 @@ namespace detail
         }
         if (usexbuf) {
             for (int p = len ; --p >= 0;) {
-                arr[p] = iter_move(arr + p - lblock);
+                arr[p] = iter_move(arr + (p - lblock));
             }
             detail::move(xbuf, xbuf + lblock, arr - lblock);
         } else if (havebuf) {
             while (--len >= 0) {
-                iter_swap(arr + len, arr + len - lblock);
+                iter_swap(arr + len, arr + (len - lblock));
             }
         }
     }
@@ -650,7 +650,7 @@ namespace detail
             havebuf = false;
             lblock = 0;
         }
-        RandomAccessIterator ptr = first + lblock + nkeys;
+        RandomAccessIterator ptr = first + (lblock + nkeys);
         int cbuf = havebuf ? lblock : nkeys;
         if (havebuf) {
             grail_BuildBlocks(ptr, last, cbuf, extbuf, LExtBuf, compare, projection);

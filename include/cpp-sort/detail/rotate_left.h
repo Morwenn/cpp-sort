@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,7 @@ namespace detail
                  i < static_cast<difference_type>(N - 1) ;
                  ++i)
             {
-                first[i] = iter_move(first + i + 1);
+                first[i] = iter_move(first + (i + 1));
             }
             first[N-1] = std::move(tmp);
         }

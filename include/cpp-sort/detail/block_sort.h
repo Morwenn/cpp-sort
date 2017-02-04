@@ -2,7 +2,7 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  *
- * Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
  *
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstdint>
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -346,7 +347,7 @@ namespace detail
             // http://pages.ripco.net/~jgamble/nw.html
             Wiki::Iterator<RandomAccessIterator> iterator(size, 4);
             while (not iterator.finished()) {
-                uint8_t order[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+                std::uint8_t order[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
                 auto range = iterator.nextRange(first);
 
                 auto do_swap = [&](difference_type x, difference_type y) {
@@ -446,7 +447,7 @@ namespace detail
                             // merge A2 and B2 into the cache
                             if (compare(proj(*std::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
-                                detail::move(A2.start, A2.end, cache.begin() + A1.length() + B2.length());
+                                detail::move(A2.start, A2.end, cache.begin() + (A1.length() + B2.length()));
                                 detail::move(B2.start, B2.end, cache.begin() + A1.length());
                             } else if (compare(proj(*B2.start), proj(*std::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
@@ -462,7 +463,7 @@ namespace detail
                             Range<cache_iterator> A3 = { cache.begin(), cache.begin() + A1.length() };
                             Range<cache_iterator> B3 = {
                                 cache.begin() + A1.length(),
-                                cache.begin() + A1.length() + A2.length()
+                                cache.begin() + (A1.length() + A2.length())
                             };
 
                             if (compare(proj(*std::prev(B3.end)), proj(*A3.start))) {
@@ -569,7 +570,7 @@ namespace detail
 
                         // check A for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the start of A
-                        for (last = A.start, count = 1; count < find; last = index, (void) ++count) {
+                        for (last = A.start, count = 1; count < find ; last = index, (void) ++count) {
                             index = FindLastForward(std::next(last), A.end, *last, compare, projection, find - count);
                             if (index == A.end) break;
                             assert(index < A.end);
@@ -807,10 +808,10 @@ namespace detail
                                             // that's where we need it to be when we go to merge it anyway
                                             if (block_size <= cache_size) {
                                                 detail::move(blockA.start, blockA.start + block_size, cache.begin());
-                                                detail::move(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
+                                                detail::move(B_split, B_split + B_remaining, blockA.start + (block_size - B_remaining));
                                             } else {
                                                 detail::swap_ranges(blockA.start, blockA.start + block_size, buffer2.start);
-                                                detail::swap_ranges(B_split, B_split + B_remaining, blockA.start + block_size - B_remaining);
+                                                detail::swap_ranges(B_split, B_split + B_remaining, blockA.start + (block_size - B_remaining));
                                             }
                                         } else {
                                             // we are unable to use the 'buffer2' trick to speed up the rotation operation since buffer2 doesn't exist, so perform a normal rotation
@@ -818,7 +819,7 @@ namespace detail
                                         }
 
                                         // update the range for the remaining A blocks, and the range remaining from the B block after it was split
-                                        lastA = { blockA.start - B_remaining, blockA.start - B_remaining + block_size };
+                                        lastA = { blockA.start - B_remaining, blockA.start - (B_remaining - block_size) };
                                         lastB = { lastA.end, lastA.end + B_remaining };
 
                                         // if there are no more A blocks remaining, this step is finished!

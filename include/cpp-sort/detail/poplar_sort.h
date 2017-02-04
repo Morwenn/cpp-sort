@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,9 +49,9 @@ namespace detail
 
         auto&& proj = utility::as_function(projection);
 
-        auto root = first + size - 1;
+        auto root = first + (size - 1);
         auto child_root1 = root - 1;
-        auto child_root2 = first + size / 2 - 1;
+        auto child_root2 = first + (size / 2 - 1);
 
         auto max_root = root;
         if (compare(proj(*max_root), proj(*child_root1)))
@@ -94,7 +94,7 @@ namespace detail
         if (m != nb_poplars)
         {
             using utility::iter_swap;
-            iter_swap(first + roots[m] - 1, first + roots[nb_poplars] - 1);
+            iter_swap(first + (roots[m] - 1), first + (roots[nb_poplars] - 1));
             sift(first + roots[m-1], roots[m] - roots[m-1],
                  std::move(compare), std::move(projection));
         }

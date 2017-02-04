@@ -334,7 +334,7 @@ namespace detail
             assert( lastOfs < ofs );
             assert( ofs <= len );
 
-            return lower_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
+            return lower_bound(base+(lastOfs+1), base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
         template<typename T, typename Iter>
@@ -390,7 +390,7 @@ namespace detail
             assert( lastOfs < ofs );
             assert( ofs <= len );
 
-            return upper_bound(base+lastOfs+1, base+ofs, key_proj, comp_.base(), proj_) - base;
+            return upper_bound(base+(lastOfs+1), base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
         auto mergeLo(iterator const base1, difference_type len1, iterator const base2, difference_type len2)
