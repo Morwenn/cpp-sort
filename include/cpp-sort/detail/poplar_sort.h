@@ -53,22 +53,25 @@ namespace detail
         auto child_root1 = root - 1;
         auto child_root2 = first + (size / 2 - 1);
 
-        auto max_root = root;
-        if (compare(proj(*max_root), proj(*child_root1)))
-        {
-            max_root = child_root1;
-        }
-        if (compare(proj(*max_root), proj(*child_root2)))
-        {
-            max_root = child_root2;
-        }
+        while (true) {
+            auto max_root = root;
+            if (compare(proj(*max_root), proj(*child_root1))) {
+                max_root = child_root1;
+            }
+            if (compare(proj(*max_root), proj(*child_root2))) {
+                max_root = child_root2;
+            }
+            if (max_root == root) return;
 
-        if (max_root != root)
-        {
             using utility::iter_swap;
             iter_swap(root, max_root);
-            sift(max_root - (size / 2 - 1), size / 2,
-                 std::move(compare), std::move(projection));
+
+            size /= 2;
+            if (size < 2) return;
+
+            root = max_root;
+            child_root1 = root - 1;
+            child_root2 = max_root + (size / 2 - size);
         }
     }
 
@@ -83,16 +86,13 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         difference_type m = nb_poplars;
-        for (difference_type j = 1 ; j < nb_poplars ; ++j)
-        {
-            if (compare(proj(first[roots[m]-1]), proj(first[roots[j]-1])))
-            {
+        for (difference_type j = 1 ; j < nb_poplars ; ++j) {
+            if (compare(proj(first[roots[m]-1]), proj(first[roots[j]-1]))) {
                 m = j;
             }
         }
 
-        if (m != nb_poplars)
-        {
+        if (m != nb_poplars) {
             using utility::iter_swap;
             iter_swap(first + (roots[m] - 1), first + (roots[nb_poplars] - 1));
             sift(first + roots[m-1], roots[m] - roots[m-1],
@@ -106,8 +106,7 @@ namespace detail
         -> void
     {
         auto size = std::distance(first, last);
-        if (size < 16)
-        {
+        if (size < 16) {
             // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
             // should be faster
@@ -126,8 +125,7 @@ namespace detail
         // that the one on the left. Apparently, it makes things
         // faster, probably helping the branch predictor or
         // something...
-        if (compare(proj(*(last - 2)), proj(*std::prev(middle))))
-        {
+        if (compare(proj(*(last - 2)), proj(*std::prev(middle)))) {
             using utility::iter_swap;
             iter_swap(std::prev(middle), last - 2);
             sift(first, middle - first, compare, projection);
@@ -153,37 +151,28 @@ namespace detail
 
         // Make the poplar heap
         auto it = first;
-        do
-        {
-            if (std::distance(it, last) >= poplar_size)
-            {
+        do {
+            if (std::distance(it, last) >= poplar_size) {
                 make_poplar(it, it + poplar_size, compare, projection);
                 roots[++nb_poplars] = std::distance(first, it + poplar_size);
                 it += poplar_size;
-            }
-            else
-            {
+            } else {
                 poplar_size = (poplar_size + 1) / 2 - 1;
             }
         } while (poplar_size > 0);
 
         // Sort the poplar heap
-        while (size > 1)
-        {
+        do {
             relocate(first, roots, nb_poplars, compare, projection);
-            if (roots[nb_poplars-1] == size - 1)
-            {
+            if (roots[nb_poplars-1] == size - 1) {
                 --nb_poplars;
-            }
-            else
-            {
+            } else {
                 roots[nb_poplars] = (roots[nb_poplars-1] + size) / 2;
                 ++nb_poplars;
                 roots[nb_poplars] = size - 1;
             }
-
             --size;
-        }
+        } while (size > 1);
     }
 }}
 
