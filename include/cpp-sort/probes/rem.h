@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,16 +27,17 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
+#include "../detail/upper_bound.h"
 
 namespace cppsort
 {
@@ -58,42 +59,43 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> cppsort::detail::difference_type_t<ForwardIterator>
             {
-                using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
-                auto&& proj = utility::as_function(projection);
+                // Compute Rem as n - longest non-decreasing subsequence,
+                // where the LNDS is computed with an altered patience
+                // sorting algorithm
 
                 auto size = std::distance(first, last);
-                if (size < 2)
-                {
-                    return 0;
-                }
+                if (size < 2) return 0;
 
-                // Size of the longest ascending subsequence
-                difference_type max_size = 0;
-                // Beginning of the current subsequence
-                auto begin = first;
+                auto&& proj = utility::as_function(projection);
 
-                auto current = first;
-                auto next = std::next(first);
-                while (true)
-                {
-                    while (next != last && compare(proj(*current), proj(*next)))
-                    {
-                        ++current;
-                        ++next;
+                // Top (smaller) elements in patience sorting stacks
+                std::vector<ForwardIterator> stack_tops;
+
+                auto deref_compare = [&](const auto& lhs, auto rhs_it) mutable {
+                    return compare(lhs, *rhs_it);
+                };
+                auto deref_proj = [&](const auto& value) mutable -> decltype(auto) {
+                    return proj(value);
+                };
+
+                while (first != last) {
+                    auto it = cppsort::detail::upper_bound(
+                        std::begin(stack_tops), std::end(stack_tops),
+                        proj(*first), deref_compare, deref_proj);
+
+                    if (it == std::end(stack_tops)) {
+                        // The element is bigger than everything else,
+                        // create a new "stack" to put it
+                        stack_tops.emplace_back(first);
+                    } else {
+                        // The element is strictly smaller than the top
+                        // of a given stack, replace the stack top
+                        *it = first;
                     }
-
-                    max_size = std::max(
-                        max_size,
-                        std::distance(begin, next)
-                    );
-
-                    if (next == last) break;
-                    ++current;
-                    ++next;
-                    begin = current;
+                    ++first;
                 }
 
-                return size - max_size;
+                return stack_tops.size() ? size - stack_tops.size() : 0;
             }
         };
     }

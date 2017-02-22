@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,8 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
     SECTION( "simple test" )
     {
         std::forward_list<int> li = { 6, 9, 79, 41, 44, 49, 11, 16, 69, 15 };
-        CHECK( cppsort::probe::rem(li) == 7 );
-        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 7 );
+        CHECK( cppsort::probe::rem(li) == 4 );
+        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 4 );
     }
 
     SECTION( "lower bound" )
@@ -50,5 +50,16 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
         std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::rem(li) == 10 );
         CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 10 );
+    }
+
+    SECTION( "uniform distribution" )
+    {
+        // Check that we are taking the longest non-decreasing
+        // subsequence into account, and not the longest increasing
+        // subsequence
+
+        std::forward_list<int> li = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+        CHECK( cppsort::probe::rem(li) == 0 );
+        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 0 );
     }
 }
