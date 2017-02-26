@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
+#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -63,28 +64,43 @@ namespace probe
                 // Head an tail of encroaching lists
                 std::vector<std::pair<ForwardIterator, ForwardIterator>> lists;
 
-                while (first != last)
-                {
-                    bool found = false;
-                    for (auto& list: lists)
-                    {
-                        if (not compare(proj(*list.first), proj(*first)))
-                        {
-                            list.first = first;
-                            found = true;
-                            break;
-                        }
+                while (first != last) {
+                    auto&& value = proj(*first);
 
-                        if (not compare(proj(*first), proj(*list.second)))
-                        {
-                            list.second = first;
-                            found = true;
-                            break;
+                    // Binary search for an encroaching list where
+                    // value <= list.first or value >= list.second
+
+                    // Whether the found value is smaller than the head
+                    // of the found encroaching list or greater than its
+                    // tail
+                    bool value_is_smaller = true;
+
+                    auto size = lists.size();
+                    auto res_it = std::begin(lists);
+                    while (size > 0) {
+                        auto it = res_it;
+                        std::advance(it, size / 2);
+                        if (not compare(proj(*it->first), value)) {
+                            size /= 2;
+                            value_is_smaller = true;
+                        } else if (not compare(value, proj(*it->second))) {
+                            size /= 2;
+                            value_is_smaller = false;
+                        } else {
+                            res_it = ++it;
+                            size -= size / 2 + 1;
                         }
                     }
 
-                    if (not found)
-                    {
+                    if (res_it != std::end(lists)) {
+                        // Change the head or tail of the found encroaching list
+                        // if any has been found
+                        if (value_is_smaller) {
+                            res_it->first = first;
+                        } else {
+                            res_it->second = first;
+                        }
+                    } else {
                         // Create a new encroaching list if the element
                         // didn't fit in any of the existing ones
                         lists.emplace_back(first, first);
