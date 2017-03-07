@@ -82,7 +82,7 @@ namespace detail
         -> std::pair<ForwardIterator, ForwardIterator>
     {
         std::pair<ForwardIterator, ForwardIterator> result{begin, begin};
-        if (begin == end || ++begin == end) {
+        if (begin == end || std::next(begin) == end) {
             return result;
         }
         return unchecked_minmax_element(std::move(begin), std::move(end),

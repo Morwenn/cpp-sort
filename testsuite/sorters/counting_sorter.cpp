@@ -69,4 +69,16 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
         cppsort::sort(cppsort::counting_sorter{}, std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
+
+    SECTION( "GitHub issue #103" )
+    {
+        // Specific bug in counting_sort due to another specific bug in
+        // minmax_element_and_is_sorted due to another specific bug in
+        // minmax_element... found while investigating GitHub issue #103;
+        // better have a test
+
+        std::vector<int> vec = { -47, -46, -45, -44, -43, -42, -41, -39, -40, -38 };
+        cppsort::counting_sort(vec);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
 }
