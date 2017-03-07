@@ -57,6 +57,17 @@ TEST_CASE( "test sorter with ascending distribution", "[distributions]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "counting_sorter" )
+    {
+        // While counting_sort shouldn't be affected by patterns, its
+        // underlying minmax_element_and_is_sorted function had a bug
+        // that could specifically appear with an ascending distribution,
+        // so here is the dedicated test (see issue #103)
+
+        cppsort::sort(cppsort::counting_sort, collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "grail_sorter" )
     {
         using namespace cppsort;
