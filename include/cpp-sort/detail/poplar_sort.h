@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
@@ -44,7 +45,7 @@ namespace detail
     struct poplar
     {
         RandomAccessIterator begin, end;
-        difference_type_t<RandomAccessIterator> size;
+        std::make_unsigned_t<difference_type_t<RandomAccessIterator>> size;
 
         auto root() const
             -> RandomAccessIterator
@@ -54,8 +55,9 @@ namespace detail
         }
     };
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto sift(RandomAccessIterator first, difference_type_t<RandomAccessIterator> size,
+    template<typename RandomAccessIterator, typename Size,
+             typename Compare, typename Projection>
+    auto sift(RandomAccessIterator first, Size size,
               Compare compare, Projection projection)
         -> void
     {
@@ -119,7 +121,8 @@ namespace detail
                      Compare compare, Projection projection)
         -> void
     {
-        auto size = std::distance(first, last);
+        using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
+        poplar_size_t size = std::distance(first, last);
         if (size < 16) {
             // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
@@ -140,18 +143,20 @@ namespace detail
                      Compare compare, Projection projection)
         -> void
     {
+        using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
+
         // Size of the unsorted subsequence
-        auto size = std::distance(first, last);
+        poplar_size_t size = std::distance(first, last);
         if (size < 2) return;
 
         std::vector<poplar<RandomAccessIterator>> poplars;
         poplars.reserve(utility::log2(size));
-        auto poplar_size = utility::hyperfloor(size) - 1;
+        poplar_size_t poplar_size = utility::hyperfloor(size) - 1;
 
         // Make the poplar heap
         auto it = first;
         do {
-            if (std::distance(it, last) >= poplar_size) {
+            if (poplar_size_t(std::distance(it, last)) >= poplar_size) {
                 auto begin = it;
                 auto end = it + poplar_size;
                 make_poplar(begin, end, compare, projection);

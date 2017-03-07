@@ -77,6 +77,7 @@ set(
     sorters/merge_insertion_sorter_projection.cpp
     sorters/merge_sorter.cpp
     sorters/merge_sorter_projection.cpp
+    sorters/poplar_sorter.cpp
     sorters/ska_sorter.cpp
     sorters/ska_sorter_projection.cpp
     sorters/spread_sorter.cpp
