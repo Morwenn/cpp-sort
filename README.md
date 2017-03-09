@@ -29,14 +29,17 @@ int main()
 }
 ```
 
-**cpp-sort** actually provides a full set of sorting-related features. The most
-important one is probably the concept of *sorters* and *sorter adapters*. Sorters
-are function objects implementing a sorting algorithm and sorter adapters are
-special class templates designed to adapt sorters and alter their behaviour in some
-specific manner. The library provides sorters implementing common and not-so-common
-sorting algorithms as well as some specific adapters. It also provides fixed-size
-sorters and tools such as sorter facade or sorter traits, designed to craft your
-own sorters. Here is a more complete example of what the library can do:
+# The main features & the extra features
+
+**cpp-sort** actually provides a full set of sorting-related features. Here are the main
+building blocks of the library:
+* Every sorting algorithm exists as a function object called a [sorter](https://github.com/Morwenn/cpp-sort/wiki/Sorters)
+* Sorters can be wrapped in [sorter adapters](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters) to augment their behaviour
+* The library provides a [sorter facade](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) to easily build sorters
+* [Fixed-size sorters](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters) can be used to efficiently sort tiny fixed-size collections
+* [Measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness) can be used to evaluate the disorder in a collection
+
+Here is a more complete example of what the library can do:
 
 ```cpp
 #include <algorithm>
@@ -51,28 +54,41 @@ own sorters. Here is a more complete example of what the library can do:
 
 int main()
 {
-    struct wrapper { int value; }
+    struct wrapper { int value; };
 
     std::forward_list<wrapper> li = { {5}, {8}, {3}, {2}, {9} };
     std::vector<wrapper> vec = { {5}, {8}, {3}, {2}, {9} };
-    
+
     // When used, this sorter will use a pattern-defeating quicksort
     // to sort random-access collections, and a mergesort otherwise
     using sorter = cppsort::hybrid_adapter<
         cppsort::pdq_sorter,
         cppsort::merge_sorter
     >;
-    
+    sorter sort;
+
     // Sort li and vec in reverse order using their value member
-    cppsort::sort(sorter{}, li, std::greater<>{}, &wrapper::value);
-    cppsort::sort(sorter{}, vec, std::greater<>{}, &wrapper::value);
+    sort(li, std::greater<>{}, &wrapper::value);
+    sort(vec, std::greater<>{}, &wrapper::value);
 
     assert(std::equal(
         std::begin(li), std::end(li),
-        std::begin(vec), std::end(vec)
+        std::begin(vec), std::end(vec),
+        [](auto& lhs, auto& rhs) { return lhs.value == rhs.value; }
     ));
 }
 ```
+
+Even when the sorting functions are used without the extra features, they still provide
+some interesting guarantees (ideas often taken from the Ranges TS):
+* They provide both an iterator and a range interface
+* When possible, they accept a custom comparator parameter
+* Most of them accept a projection parameter
+* They correctly handle proxy iterators with `iter_swap` and `iter_move`
+* They also work when iterators don't provide post-incrementation nor post-decrementation
+* The value types of the collections to be sorted need not be default-constructible
+* The value types of the collections to be sorted need not be copyable (only movable)
+* Stateless sorters can be converted to a function pointer for each overloaded `operator()`
 
 You can read more about all the available tools and find some tutorials about using
 and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wiki).
