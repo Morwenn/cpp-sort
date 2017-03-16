@@ -109,21 +109,25 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
 # Compiler support
 
-**cpp-sort** currently works with g++5 and clang++3.8. It uses some of the most
-recent (and not widely supported) C++14 features and will probably use the C++17
-features once they are available. The overall goal is to make sure that the library
-works with the latest g++ and clang++ versions, without going out of its way to
-support older releases.
+**cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
+or more recent versions of these compilers. Future development on the C++14 branch will
+try to remain compatible with these version. There is currently no plan to explicitly
+support other compilers.
 
-In the future, the branches will follow the following pattern: the master branch
-will remain C++14 and there will be a C++17 branch. There will be other branches
-forking the C++17 one for some of the published Technical Specifications (for
-example, there will likely be a branch for the concepts TS); these branches will
-eventually be merged in the C++17 one when the corresponding technical specifications
-are merged into the current C++ working draft (or in a C++20 branch if the
-specifications do not make it in time for the C++17 release). Of course the creation
-of such branches will depend on compiler support: if a feature isn't supported by
-either the latest g++ or clang++, I won't use it before the following release.
+The repository also contains an experimental [C++17 branch](https://github.com/Morwenn/cpp-sort/tree/c++17)
+which requires the most recent versions of g++ and clang++, and will probably require even
+more recent versions until the C++17 support of both compilers is stable enough. It is
+worth noting that code written against the C++14 branch is not guaranteed to work with the
+C++17 branch as the new language and standard library features replaced some of the utility
+headers; those deletions are documented. At some point in the future, the C++17 branch will
+have more features than the C++14 ones, such as proper handling of execution policies to
+implement parallel sorting algorithms. At some later point in the future, the C++17 branch
+will likely become the main branch, and the C++14 branch will only recceive bug fixes.
+
+The long-term goal is to make the library evolve with the C++ standard, and the kind of
+differences that already between the C++14 and C++17 branches will also exist between the
+future branches. Some features such as concepts and standard ranges will likely shape the
+futur of the library.
 
 # Thanks
 
