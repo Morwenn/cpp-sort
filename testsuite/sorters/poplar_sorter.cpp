@@ -40,11 +40,6 @@ TEST_CASE( "poplar_sorter tests", "[poplar_sorter]" )
         // problem with the underlying bit tricks that eventually
         // made the algorithm fail
 
-        std::vector<int> collection(1'000'000, 0);
-        std::iota(std::begin(collection), std::end(collection), 0);
-        std::mt19937 engine(1477332479); // constant seed
-        std::shuffle(std::begin(collection), std::end(collection), engine);
-
         auto size = 131073; // This part matters the most
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
