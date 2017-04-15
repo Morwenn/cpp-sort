@@ -187,10 +187,11 @@ namespace utility
             -> void
         {
             using rvalue_reference = std::decay_t<cppsort::detail::rvalue_reference_t<ForwardIterator>>;
+            auto&& comp = as_function(compare);
             auto&& proj = as_function(projection);
 
             // Shrink the problem size on the left side
-            while (first != middle && not compare(proj(*middle), proj(*first)))
+            while (first != middle && not comp(proj(*middle), proj(*first)))
             {
                 ++first;
             }

@@ -58,6 +58,7 @@ namespace detail
         {
             using utility::iter_move;
             using utility::iter_swap;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             // Order elements pair-wise
@@ -68,13 +69,13 @@ namespace detail
 
             // Order pairs of elements by max value
 
-            if (compare(proj(first[3u]), proj(first[1u]))) {
+            if (comp(proj(first[3u]), proj(first[1u]))) {
                 iter_swap(first, first + 2u);
                 iter_swap(first + 1u, first + 3u);
             }
 
-            if (compare(proj(first[5u]), proj(first[3u]))) {
-                if (compare(proj(first[5u]), proj(first[1u]))) {
+            if (comp(proj(first[5u]), proj(first[3u]))) {
+                if (comp(proj(first[5u]), proj(first[1u]))) {
                     {
                         auto tmp = iter_move(first + 5u);
                         first[5u] = iter_move(first + 3u);
@@ -95,19 +96,19 @@ namespace detail
 
             // Merge-insert minimal elements
 
-            if (compare(proj(first[4u]), proj(first[1u]))) {
+            if (comp(proj(first[4u]), proj(first[1u]))) {
                 // Insert last element in [0, 1, 3]
-                if (compare(proj(first[4u]), proj(first[0u]))) {
+                if (comp(proj(first[4u]), proj(first[0u]))) {
                     rotate_right<5u>(first);
                 } else {
                     rotate_right<4u>(first + 1u);
                 }
             } else {
-                if (compare(proj(first[4u]), proj(first[3u]))) {
+                if (comp(proj(first[4u]), proj(first[3u]))) {
                     rotate_right<3u>(first + 2u);
                 } else {
                     // Insert 2 in [0, 1, 3]
-                    if (compare(proj(first[2u]), proj(first[0u]))) {
+                    if (comp(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
                         iter_swap_if(first + 1u, first + 2u,
@@ -118,8 +119,8 @@ namespace detail
             }
 
             // Insert 3 in [0, 1, 2]
-            if (compare(proj(first[3u]), proj(first[1u]))) {
-                if (compare(proj(first[3u]), proj(first[0u]))) {
+            if (comp(proj(first[3u]), proj(first[1u]))) {
+                if (comp(proj(first[3u]), proj(first[0u]))) {
                     rotate_right<4u>(first);
                 } else {
                     rotate_right<3u>(first + 1u);

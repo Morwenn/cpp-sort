@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,11 +50,12 @@ namespace detail
         -> ResultType
     {
         using utility::iter_move;
+        auto&& comp = utility::as_function(compare);
 
         ResultType inversions = 0;
 
         // Shrink the problem size on the left side
-        while (compare(*first, *middle))
+        while (comp(*first, *middle))
         {
             ++first;
         }
@@ -68,7 +69,7 @@ namespace detail
                 detail::move(first1, middle, result);
                 break;
             }
-            if (compare(*first2, *first1))
+            if (comp(*first2, *first1))
             {
                 *result = iter_move(first2);
                 ++first2;
@@ -123,6 +124,7 @@ namespace detail
         -> difference_type_t<ForwardIterator>
     {
         using difference_type = difference_type_t<ForwardIterator>;
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         difference_type count = 0;
@@ -131,7 +133,7 @@ namespace detail
             auto&& value = proj(*it1);
             for (auto it2 = std::next(it1) ; it2 != last ; ++it2)
             {
-                if (compare(proj(*it2), value))
+                if (comp(proj(*it2), value))
                 {
                     ++count;
                 }

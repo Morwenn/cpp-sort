@@ -63,6 +63,7 @@ namespace detail
     {
         if (size < 2) return;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         auto root = first + (size - 1);
@@ -71,10 +72,10 @@ namespace detail
 
         while (true) {
             auto max_root = root;
-            if (compare(proj(*max_root), proj(*child_root1))) {
+            if (comp(proj(*max_root), proj(*child_root1))) {
                 max_root = child_root1;
             }
-            if (compare(proj(*max_root), proj(*child_root2))) {
+            if (comp(proj(*max_root), proj(*child_root2))) {
                 max_root = child_root2;
             }
             if (max_root == root) return;
@@ -96,6 +97,7 @@ namespace detail
                   Compare compare, Projection projection)
         -> void
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Find the poplar with the bigger root
@@ -103,7 +105,7 @@ namespace detail
         auto last = std::prev(std::end(poplars));
         auto bigger = last;
         for (auto it = std::begin(poplars) ; it != last ; ++it) {
-            if (compare(proj(*bigger->root()), proj(*it->root()))) {
+            if (comp(proj(*bigger->root()), proj(*it->root()))) {
                 bigger = it;
             }
         }

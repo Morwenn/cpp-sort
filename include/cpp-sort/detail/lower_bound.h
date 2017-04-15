@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,26 +27,21 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <functional>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<
-        typename ForwardIterator,
-        typename T,
-        typename Compare = std::less<>,
-        typename Projection = utility::identity
-    >
+    template<typename ForwardIterator, typename T,
+             typename Compare, typename Projection>
     auto lower_bound(ForwardIterator first, ForwardIterator last,
                      const T& value,
-                     Compare compare={}, Projection projection={})
+                     Compare compare, Projection projection)
         -> ForwardIterator
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         auto size = std::distance(first, last);
@@ -54,7 +49,7 @@ namespace detail
         {
             ForwardIterator it = first;
             std::advance(it, size / 2);
-            if (compare(proj(*it), value))
+            if (comp(proj(*it), value))
             {
                 first = ++it;
                 size -= size / 2 + 1;

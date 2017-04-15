@@ -46,6 +46,7 @@ namespace detail
                                       Compare compare={}, Projection projection={})
         -> decltype(auto)
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Function-local result type, only the names of the
@@ -64,7 +65,7 @@ namespace detail
 
         // While it is sorted, the min and max are obvious
         auto current = first;
-        while (not compare(proj(*next), proj(*current)))
+        while (not comp(proj(*next), proj(*current)))
         {
             ++current;
             ++next;
@@ -83,11 +84,11 @@ namespace detail
         result.max = current;
 
         auto tmp = minmax_element(next, last, compare, projection);
-        if (compare(proj(*tmp.first), proj(*result.min)))
+        if (comp(proj(*tmp.first), proj(*result.min)))
         {
             result.min = tmp.first;
         }
-        if (not compare(proj(*tmp.second), proj(*result.max)))
+        if (not comp(proj(*tmp.second), proj(*result.max)))
         {
             result.max = tmp.second;
         }

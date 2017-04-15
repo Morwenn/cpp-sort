@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,13 +45,14 @@ namespace detail
         auto operator()(RandomAccessIterator first, Compare compare, Projection projection) const
             -> void
         {
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
             auto&& proj0 = proj(first[0u]);
 
-            if (compare(proj(first[4u]), proj0)) {
-                if (compare(proj(first[6u]), proj0)) {
-                    if (compare(proj(first[7u]), proj0)) {
-                        if (compare(proj(first[8u]), proj0)) {
+            if (comp(proj(first[4u]), proj0)) {
+                if (comp(proj(first[6u]), proj0)) {
+                    if (comp(proj(first[7u]), proj0)) {
+                        if (comp(proj(first[8u]), proj0)) {
                             rotate_left<9u>(first);
                         } else {
                             rotate_left<8u>(first);
@@ -60,21 +61,21 @@ namespace detail
                         rotate_left<7u>(first);
                     }
                 } else {
-                    if (compare(proj(first[5u]), proj0)) {
+                    if (comp(proj(first[5u]), proj0)) {
                         rotate_left<6u>(first);
                     } else {
                         rotate_left<5u>(first);
                     }
                 }
             } else {
-                if (compare(proj(first[2u]), proj0)) {
-                    if (compare(proj(first[3u]), proj0)) {
+                if (comp(proj(first[2u]), proj0)) {
+                    if (comp(proj(first[3u]), proj0)) {
                         rotate_left<4u>(first);
                     } else {
                         rotate_left<3u>(first);
                     }
                 } else {
-                    if (compare(proj(first[1u]), proj0)) {
+                    if (comp(proj(first[1u]), proj0)) {
                         rotate_left<2u>(first);
                     }
                 }

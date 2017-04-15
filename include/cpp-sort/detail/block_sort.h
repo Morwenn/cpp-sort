@@ -67,12 +67,13 @@ namespace detail
         difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = first + skip ; compare(proj(*std::prev(index)), value_proj) ; index += skip) {
+        for (index = first + skip ; comp(proj(*std::prev(index)), value_proj) ; index += skip) {
             if (index >= last - skip) {
                 return lower_bound(index, last, value_proj,
                                    std::move(compare), std::move(projection));
@@ -93,12 +94,13 @@ namespace detail
         difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = first + skip ; not compare(value_proj, proj(*std::prev(index))) ; index += skip) {
+        for (index = first + skip ; not comp(value_proj, proj(*std::prev(index))) ; index += skip) {
             if (index >= last - skip) {
                 return upper_bound(index, last, value_proj,
                                    std::move(compare), std::move(projection));
@@ -119,12 +121,13 @@ namespace detail
         difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = last - skip ; index > first && not compare(proj(*std::prev(index)), value_proj) ; index -= skip) {
+        for (index = last - skip ; index > first && not comp(proj(*std::prev(index)), value_proj) ; index -= skip) {
             if (index < first + skip) {
                 return lower_bound(first, index, value_proj,
                                    std::move(compare), std::move(projection));
@@ -145,12 +148,13 @@ namespace detail
         difference_type size = std::distance(first, last);
         if (size == 0) return first;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         auto&& value_proj = proj(value);
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = last - skip ; index > first && compare(value_proj, proj(*std::prev(index))) ; index -= skip) {
+        for (index = last - skip ; index > first && comp(value_proj, proj(*std::prev(index))) ; index -= skip) {
             if (index < first + skip) {
                 return upper_bound(first, index, value_proj,
                                    std::move(compare), std::move(projection));
@@ -180,11 +184,12 @@ namespace detail
             RandomAccessIterator B_last = last2;
             RandomAccessIterator insert_index = first1;
 
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             if (first1 != last1 && first2 != last2) {
                 while (true) {
-                    if (not compare(proj(*B_index), proj(*A_index))) {
+                    if (not comp(proj(*B_index), proj(*A_index))) {
                         iter_swap(insert_index, A_index);
                         ++A_index;
                         ++insert_index;
@@ -340,6 +345,7 @@ namespace detail
                 return;
             }
 
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             // sort groups of 4-8 items at a time using an unstable sorting network,
@@ -351,8 +357,8 @@ namespace detail
                 auto range = iterator.nextRange(first);
 
                 auto do_swap = [&](difference_type x, difference_type y) {
-                    if (compare(proj(range.start[y]), proj(range.start[x])) ||
-                        (order[x] > order[y] && not compare(proj(range.start[x]), proj(range.start[y])))
+                    if (comp(proj(range.start[y]), proj(range.start[x])) ||
+                        (order[x] > order[y] && not comp(proj(range.start[x]), proj(range.start[y])))
                     ) {
                         iter_swap(range.start + x, range.start + y);
                         iter_swap(order + x, order + y);
@@ -426,18 +432,18 @@ namespace detail
                             auto A2 = iterator.nextRange(first);
                             auto B2 = iterator.nextRange(first);
 
-                            if (compare(proj(*std::prev(B1.end)), proj(*A1.start))) {
+                            if (comp(proj(*std::prev(B1.end)), proj(*A1.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
                                 detail::move(A1.start, A1.end, cache.begin() + B1.length());
                                 detail::move(B1.start, B1.end, cache.begin());
-                            } else if (compare(proj(*B1.start), proj(*std::prev(A1.end)))) {
+                            } else if (comp(proj(*B1.start), proj(*std::prev(A1.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
                                 merge_move(A1.start, A1.end, B1.start, B1.end, cache.begin(),
                                            compare, projection, projection);
                             } else {
                                 // if A1, B1, A2, and B2 are all in order, skip doing anything else
-                                if (not compare(proj(*B2.start), proj(*std::prev(A2.end))) &&
-                                    not compare(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
+                                if (not comp(proj(*B2.start), proj(*std::prev(A2.end))) &&
+                                    not comp(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
 
                                 // move A1 and B1 into the cache in the same order
                                 detail::move(A1.start, B1.end, cache.begin());
@@ -445,11 +451,11 @@ namespace detail
                             A1 = { A1.start, B1.end };
 
                             // merge A2 and B2 into the cache
-                            if (compare(proj(*std::prev(B2.end)), proj(*A2.start))) {
+                            if (comp(proj(*std::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
                                 detail::move(A2.start, A2.end, cache.begin() + (A1.length() + B2.length()));
                                 detail::move(B2.start, B2.end, cache.begin() + A1.length());
-                            } else if (compare(proj(*B2.start), proj(*std::prev(A2.end)))) {
+                            } else if (comp(proj(*B2.start), proj(*std::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
                                 merge_move(A2.start, A2.end, B2.start, B2.end, cache.begin() + A1.length(),
                                            compare, projection, projection);
@@ -466,11 +472,11 @@ namespace detail
                                 cache.begin() + (A1.length() + A2.length())
                             };
 
-                            if (compare(proj(*std::prev(B3.end)), proj(*A3.start))) {
+                            if (comp(proj(*std::prev(B3.end)), proj(*A3.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the array
                                 detail::move(A3.start, A3.end, A1.start + A2.length());
                                 detail::move(B3.start, B3.end, A1.start);
-                            } else if (compare(proj(*B3.start), proj(*std::prev(A3.end)))) {
+                            } else if (comp(proj(*B3.start), proj(*std::prev(A3.end)))) {
                                 // these two ranges weren't already in order, so merge them back into the array
                                 merge_move(A3.start, A3.end, B3.start, B3.end, A1.start,
                                            compare, projection, projection);
@@ -490,10 +496,10 @@ namespace detail
                             auto A = iterator.nextRange(first);
                             auto B = iterator.nextRange(first);
 
-                            if (compare(proj(*std::prev(B.end)), proj(*A.start))) {
+                            if (comp(proj(*std::prev(B.end)), proj(*A.start))) {
                                 // the two ranges are in reverse order, so a simple rotation should fix it
                                 detail::rotate(A.start, A.end, B.end);
-                            } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
+                            } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we'll need to merge them!
                                 detail::move(A.start, A.end, cache.begin());
                                 merge_move(cache.begin(), cache.begin() + A.length(),
@@ -732,10 +738,10 @@ namespace detail
                             }
                         }
 
-                        if (compare(proj(*std::prev(B.end)), proj(*A.start))) {
+                        if (comp(proj(*std::prev(B.end)), proj(*A.start))) {
                             // the two ranges are in reverse order, so a simple rotation should fix it
                             detail::rotate(A.start, A.end, B.end);
-                        } else if (compare(proj(*B.start), proj(*std::prev(A.end)))) {
+                        } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
                             // these two ranges weren't already in order, so we'll need to merge them!
 
                             // break the remainder of A into blocks. firstA is the uneven-sized first A block
@@ -768,7 +774,7 @@ namespace detail
                                 while (true) {
                                     // if there's a previous B block and the first value of the minimum A block is <= the last value of the previous B block,
                                     // then drop that minimum A block behind. or if there are no B blocks left then keep dropping the remaining A blocks.
-                                    if ((lastB.length() > 0 && not compare(proj(*std::prev(lastB.end)), proj(*indexA))) ||
+                                    if ((lastB.length() > 0 && not comp(proj(*std::prev(lastB.end)), proj(*indexA))) ||
                                         blockB.length() == 0) {
                                         // figure out where to split the previous B block, and rotate it at the split
                                         RandomAccessIterator B_split = lower_bound(lastB.start, lastB.end, proj(*indexA),
@@ -778,7 +784,7 @@ namespace detail
                                         // swap the minimum A block to the beginning of the rolling A blocks
                                         RandomAccessIterator minA = blockA.start;
                                         for (auto findA = minA + block_size ; findA < blockA.end ; findA += block_size) {
-                                            if (compare(proj(*findA), proj(*minA))) {
+                                            if (comp(proj(*findA), proj(*minA))) {
                                                 minA = findA;
                                             }
                                         }

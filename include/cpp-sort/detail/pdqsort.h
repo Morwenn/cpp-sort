@@ -65,12 +65,13 @@ namespace detail
         // *(begin - 1) is an element smaller than or equal to any element in [begin, end).
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto unguarded_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                      Compare comp, Projection projection)
+                                      Compare compare, Projection projection)
             -> void
         {
             if (begin == end) return;
 
             using utility::iter_move;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             for (RandomAccessIterator cur = begin + 1; cur != end; ++cur) {
@@ -97,12 +98,13 @@ namespace detail
         // successfully sort and return true.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto partial_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                    Compare comp, Projection projection)
+                                    Compare compare, Projection projection)
             -> bool
         {
             if (begin == end) return true;
 
             using utility::iter_move;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             int limit = 0;
@@ -135,12 +137,13 @@ namespace detail
         // equal to any element in [begin, end).
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto unguarded_partial_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                              Compare comp, Projection projection)
+                                              Compare compare, Projection projection)
             -> bool
         {
             if (begin == end) return true;
 
             using utility::iter_move;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             int limit = 0;
@@ -211,18 +214,19 @@ namespace detail
             }
         }
 
-        // Partitions [begin, end) around pivot *begin using comparison function comp. Elements equal
+        // Partitions [begin, end) around pivot *begin using comparison function compare. Elements equal
         // to the pivot are put in the right-hand partition. Returns the position of the pivot after
         // partitioning and whether the passed sequence already was correctly partitioned. Assumes the
         // pivot is a median of at least 3 elements and that [begin, end) is at least
         // insertion_sort_threshold long.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto partition_right(RandomAccessIterator begin, RandomAccessIterator end,
-                             Compare comp, Projection projection)
+                             Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
             using utility::iter_move;
             using utility::iter_swap;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
@@ -386,11 +390,12 @@ namespace detail
         // the pivot and it doesn't check or return if the passed sequence already was partitioned.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto partition_left(RandomAccessIterator begin, RandomAccessIterator end,
-                            Compare comp, Projection projection)
+                            Compare compare, Projection projection)
             -> RandomAccessIterator
         {
             using utility::iter_move;
             using utility::iter_swap;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             auto pivot = iter_move(begin);
@@ -419,12 +424,13 @@ namespace detail
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto pdqsort_loop(RandomAccessIterator begin, RandomAccessIterator end,
-                          Compare comp, Projection projection,
+                          Compare compare, Projection projection,
                           int bad_allowed, bool leftmost=true)
             -> void
         {
             using utility::iter_swap;
             using difference_type = difference_type_t<RandomAccessIterator>;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             // Use a while loop for tail recursion elimination.
@@ -433,21 +439,21 @@ namespace detail
 
                 // Insertion sort is faster for small arrays.
                 if (size < insertion_sort_threshold) {
-                    if (leftmost) insertion_sort(begin, end, comp, projection);
-                    else unguarded_insertion_sort(begin, end, comp, projection);
+                    if (leftmost) insertion_sort(begin, end, compare, projection);
+                    else unguarded_insertion_sort(begin, end, compare, projection);
                     return;
                 }
 
                 // Choose pivot as median of 3 or pseudomedian of 9.
                 difference_type s2 = size / 2;
                 if (size > ninther_threshold) {
-                    iter_sort3(begin, begin + s2, end - 1, comp, projection);
-                    iter_sort3(begin + 1, begin + (s2 - 1), end - 2, comp, projection);
-                    iter_sort3(begin + 2, begin + (s2 + 1), end - 3, comp, projection);
-                    iter_sort3(begin + (s2 - 1), begin + s2, begin + (s2 + 1), comp, projection);
+                    iter_sort3(begin, begin + s2, end - 1, compare, projection);
+                    iter_sort3(begin + 1, begin + (s2 - 1), end - 2, compare, projection);
+                    iter_sort3(begin + 2, begin + (s2 + 1), end - 3, compare, projection);
+                    iter_sort3(begin + (s2 - 1), begin + s2, begin + (s2 + 1), compare, projection);
                     iter_swap(begin, begin + s2);
                 } else {
-                    iter_sort3(begin + s2, begin, end - 1, comp, projection);
+                    iter_sort3(begin + s2, begin, end - 1, compare, projection);
                 }
 
                 // If *(begin - 1) is the end of the right partition of a previous partition operation
@@ -456,13 +462,13 @@ namespace detail
                 // the left partition, greater elements in the right partition. We do not have to
                 // recurse on the left partition, since it's sorted (all equal).
                 if (!leftmost && !comp(proj(*(begin - 1)), proj(*begin))) {
-                    begin = partition_left(begin, end, comp, projection) + 1;
+                    begin = partition_left(begin, end, compare, projection) + 1;
                     continue;
                 }
 
                 // Partition and get results.
                 std::pair<RandomAccessIterator, bool> part_result
-                    = partition_right(begin, end, comp, projection);
+                    = partition_right(begin, end, compare, projection);
                 RandomAccessIterator pivot_pos = part_result.first;
                 bool already_partitioned = part_result.second;
 
@@ -475,8 +481,8 @@ namespace detail
                 if (highly_unbalanced) {
                     // If we had too many bad partitions, switch to heapsort to guarantee O(n log n).
                     if (--bad_allowed == 0) {
-                        make_heap(begin, end, comp, projection);
-                        sort_heap(begin, end, comp, projection);
+                        make_heap(begin, end, compare, projection);
+                        sort_heap(begin, end, compare, projection);
                         return;
                     }
 
@@ -507,15 +513,15 @@ namespace detail
                     // If we were decently balanced and we tried to sort an already partitioned
                     // sequence try to use insertion sort.
                     if (already_partitioned &&
-                        partial_insertion_sort(begin, pivot_pos, comp, projection) &&
-                        unguarded_partial_insertion_sort(pivot_pos + 1, end, comp, projection)) {
+                        partial_insertion_sort(begin, pivot_pos, compare, projection) &&
+                        unguarded_partial_insertion_sort(pivot_pos + 1, end, compare, projection)) {
                         return;
                     }
                 }
 
                 // Sort the left partition first using recursion and do tail recursion elimination for
                 // the right-hand partition.
-                pdqsort_loop(begin, pivot_pos, comp, projection, bad_allowed, leftmost);
+                pdqsort_loop(begin, pivot_pos, compare, projection, bad_allowed, leftmost);
                 begin = pivot_pos + 1;
                 leftmost = false;
             }
@@ -524,12 +530,12 @@ namespace detail
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto pdqsort(RandomAccessIterator begin, RandomAccessIterator end,
-                 Compare comp, Projection projection)
+                 Compare compare, Projection projection)
         -> void
     {
         if (std::distance(begin, end) < 2) return;
         pdqsort_detail::pdqsort_loop(std::move(begin), std::move(end),
-                                     std::move(comp), std::move(projection),
+                                     std::move(compare), std::move(projection),
                                      utility::log2(end - begin));
     }
 }}

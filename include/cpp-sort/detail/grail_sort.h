@@ -699,8 +699,9 @@ namespace detail
         auto size = std::distance(first, last);
         typename BufferProvider::template buffer<rvalue_reference> buffer(size);
 
+        using compare_t = std::decay_t<decltype(utility::as_function(compare))>;
         grail_commonSort(std::move(first), std::move(last), buffer.begin(), buffer.size(),
-                         three_way_compare<Compare>(compare), std::move(projection));
+                         three_way_compare<compare_t>(compare), std::move(projection));
     }
 }}
 
