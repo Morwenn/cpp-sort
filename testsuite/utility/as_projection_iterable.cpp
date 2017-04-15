@@ -22,9 +22,12 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
+#include <ctime>
 #include <functional>
 #include <iterator>
+#include <numeric>
 #include <random>
+#include <type_traits>
 #include <utility>
 #include <vector>
 #include <catch.hpp>
@@ -64,7 +67,7 @@ namespace
     {
         template<
             typename Iterator,
-            typename Compare=std::less<>,
+            typename Compare = std::less<>,
             typename = std::enable_if_t<cppsort::is_projection_iterator_v<
                 cppsort::utility::identity, Iterator, Compare
             >>
@@ -78,7 +81,7 @@ namespace
 
         template<
             typename Iterable,
-            typename Compare=std::less<>,
+            typename Compare = std::less<>,
             typename = std::enable_if_t<cppsort::is_projection_v<
                 cppsort::utility::identity, Iterable, Compare
             >>

@@ -32,7 +32,6 @@
 #include <catch.hpp>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sort.h>
-#include <cpp-sort/utility/as_function.h>
 #include "../algorithm.h"
 
 TEST_CASE( "default sorter tests with projections",

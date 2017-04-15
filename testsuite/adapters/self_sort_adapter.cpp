@@ -24,7 +24,8 @@
 #include <type_traits>
 #include <catch.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/sorter_facade.h>
 
 namespace
 {

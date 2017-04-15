@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
+#include <type_traits>
 #include <utility>
 #include <catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>

@@ -30,6 +30,8 @@
 #include <numeric>
 #include <random>
 #include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/sorters/ska_sorter.h>

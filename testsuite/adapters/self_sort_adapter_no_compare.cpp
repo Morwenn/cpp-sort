@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <list>
 #include <utility>
+#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
