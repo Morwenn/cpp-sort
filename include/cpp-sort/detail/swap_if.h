@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -128,7 +128,7 @@ namespace detail
         // only when the iterators don't have dedicated
         // iter_move or iter_swap ADL-found functions
 
-        swap_if(*lhs, *rhs, compare, projection);
+        swap_if(*lhs, *rhs, std::move(compare), std::move(projection));
     }
 }}
 

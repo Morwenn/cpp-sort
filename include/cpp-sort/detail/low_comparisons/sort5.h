@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +87,8 @@ namespace detail
                     if (compare(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
-                        iter_swap_if(first + 1u, first + 2u, compare, projection);
+                        iter_swap_if(first + 1u, first + 2u,
+                                     std::move(compare), std::move(projection));
                     }
                     return;
                 }
@@ -101,7 +102,8 @@ namespace detail
                     rotate_right<3u>(first + 1u);
                 }
             } else {
-                iter_swap_if(first + 2u, first + 3u, compare, projection);
+                iter_swap_if(first + 2u, first + 3u,
+                             std::move(compare), std::move(projection));
             }
         }
     };

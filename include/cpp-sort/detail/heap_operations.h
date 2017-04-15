@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// //  Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// //  Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_HEAP_OPERATIONS_H_
@@ -109,7 +109,7 @@ namespace detail
         {
             using utility::iter_swap;
             iter_swap(first, --last);
-            sift_down<Compare>(first, last, comp, projection, len - 1, first);
+            sift_down<Compare>(first, last, comp, std::move(projection), len - 1, first);
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include "../swap_if.h"
@@ -52,7 +53,8 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            iter_swap_if(first, first + 1u, compare, projection);
+            iter_swap_if(first, first + 1u,
+                         std::move(compare), std::move(projection));
         }
     };
 }}

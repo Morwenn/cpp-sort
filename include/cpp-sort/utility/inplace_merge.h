@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -144,7 +144,7 @@ namespace utility
 
                 cppsort::detail::half_inplace_merge(
                     buffer, buff_it, f1, std::next(f1, n1), f0,
-                    n0, compare, projection
+                    n0, std::move(compare), std::move(projection)
                 );
                 return;
             }
