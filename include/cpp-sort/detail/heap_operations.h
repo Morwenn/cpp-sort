@@ -25,7 +25,7 @@ namespace cppsort
 {
 namespace detail
 {
-    template<class Compare, class RandomAccessIterator, class Projection>
+    template<typename Compare, typename RandomAccessIterator, typename Projection>
     auto sift_down(RandomAccessIterator first, RandomAccessIterator,
                    Compare compare, Projection projection,
                    difference_type_t<RandomAccessIterator> len,
@@ -83,7 +83,7 @@ namespace detail
         *start = std::move(top);
     }
 
-    template<class RandomAccessIterator, class Compare, class Projection>
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto make_heap(RandomAccessIterator first, RandomAccessIterator last,
                    Compare compare, Projection projection)
         -> void
@@ -98,7 +98,7 @@ namespace detail
         }
     }
 
-    template<class Compare, class RandomAccessIterator, class Projection>
+    template<typename Compare, typename RandomAccessIterator, typename Projection>
     auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
                   Compare compare, Projection projection,
                   difference_type_t<RandomAccessIterator> len)
@@ -111,7 +111,7 @@ namespace detail
         }
     }
 
-    template<class RandomAccessIterator, class Compare, class Projection>
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto sort_heap(RandomAccessIterator first, RandomAccessIterator last,
                    Compare compare, Projection projection)
         -> void

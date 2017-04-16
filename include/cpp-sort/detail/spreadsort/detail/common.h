@@ -35,18 +35,18 @@ namespace spreadsort
 namespace detail
 {
     //Well, we're not using Boost in the end
-    template<bool Condition, typename T = void>
+    template<bool Condition, typename T=void>
     using disable_if_t = std::enable_if_t<not Condition, T>;
 
     //This only works on unsigned data types
-    template <typename T>
+    template<typename T>
     auto rough_log_2_size(const T& input)
         -> unsigned
     {
       unsigned result = 0;
       //The && is necessary on some compilers to avoid infinite loops
       //it doesn't significantly impair performance
-      while ((input >> result) && (result < (8*sizeof(T)))) ++result;
+      while ((input >> result) && (result < (8 * sizeof(T)))) ++result;
       return result;
     }
 
@@ -112,12 +112,12 @@ namespace detail
 
     // Resizes the bin cache and bin sizes, and initializes each bin size to 0.
     // This generates the memory overhead to use in radix sorting.
-    template <class RandomAccessIter>
+    template<typename RandomAccessIterator>
     auto size_bins(std::size_t *bin_sizes,
-                   std::vector<RandomAccessIter> &bin_cache,
+                   std::vector<RandomAccessIterator> &bin_cache,
                    unsigned cache_offset, unsigned &cache_end,
                    unsigned bin_count)
-        -> RandomAccessIter*
+        -> RandomAccessIterator*
     {
       // Clear the bin sizes
       for (std::size_t u = 0; u < bin_count; u++)
