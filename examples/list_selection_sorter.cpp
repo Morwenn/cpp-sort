@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #include <iterator>
 #include <list>
 #include <cpp-sort/sorters/selection_sorter.h>
+#include <cpp-sort/utility/as_function.h>
 
 namespace example
 {
@@ -47,17 +48,15 @@ namespace example
     {
         // Dedicated selection sort algorithm for example::list
 
+        auto&& comp = cppsort::utility::as_function(compare);
+
         auto it = std::begin(collection);
         auto last = std::end(collection);
-        while (it != last)
-        {
-            auto min_it = std::min_element(it, last, compare);
-            if (min_it == it)
-            {
+        while (it != last) {
+            auto min_it = std::min_element(it, last, comp);
+            if (min_it == it) {
                 ++it;
-            }
-            else
-            {
+            } else {
                 collection.splice(it, collection, min_it);
             }
         }
