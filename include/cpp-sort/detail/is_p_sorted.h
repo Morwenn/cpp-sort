@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,12 +40,13 @@ namespace detail
                      Compare compare, Projection projection)
         -> bool
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         for (auto it1 = first + p ; it1 != last ; ++it1) {
             auto&& value = proj(*it1);
             for (auto it2 = first ; it2 != it1 - p ; ++it2) {
-                if (compare(value, proj(*it2))) {
+                if (comp(value, proj(*it2))) {
                     return false;
                 }
             }

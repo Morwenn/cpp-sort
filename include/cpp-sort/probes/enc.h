@@ -59,6 +59,7 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> cppsort::detail::difference_type_t<ForwardIterator>
             {
+                auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
                 // Head an tail of encroaching lists
@@ -80,10 +81,10 @@ namespace probe
                     while (size > 0) {
                         auto it = res_it;
                         std::advance(it, size / 2);
-                        if (not compare(proj(*it->first), value)) {
+                        if (not comp(proj(*it->first), value)) {
                             size /= 2;
                             value_is_smaller = true;
-                        } else if (not compare(value, proj(*it->second))) {
+                        } else if (not comp(value, proj(*it->second))) {
                             size /= 2;
                             value_is_smaller = false;
                         } else {

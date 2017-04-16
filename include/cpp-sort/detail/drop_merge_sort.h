@@ -49,6 +49,7 @@ namespace detail
         auto size = std::distance(begin, end);
         if (size < 2) return;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         using difference_type = difference_type_t<BidirectionalIterator>;
@@ -62,10 +63,10 @@ namespace detail
         static constexpr difference_type recency = 8;
 
         while (read != end) {
-            if (begin != write && compare(proj(*read), proj(*std::prev(write)))) {
+            if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
 
                 if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
-                    not compare(proj(*read), proj(*std::prev(write, 2)))) {
+                    not comp(proj(*read), proj(*std::prev(write, 2)))) {
                     dropped.push_back(*std::prev(write));
                     *std::prev(write) = *read;
                     ++read;
@@ -103,7 +104,7 @@ namespace detail
         while (not dropped.empty()) {
             auto& last_dropped = dropped.back();
 
-            while (begin != write && compare(proj(last_dropped), proj(*std::prev(write)))) {
+            while (begin != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
                 --back;
                 --write;
                 *back = std::move(*write);
@@ -126,6 +127,7 @@ namespace detail
         auto size = std::distance(begin, end);
         if (size < 2) return;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         using difference_type = difference_type_t<BidirectionalIterator>;
@@ -139,10 +141,10 @@ namespace detail
         static constexpr difference_type recency = 8;
 
         while (read != end) {
-            if (begin != write && compare(proj(*read), proj(*std::prev(write)))) {
+            if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
 
                 if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
-                    not compare(proj(*read), proj(*std::prev(write, 2)))) {
+                    not comp(proj(*read), proj(*std::prev(write, 2)))) {
                     dropped.push_back(iter_move(std::prev(write)));
                     *std::prev(write) = iter_move(read);
                     ++read;
@@ -181,7 +183,7 @@ namespace detail
         while (not dropped.empty()) {
             auto& last_dropped = dropped.back();
 
-            while (begin != write && compare(proj(last_dropped), proj(*std::prev(write)))) {
+            while (begin != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
                 --back;
                 --write;
                 *back = iter_move(write);

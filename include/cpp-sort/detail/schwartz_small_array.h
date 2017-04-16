@@ -31,6 +31,7 @@
 #include <cstddef>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/is_in_pack.h>
 
 namespace cppsort

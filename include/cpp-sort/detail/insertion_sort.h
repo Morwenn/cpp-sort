@@ -42,6 +42,7 @@ namespace detail
         if (first == last) return;
 
         using utility::iter_move;
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur) {
@@ -50,13 +51,13 @@ namespace detail
 
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
-            if (compare(proj(*sift), proj(*sift_1))) {
+            if (comp(proj(*sift), proj(*sift_1))) {
                 auto tmp = iter_move(sift);
                 auto&& tmp_proj = proj(tmp);
 
                 do {
                     *sift = iter_move(sift_1);
-                } while (--sift != first && compare(tmp_proj, proj(*--sift_1)));
+                } while (--sift != first && comp(tmp_proj, proj(*--sift_1)));
                 *sift = std::move(tmp);
             }
         }

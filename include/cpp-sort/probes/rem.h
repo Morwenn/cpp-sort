@@ -66,13 +66,14 @@ namespace probe
                 auto size = std::distance(first, last);
                 if (size < 2) return 0;
 
+                auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
                 // Top (smaller) elements in patience sorting stacks
                 std::vector<ForwardIterator> stack_tops;
 
                 auto deref_compare = [&](const auto& lhs, auto rhs_it) mutable {
-                    return compare(lhs, *rhs_it);
+                    return comp(lhs, *rhs_it);
                 };
                 auto deref_proj = [&](const auto& value) mutable -> decltype(auto) {
                     return proj(value);

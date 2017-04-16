@@ -78,6 +78,7 @@ namespace cppsort
                                   Compare compare, Projection projection)
             -> void
         {
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             auto it = collection.before_begin();
@@ -92,7 +93,7 @@ namespace cppsort
                 auto insertion_point = collection.before_begin();
                 while (std::next(insertion_point) != last)
                 {
-                    if (not compare(proj(*std::next(insertion_point)), value)) break;
+                    if (not comp(proj(*std::next(insertion_point)), value)) break;
                     ++insertion_point;
                 }
 

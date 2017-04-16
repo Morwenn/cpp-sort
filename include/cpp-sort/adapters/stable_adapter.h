@@ -58,16 +58,17 @@ namespace cppsort
             private:
 
                 using projection_t = decltype(utility::as_function(std::declval<Projection&>()));
-                std::tuple<Compare, projection_t> data;
+                using compare_t = decltype(utility::as_function(std::declval<Compare&>()));
+                std::tuple<compare_t, projection_t> data;
 
             public:
 
                 stable_compare(Compare compare, Projection projection={}):
-                    data(std::move(compare), utility::as_function(projection))
+                    data(utility::as_function(compare), utility::as_function(projection))
                 {}
 
                 auto compare() const
-                    -> Compare
+                    -> compare_t
                 {
                     return std::get<0>(data);
                 }

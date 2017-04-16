@@ -74,6 +74,7 @@ namespace detail
         BidirectionalIterator next = is_sorted_until(first, last, compare, projection);
         BidirectionalIterator current = std::prev(next);
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         while (true)
@@ -83,7 +84,7 @@ namespace detail
             // Decreasing range
             while (next != last)
             {
-                if (compare(proj(*current), proj(*next))) break;
+                if (comp(proj(*current), proj(*next))) break;
                 ++current;
                 ++next;
             }
@@ -123,7 +124,7 @@ namespace detail
             // Increasing range
             while (next != last)
             {
-                if (compare(proj(*next), proj(*current))) break;
+                if (comp(proj(*next), proj(*current))) break;
                 ++current;
                 ++next;
             }
@@ -198,6 +199,7 @@ namespace detail
         RandomAccessIterator current = first;
         RandomAccessIterator next = std::next(first);
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         while (true) {
@@ -221,20 +223,20 @@ namespace detail
             RandomAccessIterator current2 = current;
             RandomAccessIterator next2 = next;
 
-            if (compare(proj(*next), proj(*current))) {
+            if (comp(proj(*next), proj(*current))) {
                 // Found a decreasing sequence, move iterators
                 // to the limits of the sequence
                 do {
                     --current;
                     --next;
-                    if (compare(proj(*current), proj(*next))) break;
+                    if (comp(proj(*current), proj(*next))) break;
                 } while (current != begin_range);
-                if (compare(proj(*current), proj(*next))) ++current;
+                if (comp(proj(*current), proj(*next))) ++current;
 
                 ++current2;
                 ++next2;
                 while (next2 != last) {
-                    if (compare(proj(*current2), proj(*next2))) break;
+                    if (comp(proj(*current2), proj(*next2))) break;
                     ++current2;
                     ++next2;
                 }
@@ -263,14 +265,14 @@ namespace detail
                 do {
                     --current;
                     --next;
-                    if (compare(proj(*next), proj(*current))) break;
+                    if (comp(proj(*next), proj(*current))) break;
                 } while (current != begin_range);
-                if (compare(proj(*next), proj(*current))) ++current;
+                if (comp(proj(*next), proj(*current))) ++current;
 
                 ++current2;
                 ++next2;
                 while (next2 != last) {
-                    if (compare(proj(*next2), proj(*current2))) break;
+                    if (comp(proj(*next2), proj(*current2))) break;
                     ++current2;
                     ++next2;
                 }

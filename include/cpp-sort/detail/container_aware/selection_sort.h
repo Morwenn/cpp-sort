@@ -69,6 +69,7 @@ namespace cppsort
                                   Compare compare, Projection projection)
             -> void
         {
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             auto first = collection.before_begin();
@@ -79,7 +80,7 @@ namespace cppsort
                 auto it = first;
                 while (std::next(it) != last)
                 {
-                    if (compare(proj(*std::next(it)), proj(*std::next(min_it))))
+                    if (comp(proj(*std::next(it)), proj(*std::next(min_it))))
                     {
                         min_it = it;
                     }

@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_INPLACE_MERGE_H_
@@ -21,6 +21,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "assume.h"
 #include "iterator_traits.h"
@@ -37,18 +38,19 @@ namespace detail
     class negate
     {
     private:
-        Predicate pred;
+        Predicate predicate;
     public:
         negate() {}
 
-        explicit negate(Predicate p):
-            pred(p)
+        explicit negate(Predicate predicate):
+            predicate(predicate)
         {}
 
         template<typename T1>
         auto operator()(const T1& x)
             -> bool
         {
+            auto&& pred = utility::as_function(predicate);
             return not pred(x);
         }
 
@@ -56,6 +58,7 @@ namespace detail
         auto operator()(const T1& x, const T2& y)
             -> bool
         {
+            auto&& pred = utility::as_function(predicate);
             return not pred(x, y);
         }
     };
@@ -65,9 +68,10 @@ namespace detail
     auto half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
                             InputIterator2 first2, InputIterator2 last2,
                             OutputIterator result, Size min_len,
-                            Compare comp, Projection projection)
+                            Compare compare, Projection projection)
         -> void
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         for (; min_len != 0 ; --min_len) {
@@ -103,7 +107,7 @@ namespace detail
     template<typename Compare, typename BidirectionalIterator,
              typename Projection, typename RandomAccessIterator>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                                BidirectionalIterator last, Compare comp, Projection projection,
+                                BidirectionalIterator last, Compare compare, Projection projection,
                                 difference_type_t<BidirectionalIterator> len1,
                                 difference_type_t<BidirectionalIterator> len2,
                                 RandomAccessIterator buff)
@@ -120,7 +124,7 @@ namespace detail
                 ::new(p) rvalue_reference(iter_move(i));
             }
             half_inplace_merge(buff, p, middle, last, first, len1,
-                               std::move(comp), std::move(projection));
+                               std::move(compare), std::move(projection));
         }
         else
         {
@@ -133,7 +137,7 @@ namespace detail
             half_inplace_merge(Rv(p), Rv(buff),
                                RBi(middle), RBi(first),
                                RBi(last), len2,
-                               negate<Compare>(comp), std::move(projection));
+                               negate<Compare>(compare), std::move(projection));
         }
     }
 
@@ -141,7 +145,7 @@ namespace detail
              typename Projection, typename RandomAccessIterator>
     auto inplace_merge_impl(BidirectionalIterator first, BidirectionalIterator middle,
                             BidirectionalIterator last,
-                            Compare comp, Projection projection,
+                            Compare compare, Projection projection,
                             difference_type_t<BidirectionalIterator> len1,
                             difference_type_t<BidirectionalIterator> len2,
                             RandomAccessIterator buff,
@@ -149,6 +153,7 @@ namespace detail
         -> void
     {
         using difference_type = difference_type_t<BidirectionalIterator>;
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         while (true)
@@ -158,7 +163,7 @@ namespace detail
                 return;
             if (len1 <= buff_size || len2 <= buff_size)
                 return buffered_inplace_merge<Compare>
-                       (first, middle, last, comp, projection, len1, len2, buff);
+                       (first, middle, last, compare, projection, len1, len2, buff);
             // shrink [first, middle) as much as possible (with no moves), returning if it shrinks to 0
             for (; true; ++first, (void) --len1)
             {
@@ -185,7 +190,7 @@ namespace detail
                 len21 = len2 / 2;
                 m2 = middle;
                 std::advance(m2, len21);
-                m1 = upper_bound(first, middle, proj(*m2), comp, projection);
+                m1 = upper_bound(first, middle, proj(*m2), compare, projection);
                 len11 = std::distance(first, m1);
             }
             else
@@ -201,7 +206,7 @@ namespace detail
                 len11 = len1 / 2;
                 m1 = first;
                 std::advance(m1, len11);
-                m2 = lower_bound(middle, last, proj(*m1), comp, projection);
+                m2 = lower_bound(middle, last, proj(*m1), compare, projection);
                 len21 = std::distance(middle, m2);
             }
             difference_type len12 = len1 - len11;  // distance(m1, middle)
@@ -213,9 +218,9 @@ namespace detail
             // merge smaller range with recursive call and larger with tail recursion elimination
             if (len11 + len21 < len12 + len22)
             {
-                inplace_merge_impl<Compare>(first, m1, middle, comp, projection,
+                inplace_merge_impl<Compare>(first, m1, middle, compare, projection,
                                             len11, len21, buff, buff_size);
-    //          inplace_merge_impl<Compare>(middle, m2, last, comp, projection,
+    //          inplace_merge_impl<Compare>(middle, m2, last, compare, projection,
     //                                      len12, len22, buff, buff_size);
                 first = middle;
                 middle = m2;
@@ -224,9 +229,9 @@ namespace detail
             }
             else
             {
-                inplace_merge_impl<Compare>(middle, m2, last, comp, projection,
+                inplace_merge_impl<Compare>(middle, m2, last, compare, projection,
                                             len12, len22, buff, buff_size);
-    //          inplace_merge_impl<Compare>(first, m1, middle, comp, projection,
+    //          inplace_merge_impl<Compare>(first, m1, middle, compare, projection,
     //                                      len11, len21, buff, buff_size);
                 last = middle;
                 middle = m1;
@@ -238,7 +243,7 @@ namespace detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                       BidirectionalIterator last, Compare comp, Projection projection)
+                       BidirectionalIterator last, Compare compare, Projection projection)
         -> void
     {
         using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
@@ -252,7 +257,7 @@ namespace detail
 
         using Comp_ref = std::add_lvalue_reference_t<Compare>;
         return inplace_merge_impl<Comp_ref>(std::move(first), std::move(middle), std::move(last),
-                                            comp, std::move(projection),
+                                            compare, std::move(projection),
                                             len1, len2, buff.first, buff.second);
     }
 }}

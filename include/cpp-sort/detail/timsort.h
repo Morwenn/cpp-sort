@@ -701,8 +701,10 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
-        TimSort<RandomAccessIterator, Compare, Projection>::sort(std::move(first), std::move(last),
-                                                                 std::move(compare), std::move(projection));
+        using compare_t = std::decay_t<decltype(utility::as_function(compare))>;
+        TimSort<RandomAccessIterator, compare_t, Projection>::sort(std::move(first), std::move(last),
+                                                                   utility::as_function(compare),
+                                                                   std::move(projection));
     }
 }}
 

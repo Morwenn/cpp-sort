@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,7 @@ namespace detail
         if (size < 2) return;
 
         using utility::iter_swap;
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         while (--size)
@@ -62,7 +63,7 @@ namespace detail
             ForwardIterator next = std::next(current);
             for (difference_type_t<ForwardIterator> i = 0 ; i < size ; ++i)
             {
-                if (compare(proj(*next), proj(*current)))
+                if (comp(proj(*next), proj(*current)))
                 {
                     iter_swap(current, next);
                 }

@@ -44,11 +44,12 @@ namespace detail
         // the input range is never empty
         CPPSORT_ASSUME(first != last);
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         auto min = first;
         while (++first != last) {
-            if (compare(proj(*first), proj(*min))) {
+            if (comp(proj(*first), proj(*min))) {
                 min = first;
             }
         }

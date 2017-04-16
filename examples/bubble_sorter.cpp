@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/begin_end.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
@@ -44,14 +45,13 @@ namespace detail
     {
         if (size < 2) return;
 
-        while (--size)
-        {
+        auto&& comp = cppsort::utility::as_function(compare);
+
+        while (--size) {
             ForwardIterator current = first;
             ForwardIterator next = std::next(current);
-            for (std::size_t i = 0 ; i < size ; ++i)
-            {
-                if (compare(*next, *current))
-                {
+            for (std::size_t i = 0 ; i < size ; ++i) {
+                if (comp(*next, *current)) {
                     using cppsort::utility::iter_swap;
                     iter_swap(current, next);
                 }

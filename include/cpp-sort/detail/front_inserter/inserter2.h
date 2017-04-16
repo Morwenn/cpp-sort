@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,9 +45,10 @@ namespace detail
         auto operator()(RandomAccessIterator first, Compare compare, Projection projection) const
             -> void
         {
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            if (compare(proj(first[1u]), proj(first[0u]))) {
+            if (comp(proj(first[1u]), proj(first[0u]))) {
                 rotate_left<2u>(first);
             }
         }

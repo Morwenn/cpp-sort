@@ -316,6 +316,7 @@ namespace detail
         auto size = std::distance(first, last);
         if (size < 2) return;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Whether there is a stray element not in a pair
@@ -396,7 +397,7 @@ namespace detail
                 auto insertion_point = std::upper_bound(
                     std::begin(chain), *pe, proj(*it),
                     [=](const auto& lhs, const auto& rhs) mutable {
-                        return compare(lhs, proj(*rhs));
+                        return comp(lhs, proj(*rhs));
                     }
                 );
                 chain.insert(insertion_point, it);
@@ -414,7 +415,7 @@ namespace detail
             auto insertion_point = std::upper_bound(
                 std::begin(chain), *current_pend, proj(*current_it),
                 [=](const auto& lhs, const auto& rhs) mutable {
-                    return compare(lhs, proj(*rhs));
+                    return comp(lhs, proj(*rhs));
                 }
             );
             chain.insert(insertion_point, current_it);

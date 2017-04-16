@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_MERGE_MOVE_H_
@@ -28,11 +28,12 @@ namespace detail
              typename Compare, typename Projection1, typename Projection2>
     auto merge_move(InputIterator1 first1, InputIterator1 last1,
                     InputIterator2 first2, InputIterator2 last2,
-                    OutputIterator result, Compare comp={},
-                    Projection1 projection1={}, Projection2 projection2={})
+                    OutputIterator result, Compare compare,
+                    Projection1 projection1, Projection2 projection2)
         -> OutputIterator
     {
         using utility::iter_move;
+        auto&& comp = utility::as_function(compare);
         auto&& proj1 = utility::as_function(projection1);
         auto&& proj2 = utility::as_function(projection2);
 

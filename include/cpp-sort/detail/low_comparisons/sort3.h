@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,11 +56,12 @@ namespace detail
             -> void
         {
             using std::swap;
+            auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            if (compare(proj(first[1u]), proj(first[0u]))) {
-                if (compare(proj(first[2u]), proj(first[0u]))) {
-                    if (compare(proj(first[2u]), proj(first[1u]))) {
+            if (comp(proj(first[1u]), proj(first[0u]))) {
+                if (comp(proj(first[2u]), proj(first[0u]))) {
+                    if (comp(proj(first[2u]), proj(first[1u]))) {
                         swap(first[0u], first[2u]);
                     } else {
                         rotate_left<3u>(first);
@@ -69,8 +70,8 @@ namespace detail
                     swap(first[0u], first[1u]);
                 }
             } else {
-                if (compare(proj(first[2u]), proj(first[1u]))) {
-                    if (compare(proj(first[2u]), proj(first[0u]))) {
+                if (comp(proj(first[2u]), proj(first[1u]))) {
+                    if (comp(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
                         swap(first[1u], first[2u]);

@@ -47,10 +47,10 @@ namespace detail
     auto swap_if(T& lhs, T& rhs, Compare compare, Projection projection)
         -> void
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (compare(proj(rhs), proj(lhs)))
-        {
+        if (comp(proj(rhs), proj(lhs))) {
             using std::swap;
             swap(lhs, rhs);
         }
@@ -102,10 +102,10 @@ namespace detail
     auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
         -> void
     {
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (compare(proj(*rhs), proj(*lhs)))
-        {
+        if (comp(proj(*rhs), proj(*lhs))) {
             using utility::iter_swap;
             iter_swap(lhs, rhs);
         }

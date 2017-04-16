@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,6 +90,7 @@ namespace detail
         bool sorted = quicksort_fallback(first, last, size, compare, projection, category{});
         if (sorted) return;
 
+        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Choose pivot as median of 9
@@ -112,7 +113,7 @@ namespace detail
         auto&& pivot1 = proj(*last_1);
         ForwardIterator middle1 = detail::partition(
             first, last_1,
-            [&](const auto& elem) { return compare(proj(elem), pivot1); }
+            [&](const auto& elem) { return comp(proj(elem), pivot1); }
         );
 
         // Put the pivot in its final position and partition
@@ -120,7 +121,7 @@ namespace detail
         auto&& pivot2 = proj(*middle1);
         ForwardIterator middle2 = detail::partition(
             std::next(middle1), last,
-            [&](const auto& elem) { return not compare(pivot2, proj(elem)); }
+            [&](const auto& elem) { return not comp(pivot2, proj(elem)); }
         );
 
         // Recursive call: heuristic trick here: in real world cases,

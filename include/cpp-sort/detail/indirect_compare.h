@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,8 +53,9 @@ namespace detail
             auto operator()(Iterator lhs, Iterator rhs)
                 -> bool
             {
+                auto&& comp = utility::as_function(std::get<0>(data));
                 auto&& proj = utility::as_function(std::get<1>(data));
-                return std::get<0>(data)(proj(*lhs), proj(*rhs));
+                return comp(proj(*lhs), proj(*rhs));
             }
     };
 }}
