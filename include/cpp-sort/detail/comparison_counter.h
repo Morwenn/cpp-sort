@@ -30,6 +30,7 @@
 #include <cstddef>
 #include <functional>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 
 namespace cppsort
 {
@@ -53,7 +54,8 @@ namespace detail
                 -> decltype(auto)
             {
                 ++count;
-                return compare(std::forward<T>(lhs), std::forward<U>(rhs));
+                auto&& comp = utility::as_function(compare);
+                return comp(std::forward<T>(lhs), std::forward<U>(rhs));
             }
 
             // Accessible member data

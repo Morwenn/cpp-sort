@@ -21,6 +21,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "assume.h"
 #include "iterator_traits.h"
@@ -37,18 +38,19 @@ namespace detail
     class negate
     {
     private:
-        Predicate pred;
+        Predicate predicate;
     public:
         negate() {}
 
-        explicit negate(Predicate p):
-            pred(p)
+        explicit negate(Predicate predicate):
+            predicate(predicate)
         {}
 
         template<typename T1>
         auto operator()(const T1& x)
             -> bool
         {
+            auto&& pred = utility::as_function(predicate);
             return not pred(x);
         }
 
@@ -56,6 +58,7 @@ namespace detail
         auto operator()(const T1& x, const T2& y)
             -> bool
         {
+            auto&& pred = utility::as_function(predicate);
             return not pred(x, y);
         }
     };

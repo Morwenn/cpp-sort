@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 
@@ -66,7 +67,8 @@ namespace cppsort
                     "std_sorter requires at least random-access iterators"
                 );
 
-                std::sort(std::move(first), std::move(last), std::move(compare));
+                std::sort(std::move(first), std::move(last),
+                          utility::as_function(compare));
             }
 
             ////////////////////////////////////////////////////////////
@@ -107,7 +109,8 @@ namespace cppsort
                     "stable_adapter<std_sorter> requires at least random-access iterators"
                 );
 
-                std::stable_sort(std::move(first), std::move(last), std::move(compare));
+                std::stable_sort(std::move(first), std::move(last),
+                                 utility::as_function(compare));
             }
 
             ////////////////////////////////////////////////////////////
