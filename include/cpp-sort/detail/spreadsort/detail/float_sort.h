@@ -24,7 +24,6 @@ Phil Endecott and Frank Gennari
 #include <cstdint>
 #include <cstring>
 #include <functional>
-#include <iterator>
 #include <limits>
 #include <memory>
 #include <type_traits>

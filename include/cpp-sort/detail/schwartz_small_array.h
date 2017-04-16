@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,17 +28,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <array>
-#include <functional>
-#include <iterator>
-#include <memory>
+#include <cstddef>
 #include <type_traits>
 #include <utility>
-#include <vector>
-#include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/is_in_pack.h>
-#include "../detail/checkers.h"
 
 namespace cppsort
 {

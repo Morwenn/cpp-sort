@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// //  Modified in 2016 by Morwenn for inclusion into cpp-sort
+// //  Modified in 2016-2017 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_MOVE_H_
@@ -19,9 +19,7 @@
 #include <cstring>
 #include <iterator>
 #include <type_traits>
-#include <utility>
 #include <cpp-sort/utility/iter_move.h>
-#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -56,8 +54,9 @@ namespace detail
     {
         using utility::iter_move;
 
-        for (; first != last; ++first, (void) ++result)
+        for (; first != last; ++first, (void) ++result) {
             *result = iter_move(first);
+        }
         return result;
     }
 
@@ -70,8 +69,9 @@ namespace detail
         >
     {
         const std::size_t n = static_cast<std::size_t>(last - first);
-        if (n > 0)
+        if (n > 0) {
             std::memmove(result, first, n * sizeof(U));
+        }
         return result + n;
     }
 
@@ -91,8 +91,9 @@ namespace detail
     {
         using utility::iter_move;
 
-        while (first != last)
+        while (first != last) {
             *--result = iter_move(--last);
+        }
         return result;
     }
 
@@ -105,8 +106,7 @@ namespace detail
         >
     {
         const std::size_t n = static_cast<std::size_t>(last - first);
-        if (n > 0)
-        {
+        if (n > 0) {
             result -= n;
             std::memmove(result, first, n * sizeof(U));
         }

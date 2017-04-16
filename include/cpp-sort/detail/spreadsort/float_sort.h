@@ -12,7 +12,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_
@@ -20,9 +20,7 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstring>
 #include <functional>
-#include <limits>
 #include <utility>
 #include "detail/constants.h"
 #include "detail/float_sort.h"

@@ -56,8 +56,10 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/inplace_merge.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/lower_bound.h"
 #include "../detail/memory.h"
 #include "../detail/rotate.h"
+#include "../detail/upper_bound.h"
 
 namespace cppsort
 {

@@ -30,7 +30,6 @@
 #include <iterator>
 #include <list>
 #include <utility>
-#include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
