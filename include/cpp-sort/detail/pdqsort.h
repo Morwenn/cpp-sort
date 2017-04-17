@@ -1,7 +1,7 @@
 /*
     pdqsort.h - Pattern-defeating quicksort.
 
-    Copyright (c) 2015-2016 Orson Peters
+    Copyright (c) 2015-2017 Orson Peters
     Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
@@ -32,6 +32,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/bitops.h>
+#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "heap_operations.h"
 #include "insertion_sort.h"
@@ -48,7 +49,7 @@ namespace detail
             insertion_sort_threshold = 24,
 
             // Partitions above this size use Tukey's ninther to select the pivot.
-            ninther_threshold = 80,
+            ninther_threshold = 128,
 
             // When we detect an already sorted partition, attempt an insertion sort that allows this
             // amount of element moves before giving up.
@@ -218,10 +219,10 @@ namespace detail
         // to the pivot are put in the right-hand partition. Returns the position of the pivot after
         // partitioning and whether the passed sequence already was correctly partitioned. Assumes the
         // pivot is a median of at least 3 elements and that [begin, end) is at least
-        // insertion_sort_threshold long.
+        // insertion_sort_threshold long. Uses branchless partitioning.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto partition_right(RandomAccessIterator begin, RandomAccessIterator end,
-                             Compare compare, Projection projection)
+        auto partition_right_branchless(RandomAccessIterator begin, RandomAccessIterator end,
+                                        Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
             using utility::iter_move;
@@ -268,44 +269,28 @@ namespace detail
                     start_l = 0;
                     RandomAccessIterator it = first;
                     for (unsigned char i = 0 ; i < block_size ;) {
-                        bool c0 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c1 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c2 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c3 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c4 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c5 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c6 = !comp(proj(*it), pivot_proj); ++it;
-                        bool c7 = !comp(proj(*it), pivot_proj); ++it;
-                        offsets_l[num_l] = i++; num_l += c0;
-                        offsets_l[num_l] = i++; num_l += c1;
-                        offsets_l[num_l] = i++; num_l += c2;
-                        offsets_l[num_l] = i++; num_l += c3;
-                        offsets_l[num_l] = i++; num_l += c4;
-                        offsets_l[num_l] = i++; num_l += c5;
-                        offsets_l[num_l] = i++; num_l += c6;
-                        offsets_l[num_l] = i++; num_l += c7;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
+                        offsets_l[num_l] = i++; num_l += !comp(proj(*it), pivot_proj); ++it;
                     }
                 }
                 if (num_r == 0) {
                     start_r = 0;
                     RandomAccessIterator it = last;
-                    for (unsigned char i = 0 ; i < block_size;) {
-                        bool c0 = comp(proj(*--it), pivot_proj);
-                        bool c1 = comp(proj(*--it), pivot_proj);
-                        bool c2 = comp(proj(*--it), pivot_proj);
-                        bool c3 = comp(proj(*--it), pivot_proj);
-                        bool c4 = comp(proj(*--it), pivot_proj);
-                        bool c5 = comp(proj(*--it), pivot_proj);
-                        bool c6 = comp(proj(*--it), pivot_proj);
-                        bool c7 = comp(proj(*--it), pivot_proj);
-                        offsets_r[num_r] = ++i; num_r += c0;
-                        offsets_r[num_r] = ++i; num_r += c1;
-                        offsets_r[num_r] = ++i; num_r += c2;
-                        offsets_r[num_r] = ++i; num_r += c3;
-                        offsets_r[num_r] = ++i; num_r += c4;
-                        offsets_r[num_r] = ++i; num_r += c5;
-                        offsets_r[num_r] = ++i; num_r += c6;
-                        offsets_r[num_r] = ++i; num_r += c7;
+                    for (unsigned char i = 0 ; i < block_size ;) {
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
+                        offsets_r[num_r] = ++i; num_r += comp(proj(*--it), pivot_proj);
                     }
                 }
 
@@ -330,7 +315,7 @@ namespace detail
                 r_size = unknown_left;
             } else {
                 // No leftover block, split the unknown elements in two blocks.
-                l_size = unknown_left/2;
+                l_size = unknown_left / 2;
                 r_size = unknown_left - l_size;
             }
 
@@ -371,7 +356,8 @@ namespace detail
             if (num_r) {
                 offsets_r += start_r;
                 while (num_r--) {
-                    iter_swap(last - offsets_r[num_r], first), ++first;
+                    iter_swap(last - offsets_r[num_r], first);
+                    ++first;
                 }
                 last = first;
             }
@@ -384,7 +370,57 @@ namespace detail
             return std::make_pair(pivot_pos, already_partitioned);
         }
 
+        // Partitions [begin, end) around pivot *begin using comparison function compare. Elements equal
+        // to the pivot are put in the right-hand partition. Returns the position of the pivot after
+        // partitioning and whether the passed sequence already was correctly partitioned. Assumes the
+        // pivot is a median of at least 3 elements and that [begin, end) is at least
+        // insertion_sort_threshold long.
+        template<typename RandomAccessIterator, typename Compare, typename Projection>
+        auto partition_right(RandomAccessIterator begin, RandomAccessIterator end,
+                             Compare compare, Projection projection)
+            -> std::pair<RandomAccessIterator, bool>
+        {
+            using utility::iter_move;
+            using utility::iter_swap;
+            auto&& comp = utility::as_function(compare);
+            auto&& proj = utility::as_function(projection);
 
+            // Move pivot into local for speed.
+            auto pivot = iter_move(begin);
+            auto&& pivot_proj = proj(pivot);
+
+            RandomAccessIterator first = begin;
+            RandomAccessIterator last = end;
+
+            // Find the first element greater than or equal than the pivot (the median of 3 guarantees
+            // this exists).
+            while (comp(proj(*++first), pivot_proj));
+
+            // Find the first element strictly smaller than the pivot. We have to guard this search if
+            // there was no element before *first.
+            if (first - 1 == begin) while (first < last && !comp(proj(*--last), pivot_proj));
+            else                    while (                !comp(proj(*--last), pivot_proj));
+
+            // If the first pair of elements that should be swapped to partition are the same element,
+            // the passed in sequence already was correctly partitioned.
+            bool already_partitioned = first >= last;
+
+            // Keep swapping pairs of elements that are on the wrong side of the pivot. Previously
+            // swapped pairs guard the searches, which is why the first iteration is special-cased
+            // above.
+            while (first < last) {
+                iter_swap(first, last);
+                while (comp(proj(*++first), pivot_proj));
+                while (!comp(proj(*--last), pivot_proj));
+            }
+
+            // Put the pivot in the right place.
+            RandomAccessIterator pivot_pos = first - 1;
+            *begin = iter_move(pivot_pos);
+            *pivot_pos = std::move(pivot);
+
+            return std::make_pair(pivot_pos, already_partitioned);
+        }
 
         // Similar function to the one above, except elements equal to the pivot are put to the left of
         // the pivot and it doesn't check or return if the passed sequence already was partitioned.
@@ -422,7 +458,8 @@ namespace detail
         }
 
 
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
+        template<typename RandomAccessIterator, typename Compare, typename Projection,
+                 bool Branchless>
         auto pdqsort_loop(RandomAccessIterator begin, RandomAccessIterator end,
                           Compare compare, Projection projection,
                           int bad_allowed, bool leftmost=true)
@@ -467,8 +504,9 @@ namespace detail
                 }
 
                 // Partition and get results.
-                std::pair<RandomAccessIterator, bool> part_result
-                    = partition_right(begin, end, compare, projection);
+                std::pair<RandomAccessIterator, bool> part_result = Branchless  ?
+                    partition_right_branchless(begin, end, compare, projection) :
+                    partition_right(begin, end, compare, projection);
                 RandomAccessIterator pivot_pos = part_result.first;
                 bool already_partitioned = part_result.second;
 
@@ -521,7 +559,8 @@ namespace detail
 
                 // Sort the left partition first using recursion and do tail recursion elimination for
                 // the right-hand partition.
-                pdqsort_loop(begin, pivot_pos, compare, projection, bad_allowed, leftmost);
+                pdqsort_loop<RandomAccessIterator, Compare, Projection, Branchless>(
+                    begin, pivot_pos, compare, projection, bad_allowed, leftmost);
                 begin = pivot_pos + 1;
                 leftmost = false;
             }
@@ -533,10 +572,17 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
+        using value_type = decltype(*begin);
+        using projected_type = decltype(utility::as_function(projection)(*begin));
+        constexpr bool is_branchless =
+            utility::is_probably_branchless_comparison<Compare, projected_type>::value &&
+            utility::is_probably_branchless_projection<Projection, value_type>::value;
+
         if (std::distance(begin, end) < 2) return;
-        pdqsort_detail::pdqsort_loop(std::move(begin), std::move(end),
-                                     std::move(compare), std::move(projection),
-                                     utility::log2(end - begin));
+        pdqsort_detail::pdqsort_loop<RandomAccessIterator, Compare, Projection, is_branchless>(
+            std::move(begin), std::move(end),
+            std::move(compare), std::move(projection),
+            utility::log2(end - begin));
     }
 }}
 
