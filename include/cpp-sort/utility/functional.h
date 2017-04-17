@@ -30,6 +30,7 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/branchless_traits.h>
 
 namespace cppsort
 {
@@ -49,6 +50,11 @@ namespace utility
 
         using is_transparent = void;
     };
+
+    template<typename T>
+    struct is_probably_branchless_projection<identity, T>:
+        std::true_type
+    {};
 
     ////////////////////////////////////////////////////////////
     // Transform overload in unary or binary function
