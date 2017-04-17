@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/weak_greater.h>
+#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
@@ -77,6 +78,16 @@ namespace cppsort
         constexpr auto&& partial_greater = utility::static_const<
             detail::partial_greater_fn
         >::value;
+    }
+
+    // Branchless traits
+
+    namespace utility
+    {
+        template<typename T>
+        struct is_probably_branchless_comparison<decltype(partial_greater), T>:
+            std::is_arithmetic<T>
+        {};
     }
 }
 
