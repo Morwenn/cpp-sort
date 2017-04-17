@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
 
@@ -54,10 +55,8 @@ namespace cppsort
         auto total_greater(T lhs, T rhs)
             -> std::enable_if_t<std::is_floating_point<T>::value, bool>
         {
-            if (std::isfinite(lhs) && std::isfinite(rhs))
-            {
-                if (lhs == 0 && rhs == 0)
-                {
+            if (std::isfinite(lhs) && std::isfinite(rhs)) {
+                if (lhs == 0 && rhs == 0) {
                     return std::signbit(rhs) && not std::signbit(lhs);
                 }
                 return lhs > rhs;
@@ -88,6 +87,16 @@ namespace cppsort
         constexpr auto&& total_greater = utility::static_const<
             detail::total_greater_fn
         >::value;
+    }
+
+    // Branchless traits
+
+    namespace utility
+    {
+        template<typename T>
+        struct is_probably_branchless_comparison<decltype(total_greater), T>:
+            std::is_integral<T>
+        {};
     }
 }
 
