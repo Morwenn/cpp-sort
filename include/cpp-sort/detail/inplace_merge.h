@@ -163,7 +163,7 @@ namespace detail
                 return;
             if (len1 <= buff_size || len2 <= buff_size)
                 return buffered_inplace_merge<Compare>
-                       (first, middle, last, compare, projection, len1, len2, buff);
+                       (first, middle, last, compare, std::move(projection), len1, len2, buff);
             // shrink [first, middle) as much as possible (with no moves), returning if it shrinks to 0
             for (; true; ++first, (void) --len1)
             {

@@ -476,8 +476,11 @@ namespace detail
 
                 // Insertion sort is faster for small arrays.
                 if (size < insertion_sort_threshold) {
-                    if (leftmost) insertion_sort(begin, end, compare, projection);
-                    else unguarded_insertion_sort(begin, end, compare, projection);
+                    if (leftmost) {
+                        insertion_sort(begin, end, std::move(compare), std::move(projection));
+                    } else {
+                        unguarded_insertion_sort(begin, end, std::move(compare), std::move(projection));
+                    }
                     return;
                 }
 
@@ -520,7 +523,7 @@ namespace detail
                     // If we had too many bad partitions, switch to heapsort to guarantee O(n log n).
                     if (--bad_allowed == 0) {
                         make_heap(begin, end, compare, projection);
-                        sort_heap(begin, end, compare, projection);
+                        sort_heap(begin, end, std::move(compare), std::move(projection));
                         return;
                     }
 
