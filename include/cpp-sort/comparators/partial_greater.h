@@ -41,7 +41,7 @@ namespace cppsort
         // Weak order for floating point types
 
         template<typename T>
-        auto partial_greater(T lhs, T rhs)
+        auto partial_greater(T lhs, T rhs) noexcept
             -> std::enable_if_t<std::is_floating_point<T>::value, bool>
         {
             return lhs > rhs;
