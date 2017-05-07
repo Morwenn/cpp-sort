@@ -22,7 +22,7 @@ def oddeven_merge_sort_range(lo, hi):
         # if there is more than one element, split the input
         # down the middle and first sort the first and second
         # half, followed by merging them.
-        mid = lo + ((hi - lo) // 2)
+        #mid = lo + ((hi - lo) // 2)
         #yield from oddeven_merge_sort_range(lo, mid)
         #yield from oddeven_merge_sort_range(mid + 1, hi)
         yield from oddeven_merge(lo, hi, 1)
@@ -118,7 +118,39 @@ def oddeven_merge3(indices):
 #                yield (l+j+i, l+j+i+k)
 
 
-if __name__ == '__main__':
-    for pair in oddeven_merge2(30):
-        print(list(pair))
+###########################################################
+# Pairwise sorting networks
 
+def pairwise_merge(lo, hi, r):
+    step = r * 2
+    if step < hi - lo:
+        yield from pairwise_merge(lo, hi, step)
+        yield from pairwise_merge(lo + r, hi - r, step)
+        for i in range(lo + r, hi - r + 1, step):
+            yield i, i + r
+    else:
+        pass
+        # yield lo, lo + r
+
+def pairwise_split(lo, hi):
+    mid = lo + ((hi - lo) // 2)
+    for i in range(0, mid - lo + 1, 1):
+        yield lo + i, mid + i + 1
+
+def pairwise_sort(lo, hi):
+    if hi - lo >= 1:
+        mid = lo + ((hi - lo) // 2)
+        yield from pairwise_split(lo, hi)
+        yield from pairwise_sort(lo, mid)
+        yield from pairwise_sort(mid + 1, hi)
+        yield from pairwise_merge(lo, hi, 1)
+
+
+if __name__ == '__main__':
+    count = 0
+    for pair in oddeven_merge_sort(32):
+        if pair[0] in range(2, 29) and pair[1] in range(2, 29):
+            count += 1
+            print(list(pair))
+
+    print('Size:', count)
