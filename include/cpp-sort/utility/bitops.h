@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,12 +36,11 @@ namespace utility
 {
     // Returns 2^ceil(log2(n)), assumes n > 0
     template<typename Unsigned>
-    auto hyperceil(Unsigned n)
+    constexpr auto hyperceil(Unsigned n)
         -> Unsigned
     {
-        static constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
-        for (std::size_t i = 1 ; i <= bound ; i <<= 1)
-        {
+        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
+        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
             n |= (n >> i);
         }
         return n + 1;
@@ -49,12 +48,11 @@ namespace utility
 
     // Returns 2^floor(log2(n)), assumes n > 0
     template<typename Unsigned>
-    auto hyperfloor(Unsigned n)
+    constexpr auto hyperfloor(Unsigned n)
         -> Unsigned
     {
-        static constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
-        for (std::size_t i = 1 ; i <= bound ; i <<= 1)
-        {
+        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
+        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
             n |= (n >> i);
         }
         return n & ~(n >> 1);
@@ -62,12 +60,11 @@ namespace utility
 
     // Returns floor(log2(n)), assumes n > 0
     template<typename Integer>
-    auto log2(Integer n)
+    constexpr auto log2(Integer n)
         -> Integer
     {
         Integer log = 0;
-        while (n >>= 1)
-        {
+        while (n >>= 1) {
             ++log;
         }
         return log;
