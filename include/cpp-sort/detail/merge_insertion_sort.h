@@ -299,7 +299,7 @@ namespace detail
         // predecessor that fit in 64 bits, starting with the difference
         // between the Jacobsthal numbers 4 and 3 (the previous ones are
         // unneeded)
-        static constexpr std::uint_fast64_t jacobsthal_diff[] = {
+        constexpr std::uint_fast64_t jacobsthal_diff[] = {
             2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
             2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
             1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,

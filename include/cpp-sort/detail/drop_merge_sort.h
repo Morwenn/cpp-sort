@@ -60,7 +60,7 @@ namespace detail
         auto write = begin;
         auto read = begin;
 
-        static constexpr difference_type recency = 8;
+        constexpr difference_type recency = 8;
 
         while (read != end) {
             if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
@@ -138,7 +138,7 @@ namespace detail
         auto write = begin;
         auto read = begin;
 
-        static constexpr difference_type recency = 8;
+        constexpr difference_type recency = 8;
 
         while (read != end) {
             if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
