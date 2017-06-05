@@ -31,9 +31,9 @@ script:
   - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DSANITIZE="${SANITIZE}" .
   - make
   - if [ "${VALGRIND}" = "true" ]; then
-      travis_wait valgrind --leak-check=full --track-origins=yes testsuite/cpp-sort-testsuite;
+      travis_wait valgrind --leak-check=full --track-origins=yes testsuite/cpp-sort-testsuite --rng-seed $RANDOM;
     else
-      testsuite/cpp-sort-testsuite;
+      testsuite/cpp-sort-testsuite --rng-seed $RANDOM;
     fi
 
 notifications:
