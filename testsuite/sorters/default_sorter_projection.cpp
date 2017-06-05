@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <forward_list>
 #include <functional>
 #include <iterator>
@@ -38,7 +37,7 @@ TEST_CASE( "default sorter tests with projections",
            "[default_sorter][projection]" )
 {
     // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
+    std::mt19937_64 engine(Catch::rngSeed());
 
     // Wrapper to hide the integer
     struct wrapper { int value; };

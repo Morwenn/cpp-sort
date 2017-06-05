@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <iterator>
 #include <random>
 #include <string>
@@ -48,7 +47,7 @@ TEST_CASE( "every sorter with Schwartzian transform adapter",
 {
     std::vector<wrapper<>> collection(412);
     helpers::iota(std::begin(collection), std::end(collection), -125, &wrapper<>::value);
-    std::mt19937 engine(std::time(nullptr));
+    std::mt19937 engine(Catch::rngSeed());
     std::shuffle(std::begin(collection), std::end(collection), engine);
 
     SECTION( "block_sorter" )

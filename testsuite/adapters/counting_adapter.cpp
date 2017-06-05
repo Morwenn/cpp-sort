@@ -23,7 +23,6 @@
  */
 #include <algorithm>
 #include <cstddef>
-#include <ctime>
 #include <iterator>
 #include <list>
 #include <numeric>
@@ -66,7 +65,7 @@ TEST_CASE( "basic counting_adapter tests",
         struct wrapper { int value; };
 
         // Pseudo-random number engine
-        std::mt19937_64 engine(std::time(nullptr));
+        std::mt19937_64 engine(Catch::rngSeed());
 
         // Fill the collection
         std::vector<wrapper> tmp(80);
@@ -127,7 +126,7 @@ TEST_CASE( "counting_adapter with span",
         struct wrapper { int value; };
 
         // Pseudo-random number engine
-        std::mt19937_64 engine(std::time(nullptr));
+        std::mt19937_64 engine(Catch::rngSeed());
 
         // Fill the collection
         std::vector<wrapper> tmp(80);

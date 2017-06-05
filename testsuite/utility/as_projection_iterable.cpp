@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
 #include <numeric>
@@ -148,7 +147,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
     // Collection to sort
     std::vector<int> collection(100);
     std::iota(std::begin(collection), std::end(collection), 0);
-    std::mt19937 engine(std::time(nullptr));
+    std::mt19937 engine(Catch::rngSeed());
     std::shuffle(std::begin(collection), std::end(collection), engine);
     auto vec = collection;
 
