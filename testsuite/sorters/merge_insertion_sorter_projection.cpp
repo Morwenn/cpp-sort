@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
 #include <random>
@@ -36,7 +35,7 @@ TEST_CASE( "merge_insertion_sorter tests with projections",
            "[merge_insertion_sorter][projection]" )
 {
     // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
+    std::mt19937_64 engine(Catch::rngSeed());
 
     // Wrapper to hide the integer
     struct wrapper { int value; };

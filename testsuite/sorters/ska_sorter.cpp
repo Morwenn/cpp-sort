@@ -23,7 +23,6 @@
  */
 #include <algorithm>
 #include <cstdint>
-#include <ctime>
 #include <deque>
 #include <iterator>
 #include <limits>
@@ -40,7 +39,7 @@
 TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
 {
     // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
+    std::mt19937_64 engine(Catch::rngSeed());
 
     SECTION( "sort with int iterable" )
     {

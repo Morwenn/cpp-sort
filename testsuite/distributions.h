@@ -32,12 +32,8 @@
 #include <iterator>
 #include <random>
 #include <vector>
+#include <catch.hpp>
 #include <cpp-sort/utility/bitops.h>
-
-#ifdef __MINGW32__
-    // Poor seed for the pseudo-random number generation
-#   include <ctime>
-#endif
 
 namespace dist
 {
@@ -64,11 +60,7 @@ namespace dist
             -> void
         {
             // Pseudo-random number generator
-#ifdef __MINGW32__
-            thread_local std::mt19937 engine(std::time(nullptr));
-#else
-            thread_local std::mt19937 engine(std::random_device{}());
-#endif
+            thread_local std::mt19937 engine(Catch::rngSeed());
 
             std::vector<T> vec;
             vec.reserve(size);
@@ -90,11 +82,7 @@ namespace dist
             -> void
         {
             // Pseudo-random number generator
-#ifdef __MINGW32__
-            thread_local std::mt19937 engine(std::time(nullptr));
-#else
-            thread_local std::mt19937 engine(std::random_device{}());
-#endif
+            thread_local std::mt19937 engine(Catch::rngSeed());
 
             std::vector<int> vec;
             vec.reserve(size);

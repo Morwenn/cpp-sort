@@ -23,7 +23,6 @@
  */
 #include <algorithm>
 #include <array>
-#include <ctime>
 #include <iterator>
 #include <random>
 #include <catch.hpp>
@@ -54,7 +53,7 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         >
     >{};
 
-    std::mt19937 engine(std::time(nullptr));
+    std::mt19937 engine(Catch::rngSeed());
 
     SECTION( "size 0" )
     {

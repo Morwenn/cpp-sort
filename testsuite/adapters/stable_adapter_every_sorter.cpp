@@ -24,7 +24,6 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <ctime>
 #include <iterator>
 #include <random>
 #include <vector>
@@ -65,7 +64,7 @@ TEST_CASE( "every sorter with stable adapter",
     {
         wrap.value = count++ % 17;
     }
-    std::mt19937 engine(std::time(nullptr));
+    std::mt19937 engine(Catch::rngSeed());
     std::shuffle(std::begin(collection), std::end(collection), engine);
     count = 0;
     for (wrapper& wrap: collection)

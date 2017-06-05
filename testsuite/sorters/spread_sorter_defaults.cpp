@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
 #include <numeric>
@@ -41,7 +40,7 @@ TEST_CASE( "spread_sorter generate overloads",
     // operator() overloads for non-comparison sorters
 
     // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
+    std::mt19937_64 engine(Catch::rngSeed());
 
     SECTION( "default operator() with std::less<>" )
     {

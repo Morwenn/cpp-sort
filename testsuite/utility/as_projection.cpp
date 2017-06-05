@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
 #include <numeric>
@@ -62,7 +61,7 @@ TEST_CASE( "try mixed comparison/projection function object",
 {
     std::vector<int> collection(100);
     std::iota(std::begin(collection), std::end(collection), 0);
-    std::mt19937 engine(std::time(nullptr));
+    std::mt19937 engine(Catch::rngSeed());
     std::shuffle(std::begin(collection), std::end(collection), engine);
 
     tricky_function func;

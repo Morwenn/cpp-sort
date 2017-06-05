@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <ctime>
 #include <functional>
 #include <iterator>
 #include <random>
@@ -37,7 +36,7 @@ TEST_CASE( "ska_sorter tests with projections",
            "[ska_sorter][projection]" )
 {
     // Pseudo-random number engine
-    std::mt19937_64 engine(std::time(nullptr));
+    std::mt19937_64 engine(Catch::rngSeed());
 
     SECTION( "sort with int iterable" )
     {
