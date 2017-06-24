@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,6 +60,9 @@ namespace utility
     struct is_callable:
         detail::is_callable_impl<T, Ret>
     {};
+
+    template<typename T, typename Ret=void>
+    constexpr bool is_callable_v = is_callable<T, Ret>::value;
 }}
 
 #endif // CPPSORT_UTILITY_IS_CALLABLE_H_

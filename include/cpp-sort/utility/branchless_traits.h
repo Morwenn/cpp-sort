@@ -88,6 +88,10 @@ namespace utility
         >
     {};
 
+    template<typename Compare, typename T>
+    constexpr bool is_probably_branchless_comparison_v
+        = is_probably_branchless_comparison<Compare, T>::value;
+
     ////////////////////////////////////////////////////////////
     // Whether a projection function is likely branchless when
     // called with an instance of a specific type
@@ -120,6 +124,10 @@ namespace utility
             detail::is_probably_branchless_projection_impl<Projection, T>
         >
     {};
+
+    template<typename Projection, typename T>
+    constexpr bool is_probably_branchless_projection_v
+        = is_probably_branchless_projection<Projection, T>::value;
 }}
 
 #endif // CPPSORT_UTILITY_BRANCHLESS_TRAITS_H_

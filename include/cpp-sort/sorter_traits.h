@@ -240,6 +240,9 @@ namespace cppsort
     template<typename Sorter>
     using is_always_stable = typename sorter_traits<Sorter>::is_always_stable;
 
+    template<typename Sorter>
+    constexpr bool is_always_stable_v = is_always_stable<Sorter>::value;
+
     ////////////////////////////////////////////////////////////
     // Whether a sorter is stable when called with parameter of
     // specific types
@@ -251,6 +254,9 @@ namespace cppsort
     struct is_stable<Sorter(Args...)>:
         sorter_traits<Sorter>::is_always_stable
     {};
+
+    template<typename Arg>
+    constexpr bool is_stable_v = is_stable<Arg>::value;
 
     ////////////////////////////////////////////////////////////
     // Fixed-size sorter traits

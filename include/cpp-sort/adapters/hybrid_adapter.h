@@ -128,7 +128,7 @@ namespace cppsort
                     template<typename... Args>
                     static auto detail_stability(choice<Ind>, Args&&... args)
                         -> std::enable_if_t<
-                            utility::is_callable<Sorter(Args...)>::value,
+                            utility::is_callable_v<Sorter(Args...)>,
                             cppsort::is_stable<Sorter(Args...)>
                         >
                     {

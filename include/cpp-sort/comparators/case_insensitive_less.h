@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -208,7 +208,7 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> std::enable_if_t<
-                            not utility::is_callable<caller(U, U, std::locale), nope_type>::value,
+                            not utility::is_callable_v<caller(U, U, std::locale), nope_type>,
                             decltype(case_insensitive_less(lhs, rhs, loc))
                         >
                     {
@@ -218,7 +218,7 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> std::enable_if_t<
-                            utility::is_callable<caller(U, U, std::locale), nope_type>::value,
+                            utility::is_callable_v<caller(U, U, std::locale), nope_type>,
                             bool
                         >
                     {

@@ -578,8 +578,8 @@ namespace detail
         using value_type = decltype(*begin);
         using projected_type = decltype(utility::as_function(projection)(*begin));
         constexpr bool is_branchless =
-            utility::is_probably_branchless_comparison<Compare, projected_type>::value &&
-            utility::is_probably_branchless_projection<Projection, value_type>::value;
+            utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
+            utility::is_probably_branchless_projection_v<Projection, value_type>;
 
         if (std::distance(begin, end) < 2) return;
         pdqsort_detail::pdqsort_loop<RandomAccessIterator, Compare, Projection, is_branchless>(
