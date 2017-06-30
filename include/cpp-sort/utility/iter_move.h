@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -121,7 +121,7 @@ namespace utility
         -> rvalue_reference_t<Iterator>
     {
         using utility::iter_move;
-        return iter_move(it.base());
+        return iter_move(std::prev(it.base()));
     }
 
     template<typename Iterator>
@@ -129,7 +129,7 @@ namespace utility
         -> void
     {
         using utility::iter_swap;
-        iter_swap(lhs.base(), rhs.base());
+        iter_swap(std::prev(lhs.base()), std::prev(rhs.base()));
     }
 }}
 

@@ -18,6 +18,7 @@ set(
     adapters/indirect_adapter_every_sorter.cpp
     adapters/mixed_adapters.cpp
     adapters/schwartz_adapter_every_sorter.cpp
+    adapters/schwartz_adapter_every_sorter_reversed.cpp
     adapters/schwartz_adapter_fixed_sorters.cpp
     adapters/self_sort_adapter.cpp
     adapters/self_sort_adapter_no_compare.cpp
