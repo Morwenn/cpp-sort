@@ -57,28 +57,28 @@ namespace utility
 
         // A reference-wrapped Range is an Range
         template<typename T>
-        auto begin(std::reference_wrapper<T> ref)
+        constexpr auto begin(std::reference_wrapper<T> ref)
             -> decltype(begin(ref.get()))
         {
             return begin(ref.get());
         }
 
         template<typename T>
-        auto end(std::reference_wrapper<T> ref)
+        constexpr auto end(std::reference_wrapper<T> ref)
             -> decltype(end(ref.get()))
         {
             return end(ref.get());
         }
 
         template<typename T>
-        auto rbegin(std::reference_wrapper<T> ref)
+        constexpr auto rbegin(std::reference_wrapper<T> ref)
             -> decltype(rbegin(ref.get()))
         {
             return rbegin(ref.get());
         }
 
         template<typename T>
-        auto rend(std::reference_wrapper<T> ref)
+        constexpr auto rend(std::reference_wrapper<T> ref)
             -> decltype(rend(ref.get()))
         {
             return rend(ref.get());
@@ -230,6 +230,7 @@ namespace utility
             {
                 return std::reverse_iterator<T*>(t);
             }
+
             template<typename T>
             constexpr auto operator()(std::initializer_list<T> il) const noexcept
                 -> std::reverse_iterator<T const*>

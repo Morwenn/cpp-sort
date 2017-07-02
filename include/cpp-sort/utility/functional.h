@@ -80,12 +80,12 @@ namespace utility
                         not std::is_same<std::decay_t<Func>, as_projection_fn>::value
                     >
                 >
-                explicit as_projection_fn(Func&& func):
+                constexpr explicit as_projection_fn(Func&& func):
                     _func(std::forward<Func>(func))
                 {}
 
                 template<typename T>
-                auto operator()(T&& arg) &
+                constexpr auto operator()(T&& arg) &
                     noexcept(noexcept(_func(std::forward<T>(arg))))
                     -> decltype(_func(std::forward<T>(arg)))
                 {
@@ -93,7 +93,7 @@ namespace utility
                 }
 
                 template<typename T>
-                auto operator()(T&& arg) &&
+                constexpr auto operator()(T&& arg) &&
                     noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
                     -> decltype(std::move(_func)(std::forward<T>(arg)))
                 {
@@ -101,7 +101,7 @@ namespace utility
                 }
 
                 template<typename T>
-                auto operator()(T&& arg) const&
+                constexpr auto operator()(T&& arg) const&
                     noexcept(noexcept(_func(std::forward<T>(arg))))
                     -> decltype(_func(std::forward<T>(arg)))
                 {
@@ -109,7 +109,7 @@ namespace utility
                 }
 
                 template<typename T>
-                auto operator()(T&& arg) const&&
+                constexpr auto operator()(T&& arg) const&&
                     noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
                     -> decltype(std::move(_func)(std::forward<T>(arg)))
                 {
@@ -146,12 +146,12 @@ namespace utility
                         not std::is_same<std::decay_t<Func>, as_comparison_fn>::value
                     >
                 >
-                explicit as_comparison_fn(Func&& func):
+                constexpr explicit as_comparison_fn(Func&& func):
                     _func(std::forward<Func>(func))
                 {}
 
                 template<typename T, typename U>
-                auto operator()(T&& lhs, U&& rhs) &
+                constexpr auto operator()(T&& lhs, U&& rhs) &
                     noexcept(noexcept(_func(std::forward<T>(lhs), std::forward<U>(rhs))))
                     -> decltype(_func(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
@@ -159,7 +159,7 @@ namespace utility
                 }
 
                 template<typename T, typename U>
-                auto operator()(T&& lhs, U&& rhs) &&
+                constexpr auto operator()(T&& lhs, U&& rhs) &&
                     noexcept(noexcept(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
                     -> decltype(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
@@ -167,7 +167,7 @@ namespace utility
                 }
 
                 template<typename T, typename U>
-                auto operator()(T&& lhs, U&& rhs) const&
+                constexpr auto operator()(T&& lhs, U&& rhs) const&
                     noexcept(noexcept(_func(std::forward<T>(lhs), std::forward<U>(rhs))))
                     -> decltype(_func(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
@@ -175,7 +175,7 @@ namespace utility
                 }
 
                 template<typename T, typename U>
-                auto operator()(T&& lhs, U&& rhs) const&&
+                constexpr auto operator()(T&& lhs, U&& rhs) const&&
                     noexcept(noexcept(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
                     -> decltype(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
@@ -195,7 +195,7 @@ namespace utility
     }
 
     template<typename Function>
-    auto as_projection(Function&& func)
+    constexpr auto as_projection(Function&& func)
         -> std::enable_if_t<
             not detail::is_as_projection_fn<std::decay_t<Function>>::value,
             detail::as_projection_fn<std::decay_t<Function>>
@@ -205,7 +205,7 @@ namespace utility
     }
 
     template<typename Function>
-    auto as_projection(Function&& func)
+    constexpr auto as_projection(Function&& func)
         -> std::enable_if_t<
             detail::is_as_projection_fn<std::decay_t<Function>>::value,
             decltype(std::forward<Function>(func))
@@ -215,7 +215,7 @@ namespace utility
     }
 
     template<typename Function>
-    auto as_comparison(Function&& func)
+    constexpr auto as_comparison(Function&& func)
         -> std::enable_if_t<
             not detail::is_as_comparison_fn<std::decay_t<Function>>::value,
             detail::as_comparison_fn<std::decay_t<Function>>
@@ -225,7 +225,7 @@ namespace utility
     }
 
     template<typename Function>
-    auto as_comparison(Function&& func)
+    constexpr auto as_comparison(Function&& func)
         -> std::enable_if_t<
             detail::is_as_comparison_fn<std::decay_t<Function>>::value,
             decltype(std::forward<Function>(func))
