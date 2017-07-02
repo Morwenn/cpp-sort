@@ -28,7 +28,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/begin_end.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
@@ -106,8 +105,7 @@ namespace detail
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(cppsort::utility::begin(iterable),
-                        cppsort::utility::size(iterable),
+            bubble_sort(std::begin(iterable), cppsort::utility::size(iterable),
                         compare);
         }
 
