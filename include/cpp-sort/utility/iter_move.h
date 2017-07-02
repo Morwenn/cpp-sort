@@ -131,6 +131,25 @@ namespace utility
         using utility::iter_swap;
         iter_swap(std::prev(lhs.base()), std::prev(rhs.base()));
     }
+
+    ////////////////////////////////////////////////////////////
+    // std::move_iterator overloads
+
+    template<typename Iterator>
+    auto iter_move(const std::move_iterator<Iterator>& it)
+        -> rvalue_reference_t<Iterator>
+    {
+        using utility::iter_move;
+        return iter_move(it.base());
+    }
+
+    template<typename Iterator>
+    auto iter_swap(std::move_iterator<Iterator> lhs, std::move_iterator<Iterator> rhs)
+        -> void
+    {
+        using utility::iter_swap;
+        iter_swap(lhs.base(), rhs.base());
+    }
 }}
 
 #endif // CPPSORT_UTILITY_ITER_MOVE_H_
