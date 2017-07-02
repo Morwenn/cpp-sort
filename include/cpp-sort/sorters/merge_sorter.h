@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/begin_end.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
@@ -64,12 +63,12 @@ namespace cppsort
                 static_assert(
                     std::is_base_of<
                         std::forward_iterator_tag,
-                        iterator_category_t<decltype(utility::begin(iterable))>
+                        iterator_category_t<decltype(std::begin(iterable))>
                     >::value,
                     "merge_sorter requires at least forward iterators"
                 );
 
-                merge_sort(utility::begin(iterable), utility::end(iterable),
+                merge_sort(std::begin(iterable), std::end(iterable),
                            utility::size(iterable),
                            std::move(compare), std::move(projection));
             }
