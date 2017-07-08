@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,6 +64,14 @@ namespace cppsort
                     >::value
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        iterator_category_t<RandomAccessIterator>
+                    >::value,
+                    "string_spread_sorter requires at least random-access iterators"
+                );
+
                 unsigned char unused = '\0';
                 spreadsort::string_sort(std::move(first), std::move(last),
                                         std::move(projection), unused);
@@ -82,6 +90,14 @@ namespace cppsort
                     >::value && (sizeof(wchar_t) == 2)
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        iterator_category_t<RandomAccessIterator>
+                    >::value,
+                    "string_spread_sorter requires at least random-access iterators"
+                );
+
                 std::uint16_t unused = 0;
                 spreadsort::string_sort(std::move(first), std::move(last),
                                         std::move(projection), unused);
@@ -103,6 +119,14 @@ namespace cppsort
                     >::value
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        iterator_category_t<RandomAccessIterator>
+                    >::value,
+                    "string_spread_sorter requires at least random-access iterators"
+                );
+
                 unsigned char unused = '\0';
                 spreadsort::reverse_string_sort(std::move(first), std::move(last),
                                                 std::move(compare), std::move(projection),
@@ -122,6 +146,14 @@ namespace cppsort
                     >::value && (sizeof(wchar_t) == 2)
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        iterator_category_t<RandomAccessIterator>
+                    >::value,
+                    "string_spread_sorter requires at least random-access iterators"
+                );
+
                 std::uint16_t unused = 0;
                 spreadsort::reverse_string_sort(std::move(first), std::move(last),
                                                 std::move(compare), std::move(projection),

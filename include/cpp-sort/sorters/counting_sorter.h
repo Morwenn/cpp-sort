@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,6 +51,14 @@ namespace cppsort
                     std::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        iterator_category_t<ForwardIterator>
+                    >::value,
+                    "counting_sorter requires at least forward iterators"
+                );
+
                 counting_sort(std::move(first), std::move(last));
             }
 
@@ -60,6 +68,14 @@ namespace cppsort
                     std::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        iterator_category_t<ForwardIterator>
+                    >::value,
+                    "counting_sorter requires at least forward iterators"
+                );
+
                 reverse_counting_sort(std::move(first), std::move(last));
             }
 

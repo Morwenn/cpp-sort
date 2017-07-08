@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,6 +61,14 @@ namespace cppsort
                     is_projection_iterator_v<Projection, RandomAccessIterator>
                 >
             {
+                static_assert(
+                    std::is_base_of<
+                        std::random_access_iterator_tag,
+                        iterator_category_t<RandomAccessIterator>
+                    >::value,
+                    "float_spread_sorter requires at least random-access iterators"
+                );
+
                 spreadsort::float_sort(std::move(first), std::move(last), std::move(projection));
             }
 
