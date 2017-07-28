@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_DETECTION_H_
-#define CPPSORT_UTILITY_DETECTION_H_
+#ifndef CPPSORT_DETAIL_DETECTION_H_
+#define CPPSORT_DETAIL_DETECTION_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,7 +31,7 @@
 
 namespace cppsort
 {
-namespace utility
+namespace detail
 {
     ////////////////////////////////////////////////////////////
     // std::void_t from C++17
@@ -53,39 +53,36 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // Detection idiom from Library Fundamentals TS v2
 
-    namespace detail
+    template<
+        typename Default,
+        typename AlwaysVoid,
+        template<typename...> class Op, typename... Args
+    >
+    struct detector
     {
-        template<
-            typename Default,
-            typename AlwaysVoid,
-            template<typename...> class Op, typename... Args
-        >
-        struct detector
-        {
-            using value_t = std::false_type;
-            using type = Default;
-        };
+        using value_t = std::false_type;
+        using type = Default;
+    };
 
-        template<
-            typename Default,
-            template<typename...> class Op,
-            typename... Args
-        >
-        struct detector<Default, void_t<Op<Args...>>, Op, Args...>
-        {
-            using value_t = std::true_type;
-            using type = Op<Args...>;
-        };
-    }
+    template<
+        typename Default,
+        template<typename...> class Op,
+        typename... Args
+    >
+    struct detector<Default, void_t<Op<Args...>>, Op, Args...>
+    {
+        using value_t = std::true_type;
+        using type = Op<Args...>;
+    };
 
     template<template<typename...> class Op, typename... Args>
-    using is_detected = typename detail::detector<nonesuch, void, Op, Args...>::value_t;
+    using is_detected = typename detector<nonesuch, void, Op, Args...>::value_t;
 
     template<template<typename...> class Op, typename... Args>
-    using detected_t = typename detail::detector<nonesuch, void, Op, Args...>::type;
+    using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
     template<typename Default, template<typename...> class Op, typename... Args>
-    using detected_or = detail::detector<Default, void, Op, Args...>;
+    using detected_or = detector<Default, void, Op, Args...>;
 
     template<template<typename...> class Op, typename... Args >
     constexpr bool is_detected_v = is_detected<Op, Args...>::value;
@@ -106,4 +103,4 @@ namespace utility
     constexpr bool is_detected_convertible_v = is_detected_convertible<To, Op, Args...>::value;
 }}
 
-#endif // CPPSORT_UTILITY_DETECTION_H_
+#endif // CPPSORT_DETAIL_DETECTION_H_

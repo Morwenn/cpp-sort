@@ -19,8 +19,8 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/bitops.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "bitops.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -272,7 +272,7 @@ namespace detail
 
             Iterator(difference_type size, difference_type min_level):
                 size(size),
-                power_of_two(utility::hyperfloor(size)),
+                power_of_two(hyperfloor(size)),
                 decimal(0),
                 numerator(0),
                 denominator(power_of_two / min_level),

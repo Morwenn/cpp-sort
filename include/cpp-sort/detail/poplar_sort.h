@@ -32,8 +32,8 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/bitops.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "bitops.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 
@@ -152,8 +152,8 @@ namespace detail
         if (size < 2) return;
 
         std::vector<poplar<RandomAccessIterator>> poplars;
-        poplars.reserve(utility::log2(size));
-        poplar_size_t poplar_size = utility::hyperfloor(size) - 1;
+        poplars.reserve(log2(size));
+        poplar_size_t poplar_size = hyperfloor(size) - 1;
 
         // Make the poplar heap
         auto it = first;

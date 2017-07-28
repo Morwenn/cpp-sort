@@ -33,8 +33,8 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/detection.h>
 #include "../detail/checkers.h"
+#include "../detail/detection.h"
 
 namespace cppsort
 {
@@ -55,7 +55,7 @@ namespace cppsort
             typename... Args
         >
         constexpr bool has_sort_method
-            = utility::is_detected_v<has_sort_method_t, Iterable, Args...>;
+            = is_detected_v<has_sort_method_t, Iterable, Args...>;
 
         template<
             typename Iterable,
@@ -69,7 +69,7 @@ namespace cppsort
             typename... Args
         >
         constexpr bool has_stable_sort_method
-            = utility::is_detected_v<has_stable_sort_method_t, Iterable, Args...>;
+            = is_detected_v<has_stable_sort_method_t, Iterable, Args...>;
 
         ////////////////////////////////////////////////////////////
         // Adapter

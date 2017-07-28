@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,61 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_LOGICAL_TRAITS_H_
-#define CPPSORT_UTILITY_LOGICAL_TRAITS_H_
+#ifndef CPPSORT_DETAIL_BITOPS_H_
+#define CPPSORT_DETAIL_BITOPS_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <type_traits>
+#include <cstddef>
+#include <limits>
 
 namespace cppsort
 {
-namespace utility
+namespace detail
 {
-    ////////////////////////////////////////////////////////////
-    // Conjunction
+    // Returns 2^ceil(log2(n)), assumes n > 0
+    template<typename Unsigned>
+    constexpr auto hyperceil(Unsigned n)
+        -> Unsigned
+    {
+        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
+        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
+            n |= (n >> i);
+        }
+        return n + 1;
+    }
 
-    template<typename...>
-    struct conjunction:
-        std::true_type
-    {};
+    // Returns 2^floor(log2(n)), assumes n > 0
+    template<typename Unsigned>
+    constexpr auto hyperfloor(Unsigned n)
+        -> Unsigned
+    {
+        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
+        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
+            n |= (n >> i);
+        }
+        return n & ~(n >> 1);
+    }
 
-    template<typename Head>
-    struct conjunction<Head>:
-        Head
-    {};
-
-    template<typename Head, typename... Tail>
-    struct conjunction<Head, Tail...>:
-        std::conditional_t<Head::value != false, conjunction<Tail...>, Head>
-    {};
-
-    ////////////////////////////////////////////////////////////
-    // Disjunction
-
-    template<typename...>
-    struct disjunction:
-        std::false_type
-    {};
-
-    template<typename Head>
-    struct disjunction<Head>:
-        Head
-    {};
-
-    template<typename Head, typename... Tail>
-    struct disjunction<Head, Tail...>:
-        std::conditional_t<Head::value != false, Head, disjunction<Tail...>>
-    {};
-
-    ////////////////////////////////////////////////////////////
-    // Negation
-
-    template<typename T>
-    struct negation:
-        std::integral_constant<bool, not T::value>
-    {};
+    // Returns floor(log2(n)), assumes n > 0
+    template<typename Integer>
+    constexpr auto log2(Integer n)
+        -> Integer
+    {
+        Integer log = 0;
+        while (n >>= 1) {
+            ++log;
+        }
+        return log;
+    }
 }}
 
-#endif // CPPSORT_UTILITY_LOGICAL_TRAITS_H_
+#endif // CPPSORT_DETAIL_BITOPS_H_

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
-#include <cpp-sort/utility/any_all.h>
-#include <cpp-sort/utility/detection.h>
+#include "any_all.h"
+#include "detection.h"
 
 namespace cppsort
 {
@@ -44,7 +44,7 @@ namespace detail
     {};
 
     template<typename T>
-    struct has_iterator_category<T, utility::void_t<typename T::iterator_category>>:
+    struct has_iterator_category<T, void_t<typename T::iterator_category>>:
         std::true_type
     {};
 
@@ -62,7 +62,7 @@ namespace detail
     template<typename... Sorters>
     struct raw_check_iterator_category:
         raw_check_iterator_category_impl<
-            utility::all(has_iterator_category<Sorters>::value...),
+            all(has_iterator_category<Sorters>::value...),
             Sorters...
         >
     {};
@@ -73,7 +73,7 @@ namespace detail
     {};
 
     template<typename T>
-    struct has_is_always_stable<T, utility::void_t<typename T::is_always_stable>>:
+    struct has_is_always_stable<T, void_t<typename T::is_always_stable>>:
         std::true_type
     {};
 
@@ -85,14 +85,14 @@ namespace detail
     {
         using is_always_stable = std::integral_constant<
             bool,
-            utility::all(typename Sorters::is_always_stable{}()...)
+            all(typename Sorters::is_always_stable{}()...)
         >;
     };
 
     template<typename... Sorters>
     struct raw_check_is_always_stable:
         raw_check_is_always_stable_impl<
-            utility::all(has_is_always_stable<Sorters>::value...),
+            all(has_is_always_stable<Sorters>::value...),
             Sorters...
         >
     {};

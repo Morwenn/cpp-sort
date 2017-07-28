@@ -32,9 +32,9 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/detection.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "detection.h"
 
 namespace cppsort
 {
@@ -95,8 +95,8 @@ namespace detail
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            utility::is_detected_v<utility::detail::has_iter_move_t, Iterator> ||
-            utility::is_detected_v<utility::detail::has_iter_swap_t, Iterator>
+            is_detected_v<utility::detail::has_iter_move_t, Iterator> ||
+            is_detected_v<utility::detail::has_iter_swap_t, Iterator>
         >
     >
     auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
@@ -116,8 +116,8 @@ namespace detail
         typename Compare,
         typename Projection,
         typename = std::enable_if_t<
-            not utility::is_detected_v<utility::detail::has_iter_move_t, Iterator> &&
-            not utility::is_detected_v<utility::detail::has_iter_swap_t, Iterator>
+            not is_detected_v<utility::detail::has_iter_move_t, Iterator> &&
+            not is_detected_v<utility::detail::has_iter_swap_t, Iterator>
         >,
         typename = void // dummy parameter for ODR
     >

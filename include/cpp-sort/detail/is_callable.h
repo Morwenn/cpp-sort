@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,45 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_IS_IN_PACK_H_
-#define CPPSORT_UTILITY_IS_IN_PACK_H_
+#ifndef CPPSORT_DETAIL_IS_CALLABLE_H_
+#define CPPSORT_DETAIL_IS_CALLABLE_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
 #include <type_traits>
+#include "detection.h"
 
 namespace cppsort
 {
-namespace utility
+namespace detail
 {
-    namespace detail
-    {
-        template<std::size_t Value, std::size_t... Values>
-        struct is_in_pack_impl;
+    template<typename T, typename Ret=void, typename=void>
+    struct is_callable_impl:
+        std::false_type
+    {};
 
-        template<
-            std::size_t Value,
-            std::size_t Head,
-            std::size_t... Tail
-        >
-        struct is_in_pack_impl<Value, Head, Tail...>:
-            std::conditional_t<
-                Value == Head,
-                std::true_type,
-                is_in_pack_impl<Value, Tail...>
-            >
-        {};
+    template<typename Func, typename... Args>
+    struct is_callable_impl<Func(Args...), void, void_t<std::result_of_t<Func(Args...)>>>:
+        std::true_type
+    {};
 
-        template<std::size_t Value>
-        struct is_in_pack_impl<Value>:
-            std::false_type
-        {};
-    }
+    template<typename Func, typename Ret, typename... Args>
+    struct is_callable_impl<Func(Args...), Ret, void_t<std::result_of_t<Func(Args...)>>>:
+        std::is_convertible<std::result_of_t<Func(Args...)>, Ret>
+    {};
 
-    template<std::size_t Value, std::size_t... Values>
-    constexpr bool is_in_pack = detail::is_in_pack_impl<Value, Values...>::value;
+    //
+    // is_callable type trait as proposed by P0077R2
+    //
+
+    template<typename T, typename Ret=void>
+    struct is_callable:
+        is_callable_impl<T, Ret>
+    {};
+
+    template<typename T, typename Ret=void>
+    constexpr bool is_callable_v = is_callable<T, Ret>::value;
 }}
 
-#endif // CPPSORT_UTILITY_IS_IN_PACK_H_
+#endif // CPPSORT_DETAIL_IS_CALLABLE_H_

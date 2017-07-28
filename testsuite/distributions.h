@@ -33,7 +33,7 @@
 #include <random>
 #include <vector>
 #include <catch.hpp>
-#include <cpp-sort/utility/bitops.h>
+#include <cpp-sort/detail/bitops.h>
 
 namespace dist
 {
@@ -191,7 +191,7 @@ namespace dist
         auto operator()(OutputIterator out, std::size_t size) const
             -> void
         {
-            std::size_t limit = size / cppsort::utility::log2(size) * 1.1;
+            std::size_t limit = size / cppsort::detail::log2(size) * 1.1;
             for (std::size_t i = 0 ; i < size ; ++i) {
                 *out++ = i % limit;
             }
@@ -205,7 +205,7 @@ namespace dist
         auto operator()(OutputIterator out, std::size_t size) const
             -> void
         {
-            std::size_t limit = size / cppsort::utility::log2(size) * 1.1;
+            std::size_t limit = size / cppsort::detail::log2(size) * 1.1;
             while (size--) {
                 *out++ = size % limit;
             }

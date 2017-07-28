@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/utility/logical_traits.h>
+#include "detail/logical_traits.h"
 
 namespace cppsort
 {
@@ -128,7 +128,7 @@ namespace cppsort
         typename Sorter,
         typename Iterable,
         typename Func,
-        typename = std::enable_if_t<utility::disjunction<
+        typename = std::enable_if_t<detail::disjunction<
             is_comparison_sorter<Sorter, Iterable, Func>,
             is_projection_sorter<Sorter, Iterable, Func>
         >::value>

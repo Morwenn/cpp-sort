@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,38 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_ANY_ALL_H_
-#define CPPSORT_UTILITY_ANY_ALL_H_
+#ifndef CPPSORT_DETAIL_IS_IN_PACK_H_
+#define CPPSORT_DETAIL_IS_IN_PACK_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <cstddef>
+#include <type_traits>
 
 namespace cppsort
 {
-namespace utility
+namespace detail
 {
-    constexpr auto any(bool head)
-        -> bool
-    {
-        return head;
-    }
+    template<std::size_t Value, std::size_t... Values>
+    struct is_in_pack_impl;
 
-    template<typename... Bools>
-    constexpr auto any(bool head, Bools... tail)
-        -> bool
-    {
-        return head || any(tail...);
-    }
+    template<
+        std::size_t Value,
+        std::size_t Head,
+        std::size_t... Tail
+    >
+    struct is_in_pack_impl<Value, Head, Tail...>:
+        std::conditional_t<
+            Value == Head,
+            std::true_type,
+            is_in_pack_impl<Value, Tail...>
+        >
+    {};
 
-    constexpr auto all(bool head)
-        -> bool
-    {
-        return head;
-    }
+    template<std::size_t Value>
+    struct is_in_pack_impl<Value>:
+        std::false_type
+    {};
 
-    template<typename... Bools>
-    constexpr auto all(bool head, Bools... tail)
-        -> bool
-    {
-        return head && all(tail...);
-    }
+    template<std::size_t Value, std::size_t... Values>
+    constexpr bool is_in_pack = is_in_pack_impl<Value, Values...>::value;
 }}
 
-#endif // CPPSORT_UTILITY_ANY_ALL_H_
+#endif // CPPSORT_DETAIL_IS_IN_PACK_H_

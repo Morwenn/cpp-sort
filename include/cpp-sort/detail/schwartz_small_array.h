@@ -32,7 +32,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/is_in_pack.h>
+#include "../detail/is_in_pack.h"
 
 namespace cppsort
 {
@@ -52,7 +52,7 @@ namespace cppsort
         >
         auto operator()(std::array<T, N>& array, Args&&... args) const
             -> std::enable_if_t<
-                utility::is_in_pack<N, Indices...>,
+                detail::is_in_pack<N, Indices...>,
                 decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
             >
         {
@@ -64,11 +64,11 @@ namespace cppsort
             typename T,
             std::size_t N,
             typename... Args,
-            typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
+            typename = std::enable_if_t<detail::is_in_pack<N, Indices...>>
         >
         auto operator()(T (&array)[N], Args&&... args) const
             -> std::enable_if_t<
-                utility::is_in_pack<N, Indices...>,
+                detail::is_in_pack<N, Indices...>,
                 decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
             >
         {

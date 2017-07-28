@@ -21,54 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_BITOPS_H_
-#define CPPSORT_UTILITY_BITOPS_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <cstddef>
-#include <limits>
+#ifndef CPPSORT_DETAIL_ANY_ALL_H_
+#define CPPSORT_DETAIL_ANY_ALL_H_
 
 namespace cppsort
 {
-namespace utility
+namespace detail
 {
-    // Returns 2^ceil(log2(n)), assumes n > 0
-    template<typename Unsigned>
-    constexpr auto hyperceil(Unsigned n)
-        -> Unsigned
+    constexpr auto any(bool head)
+        -> bool
     {
-        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
-        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
-            n |= (n >> i);
-        }
-        return n + 1;
+        return head;
     }
 
-    // Returns 2^floor(log2(n)), assumes n > 0
-    template<typename Unsigned>
-    constexpr auto hyperfloor(Unsigned n)
-        -> Unsigned
+    template<typename... Bools>
+    constexpr auto any(bool head, Bools... tail)
+        -> bool
     {
-        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
-        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
-            n |= (n >> i);
-        }
-        return n & ~(n >> 1);
+        return head || any(tail...);
     }
 
-    // Returns floor(log2(n)), assumes n > 0
-    template<typename Integer>
-    constexpr auto log2(Integer n)
-        -> Integer
+    constexpr auto all(bool head)
+        -> bool
     {
-        Integer log = 0;
-        while (n >>= 1) {
-            ++log;
-        }
-        return log;
+        return head;
+    }
+
+    template<typename... Bools>
+    constexpr auto all(bool head, Bools... tail)
+        -> bool
+    {
+        return head && all(tail...);
     }
 }}
 
-#endif // CPPSORT_UTILITY_BITOPS_H_
+#endif // CPPSORT_DETAIL_ANY_ALL_H_

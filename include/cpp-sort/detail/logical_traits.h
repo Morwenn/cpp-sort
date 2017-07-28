@@ -21,48 +21,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_UTILITY_IS_CALLABLE_H_
-#define CPPSORT_UTILITY_IS_CALLABLE_H_
+#ifndef CPPSORT_DETAIL_LOGICAL_TRAITS_H_
+#define CPPSORT_DETAIL_LOGICAL_TRAITS_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
-#include <cpp-sort/utility/detection.h>
 
 namespace cppsort
 {
-namespace utility
+namespace detail
 {
-    namespace detail
-    {
-        template<typename T, typename Ret=void, typename=void>
-        struct is_callable_impl:
-            std::false_type
-        {};
+    ////////////////////////////////////////////////////////////
+    // Conjunction
 
-        template<typename Func, typename... Args>
-        struct is_callable_impl<Func(Args...), void, void_t<std::result_of_t<Func(Args...)>>>:
-            std::true_type
-        {};
-
-        template<typename Func, typename Ret, typename... Args>
-        struct is_callable_impl<Func(Args...), Ret, void_t<std::result_of_t<Func(Args...)>>>:
-            std::is_convertible<std::result_of_t<Func(Args...)>, Ret>
-        {};
-    }
-
-    //
-    // is_callable type trait as proposed by P0077R2
-    //
-
-    template<typename T, typename Ret=void>
-    struct is_callable:
-        detail::is_callable_impl<T, Ret>
+    template<typename...>
+    struct conjunction:
+        std::true_type
     {};
 
-    template<typename T, typename Ret=void>
-    constexpr bool is_callable_v = is_callable<T, Ret>::value;
+    template<typename Head>
+    struct conjunction<Head>:
+        Head
+    {};
+
+    template<typename Head, typename... Tail>
+    struct conjunction<Head, Tail...>:
+        std::conditional_t<Head::value != false, conjunction<Tail...>, Head>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Disjunction
+
+    template<typename...>
+    struct disjunction:
+        std::false_type
+    {};
+
+    template<typename Head>
+    struct disjunction<Head>:
+        Head
+    {};
+
+    template<typename Head, typename... Tail>
+    struct disjunction<Head, Tail...>:
+        std::conditional_t<Head::value != false, Head, disjunction<Tail...>>
+    {};
+
+    ////////////////////////////////////////////////////////////
+    // Negation
+
+    template<typename T>
+    struct negation:
+        std::integral_constant<bool, not T::value>
+    {};
 }}
 
-#endif // CPPSORT_UTILITY_IS_CALLABLE_H_
+#endif // CPPSORT_DETAIL_LOGICAL_TRAITS_H_

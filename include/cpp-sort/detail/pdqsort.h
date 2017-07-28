@@ -31,9 +31,9 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/bitops.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "bitops.h"
 #include "heap_operations.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
@@ -585,7 +585,7 @@ namespace detail
         pdqsort_detail::pdqsort_loop<RandomAccessIterator, Compare, Projection, is_branchless>(
             std::move(begin), std::move(end),
             std::move(compare), std::move(projection),
-            utility::log2(end - begin));
+            detail::log2(end - begin));
     }
 }}
 

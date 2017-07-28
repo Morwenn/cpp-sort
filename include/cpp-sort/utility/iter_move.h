@@ -30,7 +30,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/utility/detection.h>
+#include "../detail/detection.h"
 
 namespace cppsort
 {
@@ -60,7 +60,7 @@ namespace utility
     template<
         typename Iterator,
         typename = std::enable_if_t<
-            is_detected_v<detail::has_iter_move_t, Iterator>
+            cppsort::detail::is_detected_v<detail::has_iter_move_t, Iterator>
         >
     >
     auto iter_swap(Iterator lhs, Iterator rhs)
@@ -74,7 +74,7 @@ namespace utility
     template<
         typename Iterator,
         typename = std::enable_if_t<
-            not is_detected_v<detail::has_iter_move_t, Iterator>
+            not cppsort::detail::is_detected_v<detail::has_iter_move_t, Iterator>
         >,
         typename = void // dummy parameter for ODR
     >

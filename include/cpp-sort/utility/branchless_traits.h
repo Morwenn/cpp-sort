@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
-#include <cpp-sort/utility/logical_traits.h>
+#include "../detail/logical_traits.h"
 
 namespace cppsort
 {
@@ -72,7 +72,7 @@ namespace utility
     template<typename Compare, typename T>
     struct is_probably_branchless_comparison:
         std::conditional_t<
-            disjunction<
+            cppsort::detail::disjunction<
                 std::is_reference<Compare>,
                 std::is_const<Compare>,
                 std::is_volatile<Compare>,
@@ -109,7 +109,7 @@ namespace utility
     template<typename Projection, typename T>
     struct is_probably_branchless_projection:
         std::conditional_t<
-            disjunction<
+            cppsort::detail::disjunction<
                 std::is_reference<Projection>,
                 std::is_const<Projection>,
                 std::is_volatile<Projection>,

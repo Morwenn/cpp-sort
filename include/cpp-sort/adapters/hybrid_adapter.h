@@ -33,8 +33,8 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/is_callable.h>
 #include "../detail/checkers.h"
+#include "../detail/is_callable.h"
 #include "../detail/iterator_traits.h"
 
 namespace cppsort
@@ -128,7 +128,7 @@ namespace cppsort
                     template<typename... Args>
                     static auto detail_stability(choice<Ind>, Args&&... args)
                         -> std::enable_if_t<
-                            utility::is_callable_v<Sorter(Args...)>,
+                            detail::is_callable_v<Sorter(Args...)>,
                             cppsort::is_stable<Sorter(Args...)>
                         >
                     {

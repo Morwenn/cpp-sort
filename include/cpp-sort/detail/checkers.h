@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/any_all.h>
+#include "any_all.h"
 #include "raw_checkers.h"
 
 namespace cppsort
@@ -53,7 +53,7 @@ namespace detail
     template<typename... Sorters>
     struct check_iterator_category:
         check_iterator_category_impl<
-            utility::all(has_iterator_category<sorter_traits<Sorters>>::value...),
+            all(has_iterator_category<sorter_traits<Sorters>>::value...),
             Sorters...
         >
     {};
@@ -66,14 +66,14 @@ namespace detail
     {
         using is_always_stable = std::integral_constant<
             bool,
-            utility::all(typename sorter_traits<Sorters>::is_always_stable{}()...)
+            all(typename sorter_traits<Sorters>::is_always_stable{}()...)
         >;
     };
 
     template<typename... Sorters>
     struct check_is_always_stable:
         check_is_always_stable_impl<
-            utility::all(has_is_always_stable<sorter_traits<Sorters>>::value...),
+            all(has_is_always_stable<sorter_traits<Sorters>>::value...),
             Sorters...
         >
     {};

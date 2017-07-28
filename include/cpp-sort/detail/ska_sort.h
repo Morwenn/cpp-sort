@@ -21,8 +21,8 @@
 #include <utility>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/detection.h>
-#include <cpp-sort/utility/logical_traits.h>
+#include "detection.h"
+#include "logical_traits.h"
 
 namespace cppsort
 {
@@ -965,17 +965,17 @@ namespace detail
         = std::decay_t<decltype(std::declval<T&>()[0])>;
 
     template<template<typename...> class Op, typename... Args>
-    using is_index_ska_sortable = is_ska_sortable<utility::detected_t<Op, Args...>>;
+    using is_index_ska_sortable = is_ska_sortable<detected_t<Op, Args...>>;
 
     // A bit hackish, but I'm bad at workarounds...
     template<>
-    struct is_ska_sortable<utility::nonesuch>:
+    struct is_ska_sortable<nonesuch>:
         std::false_type
     {};
 
     template<typename T>
     struct is_ska_sortable:
-        utility::disjunction<
+        disjunction<
             std::is_integral<T>,
             is_index_ska_sortable<has_indexing_operator_t, T>
         >
@@ -1004,7 +1004,7 @@ namespace detail
 
     template<typename T, typename U>
     struct is_ska_sortable<std::pair<T, U>>:
-        utility::conjunction<
+        conjunction<
             is_ska_sortable<T>,
             is_ska_sortable<U>
         >
@@ -1012,7 +1012,7 @@ namespace detail
 
     template<typename... Args>
     struct is_ska_sortable<std::tuple<Args...>>:
-        utility::conjunction<
+        conjunction<
             is_ska_sortable<Args>...
         >
     {};

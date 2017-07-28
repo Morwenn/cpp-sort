@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,8 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/detection.h>
-#include <cpp-sort/utility/is_in_pack.h>
+#include "../detail/detection.h"
+#include "../detail/is_in_pack.h"
 
 namespace cppsort
 {
@@ -50,7 +50,7 @@ namespace cppsort
         };
 
         template<typename T>
-        struct has_domain<T, utility::void_t<typename T::domain>>:
+        struct has_domain<T, void_t<typename T::domain>>:
             std::true_type
         {
             using domain = typename T::domain;
@@ -86,7 +86,7 @@ namespace cppsort
         >
         auto operator()(std::array<T, N>& array, Args&&... args) const
             -> std::enable_if_t<
-                utility::is_in_pack<N, Indices...>,
+                detail::is_in_pack<N, Indices...>,
                 decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
             >
         {
@@ -97,11 +97,11 @@ namespace cppsort
             typename T,
             std::size_t N,
             typename... Args,
-            typename = std::enable_if_t<utility::is_in_pack<N, Indices...>>
+            typename = std::enable_if_t<detail::is_in_pack<N, Indices...>>
         >
         auto operator()(T (&array)[N], Args&&... args) const
             -> std::enable_if_t<
-                utility::is_in_pack<N, Indices...>,
+                detail::is_in_pack<N, Indices...>,
                 decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
             >
         {
