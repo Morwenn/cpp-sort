@@ -27,7 +27,7 @@
 #include <numeric>
 #include <random>
 #include <vector>
-#include <cpp-sort/utility/bitops.h>
+#include <cpp-sort/detail/bitops.h>
 
 ////////////////////////////////////////////////////////////
 // Distributions for benchmarks
@@ -217,7 +217,7 @@ struct ascending_sawtooth:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::size_t limit = size / cppsort::utility::log2(size) + 50;
+        std::size_t limit = size / cppsort::detail::log2(size) + 50;
         for (std::size_t i = 0 ; i < size ; ++i)
         {
             *out++ = i % limit;
@@ -234,7 +234,7 @@ struct ascending_sawtooth_bad:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::size_t limit = size / cppsort::utility::log2(size) - 50;
+        std::size_t limit = size / cppsort::detail::log2(size) - 50;
         for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = i % limit;
         }
@@ -250,7 +250,7 @@ struct descending_sawtooth:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::size_t limit = size / cppsort::utility::log2(size) + 50;
+        std::size_t limit = size / cppsort::detail::log2(size) + 50;
         while (size--)
         {
             *out++ = size % limit;
@@ -267,7 +267,7 @@ struct descending_sawtooth_bad:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        std::size_t limit = size / cppsort::utility::log2(size) - 50;
+        std::size_t limit = size / cppsort::detail::log2(size) - 50;
         while (size--) {
             *out++ = size % limit;
         }
@@ -315,7 +315,7 @@ struct sparse_inversions:
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        const auto size_run = size / cppsort::utility::log2(size) + 30;
+        const auto size_run = size / cppsort::detail::log2(size) + 30;
 
         for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = (i % size_run) == 0 ? 0 : i;
@@ -334,7 +334,7 @@ struct vergesort_killer:
     {
         // WARNING: not for small collections, mostly because I'm lazy...
 
-        const auto size_run = size / cppsort::utility::log2(size);
+        const auto size_run = size / cppsort::detail::log2(size);
         auto desc = descending{};
         auto killer = pipe_organ{};
 
