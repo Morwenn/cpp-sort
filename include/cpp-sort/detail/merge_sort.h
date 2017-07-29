@@ -33,10 +33,11 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/inplace_merge.h>
 #include "bubble_sort.h"
+#include "inplace_merge.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
+#include "memory.h"
 
 namespace cppsort
 {
@@ -57,8 +58,7 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (size < 14)
-        {
+        if (size < 14) {
             bubble_sort(std::move(first), size,
                         std::move(compare), std::move(projection));
             return std::move(buffer);
@@ -82,19 +82,16 @@ namespace detail
 
         // Shrink the left partition to merge
         auto&& middle_proj = proj(*middle);
-        while (first != middle && not comp(middle_proj, proj(*first)))
-        {
+        while (first != middle && not comp(middle_proj, proj(*first))) {
             ++first;
             --size_left;
         }
-        if (first == middle)
-        {
+        if (first == middle) {
             return std::move(buffer);
         }
 
         // Try to increase the memory buffer if it not big enough
-        if (buff_size < size - (size / 2))
-        {
+        if (buff_size < size - (size / 2)) {
             using rvalue_reference = std::decay_t<rvalue_reference_t<ForwardIterator>>;
             auto new_buffer = std::get_temporary_buffer<rvalue_reference>(size - (size / 2));
             buffer.reset(new_buffer.first);
@@ -102,9 +99,9 @@ namespace detail
         }
 
         // Merge the sorted partitions in-place
-        utility::detail::merge_n_adaptative(first, size_left, middle, size - (size / 2),
-                                            buffer.get(), buff_size,
-                                            std::move(compare), std::move(projection));
+        merge_n_adaptative(first, size_left, middle, size - (size / 2),
+                           buffer.get(), buff_size,
+                           std::move(compare), std::move(projection));
 
         return std::move(buffer);
     }
@@ -120,8 +117,7 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (size < 40)
-        {
+        if (size < 40) {
             insertion_sort(std::move(first), std::move(last),
                            std::move(compare), std::move(projection));
             return std::move(buffer);
@@ -145,19 +141,16 @@ namespace detail
 
         // Shrink the left partition to merge
         auto&& middle_proj = proj(*middle);
-        while (first != middle && not comp(middle_proj, proj(*first)))
-        {
+        while (first != middle && not comp(middle_proj, proj(*first))) {
             ++first;
             --size_left;
         }
-        if (first == middle)
-        {
+        if (first == middle) {
             return std::move(buffer);
         }
 
         // Try to increase the memory buffer if it not big enough
-        if (buff_size < size_left)
-        {
+        if (buff_size < size_left) {
             using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
             auto new_buffer = std::get_temporary_buffer<rvalue_reference>(size_left);
             buffer.reset(new_buffer.first);
@@ -181,8 +174,7 @@ namespace detail
                     std::forward_iterator_tag)
         -> void
     {
-        if (size < 14)
-        {
+        if (size < 14) {
             bubble_sort(std::move(first), size,
                         std::move(compare), std::move(projection));
             return;
@@ -202,8 +194,7 @@ namespace detail
                     std::bidirectional_iterator_tag)
         -> void
     {
-        if (size < 40)
-        {
+        if (size < 40) {
             insertion_sort(std::move(first), std::move(last),
                            std::move(compare), std::move(projection));
             return;
