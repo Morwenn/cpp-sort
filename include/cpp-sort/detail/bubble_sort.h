@@ -28,9 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
+#include "swap_if.h"
 
 namespace cppsort
 {
@@ -53,20 +52,11 @@ namespace detail
     {
         if (size < 2) return;
 
-        using utility::iter_swap;
-        auto&& comp = utility::as_function(compare);
-        auto&& proj = utility::as_function(projection);
-
-        while (--size)
-        {
+        while (--size) {
             ForwardIterator current = first;
             ForwardIterator next = std::next(current);
-            for (difference_type_t<ForwardIterator> i = 0 ; i < size ; ++i)
-            {
-                if (comp(proj(*next), proj(*current)))
-                {
-                    iter_swap(current, next);
-                }
+            for (difference_type_t<ForwardIterator> i = 0 ; i < size ; ++i) {
+                iter_swap_if(current, next, compare, projection);
                 ++next;
                 ++current;
             }
