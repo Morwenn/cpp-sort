@@ -39,7 +39,7 @@ building blocks of the library:
 * [Fixed-size sorters](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters) can be used to efficiently sort tiny fixed-size collections
 * [Measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness) can be used to evaluate the disorder in a collection
 
-Here is a more complete example of what the library can do:
+Here is a more complete example of what can be done with the library:
 
 ```cpp
 #include <algorithm>
@@ -96,7 +96,7 @@ and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wik
 # Benchmarks
 
 The following graph has been generated with a script found in the benchmarks
-directory. It shows the time needed for one sorting algorithm to sort one million
+directory. It shows the time needed for a sorting algorithm to sort one million
 shuffled `std::array<int, N>` of sizes 0 to 15. It compares the sorters generally
 used to sort small arrays:
 
@@ -111,7 +111,7 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
 **cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
 or more recent versions of these compilers. Future development on the C++14 branch will
-try to remain compatible with these version. There is currently no plan to explicitly
+try to remain compatible with these versions. There is currently no plan to explicitly
 support other compilers.
 
 The repository also contains an experimental [C++17 branch](https://github.com/Morwenn/cpp-sort/tree/c++17)
@@ -119,15 +119,17 @@ which requires the most recent versions of g++ and clang++, and will probably re
 more recent versions until the C++17 support of both compilers is stable enough. It is
 worth noting that code written against the C++14 branch is not guaranteed to work with the
 C++17 branch as the new language and standard library features replaced some of the utility
-headers; those deletions are documented. At some point in the future, the C++17 branch will
-have more features than the C++14 ones, such as proper handling of execution policies to
-implement parallel sorting algorithms. At some later point in the future, the C++17 branch
-will likely become the main branch, and the C++14 branch will only recceive bug fixes.
+headers; those changes [are documented](https://github.com/Morwenn/cpp-sort/wiki/Changelog).
+The C++17 branch already has more features than the C++14 one, and will at some point have
+significant features that the C++14 branch won't have, such as proper handling of execution
+policies to implement parallel sorting algorithms. At some later point in the future, the
+C++17 branch will likely become the main branch, and the C++14 branch will only receive bug
+fixes and smallish updates.
 
 The long-term goal is to make the library evolve with the C++ standard, and the kind of
-differences that already between the C++14 and C++17 branches will also exist between the
-future branches. Some features such as concepts and standard ranges will likely shape the
-futur of the library.
+differences that already exist between the C++14 and C++17 branches will also exist between
+the future branches. Some features such as concepts and standard ranges will likely shape the
+future of the library.
 
 # Thanks
 
@@ -137,11 +139,11 @@ futur of the library.
 
 Even though some parts of the library are [original research](https://github.com/Morwenn/cpp-sort/wiki/Original-research)
 and some others correspond to custom and rather naive implementations of standard
-sorting algorithms, **cpp-sort** also reuses a great deal of code from open-source
-projects, often slightly altered to integrate seamlessly into the library. Here is
-a list of the external resources used to create this library. I hope that the many
-different licenses are compatible. If it is not the case, please contact me (or
-submit an issue) and we will see what can be done about it:
+sorting algorithms, **cpp-sort** also reuses a great deal of code and ideas from
+open-source projects, often altered to integrate seamlessly into the library. Here
+is a list of the external resources used to create this library. I hope that the
+many different licenses are compatible. If it is not the case, please contact me
+(or submit an issue) and we will see what can be done about it:
 
 * Some of the algorithms used by `insertion_sorter` and `pdq_sorter` come from
 Orson Peters' [pattern-defeating quicksort](https://github.com/orlp/pdqsort). Some
@@ -151,8 +153,7 @@ parts of the benchmarks come from there as well.
 of a Timsort](https://github.com/gfx/cpp-TimSort).
 
 * The three algorithms used by `spread_sorter` come from Steven Ross [Boost.Sort
-module](http://www.boost.org/doc/libs/1_59_0/libs/sort/doc/html/index.html) with
-some modifications so that they do not depend on Boost anymore.
+module](http://www.boost.org/doc/libs/1_59_0/libs/sort/doc/html/index.html).
 
 * [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function),
 [`utility::static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const),
@@ -173,9 +174,9 @@ reimplementation](https://github.com/adrian17/cpp-drop-merge-sort) of Emil Erner
 in [libc++](http://libcxx.llvm.org/), enhanced to handle both projections and
 proxy iterators.
 
-* The algorithm used by [`utility::inplace_merge`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#inplace_merge)
-is an implementation of a merge algorithm proposed by Dudziński and Dydek, and
-implemented by Alexander Stepanov and Paul McJones in their book [*Elements of
+* The library internally uses an `inplace_merge` function that works with forward
+iterators. Its implementation uses a merge algorithm proposed by Dudziński and Dydek,
+and implemented by Alexander Stepanov and Paul McJones in their book [*Elements of
 Programming*](http://www.elementsofprogramming.com/).
 
 * The implementation of Dijkstra's smoothsort used by `smooth_sorter` has been
