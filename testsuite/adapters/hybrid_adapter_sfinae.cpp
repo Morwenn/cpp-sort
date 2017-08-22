@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,11 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
-#include <catch.hpp>
+#include "../span.h"
 
 namespace
 {
@@ -140,6 +141,18 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
         sorter_type res3 = cppsort::sort(sorter{}, vec3);
         CHECK( res3 == sorter_type::generic );
     }
+
+    SECTION( "with span" )
+    {
+        sorter_type res1 = cppsort::sort(sorter{}, make_span(vec1));
+        CHECK( res1 == sorter_type::integer );
+
+        sorter_type res2 = cppsort::sort(sorter{}, make_span(vec2));
+        CHECK( res2 == sorter_type::floating_point );
+
+        sorter_type res3 = cppsort::sort(sorter{}, make_span(vec3));
+        CHECK( res3 == sorter_type::generic );
+    }
 }
 
 TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
@@ -183,6 +196,18 @@ TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
         CHECK( res2 == sorter_type::floating_point );
 
         sorter_type res3 = cppsort::sort(sorter{}, vec3);
+        CHECK( res3 == sorter_type::generic );
+    }
+
+    SECTION( "with span" )
+    {
+        sorter_type res1 = cppsort::sort(sorter{}, make_span(vec1));
+        CHECK( res1 == sorter_type::integer );
+
+        sorter_type res2 = cppsort::sort(sorter{}, make_span(vec2));
+        CHECK( res2 == sorter_type::floating_point );
+
+        sorter_type res3 = cppsort::sort(sorter{}, make_span(vec3));
         CHECK( res3 == sorter_type::generic );
     }
 }
