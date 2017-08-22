@@ -28,11 +28,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <utility>
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../rotate_left.h"
 #include "../rotate_right.h"
 
@@ -55,26 +55,26 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using std::swap;
+            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             if (comp(proj(first[1u]), proj(first[0u]))) {
                 if (comp(proj(first[2u]), proj(first[0u]))) {
                     if (comp(proj(first[2u]), proj(first[1u]))) {
-                        swap(first[0u], first[2u]);
+                        iter_swap(first, first + 2u);
                     } else {
                         rotate_left<3u>(first);
                     }
                 } else {
-                    swap(first[0u], first[1u]);
+                    iter_swap(first, first + 1u);
                 }
             } else {
                 if (comp(proj(first[2u]), proj(first[1u]))) {
                     if (comp(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
-                        swap(first[1u], first[2u]);
+                        iter_swap(first + 1u, first + 2u);
                     }
                 }
             }

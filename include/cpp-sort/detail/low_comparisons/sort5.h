@@ -33,6 +33,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "../rotate_right.h"
 #include "../swap_if.h"
 
@@ -55,7 +56,7 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using std::swap;
+            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -67,8 +68,8 @@ namespace detail
             // Order pairs of elements by max value
 
             if (comp(proj(first[3u]), proj(first[1u]))) {
-                swap(first[0u], first[2u]);
-                swap(first[1u], first[3u]);
+                iter_swap(first, first + 2u);
+                iter_swap(first + 1u, first + 3u);
             }
 
             // Merge-insert minimal elements
