@@ -127,4 +127,14 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         sorter{}(collection, &internal_compare<int>::compare_to);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
+
+    SECTION( "verge_adapter" )
+    {
+        using sorter = cppsort::verge_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(collection, &internal_compare<int>::compare_to);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
 }
