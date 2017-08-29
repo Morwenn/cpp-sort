@@ -243,32 +243,27 @@ namespace detail
     // inplace_merge for bidirectional iterators
 
     template<typename Predicate>
-    class negate
+    class invert
     {
-    private:
-        Predicate predicate;
-    public:
-        negate() {}
+        private:
 
-        explicit negate(Predicate predicate):
-            predicate(predicate)
-        {}
+            Predicate predicate;
 
-        template<typename T1>
-        auto operator()(const T1& x)
-            -> bool
-        {
-            auto&& pred = utility::as_function(predicate);
-            return not pred(x);
-        }
+        public:
 
-        template<typename T1, typename T2>
-        auto operator()(const T1& x, const T2& y)
-            -> bool
-        {
-            auto&& pred = utility::as_function(predicate);
-            return not pred(x, y);
-        }
+            invert() {}
+
+            explicit invert(Predicate predicate):
+                predicate(predicate)
+            {}
+
+            template<typename T1, typename T2>
+            auto operator()(const T1& x, const T2& y)
+                -> bool
+            {
+                auto&& pred = utility::as_function(predicate);
+                return pred(y, x);
+            }
     };
 
     template<typename Compare, typename BidirectionalIterator,
@@ -301,7 +296,7 @@ namespace detail
             half_inplace_merge(Rv(p), Rv(buff),
                                RBi(middle), RBi(first),
                                RBi(last), len2,
-                               negate<Compare>(compare), std::move(projection));
+                               invert<Compare>(compare), std::move(projection));
         }
     }
 
