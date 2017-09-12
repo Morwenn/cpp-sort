@@ -63,11 +63,15 @@ namespace detail
     constexpr auto log2(Integer n)
         -> Integer
     {
+#if defined(__GNUC__) || defined(__clang__)
+        return std::numeric_limits<Integer>::digits - __builtin_clz(n) - 1;
+#else
         Integer log = 0;
         while (n >>= 1) {
             ++log;
         }
         return log;
+#endif
     }
 }}
 
