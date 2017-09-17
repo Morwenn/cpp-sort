@@ -54,6 +54,7 @@ namespace cppsort
     struct heap_sorter;
     struct insertion_sorter;
     struct integer_spread_sorter;
+    struct ips4o_sorter;
     struct merge_insertion_sorter;
     struct merge_sorter;
     struct pdq_sorter;
