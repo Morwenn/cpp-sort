@@ -42,8 +42,8 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/sorters/insertion_sorter.h>
 #include "ips4o_fwd.h"
-#include "base_case.h"
 #include "memory.h"
 #include "partitioning.h"
 
@@ -65,7 +65,7 @@ namespace ips4o
             // Check for base case
             const auto n = std::distance(begin, end);
             if (n <= 2 * Cfg::kBaseCaseSize) {
-                detail::baseCaseSort(begin, end, local_.classifier.getComparator());
+                cppsort::insertion_sort(begin, end, local_.classifier.getComparator());
                 return;
             }
             diff_t bucket_start[Cfg::kMaxBuckets + 1];
@@ -107,13 +107,13 @@ namespace ips4o
 
         public:
 
-            explicit SequentialSorter(typename Cfg::less comp):
+            explicit SequentialSorter(typename Cfg::compare_type compare):
                 buffer_storage_(1),
-                local_ptr_(Cfg::kDataAlignment, std::move(comp), buffer_storage_.get())
+                local_ptr_(Cfg::kDataAlignment, std::move(compare), buffer_storage_.get())
             {}
 
-            explicit SequentialSorter(typename Cfg::less comp, char* buffer_storage):
-                local_ptr_(Cfg::kDataAlignment, std::move(comp), buffer_storage)
+            explicit SequentialSorter(typename Cfg::compare_type compare, char* buffer_storage):
+                local_ptr_(Cfg::kDataAlignment, std::move(compare), buffer_storage)
             {}
 
             auto operator()(iterator begin, iterator end)

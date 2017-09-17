@@ -42,8 +42,8 @@
 ////////////////////////////////////////////////////////////
 #include <limits>
 #include <utility>
+#include <cpp-sort/sorters/insertion_sorter.h>
 #include "ips4o_fwd.h"
-#include "base_case.h"
 #include "memory.h"
 #include "../assume.h"
 
@@ -106,7 +106,7 @@ namespace detail
         -> void
     {
         const bool is_last_level = end_ - begin_ <= Cfg::kSingleLevelThreshold;
-        const auto comp = classifier_->getComparator();
+        auto compare = classifier_->getComparator();
 
         for (int i = first_bucket ; i < last_bucket ; ++i) {
             // Get bucket information
@@ -204,7 +204,7 @@ namespace detail
 
             // Perform final base case sort here, while the data is still cached
             if (is_last_level || (bend - bstart) <= 2 * Cfg::kBaseCaseSize) {
-                detail::baseCaseSort(begin_ + bstart, begin_ + bend, comp);
+                cppsort::insertion_sort(begin_ + bstart, begin_ + bend, compare);
             }
         }
     }

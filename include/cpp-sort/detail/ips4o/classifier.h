@@ -42,6 +42,7 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include "ips4o_fwd.h"
 #include "../assume.h"
 
@@ -62,12 +63,12 @@ namespace detail
         using iterator = typename Cfg::iterator;
         using value_type = typename Cfg::value_type;
         using bucket_type = typename Cfg::bucket_type;
-        using less = typename Cfg::less;
+        using compare_type = typename Cfg::compare_type;
 
         public:
 
-            Classifier(less comp):
-                comp_(std::move(comp))
+            Classifier(compare_type compare):
+                compare(std::move(compare))
             {}
 
             ~Classifier() {
@@ -100,9 +101,9 @@ namespace detail
              * The comparison operator.
              */
             auto getComparator() const
-                -> less
+                -> compare_type
             {
-                return comp_;
+                return compare;
             }
 
             /*
@@ -123,7 +124,7 @@ namespace detail
              * Classifies a single element.
              */
             template<bool kEqualBuckets>
-            auto classify(const value_type& value) const
+            auto classify(const value_type& value)
                 -> bucket_type
             {
                 const int log_buckets = log_buckets_;
@@ -131,12 +132,14 @@ namespace detail
                 CPPSORT_ASSUME(log_buckets > 0);
                 CPPSORT_ASSUME(log_buckets < 10);
 
+                auto&& comp = utility::as_function(compare);
+
                 bucket_type b = 1;
                 for (int l = 0 ; l < log_buckets ; ++l) {
-                    b = 2 * b + comp_(splitter(b), value);
+                    b = 2 * b + comp(splitter(b), value);
                 }
                 if (kEqualBuckets) {
-                    b = 2 * b + !comp_(value, sortedSplitter(b - num_buckets));
+                    b = 2 * b + not comp(value, sortedSplitter(b - num_buckets));
                 }
                 return b - (kEqualBuckets ? 2 * num_buckets : num_buckets);
             }
@@ -145,7 +148,7 @@ namespace detail
              * Classifies all elements using a callback.
              */
             template<bool kEqualBuckets, typename Yield>
-            auto classify(iterator begin, iterator end, Yield&& yield) const
+            auto classify(iterator begin, iterator end, Yield&& yield)
                 -> void
             {
                 switch (log_buckets_) {
@@ -165,13 +168,15 @@ namespace detail
              * Classifies all elements using a callback.
              */
             template<bool kEqualBuckets, int kLogBuckets, typename Yield>
-            auto classifyUnrolled(iterator begin, const iterator end, Yield&& yield) const
+            auto classifyUnrolled(iterator begin, const iterator end, Yield&& yield)
                 -> void
             {
                 constexpr bucket_type kNumBuckets = 1l << (kLogBuckets + kEqualBuckets);
                 constexpr int kUnroll = Cfg::kUnrollClassifier;
                 CPPSORT_ASSUME(begin < end);
                 CPPSORT_ASSUME(begin <= (end - kUnroll));
+
+                auto&& comp = utility::as_function(compare);
 
                 bucket_type b[kUnroll];
                 for (auto cutoff = end - kUnroll ; begin <= cutoff ; begin += kUnroll) {
@@ -181,13 +186,13 @@ namespace detail
 
                     for (int l = 0 ; l < kLogBuckets ; ++l) {
                         for (int i = 0 ; i < kUnroll ; ++i) {
-                            b[i] = 2 * b[i] + comp_(splitter(b[i]), begin[i]);
+                            b[i] = 2 * b[i] + comp(splitter(b[i]), begin[i]);
                         }
                     }
 
                     if (kEqualBuckets) {
                         for (int i = 0 ; i < kUnroll ; ++i) {
-                            b[i] = 2 * b[i] + !comp_(begin[i], sortedSplitter(b[i] - kNumBuckets / 2));
+                            b[i] = 2 * b[i] + not comp(begin[i], sortedSplitter(b[i] - kNumBuckets / 2));
                         }
                     }
 
@@ -200,10 +205,10 @@ namespace detail
                 for (; begin != end ; ++begin) {
                     bucket_type b = 1;
                     for (int l = 0 ; l < kLogBuckets ; ++l) {
-                        b = 2 * b + comp_(splitter(b), *begin);
+                        b = 2 * b + comp(splitter(b), *begin);
                     }
                     if (kEqualBuckets) {
-                        b = 2 * b + !comp_(*begin, sortedSplitter(b - kNumBuckets / 2));
+                        b = 2 * b + not comp(*begin, sortedSplitter(b - kNumBuckets / 2));
                     }
                     yield(b - kNumBuckets, begin);
                 }
@@ -266,7 +271,7 @@ namespace detail
             std::aligned_storage_t<sizeof(value_type), alignof(value_type)> sorted_storage_[Cfg::kMaxBuckets / 2];
             int log_buckets_ = 0;
             bucket_type num_buckets_ = 0;
-            less comp_;
+            compare_type compare;
     };
 }}}}
 

@@ -42,8 +42,8 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/sorters/insertion_sorter.h>
 #include "ips4o_fwd.h"
-#include "base_case.h"
 #include "config.h"
 #include "memory.h"
 #include "sequential.h"
@@ -69,13 +69,13 @@ namespace ips4o
      * Configurable interface.
      */
     template<typename Cfg, typename RandomAccessIterator,
-             typename Compare, typename Projection>
+             typename Compare>
     auto sort(RandomAccessIterator begin, RandomAccessIterator end,
-              Compare compare, Projection projection)
+              Compare compare)
         -> void
     {
         if (std::distance(begin, end) <= Cfg::kBaseCaseMultiplier * Cfg::kBaseCaseSize) {
-            detail::baseCaseSort(std::move(begin), std::move(end), std::move(compare));
+            cppsort::insertion_sort(std::move(begin), std::move(end), std::move(compare));
         } else {
             make_sorter<RandomAccessIterator, Cfg>(std::move(compare))(std::move(begin),
                                                                        std::move(end));
@@ -85,13 +85,13 @@ namespace ips4o
     /*
      * Standard interface.
      */
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    template<typename RandomAccessIterator, typename Compare>
     auto sort(RandomAccessIterator begin, RandomAccessIterator end,
-              Compare compare, Projection projection)
+              Compare compare)
         -> void
     {
         ips4o::sort<Config<>>(std::move(begin), std::move(end),
-                              std::move(compare), std::move(projection));
+                              std::move(compare));
     }
 }}}
 

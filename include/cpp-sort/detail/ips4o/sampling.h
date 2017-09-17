@@ -99,7 +99,7 @@ namespace detail
         sequential(begin, begin + num_samples);
         auto splitter = begin + step - 1;
         auto sorted_splitters = classifier.getSortedSplitters();
-        const auto compare = classifier.getComparator();
+        auto compare = classifier.getComparator();
 
         // Choose the splitters
         CPPSORT_ASSUME(sorted_splitters != nullptr);

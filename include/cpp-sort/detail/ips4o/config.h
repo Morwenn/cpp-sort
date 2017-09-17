@@ -203,7 +203,7 @@ namespace ips4o
         }
     };
 
-    template<typename It_, typename Comp_, typename Cfg=Config<>>
+    template<typename Iterator, typename Compare, typename Cfg=Config<>>
     struct ExtendedConfig:
         Cfg
     {
@@ -214,7 +214,7 @@ namespace ips4o
         /*
          * The iterator type for the input data.
          */
-        using iterator = It_;
+        using iterator = Iterator;
         /*
          * The difference type for the iterator.
          */
@@ -224,9 +224,9 @@ namespace ips4o
          */
         using value_type = typename std::iterator_traits<iterator>::value_type;
         /*
-         * The comparison operator.
+         * The comparison function.
          */
-        using less = Comp_;
+        using compare_type = Compare;
 
         struct Sync
         {

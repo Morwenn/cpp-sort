@@ -237,9 +237,9 @@ namespace detail
             0u
         > random_generator;
 
-        LocalData(typename Cfg::less comp, char* buffer_storage):
+        LocalData(typename Cfg::compare_type compare, char* buffer_storage):
             buffers(buffer_storage),
-            classifier(std::move(comp))
+            classifier(std::move(compare))
         {
             std::random_device rdev;
             std::ptrdiff_t seed = rdev();
@@ -307,8 +307,9 @@ namespace detail
         std::vector<ParallelTask> small_tasks;
         std::atomic_size_t small_task_index;
 
-        SharedData(typename Cfg::less comp, typename Cfg::Sync sync, std::size_t num_threads):
-            classifier(std::move(comp)),
+        SharedData(typename Cfg::compare_type compare, typename Cfg::Sync sync,
+                   std::size_t num_threads):
+            classifier(std::move(compare)),
             sync(std::forward<typename Cfg::Sync>(sync)),
             local(num_threads)
         {

@@ -50,13 +50,12 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    not is_projection_iterator_v<Compare, RandomAccessIterator>
                 >
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}, Projection projection={}) const
+                            Compare compare={}) const
                 -> void
             {
                 static_assert(
@@ -68,7 +67,7 @@ namespace cppsort
                 );
 
                 ips4o::sort(std::move(first), std::move(last),
-                            std::move(compare), std::move(projection));
+                            std::move(compare));
             }
 
             ////////////////////////////////////////////////////////////
