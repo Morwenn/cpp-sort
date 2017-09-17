@@ -51,13 +51,9 @@ namespace ips4o
 {
     namespace detail
     {
-        template<typename It, typename Compare>
-        auto baseCaseSort(It begin, It end, Compare&& compare)
-            -> void;
-
-        template<typename It, typename RandomGen>
-        auto selectSample(It begin, const It end,
-                          typename std::iterator_traits<It>::difference_type num_samples,
+        template<typename Iterator, typename RandomGen>
+        auto selectSample(Iterator begin, const Iterator end,
+                          typename std::iterator_traits<Iterator>::difference_type num_samples,
                           RandomGen&& gen)
             -> void;
 
@@ -159,15 +155,8 @@ namespace ips4o
     template<typename Cfg>
     class SequentialSorter;
 
-    template<typename Cfg>
-    class ParallelSorter;
-
-    template<typename It, class Comp>
-    auto sort(It begin, It end, Comp comp)
-        -> void;
-
-    template<typename It>
-    auto sort(It begin, It end)
+    template<typename Iterator, typename Compare>
+    auto sort(Iterator begin, Iterator end, Compare compare)
         -> void;
 }}}
 
