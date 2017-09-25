@@ -84,13 +84,11 @@ namespace detail
 
         if (read < write) {
             // No more blocks in this bucket
-            if (kIsParallel) bp.stopRead();
             return -1;
         }
 
         // Read block
         local_.swap[0].readFrom(begin_ + read);
-        if (kIsParallel) bp.stopRead();
 
         return classifier_->template classify<kEqualBuckets>(local_.swap[0].head());
     }
@@ -117,8 +115,6 @@ namespace detail
                     overflow_ = &local_.overflow;
                     return -1;
                 }
-                // Make sure no one is currently reading this block
-                while (kIsParallel && bp.isReading()) {}
                 // Write block
                 local_.swap[current_swap].writeTo(begin_ + write);
                 return -1;

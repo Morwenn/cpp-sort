@@ -66,15 +66,15 @@ namespace detail
 
         // Do the classification
         classifier_->template classify<kEqualBuckets>(my_begin, my_end,
-                [&](typename Cfg::bucket_type bucket, iterator it) {
-                    // Only flush buffers on overflow
-                    if (buffers.isFull(bucket)) {
-                        buffers.writeTo(bucket, write);
-                        write += Cfg::kBlockSize;
-                        local_.bucket_size[bucket] += Cfg::kBlockSize;
-                    }
-                    buffers.push(bucket, std::move(*it));
-                });
+            [&](typename Cfg::bucket_type bucket, iterator it) {
+                // Only flush buffers on overflow
+                if (buffers.isFull(bucket)) {
+                    buffers.writeTo(bucket, write);
+                    write += Cfg::kBlockSize;
+                    local_.bucket_size[bucket] += Cfg::kBlockSize;
+                }
+                buffers.push(bucket, std::move(*it));
+            });
 
         // Update bucket sizes to account for partially filled buckets
         for (int i = 0, end = num_buckets_ ; i < end ; ++i) {
@@ -114,52 +114,6 @@ namespace detail
                              : (stop <= my_first_empty_block ? stop : my_first_empty_block))
                             - Cfg::kBlockSize);
         }
-    }
-
-    /*
-     * Local classification in the parallel case.
-     */
-    template<typename Cfg>
-    auto Sorter<Cfg>::parallelClassification(const bool use_equal_buckets)
-        -> void
-    {
-        // Compute stripe for each thread
-        const auto elements_per_thread = static_cast<double>(end_ - begin_) / num_threads_;
-        const auto my_begin = begin_ + Cfg::alignToNextBlock(my_id_ * elements_per_thread);
-        const auto my_end = [&] {
-            auto e = begin_ + Cfg::alignToNextBlock((my_id_ + 1) * elements_per_thread);
-            e = end_ < e ? end_ : e;
-            return e;
-        }();
-
-        local_.first_block = my_begin - begin_;
-
-        // Do classification
-        if (my_begin >= my_end) {
-            // Small input (less than two blocks per thread), wait for other threads to finish
-            local_.first_empty_block = my_begin - begin_;
-            shared_->sync.barrier();
-        } else {
-            const auto my_first_empty_block =
-                    use_equal_buckets ? classifyLocally<true>(my_begin, my_end)
-                                      : classifyLocally<false>(my_begin, my_end);
-
-            // Find bucket boundaries
-            diff_t sum = 0;
-            for (int i = 0, end = num_buckets_ ; i < end ; ++i) {
-                sum += local_.bucket_size[i];
-                __atomic_fetch_add(&bucket_start_[i + 1], sum, __ATOMIC_RELAXED);
-            }
-
-            local_.first_empty_block = my_first_empty_block;
-
-            shared_->sync.barrier();
-
-            // Move empty blocks and set bucket write/read pointers
-            moveEmptyBlocks(my_begin - begin_, my_end - begin_, my_first_empty_block);
-        }
-
-        shared_->sync.barrier();
     }
 }}}}
 

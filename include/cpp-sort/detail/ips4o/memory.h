@@ -262,24 +262,6 @@ namespace detail
     };
 
     /*
-     * A subtask in the parallel algorithm.
-     * Uses indices instead of iterators to avoid unnecessary template instantiations.
-     */
-    struct ParallelTask
-    {
-        std::ptrdiff_t begin;
-        std::ptrdiff_t end;
-        int level;
-
-        bool operator==(const ParallelTask& rhs) const { return begin == rhs.begin && end == rhs.end; }
-        bool operator!=(const ParallelTask& rhs) const { return begin != rhs.begin || end != rhs.end; }
-        bool operator<(const ParallelTask& rhs) const { return end - begin < rhs.end - rhs.begin; }
-        bool operator<=(const ParallelTask& rhs) const { return end - begin <= rhs.end - rhs.begin; }
-        bool operator>(const ParallelTask& rhs) const { return end - begin > rhs.end - rhs.begin; }
-        bool operator>=(const ParallelTask& rhs) const { return end - begin >= rhs.end - rhs.begin; }
-    };
-
-    /*
      * Data shared between all threads.
      */
     template<typename Cfg>
@@ -303,8 +285,6 @@ namespace detail
 
         // Parallel subtask information
         typename Cfg::iterator begin_;
-        std::vector<ParallelTask> big_tasks;
-        std::vector<ParallelTask> small_tasks;
         std::atomic_size_t small_task_index;
 
         SharedData(typename Cfg::compare_type compare, typename Cfg::Sync sync,

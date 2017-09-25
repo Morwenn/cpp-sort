@@ -70,26 +70,14 @@ namespace detail
     {
         // Sampling
         bool use_equal_buckets = false;
-        {
-            if (not kIsParallel) {
-                std::tie(this->num_buckets_, use_equal_buckets) = buildClassifier(begin, end, local_.classifier);
-            } else {
-                shared->sync.single([&] {
-                    std::tie(this->num_buckets_, use_equal_buckets) = buildClassifier(begin, end, shared->classifier);
-                    shared->num_buckets = this->num_buckets_;
-                    shared->use_equal_buckets = use_equal_buckets;
-                });
-                this->num_buckets_ = shared->num_buckets;
-                use_equal_buckets = shared->use_equal_buckets;
-            }
-        }
+        std::tie(this->num_buckets_, use_equal_buckets) = buildClassifier(begin, end, local_.classifier);
 
         // Set parameters for this partitioning step
         // Must do this AFTER sampling, because sampling will recurse to sort splitters.
         this->shared_ = shared;
-        this->classifier_ = kIsParallel ? &shared_->classifier : &local_.classifier;
+        this->classifier_ = &local_.classifier;
         this->bucket_start_ = bucket_start;
-        this->bucket_pointers_ = kIsParallel ? shared_->bucket_pointers : local_.bucket_pointers;
+        this->bucket_pointers_ = local_.bucket_pointers;
         this->overflow_ = nullptr;
         this->begin_ = begin;
         this->end_ = end;
@@ -97,11 +85,7 @@ namespace detail
         this->num_threads_ = num_threads;
 
         // Local Classification
-        if (kIsParallel) {
-            parallelClassification(use_equal_buckets);
-        } else {
-            sequentialClassification(use_equal_buckets);
-        }
+        sequentialClassification(use_equal_buckets);
 
         // Compute which bucket can cause overflow
         const int overflow_bucket = computeOverflowBucket();
@@ -113,16 +97,8 @@ namespace detail
             permuteBlocks<false, kIsParallel>();
         }
 
-        if (kIsParallel && overflow_) {
-            shared_->overflow = &local_.overflow;
-        }
-
-        if (kIsParallel) shared_->sync.barrier();
-
         // Cleanup
         {
-            if (kIsParallel) overflow_ = shared_->overflow;
-
             // Distribute buckets among threads
             const int num_buckets = num_buckets_;
             const int buckets_per_thread = (num_buckets + num_threads_ - 1) / num_threads_;
@@ -132,17 +108,13 @@ namespace detail
             my_last_bucket = num_buckets < my_last_bucket ? num_buckets : my_last_bucket;
 
             // Save excess elements at right end of stripe
-            const auto in_swap_buffer = !kIsParallel
-                                                ? std::pair<int, diff_t>(my_last_bucket, 0)
-                                                : saveMargins(my_last_bucket);
-            if (kIsParallel) shared_->sync.barrier();
+            const auto in_swap_buffer = std::pair<int, diff_t>(my_last_bucket, 0);
 
             // Write remaining elements
             writeMargins(my_first_bucket, my_last_bucket, overflow_bucket,
                          in_swap_buffer.first, in_swap_buffer.second);
         }
 
-        if (kIsParallel) shared_->sync.barrier();
         local_.reset();
 
         return {this->num_buckets_, use_equal_buckets};
