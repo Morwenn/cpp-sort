@@ -1,7 +1,5 @@
 language: cpp
 
-sudo: false
-
 addons:
   apt:
     sources:
@@ -15,34 +13,83 @@ addons:
 matrix:
   include:
 
-    # clang
+    # Linux clang
     - os: linux
-      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE=''
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
-      env: BUILD_TYPE=Release VALGRIND=false SANITIZE=''
+      sudo: false
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
-    # gcc
+    # Linux gcc
     - os: linux
-      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE=''
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
     - os: linux
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
     - os: linux
-      env: BUILD_TYPE=Release VALGRIND=false SANITIZE=''
+      sudo: false
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      compiler: gcc
+
+    # OSX clang
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Xcode"
+      compiler: clang
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Xcode"
+      compiler: clang
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Xcode"
+      compiler: clang
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
+      compiler: clang
+
+    # OSX gcc
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Xcode"
+      compiler: gcc
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Xcode"
+      compiler: gcc
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Xcode"
+      compiler: gcc
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
       compiler: gcc
 
 install:
@@ -54,6 +101,7 @@ script:
   - cd build
   - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
+          -G"${CMAKE_GENERATOR}"
           ..
   - cmake --build .
   - if [ "${VALGRIND}" = "true" ]; then
