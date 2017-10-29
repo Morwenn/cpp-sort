@@ -25,6 +25,10 @@ matrix:
       compiler: clang
 
     - os: linux
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address
+      compiler: clang
+
+    - os: linux
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE=''
       compiler: clang
 
