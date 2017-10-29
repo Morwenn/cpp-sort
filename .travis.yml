@@ -2,16 +2,6 @@ language: cpp
 
 sudo: false
 
-compiler:
-  - clang
-  - gcc
-
-env:
-  - BUILD_TYPE=Debug    VALGRIND=true   SANITIZE='' 
-  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=undefined 
-#  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=address 
-  - BUILD_TYPE=Release  VALGRIND=false  SANITIZE=''
-
 addons:
   apt:
     sources:
@@ -22,6 +12,35 @@ addons:
       - g++-5
       - valgrind
 
+matrix:
+  include:
+
+    # clang
+    - os: linux
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE=''
+      compiler: clang
+
+    - os: linux
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined
+      compiler: clang
+
+    - os: linux
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE=''
+      compiler: clang
+
+    # gcc
+    - os: linux
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE=''
+      compiler: gcc
+
+    - os: linux
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined
+      compiler: gcc
+
+    - os: linux
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE=''
+      compiler: gcc
+
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
@@ -29,7 +48,9 @@ install:
 script: 
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DSANITIZE="${SANITIZE}" ..
+  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+          -DSANITIZE="${SANITIZE}"
+          ..
   - cmake --build .
   - if [ "${VALGRIND}" = "true" ]; then
       travis_wait valgrind --leak-check=full --track-origins=yes --error-exitcode=1 testsuite/cpp-sort-testsuite --rng-seed $RANDOM;
