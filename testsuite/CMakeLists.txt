@@ -122,6 +122,7 @@ add_executable(
     ${UTILITY_TESTS}
 )
 
+add_dependencies(cpp-sort-testsuite catch)
 add_dependencies(cpp-sort-testsuite Catch)
 
 add_test(testsuite cpp-sort-testsuite)
