@@ -71,27 +71,6 @@ matrix:
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
       compiler: clang
 
-    # OSX gcc
-    - os: osx
-      osx_image: xcode8
-      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Xcode"
-      compiler: gcc
-
-    - os: osx
-      osx_image: xcode8
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Xcode"
-      compiler: gcc
-
-    - os: osx
-      osx_image: xcode8
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Xcode"
-      compiler: gcc
-
-    - os: osx
-      osx_image: xcode8
-      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
-      compiler: gcc
-
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
