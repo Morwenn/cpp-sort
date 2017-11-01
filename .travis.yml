@@ -1,17 +1,5 @@
 language: cpp
 
-sudo: false
-
-compiler:
-  - clang
-  - gcc
-
-env:
-  - BUILD_TYPE=Debug    VALGRIND=true   SANITIZE='' 
-  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=undefined 
-#  - BUILD_TYPE=Debug    VALGRIND=false  SANITIZE=address 
-  - BUILD_TYPE=Release  VALGRIND=false  SANITIZE=''
-
 addons:
   apt:
     sources:
@@ -22,17 +10,81 @@ addons:
       - g++-5
       - valgrind
 
+matrix:
+  include:
+
+    # Linux clang
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      compiler: clang
+
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
+      compiler: clang
+
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      compiler: clang
+
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      compiler: clang
+
+    # Linux gcc
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      compiler: gcc
+
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
+      compiler: gcc
+
+    - os: linux
+      sudo: false
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      compiler: gcc
+
+    # OSX clang
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Xcode"
+      compiler: clang
+
+    - os: osx
+      osx_image: xcode8
+      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
+      compiler: clang
+
+before_install:
+  - if [ `uname` = 'Darwin' ]; then brew update && brew install valgrind; fi
+
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
 
-script: 
-  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" -DSANITIZE="${SANITIZE}" .
-  - make
+script:
+  - case `uname` in
+        Darwin) export EXECUTABLE_DIR="testsuite/Debug";;
+        Linux) export EXECUTABLE_DIR="testsuite";;
+    esac
+
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+          -DSANITIZE="${SANITIZE}"
+          -G"${CMAKE_GENERATOR}"
+          ..
+  - cmake --build .
   - if [ "${VALGRIND}" = "true" ]; then
-      travis_wait valgrind --leak-check=full --track-origins=yes --error-exitcode=1 testsuite/cpp-sort-testsuite --rng-seed $RANDOM;
+        travis_wait valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
     else
-      testsuite/cpp-sort-testsuite --rng-seed $RANDOM;
+        $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
     fi
 
 notifications:

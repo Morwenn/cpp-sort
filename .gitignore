@@ -20,12 +20,8 @@
 *.out
 *.app
 
-# CMake files and Makefile
-CMakeCache.txt
-CMakeFiles
-Makefile
-*.cmake
-install_manifest.txt
+# Build directory
+build
 
 # Code::Blocks files
 *.cbp
@@ -42,6 +38,3 @@ CppCheckResults.xml
 *.png
 *.pdf
 *.synctex.gz
-
-# Downloaded Catch files
-catch

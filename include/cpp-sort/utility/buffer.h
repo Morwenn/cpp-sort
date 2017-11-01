@@ -109,6 +109,78 @@ namespace utility
         };
     };
 
+    template<>
+    struct fixed_buffer<0>
+    {
+        // Not sure how to handle this one, but buffered sorters should
+        // tolerate 0-sized buffers and do nothing with them; we take a
+        // somewhat hazardous route and make some things rely on a 1-sized
+        // std::array
+
+        template<typename T>
+        struct buffer
+        {
+            buffer() = default;
+            explicit constexpr buffer(std::size_t /* size */) {}
+
+            constexpr auto size() const
+                -> typename std::array<T, 1>::size_type
+            {
+                return 0;
+            }
+
+            constexpr auto operator[](std::size_t pos)
+                -> typename std::array<T, 1>::reference
+            {
+                // Should never be called
+                return begin()[pos];
+            }
+
+            constexpr auto operator[](std::size_t pos) const
+                -> typename std::array<T, 1>::const_reference
+            {
+                // Should never be called
+                return begin()[pos];
+            }
+
+            constexpr auto begin()
+                -> typename std::array<T, 1>::pointer
+            {
+                return nullptr;
+            }
+
+            constexpr auto begin() const
+                -> typename std::array<T, 1>::const_pointer
+            {
+                return nullptr;
+            }
+
+            constexpr auto cbegin() const
+                -> typename std::array<T, 1>::const_pointer
+            {
+                return nullptr;
+            }
+
+            constexpr auto end()
+                -> typename std::array<T, 1>::pointer
+            {
+                return nullptr;
+            }
+
+            constexpr auto end() const
+                -> typename std::array<T, 1>::const_pointer
+            {
+                return nullptr;
+            }
+
+            constexpr auto cend() const
+                -> typename std::array<T, 1>::const_pointer
+            {
+                return nullptr;
+            }
+        };
+    };
+
     ////////////////////////////////////////////////////////////
     // Dynamic buffer accepting a size policy
 
