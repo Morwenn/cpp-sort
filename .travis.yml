@@ -61,6 +61,9 @@ matrix:
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
       compiler: clang
 
+before_install:
+  - if [ `uname` = 'Darwin' ]; then brew update && brew install valgrind; fi
+
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
