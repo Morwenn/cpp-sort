@@ -110,9 +110,20 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 # Compiler support
 
 **cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
-or more recent versions of these compilers. Future development on the C++14 branch will
-try to remain compatible with these versions. There is currently no plan to explicitly
-support other compilers.
+or more recent versions of these compilers. So far, the build matrix + home tests give
+the following supports:
+* Works on Linux with both g++5 and clang++3.8
+* Works on OSX with Xcode 8
+* Works on Windows with MinGW-w64 g++5
+* Works with both libstdc++ and libc++
+* Passes Valgrind checks on Linux and OSX, with every tested compiler
+* Passes undefined sanitizer checks on Linux with both g++ and clang++
+* Passes address sanitizers checks on Linux with clang++
+
+Last time I tried it did not work with MSVC 2017. Future development on the C++14 branch
+will try to remain compatible with the compiler versions listed above. Some sanitizer tests
+are not listed above, not because they trigger error, but because I didn't manage to make
+them build properly.
 
 The repository also contains an experimental [C++17 branch](https://github.com/Morwenn/cpp-sort/tree/c++17)
 which requires the most recent versions of g++ and clang++, and will probably require even
