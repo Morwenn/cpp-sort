@@ -123,7 +123,6 @@ add_executable(
 )
 
 add_dependencies(cpp-sort-testsuite catch)
-add_dependencies(cpp-sort-testsuite Catch)
 
 add_test(testsuite cpp-sort-testsuite)
 
