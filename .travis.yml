@@ -66,7 +66,11 @@ matrix:
       compiler: clang
 
 before_install:
-  - if [ `uname` = 'Darwin' ]; then brew update && brew install valgrind; fi
+  - if [ `uname` = 'Darwin' ]; then
+        brew update &&
+        brew install ccache valgrind &&
+        export PATH="/usr/local/opt/ccache/libexec:$PATH";
+    fi
 
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
