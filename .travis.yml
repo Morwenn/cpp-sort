@@ -84,7 +84,12 @@ script:
           -DSANITIZE="${SANITIZE}"
           -G"${CMAKE_GENERATOR}"
           ..
-  - cmake --build .
+  - if [ `uname` = 'Darwin' ]; then
+        cmake --build . -- -jobs 2;
+    else
+        cmake --build . -- -j2;
+    fi
+
   - if [ "${VALGRIND}" = "true" ]; then
         travis_wait valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
     else
