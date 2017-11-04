@@ -123,6 +123,7 @@ add_executable(
 )
 
 add_dependencies(cpp-sort-testsuite catch)
+target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 
 add_test(testsuite cpp-sort-testsuite)
 
