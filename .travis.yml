@@ -51,6 +51,11 @@ matrix:
 
     - os: linux
       sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      compiler: gcc
+
+    - os: linux
+      sudo: false
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
