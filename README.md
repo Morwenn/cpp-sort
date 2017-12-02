@@ -200,13 +200,16 @@ of the algorithm.
 * The algorithm used by `grail_sorter` has been adapted from Mrrl's
 [GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
 
-* The algorithms 17 to 22 used by `sorting_network_sorter` correspond to the ones
-found by Symmetry and Evolution based Network Sort Optimization (SENSO) published in
-*Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
-and Miikkulainen.
-
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
 Perl's [`Algorithm::Networksort` module](http://search.cpan.org/~jgamble/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
+
+* The algorithms 17, 18, 19 and 21 used by `sorting_network_sorter` correspond to the
+ones found by Symmetry and Evolution based Network Sort Optimization (SENSO) published
+in *Using Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam
+and Miikkulainen.
+
+* The algorithms 20, 23 and 24 used by `sorting_network_sorter` have been found and
+proposed for inclusion by Bert Dobbelaere. Huge thanks for this contribution :)
 
 * Some of the optimizations used by `sorting_network_sorter` come from [this
 discussion](http://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
