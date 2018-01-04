@@ -15,7 +15,9 @@ endif()
 
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${SANITIZE}")
+    foreach(SANITIZE_FLAG ${SANITIZE})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${SANITIZE_FLAG}")
+    endforeach()
 endif()
 
 # Include cpp-sort headers
