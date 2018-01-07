@@ -82,15 +82,11 @@ install:
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
 
 script:
-  - case `uname` in
-        Darwin) export EXECUTABLE_DIR="testsuite/Debug";;
-        Linux) export EXECUTABLE_DIR="testsuite";;
-    esac
-
   - mkdir build
   - cd build
   - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
+          -DUSE_VALGRIND=${VALGRIND}
           -G"${CMAKE_GENERATOR}"
           ..
   - if [ `uname` = 'Darwin' ]; then
@@ -98,12 +94,8 @@ script:
     else
         cmake --build . -- -j2;
     fi
-
-  - if [ "${VALGRIND}" = "true" ]; then
-        travis_wait valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
-    else
-        $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
-    fi
+  - cd testsuite
+  - ctest -C ${BUILD_TYPE} --output-on-failure
 
 notifications:
   email: false

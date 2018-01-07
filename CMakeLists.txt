@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 3.1.0)
 # can optionally be built with CMake. This is what this script does.
 #
 
+option(USE_VALGRIND "whether to run the tests with Valgrind" OFF)
+
 set(CMAKE_CXX_STANDARD 14)
 
 # Use the gold linker if possible
