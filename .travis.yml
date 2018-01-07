@@ -82,20 +82,19 @@ install:
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
 
 script:
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+  - cmake -H. -Bbuild
+          -DCMAKE_CONFIGURATION_TYPES="${BUILD_TYPE}"
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
           -DUSE_VALGRIND=${VALGRIND}
           -G"${CMAKE_GENERATOR}"
-          ..
   - if [ `uname` = 'Darwin' ]; then
-        cmake --build . -- -jobs 2;
+        cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
     else
-        cmake --build . -- -j2;
+        cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
-  - cd testsuite
-  - ctest -C ${BUILD_TYPE} --output-on-failure
+  - cd build/testsuite
+  - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
 
 notifications:
   email: false
