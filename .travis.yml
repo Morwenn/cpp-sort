@@ -10,6 +10,10 @@ addons:
       - g++-5
       - valgrind
 
+cache:
+  apt: true
+  ccache: true
+
 matrix:
   include:
 
@@ -47,6 +51,11 @@ matrix:
 
     - os: linux
       sudo: false
+      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      compiler: gcc
+
+    - os: linux
+      sudo: false
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
@@ -62,30 +71,30 @@ matrix:
       compiler: clang
 
 before_install:
-  - if [ `uname` = 'Darwin' ]; then brew update && brew install valgrind; fi
+  - if [ `uname` = 'Darwin' ]; then
+        brew update &&
+        brew install ccache valgrind &&
+        export PATH="/usr/local/opt/ccache/libexec:$PATH";
+    fi
 
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
 
 script:
-  - case `uname` in
-        Darwin) export EXECUTABLE_DIR="testsuite/Debug";;
-        Linux) export EXECUTABLE_DIR="testsuite";;
-    esac
-
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+  - cmake -H. -Bbuild
+          -DCMAKE_CONFIGURATION_TYPES="${BUILD_TYPE}"
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
+          -DUSE_VALGRIND=${VALGRIND}
           -G"${CMAKE_GENERATOR}"
-          ..
-  - cmake --build .
-  - if [ "${VALGRIND}" = "true" ]; then
-        travis_wait valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
+  - if [ `uname` = 'Darwin' ]; then
+        cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
     else
-        $EXECUTABLE_DIR/cpp-sort-testsuite --rng-seed $RANDOM;
+        cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
+  - cd build/testsuite
+  - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
 
 notifications:
   email: false

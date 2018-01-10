@@ -6,11 +6,20 @@ cmake_minimum_required(VERSION 3.1.0)
 # can optionally be built with CMake. This is what this script does.
 #
 
+option(USE_VALGRIND "whether to run the tests with Valgrind" OFF)
+
 set(CMAKE_CXX_STANDARD 14)
+
+# Use the gold linker if possible
+if (UNIX AND NOT APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+endif()
 
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${SANITIZE}")
+    foreach(SANITIZE_FLAG ${SANITIZE})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${SANITIZE_FLAG}")
+    endforeach()
 endif()
 
 # Include cpp-sort headers

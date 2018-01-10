@@ -123,8 +123,14 @@ add_executable(
 )
 
 add_dependencies(cpp-sort-testsuite catch)
+target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
+target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
-add_test(testsuite cpp-sort-testsuite)
+string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
+if (${USE_VALGRIND})
+    add_test(NAME testsuite COMMAND valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
+else()
+    add_test(NAME testsuite COMMAND $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
+endif()
 
-# Enable unit-testing
-enable_testing(true)
+enable_testing()
