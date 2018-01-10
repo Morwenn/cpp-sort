@@ -124,6 +124,7 @@ add_executable(
 
 add_dependencies(cpp-sort-testsuite catch)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
+target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 if (${USE_VALGRIND})
