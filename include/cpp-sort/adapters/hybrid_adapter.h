@@ -41,10 +41,6 @@ namespace cppsort
 {
     namespace detail
     {
-        // Here goes what we can't put into hybrid_sorter's privates
-        // because full template specialization is not allowed in
-        // classes...
-
         ////////////////////////////////////////////////////////////
         // Overload resolution tool
 
@@ -75,6 +71,57 @@ namespace cppsort
         template<>
         constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
 
+        // Number of acceptable iterator categories
+        static constexpr std::size_t categories_number = 4;
+
+        ////////////////////////////////////////////////////////////
+        // Import every operator() in one class
+
+        template<typename Head, typename... Tail>
+        struct sorters_merger:
+            Head, sorters_merger<Tail...>
+        {
+            using Head::operator();
+            using Head::detail_stability;
+
+            using sorters_merger<Tail...>::operator();
+            using sorters_merger<Tail...>::detail_stability;
+        };
+
+        template<typename Head>
+        struct sorters_merger<Head>:
+            Head
+        {
+            using Head::operator();
+            using Head::detail_stability;
+        };
+
+        ////////////////////////////////////////////////////////////
+        // Add a dispatch to the operator() so that a sorter is
+        // preferred for its iterator category first, then for its
+        // position into the sorters
+
+        template<typename Sorter, std::size_t Ind>
+        struct selection_wrapper
+        {
+            template<typename... Args>
+            auto operator()(choice<Ind>, Args&&... args) const
+                -> decltype(Sorter{}(std::forward<Args>(args)...))
+            {
+                return Sorter{}(std::forward<Args>(args)...);
+            }
+
+            template<typename... Args>
+            static auto detail_stability(choice<Ind>, Args&&... args)
+                -> std::enable_if_t<
+                    detail::is_callable_v<Sorter(Args...)>,
+                    cppsort::is_stable<Sorter(Args...)>
+                >
+            {
+                return {};
+            }
+        };
+
         ////////////////////////////////////////////////////////////
         // Adapter
 
@@ -84,57 +131,6 @@ namespace cppsort
             public check_is_always_stable<Sorters...>
         {
             private:
-
-                // Number of acceptable iterator categories
-                static constexpr std::size_t categories_number = 4;
-
-                ////////////////////////////////////////////////////////////
-                // Import every operator() in one class
-
-                template<typename Head, typename... Tail>
-                struct sorters_merger:
-                    Head, sorters_merger<Tail...>
-                {
-                    using Head::operator();
-                    using Head::detail_stability;
-
-                    using sorters_merger<Tail...>::operator();
-                    using sorters_merger<Tail...>::detail_stability;
-                };
-
-                template<typename Head>
-                struct sorters_merger<Head>:
-                    Head
-                {
-                    using Head::operator();
-                    using Head::detail_stability;
-                };
-
-                ////////////////////////////////////////////////////////////
-                // Add a dispatch to the operator() so that a sorter is
-                // preferred for its iterator category first, then for its
-                // position into the sorters
-
-                template<typename Sorter, std::size_t Ind>
-                struct selection_wrapper
-                {
-                    template<typename... Args>
-                    auto operator()(choice<Ind>, Args&&... args) const
-                        -> decltype(Sorter{}(std::forward<Args>(args)...))
-                    {
-                        return Sorter{}(std::forward<Args>(args)...);
-                    }
-
-                    template<typename... Args>
-                    static auto detail_stability(choice<Ind>, Args&&... args)
-                        -> std::enable_if_t<
-                            detail::is_callable_v<Sorter(Args...)>,
-                            cppsort::is_stable<Sorter(Args...)>
-                        >
-                    {
-                        return {};
-                    }
-                };
 
                 // Associate and index to every sorter depending on
                 // its position in the parameter pack
