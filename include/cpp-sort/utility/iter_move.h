@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -99,26 +99,11 @@ namespace utility
     }
 
     ////////////////////////////////////////////////////////////
-    // rvalue_reference_t type trait
-
-    namespace adl_trick
-    {
-        using utility::iter_move;
-
-        template<typename Iterator>
-        auto do_iter_move()
-            -> decltype(iter_move(std::declval<Iterator&>()));
-    }
-
-    template<typename Iterator>
-    using rvalue_reference_t = decltype(adl_trick::do_iter_move<Iterator>());
-
-    ////////////////////////////////////////////////////////////
     // std::reverse_iterator overloads
 
     template<typename Iterator>
     auto iter_move(const std::reverse_iterator<Iterator>& it)
-        -> rvalue_reference_t<Iterator>
+        -> decltype(iter_move(std::declval<Iterator&>()))
     {
         using utility::iter_move;
         return iter_move(std::prev(it.base()));
@@ -137,7 +122,7 @@ namespace utility
 
     template<typename Iterator>
     auto iter_move(const std::move_iterator<Iterator>& it)
-        -> rvalue_reference_t<Iterator>
+        -> decltype(iter_move(std::declval<Iterator&>()))
     {
         using utility::iter_move;
         return iter_move(it.base());
@@ -150,6 +135,21 @@ namespace utility
         using utility::iter_swap;
         iter_swap(lhs.base(), rhs.base());
     }
+
+    ////////////////////////////////////////////////////////////
+    // rvalue_reference_t type trait
+
+    namespace adl_trick
+    {
+        using utility::iter_move;
+
+        template<typename Iterator>
+        auto do_iter_move()
+            -> decltype(iter_move(std::declval<Iterator&>()));
+    }
+
+    template<typename Iterator>
+    using rvalue_reference_t = decltype(adl_trick::do_iter_move<Iterator>());
 }}
 
 #endif // CPPSORT_UTILITY_ITER_MOVE_H_

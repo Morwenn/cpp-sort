@@ -1,7 +1,8 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2018 Timothy Van Slyke
+ * Modified in 2018 by Morwenn for inclusion into cpp-sort
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,47 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_UPPER_BOUND_H_
-#define CPPSORT_DETAIL_UPPER_BOUND_H_
+#ifndef CPPSORT_DETAIL_TIMSORT_ITER_H_
+#define CPPSORT_DETAIL_TIMSORT_ITER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename ForwardIterator, typename T,
-             typename Compare, typename Projection=utility::identity>
-    auto upper_bound(ForwardIterator first, ForwardIterator last,
-                     const T& value,
-                     Compare compare, Projection projection={})
-        -> ForwardIterator
-    {
-        auto&& comp = utility::as_function(compare);
-        auto&& proj = utility::as_function(projection);
+    template<typename Iterator>
+    using iterator_difference_type_t = typename std::iterator_traits<Iterator>::difference_type;
 
-        auto size = std::distance(first, last);
-        while (size > 0)
-        {
-            ForwardIterator it = first;
-            std::advance(it, size / 2);
-            if (not comp(value, proj(*it)))
-            {
-                first = ++it;
-                size -= size / 2 + 1;
-            }
-            else
-            {
-                size /= 2;
-            }
-        }
-        return first;
-    }
+    template<typename Iterator>
+    using iterator_value_type_t = typename std::iterator_traits<Iterator>::value_type;
 }}
 
-#endif // CPPSORT_DETAIL_UPPER_BOUND_H_
+#endif // CPPSORT_DETAIL_TIMSORT_ITER_H_

@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2016-2018 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_DESTRUCT_N_H_
@@ -99,6 +99,25 @@ namespace detail
         // Number of allocated objects to destroy
         std::size_t size;
     };
+
+    ////////////////////////////////////////////////////////////
+    // C++17 memory algorithms
+
+    template<typename T>
+    auto destroy_at(T* ptr)
+        -> void
+    {
+        ptr->~T();
+    }
+
+    template<typename ForwardIterator>
+    auto destroy(ForwardIterator first, ForwardIterator last)
+        -> void
+    {
+        for (; first != last ; ++first) {
+            destroy_at(std::addressof(*first));
+        }
+    }
 }}
 
 #endif // CPPSORT_DETAIL_DESTRUCT_N_H_

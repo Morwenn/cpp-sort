@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
-#include "../detail/timsort.h"
+#include "../detail/timsort/timsort.h"
 
 namespace cppsort
 {
@@ -50,13 +50,12 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    not is_projection_iterator_v<Compare, RandomAccessIterator>
                 >
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}, Projection projection={}) const
+                            Compare compare={}) const
                 -> void
             {
                 static_assert(
@@ -67,8 +66,7 @@ namespace cppsort
                     "tim_sorter requires at least random-access iterators"
                 );
 
-                timsort(std::move(first), std::move(last),
-                        std::move(compare), std::move(projection));
+                timsort(std::move(first), std::move(last), std::move(compare));
             }
 
             ////////////////////////////////////////////////////////////
