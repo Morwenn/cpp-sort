@@ -35,6 +35,7 @@
 #include "compiler.h"
 #include "memcpy_algos.h"
 #include "minrun.h"
+#include "../iterator_traits.h"
 #include "../memory.h"
 #include "../move.h"
 
@@ -247,7 +248,7 @@ namespace detail
             >
         {
             static_assert(
-                std::is_same<std::decay_t<ValueType>, std::decay_t<iterator_value_type_t<Iterator>>>::value,
+                std::is_same<std::decay_t<ValueType>, std::decay_t<value_type_t<Iterator>>>::value,
                 "if you see this message, timsort() is broken"
             );
             // both contiguous iterators to trivially copyable type.  do a memcpy
@@ -264,7 +265,7 @@ namespace detail
             >
         {
             static_assert(
-                std::is_same<std::decay_t<ValueType>, std::decay_t<iterator_value_type_t<Iterator>>>::value,
+                std::is_same<std::decay_t<ValueType>, std::decay_t<value_type_t<Iterator>>>::value,
                 "if you see this message, timsort() is broken"
             );
             // Iterator is a reverse contiguous iterators to trivially copyable type.

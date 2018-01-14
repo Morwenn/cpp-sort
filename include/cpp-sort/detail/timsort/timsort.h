@@ -40,6 +40,7 @@
 #include "minrun.h"
 #include "timsort_stack_buffer.h"
 #include "utils.h"
+#include "../iterator_traits.h"
 #include "../lower_bound.h"
 #include "../memory.h"
 #include "../reverse.h"
@@ -60,7 +61,7 @@ namespace detail
          * @param end_it     Past-the-end random access iterator.
          * @param compare    Comparator to use.
          */
-        using value_type = iterator_value_type_t<Iterator>;
+        using value_type = value_type_t<Iterator>;
         TimSort(Iterator begin_it, Iterator end_it, Compare compare):
             stack_buffer{},
             start(begin_it),
@@ -604,7 +605,7 @@ namespace detail
     auto timsort(Iterator begin, Iterator end, Compare compare)
         -> void
     {
-        using value_type = iterator_value_type_t<Iterator>;
+        using value_type = value_type_t<Iterator>;
         std::size_t len = std::distance(begin, end);
         if (len > max_minrun<value_type>()) {
             TimSort<Iterator, Compare>(begin, end, std::move(compare));

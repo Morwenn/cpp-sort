@@ -34,7 +34,7 @@
 #include <utility>
 #include <valarray>
 #include <vector>
-#include "iter.h"
+#include "../iterator_traits.h"
 
 #if __cplusplus > 201402L && defined(__has_include)
 #   if __has_include(<string_view>)
@@ -52,7 +52,7 @@ namespace detail
     {
         private:
 
-            using _value_type = iterator_value_type_t<Iterator>;
+            using _value_type = value_type_t<Iterator>;
             using _va = std::valarray<_value_type>;
             using _begin_result = std::decay_t<decltype(std::begin(std::declval<_va>()))>;
             using _begin_cresult = std::decay_t<decltype(std::begin(std::declval<const _va>()))>;
@@ -70,14 +70,14 @@ namespace detail
 
     template<
         typename Iterator,
-        bool = std::is_pod<iterator_value_type_t<Iterator>>::value
+        bool = std::is_pod<value_type_t<Iterator>>::value
     >
     struct is_string_iterator;
 
     template<typename Iterator>
     struct is_string_iterator<Iterator, true>
     {
-        using _value_type = iterator_value_type_t<Iterator>;
+        using _value_type = value_type_t<Iterator>;
         static constexpr bool value =
             std::is_same<Iterator, typename std::basic_string<_value_type>::iterator>::value ||
             std::is_same<Iterator, typename std::basic_string<_value_type>::const_iterator>::value;
@@ -90,14 +90,14 @@ namespace detail
 
     template<
         typename Iterator,
-        bool = std::is_pod<iterator_value_type_t<Iterator>>::value
+        bool = std::is_pod<value_type_t<Iterator>>::value
     >
     struct is_string_view_iterator;
 
     template<typename Iterator>
     struct is_string_view_iterator<Iterator, true>
     {
-        using _value_type = iterator_value_type_t<Iterator>;
+        using _value_type = value_type_t<Iterator>;
         static constexpr bool value =
             std::is_same<Iterator, typename std::basic_string<_value_type>::iterator>::value ||
             std::is_same<Iterator, typename std::basic_string<_value_type>::const_iterator>::value;
@@ -113,7 +113,7 @@ namespace detail
     template<typename Iterator>
     struct is_stringview_iterator
     {
-        using _value_type = iterator_value_type_t<Iterator>;
+        using _value_type = value_type_t<Iterator>;
         static constexpr bool value =
             std::is_same<Iterator, typename std::basic_string_view<_value_type>::iterator>::value ||
             std::is_same<Iterator, typename std::basic_string_view<_value_type>::const_iterator>::value;
@@ -124,7 +124,7 @@ namespace detail
     template<typename Iterator>
     struct is_vector_iterator
     {
-        using _value_type = iterator_value_type_t<Iterator>;
+        using _value_type = value_type_t<Iterator>;
         static constexpr bool value =
             std::is_same<Iterator, typename std::vector<_value_type>::iterator>::value ||
             std::is_same<Iterator, typename std::vector<_value_type>::const_iterator>::value;
@@ -133,7 +133,7 @@ namespace detail
     template<typename Iterator>
     struct is_contiguous_iterator
     {
-        using _value_type = iterator_value_type_t<Iterator>;
+        using _value_type = value_type_t<Iterator>;
         static constexpr bool value =
             (is_vector_iterator<Iterator>::value && not std::is_same<_value_type, bool>::value) ||
             is_string_iterator<Iterator>::value ||

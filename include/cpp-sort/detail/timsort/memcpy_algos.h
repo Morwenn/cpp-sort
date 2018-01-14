@@ -32,7 +32,7 @@
 #include <cstring>
 #include <type_traits>
 #include "contiguous_iterator.h"
-#include "iter.h"
+#include "../iterator_traits.h"
 
 namespace cppsort
 {
@@ -40,7 +40,7 @@ namespace detail
 {
     template<typename Iterator>
     constexpr bool has_memcpy_safe_value_type_v =
-        std::is_trivially_copyable<iterator_value_type_t<Iterator>>::value;
+        std::is_trivially_copyable<value_type_t<Iterator>>::value;
 
     template<typename Iterator>
     static constexpr bool can_forward_memcpy_v
@@ -54,7 +54,7 @@ namespace detail
     struct GetMemcpyIterator
     {
         static auto get(Iterator iter) noexcept
-            -> iterator_value_type_t<Iterator>*
+            -> value_type_t<Iterator>*
         {
             return &(*iter);
         }
@@ -96,7 +96,7 @@ namespace detail
             DestIt
         >
     {
-        using value_type = iterator_value_type_t<SrcIt>;
+        using value_type = value_type_t<SrcIt>;
         std::memcpy(get_memcpy_iterator(dest), get_memcpy_iterator(begin), (end - begin) * sizeof(value_type));
         return dest + (end - begin);
     }
@@ -108,7 +108,7 @@ namespace detail
             DestIt
         >
     {
-        using value_type = iterator_value_type_t<SrcIt>;
+        using value_type = value_type_t<SrcIt>;
         std::memcpy(get_memcpy_iterator(dest + (end - begin) - 1),
                     get_memcpy_iterator(end - 1),
                     (end - begin) * sizeof(value_type));

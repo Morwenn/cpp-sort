@@ -37,9 +37,9 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "compiler.h"
-#include "iter.h"
 #include "memcpy_algos.h"
 #include "minrun.h"
+#include "../iterator_traits.h"
 #include "../move.h"
 #include "../upper_bound.h"
 
@@ -122,7 +122,7 @@ namespace detail
         //
         // benchmarking across a number of different cases shows that this usually wins over
         // a call to std::rotate()
-        using value_type = iterator_value_type_t<Iterator>;
+        using value_type = value_type_t<Iterator>;
         constexpr std::size_t use_temporary_upper_limit = 3 * sizeof(void*);
         constexpr bool use_temporary = sizeof(value_type) < use_temporary_upper_limit;
         if (use_temporary)
@@ -159,7 +159,7 @@ namespace detail
     {
         using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
-        using value_type = iterator_value_type_t<Iterator>;
+        using value_type = value_type_t<Iterator>;
 
         if (std::is_scalar<value_type>::value && (
             std::is_same<Compare, std::less<>>::value ||
