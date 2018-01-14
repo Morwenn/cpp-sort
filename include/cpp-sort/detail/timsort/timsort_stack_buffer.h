@@ -339,8 +339,7 @@ namespace detail
         }
 
         template<typename Iterator>
-        auto can_acquire_merge_buffer([[maybe_unused]] Iterator begin,
-                                      [[maybe_unused]] Iterator end) const noexcept
+        auto can_acquire_merge_buffer(Iterator begin, Iterator end) const noexcept
             -> bool
         {
             if (sizeof(ValueType) > (buffer_size * sizeof(IntType))) {
