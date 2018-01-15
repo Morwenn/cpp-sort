@@ -1,5 +1,5 @@
 //          Copyright Malte Skarupke 2016.
-//  Modified in 2017 by Morwenn for inclusion into cpp-sort.
+// Modified in 2017-2018 by Morwenn for inclusion into cpp-sort.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -20,6 +20,7 @@
 #include <utility>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
+#include "attributes.h"
 #include "detection.h"
 #include "logical_traits.h"
 #include "memcpy_cast.h"
@@ -168,9 +169,11 @@ namespace detail
             case 3:
                 to_call(begin);
                 ++begin;
+                CPPSORT_ATTRIBUTE_FALLTHROUGH;
             case 2:
                 to_call(begin);
                 ++begin;
+                CPPSORT_ATTRIBUTE_FALLTHROUGH;
             case 1:
                 to_call(begin);
         }
