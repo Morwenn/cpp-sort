@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -55,8 +55,7 @@ namespace detail
         ResultType inversions = 0;
 
         // Shrink the problem size on the left side
-        while (comp(*first, *middle))
-        {
+        while (comp(*first, *middle)) {
             ++first;
         }
 
@@ -64,20 +63,15 @@ namespace detail
         auto result = cache;
         for (auto first1 = first ; first1 != middle ; ++result)
         {
-            if (first2 == last)
-            {
+            if (first2 == last) {
                 detail::move(first1, middle, result);
                 break;
             }
-            if (comp(*first2, *first1))
-            {
+            if (comp(*first2, *first1)) {
                 *result = iter_move(first2);
                 ++first2;
-
                 inversions += std::distance(first1, middle);
-            }
-            else
-            {
+            } else {
                 *result = iter_move(first1);
                 ++first1;
             }
@@ -102,8 +96,7 @@ namespace detail
         -> ResultType
     {
         auto size = std::distance(first, last);
-        if (size < 2)
-        {
+        if (size < 2) {
             return 0;
         }
 
@@ -116,30 +109,6 @@ namespace detail
                                                          std::move(last), std::move(cache),
                                                          std::move(compare));
         return inversions;
-    }
-
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto count_inversions_quadratic(ForwardIterator first, ForwardIterator last,
-                                    Compare compare, Projection projection)
-        -> difference_type_t<ForwardIterator>
-    {
-        using difference_type = difference_type_t<ForwardIterator>;
-        auto&& comp = utility::as_function(compare);
-        auto&& proj = utility::as_function(projection);
-
-        difference_type count = 0;
-        for (auto it1 = first ; it1 != last ; ++it1)
-        {
-            auto&& value = proj(*it1);
-            for (auto it2 = std::next(it1) ; it2 != last ; ++it2)
-            {
-                if (comp(proj(*it2), value))
-                {
-                    ++count;
-                }
-            }
-        }
-        return count;
     }
 }}
 
