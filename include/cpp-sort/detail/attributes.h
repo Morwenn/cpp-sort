@@ -41,10 +41,10 @@
 
 #if __has_cpp_attribute(fallthrough)
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[fallthrough]]
-#elif defined(__GNUC__)
-#   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[gnu::fallthrough]]
 #elif defined(__clang__)
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[clang::fallthrough]]
+#elif defined(__GNUC__)
+#   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[gnu::fallthrough]]
 #else
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH
 #endif
