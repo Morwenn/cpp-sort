@@ -44,9 +44,13 @@
 #elif defined(__clang__)
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[clang::fallthrough]]
 #elif defined(__GNUC__)
-#   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[gnu::fallthrough]]
+#   if __GNUC__ >= 7
+#       define CPPSORT_ATTRIBUTE_FALLTHROUGH [[gnu::fallthrough]]
+#   else
+#       define CPPSORT_ATTRIBUTE_FALLTHROUGH (void)0
+#   endif
 #else
-#   define CPPSORT_ATTRIBUTE_FALLTHROUGH
+#   define CPPSORT_ATTRIBUTE_FALLTHROUGH (void)0
 #endif
 
 #endif // CPPSORT_DETAIL_ATTRIBUTES_H_
