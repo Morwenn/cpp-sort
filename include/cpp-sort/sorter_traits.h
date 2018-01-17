@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -94,6 +94,11 @@ namespace cppsort
             is_callable<Sorter(Iterable&)>
         {};
 
+        template<typename T, std::size_t N, typename Iterable>
+        struct has_sort<T[N], Iterable>:
+            std::false_type
+        {};
+
         template<typename Sorter, typename Iterable, typename Compare>
         struct has_comparison_sort:
             conjunction<
@@ -102,12 +107,22 @@ namespace cppsort
             >
         {};
 
+        template<typename T, std::size_t N, typename Iterable, typename Compare>
+        struct has_comparison_sort<T[N], Iterable, Compare>:
+            std::false_type
+        {};
+
         template<typename Sorter, typename Iterable, typename Projection>
         struct has_projection_sort:
             conjunction<
                 is_callable<Sorter(Iterable&, Projection)>,
                 is_projection<Projection, Iterable>
             >
+        {};
+
+        template<typename T, std::size_t N, typename Iterable, typename Projection>
+        struct has_projection_sort<T[N], Iterable, Projection>:
+            std::false_type
         {};
 
         template<typename Sorter, typename Iterable, typename Compare, typename Projection>

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ namespace utility
     }
 
     template<typename T, std::size_t N>
-    constexpr auto size(const T (&array)[N]) noexcept
+    constexpr auto size(const T (&)[N]) noexcept
         -> std::size_t
     {
         return N;
