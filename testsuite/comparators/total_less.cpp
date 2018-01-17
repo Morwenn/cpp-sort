@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <array>
 #include <cmath>
 #include <limits>
 #include <catch.hpp>
@@ -33,7 +32,7 @@ TEST_CASE( "IEEE 754 totalOrder implementation" )
     static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
     static constexpr double inf = std::numeric_limits<double>::infinity();
 
-    std::array<double, 8> array = { +1.0, +inf, -1.0, -nan, +0.0, -inf, +nan, -0.0 };
+    double array[] = { +1.0, +inf, -1.0, -nan, +0.0, -inf, +nan, -0.0 };
     cppsort::sort(array, cppsort::total_less);
 
     // Check for IEEE 754 totalOrder,
