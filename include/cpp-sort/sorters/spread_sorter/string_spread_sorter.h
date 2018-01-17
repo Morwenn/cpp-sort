@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,13 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../../detail/config.h"
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/string_sort.h"
+
+#if __cplusplus > 201402L && __has_include(<string_view>)
+#   include <string_view>
+#endif
 
 namespace cppsort
 {
@@ -58,10 +63,10 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> std::enable_if_t<
-                    std::is_same<
-                        projected_t<RandomAccessIterator, Projection>,
-                        std::string
-                    >::value
+                    std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
+#if __cplusplus > 201402L && __has_include(<string_view>)
+                    || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
+#endif
                 >
             {
                 static_assert(
@@ -83,11 +88,12 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> std::enable_if_t<
-                    std::is_same<
-                        projected_t<RandomAccessIterator, Projection>,
-                        std::wstring
-                    >::value && (sizeof(wchar_t) == 2)
+                -> std::enable_if_t<(
+                        std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
+#if __cplusplus > 201402L && __has_include(<string_view>)
+                        || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
+#endif
+                    ) && (sizeof(wchar_t) == 2)
                 >
             {
                 static_assert(
@@ -113,10 +119,10 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
                 -> std::enable_if_t<
-                    std::is_same<
-                        projected_t<RandomAccessIterator, Projection>,
-                        std::string
-                    >::value
+                    std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
+#if __cplusplus > 201402L && __has_include(<string_view>)
+                    || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
+#endif
                 >
             {
                 static_assert(
@@ -139,11 +145,12 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
-                -> std::enable_if_t<
-                    std::is_same<
-                        projected_t<RandomAccessIterator, Projection>,
-                        std::wstring
-                    >::value && (sizeof(wchar_t) == 2)
+                -> std::enable_if_t<(
+                        std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
+#if __cplusplus > 201402L && __has_include(<string_view>)
+                        || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
+#endif
+                    ) && (sizeof(wchar_t) == 2)
                 >
             {
                 static_assert(
