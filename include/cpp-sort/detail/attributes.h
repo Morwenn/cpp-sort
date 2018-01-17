@@ -24,6 +24,11 @@
 #ifndef CPPSORT_DETAIL_ATTRIBUTES_H_
 #define CPPSORT_DETAIL_ATTRIBUTES_H_
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include "config.h"
+
 //
 // Some attributes aren't available in C++14 but might be
 // useful to provide in later revisions of the standard, but
@@ -32,10 +37,6 @@
 // don't officially exist, so we need to fall back to older
 // platform-specific equivalents when possible
 //
-
-#ifndef __has_cpp_attribute
-#   define __has_cpp_attribute(x) 0
-#endif
 
 // CPPSORT_ATTRIBUTE_FALLTHROUGH
 

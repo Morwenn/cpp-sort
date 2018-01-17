@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,11 +37,16 @@
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
 #include "swap_if.h"
 #include "swap_ranges.h"
+
+#if __has_include(<ext/bitmap_allocator.h>)
+#   include <ext/bitmap_allocator.h>
+#endif
 
 namespace cppsort
 {
@@ -344,13 +349,22 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Separate main chain and pend elements
 
+#if __has_include(<ext/bitmap_allocator.h>)
+        using list_t = std::list<
+            group_iterator<RandomAccessIterator>,
+            __gnu_cxx::bitmap_allocator<group_iterator<RandomAccessIterator>>
+        >;
+#else
+        using list_t = std::list<group_iterator<RandomAccessIterator>>;
+#endif
+
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
-        std::list<group_iterator<RandomAccessIterator>> chain = { first, std::next(first) };
+        list_t chain = { first, std::next(first) };
 
         // Upper bounds for the insertion of pend elements
-        std::vector<typename std::list<group_iterator<RandomAccessIterator>>::iterator> pend;
+        std::vector<typename list_t::iterator> pend;
         pend.reserve((size + 1) / 2 - 1);
 
         for (auto it = first + 2 ; it != end ; it += 2)
@@ -379,7 +393,7 @@ namespace detail
             // a positive number, so there is of risk comparing funny values
             using size_type = std::common_type_t<
                 std::uint_fast64_t,
-                typename std::list<group_iterator<RandomAccessIterator>>::difference_type
+                typename list_t::difference_type
             >;
 
             // Find next index

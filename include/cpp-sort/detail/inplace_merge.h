@@ -6,12 +6,12 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 
 // Copyright (c) 2009 Alexander Stepanov and Paul McJones
-// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
 //
 // Permission to use, copy, modify, distribute and sell this software
 // and its documentation for any purpose is hereby granted without
@@ -41,7 +41,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "assume.h"
+#include "config.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "memory.h"

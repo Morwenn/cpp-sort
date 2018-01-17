@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,11 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_DETAIL_ASSUME_H_
-#define CPPSORT_DETAIL_ASSUME_H_
+#ifndef CPPSORT_DETAIL_CONFIG_H_
+#define CPPSORT_DETAIL_CONFIG_H_
 
-// Assumptions may help the compiler to remove unnecessary code
-// Some parts of the library may be significantly slower if this
+////////////////////////////////////////////////////////////
+// Check for __has_* macros
+
+#ifndef __has_include
+#   define __has_include(x) 0
+#endif
+
+#ifndef __has_cpp_attribute
+#   define __has_cpp_attribute(x) 0
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_ASSUME
+
+// Assumptions may help the compiler to remove unnecessary code;
+// some parts of the library may be significantly slower if this
 // assumption mechanism isn't supported
 
 #if defined(__GNUC__)
@@ -38,4 +52,4 @@
 #   define CPPSORT_ASSUME(cond)
 #endif
 
-#endif // CPPSORT_DETAIL_ASSUME_H_
+#endif // CPPSORT_DETAIL_CONFIG_H_

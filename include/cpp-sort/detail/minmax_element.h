@@ -1,7 +1,7 @@
 // Range v3 library
 //
 //  Copyright Eric Niebler 2014
-//  Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+//  Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
 //
 //  Use, modification and distribution is subject to the
 //  Boost Software License, Version 1.0. (See accompanying
@@ -22,7 +22,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include "assume.h"
+#include "config.h"
 
 namespace cppsort
 {
