@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -108,7 +108,12 @@ namespace cppsort
     template<typename Sorter>
     struct schwartz_adapter:
         sorter_facade<detail::schwartz_adapter_impl<Sorter>>
-    {};
+    {
+        schwartz_adapter() = default;
+
+        // Automatic deduction guide
+        constexpr schwartz_adapter(Sorter) noexcept {}
+    };
 
     ////////////////////////////////////////////////////////////
     // is_stable specialization

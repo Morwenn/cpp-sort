@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -98,6 +98,9 @@ namespace cppsort
         detail::container_aware_adapter_base<selection_sorter>
     {
         using detail::container_aware_adapter_base<selection_sorter>::operator();
+
+        container_aware_adapter() = default;
+        constexpr container_aware_adapter(selection_sorter) noexcept {}
 
         ////////////////////////////////////////////////////////////
         // std::list

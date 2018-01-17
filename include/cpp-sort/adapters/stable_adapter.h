@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -164,13 +164,24 @@ namespace cppsort
     template<typename Sorter>
     struct make_stable:
         sorter_facade<detail::stable_adapter_impl<Sorter>>
-    {};
+    {
+        make_stable() = default;
+
+        // Automatic deduction guide
+        constexpr make_stable(Sorter) noexcept {};
+    };
 
     // Actual sorter
     template<typename Sorter>
     struct stable_adapter:
         detail::check_iterator_category<Sorter>
     {
+        stable_adapter() = default;
+
+        // Automatic deduction guide
+        constexpr stable_adapter(Sorter) noexcept {}
+
+
         template<
             typename... Args,
             typename = std::enable_if_t<is_stable_v<Sorter(Args...)>>
