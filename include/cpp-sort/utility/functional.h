@@ -276,7 +276,7 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // Function constant (micro-optimization)
 
-#ifdef __cpp_template_auto
+#ifdef __cpp_nontype_template_parameter_auto
     template<auto Function>
     struct function_constant
     {
