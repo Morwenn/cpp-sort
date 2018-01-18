@@ -90,6 +90,7 @@ some interesting guarantees (ideas often taken from the Ranges TS):
 * The value types of the collections to be sorted need not be default-constructible
 * The value types of the collections to be sorted need not be copyable (only movable)
 * Stateless sorters can be converted to a function pointer for each overloaded `operator()`
+* Sorters are function objects: they can directly be passed as "overload sets" to other functions
 
 You can read more about all the available tools and find some tutorials about using
 and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wiki).
