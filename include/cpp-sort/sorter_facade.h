@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <cpp-sort/refined.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include "detail/config.h"
 #include "detail/projection_compare.h"
 
 namespace cppsort
@@ -90,6 +91,7 @@ namespace cppsort
             // Conversion to function pointers
 
             template<typename Iterable>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_t<Iterable>() const
             {
                 return [](Iterable& iterable) {
@@ -98,6 +100,7 @@ namespace cppsort
             }
 
             template<typename Iterable>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_rvalue_t<Iterable>() const
             {
                 return [](Iterable&& iterable) {
@@ -106,6 +109,7 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Func>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_func_t<Iterable, Func>() const
             {
                 return [](Iterable& iterable, Func func) {
@@ -114,6 +118,7 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Func>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_rvalue_func_t<Iterable, Func>() const
             {
                 return [](Iterable&& iterable, Func func) {
@@ -122,6 +127,7 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Func1, typename Func2>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_func2_t<Iterable, Func1, Func2>() const
             {
                 return [](Iterable& iterable, Func1 func1, Func2 func2) {
@@ -130,6 +136,7 @@ namespace cppsort
             }
 
             template<typename Iterable, typename Func1, typename Func2>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_rvalue_func2_t<Iterable, Func1, Func2>() const
             {
                 return [](Iterable&& iterable, Func1 func1, Func2 func2) {
@@ -138,6 +145,7 @@ namespace cppsort
             }
 
             template<typename Iterator>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_it_t<Iterator>() const
             {
                 return [](Iterator first, Iterator last) {
@@ -146,6 +154,7 @@ namespace cppsort
             }
 
             template<typename Iterator, typename Func>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_func_it_t<Iterator, Func>() const
             {
                 return [](Iterator first, Iterator last, Func func) {
@@ -154,6 +163,7 @@ namespace cppsort
             }
 
             template<typename Iterator, typename Func1, typename Func2>
+            CPPSORT_CONSTEXPR_AFTER_CXX14
             operator fptr_func2_it_t<Iterator, Func1, Func2>() const
             {
                 return [](Iterator first, Iterator last, Func1 func1, Func2 func2) {
