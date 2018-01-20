@@ -70,6 +70,22 @@ matrix:
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
       compiler: clang
 
+    # Conan
+    - os: linux
+      sudo: required
+      language: python
+      python: "3.6"
+      if: branch = master
+      env: CC=clang CXX=clang++
+      install:
+        - pip install conan
+      script:
+        - conan create . morwenn/stable
+      after_success:
+        - conan remote add bintray https://api.bintray.com/conan/morwenn/cpp-sort
+        - conan user -r bintray -p ${CONAN_PASSWORD} morwenn
+        - conan upload --all -r bintray cpp-sort/1.0.0@morwenn/stable
+
 before_install:
   - if [ `uname` = 'Darwin' ]; then
         brew update &&
