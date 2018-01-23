@@ -88,6 +88,16 @@ namespace cppsort
         public:
 
             ////////////////////////////////////////////////////////////
+            // Constructors
+
+            sorter_facade() = default;
+
+            template<typename... Args>
+            constexpr sorter_facade(Args&&... args):
+                Sorter(std::forward<Args>(args)...)
+            {}
+
+            ////////////////////////////////////////////////////////////
             // Conversion to function pointers
 
             template<typename Iterable>
