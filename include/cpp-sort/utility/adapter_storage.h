@@ -85,16 +85,16 @@ namespace utility
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args) const
-            noexcept(noexcept(Sorter{}(std::forward<Args>(args)...)))
-            -> decltype(Sorter{}(std::forward<Args>(args)...))
+            noexcept(noexcept(sorter(std::forward<Args>(args)...)))
+            -> decltype(sorter(std::forward<Args>(args)...))
         {
             return sorter(std::forward<Args>(args)...);
         }
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args)
-            noexcept(noexcept(Sorter{}(std::forward<Args>(args)...)))
-            -> decltype(Sorter{}(std::forward<Args>(args)...))
+            noexcept(noexcept(sorter(std::forward<Args>(args)...)))
+            -> decltype(sorter(std::forward<Args>(args)...))
         {
             return sorter(std::forward<Args>(args)...);
         }
