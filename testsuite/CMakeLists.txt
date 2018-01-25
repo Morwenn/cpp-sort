@@ -91,6 +91,7 @@ set(
 set(
     UTILITY_TESTS
 
+    utility/adapter_storage.cpp
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
     utility/branchless_traits.cpp
