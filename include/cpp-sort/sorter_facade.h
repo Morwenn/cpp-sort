@@ -481,10 +481,10 @@ namespace cppsort
                         decltype(std::begin(iterable)),
                         std::less<>
                     >::value,
-                    decltype(self.operator()(std::forward<Iterable>(iterable)))
+                    decltype(_call_sorter(self, std::forward<Iterable>(iterable)))
                 >
             {
-                return self.operator()(std::forward<Iterable>(iterable));
+                return _call_sorter(self, std::forward<Iterable>(iterable));
             }
 
             ////////////////////////////////////////////////////////////
@@ -520,10 +520,10 @@ namespace cppsort
                         std::less<>,
                         utility::identity
                     >::value,
-                    decltype(self.operator()(std::forward<Iterable>(iterable)))
+                    decltype(_call_sorter(self, std::forward<Iterable>(iterable)))
                 >
             {
-                return self.operator()(std::forward<Iterable>(iterable));
+                return _call_sorter(self, std::forward<Iterable>(iterable));
             }
 
             ////////////////////////////////////////////////////////////
@@ -623,10 +623,10 @@ namespace cppsort
                         std::less<>,
                         utility::identity
                     >::value,
-                    decltype(self.operator()(std::forward<Iterable>(iterable)))
+                    decltype(_call_sorter(self, std::forward<Iterable>(iterable)))
                 >
             {
-                return self.operator()(std::forward<Iterable>(iterable));
+                return _call_sorter(self, std::forward<Iterable>(iterable));
             }
 
             template<typename Self, typename Iterator, typename Projection>
@@ -969,7 +969,7 @@ namespace cppsort
             template<typename... Args>
             auto operator()(Args&&... args) const
                 noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
-                -> decltype(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...))
+                -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
             {
                 return _call_sorter(*this, std::forward<Args>(args)...);
             }
@@ -977,7 +977,7 @@ namespace cppsort
             template<typename... Args>
             auto operator()(Args&&... args)
                 noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
-                -> decltype(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...))
+                -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
             {
                 return _call_sorter(*this, std::forward<Args>(args)...);
             }
