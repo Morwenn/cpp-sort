@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/vergesort.h"
 
@@ -44,38 +45,70 @@ namespace cppsort
     namespace detail
     {
         template<typename FallbackSorter>
-        struct verge_adapter_impl
+        struct verge_adapter_impl:
+            utility::adapter_storage<FallbackSorter>
         {
-            template<
-                typename RandomAccessIterator,
-                typename Compare = std::less<>,
-                typename Projection = utility::identity,
-                typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+            public:
+
+                verge_adapter_impl() = default;
+
+                constexpr verge_adapter_impl(FallbackSorter sorter):
+                    utility::adapter_storage<FallbackSorter>(std::move(sorter))
+                {}
+
+            private:
+
+                template<
+                    typename Self,
+                    typename RandomAccessIterator,
+                    typename Compare = std::less<>,
+                    typename Projection = utility::identity,
+                    typename = std::enable_if_t<
+                        is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    >
                 >
-            >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}, Projection projection={}) const
-                -> void
-            {
-                static_assert(
-                    std::is_base_of<
-                        std::bidirectional_iterator_tag,
-                        iterator_category_t<RandomAccessIterator>
-                    >::value,
-                    "verge_adapter requires at least random-access iterators"
-                );
+                static auto _call_sorter(Self& self, RandomAccessIterator first, RandomAccessIterator last,
+                                         Compare compare={}, Projection projection={})
+                    -> void
+                {
+                    static_assert(
+                        std::is_base_of<
+                            std::bidirectional_iterator_tag,
+                            iterator_category_t<RandomAccessIterator>
+                        >::value,
+                        "verge_adapter requires at least random-access iterators"
+                    );
 
-                vergesort(std::move(first), std::move(last),
-                          std::move(compare), std::move(projection),
-                          FallbackSorter{});
-            }
+                    vergesort(std::move(first), std::move(last),
+                              std::move(compare), std::move(projection),
+                              self.utility::template adapter_storage<FallbackSorter>::get());
+                }
 
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
+                using this_class = verge_adapter_impl<FallbackSorter>;
 
-            using iterator_category = std::random_access_iterator_tag;
-            using is_always_stable = std::false_type;
+            public:
+
+                template<typename... Args>
+                auto operator()(Args&&... args) const
+                    noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                template<typename... Args>
+                auto operator()(Args&&... args)
+                    noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                ////////////////////////////////////////////////////////////
+                // Sorter traits
+
+                using iterator_category = std::random_access_iterator_tag;
+                using is_always_stable = std::false_type;
         };
     }
 
@@ -85,8 +118,9 @@ namespace cppsort
     {
         verge_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr verge_adapter(FallbackSorter) noexcept {}
+        constexpr verge_adapter(FallbackSorter sorter):
+            sorter_facade<detail::verge_adapter_impl<FallbackSorter>>(std::move(sorter))
+        {}
     };
 }
 

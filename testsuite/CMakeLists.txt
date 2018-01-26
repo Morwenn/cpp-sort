@@ -11,6 +11,7 @@ set(
     adapters/container_aware_adapter_list.cpp
     adapters/counting_adapter.cpp
     adapters/every_adapter_internal_compare.cpp
+    adapters/every_adapter_mutable_sorter.cpp
     adapters/hybrid_adapter_is_stable.cpp
     adapters/hybrid_adapter_partial_compare.cpp
     adapters/hybrid_adapter_sfinae.cpp

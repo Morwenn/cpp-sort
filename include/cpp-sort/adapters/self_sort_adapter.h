@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/checkers.h"
 #include "../detail/detection.h"
 
@@ -76,8 +77,15 @@ namespace cppsort
 
         template<typename Sorter>
         struct self_sort_adapter_impl:
+            utility::adapter_storage<Sorter>,
             check_iterator_category<Sorter>
         {
+            self_sort_adapter_impl() = default;
+
+            constexpr self_sort_adapter_impl(Sorter sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
+            {}
+
             template<typename Iterable, typename... Args>
             auto operator()(Iterable&& iterable, Args&&... args) const
                 -> std::enable_if_t<
@@ -104,19 +112,21 @@ namespace cppsort
                 -> std::enable_if_t<
                     not has_sort_method<Iterable, Args...> &&
                     not has_stable_sort_method<Iterable, Args...>,
-                    decltype(Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                    decltype(utility::adapter_storage<Sorter>::operator()(
+                        std::forward<Iterable>(iterable), std::forward<Args>(args)...))
                 >
             {
-                return Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+                return utility::adapter_storage<Sorter>::operator()(
+                    std::forward<Iterable>(iterable), std::forward<Args>(args)...);
             }
 
             template<typename Iterator, typename... Args>
             auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(Sorter{}(std::move(first), std::move(last),
-                                     std::forward<Args>(args)...))
+                -> decltype(utility::adapter_storage<Sorter>::operator()(
+                    std::move(first), std::move(last), std::forward<Args>(args)...))
             {
-                return Sorter{}(std::move(first), std::move(last),
-                                std::forward<Args>(args)...);
+                return utility::adapter_storage<Sorter>::operator()(
+                    std::move(first), std::move(last), std::forward<Args>(args)...);
             }
 
             ////////////////////////////////////////////////////////////
@@ -132,8 +142,9 @@ namespace cppsort
     {
         self_sort_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr self_sort_adapter(Sorter) noexcept {};
+        constexpr self_sort_adapter(Sorter sorter):
+            sorter_facade<detail::self_sort_adapter_impl<Sorter>>(std::move(sorter))
+        {};
     };
 
     ////////////////////////////////////////////////////////////

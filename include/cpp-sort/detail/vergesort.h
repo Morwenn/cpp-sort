@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -169,7 +169,7 @@ namespace detail
     template<typename RandomAccessIterator, typename Compare,
              typename Projection, typename Fallback>
     auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
-                   Compare compare, Projection projection, Fallback fallback,
+                   Compare compare, Projection projection, Fallback&& fallback,
                    std::random_access_iterator_tag)
         -> void
     {
@@ -178,8 +178,8 @@ namespace detail
 
         if (dist < 128) {
             // Vergesort is inefficient for small collections
-            fallback(std::move(first), std::move(last),
-                     std::move(compare), std::move(projection));
+            std::forward<Fallback>(fallback)(std::move(first), std::move(last),
+                                             std::move(compare), std::move(projection));
             return;
         }
 
@@ -248,7 +248,8 @@ namespace detail
                         begin_unstable = begin_range;
                     }
                     if (begin_unstable != last) {
-                        fallback(begin_unstable, current, compare, projection);
+                        std::forward<Fallback>(fallback)(begin_unstable, current,
+                                                         compare, projection);
                         runs.push_back(current);
                         begin_unstable = last;
                     }
@@ -283,7 +284,8 @@ namespace detail
                         begin_unstable = begin_range;
                     }
                     if (begin_unstable != last) {
-                        fallback(begin_unstable, current, compare, projection);
+                        std::forward<Fallback>(fallback)(begin_unstable, current,
+                                                         compare, projection);
                         runs.push_back(current);
                         begin_unstable = last;
                     }
@@ -305,7 +307,7 @@ namespace detail
         if (begin_unstable != last) {
             // If there are unsorted elements left, sort them
             runs.push_back(last);
-            fallback(begin_unstable, last, compare, projection);
+            std::forward<Fallback>(fallback)(begin_unstable, last, compare, projection);
         }
 
         if (runs.size() < 2) return;
@@ -339,12 +341,13 @@ namespace detail
     template<typename BidirectionalIterator, typename Compare,
              typename Projection, typename Fallback>
     auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
-                   Compare compare, Projection projection, Fallback fallback)
+                   Compare compare, Projection projection, Fallback&& fallback)
         -> void
     {
         vergesort(std::move(first), std::move(last),
                   std::move(compare), std::move(projection),
-                  std::move(fallback), std::random_access_iterator_tag{});
+                  std::forward<Fallback>(fallback),
+                  std::random_access_iterator_tag{});
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>

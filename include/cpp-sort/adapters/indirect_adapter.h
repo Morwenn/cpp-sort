@@ -34,6 +34,7 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
@@ -48,78 +49,111 @@ namespace cppsort
     {
         template<typename Sorter>
         struct indirect_adapter_impl:
+            utility::adapter_storage<Sorter>,
             check_is_always_stable<Sorter>
         {
-            template<
-                typename RandomAccessIterator,
-                typename Compare = std::less<>,
-                typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator_v<
-                    Projection, RandomAccessIterator, Compare
-                >>
-            >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}, Projection projection={}) const
-                -> void
-            {
-                using utility::iter_move;
+            public:
 
-                if (first == last || std::next(first) == last) return;
+                indirect_adapter_impl() = default;
 
-                ////////////////////////////////////////////////////////////
-                // Indirectly sort the iterators
+                constexpr indirect_adapter_impl(Sorter sorter):
+                    utility::adapter_storage<Sorter>(std::move(sorter))
+                {}
 
-                // Copy the iterators in a vector
-                std::vector<RandomAccessIterator> iterators;
-                iterators.reserve(std::distance(first, last));
-                for (RandomAccessIterator it = first ; it != last ; ++it) {
-                    iterators.push_back(it);
-                }
+            private:
 
-                // Sort the iterators on pointed values
-                Sorter{}(std::begin(iterators), std::end(iterators),
-                         detail::indirect_compare<Compare, Projection>(compare, projection));
+                template<
+                    typename Self,
+                    typename RandomAccessIterator,
+                    typename Compare = std::less<>,
+                    typename Projection = utility::identity,
+                    typename = std::enable_if_t<is_projection_iterator_v<
+                        Projection, RandomAccessIterator, Compare
+                    >>
+                >
+                static auto _call_sorter(Self& self, RandomAccessIterator first, RandomAccessIterator last,
+                                Compare compare={}, Projection projection={})
+                    -> void
+                {
+                    using utility::iter_move;
 
-                ////////////////////////////////////////////////////////////
-                // Move the values according the iterator's positions
+                    if (first == last || std::next(first) == last) return;
 
-                std::vector<bool> sorted(std::distance(first, last), false);
+                    ////////////////////////////////////////////////////////////
+                    // Indirectly sort the iterators
 
-                // Element where the current cycle starts
-                RandomAccessIterator start = first;
-
-                do {
-                    // Find the element to put in current's place
-                    RandomAccessIterator current = start;
-                    auto next_pos = std::distance(first, current);
-                    RandomAccessIterator next = iterators[next_pos];
-                    sorted[next_pos] = true;
-
-                    // Process the current cycle
-                    if (next != current) {
-                        auto tmp = iter_move(current);
-                        while (next != start) {
-                            *current = iter_move(next);
-                            current = next;
-                            auto next_pos = std::distance(first, next);
-                            next = iterators[next_pos];
-                            sorted[next_pos] = true;
-                        }
-                        *current = std::move(tmp);
+                    // Copy the iterators in a vector
+                    std::vector<RandomAccessIterator> iterators;
+                    iterators.reserve(std::distance(first, last));
+                    for (RandomAccessIterator it = first ; it != last ; ++it) {
+                        iterators.push_back(it);
                     }
 
-                    // Find the next cycle
+                    // Sort the iterators on pointed values
+                    self.utility::template adapter_storage<Sorter>::operator()(
+                        std::begin(iterators), std::end(iterators),
+                        detail::indirect_compare<Compare, Projection>(compare, projection));
+
+                    ////////////////////////////////////////////////////////////
+                    // Move the values according the iterator's positions
+
+                    std::vector<bool> sorted(std::distance(first, last), false);
+
+                    // Element where the current cycle starts
+                    RandomAccessIterator start = first;
+
                     do {
-                        ++start;
-                    } while (start != last && sorted[start - first]);
+                        // Find the element to put in current's place
+                        RandomAccessIterator current = start;
+                        auto next_pos = std::distance(first, current);
+                        RandomAccessIterator next = iterators[next_pos];
+                        sorted[next_pos] = true;
 
-                } while (start != last);
-            }
+                        // Process the current cycle
+                        if (next != current) {
+                            auto tmp = iter_move(current);
+                            while (next != start) {
+                                *current = iter_move(next);
+                                current = next;
+                                auto next_pos = std::distance(first, next);
+                                next = iterators[next_pos];
+                                sorted[next_pos] = true;
+                            }
+                            *current = std::move(tmp);
+                        }
 
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
+                        // Find the next cycle
+                        do {
+                            ++start;
+                        } while (start != last && sorted[start - first]);
 
-            using iterator_category = std::random_access_iterator_tag;
+                    } while (start != last);
+                }
+
+                using this_class = indirect_adapter_impl<Sorter>;
+
+            public:
+
+                template<typename... Args>
+                auto operator()(Args&&... args) const
+                    noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                template<typename... Args>
+                auto operator()(Args&&... args)
+                    noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                ////////////////////////////////////////////////////////////
+                // Sorter traits
+
+                using iterator_category = std::random_access_iterator_tag;
         };
     }
 
@@ -129,8 +163,9 @@ namespace cppsort
     {
         indirect_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr indirect_adapter(Sorter) noexcept {}
+        constexpr indirect_adapter(Sorter sorter):
+            sorter_facade<detail::indirect_adapter_impl<Sorter>>(std::move(sorter))
+        {}
     };
 
     ////////////////////////////////////////////////////////////

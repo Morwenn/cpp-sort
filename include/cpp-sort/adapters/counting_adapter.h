@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/checkers.h"
 #include "../detail/comparison_counter.h"
 
@@ -43,96 +44,133 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename ComparisonSorter, typename CountType>
+        template<typename Sorter, typename CountType>
         struct counting_adapter_impl:
-            check_iterator_category<ComparisonSorter>,
-            check_is_always_stable<ComparisonSorter>
+            utility::adapter_storage<Sorter>,
+            check_iterator_category<Sorter>,
+            check_is_always_stable<Sorter>
         {
-            template<
-                typename Iterable,
-                typename Compare = std::less<>,
-                typename = std::enable_if_t<
-                    not is_projection_v<Compare, Iterable>
-                >
-            >
-            auto operator()(Iterable&& iterable, Compare compare={}) const
-                -> CountType
-            {
-                CountType count(0);
-                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::forward<Iterable>(iterable), std::move(cmp));
-                return count;
-            }
+            public:
 
-            template<
-                typename Iterator,
-                typename Compare = std::less<>,
-                typename = std::enable_if_t<
-                    not is_projection_iterator_v<Compare, Iterator>
-                >
-            >
-            auto operator()(Iterator first, Iterator last, Compare compare={}) const
-                -> CountType
-            {
-                CountType count(0);
-                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::move(first), std::move(last), std::move(cmp));
-                return count;
-            }
+                counting_adapter_impl() = default;
 
-            template<
-                typename Iterable,
-                typename Compare,
-                typename Projection,
-                typename = std::enable_if_t<
-                    is_projection_v<Projection, Iterable, Compare>
-                >
-            >
-            auto operator()(Iterable&& iterable, Compare compare={},
-                            Projection projection={}) const
-                -> CountType
-            {
-                CountType count(0);
-                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::forward<Iterable>(iterable), std::move(cmp), projection);
-                return count;
-            }
+                constexpr counting_adapter_impl(Sorter sorter):
+                    utility::adapter_storage<Sorter>(std::move(sorter))
+                {}
 
-            template<
-                typename Iterator,
-                typename Compare,
-                typename Projection,
-                typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
+            private:
+
+                template<
+                    typename Self,
+                    typename Iterable,
+                    typename Compare = std::less<>,
+                    typename = std::enable_if_t<
+                        not is_projection_v<Compare, Iterable>
+                    >
                 >
-            >
-            auto operator()(Iterator first, Iterator last,
-                            Compare compare, Projection projection) const
-                -> CountType
-            {
-                CountType count(0);
-                comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::move(first), std::move(last),
-                                   std::move(cmp), std::move(projection));
-                return count;
-            }
+                static auto _call_sorter(Self& self, Iterable&& iterable, Compare compare={})
+                    -> CountType
+                {
+                    CountType count(0);
+                    comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                    self.utility::template adapter_storage<Sorter>::operator()(
+                        std::forward<Iterable>(iterable), std::move(cmp));
+                    return count;
+                }
+
+                template<
+                    typename Self,
+                    typename Iterator,
+                    typename Compare = std::less<>,
+                    typename = std::enable_if_t<
+                        not is_projection_iterator_v<Compare, Iterator>
+                    >
+                >
+                static auto _call_sorter(Self& self, Iterator first, Iterator last, Compare compare={})
+                    -> CountType
+                {
+                    CountType count(0);
+                    comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                    self.utility::template adapter_storage<Sorter>::operator()(
+                        std::move(first), std::move(last), std::move(cmp));
+                    return count;
+                }
+
+                template<
+                    typename Self,
+                    typename Iterable,
+                    typename Compare,
+                    typename Projection,
+                    typename = std::enable_if_t<
+                        is_projection_v<Projection, Iterable, Compare>
+                    >
+                >
+                static auto _call_sorter(Self& self, Iterable&& iterable, Compare compare={},
+                                         Projection projection={})
+                    -> CountType
+                {
+                    CountType count(0);
+                    comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                    self.utility::template adapter_storage<Sorter>::operator()(
+                        std::forward<Iterable>(iterable), std::move(cmp), projection);
+                    return count;
+                }
+
+                template<
+                    typename Self,
+                    typename Iterator,
+                    typename Compare,
+                    typename Projection,
+                    typename = std::enable_if_t<
+                        is_projection_iterator_v<Projection, Iterator, Compare>
+                    >
+                >
+                static auto _call_sorter(Self& self, Iterator first, Iterator last,
+                                         Compare compare, Projection projection)
+                    -> CountType
+                {
+                    CountType count(0);
+                    comparison_counter<Compare, CountType> cmp(std::move(compare), count);
+                    self.utility::template adapter_storage<Sorter>::operator()(
+                        std::move(first), std::move(last),
+                        std::move(cmp), std::move(projection));
+                    return count;
+                }
+
+                using this_class = counting_adapter_impl<Sorter, CountType>;
+
+            public:
+
+                template<typename... Args>
+                auto operator()(Args&&... args) const
+                    noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                template<typename... Args>
+                auto operator()(Args&&... args)
+                    noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
         };
     }
 
     template<
-        typename ComparisonSorter,
+        typename Sorter,
         typename CountType = std::size_t
     >
     struct counting_adapter:
-        sorter_facade<detail::counting_adapter_impl<
-            ComparisonSorter,
-            CountType
-        >>
+        sorter_facade<detail::counting_adapter_impl<Sorter, CountType>>
     {
         counting_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr counting_adapter(ComparisonSorter) noexcept {}
+        constexpr counting_adapter(Sorter sorter):
+            sorter_facade<detail::counting_adapter_impl<Sorter, CountType>>(std::move(sorter))
+        {}
     };
 
     ////////////////////////////////////////////////////////////

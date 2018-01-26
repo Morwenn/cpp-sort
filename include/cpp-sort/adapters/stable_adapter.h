@@ -35,6 +35,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/associate_iterator.h"
@@ -109,54 +110,89 @@ namespace cppsort
 
         template<typename Sorter>
         struct stable_adapter_impl:
+            utility::adapter_storage<Sorter>,
             check_iterator_category<Sorter>
         {
-            template<
-                typename Iterator,
-                typename Compare = std::less<>,
-                typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator_v<
-                    Projection, Iterator, Compare
-                >>
-            >
-            auto operator()(Iterator first, Iterator last,
-                            Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
-            {
-                using difference_type = difference_type_t<Iterator>;
-                using value_t = association<Iterator, difference_type>;
+            public:
 
-                ////////////////////////////////////////////////////////////
-                // Bind index to iterator
+                stable_adapter_impl() = default;
 
-                auto size = std::distance(first, last);
-                std::unique_ptr<value_t, operator_deleter> iterators(
-                    static_cast<value_t*>(::operator new(size * sizeof(value_t)))
-                );
-                destruct_n<value_t> d(0);
-                std::unique_ptr<value_t, destruct_n<value_t>&> h2(iterators.get(), d);
+                constexpr stable_adapter_impl(Sorter sorter):
+                    utility::adapter_storage<Sorter>(std::move(sorter))
+                {}
 
-                // Associate iterators to their position
-                difference_type count = 0;
-                for (auto ptr = iterators.get() ; first != last ; ++d, (void) ++first, ++ptr)
+            private:
+
+                template<
+                    typename Self,
+                    typename Iterator,
+                    typename Compare = std::less<>,
+                    typename Projection = utility::identity,
+                    typename = std::enable_if_t<is_projection_iterator_v<
+                        Projection, Iterator, Compare
+                    >>
+                >
+                static auto _call_sorter(Self& self, Iterator first, Iterator last,
+                                         Compare compare={}, Projection projection={})
+                    -> decltype(
+                        self.utility::template adapter_storage<Sorter>::operator()(
+                            std::declval<associate_iterator<association<Iterator, difference_type_t<Iterator>>*>>(),
+                            std::declval<associate_iterator<association<Iterator, difference_type_t<Iterator>>*>>(),
+                            make_stable_compare(std::move(compare), std::move(projection))
+                        )
+                    )
                 {
-                    ::new(ptr) value_t(first, count++);
+                    using difference_type = difference_type_t<Iterator>;
+                    using value_t = association<Iterator, difference_type>;
+
+                    ////////////////////////////////////////////////////////////
+                    // Bind index to iterator
+
+                    auto size = std::distance(first, last);
+                    std::unique_ptr<value_t, operator_deleter> iterators(
+                        static_cast<value_t*>(::operator new(size * sizeof(value_t)))
+                    );
+                    destruct_n<value_t> d(0);
+                    std::unique_ptr<value_t, destruct_n<value_t>&> h2(iterators.get(), d);
+
+                    // Associate iterators to their position
+                    difference_type count = 0;
+                    for (auto ptr = iterators.get() ; first != last ; ++d, (void) ++first, ++ptr) {
+                        ::new(ptr) value_t(first, count++);
+                    }
+
+                    ////////////////////////////////////////////////////////////
+                    // Sort but takes the index into account to ensure stability
+
+                    return self.utility::template adapter_storage<Sorter>::operator()(
+                        make_associate_iterator(iterators.get()),
+                        make_associate_iterator(iterators.get() + size),
+                        make_stable_compare(std::move(compare), std::move(projection))
+                    );
+                }
+
+            public:
+
+                template<typename... Args>
+                auto operator()(Args&&... args)
+                    noexcept(noexcept(_call_sorter(std::declval<stable_adapter_impl<Sorter>&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                template<typename... Args>
+                auto operator()(Args&&... args) const
+                    noexcept(noexcept(_call_sorter(std::declval<const stable_adapter_impl<Sorter>&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
                 }
 
                 ////////////////////////////////////////////////////////////
-                // Sort but takes the index into account to ensure stability
+                // Sorter traits
 
-                return Sorter{}(
-                    make_associate_iterator(iterators.get()),
-                    make_associate_iterator(iterators.get() + size),
-                    make_stable_compare(std::move(compare), std::move(projection))
-                );
-            }
-
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
-
-            using is_always_stable = std::true_type;
+                using is_always_stable = std::true_type;
         };
     }
 
@@ -167,46 +203,71 @@ namespace cppsort
     {
         make_stable() = default;
 
-        // Automatic deduction guide
-        constexpr make_stable(Sorter) noexcept {};
+        constexpr make_stable(Sorter sorter):
+            sorter_facade<detail::stable_adapter_impl<Sorter>>(std::move(sorter))
+        {}
     };
 
     // Actual sorter
     template<typename Sorter>
     struct stable_adapter:
-        detail::check_iterator_category<Sorter>
+        make_stable<Sorter>
     {
-        stable_adapter() = default;
+        public:
 
-        // Automatic deduction guide
-        constexpr stable_adapter(Sorter) noexcept {}
+            stable_adapter() = default;
 
+            constexpr stable_adapter(Sorter sorter):
+                make_stable<Sorter>(std::move(sorter))
+            {}
 
-        template<
-            typename... Args,
-            typename = std::enable_if_t<is_stable_v<Sorter(Args...)>>
-        >
-        auto operator()(Args&&... args) const
-            -> decltype(Sorter{}(std::forward<Args>(args)...))
-        {
-            return Sorter{}(std::forward<Args>(args)...);
-        }
+        private:
 
-        template<
-            typename... Args,
-            typename = std::enable_if_t<not is_stable_v<Sorter(Args...)>>,
-            typename = void
-        >
-        auto operator()(Args&&... args) const
-            -> decltype(make_stable<Sorter>{}(std::forward<Args>(args)...))
-        {
-            return make_stable<Sorter>{}(std::forward<Args>(args)...);
-        }
+            template<
+                typename Self,
+                typename... Args,
+                typename = std::enable_if_t<is_stable_v<Sorter(Args...)>>
+            >
+            static auto _call_sorter(Self& self, Args&&... args)
+                -> decltype(self.make_stable<Sorter>::get().operator()(std::forward<Args>(args)...))
+            {
+                return self.make_stable<Sorter>::get().operator()(std::forward<Args>(args)...);
+            }
 
-        ////////////////////////////////////////////////////////////
-        // Sorter traits
+            template<
+                typename Self,
+                typename... Args,
+                typename = std::enable_if_t<not is_stable_v<Sorter(Args...)>>,
+                typename = void
+            >
+            static auto _call_sorter(Self& self, Args&&... args)
+                -> decltype(self.make_stable<Sorter>::operator()(std::forward<Args>(args)...))
+            {
+                return self.make_stable<Sorter>::operator()(std::forward<Args>(args)...);
+            }
 
-        using is_always_stable = std::true_type;
+        public:
+
+            template<typename... Args>
+            auto operator()(Args&&... args)
+                noexcept(noexcept(_call_sorter(std::declval<stable_adapter<Sorter>&>(), std::forward<Args>(args)...)))
+                -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+            {
+                return _call_sorter(*this, std::forward<Args>(args)...);
+            }
+
+            template<typename... Args>
+            auto operator()(Args&&... args) const
+                noexcept(noexcept(_call_sorter(std::declval<const stable_adapter<Sorter>&>(), std::forward<Args>(args)...)))
+                -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+            {
+                return _call_sorter(*this, std::forward<Args>(args)...);
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using is_always_stable = std::true_type;
     };
 }
 
