@@ -153,6 +153,12 @@ TEST_CASE( "test most adapters with a mutable sorter",
         // List sorted itself without using the original sorter
         CHECK( adapted_sorter.get().dummy1 == 5 );
         CHECK( adapted_sorter.get().dummy2 == 7 );
+
+        adapted_sorter(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        // List sorted itself without using the original sorter
+        CHECK( adapted_sorter.get().dummy1 == 3 );
+        CHECK( adapted_sorter.get().dummy2 == 11 );
     }
 
     SECTION( "stable_adapter" )

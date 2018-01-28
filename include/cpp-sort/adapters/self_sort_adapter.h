@@ -80,59 +80,83 @@ namespace cppsort
             utility::adapter_storage<Sorter>,
             check_iterator_category<Sorter>
         {
-            self_sort_adapter_impl() = default;
+            public:
 
-            constexpr self_sort_adapter_impl(Sorter sorter):
-                utility::adapter_storage<Sorter>(std::move(sorter))
-            {}
+                self_sort_adapter_impl() = default;
 
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable&& iterable, Args&&... args) const
-                -> std::enable_if_t<
-                    has_sort_method<Iterable, Args...>,
-                    decltype(std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...))
-                >
-            {
-                return std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...);
-            }
+                constexpr self_sort_adapter_impl(Sorter sorter):
+                    utility::adapter_storage<Sorter>(std::move(sorter))
+                {}
 
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable&& iterable, Args&&... args) const
-                -> std::enable_if_t<
-                    not has_sort_method<Iterable, Args...> &&
-                    has_stable_sort_method<Iterable, Args...>,
-                    decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
-                >
-            {
-                return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
-            }
+            private:
 
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable&& iterable, Args&&... args) const
-                -> std::enable_if_t<
-                    not has_sort_method<Iterable, Args...> &&
-                    not has_stable_sort_method<Iterable, Args...>,
-                    decltype(utility::adapter_storage<Sorter>::operator()(
-                        std::forward<Iterable>(iterable), std::forward<Args>(args)...))
-                >
-            {
-                return utility::adapter_storage<Sorter>::operator()(
-                    std::forward<Iterable>(iterable), std::forward<Args>(args)...);
-            }
+                template<typename Self, typename Iterable, typename... Args>
+                static auto _call_sorter(Self&, Iterable&& iterable, Args&&... args)
+                    -> std::enable_if_t<
+                        has_sort_method<Iterable, Args...>,
+                        decltype(std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...))
+                    >
+                {
+                    return std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...);
+                }
 
-            template<typename Iterator, typename... Args>
-            auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(utility::adapter_storage<Sorter>::operator()(
-                    std::move(first), std::move(last), std::forward<Args>(args)...))
-            {
-                return utility::adapter_storage<Sorter>::operator()(
-                    std::move(first), std::move(last), std::forward<Args>(args)...);
-            }
+                template<typename Self, typename Iterable, typename... Args>
+                static auto _call_sorter(Self&, Iterable&& iterable, Args&&... args)
+                    -> std::enable_if_t<
+                        not has_sort_method<Iterable, Args...> &&
+                        has_stable_sort_method<Iterable, Args...>,
+                        decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
+                    >
+                {
+                    return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
+                }
 
-            ////////////////////////////////////////////////////////////
-            // Sorter traits
+                template<typename Self, typename Iterable, typename... Args>
+                static auto _call_sorter(Self& self, Iterable&& iterable, Args&&... args)
+                    -> std::enable_if_t<
+                        not has_sort_method<Iterable, Args...> &&
+                        not has_stable_sort_method<Iterable, Args...>,
+                        decltype(self.utility::template adapter_storage<Sorter>::operator()(
+                            std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                    >
+                {
+                    return self.utility::template adapter_storage<Sorter>::operator()(
+                        std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+                }
 
-            using is_always_stable = std::false_type;
+                template<typename Self, typename Iterator, typename... Args>
+                static auto _call_sorter(Self& self, Iterator first, Iterator last, Args&&... args)
+                    -> decltype(self.utility::template adapter_storage<Sorter>::operator()(
+                        std::move(first), std::move(last), std::forward<Args>(args)...))
+                {
+                    return self.utility::template adapter_storage<Sorter>::operator()(
+                        std::move(first), std::move(last), std::forward<Args>(args)...);
+                }
+
+                using this_class = self_sort_adapter_impl<Sorter>;
+
+            public:
+
+                template<typename... Args>
+                auto operator()(Args&&... args) const
+                    noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                template<typename... Args>
+                auto operator()(Args&&... args)
+                    noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                ////////////////////////////////////////////////////////////
+                // Sorter traits
+
+                using is_always_stable = std::false_type;
         };
     }
 
