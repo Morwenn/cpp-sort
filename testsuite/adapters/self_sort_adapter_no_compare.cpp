@@ -46,7 +46,7 @@ namespace
     {
         template<typename... Args>
         auto operator()(Args&&... args) const
-            -> sorter_type
+            -> decltype(cppsort::verge_sorter{}(std::forward<Args>(args)...), sorter_type{})
         {
             cppsort::verge_sorter{}(std::forward<Args>(args)...);
             return sorter_type::dummy_sorter;

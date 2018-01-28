@@ -959,25 +959,21 @@ namespace cppsort
                     refined<decltype(*std::begin(iterable))>(std::move(projection))));
             }
 
+        public:
+
             ////////////////////////////////////////////////////////////
             // Actual call operator
 
-            using this_class = sorter_facade<Sorter>;
-
-        public:
-
             template<typename... Args>
             auto operator()(Args&&... args) const
-                noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
-                -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                -> decltype(this->_call_sorter(*this, std::forward<Args>(args)...))
             {
                 return _call_sorter(*this, std::forward<Args>(args)...);
             }
 
             template<typename... Args>
             auto operator()(Args&&... args)
-                noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
-                -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                -> decltype(this->_call_sorter(*this, std::forward<Args>(args)...))
             {
                 return _call_sorter(*this, std::forward<Args>(args)...);
             }
