@@ -29,10 +29,12 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <iterator>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/checkers.h"
 #include "../detail/is_callable.h"
 #include "../detail/iterator_traits.h"
@@ -41,6 +43,82 @@ namespace cppsort
 {
     namespace detail
     {
+        ////////////////////////////////////////////////////////////
+        // hybrid_adapter storage
+        //
+        // Unlike most adapters, hybrid_adapter actually wraps
+        // several sorters, and thus needs a dedicated storage with
+        // enhanced capabilities; it also does not provide any
+        // operator() because it wouldn't make sense since the
+        // storage itself doesn't know which sorter to call
+
+        // Tag it with an index to avoid multiple inheritance issues
+        template<std::size_t Ind, typename Sorter>
+        struct hybrid_adapter_storage_leaf:
+            utility::adapter_storage<Sorter>
+        {
+            using utility::adapter_storage<Sorter>::adapter_storage;
+        };
+
+        template<typename IndexSequence, typename... Sorters>
+        struct hybrid_adapter_storage_impl;
+
+        template<std::size_t... Indices, typename... Sorters>
+        struct hybrid_adapter_storage_impl<std::index_sequence<Indices...>, Sorters...>:
+            hybrid_adapter_storage_leaf<Indices, Sorters>...
+        {
+            hybrid_adapter_storage_impl() = default;
+
+            constexpr hybrid_adapter_storage_impl(Sorters... sorters):
+                hybrid_adapter_storage_leaf<Indices, Sorters>(std::move(sorters))...
+            {};
+
+            template<std::size_t I>
+            auto get() &
+                -> decltype(auto)
+            {
+                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                return static_cast<hybrid_adapter_storage_leaf<I, type>&>(*this).get();
+            }
+
+            template<std::size_t I>
+            auto get() const&
+                -> decltype(auto)
+            {
+                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                return static_cast<const hybrid_adapter_storage_leaf<I, type>&>(*this).get();
+            }
+
+            template<std::size_t I>
+            auto get() &&
+                -> decltype(auto)
+            {
+                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                return static_cast<hybrid_adapter_storage_leaf<I, type>&&>(*this).get();
+            }
+
+            template<std::size_t I>
+            auto get() const&&
+                -> decltype(auto)
+            {
+                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                return static_cast<const hybrid_adapter_storage_leaf<I, type>&&>(*this).get();
+            }
+        };
+
+        template<typename... Sorters>
+        struct hybrid_adapter_storage:
+            hybrid_adapter_storage_impl<
+                std::make_index_sequence<sizeof...(Sorters)>,
+                Sorters...
+            >
+        {
+            using hybrid_adapter_storage_impl<
+                std::make_index_sequence<sizeof...(Sorters)>,
+                Sorters...
+            >::hybrid_adapter_storage_impl;
+        };
+
         ////////////////////////////////////////////////////////////
         // Overload resolution tool
 
@@ -135,9 +213,18 @@ namespace cppsort
 
         template<typename... Sorters>
         class hybrid_adapter_impl:
+            public hybrid_adapter_storage<Sorters...>,
             public check_iterator_category<Sorters...>,
             public check_is_always_stable<Sorters...>
         {
+            public:
+
+                hybrid_adapter_impl() = default;
+
+                constexpr hybrid_adapter_impl(Sorters... sorters):
+                    hybrid_adapter_storage<Sorters...>(std::move(sorters)...)
+                {}
+
             private:
 
                 // Associate and index to every sorter depending on
@@ -224,8 +311,9 @@ namespace cppsort
     {
         hybrid_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr hybrid_adapter(Sorters...) noexcept {};
+        constexpr hybrid_adapter(Sorters... sorters):
+            sorter_facade<detail::hybrid_adapter_impl<Sorters...>>(std::move(sorters)...)
+        {};
     };
 
     ////////////////////////////////////////////////////////////
