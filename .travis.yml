@@ -104,9 +104,9 @@ script:
           -DUSE_VALGRIND=${VALGRIND}
           -G"${CMAKE_GENERATOR}"
   - if [ `uname` = 'Darwin' ]; then
-        cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
+        travis_wait cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
     else
-        cmake --build build --config ${BUILD_TYPE} -- -j2;
+        travis_wait cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
   - cd build/testsuite
   - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure

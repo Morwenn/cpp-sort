@@ -223,7 +223,7 @@ namespace cppsort
                         choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
-                    )
+                    );
                 }
 
                 template<typename Self, typename Iterator, typename... Args>
@@ -242,22 +242,18 @@ namespace cppsort
                     );
                 }
 
-                using this_class = hybrid_adapter_impl<Sorters...>;
-
             public:
 
                 template<typename... Args>
                 auto operator()(Args&&... args) const
-                    noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
-                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                    -> decltype(this->_call_sorter(*this, std::forward<Args>(args)...))
                 {
                     return _call_sorter(*this, std::forward<Args>(args)...);
                 }
 
                 template<typename... Args>
                 auto operator()(Args&&... args)
-                    noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
-                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                    -> decltype(this->_call_sorter(*this, std::forward<Args>(args)...))
                 {
                     return _call_sorter(*this, std::forward<Args>(args)...);
                 }
