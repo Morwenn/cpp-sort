@@ -44,82 +44,6 @@ namespace cppsort
     namespace detail
     {
         ////////////////////////////////////////////////////////////
-        // hybrid_adapter storage
-        //
-        // Unlike most adapters, hybrid_adapter actually wraps
-        // several sorters, and thus needs a dedicated storage with
-        // enhanced capabilities; it also does not provide any
-        // operator() because it wouldn't make sense since the
-        // storage itself doesn't know which sorter to call
-
-        // Tag it with an index to avoid multiple inheritance issues
-        template<std::size_t Ind, typename Sorter>
-        struct hybrid_adapter_storage_leaf:
-            utility::adapter_storage<Sorter>
-        {
-            using utility::adapter_storage<Sorter>::adapter_storage;
-        };
-
-        template<typename IndexSequence, typename... Sorters>
-        struct hybrid_adapter_storage_impl;
-
-        template<std::size_t... Indices, typename... Sorters>
-        struct hybrid_adapter_storage_impl<std::index_sequence<Indices...>, Sorters...>:
-            hybrid_adapter_storage_leaf<Indices, Sorters>...
-        {
-            hybrid_adapter_storage_impl() = default;
-
-            constexpr hybrid_adapter_storage_impl(Sorters... sorters):
-                hybrid_adapter_storage_leaf<Indices, Sorters>(std::move(sorters))...
-            {};
-
-            template<std::size_t I>
-            auto get() &
-                -> decltype(auto)
-            {
-                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
-                return static_cast<hybrid_adapter_storage_leaf<I, type>&>(*this).get();
-            }
-
-            template<std::size_t I>
-            auto get() const&
-                -> decltype(auto)
-            {
-                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
-                return static_cast<const hybrid_adapter_storage_leaf<I, type>&>(*this).get();
-            }
-
-            template<std::size_t I>
-            auto get() &&
-                -> decltype(auto)
-            {
-                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
-                return static_cast<hybrid_adapter_storage_leaf<I, type>&&>(*this).get();
-            }
-
-            template<std::size_t I>
-            auto get() const&&
-                -> decltype(auto)
-            {
-                using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
-                return static_cast<const hybrid_adapter_storage_leaf<I, type>&&>(*this).get();
-            }
-        };
-
-        template<typename... Sorters>
-        struct hybrid_adapter_storage:
-            hybrid_adapter_storage_impl<
-                std::make_index_sequence<sizeof...(Sorters)>,
-                Sorters...
-            >
-        {
-            using hybrid_adapter_storage_impl<
-                std::make_index_sequence<sizeof...(Sorters)>,
-                Sorters...
-            >::hybrid_adapter_storage_impl;
-        };
-
-        ////////////////////////////////////////////////////////////
         // Overload resolution tool
 
         template<std::size_t Value>
@@ -161,40 +85,40 @@ namespace cppsort
         >;
 
         ////////////////////////////////////////////////////////////
-        // Import every operator() in one class
+        // hybrid_adapter storage
+        //
+        // Unlike most adapters, hybrid_adapter actually wraps
+        // several sorters, and thus needs a dedicated storage with
+        // enhanced capabilities; it also does not provide any
+        // operator() because it wouldn't make sense since the
+        // storage itself doesn't know which sorter to call
 
-        template<typename Head, typename... Tail>
-        struct sorters_merger:
-            Head, sorters_merger<Tail...>
+        template<std::size_t Ind, typename Sorter>
+        struct hybrid_adapter_storage_leaf:
+            utility::adapter_storage<Sorter>
         {
-            using Head::operator();
-            using Head::detail_stability;
+            hybrid_adapter_storage_leaf() = default;
 
-            using sorters_merger<Tail...>::operator();
-            using sorters_merger<Tail...>::detail_stability;
-        };
+            constexpr hybrid_adapter_storage_leaf(Sorter sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
+            {};
 
-        template<typename Head>
-        struct sorters_merger<Head>:
-            Head
-        {
-            using Head::operator();
-            using Head::detail_stability;
-        };
+            // Add a dispatch to the operator() so that a sorter is
+            // preferred for its iterator category first, then for its
+            // position into the sorters
 
-        ////////////////////////////////////////////////////////////
-        // Add a dispatch to the operator() so that a sorter is
-        // preferred for its iterator category first, then for its
-        // position into the sorters
-
-        template<typename Sorter, std::size_t Ind>
-        struct selection_wrapper
-        {
             template<typename... Args>
             auto operator()(choice<Ind>, Args&&... args) const
-                -> decltype(Sorter{}(std::forward<Args>(args)...))
+                -> decltype(utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...))
             {
-                return Sorter{}(std::forward<Args>(args)...);
+                return utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...);
+            }
+
+            template<typename... Args>
+            auto operator()(choice<Ind>, Args&&... args)
+                -> decltype(utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...))
+            {
+                return utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...);
             }
 
             template<typename... Args>
@@ -208,82 +132,142 @@ namespace cppsort
             }
         };
 
+        template<typename Head, typename... Tail>
+        struct hybrid_adapter_storage_impl:
+            Head, hybrid_adapter_storage_impl<Tail...>
+        {
+            hybrid_adapter_storage_impl() = default;
+
+            constexpr hybrid_adapter_storage_impl(Head head, Tail... tail):
+                Head(std::move(head)),
+                hybrid_adapter_storage_impl<Tail...>(std::move(tail)...)
+            {};
+
+            using Head::operator();
+            using Head::detail_stability;
+
+            using hybrid_adapter_storage_impl<Tail...>::operator();
+            using hybrid_adapter_storage_impl<Tail...>::detail_stability;
+        };
+
+        template<typename Head>
+        struct hybrid_adapter_storage_impl<Head>:
+            Head
+        {
+            hybrid_adapter_storage_impl() = default;
+
+            constexpr hybrid_adapter_storage_impl(Head head):
+                Head(std::move(head))
+            {};
+
+            using Head::operator();
+            using Head::detail_stability;
+        };
+
+        template<typename Indices, typename... Sorters>
+        struct hybrid_adapter_storage;
+
+        template<typename... Sorters, std::size_t... Indices>
+        struct hybrid_adapter_storage<std::index_sequence<Indices...>, Sorters...>:
+            hybrid_adapter_storage_impl<
+                hybrid_adapter_storage_leaf<
+                    Indices + iterator_category_value<iterator_category<Sorters>>
+                            * categories_number,
+                    Sorters
+                >...
+            >
+        {
+            using hybrid_adapter_storage_impl<
+                hybrid_adapter_storage_leaf<
+                    Indices + iterator_category_value<iterator_category<Sorters>>
+                            * categories_number,
+                    Sorters
+                >...
+            >::hybrid_adapter_storage_impl;
+        };
+
         ////////////////////////////////////////////////////////////
         // Adapter
 
         template<typename... Sorters>
         class hybrid_adapter_impl:
-            public hybrid_adapter_storage<Sorters...>,
+            public hybrid_adapter_storage<std::make_index_sequence<sizeof...(Sorters)>, Sorters...>,
             public check_iterator_category<Sorters...>,
             public check_is_always_stable<Sorters...>
         {
+            using base_class = hybrid_adapter_storage<
+                std::make_index_sequence<sizeof...(Sorters)>,
+                Sorters...
+            >;
+
             public:
 
                 hybrid_adapter_impl() = default;
 
                 constexpr hybrid_adapter_impl(Sorters... sorters):
-                    hybrid_adapter_storage<Sorters...>(std::move(sorters)...)
+                    base_class(std::move(sorters)...)
                 {}
 
             private:
 
-                // Associate and index to every sorter depending on
-                // its position in the parameter pack
-                template<typename>
-                struct dispatch_sorter_impl;
-
-                template<std::size_t... Indices>
-                struct dispatch_sorter_impl<std::index_sequence<Indices...>>
-                {
-                    using type = sorters_merger<
-                        selection_wrapper<
-                            Sorters,
-                            Indices + iterator_category_value<iterator_category<Sorters>>
-                                    * categories_number
-                        >...
-                    >;
-                };
-
-                // Dispatch-enabled sorter
-                using dispatch_sorter = typename dispatch_sorter_impl<
-                    std::make_index_sequence<sizeof...(Sorters)>
-                >::type;
-
-            public:
-
-                template<typename Iterable, typename... Args>
-                auto operator()(Iterable&& iterable, Args&&... args) const
-                    -> decltype(dispatch_sorter{}(
+                template<typename Self, typename Iterable, typename... Args>
+                static auto _call_sorter(Self& self, Iterable&& iterable, Args&&... args)
+                    -> decltype(self.base_class::operator()(
                         choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
                 {
                     // Call the appropriate operator()
-                    return dispatch_sorter{}(
+                    return self.base_class::operator()(
                         choice_for_it<decltype(std::begin(iterable))>{},
-                        std::forward<Iterable>(iterable), std::forward<Args>(args)...
-                    );
+                        std::forward<Iterable>(iterable),
+                        std::forward<Args>(args)...
+                    )
                 }
 
-                template<typename Iterator, typename... Args>
-                auto operator()(Iterator first, Iterator last, Args&&... args) const
-                    -> decltype(dispatch_sorter{}(
+                template<typename Self, typename Iterator, typename... Args>
+                static auto _call_sorter(Self& self, Iterator first, Iterator last, Args&&... args)
+                    -> decltype(self.base_class::operator()(
                             choice_for_it<Iterator>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
                     // Call the appropriate operator()
-                    return dispatch_sorter{}(
+                    return self.base_class::operator()(
                         choice_for_it<Iterator>{},
-                        std::move(first), std::move(last), std::forward<Args>(args)...
+                        std::move(first), std::move(last),
+                        std::forward<Args>(args)...
                     );
                 }
 
+                using this_class = hybrid_adapter_impl<Sorters...>;
+
+            public:
+
+                template<typename... Args>
+                auto operator()(Args&&... args) const
+                    noexcept(noexcept(_call_sorter(std::declval<const this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                template<typename... Args>
+                auto operator()(Args&&... args)
+                    noexcept(noexcept(_call_sorter(std::declval<this_class&>(), std::forward<Args>(args)...)))
+                    -> decltype(_call_sorter(*this, std::forward<Args>(args)...))
+                {
+                    return _call_sorter(*this, std::forward<Args>(args)...);
+                }
+
+                ////////////////////////////////////////////////////////////
+                // Stability of a call
+
                 template<typename Iterable, typename... Args>
                 static auto detail_stability(Iterable&& iterable, Args&&... args)
-                    -> decltype(dispatch_sorter::detail_stability(
+                    -> decltype(base_class::detail_stability(
                         choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
@@ -294,13 +278,52 @@ namespace cppsort
 
                 template<typename Iterator, typename... Args>
                 static auto detail_stability(Iterator first, Iterator last, Args&&... args)
-                    -> decltype(dispatch_sorter::detail_stability(
+                    -> decltype(base_class::detail_stability(
                             choice_for_it<Iterator>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
                     return {};
+                }
+
+                ////////////////////////////////////////////////////////////
+                // access to the stored sorters
+
+                template<std::size_t I>
+                auto get() &
+                    -> decltype(auto)
+                {
+                    using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                    constexpr auto id = I + iterator_category_value<iterator_category<type>> * categories_number;
+                    return static_cast<hybrid_adapter_storage_leaf<id, type>&>(*this).get();
+                }
+
+                template<std::size_t I>
+                auto get() const&
+                    -> decltype(auto)
+                {
+                    using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                    constexpr auto id = I + iterator_category_value<iterator_category<type>> * categories_number;
+                    return static_cast<const hybrid_adapter_storage_leaf<id, type>&>(*this).get();
+                }
+
+                template<std::size_t I>
+                auto get() &&
+                    -> decltype(auto)
+                {
+                    using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                    constexpr auto id = I + iterator_category_value<iterator_category<type>> * categories_number;
+                    return static_cast<hybrid_adapter_storage_leaf<id, type>&&>(*this).get();
+                }
+
+                template<std::size_t I>
+                auto get() const&&
+                    -> decltype(auto)
+                {
+                    using type = std::tuple_element_t<I, std::tuple<Sorters...>>;
+                    constexpr auto id = I + iterator_category_value<iterator_category<type>> * categories_number;
+                    return static_cast<const hybrid_adapter_storage_leaf<id, type>&&>(*this).get();
                 }
         };
     }

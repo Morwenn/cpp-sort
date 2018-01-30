@@ -108,18 +108,28 @@ TEST_CASE( "test most adapters with a mutable sorter",
         CHECK( adapted_sorter.get().dummy2 == 11 );
     }
 
-    /*SECTION( "hybrid_adapter" )
+    SECTION( "hybrid_adapter" )
     {
         auto adapted_sorter = cppsort::hybrid_adapter<
             cppsort::merge_sorter,
             mutable_sorter
         >(cppsort::merge_sort, original_sorter);
 
+        std::list<int> li;
+        distribution(std::back_inserter(li), 65, 0);
+
+        adapted_sorter(li);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        // merge_sorter is used, mutable_sorter hasn't changed
+        CHECK( adapted_sorter.template get<1>().dummy1 == 5 );
+        CHECK( adapted_sorter.template get<1>().dummy2 == 7 );
+
         adapted_sorter(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        // mutable_sorter is used and its members have changed
         CHECK( adapted_sorter.template get<1>().dummy1 == 3 );
         CHECK( adapted_sorter.template get<1>().dummy2 == 11 );
-    }*/
+    }
 
     SECTION( "indirect_adapter" )
     {
