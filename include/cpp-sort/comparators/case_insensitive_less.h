@@ -126,9 +126,9 @@ namespace cppsort
                     typename = std::enable_if_t<can_be_refined_for<T>>
                 >
                 auto refine() const
-                    -> adl_barrier::refined_case_insensitive_less_locale_fn<T>
+                    -> adl_barrier::refined_case_insensitive_less_locale_fn<std::decay_t<T>>
                 {
-                    return adl_barrier::refined_case_insensitive_less_locale_fn<T>(loc);
+                    return adl_barrier::refined_case_insensitive_less_locale_fn<std::decay_t<T>>(loc);
                 }
         };
 
@@ -147,9 +147,9 @@ namespace cppsort
                 typename = std::enable_if_t<can_be_refined_for<T>>
             >
             auto refine() const
-                -> adl_barrier::refined_case_insensitive_less_fn<T>
+                -> adl_barrier::refined_case_insensitive_less_fn<std::decay_t<T>>
             {
-                return adl_barrier::refined_case_insensitive_less_fn<T>();
+                return adl_barrier::refined_case_insensitive_less_fn<std::decay_t<T>>();
             }
 
             inline auto operator()(const std::locale& loc) const
@@ -284,9 +284,9 @@ namespace cppsort
                     }
 
                     auto operator()(const std::locale& loc) const
-                        -> refined_case_insensitive_less_locale_fn<T>
+                        -> refined_case_insensitive_less_locale_fn<std::decay_t<T>>
                     {
-                        return refined_case_insensitive_less_locale_fn<T>(loc);
+                        return refined_case_insensitive_less_locale_fn<std::decay_t<T>>(loc);
                     }
             };
         }

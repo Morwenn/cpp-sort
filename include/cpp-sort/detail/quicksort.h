@@ -113,7 +113,9 @@ namespace detail
         auto&& pivot1 = proj(*last_1);
         ForwardIterator middle1 = detail::partition(
             first, last_1,
-            [&](const auto& elem) { return comp(proj(elem), pivot1); }
+            [&](const auto& elem) mutable {
+                return comp(proj(elem), pivot1);
+            }
         );
 
         // Put the pivot in its final position and partition
@@ -121,7 +123,9 @@ namespace detail
         auto&& pivot2 = proj(*middle1);
         ForwardIterator middle2 = detail::partition(
             std::next(middle1), last,
-            [&](const auto& elem) { return not comp(pivot2, proj(elem)); }
+            [&](const auto& elem) mutable {
+                return not comp(pivot2, proj(elem));
+            }
         );
 
         // Recursive call: heuristic trick here: in real world cases,

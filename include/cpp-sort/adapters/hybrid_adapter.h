@@ -74,7 +74,7 @@ namespace cppsort
         constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
 
         // Number of acceptable iterator categories
-        static constexpr std::size_t categories_number = 4;
+        constexpr std::size_t categories_number = 4;
 
         // Avoid just a bit of redundancy
         template<typename Iterator>
@@ -109,16 +109,16 @@ namespace cppsort
 
             template<typename... Args>
             auto operator()(choice<Ind>, Args&&... args) const
-                -> decltype(utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...))
+                -> decltype(utility::adapter_storage<Sorter>::get()(std::forward<Args>(args)...))
             {
-                return utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...);
+                return utility::adapter_storage<Sorter>::get()(std::forward<Args>(args)...);
             }
 
             template<typename... Args>
             auto operator()(choice<Ind>, Args&&... args)
-                -> decltype(utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...))
+                -> decltype(utility::adapter_storage<Sorter>::get()(std::forward<Args>(args)...))
             {
-                return utility::adapter_storage<Sorter>::operator()(std::forward<Args>(args)...);
+                return utility::adapter_storage<Sorter>::get()(std::forward<Args>(args)...);
             }
 
             template<typename... Args>
@@ -177,13 +177,31 @@ namespace cppsort
                 >...
             >
         {
-            using hybrid_adapter_storage_impl<
-                hybrid_adapter_storage_leaf<
-                    Indices + iterator_category_value<iterator_category<Sorters>>
-                            * categories_number,
-                    Sorters
-                >...
-            >::hybrid_adapter_storage_impl;
+            hybrid_adapter_storage() = default;
+
+            constexpr hybrid_adapter_storage(Sorters... sorters):
+                hybrid_adapter_storage_impl<
+                    hybrid_adapter_storage_leaf<
+                        Indices + iterator_category_value<iterator_category<Sorters>>
+                                * categories_number,
+                        Sorters
+                    >...
+                >(std::move(sorters)...)
+            {}
+        };
+
+        template<typename... Sorters>
+        struct hybrid_adapter_impl_base:
+            hybrid_adapter_storage<std::make_index_sequence<sizeof...(Sorters)>, Sorters...>
+        {
+            hybrid_adapter_impl_base() = default;
+
+            constexpr hybrid_adapter_impl_base(Sorters... sorters):
+                hybrid_adapter_storage<
+                    std::make_index_sequence<sizeof...(Sorters)>,
+                    Sorters...
+                >(std::move(sorters)...)
+            {}
         };
 
         ////////////////////////////////////////////////////////////
@@ -191,35 +209,30 @@ namespace cppsort
 
         template<typename... Sorters>
         class hybrid_adapter_impl:
-            public hybrid_adapter_storage<std::make_index_sequence<sizeof...(Sorters)>, Sorters...>,
+            public hybrid_adapter_impl_base<Sorters...>,
             public check_iterator_category<Sorters...>,
             public check_is_always_stable<Sorters...>
         {
-            using base_class = hybrid_adapter_storage<
-                std::make_index_sequence<sizeof...(Sorters)>,
-                Sorters...
-            >;
-
             public:
 
                 hybrid_adapter_impl() = default;
 
                 constexpr hybrid_adapter_impl(Sorters... sorters):
-                    base_class(std::move(sorters)...)
+                    hybrid_adapter_impl_base<Sorters...>(std::move(sorters)...)
                 {}
 
             private:
 
                 template<typename Self, typename Iterable, typename... Args>
                 static auto _call_sorter(Self& self, Iterable&& iterable, Args&&... args)
-                    -> decltype(self.base_class::operator()(
+                    -> decltype(self.template hybrid_adapter_impl_base<Sorters...>::operator()(
                         choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
                 {
                     // Call the appropriate operator()
-                    return self.base_class::operator()(
+                    return self.template hybrid_adapter_impl_base<Sorters...>::operator()(
                         choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
@@ -228,14 +241,14 @@ namespace cppsort
 
                 template<typename Self, typename Iterator, typename... Args>
                 static auto _call_sorter(Self& self, Iterator first, Iterator last, Args&&... args)
-                    -> decltype(self.base_class::operator()(
+                    -> decltype(self.template hybrid_adapter_impl_base<Sorters...>::operator()(
                             choice_for_it<Iterator>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
                     // Call the appropriate operator()
-                    return self.base_class::operator()(
+                    return self.template hybrid_adapter_impl_base<Sorters...>::operator()(
                         choice_for_it<Iterator>{},
                         std::move(first), std::move(last),
                         std::forward<Args>(args)...
@@ -263,7 +276,7 @@ namespace cppsort
 
                 template<typename Iterable, typename... Args>
                 static auto detail_stability(Iterable&& iterable, Args&&... args)
-                    -> decltype(base_class::detail_stability(
+                    -> decltype(hybrid_adapter_impl_base<Sorters...>::detail_stability(
                         choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
@@ -274,7 +287,7 @@ namespace cppsort
 
                 template<typename Iterator, typename... Args>
                 static auto detail_stability(Iterator first, Iterator last, Args&&... args)
-                    -> decltype(base_class::detail_stability(
+                    -> decltype(hybrid_adapter_impl_base<Sorters...>::detail_stability(
                             choice_for_it<Iterator>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
