@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ namespace cppsort
         };
 
         template<typename T>
-        auto case_insensitive_less(const T& lhs, const T& rhs, const std::locale loc)
+        auto case_insensitive_less(const T& lhs, const T& rhs, const std::locale& loc)
             -> bool
         {
             using char_type = std::decay_t<decltype(*std::begin(lhs))>;
@@ -164,7 +164,7 @@ namespace cppsort
             // Hide the generic case_insensitive_less from the enclosing namespace
             struct nope_type {};
             template<typename T>
-            auto case_insensitive_less(const T& lhs, const T& rhs, const std::locale loc)
+            auto case_insensitive_less(const T& lhs, const T& rhs, const std::locale& loc)
                 -> nope_type;
             template<typename T>
             auto case_insensitive_less(const T& lhs, const T& rhs)
@@ -174,7 +174,7 @@ namespace cppsort
             struct caller
             {
                 template<typename T>
-                auto operator()(const T& lhs, const T& rhs, const std::locale loc) const
+                auto operator()(const T& lhs, const T& rhs, const std::locale& loc) const
                     -> decltype(case_insensitive_less(lhs, rhs, loc))
                 {
                     return case_insensitive_less(lhs, rhs, loc);
@@ -200,7 +200,7 @@ namespace cppsort
 
                 public:
 
-                    explicit refined_case_insensitive_less_locale_fn(std::locale loc):
+                    explicit refined_case_insensitive_less_locale_fn(const std::locale& loc):
                         loc(loc),
                         ct(std::use_facet<std::ctype<char_type>>(loc))
                     {}
