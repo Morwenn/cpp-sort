@@ -74,6 +74,14 @@ namespace cppsort
         // Number of acceptable iterator categories
         static constexpr std::size_t categories_number = 4;
 
+        // Avoid just a bit of redundancy
+        template<typename Iterator>
+        using choice_for_it = choice<
+            iterator_category_value<
+                iterator_category_t<Iterator>
+            > * categories_number
+        >;
+
         ////////////////////////////////////////////////////////////
         // Import every operator() in one class
 
@@ -159,21 +167,14 @@ namespace cppsort
                 template<typename Iterable, typename... Args>
                 auto operator()(Iterable&& iterable, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
-                        choice<
-                            iterator_category_value<
-                                iterator_category_t<decltype(std::begin(iterable))>
-                            > * categories_number
-                        >{},
+                        choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
                 {
-                    // Iterator category of the iterable to sort
-                    using category = iterator_category_t<decltype(std::begin(iterable))>;
-
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
-                        choice<iterator_category_value<category> * categories_number>{},
+                        choice_for_it<decltype(std::begin(iterable))>{},
                         iterable, std::forward<Args>(args)...
                     );
                 }
@@ -181,21 +182,14 @@ namespace cppsort
                 template<typename Iterator, typename... Args>
                 auto operator()(Iterator first, Iterator last, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
-                            choice<
-                                iterator_category_value<
-                                    iterator_category_t<Iterator>
-                                > * categories_number
-                            >{},
+                            choice_for_it<Iterator>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
-                    // Iterator category of the iterable to sort
-                    using category = iterator_category_t<Iterator>;
-
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
-                        choice<iterator_category_value<category> * categories_number>{},
+                        choice_for_it<Iterator>{},
                         std::move(first), std::move(last), std::forward<Args>(args)...
                     );
                 }
@@ -203,11 +197,7 @@ namespace cppsort
                 template<typename Iterable, typename... Args>
                 static auto detail_stability(Iterable&& iterable, Args&&... args)
                     -> decltype(dispatch_sorter::detail_stability(
-                        choice<
-                            iterator_category_value<
-                                iterator_category_t<decltype(std::begin(iterable))>
-                            > * categories_number
-                        >{},
+                        choice_for_it<decltype(std::begin(iterable))>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
@@ -218,11 +208,7 @@ namespace cppsort
                 template<typename Iterator, typename... Args>
                 static auto detail_stability(Iterator first, Iterator last, Args&&... args)
                     -> decltype(dispatch_sorter::detail_stability(
-                            choice<
-                                iterator_category_value<
-                                    iterator_category_t<Iterator>
-                                > * categories_number
-                            >{},
+                            choice_for_it<Iterator>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
