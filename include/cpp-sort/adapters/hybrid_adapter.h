@@ -175,7 +175,7 @@ namespace cppsort
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
                         choice_for_it<decltype(std::begin(iterable))>{},
-                        iterable, std::forward<Args>(args)...
+                        std::forward<Iterable>(iterable), std::forward<Args>(args)...
                     );
                 }
 
