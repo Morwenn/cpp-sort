@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015-2017 Orson Peters
-    Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -34,7 +34,7 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
-#include "heap_operations.h"
+#include "heapsort.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "iter_sort3.h"
@@ -522,8 +522,8 @@ namespace detail
                 if (highly_unbalanced) {
                     // If we had too many bad partitions, switch to heapsort to guarantee O(n log n).
                     if (--bad_allowed == 0) {
-                        make_heap(begin, end, compare, projection);
-                        sort_heap(begin, end, std::move(compare), std::move(projection));
+                        heapsort(std::move(begin), std::move(end),
+                                 std::move(compare), std::move(projection));
                         return;
                     }
 
