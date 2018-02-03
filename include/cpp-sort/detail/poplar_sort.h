@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -153,7 +153,19 @@ namespace detail
 
         std::vector<poplar<RandomAccessIterator>> poplars;
         poplars.reserve(log2(size));
-        poplar_size_t poplar_size = hyperfloor(size) - 1;
+
+        //
+        // Size of the biggest poplar in the array, which always is a number
+        // of the form 2^n - 1
+        //
+        // It's worth noting that the +1 never causes problems: we're only
+        // using unsigned integers, so when size is the biggest representable
+        // value for its type, size + 1 == 0 thanks to the behaviour of
+        // unsigned overflow; hyperfloor(0) == 0, and subtracting 1 to that
+        // gives back the biggest representable value, which happens to be
+        // a number of the form 2^n - 1
+        //
+        poplar_size_t poplar_size = hyperfloor(size + 1u) - 1u;
 
         // Make the poplar heap
         auto it = first;
