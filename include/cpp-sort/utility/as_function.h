@@ -1,7 +1,7 @@
 // Range v3 library
 //
 //  Copyright Eric Niebler 2013-2014
-//  Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
+//  Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
 //
 //  Use, modification and distribution is subject to the
 //  Boost Software License, Version 1.0. (See accompanying
@@ -20,6 +20,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/remove_cvref.h"
 
 namespace cppsort
 {
@@ -33,7 +34,7 @@ namespace utility
             constexpr auto operator()(T&& t) const
                 noexcept(noexcept(std::mem_fn(t)))
                 -> std::enable_if_t<
-                    std::is_member_pointer<std::decay_t<T>>::value,
+                    std::is_member_pointer<cppsort::detail::remove_cvref_t<T>>::value,
                     decltype(std::mem_fn(t))
                 >
             {
@@ -44,7 +45,7 @@ namespace utility
             constexpr auto operator()(T && t) const
                 noexcept(std::is_nothrow_constructible<T, T>::value)
                 -> std::enable_if_t<
-                    not std::is_member_pointer<std::decay_t<T>>::value,
+                    not std::is_member_pointer<cppsort::detail::remove_cvref_t<T>>::value,
                     T
                 >
             {

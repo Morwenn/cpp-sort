@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include "detail/detection.h"
+#include "detail/remove_cvref.h"
 
 namespace cppsort
 {
@@ -75,7 +76,9 @@ namespace cppsort
     }
 
     template<typename T, typename Function>
-    using refined_t = std::decay_t<decltype(refined<std::decay_t<T>>(std::declval<Function&>()))>;
+    using refined_t = detail::remove_cvref_t<
+        decltype(refined<std::decay_t<T>>(std::declval<Function&>()))
+    >;
 }
 
 #endif // CPPSORT_REFINED_H_

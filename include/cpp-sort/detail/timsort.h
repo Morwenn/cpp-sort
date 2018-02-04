@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Modified in 2015-2017 by Morwenn for inclusion into cpp-sort.
+ * Modified in 2015-2018 by Morwenn for inclusion into cpp-sort.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -46,6 +46,7 @@
 #include "lower_bound.h"
 #include "memory.h"
 #include "move.h"
+#include "remove_cvref.h"
 #include "reverse.h"
 #include "three_way_compare.h"
 #include "upper_bound.h"
@@ -59,7 +60,7 @@ namespace detail
     {
         using iterator = RandomAccessIterator;
         using value_type = value_type_t<iterator>;
-        using rvalue_reference = std::decay_t<rvalue_reference_t<iterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<iterator>>;
         using difference_type = difference_type_t<iterator>;
         using compare_type = three_way_compare<Compare>;
 
@@ -701,7 +702,7 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
-        using compare_t = std::decay_t<decltype(utility::as_function(compare))>;
+        using compare_t = remove_cvref_t<decltype(utility::as_function(compare))>;
         TimSort<RandomAccessIterator, compare_t, Projection>::sort(std::move(first), std::move(last),
                                                                    utility::as_function(compare),
                                                                    std::move(projection));

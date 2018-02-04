@@ -24,6 +24,7 @@
 #include "detection.h"
 #include "logical_traits.h"
 #include "memcpy_cast.h"
+#include "remove_cvref.h"
 
 namespace cppsort
 {
@@ -482,9 +483,9 @@ namespace detail
 
     template<typename CurrentSubKey, typename T>
     struct ListElementSubKey:
-        SubKey<std::decay_t<decltype(std::declval<T>()[0])>>
+        SubKey<remove_cvref_t<decltype(std::declval<T>()[0])>>
     {
-        using base = SubKey<std::decay_t<decltype(std::declval<T>()[0])>>;
+        using base = SubKey<remove_cvref_t<decltype(std::declval<T>()[0])>>;
         using next = ListElementSubKey;
 
         template<typename U>
@@ -963,7 +964,7 @@ namespace detail
 
     template<typename T>
     using has_indexing_operator_t
-        = std::decay_t<decltype(std::declval<T&>()[0])>;
+        = remove_cvref_t<decltype(std::declval<T&>()[0])>;
 
     template<template<typename...> class Op, typename... Args>
     using is_index_ska_sortable = is_ska_sortable<detected_t<Op, Args...>>;

@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/branchless_traits.h>
+#include "../detail/remove_cvref.h"
 
 #ifdef __cpp_template_auto
 #   include <cpp-sort/utility/as_function.h>
@@ -81,7 +82,7 @@ namespace utility
                 template<
                     typename Func,
                     typename = std::enable_if_t<
-                        not std::is_same<std::decay_t<Func>, as_projection_fn>::value
+                        not std::is_same<cppsort::detail::remove_cvref_t<Func>, as_projection_fn>::value
                     >
                 >
                 constexpr explicit as_projection_fn(Func&& func):
@@ -147,7 +148,7 @@ namespace utility
                 template<
                     typename Func,
                     typename = std::enable_if_t<
-                        not std::is_same<std::decay_t<Func>, as_comparison_fn>::value
+                        not std::is_same<cppsort::detail::remove_cvref_t<Func>, as_comparison_fn>::value
                     >
                 >
                 constexpr explicit as_comparison_fn(Func&& func):
@@ -201,17 +202,17 @@ namespace utility
     template<typename Function>
     constexpr auto as_projection(Function&& func)
         -> std::enable_if_t<
-            not detail::is_as_projection_fn<std::decay_t<Function>>::value,
-            detail::as_projection_fn<std::decay_t<Function>>
+            not detail::is_as_projection_fn<cppsort::detail::remove_cvref_t<Function>>::value,
+            detail::as_projection_fn<cppsort::detail::remove_cvref_t<Function>>
         >
     {
-        return detail::as_projection_fn<std::decay_t<Function>>(std::forward<Function>(func));
+        return detail::as_projection_fn<cppsort::detail::remove_cvref_t<Function>>(std::forward<Function>(func));
     }
 
     template<typename Function>
     constexpr auto as_projection(Function&& func)
         -> std::enable_if_t<
-            detail::is_as_projection_fn<std::decay_t<Function>>::value,
+            detail::is_as_projection_fn<cppsort::detail::remove_cvref_t<Function>>::value,
             decltype(std::forward<Function>(func))
         >
     {
@@ -221,17 +222,17 @@ namespace utility
     template<typename Function>
     constexpr auto as_comparison(Function&& func)
         -> std::enable_if_t<
-            not detail::is_as_comparison_fn<std::decay_t<Function>>::value,
-            detail::as_comparison_fn<std::decay_t<Function>>
+            not detail::is_as_comparison_fn<cppsort::detail::remove_cvref_t<Function>>::value,
+            detail::as_comparison_fn<cppsort::detail::remove_cvref_t<Function>>
         >
     {
-        return detail::as_comparison_fn<std::decay_t<Function>>(std::forward<Function>(func));
+        return detail::as_comparison_fn<cppsort::detail::remove_cvref_t<Function>>(std::forward<Function>(func));
     }
 
     template<typename Function>
     constexpr auto as_comparison(Function&& func)
         -> std::enable_if_t<
-            detail::is_as_comparison_fn<std::decay_t<Function>>::value,
+            detail::is_as_comparison_fn<cppsort::detail::remove_cvref_t<Function>>::value,
             decltype(std::forward<Function>(func))
         >
     {

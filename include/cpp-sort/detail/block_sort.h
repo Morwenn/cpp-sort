@@ -2,7 +2,7 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  *
- * Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
  *
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -26,6 +26,7 @@
 #include "lower_bound.h"
 #include "merge_move.h"
 #include "move.h"
+#include "remove_cvref.h"
 #include "rotate.h"
 #include "swap_ranges.h"
 #include "upper_bound.h"
@@ -335,7 +336,7 @@ namespace detail
             -> void
         {
             using utility::iter_swap;
-            using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
+            using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
             using difference_type = difference_type_t<RandomAccessIterator>;
 
             difference_type size = std::distance(first, last);
