@@ -71,15 +71,12 @@ namespace cppsort
         template<>
         constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
 
-        // Number of acceptable iterator categories
-        static constexpr std::size_t categories_number = 4;
-
         // Avoid just a bit of redundancy
-        template<typename Iterator>
+        template<typename Iterator, std::size_t N>
         using choice_for_it = choice<
             iterator_category_value<
                 iterator_category_t<Iterator>
-            > * categories_number
+            > * N
         >;
 
         ////////////////////////////////////////////////////////////
@@ -152,7 +149,7 @@ namespace cppsort
                         selection_wrapper<
                             Sorters,
                             Indices + iterator_category_value<iterator_category<Sorters>>
-                                    * categories_number
+                                    * sizeof...(Sorters)
                         >...
                     >;
                 };
@@ -167,14 +164,14 @@ namespace cppsort
                 template<typename Iterable, typename... Args>
                 auto operator()(Iterable&& iterable, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
-                        choice_for_it<decltype(std::begin(iterable))>{},
+                        choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
                 {
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
-                        choice_for_it<decltype(std::begin(iterable))>{},
+                        choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
                         std::forward<Iterable>(iterable), std::forward<Args>(args)...
                     );
                 }
@@ -182,14 +179,14 @@ namespace cppsort
                 template<typename Iterator, typename... Args>
                 auto operator()(Iterator first, Iterator last, Args&&... args) const
                     -> decltype(dispatch_sorter{}(
-                            choice_for_it<Iterator>{},
+                            choice_for_it<Iterator, sizeof...(Sorters)>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
                     // Call the appropriate operator()
                     return dispatch_sorter{}(
-                        choice_for_it<Iterator>{},
+                        choice_for_it<Iterator, sizeof...(Sorters)>{},
                         std::move(first), std::move(last), std::forward<Args>(args)...
                     );
                 }
@@ -197,7 +194,7 @@ namespace cppsort
                 template<typename Iterable, typename... Args>
                 static auto detail_stability(Iterable&& iterable, Args&&... args)
                     -> decltype(dispatch_sorter::detail_stability(
-                        choice_for_it<decltype(std::begin(iterable))>{},
+                        choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
                         std::forward<Iterable>(iterable),
                         std::forward<Args>(args)...
                     ))
@@ -208,7 +205,7 @@ namespace cppsort
                 template<typename Iterator, typename... Args>
                 static auto detail_stability(Iterator first, Iterator last, Args&&... args)
                     -> decltype(dispatch_sorter::detail_stability(
-                            choice_for_it<Iterator>{},
+                            choice_for_it<Iterator, sizeof...(Sorters)>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
