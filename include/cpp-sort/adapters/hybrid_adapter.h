@@ -46,11 +46,11 @@ namespace cppsort
 
         template<std::size_t Value>
         struct choice:
-            choice<Value + 1>
+            choice<Value - 1>
         {};
 
         template<>
-        struct choice<127> {};
+        struct choice<0> {};
 
         ////////////////////////////////////////////////////////////
         // Associate a priority to iterator categories, there is
@@ -60,23 +60,23 @@ namespace cppsort
         std::size_t iterator_category_value;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 0;
+        constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 3;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 1;
+        constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 2;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 2;
+        constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 1;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
+        constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 0;
 
         // Avoid just a bit of redundancy
         template<typename Iterator, std::size_t N>
         using choice_for_it = choice<
-            iterator_category_value<
+            (iterator_category_value<
                 iterator_category_t<Iterator>
-            > * N
+            > + 1) * N - 1
         >;
 
         ////////////////////////////////////////////////////////////
@@ -148,8 +148,9 @@ namespace cppsort
                     using type = sorters_merger<
                         selection_wrapper<
                             Sorters,
-                            Indices + iterator_category_value<iterator_category<Sorters>>
-                                    * sizeof...(Sorters)
+                            sizeof...(Sorters) * iterator_category_value<iterator_category<Sorters>>
+                            + sizeof...(Indices) - Indices - 1
+
                         >...
                     >;
                 };
