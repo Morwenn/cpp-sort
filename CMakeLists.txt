@@ -24,7 +24,7 @@ if (UNIX AND SANITIZE)
 endif()
 
 # Add suitable options for code coverage when needed
-if (CODE_COVERAGE)
+if (ENABLE_COVERAGE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -Wall -Wextra -fprofile-arcs -ftest-coverage")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
 

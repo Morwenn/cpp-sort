@@ -109,7 +109,7 @@ script:
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
           -DUSE_VALGRIND=${VALGRIND}
-          -DENABE_COVERAGE=${ENABLE_COVERAGE}
+          -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
   - if [ `uname` = 'Darwin' ]; then
         cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
@@ -120,10 +120,10 @@ script:
   - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
 
 after_success:
-  - if [ "$CODE_COVERAGE" = 1 ]; then
-        make gcov
-        make lcov
-        bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports";
+  - if [ "$ENABLE_COVERAGE" = 1 ]; then
+        make gcov;
+        make lcov;
+        bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
     fi
 
 notifications:
