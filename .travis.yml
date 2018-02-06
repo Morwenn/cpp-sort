@@ -20,61 +20,61 @@ matrix:
     # Linux clang
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Debug SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Debug SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     # Linux gcc
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Debug SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Debug VALGRIND=false SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Debug SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
     - os: linux
       sudo: false
-      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Unix Makefiles"
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="Unix Makefiles"
       compiler: gcc
 
     # OSX clang
     - os: osx
       osx_image: xcode8
-      env: BUILD_TYPE=Debug VALGRIND=true SANITIZE='' CMAKE_GENERATOR="Xcode"
+      env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Xcode"
       compiler: clang
 
     - os: osx
       osx_image: xcode8
-      env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="Xcode"
       compiler: clang
 
     # Code coverage
     - os: linux
       sudo: false
       if: branch in (master, develop)
-      env: BUILD_TYPE=Debug CMAKE_GENERATOR="Unix Makefiles" ENABLE_COVERAGE=1
+      env: BUILD_TYPE=Debug CMAKE_GENERATOR="Unix Makefiles" ENABLE_COVERAGE=true
       compiler: gcc
 
     # Conan
@@ -109,7 +109,7 @@ script:
           -DCMAKE_CONFIGURATION_TYPES="${BUILD_TYPE}"
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
-          -DUSE_VALGRIND=${VALGRIND}
+          -DUSE_VALGRIND=${USE_VALGRIND}
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
   - if [ `uname` = 'Darwin' ]; then
