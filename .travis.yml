@@ -8,6 +8,7 @@ addons:
     packages:
       - clang-3.8
       - g++-5
+      - lcov
       - valgrind
 
 cache:
@@ -69,6 +70,13 @@ matrix:
       env: BUILD_TYPE=Release VALGRIND=false SANITIZE='' CMAKE_GENERATOR="Xcode"
       compiler: clang
 
+    # Code coverage
+    - os: linux
+      sudo: false
+      if: branch in (master, develop)
+      env: BUILD_TYPE=Debug CMAKE_GENERATOR="Unix Makefiles" ENABLE_COVERAGE=1
+      compiler: gcc
+
     # Conan
     - os: linux
       sudo: required
@@ -102,6 +110,7 @@ script:
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
           -DSANITIZE="${SANITIZE}"
           -DUSE_VALGRIND=${VALGRIND}
+          -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
   - if [ `uname` = 'Darwin' ]; then
         cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
@@ -110,6 +119,13 @@ script:
     fi
   - cd build/testsuite
   - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
+
+after_success:
+  - if [ "$ENABLE_COVERAGE" = 1 ]; then
+        make gcov;
+        make lcov;
+        bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
+    fi
 
 notifications:
   email: false
