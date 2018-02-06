@@ -73,6 +73,7 @@ matrix:
     # Code coverage
     - os: linux
       sudo: false
+      if: branch in (master, develop)
       env: BUILD_TYPE=Debug CMAKE_GENERATOR="Unix Makefiles" ENABLE_COVERAGE=1
       compiler: gcc
 
