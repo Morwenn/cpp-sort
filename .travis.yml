@@ -100,7 +100,7 @@ before_install:
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
     fi
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
-        sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++;
+        sudo ln -s $(which ccache) /usr/lib/ccache/clang++;
         export CXXFLAGS="-Qunused-arguments";
     fi
 
