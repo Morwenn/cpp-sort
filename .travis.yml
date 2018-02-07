@@ -19,22 +19,22 @@ matrix:
 
     # Linux clang
     - os: linux
-      sudo: false
+      sudo: required
       env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
-      sudo: false
+      sudo: required
       env: BUILD_TYPE=Debug SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
-      sudo: false
+      sudo: required
       env: BUILD_TYPE=Debug SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
     - os: linux
-      sudo: false
+      sudo: required
       env: BUILD_TYPE=Release CMAKE_GENERATOR="Unix Makefiles"
       compiler: clang
 
@@ -98,6 +98,10 @@ before_install:
         brew update;
         brew install ccache valgrind;
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
+    fi
+  - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
+        sudo ln -s ../../bin/ccache /usr/lib/ccache/clang++;
+        export CXXFLAGS="-Qunused-arguments";
     fi
 
 install:
