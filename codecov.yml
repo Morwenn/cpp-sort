@@ -1,3 +1,7 @@
 coverage:
   ignore:
     - "testsuite/*"
+    # Sorting networks have been tested independently with the 0-1 principle
+    # when needed, and are otherwise simple enough that we do not need the
+    # testsuite to test all of them
+    - "include/cpp-sort/detail/sorting_network/*"
