@@ -94,15 +94,15 @@ matrix:
         - conan upload --all -r bintray cpp-sort/1.0.0@morwenn/stable
 
 before_install:
-  - if [ `uname` = 'Darwin' ]; then
-        brew update &&
-        brew install ccache valgrind &&
+  - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
+        brew update;
+        brew install ccache valgrind;
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
     fi
 
 install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
-  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
+  - if [[ $CXX = "g++" ]]; then export CXX="g++-5"; fi
+  - if [[ $CXX = "clang++" ]]; then export CXX="clang++-3.8"; fi
 
 script:
   - cmake -H. -Bbuild
@@ -112,7 +112,7 @@ script:
           -DUSE_VALGRIND=${USE_VALGRIND}
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
-  - if [ `uname` = 'Darwin' ]; then
+  - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
     else
         cmake --build build --config ${BUILD_TYPE} -- -j2;
@@ -121,7 +121,7 @@ script:
   - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
 
 after_success:
-  - if [ "$ENABLE_COVERAGE" = 1 ]; then
+  - if [[ $ENABLE_COVERAGE = true ]]; then
         make gcov;
         make lcov;
         bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
