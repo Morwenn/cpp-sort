@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include "../detail/checkers.h"
 #include "../detail/detection.h"
 
@@ -48,7 +49,7 @@ namespace cppsort
             typename... Args
         >
         using has_sort_method_t
-            = decltype(std::declval<Iterable&>().sort(std::declval<Args&>()...));
+            = decltype(std::declval<Iterable&>().sort(utility::as_function(std::declval<Args&>())...));
 
         template<
             typename Iterable,
@@ -62,7 +63,7 @@ namespace cppsort
             typename... Args
         >
         using has_stable_sort_method_t
-            = decltype(std::declval<Iterable&>().stable_sort(std::declval<Args&>()...));
+            = decltype(std::declval<Iterable&>().stable_sort(utility::as_function(std::declval<Args&>())...));
 
         template<
             typename Iterable,
@@ -82,10 +83,10 @@ namespace cppsort
             auto operator()(Iterable&& iterable, Args&&... args) const
                 -> std::enable_if_t<
                     has_sort_method<Iterable, Args...>,
-                    decltype(std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...))
+                    decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
                 >
             {
-                return std::forward<Iterable>(iterable).sort(std::forward<Args>(args)...);
+                return std::forward<Iterable>(iterable).sort(utility::as_function(args)...);
             }
 
             template<typename Iterable, typename... Args>
@@ -93,10 +94,10 @@ namespace cppsort
                 -> std::enable_if_t<
                     not has_sort_method<Iterable, Args...> &&
                     has_stable_sort_method<Iterable, Args...>,
-                    decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
+                    decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
                 >
             {
-                return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
+                return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
             }
 
             template<typename Iterable, typename... Args>
