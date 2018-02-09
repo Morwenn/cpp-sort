@@ -31,6 +31,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/checkers.h"
 #include "../detail/is_callable.h"
@@ -133,7 +134,8 @@ namespace cppsort
     template<typename... Sorters>
     class hybrid_adapter:
         public detail::check_iterator_category<Sorters...>,
-        public detail::check_is_always_stable<Sorters...>
+        public detail::check_is_always_stable<Sorters...>,
+        public sorter_facade_fptr<hybrid_adapter<Sorters...>>
     {
         public:
 

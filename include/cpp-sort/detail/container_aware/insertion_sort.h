@@ -34,6 +34,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
@@ -114,7 +115,8 @@ namespace cppsort
 
     template<>
     struct container_aware_adapter<insertion_sorter>:
-        detail::container_aware_adapter_base<insertion_sorter>
+        detail::container_aware_adapter_base<insertion_sorter>,
+        sorter_facade_fptr<container_aware_adapter<insertion_sorter>>
     {
         container_aware_adapter() = default;
         constexpr container_aware_adapter(insertion_sorter) noexcept {}

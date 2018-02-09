@@ -34,6 +34,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
@@ -87,7 +88,8 @@ namespace cppsort
 
     template<>
     struct container_aware_adapter<merge_sorter>:
-        detail::container_aware_adapter_base<merge_sorter>
+        detail::container_aware_adapter_base<merge_sorter>,
+        sorter_facade_fptr<container_aware_adapter<merge_sorter>>
     {
         using detail::container_aware_adapter_base<merge_sorter>::operator();
 
