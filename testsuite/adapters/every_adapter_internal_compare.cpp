@@ -102,6 +102,22 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
 
+    SECTION( "stable_adapter<self_sort_adapter>" )
+    {
+        using sorter = cppsort::stable_adapter<
+            cppsort::self_sort_adapter<cppsort::poplar_sorter>
+        >;
+
+        sorter{}(collection, &internal_compare<int>::compare_to);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        std::list<internal_compare<int>> li;
+        distribution(std::back_inserter(li), 65, 0);
+
+        sorter{}(li, &internal_compare<int>::compare_to);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+    }
+
     SECTION( "small_array_adapter" )
     {
         using namespace cppsort;

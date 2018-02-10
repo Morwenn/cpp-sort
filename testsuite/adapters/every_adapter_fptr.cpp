@@ -125,6 +125,24 @@ TEST_CASE( "function pointer test for every adapter",
         CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
     }
 
+    SECTION( "stable_adapter<self_sort_adapter>" )
+    {
+        using sorter = cppsort::stable_adapter<
+            cppsort::self_sort_adapter<cppsort::poplar_sorter>
+        >;
+        void(*sort_it)(std::vector<int>&, std::greater<>) = sorter{};
+        void(*sort_it2)(std::list<int>&, std::greater<>) = sorter{};
+
+        sort_it(collection, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+
+        std::list<int> li;
+        distribution(std::back_inserter(li), 65, 0);
+
+        sort_it2(li, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+    }
+
     SECTION( "small_array_adapter" )
     {
         using namespace cppsort;
