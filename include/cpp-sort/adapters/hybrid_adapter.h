@@ -87,10 +87,10 @@ namespace cppsort
             Head, sorters_merger<Tail...>
         {
             using Head::operator();
-            using Head::detail_stability;
+            using Head::_detail_stability;
 
             using sorters_merger<Tail...>::operator();
-            using sorters_merger<Tail...>::detail_stability;
+            using sorters_merger<Tail...>::_detail_stability;
         };
 
         template<typename Head>
@@ -98,7 +98,7 @@ namespace cppsort
             Head
         {
             using Head::operator();
-            using Head::detail_stability;
+            using Head::_detail_stability;
         };
 
         ////////////////////////////////////////////////////////////
@@ -117,14 +117,11 @@ namespace cppsort
             }
 
             template<typename... Args>
-            static auto detail_stability(choice<Ind>, Args&&... args)
+            static auto _detail_stability(choice<Ind>, Args&&... args)
                 -> std::enable_if_t<
                     is_callable_v<Sorter(Args...)>,
                     is_stable<Sorter(Args...)>
-                >
-            {
-                return {};
-            }
+                >;
         };
     }
 
@@ -202,26 +199,20 @@ namespace cppsort
             }
 
             template<typename Iterable, typename... Args>
-            static auto detail_stability(Iterable&& iterable, Args&&... args)
-                -> decltype(dispatch_sorter::detail_stability(
+            static auto _detail_stability(Iterable&& iterable, Args&&... args)
+                -> decltype(dispatch_sorter::_detail_stability(
                     detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
                     std::forward<Iterable>(iterable),
                     std::forward<Args>(args)...
-                ))
-            {
-                return {};
-            }
+                ));
 
             template<typename Iterator, typename... Args>
-            static auto detail_stability(Iterator first, Iterator last, Args&&... args)
-                -> decltype(dispatch_sorter::detail_stability(
+            static auto _detail_stability(Iterator first, Iterator last, Args&&... args)
+                -> decltype(dispatch_sorter::_detail_stability(
                         detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                         std::move(first), std::move(last),
                         std::forward<Args>(args)...
-                ))
-            {
-                return {};
-            }
+                ));
     };
 
     ////////////////////////////////////////////////////////////
@@ -229,7 +220,7 @@ namespace cppsort
 
     template<typename... Sorters, typename... Args>
     struct is_stable<hybrid_adapter<Sorters...>(Args...)>:
-        decltype(hybrid_adapter<Sorters...>::detail_stability(std::declval<Args&>()...))
+        decltype(hybrid_adapter<Sorters...>::_detail_stability(std::declval<Args&>()...))
     {};
 }
 
