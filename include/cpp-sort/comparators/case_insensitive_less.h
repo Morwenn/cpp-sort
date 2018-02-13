@@ -176,17 +176,11 @@ namespace cppsort
             {
                 template<typename T>
                 auto operator()(const T& lhs, const T& rhs, const std::locale& loc) const
-                    -> decltype(case_insensitive_less(lhs, rhs, loc))
-                {
-                    return case_insensitive_less(lhs, rhs, loc);
-                }
+                    -> decltype(case_insensitive_less(lhs, rhs, loc));
 
                 template<typename T>
                 auto operator()(const T& lhs, const T& rhs) const
-                    -> decltype(case_insensitive_less(lhs, rhs))
-                {
-                    return case_insensitive_less(lhs, rhs);
-                }
+                    -> decltype(case_insensitive_less(lhs, rhs));
             };
 
             template<typename T>
