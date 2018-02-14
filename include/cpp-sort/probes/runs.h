@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,8 +61,7 @@ namespace probe
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                if (first == last || std::next(first) == last)
-                {
+                if (first == last || std::next(first) == last) {
                     return 0;
                 }
 
@@ -70,10 +69,8 @@ namespace probe
                 auto next = std::next(first);
 
                 difference_type count = 0;
-                while (true)
-                {
-                    while (next != last && comp(proj(*current), proj(*next)))
-                    {
+                while (true) {
+                    while (next != last && not comp(proj(*next), proj(*current))) {
                         ++current;
                         ++next;
                     }
