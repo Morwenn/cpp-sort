@@ -42,6 +42,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     auto exc    = cppsort::probe::exc(sequence);
     auto ham    = cppsort::probe::ham(sequence);
     auto inv    = cppsort::probe::inv(sequence);
+    auto max    = cppsort::probe::max(sequence);
     auto mono   = cppsort::probe::mono(sequence);
     auto par    = cppsort::probe::par(sequence);
     auto rem    = cppsort::probe::rem(sequence);
@@ -54,8 +55,12 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // A framework for adaptative sorting
     // by Ola Petersson and Alistair Moffat
     CHECK( runs <= rem + 1 );
+
     CHECK( exc + 1 <= ham );
     CHECK( ham <= 2 * exc );
+
+    CHECK( max <= par );
+    CHECK( par <= 2 * max );
 
     // A New Measure of Presortedness
     // by Vladimir Estivill-Castro and Derick Wood
