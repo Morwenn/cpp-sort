@@ -64,6 +64,7 @@ set(
     probes/ham.cpp
     probes/inv.cpp
     probes/max.cpp
+    probes/mono.cpp
     probes/osc.cpp
     probes/par.cpp
     probes/rem.cpp
