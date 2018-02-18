@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
+#include "remove_cvref.h"
 
 namespace cppsort
 {
@@ -69,7 +70,7 @@ namespace detail
     //
 
     template<typename Iterator, typename Projection>
-    using projected_t = std::decay_t<std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>>;
+    using projected_t = remove_cvref_t<std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>>;
 }}
 
 #endif // CPPSORT_DETAIL_ITERATOR_TRAITS_H_

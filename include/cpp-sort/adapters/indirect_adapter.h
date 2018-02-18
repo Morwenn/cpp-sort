@@ -64,14 +64,15 @@ namespace cppsort
             {
                 using utility::iter_move;
 
+                if (first == last || std::next(first) == last) return;
+
                 ////////////////////////////////////////////////////////////
                 // Indirectly sort the iterators
 
                 // Copy the iterators in a vector
                 std::vector<RandomAccessIterator> iterators;
                 iterators.reserve(std::distance(first, last));
-                for (RandomAccessIterator it = first ; it != last ; ++it)
-                {
+                for (RandomAccessIterator it = first ; it != last ; ++it) {
                     iterators.push_back(it);
                 }
 
@@ -82,15 +83,12 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Move the values according the iterator's positions
 
-                if (first == last) return;
-
                 std::vector<bool> sorted(std::distance(first, last), false);
 
                 // Element where the current cycle starts
                 RandomAccessIterator start = first;
 
-                while (start != last)
-                {
+                do {
                     // Find the element to put in current's place
                     RandomAccessIterator current = start;
                     auto next_pos = std::distance(first, current);
@@ -98,11 +96,9 @@ namespace cppsort
                     sorted[next_pos] = true;
 
                     // Process the current cycle
-                    if (next != current)
-                    {
+                    if (next != current) {
                         auto tmp = iter_move(current);
-                        while (next != start)
-                        {
+                        while (next != start) {
                             *current = iter_move(next);
                             current = next;
                             auto next_pos = std::distance(first, next);
@@ -113,12 +109,11 @@ namespace cppsort
                     }
 
                     // Find the next cycle
-                    do
-                    {
+                    do {
                         ++start;
-                    }
-                    while (start != last && sorted[start - first]);
-                }
+                    } while (start != last && sorted[start - first]);
+
+                } while (start != last);
             }
 
             ////////////////////////////////////////////////////////////

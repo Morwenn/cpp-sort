@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <cpp-sort/probes/ham.h>
 #include <cpp-sort/probes/inv.h>
 #include <cpp-sort/probes/max.h>
+#include <cpp-sort/probes/mono.h>
 #include <cpp-sort/probes/osc.h>
 #include <cpp-sort/probes/par.h>
 #include <cpp-sort/probes/rem.h>

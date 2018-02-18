@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,17 @@
 #include <list>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include "checkers.h"
 
 namespace cppsort
 {
     template<typename Sorter>
     struct stable_adapter<self_sort_adapter<Sorter>>:
-        detail::check_iterator_category<Sorter>
+        detail::check_iterator_category<Sorter>,
+        sorter_facade_fptr<stable_adapter<self_sort_adapter<Sorter>>>
     {
         ////////////////////////////////////////////////////////////
         // Generic cases
@@ -46,10 +50,10 @@ namespace cppsort
         auto operator()(Iterable&& iterable, Args&&... args) const
             -> std::enable_if_t<
                 detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...))
+                decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
             >
         {
-            return std::forward<Iterable>(iterable).stable_sort(std::forward<Args>(args)...);
+            return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
         }
 
         template<typename Iterable, typename... Args>
@@ -88,7 +92,7 @@ namespace cppsort
         auto operator()(std::forward_list<T>& iterable, Compare compare) const
             -> void
         {
-            return iterable.sort(std::move(compare));
+            return iterable.sort(utility::as_function(compare));
         }
 
         template<typename T>
@@ -106,7 +110,7 @@ namespace cppsort
         auto operator()(std::list<T>& iterable, Compare compare) const
             -> void
         {
-            return iterable.sort(std::move(compare));
+            return iterable.sort(utility::as_function(compare));
         }
 
         ////////////////////////////////////////////////////////////

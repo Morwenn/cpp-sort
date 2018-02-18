@@ -31,6 +31,7 @@
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
+#include "../detail/remove_cvref.h"
 
 namespace cppsort
 {
@@ -81,7 +82,7 @@ namespace detail
             return *this;
         }
 
-        auto operator=(associated_value<std::decay_t<decltype(*it)>, Data>&& other)
+        auto operator=(associated_value<remove_cvref_t<decltype(*it)>, Data>&& other)
             -> association&
         {
             *it = std::move(other.value);
@@ -286,8 +287,8 @@ namespace detail
     template<typename Iterator>
     auto iter_move(associate_iterator<Iterator> it)
         -> associated_value<
-            std::decay_t<decltype(*(it->it))>,
-            std::decay_t<decltype(it->data)>
+            remove_cvref_t<decltype(*(it->it))>,
+            remove_cvref_t<decltype(it->data)>
         >
     {
         return {

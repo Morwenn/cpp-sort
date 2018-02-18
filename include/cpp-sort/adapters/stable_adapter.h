@@ -174,7 +174,8 @@ namespace cppsort
     // Actual sorter
     template<typename Sorter>
     struct stable_adapter:
-        detail::check_iterator_category<Sorter>
+        detail::check_iterator_category<Sorter>,
+        sorter_facade_fptr<stable_adapter<Sorter>>
     {
         stable_adapter() = default;
 

@@ -38,6 +38,7 @@
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "memory.h"
+#include "remove_cvref.h"
 
 namespace cppsort
 {
@@ -46,7 +47,7 @@ namespace detail
     // std::unique_ptr to handle memory allocated with
     // std::get_temporary_buffer
     template<typename T>
-    using buffer_ptr = std::unique_ptr<std::decay_t<T>[], temporary_buffer_deleter>;
+    using buffer_ptr = std::unique_ptr<remove_cvref_t<T>[], temporary_buffer_deleter>;
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort_impl(ForwardIterator first, difference_type_t<ForwardIterator> size,
@@ -92,7 +93,7 @@ namespace detail
 
         // Try to increase the memory buffer if it not big enough
         if (buff_size < size - (size / 2)) {
-            using rvalue_reference = std::decay_t<rvalue_reference_t<ForwardIterator>>;
+            using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
             auto new_buffer = std::get_temporary_buffer<rvalue_reference>(size - (size / 2));
             buffer.reset(new_buffer.first);
             buff_size = new_buffer.second;
@@ -151,7 +152,7 @@ namespace detail
 
         // Try to increase the memory buffer if it not big enough
         if (buff_size < size_left) {
-            using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
+            using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
             auto new_buffer = std::get_temporary_buffer<rvalue_reference>(size_left);
             buffer.reset(new_buffer.first);
             buff_size = new_buffer.second;

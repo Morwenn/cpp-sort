@@ -34,9 +34,11 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include "../remove_cvref.h"
 #include "../std_list_traits.h"
 #include "../upper_bound.h"
 
@@ -113,7 +115,8 @@ namespace cppsort
 
     template<>
     struct container_aware_adapter<insertion_sorter>:
-        detail::container_aware_adapter_base<insertion_sorter>
+        detail::container_aware_adapter_base<insertion_sorter>,
+        sorter_facade_fptr<container_aware_adapter<insertion_sorter>>
     {
         container_aware_adapter() = default;
         constexpr container_aware_adapter(insertion_sorter) noexcept {}
@@ -207,15 +210,17 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Generic overload
 
-        template<typename First, typename... Args,
-                 typename = std::enable_if_t<
-                     not detail::is_std_list<std::decay_t<First>>::value &&
-                     not detail::is_std_forward_list<std::decay_t<First>>::value
-                >>
+        template<
+            typename First, typename... Args,
+            typename = std::enable_if_t<
+                not detail::is_std_list<detail::remove_cvref_t<First>>::value &&
+                not detail::is_std_forward_list<detail::remove_cvref_t<First>>::value
+            >
+        >
         auto operator()(First&& first, Args&&... args) const
             -> decltype(detail::container_aware_adapter_base<insertion_sorter>::operator()(
                    std::forward<First>(first), std::forward<Args>(args)...
-               ))
+            ))
         {
             return detail::container_aware_adapter_base<insertion_sorter>::operator()(
                 std::forward<First>(first), std::forward<Args>(args)...

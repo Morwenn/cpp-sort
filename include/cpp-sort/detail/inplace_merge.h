@@ -45,6 +45,7 @@
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "memory.h"
+#include "remove_cvref.h"
 #include "rotate.h"
 #include "upper_bound.h"
 
@@ -155,7 +156,7 @@ namespace detail
                             Compare compare, Projection projection)
         -> void
     {
-        using rvalue_reference = std::decay_t<rvalue_reference_t<ForwardIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
         using difference_type = difference_type_t<ForwardIterator>;
 
         if (n0 == 0 || n1 == 0) return;
@@ -214,7 +215,7 @@ namespace detail
                        std::forward_iterator_tag)
         -> void
     {
-        using rvalue_reference = std::decay_t<rvalue_reference_t<ForwardIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
         auto&& comp = as_function(compare);
         auto&& proj = as_function(projection);
 
@@ -276,7 +277,7 @@ namespace detail
         -> void
     {
         using utility::iter_move;
-        using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
         destruct_n<rvalue_reference> d(0);
         std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buff, d);
         if (len1 <= len2) {
@@ -398,7 +399,7 @@ namespace detail
                        BidirectionalIterator last, Compare compare, Projection projection)
         -> void
     {
-        using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
         using difference_type = difference_type_t<BidirectionalIterator>;
         difference_type len1 = std::distance(first, middle);
         difference_type len2 = std::distance(middle, last);

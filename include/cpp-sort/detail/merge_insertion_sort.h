@@ -41,6 +41,7 @@
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
+#include "remove_cvref.h"
 #include "swap_if.h"
 #include "swap_ranges.h"
 
@@ -443,7 +444,7 @@ namespace detail
         // Number of sub-iterators
         auto full_size = size * first.size();
 
-        using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
         std::unique_ptr<rvalue_reference, operator_deleter> cache(
             static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference)))
         );

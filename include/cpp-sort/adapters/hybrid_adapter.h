@@ -46,11 +46,11 @@ namespace cppsort
 
         template<std::size_t Value>
         struct choice:
-            choice<Value + 1>
+            choice<Value - 1>
         {};
 
         template<>
-        struct choice<127> {};
+        struct choice<0> {};
 
         ////////////////////////////////////////////////////////////
         // Associate a priority to iterator categories, there is
@@ -60,19 +60,24 @@ namespace cppsort
         std::size_t iterator_category_value;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 0;
+        constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 3;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 1;
+        constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 2;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 2;
+        constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 1;
 
         template<>
-        constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 3;
+        constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 0;
 
-        // Number of acceptable iterator categories
-        static constexpr std::size_t categories_number = 4;
+        // Avoid just a bit of redundancy
+        template<typename Iterator, std::size_t N>
+        using choice_for_it = choice<
+            (iterator_category_value<
+                iterator_category_t<Iterator>
+            > + 1) * N - 1
+        >;
 
         ////////////////////////////////////////////////////////////
         // Import every operator() in one class
@@ -82,10 +87,10 @@ namespace cppsort
             Head, sorters_merger<Tail...>
         {
             using Head::operator();
-            using Head::detail_stability;
+            using Head::_detail_stability;
 
             using sorters_merger<Tail...>::operator();
-            using sorters_merger<Tail...>::detail_stability;
+            using sorters_merger<Tail...>::_detail_stability;
         };
 
         template<typename Head>
@@ -93,7 +98,7 @@ namespace cppsort
             Head
         {
             using Head::operator();
-            using Head::detail_stability;
+            using Head::_detail_stability;
         };
 
         ////////////////////////////////////////////////////////////
@@ -112,134 +117,102 @@ namespace cppsort
             }
 
             template<typename... Args>
-            static auto detail_stability(choice<Ind>, Args&&... args)
+            static auto _detail_stability(choice<Ind>, Args&&... args)
                 -> std::enable_if_t<
-                    detail::is_callable_v<Sorter(Args...)>,
-                    cppsort::is_stable<Sorter(Args...)>
-                >
-            {
-                return {};
-            }
-        };
-
-        ////////////////////////////////////////////////////////////
-        // Adapter
-
-        template<typename... Sorters>
-        class hybrid_adapter_impl:
-            public check_iterator_category<Sorters...>,
-            public check_is_always_stable<Sorters...>
-        {
-            private:
-
-                // Associate and index to every sorter depending on
-                // its position in the parameter pack
-                template<typename>
-                struct dispatch_sorter_impl;
-
-                template<std::size_t... Indices>
-                struct dispatch_sorter_impl<std::index_sequence<Indices...>>
-                {
-                    using type = sorters_merger<
-                        selection_wrapper<
-                            Sorters,
-                            Indices + iterator_category_value<iterator_category<Sorters>>
-                                    * categories_number
-                        >...
-                    >;
-                };
-
-                // Dispatch-enabled sorter
-                using dispatch_sorter = typename dispatch_sorter_impl<
-                    std::make_index_sequence<sizeof...(Sorters)>
-                >::type;
-
-            public:
-
-                template<typename Iterable, typename... Args>
-                auto operator()(Iterable&& iterable, Args&&... args) const
-                    -> decltype(dispatch_sorter{}(
-                        choice<
-                            iterator_category_value<
-                                iterator_category_t<decltype(std::begin(iterable))>
-                            > * categories_number
-                        >{},
-                        std::forward<Iterable>(iterable),
-                        std::forward<Args>(args)...
-                    ))
-                {
-                    // Iterator category of the iterable to sort
-                    using category = iterator_category_t<decltype(std::begin(iterable))>;
-
-                    // Call the appropriate operator()
-                    return dispatch_sorter{}(
-                        choice<iterator_category_value<category> * categories_number>{},
-                        iterable, std::forward<Args>(args)...
-                    );
-                }
-
-                template<typename Iterator, typename... Args>
-                auto operator()(Iterator first, Iterator last, Args&&... args) const
-                    -> decltype(dispatch_sorter{}(
-                            choice<
-                                iterator_category_value<
-                                    iterator_category_t<Iterator>
-                                > * categories_number
-                            >{},
-                            std::move(first), std::move(last),
-                            std::forward<Args>(args)...
-                    ))
-                {
-                    // Iterator category of the iterable to sort
-                    using category = iterator_category_t<Iterator>;
-
-                    // Call the appropriate operator()
-                    return dispatch_sorter{}(
-                        choice<iterator_category_value<category> * categories_number>{},
-                        std::move(first), std::move(last), std::forward<Args>(args)...
-                    );
-                }
-
-                template<typename Iterable, typename... Args>
-                static auto detail_stability(Iterable&& iterable, Args&&... args)
-                    -> decltype(dispatch_sorter::detail_stability(
-                        choice<
-                            iterator_category_value<
-                                iterator_category_t<decltype(std::begin(iterable))>
-                            > * categories_number
-                        >{},
-                        std::forward<Iterable>(iterable),
-                        std::forward<Args>(args)...
-                    ))
-                {
-                    return {};
-                }
-
-                template<typename Iterator, typename... Args>
-                static auto detail_stability(Iterator first, Iterator last, Args&&... args)
-                    -> decltype(dispatch_sorter::detail_stability(
-                            choice<
-                                iterator_category_value<
-                                    iterator_category_t<Iterator>
-                                > * categories_number
-                            >{},
-                            std::move(first), std::move(last),
-                            std::forward<Args>(args)...
-                    ))
-                {
-                    return {};
-                }
+                    is_callable_v<Sorter(Args...)>,
+                    is_stable<Sorter(Args...)>
+                >;
         };
     }
 
-    template<typename... Sorters>
-    struct hybrid_adapter:
-        sorter_facade<detail::hybrid_adapter_impl<Sorters...>>
-    {
-        hybrid_adapter() = default;
+    ////////////////////////////////////////////////////////////
+    // Adapter
 
-        // Automatic deduction guide
-        constexpr hybrid_adapter(Sorters...) noexcept {};
+    template<typename... Sorters>
+    class hybrid_adapter:
+        public detail::check_iterator_category<Sorters...>,
+        public detail::check_is_always_stable<Sorters...>,
+        public sorter_facade_fptr<hybrid_adapter<Sorters...>>
+    {
+        public:
+
+            hybrid_adapter() = default;
+
+            // Automatic deduction guide
+            constexpr hybrid_adapter(Sorters...) noexcept {};
+
+        private:
+
+            // Associate and index to every sorter depending on
+            // its position in the parameter pack
+            template<typename>
+            struct dispatch_sorter_impl;
+
+            template<std::size_t... Indices>
+            struct dispatch_sorter_impl<std::index_sequence<Indices...>>
+            {
+                using type = detail::sorters_merger<
+                    detail::selection_wrapper<
+                        Sorters,
+                        sizeof...(Sorters) * detail::iterator_category_value<iterator_category<Sorters>>
+                        + sizeof...(Indices) - Indices - 1
+
+                    >...
+                >;
+            };
+
+            // Dispatch-enabled sorter
+            using dispatch_sorter = typename dispatch_sorter_impl<
+                std::make_index_sequence<sizeof...(Sorters)>
+            >::type;
+
+        public:
+
+            template<typename Iterable, typename... Args>
+            auto operator()(Iterable&& iterable, Args&&... args) const
+                -> decltype(dispatch_sorter{}(
+                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                    std::forward<Iterable>(iterable),
+                    std::forward<Args>(args)...
+                ))
+            {
+                // Call the appropriate operator()
+                return dispatch_sorter{}(
+                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                    std::forward<Iterable>(iterable), std::forward<Args>(args)...
+                );
+            }
+
+            template<typename Iterator, typename... Args>
+            auto operator()(Iterator first, Iterator last, Args&&... args) const
+                -> decltype(dispatch_sorter{}(
+                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                        std::move(first), std::move(last),
+                        std::forward<Args>(args)...
+                ))
+            {
+                // Call the appropriate operator()
+                return dispatch_sorter{}(
+                    detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                    std::move(first), std::move(last), std::forward<Args>(args)...
+                );
+            }
+
+            template<typename Iterable, typename... Args>
+            static auto _detail_stability(Iterable&& iterable, Args&&... args)
+                -> decltype(dispatch_sorter::_detail_stability(
+                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                    std::forward<Iterable>(iterable),
+                    std::forward<Args>(args)...
+                ));
+
+            template<typename Iterator, typename... Args>
+            static auto _detail_stability(Iterator first, Iterator last, Args&&... args)
+                -> decltype(dispatch_sorter::_detail_stability(
+                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                        std::move(first), std::move(last),
+                        std::forward<Args>(args)...
+                ));
     };
 
     ////////////////////////////////////////////////////////////
@@ -247,7 +220,7 @@ namespace cppsort
 
     template<typename... Sorters, typename... Args>
     struct is_stable<hybrid_adapter<Sorters...>(Args...)>:
-        decltype(hybrid_adapter<Sorters...>::detail_stability(std::declval<Args&>()...))
+        decltype(hybrid_adapter<Sorters...>::_detail_stability(std::declval<Args&>()...))
     {};
 }
 

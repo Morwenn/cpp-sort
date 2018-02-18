@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,8 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     auto exc    = cppsort::probe::exc(sequence);
     auto ham    = cppsort::probe::ham(sequence);
     auto inv    = cppsort::probe::inv(sequence);
+    auto max    = cppsort::probe::max(sequence);
+    auto mono   = cppsort::probe::mono(sequence);
     auto par    = cppsort::probe::par(sequence);
     auto rem    = cppsort::probe::rem(sequence);
     auto runs   = cppsort::probe::runs(sequence);
@@ -53,11 +55,19 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // A framework for adaptative sorting
     // by Ola Petersson and Alistair Moffat
     CHECK( runs <= rem + 1 );
+
     CHECK( exc + 1 <= ham );
     CHECK( ham <= 2 * exc );
+
+    CHECK( max <= par );
+    CHECK( par <= 2 * max );
 
     // A New Measure of Presortedness
     // by Vladimir Estivill-Castro and Derick Wood
     CHECK( par <= inv );
     CHECK( rem <= sequence.size() * (1 - 1 / (par + 1)) );
+
+    // Intuitive result: a descending run can be seen as several
+    // ascending runs
+    CHECK( mono <= runs );
 }

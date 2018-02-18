@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_PROBES_RUNS_H_
-#define CPPSORT_PROBES_RUNS_H_
+#ifndef CPPSORT_PROBES_MONO_H_
+#define CPPSORT_PROBES_MONO_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -43,7 +43,7 @@ namespace probe
 {
     namespace detail
     {
-        struct runs_impl
+        struct mono_impl
         {
             template<
                 typename ForwardIterator,
@@ -68,16 +68,50 @@ namespace probe
                 auto current = first;
                 auto next = std::next(first);
 
+                // The result of mono is the number of ascending runs founds +
+                // the number of descending runs founds minus one (that minus
+                // one is needed to make mono a proper measure of presortedness,
+                // returning 0 when the collection is sorted), so the whole
+                // algorithm is designed in a way that it will be "late by one"
+                // on the count of runs
                 difference_type count = 0;
-                while (true) {
-                    while (next != last && not comp(proj(*next), proj(*current))) {
-                        ++current;
-                        ++next;
+
+                while (next != last) {
+
+                    if (compare(proj(*current), proj(*next))) {
+                        // Look for an ascending run
+                        do {
+                            current = next;
+                            ++next;
+                            if (next == last) {
+                                return count;
+                            }
+                        } while(not compare(proj(*next), proj(*current)));
+                        ++count;
+
+                    } else if (compare(proj(*next), proj(*current))) {
+                        // Look for a descending run
+                        do {
+                            current = next;
+                            ++next;
+                            if (next == last) {
+                                return count;
+                            }
+                        } while(not compare(proj(*current), proj(*next)));
+                        ++count;
                     }
 
-                    if (next == last) break;
-                    ++count;
-                    ++current;
+                    //
+                    // When we have reached the end of an ascending or descending run,
+                    // we need to increase the current and next iterators in order to
+                    // reach the next pair to compute
+                    //
+                    // We also try to avoid being biased towards either ascending or
+                    // descending runs: when two values compare equivalent, increment the
+                    // iterators and wait until two elements compare unequal or until the
+                    // end of the collection has been reached
+                    //
+                    current = next;
                     ++next;
                 }
                 return count;
@@ -87,10 +121,10 @@ namespace probe
 
     namespace
     {
-        constexpr auto&& runs = utility::static_const<
-            sorter_facade<detail::runs_impl>
+        constexpr auto&& mono = utility::static_const<
+            sorter_facade<detail::mono_impl>
         >::value;
     }
 }}
 
-#endif // CPPSORT_PROBES_RUNS_H_
+#endif // CPPSORT_PROBES_MONO_H_

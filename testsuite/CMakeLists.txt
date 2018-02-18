@@ -10,8 +10,10 @@ set(
     adapters/container_aware_adapter_forward_list.cpp
     adapters/container_aware_adapter_list.cpp
     adapters/counting_adapter.cpp
+    adapters/every_adapter_fptr.cpp
     adapters/every_adapter_internal_compare.cpp
     adapters/hybrid_adapter_is_stable.cpp
+    adapters/hybrid_adapter_many_sorters.cpp
     adapters/hybrid_adapter_partial_compare.cpp
     adapters/hybrid_adapter_sfinae.cpp
     adapters/indirect_adapter.cpp
@@ -62,6 +64,7 @@ set(
     probes/ham.cpp
     probes/inv.cpp
     probes/max.cpp
+    probes/mono.cpp
     probes/osc.cpp
     probes/par.cpp
     probes/rem.cpp
@@ -126,8 +129,15 @@ add_dependencies(cpp-sort-testsuite catch)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
+if (ENABLE_COVERAGE)
+    find_package(codecov)
+    add_coverage(cpp-sort-testsuite)
+    list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
+    coverage_evaluate()
+endif()
+
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-if (${USE_VALGRIND})
+if (USE_VALGRIND)
     add_test(NAME testsuite COMMAND valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
 else()
     add_test(NAME testsuite COMMAND $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})

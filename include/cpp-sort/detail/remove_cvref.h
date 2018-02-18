@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,20 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_H_
-#define CPPSORT_ADAPTERS_H_
+#ifndef CPPSORT_DETAIL_REMOVE_CVREF_H_
+#define CPPSORT_DETAIL_REMOVE_CVREF_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/adapters/container_aware_adapter.h>
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/indirect_adapter.h>
-#include <cpp-sort/adapters/schwartz_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/adapters/stable_adapter.h>
-#include <cpp-sort/adapters/verge_adapter.h>
+#include <type_traits>
 
-#endif // CPPSORT_ADAPTERS_H_
+namespace cppsort
+{
+namespace detail
+{
+    template<typename T>
+    struct remove_cvref
+    {
+        using type = std::remove_cv_t<std::remove_reference_t<T>>;
+    };
+
+    template<typename T>
+    using remove_cvref_t = typename remove_cvref<T>::type;
+}}
+
+#endif // CPPSORT_DETAIL_REMOVE_CVREF_H_

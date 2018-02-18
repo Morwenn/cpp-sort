@@ -1,6 +1,7 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.0.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.1.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+[![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
 > regardless of application or the computer being used. But in fact, each method has its own

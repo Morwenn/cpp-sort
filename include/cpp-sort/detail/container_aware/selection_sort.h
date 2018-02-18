@@ -34,6 +34,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
@@ -95,7 +96,8 @@ namespace cppsort
 
     template<>
     struct container_aware_adapter<selection_sorter>:
-        detail::container_aware_adapter_base<selection_sorter>
+        detail::container_aware_adapter_base<selection_sorter>,
+        sorter_facade_fptr<container_aware_adapter<selection_sorter>>
     {
         using detail::container_aware_adapter_base<selection_sorter>::operator();
 

@@ -2,7 +2,7 @@
  * Grail sorting
  *
  * (c) 2013 by Andrey Astrelin
- * Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
  *
  * Stable sorting that works in O(N*log(N)) worst time
  * and uses O(1) extra memory
@@ -25,6 +25,7 @@
 #include "lower_bound.h"
 #include "merge_move.h"
 #include "move.h"
+#include "remove_cvref.h"
 #include "rotate.h"
 #include "swap_ranges.h"
 #include "three_way_compare.h"
@@ -693,7 +694,7 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
-        using rvalue_reference = std::decay_t<rvalue_reference_t<RandomAccessIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
 
         // Allocate temporary buffer
         auto size = std::distance(first, last);

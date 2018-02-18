@@ -4,7 +4,7 @@
     A C++ reimplementation of a drop-merge sort, originally made by Emil Ernerfeldt:
     https://github.com/emilk/drop-merge-sort
 
-    Modified in 2017 by Morwenn for inclusion into cpp-sort
+    Modified in 2017-2018 by Morwenn for inclusion into cpp-sort
 
     There are two versions of this function.
 
@@ -32,6 +32,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "pdqsort.h"
+#include "remove_cvref.h"
 
 namespace cppsort
 {
@@ -131,7 +132,7 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         using difference_type = difference_type_t<BidirectionalIterator>;
-        using rvalue_reference = std::decay_t<rvalue_reference_t<BidirectionalIterator>>;
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
         std::vector<rvalue_reference> dropped;
 
         difference_type num_dropped_in_row = 0;

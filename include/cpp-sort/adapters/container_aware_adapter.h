@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sort.h>
+#include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/is_callable.h"
 #include "../detail/logical_traits.h"
@@ -353,7 +354,8 @@ namespace cppsort
 
     template<typename Sorter>
     struct container_aware_adapter:
-        detail::container_aware_adapter_base<Sorter>
+        detail::container_aware_adapter_base<Sorter>,
+        sorter_facade_fptr<container_aware_adapter<Sorter>>
     {
         container_aware_adapter() = default;
 
