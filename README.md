@@ -51,7 +51,6 @@ Here is a more complete example of what can be done with the library:
 #include <iterator>
 #include <vector>
 #include <cpp-sort/adapters.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 
 int main()
