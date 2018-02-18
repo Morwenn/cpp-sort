@@ -107,6 +107,18 @@ TEST_CASE( "function pointer test for every adapter",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
     }
 
+    SECTION( "schwartz_adapter<small_array_adapter>" )
+    {
+        using sorter = cppsort::schwartz_adapter<
+            cppsort::small_array_adapter<cppsort::low_comparisons_sorter>
+        >;
+        void(*sort_it)(std::array<int, 6>&, std::greater<>) = sorter{};
+
+        std::array<int, 6> arr = {{ 4, 3, 2, 5, 6, 1 }};
+        sort_it(arr, std::greater<>{});
+        CHECK( std::is_sorted(std::begin(arr), std::end(arr), std::greater<>{}) );
+    }
+
     SECTION( "self_sort_adapter" )
     {
         using sorter = cppsort::self_sort_adapter<
