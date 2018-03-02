@@ -149,10 +149,10 @@ namespace cppsort
 
     template<typename Sorter, typename... Args>
     struct is_stable<self_sort_adapter<Sorter>(Args...)>:
-        std::conditional_t<
+        detail::conditional_t<
             detail::has_sort_method<Args...>,
             std::false_type,
-            std::conditional_t<
+            detail::conditional_t<
                 detail::has_stable_sort_method<Args...>,
                 std::true_type,
                 is_stable<Sorter(Args...)>
@@ -167,7 +167,7 @@ namespace cppsort
 
     template<typename Sorter, typename T, typename Function>
     struct is_stable<self_sort_adapter<Sorter>(std::forward_list<T>&, Function)>:
-        std::conditional_t<
+        detail::conditional_t<
             is_projection_v<Function, std::forward_list<T>&>,
             is_stable<Sorter(std::forward_list<T>&, Function)>,
             std::true_type
@@ -181,7 +181,7 @@ namespace cppsort
 
     template<typename Sorter, typename T, typename Function>
     struct is_stable<self_sort_adapter<Sorter>(std::list<T>&, Function)>:
-        std::conditional_t<
+        detail::conditional_t<
             is_projection_v<Function, std::list<T>&>,
             is_stable<Sorter(std::list<T>&, Function)>,
             std::true_type

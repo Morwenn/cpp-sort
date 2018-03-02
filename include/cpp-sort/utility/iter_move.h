@@ -42,7 +42,7 @@ namespace utility
     namespace detail
     {
         template<typename Iterator>
-        using iter_move_t = std::conditional_t<
+        using iter_move_t = cppsort::detail::conditional_t<
             std::is_reference<typename std::iterator_traits<Iterator>::reference>::value,
             std::remove_reference_t<typename std::iterator_traits<Iterator>::reference>&&,
             std::decay_t<typename std::iterator_traits<Iterator>::reference>

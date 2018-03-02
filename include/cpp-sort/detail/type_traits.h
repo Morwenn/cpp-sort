@@ -34,6 +34,26 @@ namespace cppsort
 namespace detail
 {
     ////////////////////////////////////////////////////////////
+    // Alternative to std::conditional from C++11
+
+    template<bool>
+    struct conditional
+    {
+        template<typename T, typename U>
+        using type = T;
+    };
+
+    template<>
+    struct conditional<false>
+    {
+        template<typename T, typename U>
+        using type = U;
+    };
+
+    template<bool B, typename T, typename U>
+    using conditional_t = typename conditional<B>::template type<T, U>;
+
+    ////////////////////////////////////////////////////////////
     // std::void_t from C++17
 
     template<typename...>
@@ -134,7 +154,7 @@ namespace detail
 
     template<typename Head, typename... Tail>
     struct conjunction<Head, Tail...>:
-        std::conditional_t<Head::value != false, conjunction<Tail...>, Head>
+        conditional_t<Head::value != false, conjunction<Tail...>, Head>
     {};
 
     ////////////////////////////////////////////////////////////
@@ -152,7 +172,7 @@ namespace detail
 
     template<typename Head, typename... Tail>
     struct disjunction<Head, Tail...>:
-        std::conditional_t<Head::value != false, Head, disjunction<Tail...>>
+        conditional_t<Head::value != false, Head, disjunction<Tail...>>
     {};
 
     ////////////////////////////////////////////////////////////

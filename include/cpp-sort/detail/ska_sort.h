@@ -370,7 +370,7 @@ namespace detail
             return Current::sub_key(value.second, sort_data);
         }
 
-        using next = std::conditional_t<
+        using next = conditional_t<
             std::is_same<SubKey<void>, typename Current::next>::value,
             SubKey<void>,
             PairSecondSubKey<F, S, typename Current::next>
@@ -387,7 +387,7 @@ namespace detail
             return Current::sub_key(value.first, sort_data);
         }
 
-        using next = std::conditional_t<
+        using next = conditional_t<
             std::is_same<SubKey<void>, typename Current::next>::value,
             PairSecondSubKey<F, S, SubKey<S>>,
             PairFirstSubKey<F, S, typename Current::next>

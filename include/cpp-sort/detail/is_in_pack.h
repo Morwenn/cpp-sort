@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <type_traits>
+#include "type_traits.h"
 
 namespace cppsort
 {
@@ -43,7 +44,7 @@ namespace detail
         std::size_t... Tail
     >
     struct is_in_pack_impl<Value, Head, Tail...>:
-        std::conditional_t<
+        conditional_t<
             Value == Head,
             std::true_type,
             is_in_pack_impl<Value, Tail...>
