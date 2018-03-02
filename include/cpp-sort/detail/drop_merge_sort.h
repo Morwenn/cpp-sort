@@ -32,7 +32,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "pdqsort.h"
-#include "remove_cvref.h"
+#include "type_traits.h"
 
 namespace cppsort
 {

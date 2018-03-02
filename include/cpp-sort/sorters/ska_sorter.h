@@ -36,8 +36,8 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
-#include "../detail/remove_cvref.h"
 #include "../detail/ska_sort.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {

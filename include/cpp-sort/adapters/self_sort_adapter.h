@@ -35,7 +35,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/checkers.h"
-#include "../detail/detection.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {

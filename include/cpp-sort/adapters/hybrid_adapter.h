@@ -34,7 +34,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/checkers.h"
-#include "../detail/is_callable.h"
 #include "../detail/iterator_traits.h"
 
 namespace cppsort
@@ -119,7 +118,7 @@ namespace cppsort
             template<typename... Args>
             static auto _detail_stability(choice<Ind>, Args&&... args)
                 -> std::enable_if_t<
-                    is_callable_v<Sorter(Args...)>,
+                    is_invocable_v<Sorter(Args...)>,
                     is_stable<Sorter(Args...)>
                 >;
         };

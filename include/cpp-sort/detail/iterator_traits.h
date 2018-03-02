@@ -31,7 +31,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
-#include "remove_cvref.h"
+#include "type_traits.h"
 
 namespace cppsort
 {

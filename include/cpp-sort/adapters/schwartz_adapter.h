@@ -39,7 +39,7 @@
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
 #include "../detail/memory.h"
-#include "../detail/remove_cvref.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {

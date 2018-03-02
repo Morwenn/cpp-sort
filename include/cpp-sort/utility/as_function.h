@@ -20,7 +20,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/remove_cvref.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {

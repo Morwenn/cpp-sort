@@ -33,8 +33,8 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include "../detail/detection.h"
 #include "../detail/is_in_pack.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {

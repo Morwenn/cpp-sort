@@ -46,9 +46,10 @@
 #include "lower_bound.h"
 #include "memory.h"
 #include "move.h"
-#include "remove_cvref.h"
 #include "reverse.h"
 #include "three_way_compare.h"
+#include "type_traits.h"
+
 #include "upper_bound.h"
 
 namespace cppsort

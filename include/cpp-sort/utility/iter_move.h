@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include "../detail/detection.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
