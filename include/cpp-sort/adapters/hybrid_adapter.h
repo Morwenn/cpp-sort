@@ -128,7 +128,7 @@ namespace cppsort
     // Adapter
 
     template<typename... Sorters>
-    class hybrid_adapter:
+    struct hybrid_adapter:
         public detail::check_iterator_category<Sorters...>,
         public detail::check_is_always_stable<Sorters...>,
         public sorter_facade_fptr<hybrid_adapter<Sorters...>>
