@@ -119,7 +119,7 @@ namespace cppsort
         sorter_facade_fptr<container_aware_adapter<insertion_sorter>>
     {
         container_aware_adapter() = default;
-        constexpr container_aware_adapter(insertion_sorter) noexcept {}
+        constexpr explicit container_aware_adapter(insertion_sorter) noexcept {}
 
         ////////////////////////////////////////////////////////////
         // std::list

@@ -168,7 +168,7 @@ namespace cppsort
         make_stable() = default;
 
         // Automatic deduction guide
-        constexpr make_stable(Sorter) noexcept {};
+        constexpr explicit make_stable(Sorter) noexcept {}
     };
 
     // Actual sorter
@@ -180,7 +180,7 @@ namespace cppsort
         stable_adapter() = default;
 
         // Automatic deduction guide
-        constexpr stable_adapter(Sorter) noexcept {}
+        constexpr explicit stable_adapter(Sorter) noexcept {}
 
 
         template<

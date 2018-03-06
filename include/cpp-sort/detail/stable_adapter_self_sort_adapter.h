@@ -49,7 +49,7 @@ namespace cppsort
         stable_adapter() = default;
 
         // Automatic deduction guide
-        constexpr stable_adapter(self_sort_adapter<Sorter>) noexcept {}
+        constexpr explicit stable_adapter(self_sort_adapter<Sorter>) noexcept {}
 
         ////////////////////////////////////////////////////////////
         // Generic cases

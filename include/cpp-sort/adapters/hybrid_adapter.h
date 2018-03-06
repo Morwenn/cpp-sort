@@ -138,7 +138,7 @@ namespace cppsort
             hybrid_adapter() = default;
 
             // Automatic deduction guide
-            constexpr hybrid_adapter(Sorters...) noexcept {};
+            constexpr explicit hybrid_adapter(Sorters...) noexcept {}
 
         private:
 

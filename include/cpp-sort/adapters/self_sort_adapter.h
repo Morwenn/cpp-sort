@@ -87,7 +87,7 @@ namespace cppsort
         self_sort_adapter() = default;
 
         // Automatic deduction guide
-        constexpr self_sort_adapter(Sorter) noexcept {};
+        constexpr explicit self_sort_adapter(Sorter) noexcept {}
 
         ////////////////////////////////////////////////////////////
         // Function call operator
