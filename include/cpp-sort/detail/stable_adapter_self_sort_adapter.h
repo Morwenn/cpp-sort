@@ -44,6 +44,14 @@ namespace cppsort
         sorter_facade_fptr<stable_adapter<self_sort_adapter<Sorter>>>
     {
         ////////////////////////////////////////////////////////////
+        // Construction
+
+        stable_adapter() = default;
+
+        // Automatic deduction guide
+        constexpr stable_adapter(self_sort_adapter<Sorter>) noexcept {}
+
+        ////////////////////////////////////////////////////////////
         // Generic cases
 
         template<typename Iterable, typename... Args>
