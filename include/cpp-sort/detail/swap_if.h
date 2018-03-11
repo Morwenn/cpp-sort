@@ -58,13 +58,14 @@ namespace detail
 
     template<typename T>
     auto swap_if(T& lhs, T& rhs)
+        noexcept(noexcept(swap_if(lhs, rhs, std::less<>{}, utility::identity{})))
         -> void
     {
         swap_if(lhs, rhs, std::less<>{}, utility::identity{});
     }
 
     template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::less<>, utility::identity)
+    auto swap_if(Integer& x, Integer& y, std::less<>, utility::identity) noexcept
         -> std::enable_if_t<std::is_integral<Integer>::value>
     {
         Integer dx = x;
@@ -73,7 +74,7 @@ namespace detail
     }
 
     template<typename Float>
-    auto swap_if(Float& x, Float& y, std::less<>, utility::identity)
+    auto swap_if(Float& x, Float& y, std::less<>, utility::identity) noexcept
         -> std::enable_if_t<std::is_floating_point<Float>::value>
     {
         Float dx = x;
@@ -82,7 +83,7 @@ namespace detail
     }
 
     template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::greater<>, utility::identity)
+    auto swap_if(Integer& x, Integer& y, std::greater<>, utility::identity) noexcept
         -> std::enable_if_t<std::is_integral<Integer>::value>
     {
         Integer dx = x;
@@ -91,7 +92,7 @@ namespace detail
     }
 
     template<typename Float>
-    auto swap_if(Float& x, Float& y, std::greater<>, utility::identity)
+    auto swap_if(Float& x, Float& y, std::greater<>, utility::identity) noexcept
         -> std::enable_if_t<std::is_floating_point<Float>::value>
     {
         Float dx = x;
@@ -134,6 +135,7 @@ namespace detail
         typename = void // dummy parameter for ODR
     >
     auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
+        noexcept(noexcept(swap_if(*lhs, *rhs, std::move(compare), std::move(projection))))
         -> void
     {
         // Take advantage of the swap_if optimizations
