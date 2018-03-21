@@ -118,7 +118,7 @@ namespace cppsort
             template<typename... Args>
             static auto _detail_stability(choice<Ind>, Args&&... args)
                 -> std::enable_if_t<
-                    is_invocable_v<Sorter(Args...)>,
+                    is_invocable_v<Sorter, Args...>,
                     is_stable<Sorter(Args...)>
                 >;
         };

@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstddef>
 #include <type_traits>
 
 namespace cppsort
@@ -122,6 +123,9 @@ namespace detail
         std::result_of<Func(Args...)>
     {};
 
+    template<typename T, std::size_t N, typename... Args>
+    struct invoke_result<T[N], Args...> {};
+
     template<typename Func, typename... Args>
     using invoke_result_t = typename invoke_result<Func, Args...>::type;
 
@@ -130,36 +134,59 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // std::is_invocable from C++17
 
-    template<typename T, typename Ret=void, typename=void>
+#ifdef __cpp_lib_is_invocable
+
+    template<typename Func, typename... Args>
+    using is_invocable = std::is_invocable<Func, Args...>;
+
+    template<typename Func, typename... Args>
+    constexpr bool is_invocable_v = std::is_invocable_v<Func, Args...>;
+
+    template<typename Ret, typename Func, typename... Args>
+    using is_invocable_r = std::is_invocable_r<Ret, Func, Args...>;
+
+    template<typename Ret, typename Func, typename... Args>
+    constexpr bool is_invocable_r_v = std::is_invocable_r_v<Ret, Func, Args...>;
+
+#else
+
+    template<typename Ret, typename, typename Func, typename... Args>
     struct is_invocable_impl:
         std::false_type
     {};
 
     template<typename Func, typename... Args>
-    struct is_invocable_impl<Func(Args...), void, void_t<invoke_result_t<Func, Args...>>>:
+    struct is_invocable_impl<void, void_t<invoke_result_t<Func, Args...>>, Func, Args...>:
         std::true_type
     {};
 
-    template<typename Func, typename Ret, typename... Args>
-    struct is_invocable_impl<Func(Args...), Ret, void_t<invoke_result_t<Func, Args...>>>:
+    template<typename Ret, typename Func, typename... Args>
+    struct is_invocable_impl<Ret, void_t<invoke_result_t<Func, Args...>>, Func, Args...>:
         std::is_convertible<invoke_result_t<Func, Args...>, Ret>
     {};
 
-    template<typename T>
+    template<typename Ret, typename T, std::size_t N, typename... Args>
+    struct is_invocable_impl<Ret, void, T[N], Args...>:
+        std::false_type
+    {};
+
+    template<typename Func, typename... Args>
     struct is_invocable:
-        is_invocable_impl<T, void>
+        is_invocable_impl<void, void, Func, Args...>
     {};
 
-    template<typename T>
-    constexpr bool is_invocable_v = is_invocable<T>::value;
+    template<typename Func, typename... Args>
+    constexpr bool is_invocable_v = is_invocable<Func, Args...>::value;
 
-    template<typename T, typename Ret>
+    template<typename Ret, typename Func, typename... Args>
     struct is_invocable_r:
-        is_invocable_impl<T, Ret>
+        is_invocable_impl<Ret, void, Func, Args...>
     {};
 
-    template<typename T, typename Ret>
-    constexpr bool is_invocable_r_v = is_invocable_r<T, Ret>::value;
+    template<typename Ret, typename Func, typename... Args>
+    constexpr bool is_invocable_r_v = is_invocable_r<Ret, Func, Args...>::value;
+
+#endif
 
     ////////////////////////////////////////////////////////////
     // std::conjunction from C++17
