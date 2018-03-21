@@ -44,16 +44,16 @@ namespace cppsort
     namespace detail
     {
         template<typename Projection, typename Iterable, typename Compare>
-        using is_projection_t = std::result_of_t<Compare(
-            std::result_of_t<Projection(decltype(*std::begin(std::declval<Iterable&>())))>,
-            std::result_of_t<Projection(decltype(*std::end(std::declval<Iterable&>())))>
-        )>;
+        using is_projection_t = invoke_result_t<Compare,
+            invoke_result_t<Projection, decltype(*std::begin(std::declval<Iterable&>()))>,
+            invoke_result_t<Projection, decltype(*std::end(std::declval<Iterable&>()))>
+        >;
 
         template<typename Projection, typename Iterator, typename Compare>
-        using is_projection_iterator_t = std::result_of_t<Compare(
-            std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>,
-            std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>
-        )>;
+        using is_projection_iterator_t = invoke_result_t<Compare,
+            invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>,
+            invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>
+        >;
     }
 
     template<

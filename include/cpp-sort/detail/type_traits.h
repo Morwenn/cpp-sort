@@ -104,6 +104,28 @@ namespace detail
     template<template<typename...> class Op, typename... Args>
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
+    ////////////////////////////////////////////////////////////
+    // std::invoke_result from C++17
+
+#ifdef __cpp_lib_is_invocable
+
+    template<typename Func, typename... Args>
+    using invoke_result = std::invoke_result<Func, Args...>;
+
+    template<typename Func, typename... Args>
+    using invoke_result_t = std::invoke_result_t<Func, Args...>;
+
+#else
+
+    template<typename Func, typename... Args>
+    struct invoke_result:
+        std::result_of<Func(Args...)>
+    {};
+
+    template<typename Func, typename... Args>
+    using invoke_result_t = typename invoke_result<Func, Args...>::type;
+
+#endif
 
     ////////////////////////////////////////////////////////////
     // std::is_invocable from C++17
@@ -114,13 +136,13 @@ namespace detail
     {};
 
     template<typename Func, typename... Args>
-    struct is_invocable_impl<Func(Args...), void, void_t<std::result_of_t<Func(Args...)>>>:
+    struct is_invocable_impl<Func(Args...), void, void_t<invoke_result_t<Func, Args...>>>:
         std::true_type
     {};
 
     template<typename Func, typename Ret, typename... Args>
-    struct is_invocable_impl<Func(Args...), Ret, void_t<std::result_of_t<Func(Args...)>>>:
-        std::is_convertible<std::result_of_t<Func(Args...)>, Ret>
+    struct is_invocable_impl<Func(Args...), Ret, void_t<invoke_result_t<Func, Args...>>>:
+        std::is_convertible<invoke_result_t<Func, Args...>, Ret>
     {};
 
     template<typename T>
