@@ -1,6 +1,3 @@
-# Include Catch for the tests
-include_directories(${CATCH_INCLUDE_DIR})
-
 # Define test files
 
 set(
@@ -125,6 +122,8 @@ add_executable(
     ${UTILITY_TESTS}
 )
 
+# Configure Catch2 for the tests
+target_include_directories(cpp-sort-testsuite PRIVATE ${CATCH_INCLUDE_DIR})
 add_dependencies(cpp-sort-testsuite catch)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)

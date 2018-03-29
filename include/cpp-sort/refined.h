@@ -29,8 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <utility>
-#include "detail/detection.h"
-#include "detail/remove_cvref.h"
+#include "detail/type_traits.h"
 
 namespace cppsort
 {

@@ -21,10 +21,8 @@
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "attributes.h"
-#include "detection.h"
-#include "logical_traits.h"
 #include "memcpy_cast.h"
-#include "remove_cvref.h"
+#include "type_traits.h"
 
 namespace cppsort
 {
@@ -372,7 +370,7 @@ namespace detail
             return Current::sub_key(value.second, sort_data);
         }
 
-        using next = std::conditional_t<
+        using next = conditional_t<
             std::is_same<SubKey<void>, typename Current::next>::value,
             SubKey<void>,
             PairSecondSubKey<F, S, typename Current::next>
@@ -389,7 +387,7 @@ namespace detail
             return Current::sub_key(value.first, sort_data);
         }
 
-        using next = std::conditional_t<
+        using next = conditional_t<
             std::is_same<SubKey<void>, typename Current::next>::value,
             PairSecondSubKey<F, S, SubKey<S>>,
             PairFirstSubKey<F, S, typename Current::next>

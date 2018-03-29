@@ -26,9 +26,9 @@
 #include "lower_bound.h"
 #include "merge_move.h"
 #include "move.h"
-#include "remove_cvref.h"
 #include "rotate.h"
 #include "swap_ranges.h"
+#include "type_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort

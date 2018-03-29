@@ -28,10 +28,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
-#include "remove_cvref.h"
+#include "type_traits.h"
 
 namespace cppsort
 {
@@ -70,7 +69,7 @@ namespace detail
     //
 
     template<typename Iterator, typename Projection>
-    using projected_t = remove_cvref_t<std::result_of_t<Projection(decltype(*std::declval<Iterator&>()))>>;
+    using projected_t = remove_cvref_t<invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>>;
 }}
 
 #endif // CPPSORT_DETAIL_ITERATOR_TRAITS_H_

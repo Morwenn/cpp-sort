@@ -130,7 +130,7 @@ namespace cppsort
         indirect_adapter() = default;
 
         // Automatic deduction guide
-        constexpr indirect_adapter(Sorter) noexcept {}
+        constexpr explicit indirect_adapter(Sorter) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////

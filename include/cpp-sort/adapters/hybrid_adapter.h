@@ -34,7 +34,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/checkers.h"
-#include "../detail/is_callable.h"
 #include "../detail/iterator_traits.h"
 
 namespace cppsort
@@ -119,7 +118,7 @@ namespace cppsort
             template<typename... Args>
             static auto _detail_stability(choice<Ind>, Args&&... args)
                 -> std::enable_if_t<
-                    is_callable_v<Sorter(Args...)>,
+                    is_invocable_v<Sorter, Args...>,
                     is_stable<Sorter(Args...)>
                 >;
         };
@@ -129,7 +128,7 @@ namespace cppsort
     // Adapter
 
     template<typename... Sorters>
-    class hybrid_adapter:
+    struct hybrid_adapter:
         public detail::check_iterator_category<Sorters...>,
         public detail::check_is_always_stable<Sorters...>,
         public sorter_facade_fptr<hybrid_adapter<Sorters...>>
@@ -139,7 +138,7 @@ namespace cppsort
             hybrid_adapter() = default;
 
             // Automatic deduction guide
-            constexpr hybrid_adapter(Sorters...) noexcept {};
+            constexpr explicit hybrid_adapter(Sorters...) noexcept {}
 
         private:
 

@@ -27,10 +27,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/checkers.h"
@@ -119,10 +119,7 @@ namespace cppsort
         };
     }
 
-    template<
-        typename ComparisonSorter,
-        typename CountType = std::size_t
-    >
+    template<typename ComparisonSorter, typename CountType>
     struct counting_adapter:
         sorter_facade<detail::counting_adapter_impl<
             ComparisonSorter,
@@ -132,7 +129,7 @@ namespace cppsort
         counting_adapter() = default;
 
         // Automatic deduction guide
-        constexpr counting_adapter(ComparisonSorter) noexcept {}
+        constexpr explicit counting_adapter(ComparisonSorter) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////

@@ -39,7 +39,7 @@
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
 #include "../detail/memory.h"
-#include "../detail/remove_cvref.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -113,7 +113,7 @@ namespace cppsort
         schwartz_adapter() = default;
 
         // Automatic deduction guide
-        constexpr schwartz_adapter(Sorter) noexcept {}
+        constexpr explicit schwartz_adapter(Sorter) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////

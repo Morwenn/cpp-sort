@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Morwenn
+ * Copyright (c) 2017-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
-#include "../detail/logical_traits.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -71,7 +71,7 @@ namespace utility
 
     template<typename Compare, typename T>
     struct is_probably_branchless_comparison:
-        std::conditional_t<
+        cppsort::detail::conditional_t<
             cppsort::detail::disjunction<
                 std::is_reference<Compare>,
                 std::is_const<Compare>,
@@ -108,7 +108,7 @@ namespace utility
 
     template<typename Projection, typename T>
     struct is_probably_branchless_projection:
-        std::conditional_t<
+        cppsort::detail::conditional_t<
             cppsort::detail::disjunction<
                 std::is_reference<Projection>,
                 std::is_const<Projection>,

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -63,8 +63,17 @@ namespace probe
                 // where the LNDS is computed with an altered patience
                 // sorting algorithm
 
-                auto size = std::distance(first, last);
-                if (size < 2) return 0;
+                if (first == last || std::next(first) == last) {
+                    return 0;
+                }
+
+                // The size is only needed at the end to actually compute Rem, but we
+                // need to compute it as-we-go when we are not using random-access
+                // iterators to avoid making two passes over the sequence, hence a
+                // starting value of 0 in this case
+                auto size = std::is_base_of<std::random_access_iterator_tag,
+                                            cppsort::detail::iterator_category_t<ForwardIterator>
+                            >::value ? std::distance(first, last) : 0;
 
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
@@ -94,6 +103,13 @@ namespace probe
                         *it = first;
                     }
                     ++first;
+
+                    if (not std::is_base_of<std::random_access_iterator_tag,
+                                            cppsort::detail::iterator_category_t<ForwardIterator>
+                        >::value) {
+                        // Compute the size as-we-go if iterators are not random-access
+                        ++size;
+                    }
                 }
 
                 return stack_tops.size() ? size - stack_tops.size() : 0;

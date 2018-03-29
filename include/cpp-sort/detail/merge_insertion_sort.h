@@ -41,9 +41,10 @@
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
-#include "remove_cvref.h"
 #include "swap_if.h"
 #include "swap_ranges.h"
+#include "type_traits.h"
+
 
 #if __has_include(<ext/bitmap_allocator.h>)
 #   include <ext/bitmap_allocator.h>

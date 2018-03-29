@@ -86,7 +86,7 @@ namespace cppsort
         verge_adapter() = default;
 
         // Automatic deduction guide
-        constexpr verge_adapter(FallbackSorter) noexcept {}
+        constexpr explicit verge_adapter(FallbackSorter) noexcept {}
     };
 }
 
