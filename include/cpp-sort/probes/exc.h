@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -80,7 +80,7 @@ namespace probe
                 }
 
                 // Sort the iterators on pointed values
-                pdq_sorter{}(
+                pdq_sort(
                     iterators,
                     cppsort::detail::indirect_compare<Compare, Projection>(std::move(compare),
                                                                            std::move(projection))
