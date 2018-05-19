@@ -159,11 +159,10 @@ namespace detail
         }
 
         // Merge the sorted partitions in-place
-        using comp_ref = std::add_lvalue_reference_t<Compare>;
-        inplace_merge_impl<comp_ref>(std::move(first), std::move(middle), std::move(last),
-                                     compare, std::move(projection),
-                                     size_left, size - (size / 2),
-                                     buffer.get(), buff_size);
+        inplace_merge(std::move(first), std::move(middle), std::move(last),
+                      std::move(compare), std::move(projection),
+                      size_left, size - (size / 2),
+                      buffer.get(), buff_size);
 
         return std::move(buffer);
     }
