@@ -396,7 +396,8 @@ namespace detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                       BidirectionalIterator last, Compare compare, Projection projection)
+                       BidirectionalIterator last, Compare compare, Projection projection,
+                       std::bidirectional_iterator_tag)
         -> void
     {
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
@@ -419,8 +420,7 @@ namespace detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto inplace_merge(ForwardIterator first, ForwardIterator middle,
-                       ForwardIterator last, Compare compare, Projection projection,
-                       std::bidirectional_iterator_tag)
+                       ForwardIterator last, Compare compare, Projection projection)
         -> void
     {
         using category = iterator_category_t<ForwardIterator>;
