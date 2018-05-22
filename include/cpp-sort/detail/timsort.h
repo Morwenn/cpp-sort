@@ -49,7 +49,6 @@
 #include "reverse.h"
 #include "three_way_compare.h"
 #include "type_traits.h"
-
 #include "upper_bound.h"
 
 namespace cppsort
@@ -72,6 +71,10 @@ namespace detail
         static constexpr int min_gallop = 7;
 
         int minGallop_; // default to min_gallop
+
+        // Buffer used for merges
+        std::unique_ptr<rvalue_reference, operator_deleter> buffer;
+        std::ptrdiff_t buffer_size = 0;
 
         struct run
         {
@@ -396,6 +399,21 @@ namespace detail
             return upper_bound(base+(lastOfs+1), base+ofs, key_proj, comp_.base(), proj_) - base;
         }
 
+        auto resize_buffer(std::ptrdiff_t new_size)
+            -> void
+        {
+            // Resize the merge buffer if the old one isn't big enough
+            if (buffer_size < new_size) {
+                // Release memory first, then allocate again to prevent
+                // easily avoidable out-of-memory errors
+                buffer.reset(nullptr);
+                buffer.reset(static_cast<rvalue_reference*>(
+                    ::operator new(new_size * sizeof(rvalue_reference))
+                ));
+                buffer_size = new_size;
+            }
+        }
+
         auto mergeLo(iterator const base1, difference_type len1, iterator const base2, difference_type len2)
             -> void
         {
@@ -405,9 +423,7 @@ namespace detail
 
             using utility::iter_move;
 
-            std::unique_ptr<rvalue_reference, operator_deleter> buffer(
-                static_cast<rvalue_reference*>(::operator new(len1 * sizeof(rvalue_reference)))
-            );
+            resize_buffer(len1);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
 
@@ -551,15 +567,12 @@ namespace detail
             assert( base1 + len1 == base2 );
             using utility::iter_move;
 
-            std::unique_ptr<rvalue_reference, operator_deleter> buffer(
-                static_cast<rvalue_reference*>(::operator new(len2 * sizeof(rvalue_reference)))
-            );
+            resize_buffer(len2);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
 
             rvalue_reference* ptr = buffer.get();
-            for (auto it = base2 ; it != base2 + len2 ; ++d, (void) ++it, ++ptr)
-            {
+            for (auto it = base2 ; it != base2 + len2 ; ++d, (void) ++it, ++ptr) {
                 ::new(ptr) rvalue_reference(iter_move(it));
             }
 
