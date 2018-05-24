@@ -70,11 +70,18 @@ namespace detail
         static constexpr int min_merge = 32;
         static constexpr int min_gallop = 7;
 
-        int minGallop_; // default to min_gallop
+        int minGallop_ = min_gallop;
 
         // Buffer used for merges
         std::unique_ptr<rvalue_reference, operator_deleter> buffer;
         std::ptrdiff_t buffer_size = 0;
+
+        TimSort(compare_type comp, Projection projection):
+            comp_(std::move(comp)), proj_(std::move(projection))
+        {}
+
+        // Silence GCC -Winline warning
+        ~TimSort() noexcept {}
 
         struct run
         {
@@ -191,11 +198,6 @@ namespace detail
             }
             return n + r;
         }
-
-        TimSort(compare_type comp, Projection projection):
-            comp_(std::move(comp)), proj_(std::move(projection)),
-            minGallop_(min_gallop)
-        {}
 
         auto pushRun(iterator const runBase, difference_type const runLen)
             -> void
