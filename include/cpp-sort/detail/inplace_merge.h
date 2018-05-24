@@ -491,14 +491,9 @@ namespace detail
         auto n0 = std::distance(first, middle);
         auto n1 = std::distance(middle, last);
 
-        auto buffer = std::get_temporary_buffer<rvalue_reference>(std::max(n0, n1));
-        std::unique_ptr<
-            rvalue_reference,
-            temporary_buffer_deleter
-        > ptr(buffer.first);
-
+        auto buffer = temporary_buffer<rvalue_reference>(std::max(n0, n1));
         merge_n_adaptative(std::move(first), n0, std::move(middle), n1,
-                           buffer.first, buffer.second,
+                           buffer.data(), buffer.size(),
                            std::move(compare), std::move(projection));
     }
 
@@ -509,19 +504,16 @@ namespace detail
         -> void
     {
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
-        using difference_type = difference_type_t<BidirectionalIterator>;
-        difference_type len1 = std::distance(first, middle);
-        difference_type len2 = std::distance(middle, last);
-        difference_type buff_size = std::min(len1, len2);
-        std::pair<rvalue_reference*, std::ptrdiff_t> buff
-            = std::get_temporary_buffer<rvalue_reference>(buff_size);
-        std::unique_ptr<rvalue_reference, temporary_buffer_deleter> h(buff.first);
+
+        auto len1 = std::distance(first, middle);
+        auto len2 = std::distance(middle, last);
+        temporary_buffer<rvalue_reference> buffer(std::min(len1, len2));
 
         using category = iterator_category_t<BidirectionalIterator>;
-        return inplace_merge(std::move(first), std::move(middle), std::move(last),
-                             std::move(compare), std::move(projection),
-                             len1, len2, buff.first, buff.second,
-                             category{});
+        inplace_merge(std::move(first), std::move(middle), std::move(last),
+                      std::move(compare), std::move(projection),
+                      len1, len2, buffer.data(), buffer.size(),
+                      category{});
     }
 
     ////////////////////////////////////////////////////////////
@@ -537,7 +529,8 @@ namespace detail
     {
         using category = iterator_category_t<ForwardIterator>;
         inplace_merge(std::move(first), std::move(middle), std::move(last),
-                      std::move(compare), std::move(projection), category{});
+                      std::move(compare), std::move(projection),
+                      category{});
     }
 
     // Buffered overload, which also happens to take the length of the
