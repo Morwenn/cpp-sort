@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2016 by Morwenn for inclusion into cpp-sort
+// Modified in 2016-2018 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_DESTRUCT_N_H_
@@ -98,6 +98,86 @@ namespace detail
 
         // Number of allocated objects to destroy
         std::size_t size;
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Wrapper are std::unique_ptr for temporary buffers
+
+    template<typename T>
+    class temporary_buffer
+    {
+        public:
+
+            ////////////////////////////////////////////////////////////
+            // Member types
+
+            using pointer = T*;
+            using element_type = T;
+
+            ////////////////////////////////////////////////////////////
+            // Construction & destruction
+
+            temporary_buffer() = default;
+            temporary_buffer(temporary_buffer&&) = default;
+            temporary_buffer(const temporary_buffer&) = delete;
+
+            constexpr temporary_buffer(std::nullptr_t) noexcept {}
+
+            explicit temporary_buffer(std::ptrdiff_t count)
+            {
+                auto tmp = std::get_temporary_buffer<T>(count);
+                buffer.reset(tmp.first);
+                buffer_size = tmp.second;
+            }
+
+            ~temporary_buffer() = default;
+
+            ////////////////////////////////////////////////////////////
+            // Assignment operator
+
+            temporary_buffer& operator=(temporary_buffer&&) = default;
+            temporary_buffer& operator=(const temporary_buffer&) = delete;
+
+            ////////////////////////////////////////////////////////////
+            // Data access
+
+            auto data() const noexcept
+                -> pointer
+            {
+                return buffer.get();
+            }
+
+            auto size() const noexcept
+                -> std::ptrdiff_t
+            {
+                return buffer_size;
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Modifiers
+
+            auto try_grow(std::ptrdiff_t count)
+                -> bool
+            {
+                if (count <= buffer_size) {
+                    return false;
+                }
+                auto tmp = std::get_temporary_buffer<T>(count);
+                if (tmp.second <= buffer_size) {
+                    // If the allocated buffer isn't bigger, keep the old one
+                    std::return_temporary_buffer(tmp.first);
+                    return false;
+                }
+                // If the allocated buffer is big enough, replace the previous one
+                buffer.reset(tmp.first);
+                buffer_size = tmp.second;
+                return true;
+            }
+
+        private:
+
+            std::unique_ptr<T[], temporary_buffer_deleter> buffer = nullptr;
+            std::ptrdiff_t buffer_size = 0;
     };
 }}
 
