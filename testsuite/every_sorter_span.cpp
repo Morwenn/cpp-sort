@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -120,6 +120,12 @@ TEST_CASE( "test every sorter with temporary span",
     SECTION( "poplar_sorter" )
     {
         cppsort::sort(cppsort::poplar_sorter{}, make_span(collection));
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "quick_merge_sorter" )
+    {
+        cppsort::sort(cppsort::quick_merge_sorter{}, make_span(collection));
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -138,6 +138,13 @@ TEST_CASE( "every sorter with stable adapter",
     SECTION( "poplar_sorter" )
     {
         using sorter = cppsort::poplar_sorter;
+        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "quick_merge_sorter" )
+    {
+        using sorter = cppsort::quick_merge_sorter;
         cppsort::stable_sort(sorter{}, collection, &wrapper::value);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }

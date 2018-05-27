@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Morwenn
+ * Copyright (c) 2017-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -108,6 +108,12 @@ TEST_CASE( "test every sorter with no_post_iterator", "[sorters]" )
     SECTION( "poplar_sorter" )
     {
         cppsort::sort(cppsort::poplar_sorter{}, first, last);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "quick_merge_sorter" )
+    {
+        cppsort::sort(cppsort::quick_merge_sorter{}, first, last);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
