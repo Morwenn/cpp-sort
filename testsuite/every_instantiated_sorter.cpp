@@ -22,7 +22,9 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
+#include <forward_list>
 #include <iterator>
+#include <list>
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/sorters.h>
@@ -41,6 +43,9 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     std::vector<long long int> collection; collection.reserve(35);
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 35, -47);
+
+    std::list<long long int> li(std::begin(collection), std::end(collection));
+    std::forward_list<long long int> fli(std::begin(collection), std::end(collection));
 
     SECTION( "block_sort" )
     {
@@ -106,6 +111,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     {
         cppsort::quick_merge_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        cppsort::quick_merge_sort(li);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+
+        /*cppsort::quick_merge_sort(fli);
+        CHECK( std::is_sorted(std::begin(fli), std::end(fli)) );*/
     }
 
     SECTION( "quick_sorter" )

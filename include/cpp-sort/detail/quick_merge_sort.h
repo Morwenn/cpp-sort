@@ -34,6 +34,7 @@
 #include "config.h"
 #include "insertion_sort.h"
 #include "nth_element.h"
+#include "quicksort.h"
 #include "swap_ranges.h"
 
 namespace cppsort
@@ -46,7 +47,7 @@ namespace detail
              typename Size, typename Compare, typename Projection>
     auto internal_half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
                                      InputIterator2 first2, InputIterator2 last2,
-                                     OutputIterator result, Size min_len,
+                                     OutputIterator result, Size size_left,
                                      Compare compare, Projection projection)
         -> void
     {
@@ -55,7 +56,7 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        for (; min_len != 0 ; --min_len) {
+        for (; size_left != 0 ; --size_left) {
             CPPSORT_ASSUME(first1 != last1);
             CPPSORT_ASSUME(first2 != last2);
             if (comp(proj(*first2), proj(*first1))) {
@@ -85,25 +86,27 @@ namespace detail
         // first2 through last2 are already in the right place
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto internal_buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                                         BidirectionalIterator last, BidirectionalIterator buffer,
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto internal_buffered_inplace_merge(ForwardIterator first, ForwardIterator middle,
+                                         ForwardIterator last,
+                                         difference_type_t<ForwardIterator> size_left,
+                                         ForwardIterator buffer,
                                          Compare compare, Projection projection)
         -> void
     {
         auto buffer_end = detail::swap_ranges(first, middle, buffer);
-        internal_half_inplace_merge(buffer, buffer_end, middle, last, first,
-                                    std::distance(first, middle),
+        internal_half_inplace_merge(buffer, buffer_end, middle, last, first, size_left,
                                     std::move(compare), std::move(projection));
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto internal_mergesort(BidirectionalIterator first, BidirectionalIterator last,
-                            BidirectionalIterator buffer,
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto internal_mergesort(ForwardIterator first, ForwardIterator last,
+                            difference_type_t<ForwardIterator> size,
+                            ForwardIterator buffer,
                             Compare compare, Projection projection)
         -> void
     {
-        if (std::distance(first, last) <= qmsort_insertion_limit) {
+        if (size <= qmsort_insertion_limit) {
             insertion_sort(first, last, std::move(compare), std::move(projection));
             return;
         }
@@ -111,34 +114,51 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        auto middle = first + (last - first) / 2; // Ensures left partition is smaller
-        internal_mergesort(first, middle, buffer, compare, projection);
-        internal_mergesort(middle, last, buffer, compare, projection);
+        // Ensure left partition is smaller: in a typical inplace_merge implementation,
+        // the smallest partition is moved to the buffer, but we need the move the left
+        // one to be able to safely store the result from the beginning of the collection;
+        // it can also be done from the end but requires bidirectional iterators, so all
+        // in all, ensuring that the left partition is smaller allows to use the algorithm
+        // with forward iterators
+        auto size_left = size / 2;
+        auto middle = std::next(first, size_left);
+
+        // Recursively mergesort the to partitions
+        internal_mergesort(first, middle, size_left, buffer, compare, projection);
+        internal_mergesort(middle, last, size - size_left, buffer, compare, projection);
 
         // Reduce left partition even more if possible
         auto&& mid_value = proj(*middle);
         while (first != middle && not comp(mid_value, proj(*first))) {
             ++first;
+            --size_left;
         }
         if (first == middle) return;
 
-        internal_buffered_inplace_merge(first, middle, last, buffer,
+        internal_buffered_inplace_merge(first, middle, last, size_left, buffer,
                                         std::move(compare), std::move(projection));
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto quick_merge_sort(RandomAccessIterator first, RandomAccessIterator last,
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto quick_merge_sort(ForwardIterator first, ForwardIterator last,
+                          difference_type_t<ForwardIterator> size,
                           Compare compare, Projection projection)
         -> void
     {
-        auto size = std::distance(first, last);
+        // This flavour of QuickMergeSort splits the collection in [2/3, 1/3]
+        // partitions where the right partition is used as an internal buffer
+        // to apply mergesort to the left partition, then QuickMergeSort is
+        // recursively applied to the smaller right partition
+
         while (size > qmsort_insertion_limit) {
-            auto pivot = first + 2 * (size / 3) - 2;
-            detail::nth_element(first, pivot, last, compare, projection);
-            internal_mergesort(first, pivot, pivot, compare, projection);
+            // This represents both the size of the left partition
+            // and the position of the pivot
+            auto size_left = 2 * (size / 3) - 2;
+            auto pivot = detail::nth_element(first, last, size_left, size, compare, projection);
+            internal_mergesort(first, pivot, size_left, pivot, compare, projection);
 
             first = pivot;
-            size = std::distance(first, last);
+            size -= size_left;
         }
         insertion_sort(first, last, std::move(compare), std::move(projection));
     }
