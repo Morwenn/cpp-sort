@@ -115,8 +115,8 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         cppsort::quick_merge_sort(li);
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
 
-        /*cppsort::quick_merge_sort(fli);
-        CHECK( std::is_sorted(std::begin(fli), std::end(fli)) );*/
+        cppsort::quick_merge_sort(fli);
+        CHECK( std::is_sorted(std::begin(fli), std::end(fli)) );
     }
 
     SECTION( "quick_sorter" )

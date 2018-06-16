@@ -42,7 +42,7 @@ namespace detail
         iter_swap_if(b, c, compare, projection);
         iter_swap_if(a, c, compare, projection);
         iter_swap_if(a, b, std::move(compare), std::move(projection));
-        return b; // Return median
+        return b; // Return median of 3
     }
 }}
 

@@ -41,6 +41,9 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "bubble_sort.h"
+#include "config.h"
+#include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "partition.h"
 #include "selection_sort.h"
@@ -50,6 +53,40 @@ namespace cppsort
 {
 namespace detail
 {
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto small_sort(ForwardIterator first, ForwardIterator,
+                    difference_type_t<ForwardIterator> size,
+                    Compare compare, Projection projection,
+                    std::forward_iterator_tag)
+        -> void
+    {
+        // TODO: find something better than bubble sort
+        bubble_sort(std::move(first), size,
+                    std::move(compare), std::move(projection));
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto small_sort(BidirectionalIterator first, BidirectionalIterator last,
+                    difference_type_t<BidirectionalIterator>,
+                    Compare compare, Projection projection,
+                    std::bidirectional_iterator_tag)
+        -> void
+    {
+        insertion_sort(std::move(first), std::move(last),
+                       std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto small_sort(ForwardIterator first, ForwardIterator last,
+                    difference_type_t<ForwardIterator> size,
+                    Compare compare, Projection projection)
+        -> void
+    {
+        using category = iterator_category_t<ForwardIterator>;
+        small_sort(first, last, size, std::move(compare), std::move(projection),
+                   category{});
+    }
+
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto sort3(ForwardIterator x, ForwardIterator y, ForwardIterator z,
                Compare compare, Projection projection)
@@ -171,7 +208,7 @@ namespace detail
                                      std::move(compare), std::move(projection));
             }
             default:
-                __builtin_unreachable();  // TODO: something more generic
+                CPPSORT_UNREACHABLE;
         }
     }
 
@@ -190,49 +227,76 @@ namespace detail
     {
         using utility::iter_swap;
 
-        // TODO: mutual recursion with introselect instead
-
-        while (size > 5) {
-
-            assert(std::distance(first, last) == size);
-
-            // Iterator over the collection
-            auto it = first;
-            // Points to the next value to replace by a median-of-5
-            auto medians_it = first;
-
-            // We handle first the biggest part that can be rounded to a power
-            // of 5, then we handle the rest
-            auto rounded_size = (size / 5) * 5;
-
-            // Handle elements 5 by 5
-            for (difference_type_t<ForwardIterator> i = 0 ; i < rounded_size / 5 ; ++i) {
-                auto it1 = it;
-                auto it2 = ++it;
-                auto it3 = ++it;
-                auto it4 = ++it;
-                auto it5 = ++it;
-
-                auto median = iter_median_5(it1, it2, it3, it4, it5, compare, projection);
-                iter_swap(medians_it, median);
-                ++medians_it;
-                ++it;
-            }
-
-            // Handle remaining elements
-            if (rounded_size != size) {
-                auto last_median = iter_median_rest(it, size - rounded_size, compare, projection);
-                iter_swap(last_median, medians_it);
-                ++medians_it;
-            }
-
-            // Rest variables for the next iteration
-            last = medians_it;
-            size = rounded_size == size ? size / 5 : size / 5 + 1;
+        if (size <= 5) {
+            return iter_median_rest(first, size, std::move(compare), std::move(projection));
         }
 
-        // There are at most 5 elements, return the median of those
-        return iter_median_rest(first, size, std::move(compare), std::move(projection));
+        // Iterator over the collection
+        auto it = first;
+        // Points to the next value to replace by a median-of-5
+        auto medians_it = first;
+
+        // We handle first the biggest part that can be rounded to a power
+        // of 5, then we handle the rest
+        auto rounded_size = (size / 5) * 5;
+
+        // Handle elements 5 by 5
+        for (difference_type_t<ForwardIterator> i = 0 ; i < rounded_size / 5 ; ++i) {
+            auto it1 = it;
+            auto it2 = ++it;
+            auto it3 = ++it;
+            auto it4 = ++it;
+            auto it5 = ++it;
+
+            auto median = iter_median_5(it1, it2, it3, it4, it5, compare, projection);
+            iter_swap(medians_it, median);
+            ++medians_it;
+            ++it;
+        }
+
+        // Handle remaining elements
+        if (rounded_size != size) {
+            auto last_median = iter_median_rest(it, size - rounded_size, compare, projection);
+            iter_swap(last_median, medians_it);
+            ++medians_it;
+        }
+
+        // Rest variables for the next iteration
+        last = medians_it;
+        size = rounded_size == size ? size / 5 : size / 5 + 1;
+
+        // Mutual recursion with introselect
+        return introselect(first, last, size / 2, size, detail::log2(size),
+                           std::move(compare), std::move(projection));
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Get iterator to last element
+
+    template<typename Iterator>
+    auto last_it(Iterator first, Iterator,
+                 difference_type_t<Iterator> size,
+                 std::forward_iterator_tag)
+        -> Iterator
+    {
+        return std::next(first, size - 1);
+    }
+
+    template<typename Iterator>
+    auto last_it(Iterator, Iterator last,
+                 difference_type_t<Iterator>,
+                 std::bidirectional_iterator_tag)
+        -> Iterator
+    {
+        return std::prev(last);
+    }
+
+    template<typename Iterator>
+    auto last_it(Iterator first, Iterator last, difference_type_t<Iterator> size)
+        -> Iterator
+    {
+        using category = iterator_category_t<Iterator>;
+        return last_it(first, last, size, category{});
     }
 
     ////////////////////////////////////////////////////////////
@@ -251,28 +315,44 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         if (size <= 32) {
-            insertion_sort(first, last, std::move(compare), std::move(projection));
+            small_sort(first, last, size, std::move(compare), std::move(projection));
             return std::next(first, nth_pos);
         }
 
-        // Choose pivot as either median of 3 or median of medians
-        auto middle = std::next(first, size / 2);
-        auto last_1 = std::next(middle, size - size/2 - 1);
+        // Choose pivot as either median of 9 or median of medians
+        auto temp = [&] {
+            if (bad_allowed > 0) {
+                auto it1 = std::next(first, size / 8);
+                auto it2 = std::next(it1, size / 8);
+                auto it3 = std::next(it2, size / 8);
+                auto middle = std::next(it3, size/2 - 3*(size/8));
+                auto it4 = std::next(middle, size / 8);
+                auto it5 = std::next(it4, size / 8);
+                auto it6 = std::next(it5, size / 8);
+                auto last_1 = last_it(it6, last, size - size/2 - 3*(size/8) - 1);
 
-        auto median_it = (bad_allowed != 0) ?
-            iter_sort3(first, middle, last_1, compare, projection) :
-            median_of_medians(first, last, size, compare, projection);
+                iter_sort3(first, it1, it2, compare, projection);
+                iter_sort3(it3, middle, it4, compare, projection);
+                iter_sort3(it5, it6, last_1, compare, projection);
+                auto median_it = iter_sort3(it1, middle, it4, std::move(compare), std::move(projection));
+                return std::make_pair(median_it, last_1);
+            } else {
+                auto last_1 = last_it(first, last, size);
+                auto median_it = median_of_medians(first, last, size, compare, projection);
+                return std::make_pair(median_it, last_1);
+            }
+        }();
 
         // Put the pivot at position std::prev(last) and partition
-        iter_swap(median_it, last_1);
-        auto&& pivot1 = proj(*last_1);
+        iter_swap(temp.first, temp.second);
+        auto&& pivot1 = proj(*temp.second);
         auto middle1 = detail::partition(
-            first, last_1,
+            first, temp.second,
             [&](const auto& elem) { return comp(proj(elem), pivot1); }
         );
 
         // Put the pivot in its final position and partition
-        iter_swap(middle1, last_1);
+        iter_swap(middle1, temp.second);
         auto&& pivot2 = proj(*middle1);
         auto middle2 = detail::partition(
             std::next(middle1), last,
@@ -289,13 +369,13 @@ namespace detail
         // TODO: unroll tail recursion
         // We're done if the nth element is in the middle partition
         if (nth_pos < size_left) {
-            introselect(first, middle1, nth_pos,
-                        size_left, --bad_allowed,
-                        std::move(compare), std::move(projection));
+            return introselect(first, middle1, nth_pos,
+                               size_left, --bad_allowed,
+                               std::move(compare), std::move(projection));
         } else if (nth_pos > size_left + size_middle) {
-            introselect(middle2, last, nth_pos - size_left - size_middle,
-                        size_right, --bad_allowed,
-                        std::move(compare), std::move(projection));
+            return introselect(middle2, last, nth_pos - size_left - size_middle,
+                               size_right, --bad_allowed,
+                               std::move(compare), std::move(projection));
         }
         // Return an iterator to the nth element
         return std::next(middle1, nth_pos - size_left);

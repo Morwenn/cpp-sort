@@ -32,7 +32,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
-#include "insertion_sort.h"
 #include "nth_element.h"
 #include "quicksort.h"
 #include "swap_ranges.h"
@@ -41,7 +40,7 @@ namespace cppsort
 {
 namespace detail
 {
-    constexpr int qmsort_insertion_limit = 32;
+    constexpr int qmsort_limit = 32;
 
     template<typename InputIterator1, typename InputIterator2, typename OutputIterator,
              typename Size, typename Compare, typename Projection>
@@ -106,8 +105,8 @@ namespace detail
                             Compare compare, Projection projection)
         -> void
     {
-        if (size <= qmsort_insertion_limit) {
-            insertion_sort(first, last, std::move(compare), std::move(projection));
+        if (size <= qmsort_limit) {
+            small_sort(first, last, size, std::move(compare), std::move(projection));
             return;
         }
 
@@ -150,7 +149,7 @@ namespace detail
         // to apply mergesort to the left partition, then QuickMergeSort is
         // recursively applied to the smaller right partition
 
-        while (size > qmsort_insertion_limit) {
+        while (size > qmsort_limit) {
             // This represents both the size of the left partition
             // and the position of the pivot
             auto size_left = 2 * (size / 3) - 2;
@@ -160,7 +159,7 @@ namespace detail
             first = pivot;
             size -= size_left;
         }
-        insertion_sort(first, last, std::move(compare), std::move(projection));
+        small_sort(first, last, size, std::move(compare), std::move(projection));
     }
 }}
 

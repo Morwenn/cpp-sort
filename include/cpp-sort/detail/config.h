@@ -65,4 +65,19 @@
 #   define CPPSORT_ASSUME(cond)
 #endif
 
+////////////////////////////////////////////////////////////
+// CPPSORT_UNREACHABLE
+
+// Mostly useful to silence compiler warnings in the default
+// clause of a switch when we know the default can never be
+// reached
+
+#if defined(__GNUC__) || defined(__clang__)
+#   define CPPSORT_UNREACHABLE __builtin_unreachable()
+#elif defined(_MSC_VER)
+#   define CPPSORT_UNREACHABLE __assume(false)
+#else
+#   define CPPSORT_UNREACHABLE
+#endif
+
 #endif // CPPSORT_DETAIL_CONFIG_H_
