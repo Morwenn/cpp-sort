@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,44 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <exception>
 #include <iostream>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/fixed/sorting_network_sorter.h>
 #include <cpp-sort/sort.h>
+
+////////////////////////////////////////////////////////////
+// Dedicated algorithm to find all permutations of an array
+// of 0 and 1 and play an algorithm to each permutation,
+// notably using a Gray code progression to find every
+// permutation
+
+template<typename RandomAccessIterator, typename Function>
+auto for_each_gray_permutation(RandomAccessIterator first, RandomAccessIterator last,
+                               Function func)
+    -> void
+{
+    using unsigned_t = cppsort::detail::difference_type_t<RandomAccessIterator>;
+    unsigned_t counter = 0u;
+
+    unsigned_t end = 1 << (last - first);  // 2^n permutations
+    for (unsigned_t nb_permutations = 0 ; nb_permutations != end ; nb_permutations += 2) {
+
+        // Flip value for even counter
+        func();
+        counter ^= 1u;
+        first[0u] = 1 - first[0u];
+
+        // Flip value for odd counter
+        func();
+        auto y = counter & -counter;
+        counter ^= (y << 1);
+        auto to_flip = cppsort::detail::log2(y) + 1;
+        first[to_flip] = 1 - first[to_flip];
+    }
+}
 
 ////////////////////////////////////////////////////////////
 // Count the number of comparisons
@@ -37,23 +70,19 @@ template<typename T, std::size_t N>
 auto validate_sorting_network()
     -> void
 {
+    if (N < 2) return;
+
     std::cout << "sorting network of size " << N << ": ";
 
     cppsort::sorting_network_sorter<N> sorter;
     std::array<T, N> collection;
+    std::fill(std::begin(collection), std::end(collection), 0);
 
-    for (auto it = std::begin(collection) ; it != std::end(collection) ; ++it)
-    {
-        // Progressively fill collection with 1s
-        std::fill(std::begin(collection), it, 0);
-        std::fill(it, std::end(collection), 1);
-
-        // For each possible permutation of collection
-        do
-        {
+    try {
+        for_each_gray_permutation(std::begin(collection), std::end(collection), [&] {
             // Copy then sort collection
             std::array<int, N> to_sort = collection;
-            cppsort::sort(sorter, to_sort);
+            sorter(to_sort);
 
             // Check whether it is sorted
             if (not std::is_sorted(std::begin(to_sort), std::end(to_sort))) {
@@ -69,11 +98,12 @@ auto validate_sorting_network()
                 std::cout << '\n';
 
                 // Abort for this size
-                return;
+                throw std::exception();
             }
-        } while (std::next_permutation(std::begin(collection), std::end(collection)));
+        });
+    } catch (const std::exception&) {
+        // Don't do anything else, go on with the next size
     }
-
     std::cout << "ok\n";
 }
 
@@ -88,7 +118,6 @@ auto validate_sorting_networks(std::index_sequence<Indices...>)
     (void) dummy;
 }
 
-
 ////////////////////////////////////////////////////////////
 // Main
 
@@ -101,7 +130,7 @@ int main()
     // the slower O(n!).
 
     // Sizes of the sorting networks to validate
-    using indices = std::make_index_sequence<25>;
+    using indices = std::make_index_sequence<23>;
 
     validate_sorting_networks<int>(indices{});
 }
