@@ -18,10 +18,11 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include "attributes.h"
 #include "memcpy_cast.h"
+#include "pdqsort.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -519,9 +520,9 @@ namespace detail
         -> void
     {
         auto&& proj = utility::as_function(projection);
-        cppsort::pdq_sort(std::move(begin), std::move(end), [&](auto&& l, auto&& r) {
+        pdqsort(std::move(begin), std::move(end), [&](auto&& l, auto&& r) {
             return proj(l) < proj(r);
-        });
+        }, utility::identity{});
     }
 
     template<std::ptrdiff_t StdSortThreshold, typename RandomAccessIterator, typename Projection>
