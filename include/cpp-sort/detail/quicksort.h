@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,11 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "bitops.h"
 #include "bubble_sort.h"
 #include "insertion_sort.h"
+#include "introselect.h"
 #include "iterator_traits.h"
-#include "iter_sort3.h"
 #include "partition.h"
 
 namespace cppsort
@@ -51,8 +52,7 @@ namespace detail
                             std::forward_iterator_tag)
         -> bool
     {
-        if (size < 10)
-        {
+        if (size < 10) {
             bubble_sort(std::move(first), size,
                         std::move(compare), std::move(projection));
             return true;
@@ -67,8 +67,7 @@ namespace detail
                             std::bidirectional_iterator_tag)
         -> bool
     {
-        if (size < 42)
-        {
+        if (size < 42) {
             insertion_sort(std::move(first), std::move(last),
                            std::move(compare), std::move(projection));
             return true;
@@ -78,7 +77,7 @@ namespace detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto quicksort(ForwardIterator first, ForwardIterator last,
-                   difference_type_t<ForwardIterator> size,
+                   difference_type_t<ForwardIterator> size, int bad_allowed,
                    Compare compare, Projection projection)
         -> void
     {
@@ -93,23 +92,13 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        // Choose pivot as median of 9
-        auto it1 = std::next(first, size / 8);
-        auto it2 = std::next(it1, size / 8);
-        auto it3 = std::next(it2, size / 8);
-        auto middle = std::next(it3, size/2 - 3*(size/8));
-        auto it4 = std::next(middle, size / 8);
-        auto it5 = std::next(it4, size / 8);
-        auto it6 = std::next(it5, size / 8);
-        auto last_1 = std::next(it6, size - size/2 - 3*(size/8) - 1);
-
-        iter_sort3(first, it1, it2, compare, projection);
-        iter_sort3(it3, middle, it4, compare, projection);
-        iter_sort3(it5, it6, last_1, compare, projection);
-        iter_sort3(it1, middle, it4, compare, projection);
+        // Choose pivot as either median of 9 or median of medians
+        auto temp = pick_pivot(first, last, size, bad_allowed, compare, projection);
+        auto median_it = temp.first;
+        auto last_1 = temp.second;
 
         // Put the pivot at position std::prev(last) and partition
-        iter_swap(middle, last_1);
+        iter_swap(median_it, last_1);
         auto&& pivot1 = proj(*last_1);
         ForwardIterator middle1 = detail::partition(
             first, last_1,
@@ -133,15 +122,26 @@ namespace detail
 
         // Recurse in the smallest partition first to limit the call
         // stack overhead
-        if (size_left > size_right)
-        {
+        if (size_left > size_right) {
             std::swap(first, middle2);
             std::swap(middle1, last);
             std::swap(size_left, size_right);
         }
-        quicksort(first, middle1, size_left, compare, projection);
-        quicksort(middle2, last, size_right,
+
+        --bad_allowed;
+        quicksort(first, middle1, size_left, bad_allowed, compare, projection);
+        quicksort(middle2, last, size_right, bad_allowed,
                   std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto quicksort(ForwardIterator first, ForwardIterator last,
+                   difference_type_t<ForwardIterator> size,
+                   Compare compare, Projection projection)
+        -> void
+    {
+        int bad_allowed = 2 * detail::log2(size);  // Usual introsort recursion limit
+        quicksort(first, last, size, bad_allowed, std::move(compare), std::move(projection));
     }
 }}
 
