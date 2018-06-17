@@ -329,7 +329,7 @@ namespace detail
                 auto it4 = std::next(middle, size / 8);
                 auto it5 = std::next(it4, size / 8);
                 auto it6 = std::next(it5, size / 8);
-                auto last_1 = last_it(it6, last, size - size/2 - 3*(size/8) - 1);
+                auto last_1 = last_it(it6, last, size - size/2 - 3*(size/8));
 
                 iter_sort3(first, it1, it2, compare, projection);
                 iter_sort3(it3, middle, it4, compare, projection);
