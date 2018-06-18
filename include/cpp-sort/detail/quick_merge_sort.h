@@ -1,0 +1,166 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2018 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifndef CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
+#define CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <iterator>
+#include <utility>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/iter_move.h>
+#include "config.h"
+#include "nth_element.h"
+#include "quicksort.h"
+#include "swap_ranges.h"
+
+namespace cppsort
+{
+namespace detail
+{
+    constexpr int qmsort_limit = 32;
+
+    template<typename InputIterator1, typename InputIterator2, typename OutputIterator,
+             typename Size, typename Compare, typename Projection>
+    auto internal_half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
+                                     InputIterator2 first2, InputIterator2 last2,
+                                     OutputIterator result, Size size_left,
+                                     Compare compare, Projection projection)
+        -> void
+    {
+        using utility::iter_swap;
+
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        for (; size_left != 0 ; --size_left) {
+            CPPSORT_ASSUME(first1 != last1);
+            CPPSORT_ASSUME(first2 != last2);
+            if (comp(proj(*first2), proj(*first1))) {
+                iter_swap(result, first2);
+                ++first2;
+            } else {
+                iter_swap(result, first1);
+                ++first1;
+            }
+            ++result;
+        }
+
+        for (; first1 != last1; ++result) {
+            if (first2 == last2) {
+                detail::swap_ranges(first1, last1, result);
+                return;
+            }
+
+            if (comp(proj(*first2), proj(*first1))) {
+                iter_swap(result, first2);
+                ++first2;
+            } else {
+                iter_swap(result, first1);
+                ++first1;
+            }
+        }
+        // first2 through last2 are already in the right place
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto internal_buffered_inplace_merge(ForwardIterator first, ForwardIterator middle,
+                                         ForwardIterator last,
+                                         difference_type_t<ForwardIterator> size_left,
+                                         ForwardIterator buffer,
+                                         Compare compare, Projection projection)
+        -> void
+    {
+        auto buffer_end = detail::swap_ranges(first, middle, buffer);
+        internal_half_inplace_merge(buffer, buffer_end, middle, last, first, size_left,
+                                    std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto internal_mergesort(ForwardIterator first, ForwardIterator last,
+                            difference_type_t<ForwardIterator> size,
+                            ForwardIterator buffer,
+                            Compare compare, Projection projection)
+        -> void
+    {
+        if (size <= qmsort_limit) {
+            small_sort(first, last, size, std::move(compare), std::move(projection));
+            return;
+        }
+
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        // Ensure left partition is smaller: in a typical inplace_merge implementation,
+        // the smallest partition is moved to the buffer, but we need the move the left
+        // one to be able to safely store the result from the beginning of the collection;
+        // it can also be done from the end but requires bidirectional iterators, so all
+        // in all, ensuring that the left partition is smaller allows to use the algorithm
+        // with forward iterators
+        auto size_left = size / 2;
+        auto middle = std::next(first, size_left);
+
+        // Recursively mergesort the to partitions
+        internal_mergesort(first, middle, size_left, buffer, compare, projection);
+        internal_mergesort(middle, last, size - size_left, buffer, compare, projection);
+
+        // Reduce left partition even more if possible
+        auto&& mid_value = proj(*middle);
+        while (first != middle && not comp(mid_value, proj(*first))) {
+            ++first;
+            --size_left;
+        }
+        if (first == middle) return;
+
+        internal_buffered_inplace_merge(first, middle, last, size_left, buffer,
+                                        std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto quick_merge_sort(ForwardIterator first, ForwardIterator last,
+                          difference_type_t<ForwardIterator> size,
+                          Compare compare, Projection projection)
+        -> void
+    {
+        // This flavour of QuickMergeSort splits the collection in [2/3, 1/3]
+        // partitions where the right partition is used as an internal buffer
+        // to apply mergesort to the left partition, then QuickMergeSort is
+        // recursively applied to the smaller right partition
+
+        while (size > qmsort_limit) {
+            // This represents both the size of the left partition
+            // and the position of the pivot
+            auto size_left = 2 * (size / 3) - 2;
+            auto pivot = detail::nth_element(first, last, size_left, size, compare, projection);
+            internal_mergesort(first, pivot, size_left, pivot, compare, projection);
+
+            first = pivot;
+            size -= size_left;
+        }
+        small_sort(first, last, size, std::move(compare), std::move(projection));
+    }
+}}
+
+#endif // CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
