@@ -77,7 +77,8 @@ namespace detail
     inline auto to_unsigned_or_bool(short i)
         -> unsigned short
     {
-        return static_cast<unsigned short>(i) + static_cast<unsigned short>(1 << (sizeof(short) * 8 - 1));
+        return static_cast<unsigned short>(i)
+             + static_cast<unsigned short>(1 << std::numeric_limits<short>::digits);
     }
 
     inline auto to_unsigned_or_bool(unsigned short i)
@@ -89,7 +90,8 @@ namespace detail
     inline auto to_unsigned_or_bool(int i)
         -> unsigned int
     {
-        return static_cast<unsigned int>(i) + static_cast<unsigned int>(1 << (sizeof(int) * 8 - 1));
+        return static_cast<unsigned int>(i)
+             + static_cast<unsigned int>(1 << std::numeric_limits<int>::digits);
     }
 
     inline auto to_unsigned_or_bool(unsigned int i)
@@ -101,7 +103,8 @@ namespace detail
     inline auto to_unsigned_or_bool(long l)
         -> unsigned long
     {
-        return static_cast<unsigned long>(l) + static_cast<unsigned long>(1l << (sizeof(long) * 8 - 1));
+        return static_cast<unsigned long>(l)
+             + static_cast<unsigned long>(1l << std::numeric_limits<long>::digits);
     }
 
     inline auto to_unsigned_or_bool(unsigned long l)
@@ -113,7 +116,8 @@ namespace detail
     inline auto to_unsigned_or_bool(long long l)
         -> unsigned long long
     {
-        return static_cast<unsigned long long>(l) + static_cast<unsigned long long>(1ll << (sizeof(long long) * 8 - 1));
+        return static_cast<unsigned long long>(l)
+             + static_cast<unsigned long long>(1ll << std::numeric_limits<long long>::digits);
     }
 
     inline auto to_unsigned_or_bool(unsigned long long l)
