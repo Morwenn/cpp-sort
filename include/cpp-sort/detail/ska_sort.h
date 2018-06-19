@@ -126,6 +126,17 @@ namespace detail
         return l;
     }
 
+#ifdef __SIZEOF_INT128__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+    inline auto to_unsigned_or_bool(unsigned __int128 l)
+        -> unsigned __int128
+    {
+        return l;
+    }
+#pragma GCC diagnostic pop
+#endif
+
     inline auto to_unsigned_or_bool(float f)
         -> std::uint32_t
     {
@@ -252,6 +263,17 @@ namespace detail
         using type = std::uint64_t;
     };
 
+#ifdef __SIZEOF_INT128__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+    template<>
+    struct UnsignedForSize<16>
+    {
+        using type = unsigned __int128;
+    };
+#pragma GCC diagnostic pop
+#endif
+
     template<typename T>
     struct SubKey;
 
@@ -359,6 +381,16 @@ namespace detail
     struct SubKey<unsigned long long>:
         SizedSubKey<sizeof(unsigned long long)>
     {};
+
+#ifdef __SIZEOF_INT128__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+    template<>
+    struct SubKey<unsigned __int128>:
+        SizedSubKey<sizeof(unsigned __int128)>
+    {};
+#pragma GCC diagnostic pop
+#endif
 
     template<typename T>
     struct SubKey<T*>:
@@ -879,6 +911,16 @@ namespace detail
     struct InplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, std::uint64_t>:
         UnsignedInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, 8>
     {};
+
+#ifdef __SIZEOF_INT128__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+    template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold, typename CurrentSubKey>
+    struct InplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, unsigned __int128>:
+        UnsignedInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, 16>
+    {};
+#pragma GCC diagnostic pop
+#endif
 
     template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold,
              typename CurrentSubKey, typename SubKeyType, typename Enable=void>
