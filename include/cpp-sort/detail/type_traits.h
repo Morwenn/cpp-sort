@@ -243,6 +243,64 @@ namespace detail
 
     template<typename T>
     using remove_cvref_t = typename remove_cvref<T>::type;
+
+    ////////////////////////////////////////////////////////////
+    // Type traits to take __int128 into account even when the
+    // standard library isn't instrumented but the type is still
+    // available (e.g. -std=c++17)
+
+#ifdef __SIZEOF_INT128__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+
+    template<typename T>
+    struct is_integral:
+        std::is_integral<T>
+    {};
+
+    template<>
+    struct is_integral<signed __int128>:
+        std::true_type
+    {};
+
+    template<>
+    struct is_integral<unsigned __int128>:
+        std::true_type
+    {};
+
+    template<typename T>
+    struct is_signed:
+        std::is_signed<T>
+    {};
+
+    template<>
+    struct is_signed<signed __int128>:
+        std::true_type
+    {};
+
+    template<typename T>
+    struct is_unsigned:
+        std::is_unsigned<T>
+    {};
+
+    template<>
+    struct is_unsigned<unsigned __int128>:
+        std::true_type
+    {};
+
+#pragma GCC diagnostic pop
+#else
+
+    template<typename T>
+    using is_integral = std::is_integral<T>;
+
+    template<typename T>
+    using is_signed = std::is_signed<T>;
+
+    template<typename T>
+    using is_unsigned = std::is_unsigned<T>;
+
+#endif
 }}
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_

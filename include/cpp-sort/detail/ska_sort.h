@@ -1023,7 +1023,7 @@ namespace detail
     template<typename T>
     struct is_ska_sortable:
         disjunction<
-            std::is_integral<T>,
+            is_integral<T>,
             is_index_ska_sortable<has_indexing_operator_t, T>
         >
     {};
