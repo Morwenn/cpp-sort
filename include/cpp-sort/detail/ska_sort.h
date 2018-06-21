@@ -337,7 +337,11 @@ namespace detail
 
     template<typename T>
     struct SubKey:
-        FallbackSubKey<T>
+        conditional_t<
+            is_unsigned<T>::value,
+            SizedSubKey<sizeof(T)>,
+            FallbackSubKey<T>
+        >
     {};
 
     template<>
@@ -356,41 +360,6 @@ namespace detail
 
     template<>
     struct SubKey<void>;
-
-    template<>
-    struct SubKey<unsigned char>:
-        SizedSubKey<sizeof(unsigned char)>
-    {};
-
-    template<>
-    struct SubKey<unsigned short>:
-        SizedSubKey<sizeof(unsigned short)>
-    {};
-
-    template<>
-    struct SubKey<unsigned int>:
-        SizedSubKey<sizeof(unsigned int)>
-    {};
-
-    template<>
-    struct SubKey<unsigned long>:
-        SizedSubKey<sizeof(unsigned long)>
-    {};
-
-    template<>
-    struct SubKey<unsigned long long>:
-        SizedSubKey<sizeof(unsigned long long)>
-    {};
-
-#ifdef __SIZEOF_INT128__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-    template<>
-    struct SubKey<unsigned __int128>:
-        SizedSubKey<sizeof(unsigned __int128)>
-    {};
-#pragma GCC diagnostic pop
-#endif
 
     template<typename T>
     struct SubKey<T*>:
