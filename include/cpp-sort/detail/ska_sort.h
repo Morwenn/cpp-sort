@@ -11,6 +11,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <array>
+#include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
@@ -129,6 +130,13 @@ namespace detail
 #ifdef __SIZEOF_INT128__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
+    inline auto to_unsigned_or_bool(__int128 l)
+        -> unsigned long long
+    {
+        return static_cast<unsigned __int128>(l)
+             + static_cast<unsigned __int128>(__int128(1) << (CHAR_BIT * sizeof(__int128) - 1));
+    }
+
     inline auto to_unsigned_or_bool(unsigned __int128 l)
         -> unsigned __int128
     {
