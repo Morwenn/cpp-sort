@@ -211,6 +211,10 @@ namespace cppsort
     };
 }
 
+#ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_
+#include "../detail/stable_adapter_hybrid_adapter.h"
+#endif
+
 #ifdef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_DONE_
 #include "../detail/stable_adapter_self_sort_adapter.h"
 #endif
