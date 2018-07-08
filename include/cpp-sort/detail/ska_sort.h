@@ -22,6 +22,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "attributes.h"
+#include "iterator_traits.h"
 #include "memcpy_cast.h"
 #include "pdqsort.h"
 #include "type_traits.h"
@@ -964,7 +965,7 @@ namespace detail
                             Projection projection)
         -> void
     {
-        using SubKey = SubKey<decltype(utility::as_function(projection)(*begin))>;
+        using SubKey = SubKey<projected_t<RandomAccessIterator, Projection>>;
         SortStarter<StdSortThreshold, AmericanFlagSortThreshold, SubKey>::sort(begin, end, end - begin,
                                                                                std::move(projection));
     }

@@ -58,7 +58,7 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> std::enable_if_t<detail::is_ska_sortable_v<
-                    remove_cvref_t<decltype(utility::as_function(projection)(*first))>
+                    projected_t<RandomAccessIterator, Projection>
                 >>
             {
                 static_assert(

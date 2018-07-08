@@ -575,8 +575,8 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
-        using value_type = decltype(*begin);
-        using projected_type = decltype(utility::as_function(projection)(*begin));
+        using value_type = value_type_t<RandomAccessIterator>;
+        using projected_type = projected_t<RandomAccessIterator, Projection>;
         constexpr bool is_branchless =
             utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
             utility::is_probably_branchless_projection_v<Projection, value_type>;
