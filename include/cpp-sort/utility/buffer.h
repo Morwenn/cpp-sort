@@ -109,6 +109,7 @@ namespace utility
         };
     };
 
+#if defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 6000
     template<>
     struct fixed_buffer<0>
     {
@@ -180,6 +181,7 @@ namespace utility
             }
         };
     };
+#endif
 
     ////////////////////////////////////////////////////////////
     // Dynamic buffer accepting a size policy
