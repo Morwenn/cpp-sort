@@ -31,8 +31,7 @@ namespace detail
 
     struct operator_deleter
     {
-        template<typename T>
-        auto operator()(T* pointer) const noexcept
+        inline auto operator()(void* pointer) const noexcept
             -> void
         {
             ::operator delete(pointer);
