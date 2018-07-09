@@ -9,8 +9,8 @@
 // Modified in 2016-2018 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
-#ifndef CPPSORT_DETAIL_DESTRUCT_N_H_
-#define CPPSORT_DETAIL_DESTRUCT_N_H_
+#ifndef CPPSORT_DETAIL_MEMORY_H_
+#define CPPSORT_DETAIL_MEMORY_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -20,6 +20,7 @@
 #include <memory>
 #include <new>
 #include <type_traits>
+#include "type_traits.h"
 
 namespace cppsort
 {
@@ -41,51 +42,51 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Deleter for placement new-allocated memory
 
-    template<
-        typename T,
-        bool = std::is_trivially_destructible<T>::value
-    >
-    struct destruct_n;
-
-    template<typename T>
-    struct destruct_n<T, true>
+    struct destruct_n_trivial
     {
-        explicit destruct_n(std::size_t) noexcept {}
+        explicit constexpr destruct_n_trivial(std::size_t) noexcept {}
 
-        auto operator++() noexcept
+        constexpr auto operator++() noexcept
             -> void
         {}
 
-        auto operator()(T*) noexcept
+        constexpr auto operator()(void*) noexcept
             -> void
         {}
     };
 
     template<typename T>
-    struct destruct_n<T, false>
+    struct destruct_n_impl
     {
-        explicit destruct_n(std::size_t s) noexcept:
+        explicit constexpr destruct_n_impl(std::size_t s) noexcept:
             size(s)
         {}
 
-        auto operator++() noexcept
+        constexpr auto operator++() noexcept
             -> void
         {
             ++size;
         }
 
-        auto operator()(T* pointer) noexcept
+        constexpr auto operator()(T* pointer) noexcept
             -> void
         {
-            for (std::size_t i = 0 ; i < size ; ++i, (void) ++pointer)
-            {
+            for (std::size_t i = 0 ; i < size ; ++i) {
                 pointer->~T();
+                ++pointer;
             }
         }
 
         // Number of allocated objects to destroy
         std::size_t size;
     };
+
+    template<typename T>
+    using destruct_n = conditional_t<
+        std::is_trivially_destructible<T>::value,
+        destruct_n_trivial,
+        destruct_n_impl<T>
+    >;
 
     ////////////////////////////////////////////////////////////
     // Reimplement get_temporary_buffer because C++20
@@ -196,4 +197,4 @@ namespace detail
     };
 }}
 
-#endif // CPPSORT_DETAIL_DESTRUCT_N_H_
+#endif // CPPSORT_DETAIL_MEMORY_H_
