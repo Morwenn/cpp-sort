@@ -76,6 +76,22 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "out_of_place_adapter" )
+    {
+        using sorter = cppsort::out_of_place_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(collection, &internal_compare<int>::compare_to);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+
+        std::list<internal_compare<int>> li;
+        distribution(std::back_inserter(li), 65, 0);
+
+        sorter{}(li, &internal_compare<int>::compare_to);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+    }
+
     SECTION( "schwartz_adapter" )
     {
         using sorter = cppsort::schwartz_adapter<

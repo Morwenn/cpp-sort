@@ -91,6 +91,8 @@ namespace cppsort
     template<typename Sorter>
     struct indirect_adapter;
     template<typename Sorter>
+    struct out_of_place_adapter;
+    template<typename Sorter>
     struct schwartz_adapter;
     template<typename Sorter>
     struct self_sort_adapter;
