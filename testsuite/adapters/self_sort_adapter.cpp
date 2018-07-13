@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,9 +23,11 @@
  */
 #include <type_traits>
 #include <catch.hpp>
+#include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/sorters/selection_sorter.h>
 
 namespace
 {
@@ -38,7 +40,7 @@ namespace
 
     struct container_none
     {
-        struct iterator {};
+        using iterator = int*;
 
         auto begin() -> iterator { return {}; }
         auto end() -> iterator { return {}; }
@@ -255,4 +257,20 @@ TEST_CASE( "stability of stable_adapter<self_sort_adapter>",
         CHECK( cppsort::is_stable<adapted_stable_sorter(container_both&)>::value );
         CHECK( cppsort::is_stable<adapted_stable_sorter(container_both::iterator, container_both::iterator)>::value );
     }
+}
+
+TEST_CASE( "stable_adapter<hybrid_adapter<self_sort_adapter>>",
+           "[self_sort_adapter][stable_adapter][hybrid_adapter]" )
+{
+    using sorter = cppsort::stable_adapter<
+        cppsort::hybrid_adapter<
+            cppsort::self_sort_adapter<
+                cppsort::selection_sorter
+            >
+        >
+    >;
+
+    container_both container;
+    auto res = sorter{}(container);
+    CHECK( res == kind::stable_sort );
 }

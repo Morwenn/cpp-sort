@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2018 Morwenn
+ * Copyright (c) 2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_SKA_SORTER_H_
-#define CPPSORT_SORTERS_SKA_SORTER_H_
+#ifndef CPPSORT_SORTERS_QUICK_MERGE_SORTER_H_
+#define CPPSORT_SORTERS_QUICK_MERGE_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <functional>
 #include <iterator>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
-#include "../detail/ska_sort.h"
-#include "../detail/type_traits.h"
+#include "../detail/quick_merge_sort.h"
 
 namespace cppsort
 {
@@ -46,30 +46,56 @@ namespace cppsort
 
     namespace detail
     {
-        struct ska_sorter_impl
+        struct quick_merge_sorter_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename ForwardIterable,
+                typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator>
+                    is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Projection projection={}) const
-                -> std::enable_if_t<detail::is_ska_sortable_v<
-                    projected_t<RandomAccessIterator, Projection>
-                >>
+            auto operator()(ForwardIterable&& iterable,
+                            Compare compare={}, Projection projection={}) const
+                -> void
             {
                 static_assert(
                     std::is_base_of<
-                        std::random_access_iterator_tag,
-                        iterator_category_t<RandomAccessIterator>
+                        std::forward_iterator_tag,
+                        iterator_category_t<decltype(std::begin(iterable))>
                     >::value,
-                    "ska_sorter requires at least random-access iterators"
+                    "quick_merge_sorter requires at least forward iterators"
                 );
 
-                ska_sort(std::move(first), std::move(last), std::move(projection));
+                quick_merge_sort(std::begin(iterable), std::end(iterable),
+                                 utility::size(iterable),
+                                 std::move(compare), std::move(projection));
+            }
+
+            template<
+                typename ForwardIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                >
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        iterator_category_t<ForwardIterator>
+                    >::value,
+                    "quick_merge_sorter requires at least forward iterators"
+                );
+
+                auto dist = std::distance(first, last);
+                quick_merge_sort(std::move(first), std::move(last), dist,
+                                 std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////
@@ -80,8 +106,8 @@ namespace cppsort
         };
     }
 
-    struct ska_sorter:
-        sorter_facade<detail::ska_sorter_impl>
+    struct quick_merge_sorter:
+        sorter_facade<detail::quick_merge_sorter_impl>
     {};
 
     ////////////////////////////////////////////////////////////
@@ -89,9 +115,9 @@ namespace cppsort
 
     namespace
     {
-        constexpr auto&& ska_sort
-            = utility::static_const<ska_sorter>::value;
+        constexpr auto&& quick_merge_sort
+            = utility::static_const<quick_merge_sorter>::value;
     }
 }
 
-#endif // CPPSORT_SORTERS_SKA_SORTER_H_
+#endif // CPPSORT_SORTERS_QUICK_MERGE_SORTER_H_

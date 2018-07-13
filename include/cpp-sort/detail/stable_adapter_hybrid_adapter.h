@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_SORTERS_H_
-#define CPPSORT_SORTERS_H_
+#ifndef CPPSORT_DETAIL_STABLE_ADAPTER_HYBRID_ADAPTER_H_
+#define CPPSORT_DETAIL_STABLE_ADAPTER_HYBRID_ADAPTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/sorters/block_sorter.h>
-#include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sorters/drop_merge_sorter.h>
-#include <cpp-sort/sorters/grail_sorter.h>
-#include <cpp-sort/sorters/heap_sorter.h>
-#include <cpp-sort/sorters/insertion_sorter.h>
-#include <cpp-sort/sorters/merge_insertion_sorter.h>
-#include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/poplar_sorter.h>
-#include <cpp-sort/sorters/quick_merge_sorter.h>
-#include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/sorters/selection_sorter.h>
-#include <cpp-sort/sorters/ska_sorter.h>
-#include <cpp-sort/sorters/smooth_sorter.h>
-#include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sorters/tim_sorter.h>
-#include <cpp-sort/sorters/verge_sorter.h>
+#include <type_traits>
 
-#endif // CPPSORT_SORTERS_H_
+namespace cppsort
+{
+    template<typename... Sorters>
+    struct stable_adapter<hybrid_adapter<Sorters...>>:
+        hybrid_adapter<stable_adapter<Sorters>...>
+    {
+        ////////////////////////////////////////////////////////////
+        // Construction
+
+        stable_adapter() = default;
+
+        // Automatic deduction guide
+        constexpr explicit stable_adapter(hybrid_adapter<Sorters...>) noexcept {}
+
+        ////////////////////////////////////////////////////////////
+        // Sorter traits
+
+        using is_always_stable = std::true_type;
+    };
+}
+
+#endif // CPPSORT_DETAIL_STABLE_ADAPTER_HYBRID_ADAPTER_H_

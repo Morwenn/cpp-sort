@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -109,6 +109,7 @@ namespace utility
         };
     };
 
+#if defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 6000
     template<>
     struct fixed_buffer<0>
     {
@@ -180,15 +181,19 @@ namespace utility
             }
         };
     };
+#endif
 
     ////////////////////////////////////////////////////////////
     // Dynamic buffer accepting a size policy
 
-    template<typename SizePolicy>
-    struct dynamic_buffer
+    namespace detail
     {
+        // This class is used as a base class by dynamic_buffer::buffer
+        // to reduce template bloat, notably by making sure that it isn't
+        // instantiated for every different size policy
+
         template<typename T>
-        class buffer
+        class dynamic_buffer_impl
         {
             private:
 
@@ -197,8 +202,8 @@ namespace utility
 
             public:
 
-                explicit buffer(std::size_t size):
-                    _size(SizePolicy{}(size)),
+                explicit dynamic_buffer_impl(std::size_t size):
+                    _size(size),
                     _memory(std::make_unique<T[]>(_size))
                 {}
 
@@ -255,6 +260,19 @@ namespace utility
                 {
                     return _memory.get() + size();
                 }
+        };
+    }
+
+    template<typename SizePolicy>
+    struct dynamic_buffer
+    {
+        template<typename T>
+        struct buffer:
+            detail::dynamic_buffer_impl<T>
+        {
+            explicit buffer(std::size_t size):
+                detail::dynamic_buffer_impl<T>(SizePolicy{}(size))
+            {}
         };
     };
 }}

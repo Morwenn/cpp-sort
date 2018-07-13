@@ -38,6 +38,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
+#include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
 #include "../detail/type_traits.h"
 
@@ -66,7 +67,7 @@ namespace cppsort
                               "stable_adapter<std_sorter> doesn't work with schwartz_adapter");
 
                 auto&& proj = utility::as_function(projection);
-                using proj_t = remove_cvref_t<decltype(proj(*first))>;
+                using proj_t = projected_t<ForwardIterator, Projection>;
                 using value_t = association<ForwardIterator, proj_t>;
 
                 // Collection of projected elements
@@ -78,8 +79,7 @@ namespace cppsort
                 std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);
 
                 // Associate iterator to projected element
-                for (auto ptr = projected.get() ; first != last ; ++d, (void) ++first, ++ptr)
-                {
+                for (auto ptr = projected.get() ; first != last ; ++d, (void) ++first, ++ptr) {
                     ::new(ptr) value_t(first, proj(*first));
                 }
 

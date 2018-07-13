@@ -37,11 +37,14 @@ using distr_f = void (*)(std::back_insert_iterator<Collection<T>>, std::size_t);
 template<template<typename...> class Collection, typename T>
 using sort_f = void (*)(Collection<T>&);
 
+// Type of data to sort during the benchmark
+using value_t = int;
+
 int main()
 {
     using namespace std::chrono_literals;
 
-    std::pair<std::string, distr_f<std::vector, int>> distributions[] = {
+    std::pair<std::string, distr_f<std::vector, value_t>> distributions[] = {
         { "shuffled",               shuffled()              },
         { "shuffled_16_values",     shuffled_16_values()    },
         { "all_equal",              all_equal()             },
@@ -56,7 +59,7 @@ int main()
         { "alternating_16_values",  alternating_16_values() }
     };
 
-    std::pair<std::string, sort_f<std::vector, int>> sorts[] = {
+    std::pair<std::string, sort_f<std::vector, value_t>> sorts[] = {
         { "heap_sort",      cppsort::heap_sort      },
         { "pdq_sort",       cppsort::pdq_sort       },
         { "quick_sort",     cppsort::quick_sort     },
@@ -75,7 +78,7 @@ int main()
                 auto total_start = std::chrono::high_resolution_clock::now();
                 auto total_end = std::chrono::high_resolution_clock::now();
                 while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 5s) {
-                    std::vector<int> collection;
+                    std::vector<value_t> collection;
                     distribution.second(std::back_inserter(collection), size);
                     std::uint64_t start = rdtsc();
                     sort.second(collection);

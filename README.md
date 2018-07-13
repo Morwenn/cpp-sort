@@ -1,4 +1,4 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.1.1-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.2.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
@@ -191,6 +191,11 @@ proxy iterators.
 iterators. Its implementation uses a merge algorithm proposed by Dudziński and Dydek,
 and implemented by Alexander Stepanov and Paul McJones in their book [*Elements of
 Programming*](http://www.elementsofprogramming.com/).
+
+* The `inplace_merge` overload for random-access iterators uses the *Symmerge* algorithm
+proposed by Pok-Son Kim and Arne Kutzner in [*Stable Minimum Storage Merging by Symmetric
+Comparisons*](https://pdfs.semanticscholar.org/d664/cee462cb8e6a8ae2a1a7c6bab1b5f81e0618.pdf)
+when there isn't enough memory available to perform an out-of-place merge.
 
 * The implementation of Dijkstra's smoothsort used by `smooth_sorter` has been
 directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)

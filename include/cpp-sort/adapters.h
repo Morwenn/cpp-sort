@@ -31,6 +31,7 @@
 #include <cpp-sort/adapters/counting_adapter.h>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/indirect_adapter.h>
+#include <cpp-sort/adapters/out_of_place_adapter.h>
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>

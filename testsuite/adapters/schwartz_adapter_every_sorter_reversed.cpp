@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017 Morwenn
+ * Copyright (c) 2017-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -129,6 +129,14 @@ TEST_CASE( "every sorter with Schwartzian transform adapter and reverse iterator
     SECTION( "poplar_sorter" )
     {
         using sorter = cppsort::schwartz_adapter<cppsort::poplar_sorter>;
+        cppsort::sort(sorter{}, std::rbegin(collection), std::rend(collection), &wrapper<>::value);
+        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+                                  std::greater<>{}, &wrapper<>::value) );
+    }
+
+    SECTION( "quick_merge_sorter" )
+    {
+        using sorter = cppsort::schwartz_adapter<cppsort::quick_merge_sorter>;
         cppsort::sort(sorter{}, std::rbegin(collection), std::rend(collection), &wrapper<>::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::greater<>{}, &wrapper<>::value) );

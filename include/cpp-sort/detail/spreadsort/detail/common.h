@@ -13,7 +13,7 @@ Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
 
-// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
@@ -46,7 +46,7 @@ namespace detail
       unsigned result = 0;
       //The && is necessary on some compilers to avoid infinite loops
       //it doesn't significantly impair performance
-      while ((input >> result) && (result < (8 * sizeof(T)))) ++result;
+      while ((result < (8*sizeof(T))) && (input >> result)) ++result;
       return result;
     }
 

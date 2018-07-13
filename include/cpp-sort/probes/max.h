@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,11 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/indirect_compare.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/pdqsort.h"
 
 namespace cppsort
 {
@@ -82,10 +82,11 @@ namespace probe
                 }
 
                 // Sort the iterators on pointed values
-                pdq_sorter{}(
-                    iterators,
+                pdqsort(
+                    iterators.begin(), iterators.end(),
                     cppsort::detail::indirect_compare<Compare, Projection>(std::move(compare),
-                                                                           std::move(projection))
+                                                                           std::move(projection)),
+                    utility::identity{}
                 );
 
                 ////////////////////////////////////////////////////////////

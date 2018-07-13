@@ -58,6 +58,7 @@ namespace cppsort
     struct merge_sorter;
     struct pdq_sorter;
     struct poplar_sorter;
+    struct quick_merge_sorter;
     struct quick_sorter;
     struct selection_sorter;
     struct ska_sorter;
@@ -89,6 +90,8 @@ namespace cppsort
     struct hybrid_adapter;
     template<typename Sorter>
     struct indirect_adapter;
+    template<typename Sorter>
+    struct out_of_place_adapter;
     template<typename Sorter>
     struct schwartz_adapter;
     template<typename Sorter>

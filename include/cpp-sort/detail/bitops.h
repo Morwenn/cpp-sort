@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,18 +34,6 @@ namespace cppsort
 {
 namespace detail
 {
-    // Returns 2^ceil(log2(n)), assumes n > 0
-    template<typename Unsigned>
-    constexpr auto hyperceil(Unsigned n)
-        -> Unsigned
-    {
-        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
-        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
-            n |= (n >> i);
-        }
-        return n + 1;
-    }
-
     // Returns 2^floor(log2(n)), assumes n > 0
     template<typename Unsigned>
     constexpr auto hyperfloor(Unsigned n)
