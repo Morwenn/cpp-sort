@@ -214,8 +214,8 @@ Perl's [`Algorithm::Networksort` module](http://search.cpan.org/~jgamble/Algorit
 by Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
 Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam and Miikkulainen.
 
-* The algorithms 19, 20, 21, 22, 23, 24 and 28 used by `sorting_network_sorter` have
-been found and proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
+* The algorithms 19 to 26 and 28 used by `sorting_network_sorter` have been found and
+proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
 Huge thanks for this contribution :) You can find a full list of most well-known sorting
 networks up to 32 inputs on his website.
 
