@@ -108,6 +108,16 @@ TEST_CASE( "check that adapters correctly forward the result of the wrapped sort
         CHECK( sort(li) == 43 );
     }
 
+    SECTION( "schwartz_adapter" )
+    {
+        auto sort = cppsort::schwartz_adapter<
+            return_sorter
+        >{};
+        CHECK( sort(vec) == 42 );
+        CHECK( sort(vec.begin(), vec.end(), std::less<>{}, cppsort::utility::identity{}) == 42 );
+        CHECK( sort(vec.begin(), vec.end(), cppsort::utility::identity{}) == 42 );
+    }
+
     SECTION( "self_sort_adapter" )
     {
         auto sort = cppsort::self_sort_adapter<
