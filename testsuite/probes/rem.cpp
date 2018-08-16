@@ -26,6 +26,7 @@
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/rem.h>
+#include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
 {
@@ -40,6 +41,9 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
         std::vector<int> vec(std::begin(li), std::end(li));
         CHECK( cppsort::probe::rem(vec) == 4 );
         CHECK( cppsort::probe::rem(std::begin(vec), std::end(vec)) == 4 );
+
+        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        CHECK( cppsort::probe::rem(tricky, &internal_compare<int>::compare_to) == 4 );
     }
 
     SECTION( "lower bound" )

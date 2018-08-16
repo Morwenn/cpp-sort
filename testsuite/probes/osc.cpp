@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,10 @@
  */
 #include <forward_list>
 #include <iterator>
+#include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/osc.h>
+#include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
 {
@@ -36,6 +38,9 @@ TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
         std::forward_list<int> li = { 6, 3, 9, 8, 4, 7, 1, 11 };
         CHECK( cppsort::probe::osc(li) == 17 );
         CHECK( cppsort::probe::osc(std::begin(li), std::end(li)) == 17 );
+
+        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        CHECK( cppsort::probe::osc(tricky, &internal_compare<int>::compare_to) == 17 );
     }
 
     SECTION( "lower bound" )

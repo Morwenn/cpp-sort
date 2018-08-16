@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 #include <vector>
 #include <catch.hpp>
 #include <cpp-sort/probes/par.h>
+#include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: par", "[probe][par]" )
 {
@@ -33,6 +34,9 @@ TEST_CASE( "presortedness measure: par", "[probe][par]" )
         const std::vector<int> vec = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
         CHECK( cppsort::probe::par(vec) == 7 );
         CHECK( cppsort::probe::par(std::begin(vec), std::end(vec)) == 7 );
+
+        std::vector<internal_compare<int>> tricky(vec.begin(), vec.end());
+        CHECK( cppsort::probe::par(tricky, &internal_compare<int>::compare_to) == 7 );
     }
 
     SECTION( "lower bound" )
