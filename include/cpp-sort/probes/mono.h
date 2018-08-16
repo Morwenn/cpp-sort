@@ -78,7 +78,7 @@ namespace probe
 
                 while (next != last) {
 
-                    if (compare(proj(*current), proj(*next))) {
+                    if (comp(proj(*current), proj(*next))) {
                         // Look for an ascending run
                         do {
                             current = next;
@@ -86,10 +86,10 @@ namespace probe
                             if (next == last) {
                                 return count;
                             }
-                        } while(not compare(proj(*next), proj(*current)));
+                        } while(not comp(proj(*next), proj(*current)));
                         ++count;
 
-                    } else if (compare(proj(*next), proj(*current))) {
+                    } else if (comp(proj(*next), proj(*current))) {
                         // Look for a descending run
                         do {
                             current = next;
@@ -97,7 +97,7 @@ namespace probe
                             if (next == last) {
                                 return count;
                             }
-                        } while(not compare(proj(*current), proj(*next)));
+                        } while(not comp(proj(*current), proj(*next)));
                         ++count;
                     }
 
