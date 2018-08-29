@@ -1,3 +1,5 @@
+include(CTest)
+
 # Define test files
 
 set(
@@ -99,7 +101,7 @@ set(
     utility/iter_swap.cpp
 )
 
-# Make one executable for the whole testsuite
+# Make one executable for the whole testsuite (TODO: still the case?)
 add_executable(
     cpp-sort-testsuite
 
@@ -123,15 +125,36 @@ add_executable(
     ${UTILITY_TESTS}
 )
 
+target_link_libraries(cpp-sort-testsuite
+	PRIVATE
+		cpp-sort::cpp-sort
+)
+
 # Configure Catch2 for the tests
 target_include_directories(cpp-sort-testsuite PRIVATE ${CATCH_INCLUDE_DIR})
 add_dependencies(cpp-sort-testsuite catch)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
+# Use the gold linker if possible
+if (UNIX AND NOT APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+endif()
+
+# Optionally enable sanitizers
+if (UNIX AND SANITIZE)
+	target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
+endif()
+
 if (ENABLE_COVERAGE)
     find_package(codecov)
     add_coverage(cpp-sort-testsuite)
+
+	# Set flags specific to coverage builds
+	target_compile_options(cpp-sort-testsuite PRIVATE -g -O0 -Wall -Wextra -fprofile-arcs -ftest-coverage)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+
+    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
@@ -142,5 +165,3 @@ if (USE_VALGRIND)
 else()
     add_test(NAME testsuite COMMAND $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
 endif()
-
-enable_testing()
