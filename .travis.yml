@@ -97,6 +97,7 @@ before_install:
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         brew update;
         brew install ccache valgrind;
+        brew upgrade cmake;
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
     fi
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
