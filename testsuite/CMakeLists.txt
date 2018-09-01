@@ -138,13 +138,13 @@ target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCH
 
 # Use the gold linker if possible
 if (UNIX AND NOT APPLE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
 endif()
 
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
 	target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
-	set_target_properties(cpp-sort-testsuite PROPERTIES LINK_FLAGS -fsanitize=${SANITIZE})
+	set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
 endif()
 
 if (ENABLE_COVERAGE)
@@ -153,7 +153,7 @@ if (ENABLE_COVERAGE)
 
 	# Set flags specific to coverage builds
 	target_compile_options(cpp-sort-testsuite PRIVATE -g -O0 -Wall -Wextra -fprofile-arcs -ftest-coverage)
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fprofile-arcs -ftest-coverage")
 
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
