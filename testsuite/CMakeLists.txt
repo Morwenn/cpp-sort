@@ -144,6 +144,7 @@ endif()
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
 	target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
+	set_target_properties(cpp-sort-testsuite PROPERTIES LINK_FLAGS -fsanitize=${SANITIZE})
 endif()
 
 if (ENABLE_COVERAGE)
