@@ -1,4 +1,13 @@
 include(CTest)
+include(DownloadProject)
+
+# Download Catch2 for the tests
+download_project(PROJ Catch2
+                 GIT_REPOSITORY https://github.com/catchorg/Catch2
+                 GIT_TAG master
+                 UPDATE_DISCONNECTED 1
+)
+add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
 
 # Define test files
 
@@ -101,7 +110,7 @@ set(
     utility/iter_swap.cpp
 )
 
-# Make one executable for the whole testsuite (TODO: still the case?)
+# Make one executable for the whole testsuite
 add_executable(
     cpp-sort-testsuite
 
@@ -126,13 +135,12 @@ add_executable(
 )
 
 target_link_libraries(cpp-sort-testsuite
-	PRIVATE
-		cpp-sort::cpp-sort
+    PRIVATE
+        Catch2::Catch2
+        cpp-sort::cpp-sort
 )
 
-# Configure Catch2 for the tests
-target_include_directories(cpp-sort-testsuite PRIVATE ${CATCH_INCLUDE_DIR})
-add_dependencies(cpp-sort-testsuite catch)
+# Somewhat speed up Catch2 compile times
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 

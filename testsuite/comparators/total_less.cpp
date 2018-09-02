@@ -23,7 +23,7 @@
  */
 #include <cmath>
 #include <limits>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/comparators/total_less.h>
 #include <cpp-sort/sort.h>
 

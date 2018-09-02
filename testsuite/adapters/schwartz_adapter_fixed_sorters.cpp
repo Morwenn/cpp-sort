@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 #include <array>
 #include <iterator>
 #include <random>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/fixed_sorters.h>

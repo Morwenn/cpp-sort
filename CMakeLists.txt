@@ -80,6 +80,5 @@ export(EXPORT cpp-sort-targets
 # Build tests if this is the main project
 if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
     enable_testing()
-	add_subdirectory(external/catch)  # TODO: remove later
     add_subdirectory(testsuite)
 endif()

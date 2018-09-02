@@ -27,7 +27,7 @@
 #include <iterator>
 #include <list>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters/merge_sorter.h>

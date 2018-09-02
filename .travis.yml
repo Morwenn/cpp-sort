@@ -122,7 +122,7 @@ script:
     else
         cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
-  - cd build/testsuite
+  - cd build
   - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
 
 after_success:

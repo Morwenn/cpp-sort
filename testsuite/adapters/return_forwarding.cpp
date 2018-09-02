@@ -26,7 +26,7 @@
 #include <list>
 #include <type_traits>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/sorter_facade.h>
 

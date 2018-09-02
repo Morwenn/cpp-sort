@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sort.h>

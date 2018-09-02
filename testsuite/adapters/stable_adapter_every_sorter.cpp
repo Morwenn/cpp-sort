@@ -27,7 +27,7 @@
 #include <iterator>
 #include <random>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/stable_sort.h>
 #include <cpp-sort/utility/buffer.h>
