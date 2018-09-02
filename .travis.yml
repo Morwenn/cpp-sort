@@ -123,7 +123,11 @@ script:
         cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
   - cd build
-  - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
+  - if [[ $USE_VALGRIND = true ]]; then
+        travis_wait ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure;
+    else
+        travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
+    fi
 
 after_success:
   - if [[ $ENABLE_COVERAGE = true ]]; then
