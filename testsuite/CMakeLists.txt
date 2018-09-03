@@ -1,4 +1,3 @@
-include(CTest)
 include(DownloadProject)
 
 # Download and configure Catch2 for the tests
@@ -172,8 +171,10 @@ endif()
 
 if (USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind)
-    set(MEMORYCHECK_COMMAND_OPTIONS --leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no)
+    set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
 endif()
+
+include(CTest)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 catch_discover_tests(cpp-sort-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
