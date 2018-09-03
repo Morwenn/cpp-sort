@@ -1,13 +1,15 @@
 include(CTest)
 include(DownloadProject)
 
-# Download Catch2 for the tests
+# Download and configure Catch2 for the tests
 download_project(PROJ Catch2
                  GIT_REPOSITORY https://github.com/catchorg/Catch2
                  GIT_TAG master
                  UPDATE_DISCONNECTED 1
 )
 add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
+list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
+include(Catch)
 
 # Define test files
 
@@ -174,4 +176,4 @@ if (USE_VALGRIND)
 endif()
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-add_test(NAME testsuite COMMAND $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
+catch_discover_tests(cpp-sort-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
