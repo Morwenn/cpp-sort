@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 #include <type_traits>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>

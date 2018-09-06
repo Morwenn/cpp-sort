@@ -24,7 +24,7 @@
 #include <forward_list>
 #include <iterator>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/probes/runs.h>
 #include "../internal_compare.h"
 

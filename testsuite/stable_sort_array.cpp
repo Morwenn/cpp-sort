@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 #include <functional>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/stable_sort.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/utility/functional.h>
