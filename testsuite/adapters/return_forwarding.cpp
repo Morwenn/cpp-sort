@@ -108,6 +108,16 @@ TEST_CASE( "check that adapters correctly forward the result of the wrapped sort
         CHECK( sort(li) == 43 );
     }
 
+#ifdef __cpp_lib_uncaught_exceptions
+    SECTION( "indirect_adapter" )
+    {
+        auto sort = cppsort::indirect_adapter<
+            return_sorter
+        >{};
+        CHECK( sort(vec) == 42 );
+    }
+#endif
+
     SECTION( "schwartz_adapter" )
     {
         auto sort = cppsort::schwartz_adapter<

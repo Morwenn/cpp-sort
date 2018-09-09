@@ -38,6 +38,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
 #include "../detail/indirect_compare.h"
+#include "../detail/scope_exit.h"
 
 namespace cppsort
 {
@@ -60,11 +61,9 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> void
+                -> decltype(auto)
             {
                 using utility::iter_move;
-
-                if (first == last || std::next(first) == last) return;
 
                 ////////////////////////////////////////////////////////////
                 // Indirectly sort the iterators
@@ -76,44 +75,58 @@ namespace cppsort
                     iterators.push_back(it);
                 }
 
+#ifndef __cpp_lib_uncaught_exceptions
                 // Sort the iterators on pointed values
                 Sorter{}(std::begin(iterators), std::end(iterators),
                          detail::indirect_compare<Compare, Projection>(compare, projection));
+#else
+                // Work around the sorters that return void
+                auto exit_function = scope_success([&] {
+#endif
+                    ////////////////////////////////////////////////////////////
+                    // Move the values according the iterator's positions
 
-                ////////////////////////////////////////////////////////////
-                // Move the values according the iterator's positions
+                    std::vector<bool> sorted(std::distance(first, last), false);
 
-                std::vector<bool> sorted(std::distance(first, last), false);
+                    // Element where the current cycle starts
+                    RandomAccessIterator start = first;
 
-                // Element where the current cycle starts
-                RandomAccessIterator start = first;
+                    while (start != last) {
+                        // Find the element to put in current's place
+                        RandomAccessIterator current = start;
+                        auto next_pos = std::distance(first, current);
+                        RandomAccessIterator next = iterators[next_pos];
+                        sorted[next_pos] = true;
 
-                do {
-                    // Find the element to put in current's place
-                    RandomAccessIterator current = start;
-                    auto next_pos = std::distance(first, current);
-                    RandomAccessIterator next = iterators[next_pos];
-                    sorted[next_pos] = true;
-
-                    // Process the current cycle
-                    if (next != current) {
-                        auto tmp = iter_move(current);
-                        while (next != start) {
-                            *current = iter_move(next);
-                            current = next;
-                            auto next_pos = std::distance(first, next);
-                            next = iterators[next_pos];
-                            sorted[next_pos] = true;
+                        // Process the current cycle
+                        if (next != current) {
+                            auto tmp = iter_move(current);
+                            while (next != start) {
+                                *current = iter_move(next);
+                                current = next;
+                                auto next_pos = std::distance(first, next);
+                                next = iterators[next_pos];
+                                sorted[next_pos] = true;
+                            }
+                            *current = std::move(tmp);
                         }
-                        *current = std::move(tmp);
+
+                        // Find the next cycle
+                        do {
+                            ++start;
+                        } while (start != last && sorted[start - first]);
+
                     }
+#ifdef __cpp_lib_uncaught_exceptions
+                });
 
-                    // Find the next cycle
-                    do {
-                        ++start;
-                    } while (start != last && sorted[start - first]);
+                if (first == last || std::next(first) == last) {
+                    exit_function.release();
+                }
 
-                } while (start != last);
+                return Sorter{}(std::begin(iterators), std::end(iterators),
+                                detail::indirect_compare<Compare, Projection>(compare, projection));
+#endif
             }
 
             ////////////////////////////////////////////////////////////
