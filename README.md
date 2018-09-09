@@ -227,3 +227,6 @@ Libraries*](http://arxiv.org/abs/1505.01962).
 * The LaTeX scripts used to draw the sorting networks are modified versions of
 kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),
 slightly adapted to be 0-based and draw the network from top to bottom.
+
+* The CMake tools embedded in the projects include scripts from [RWTH-HPC/CMake-codecov](https://github.com/RWTH-HPC/CMake-codecov)
+and [Crascit/DownloadProject](https://github.com/Crascit/DownloadProject).
