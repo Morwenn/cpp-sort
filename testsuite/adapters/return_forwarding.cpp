@@ -116,6 +116,14 @@ TEST_CASE( "check that adapters correctly forward the result of the wrapped sort
         >{};
         CHECK( sort(vec) == 42 );
     }
+
+    SECTION( "out_of_place_adapter" )
+    {
+        auto sort = cppsort::out_of_place_adapter<
+            return_sorter
+        >{};
+        CHECK( sort(vec) == 42 );
+    }
 #endif
 
     SECTION( "schwartz_adapter" )

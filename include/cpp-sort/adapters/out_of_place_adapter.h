@@ -36,6 +36,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
+#include "../detail/scope_exit.h"
 
 namespace cppsort
 {
@@ -46,7 +47,7 @@ namespace cppsort
     {
         template<typename Sorter, typename ForwardIterator, typename Size, typename... Args>
         auto sort_out_of_place(ForwardIterator first, Size size, Sorter sorter, Args&&... args)
-            -> void
+            -> decltype(auto)
         {
             using utility::iter_move;
             using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
@@ -67,11 +68,21 @@ namespace cppsort
                 ++d;
             }
 
+#ifdef __cpp_lib_uncaught_exceptions
+            // Work around the sorters that return void
+            auto exit_function = scope_success([&] {
+                // Copy the sorted elements back in the original collection
+                std::move(buffer.get(), buffer.get() + size, first);
+            });
+
+            // Sort the elements in the memory buffer
+            return sorter(buffer.get(), buffer.get() + size, std::forward<Args>(args)...);
+#else
             // Sort the elements in the memory buffer
             sorter(buffer.get(), buffer.get() + size, std::forward<Args>(args)...);
-
             // Copy the sorted elements back in the original collection
             std::move(buffer.get(), buffer.get() + size, first);
+#endif
         }
     }
 
@@ -94,19 +105,19 @@ namespace cppsort
 
         template<typename Iterator, typename... Args>
         auto operator()(Iterator first, Iterator last, Args&&... args) const
-            -> void
+            -> decltype(auto)
         {
             auto size = std::distance(first, last);
-            return sort_out_of_place(first, size, Sorter{}, std::forward<Args>(args)...);
+            return detail::sort_out_of_place(first, size, Sorter{}, std::forward<Args>(args)...);
         }
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> void
+            -> decltype(auto)
         {
             // Might be an optimization for forward/bidirectional iterables
             auto size = utility::size(iterable);
-            return sort_out_of_place(std::begin(iterable), size, Sorter{}, std::forward<Args>(args)...);
+            return detail::sort_out_of_place(std::begin(iterable), size, Sorter{}, std::forward<Args>(args)...);
         }
     };
 
