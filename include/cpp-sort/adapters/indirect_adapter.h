@@ -81,7 +81,7 @@ namespace cppsort
                          detail::indirect_compare<Compare, Projection>(compare, projection));
 #else
                 // Work around the sorters that return void
-                auto exit_function = scope_success([&] {
+                auto exit_function = make_scope_success([&] {
 #endif
                     ////////////////////////////////////////////////////////////
                     // Move the values according the iterator's positions

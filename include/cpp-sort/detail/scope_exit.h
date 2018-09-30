@@ -80,8 +80,11 @@ namespace detail
     };
 
     template<typename EF>
-    scope_success(EF)
-        -> scope_success<EF>;
+    auto make_scope_success(EF&& function)
+        -> scope_success<EF>
+    {
+        return scope_success<EF>(std::forward<EF>(function));
+    }
 }}
 
 #endif // __cpp_lib_uncaught_exceptions
