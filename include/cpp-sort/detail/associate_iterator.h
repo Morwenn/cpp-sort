@@ -271,6 +271,48 @@ namespace detail
                 return base()[pos];
             }
 
+            ////////////////////////////////////////////////////////////
+            // Comparison operators
+
+            friend auto operator==(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() == rhs.base();
+            }
+
+            friend auto operator!=(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() != rhs.base();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Relational operators
+
+            friend auto operator<(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() < rhs.base();
+            }
+
+            friend auto operator<=(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() <= rhs.base();
+            }
+
+            friend auto operator>(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() > rhs.base();
+            }
+
+            friend auto operator>=(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() >= rhs.base();
+            }
+
         private:
 
             Iterator _it;
@@ -295,60 +337,6 @@ namespace detail
             std::move(*(it->it)),
             std::move(it->data)
         };
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Comparison operators
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator==(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() == rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator!=(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() != rhs.base();
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Relational operators
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator<(const associate_iterator<Iterator1>& lhs,
-                   const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() < rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator<=(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() <= rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator>(const associate_iterator<Iterator1>& lhs,
-                   const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() > rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator>=(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() >= rhs.base();
     }
 
     ////////////////////////////////////////////////////////////
