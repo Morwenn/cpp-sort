@@ -5,6 +5,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 project(cpp-sort VERSION 1.2.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
+include(cotire)
 include(GNUInstallDirs)
 
 # Project options
