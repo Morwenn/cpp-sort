@@ -29,107 +29,31 @@
 #include "distributions.h"
 #include "internal_compare.h"
 
-TEST_CASE( "test every sorter with a pointer to member function comparison",
-           "[sorters][as_function]" )
+TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function comparison",
+                    "[sorters][as_function]",
+                    cppsort::block_sorter<>,
+                    cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::heap_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter,
+                    cppsort::poplar_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::smooth_sorter,
+                    cppsort::std_sorter,
+                    cppsort::tim_sorter,
+                    cppsort::verge_sorter )
 {
     std::vector<internal_compare<int>> collection;
     collection.reserve(35);
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 35, -47);
 
-    SECTION( "block_sort" )
-    {
-        cppsort::block_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "drop_merge_sort" )
-    {
-        cppsort::drop_merge_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "grail_sorter" )
-    {
-        cppsort::grail_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "heap_sorter" )
-    {
-        cppsort::heap_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "insertion_sorter" )
-    {
-        cppsort::insertion_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_insertion_sorter" )
-    {
-        cppsort::merge_insertion_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_sorter" )
-    {
-        cppsort::merge_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "pdq_sorter" )
-    {
-        cppsort::pdq_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "poplar_sorter" )
-    {
-        cppsort::poplar_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_merge_sorter" )
-    {
-        cppsort::quick_merge_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_sorter" )
-    {
-        cppsort::quick_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "selection_sorter" )
-    {
-        cppsort::selection_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "smooth_sorter" )
-    {
-        cppsort::smooth_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "std_sorter" )
-    {
-        cppsort::std_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "tim_sorter" )
-    {
-        cppsort::tim_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "verge_sorter" )
-    {
-        cppsort::verge_sort(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
+    using sorter = TestType;
+    sorter{}(collection, &internal_compare<int>::compare_to);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
