@@ -33,9 +33,17 @@
 #include "span.h"
 
 TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
+                    cppsort::block_sorter<>,
+                    cppsort::block_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    >,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::grail_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
+                    >,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
                     cppsort::merge_insertion_sorter,
@@ -63,37 +71,4 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
     using sorter = TestType;
     cppsort::sort(sorter{}, make_span(collection));
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-}
-
-TEST_CASE( "test every buffered sorter with temporary span", "[sorters][span]" )
-{
-    std::vector<long int> collection; collection.reserve(491);
-    auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 491, -125);
-
-    SECTION( "block_sorter" )
-    {
-        using namespace cppsort;
-
-        // Fixed buffer
-        sort(block_sorter<>{}, make_span(collection));
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-
-        // Dynamic buffer
-        sort(block_sorter<utility::dynamic_buffer<utility::sqrt>>{}, make_span(collection));
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "grail_sorter" )
-    {
-        using namespace cppsort;
-
-        // Fixed buffer
-        sort(grail_sorter<>{}, make_span(collection));
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-
-        // Dynamic buffer
-        sort(grail_sorter<utility::dynamic_buffer<utility::half>>{}, make_span(collection));
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
 }

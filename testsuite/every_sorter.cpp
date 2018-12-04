@@ -32,9 +32,17 @@
 #include "distributions.h"
 
 TEMPLATE_TEST_CASE( "test every normal sorter", "[sorters]",
+                    cppsort::block_sorter<>,
+                    cppsort::block_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    >,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::grail_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
+                    >,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
                     cppsort::merge_insertion_sorter,
@@ -50,8 +58,6 @@ TEMPLATE_TEST_CASE( "test every normal sorter", "[sorters]",
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )
 {
-
-
     // General test to make sure that every sorter compiles fine
     // and is able to sort a vector of numbers. spread_sorter is
     // already tested in-depth somewhere else and needs specific
@@ -64,37 +70,4 @@ TEMPLATE_TEST_CASE( "test every normal sorter", "[sorters]",
     using sorter = TestType;
     cppsort::sort(sorter{}, collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-}
-
-TEST_CASE( "test every buffered sorter", "[sorters]" )
-{
-    std::vector<int> collection; collection.reserve(491);
-    auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 491, -125);
-
-    SECTION( "block_sorter" )
-    {
-        using namespace cppsort;
-
-        // Fixed buffer
-        sort(block_sorter<>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-
-        // Dynamic buffer
-        sort(block_sorter<utility::dynamic_buffer<utility::sqrt>>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "grail_sorter" )
-    {
-        using namespace cppsort;
-
-        // Fixed buffer
-        sort(grail_sorter<>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-
-        // Dynamic buffer
-        sort(grail_sorter<utility::dynamic_buffer<utility::half>>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
 }
