@@ -34,10 +34,10 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
-#include "../detail/indirect_compare.h"
 #include "../detail/scope_exit.h"
 
 namespace cppsort
@@ -64,6 +64,7 @@ namespace cppsort
                 -> decltype(auto)
             {
                 using utility::iter_move;
+                auto&& proj = utility::as_function(projection);
 
                 ////////////////////////////////////////////////////////////
                 // Indirectly sort the iterators
@@ -77,8 +78,8 @@ namespace cppsort
 
 #ifndef __cpp_lib_uncaught_exceptions
                 // Sort the iterators on pointed values
-                Sorter{}(std::begin(iterators), std::end(iterators),
-                         detail::indirect_compare<Compare, Projection>(compare, projection));
+                Sorter{}(std::begin(iterators), std::end(iterators), std::move(compare),
+                         [&proj](RandomAccessIterator it) -> decltype(auto) { return proj(*it); });
 #else
                 // Work around the sorters that return void
                 auto exit_function = make_scope_success([&] {
@@ -124,8 +125,8 @@ namespace cppsort
                     exit_function.release();
                 }
 
-                return Sorter{}(std::begin(iterators), std::end(iterators),
-                                detail::indirect_compare<Compare, Projection>(compare, projection));
+                return Sorter{}(std::begin(iterators), std::end(iterators), std::move(compare),
+                                [&proj](RandomAccessIterator it) -> decltype(auto) { return proj(*it); });
 #endif
             }
 
