@@ -109,7 +109,7 @@ namespace utility
         };
     };
 
-#if defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 6000
+#if defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 7000
     template<>
     struct fixed_buffer<0>
     {

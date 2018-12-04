@@ -24,139 +24,38 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters/verge_adapter.h>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include "../distributions.h"
 
-TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]" )
+TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
+                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
+                    cppsort::default_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::heap_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter,
+                    cppsort::poplar_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::ska_sorter,
+                    cppsort::smooth_sorter,
+                    cppsort::spread_sorter,
+                    cppsort::std_sorter,
+                    cppsort::tim_sorter )
 {
     std::vector<double> collection; collection.reserve(412);
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 412, -125.0);
 
-    SECTION( "block_sorter" )
-    {
-        using namespace cppsort;
-
-        using sorter = verge_adapter<block_sorter<
-            utility::fixed_buffer<0>
-        >>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "default_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::default_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "drop_merge_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::drop_merge_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "grail_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::grail_sorter<>>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "heap_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::heap_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "insertion_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::insertion_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_insertion_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::merge_insertion_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::merge_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "pdq_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::pdq_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "poplar_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::poplar_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_merge_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::quick_merge_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::quick_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "selection_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::selection_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "ska_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::ska_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "smooth_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::smooth_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "spread_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::spread_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "tim_sorter" )
-    {
-        using sorter = cppsort::verge_adapter<cppsort::tim_sorter>;
-        cppsort::sort(sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
+    using sorter = cppsort::verge_adapter<TestType>;
+    cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

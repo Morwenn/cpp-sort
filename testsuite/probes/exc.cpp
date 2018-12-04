@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,10 @@
  */
 #include <forward_list>
 #include <iterator>
-#include <catch.hpp>
+#include <vector>
+#include <catch2/catch.hpp>
 #include <cpp-sort/probes/exc.h>
+#include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
 {
@@ -37,6 +39,9 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         std::forward_list<int> li2 = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::exc(li2) == 5 );
         CHECK( cppsort::probe::exc(std::begin(li2), std::end(li2)) == 5 );
+
+        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        CHECK( cppsort::probe::exc(tricky, &internal_compare<int>::compare_to) == 7 );
     }
 
     SECTION( "lower bound" )

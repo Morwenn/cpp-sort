@@ -23,8 +23,10 @@
  */
 #include <forward_list>
 #include <iterator>
-#include <catch.hpp>
+#include <vector>
+#include <catch2/catch.hpp>
 #include <cpp-sort/probes/runs.h>
+#include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
 {
@@ -39,6 +41,9 @@ TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
         std::forward_list<int> li2 = { 4, 2, 6, 5, 3, 1, 9, 7, 10, 8 };
         CHECK( cppsort::probe::runs(li2) == 6 );
         CHECK( cppsort::probe::runs(std::begin(li2), std::end(li2)) == 6 );
+
+        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        CHECK( cppsort::probe::runs(tricky, &internal_compare<int>::compare_to) == 5 );
     }
 
     SECTION( "lower bound" )

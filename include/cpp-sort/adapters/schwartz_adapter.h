@@ -54,12 +54,17 @@ namespace cppsort
             check_iterator_category<Sorter>,
             check_is_always_stable<Sorter>
         {
-            template<typename ForwardIterator, typename Compare, typename Projection>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare, Projection projection) const
-                -> std::enable_if_t<is_projection_iterator_v<
+            template<
+                typename ForwardIterator,
+                typename Compare,
+                typename Projection,
+                typename = std::enable_if_t<is_projection_iterator_v<
                     Projection, ForwardIterator, Compare
                 >>
+            >
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare, Projection projection) const
+                -> decltype(auto)
             {
                 static_assert(not std::is_same<Sorter, std_sorter>::value,
                               "std_sorter doesn't work with schwartz_adapter");
@@ -84,7 +89,7 @@ namespace cppsort
                 }
 
                 // Indirectly sort the original sequence
-                Sorter{}(
+                return Sorter{}(
                     make_associate_iterator(projected.get()),
                     make_associate_iterator(projected.get() + size),
                     std::move(compare),
@@ -95,13 +100,13 @@ namespace cppsort
             template<typename ForwardIterator, typename Compare=std::less<>>
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}) const
-                -> std::enable_if_t<not is_projection_iterator_v<
-                    Compare, ForwardIterator
-                >>
+                -> std::enable_if_t<
+                    not is_projection_iterator_v<Compare, ForwardIterator>,
+                    decltype(Sorter{}(std::move(first), std::move(last), std::move(compare)))
+                >
             {
-                // No projection to handle, forward everything to
-                // the adapted sorter
-                Sorter{}(std::move(first), std::move(last), std::move(compare));
+                // No projection to handle, forward everything to the adapted sorter
+                return Sorter{}(std::move(first), std::move(last), std::move(compare));
             }
         };
     }

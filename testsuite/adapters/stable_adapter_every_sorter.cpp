@@ -27,7 +27,7 @@
 #include <iterator>
 #include <random>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/stable_sort.h>
 #include <cpp-sort/utility/buffer.h>
@@ -43,151 +43,48 @@ namespace
     auto operator<(const wrapper& lhs, const wrapper& rhs)
         -> bool
     {
-        if (lhs.value < rhs.value)
-        {
+        if (lhs.value < rhs.value) {
             return true;
         }
-        if (rhs.value < lhs.value)
-        {
+        if (rhs.value < lhs.value) {
             return false;
         }
         return lhs.order < rhs.order;
     }
 }
 
-TEST_CASE( "every sorter with stable adapter",
-           "[stable_adapter]" )
+TEMPLATE_TEST_CASE( "every sorter with stable adapter", "[stable_adapter]",
+                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
+                    cppsort::default_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::heap_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter,
+                    cppsort::poplar_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::smooth_sorter,
+                    cppsort::std_sorter,
+                    cppsort::tim_sorter,
+                    cppsort::verge_sorter )
 {
     std::vector<wrapper> collection(412);
     std::size_t count = 0;
-    for (wrapper& wrap: collection)
-    {
+    for (wrapper& wrap: collection) {
         wrap.value = count++ % 17;
     }
     std::mt19937 engine(Catch::rngSeed());
     std::shuffle(std::begin(collection), std::end(collection), engine);
     count = 0;
-    for (wrapper& wrap: collection)
-    {
+    for (wrapper& wrap: collection) {
         wrap.order = count++;
     }
 
-    SECTION( "block_sorter" )
-    {
-        using sorter = cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "default_sorter" )
-    {
-        using sorter = cppsort::default_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "drop_merge_sorter" )
-    {
-        using sorter = cppsort::drop_merge_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "grail_sorter" )
-    {
-        using sorter = cppsort::grail_sorter<>;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "heap_sorter" )
-    {
-        using sorter = cppsort::heap_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "insertion_sorter" )
-    {
-        using sorter = cppsort::insertion_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_insertion_sorter" )
-    {
-        using sorter = cppsort::merge_insertion_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_sorter" )
-    {
-        using sorter = cppsort::merge_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "pdq_sorter" )
-    {
-        using sorter = cppsort::pdq_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "poplar_sorter" )
-    {
-        using sorter = cppsort::poplar_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_merge_sorter" )
-    {
-        using sorter = cppsort::quick_merge_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_sorter" )
-    {
-        using sorter = cppsort::quick_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "selection_sorter" )
-    {
-        using sorter = cppsort::selection_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "smooth_sorter" )
-    {
-        using sorter = cppsort::smooth_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "std_sorter" )
-    {
-        using sorter = cppsort::std_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "tim_sorter" )
-    {
-        using sorter = cppsort::tim_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "verge_sorter" )
-    {
-        using sorter = cppsort::verge_sorter;
-        cppsort::stable_sort(sorter{}, collection, &wrapper::value);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
+    using sorter = TestType;
+    cppsort::stable_sort(sorter{}, collection, &wrapper::value);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

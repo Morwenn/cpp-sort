@@ -214,8 +214,8 @@ Perl's [`Algorithm::Networksort` module](http://search.cpan.org/~jgamble/Algorit
 by Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
 Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam and Miikkulainen.
 
-* The algorithms 19, 20, 21, 22, 23, 24 and 28 used by `sorting_network_sorter` have
-been found and proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
+* The algorithms 19 to 26 and 28 used by `sorting_network_sorter` have been found and
+proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
 Huge thanks for this contribution :) You can find a full list of most well-known sorting
 networks up to 32 inputs on his website.
 
@@ -227,3 +227,6 @@ Libraries*](http://arxiv.org/abs/1505.01962).
 * The LaTeX scripts used to draw the sorting networks are modified versions of
 kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),
 slightly adapted to be 0-based and draw the network from top to bottom.
+
+* The CMake tools embedded in the projects include scripts from [RWTH-HPC/CMake-codecov](https://github.com/RWTH-HPC/CMake-codecov)
+and [Crascit/DownloadProject](https://github.com/Crascit/DownloadProject).

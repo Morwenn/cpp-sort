@@ -23,7 +23,7 @@
  */
 #include <iterator>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/probes.h>
 #include "../distributions.h"
 

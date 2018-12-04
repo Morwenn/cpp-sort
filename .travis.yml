@@ -97,6 +97,7 @@ before_install:
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         brew update;
         brew install ccache valgrind;
+        brew upgrade cmake;
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
     fi
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
@@ -121,8 +122,13 @@ script:
     else
         cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
-  - cd build/testsuite
-  - travis_wait ctest -C ${BUILD_TYPE} --output-on-failure
+  - cd build
+  - if [[ $USE_VALGRIND = true ]]; then
+        travis_wait ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure -j 4;
+        find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
+    else
+        travis_wait ctest -C ${BUILD_TYPE} --output-on-failure -j 4;
+    fi
 
 after_success:
   - if [[ $ENABLE_COVERAGE = true ]]; then

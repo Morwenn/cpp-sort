@@ -24,14 +24,39 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include "distributions.h"
 
-TEST_CASE( "test every sorter", "[sorters]" )
+TEMPLATE_TEST_CASE( "test every normal sorter", "[sorters]",
+                    cppsort::block_sorter<>,
+                    cppsort::block_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    >,
+                    cppsort::counting_sorter,
+                    cppsort::default_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::grail_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
+                    >,
+                    cppsort::heap_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter,
+                    cppsort::poplar_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::ska_sorter,
+                    cppsort::smooth_sorter,
+                    cppsort::std_sorter,
+                    cppsort::tim_sorter,
+                    cppsort::verge_sorter )
 {
     // General test to make sure that every sorter compiles fine
     // and is able to sort a vector of numbers. spread_sorter is
@@ -42,131 +67,7 @@ TEST_CASE( "test every sorter", "[sorters]" )
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
-    SECTION( "block_sorter" )
-    {
-        using namespace cppsort;
-
-        // Fixed buffer
-        sort(block_sorter<>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-
-        // Dynamic buffer
-        sort(block_sorter<utility::dynamic_buffer<utility::sqrt>>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "counting_sorter" )
-    {
-        cppsort::sort(cppsort::counting_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "default_sorter" )
-    {
-        cppsort::sort(cppsort::default_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "drop_merge_sorter" )
-    {
-        cppsort::sort(cppsort::drop_merge_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "grail_sorter" )
-    {
-        using namespace cppsort;
-
-        // Fixed buffer
-        sort(grail_sorter<>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-
-        // Dynamic buffer
-        sort(grail_sorter<utility::dynamic_buffer<utility::half>>{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "heap_sorter" )
-    {
-        cppsort::sort(cppsort::heap_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "insertion_sorter" )
-    {
-        cppsort::sort(cppsort::insertion_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_insertion_sorter" )
-    {
-        cppsort::sort(cppsort::merge_insertion_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "merge_sorter" )
-    {
-        cppsort::sort(cppsort::merge_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "pdq_sorter" )
-    {
-        cppsort::sort(cppsort::pdq_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "poplar_sorter" )
-    {
-        cppsort::sort(cppsort::poplar_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_merge_sorter" )
-    {
-        cppsort::sort(cppsort::quick_merge_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "quick_sorter" )
-    {
-        cppsort::sort(cppsort::quick_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "selection_sorter" )
-    {
-        cppsort::sort(cppsort::selection_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "ska_sorter" )
-    {
-        cppsort::sort(cppsort::ska_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "smooth_sorter" )
-    {
-        cppsort::sort(cppsort::smooth_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "std_sorter" )
-    {
-        cppsort::sort(cppsort::std_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "tim_sorter" )
-    {
-        cppsort::sort(cppsort::tim_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
-    SECTION( "verge_sorter" )
-    {
-        cppsort::sort(cppsort::verge_sorter{}, collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
+    using sorter = TestType;
+    cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

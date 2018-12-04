@@ -1,3 +1,15 @@
+include(DownloadProject)
+
+# Download and configure Catch2 for the tests
+download_project(PROJ Catch2
+                 GIT_REPOSITORY https://github.com/catchorg/Catch2
+                 GIT_TAG master
+                 UPDATE_DISCONNECTED 1
+)
+add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
+list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
+include(Catch)
+
 # Define test files
 
 set(
@@ -16,6 +28,7 @@ set(
     adapters/indirect_adapter.cpp
     adapters/indirect_adapter_every_sorter.cpp
     adapters/mixed_adapters.cpp
+    adapters/return_forwarding.cpp
     adapters/schwartz_adapter_every_sorter.cpp
     adapters/schwartz_adapter_every_sorter_reversed.cpp
     adapters/schwartz_adapter_fixed_sorters.cpp
@@ -122,24 +135,50 @@ add_executable(
     ${UTILITY_TESTS}
 )
 
-# Configure Catch2 for the tests
-target_include_directories(cpp-sort-testsuite PRIVATE ${CATCH_INCLUDE_DIR})
-add_dependencies(cpp-sort-testsuite catch)
+target_link_libraries(cpp-sort-testsuite
+    PRIVATE
+        Catch2::Catch2
+        cpp-sort::cpp-sort
+)
+
+# Somewhat speed up Catch2 compile times
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
+
+# Use the gold linker if possible
+if (UNIX AND NOT APPLE)
+    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+endif()
+
+# Optionally enable sanitizers
+if (UNIX AND SANITIZE)
+	target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
+	set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
+endif()
 
 if (ENABLE_COVERAGE)
     find_package(codecov)
     add_coverage(cpp-sort-testsuite)
+
+	# Set flags specific to coverage builds
+	target_compile_options(cpp-sort-testsuite PRIVATE -g -O0 -Wall -Wextra -fprofile-arcs -ftest-coverage)
+    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fprofile-arcs -ftest-coverage")
+
+    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
 
-string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 if (USE_VALGRIND)
-    add_test(NAME testsuite COMMAND valgrind --leak-check=full --track-origins=yes --error-exitcode=1 $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
-else()
-    add_test(NAME testsuite COMMAND $<TARGET_FILE:cpp-sort-testsuite> --rng-seed ${RNG_SEED})
+    find_program(MEMORYCHECK_COMMAND valgrind)
+    set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
 endif()
 
-enable_testing()
+include(CTest)
+
+string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
+catch_discover_tests(cpp-sort-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
+
+# Optimize build times
+set_property(TARGET cpp-sort-testsuite PROPERTY CXX_STANDARD 14)  # Required because of a cotire issue
+cotire(cpp-sort-testsuite)

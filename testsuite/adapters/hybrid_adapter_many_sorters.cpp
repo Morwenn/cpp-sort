@@ -24,7 +24,7 @@
 #include <iterator>
 #include <list>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sorter_facade.h>
 #include "../span.h"

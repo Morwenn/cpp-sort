@@ -271,6 +271,75 @@ namespace detail
                 return base()[pos];
             }
 
+            ////////////////////////////////////////////////////////////
+            // Comparison operators
+
+            friend auto operator==(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() == rhs.base();
+            }
+
+            friend auto operator!=(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() != rhs.base();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Relational operators
+
+            friend auto operator<(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() < rhs.base();
+            }
+
+            friend auto operator<=(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() <= rhs.base();
+            }
+
+            friend auto operator>(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() > rhs.base();
+            }
+
+            friend auto operator>=(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() >= rhs.base();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Arithmetic operators
+
+            friend auto operator+(associate_iterator it, difference_type size)
+                -> associate_iterator
+            {
+                return it += size;
+            }
+
+            friend auto operator+(difference_type size, associate_iterator it)
+                -> associate_iterator
+            {
+                return it += size;
+            }
+
+            friend auto operator-(associate_iterator it, difference_type size)
+                -> associate_iterator
+            {
+                return it -= size;
+            }
+
+            friend auto operator-(const associate_iterator& lhs, const associate_iterator& rhs)
+                -> difference_type
+            {
+                return lhs.base() - rhs.base();
+            }
+
         private:
 
             Iterator _it;
@@ -295,91 +364,6 @@ namespace detail
             std::move(*(it->it)),
             std::move(it->data)
         };
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Comparison operators
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator==(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() == rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator!=(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() != rhs.base();
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Relational operators
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator<(const associate_iterator<Iterator1>& lhs,
-                   const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() < rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator<=(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() <= rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator>(const associate_iterator<Iterator1>& lhs,
-                   const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() > rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator>=(const associate_iterator<Iterator1>& lhs,
-                    const associate_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() >= rhs.base();
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Arithmetic operators
-
-    template<typename Iterator>
-    auto operator+(associate_iterator<Iterator> it, difference_type_t<associate_iterator<Iterator>> size)
-        -> associate_iterator<Iterator>
-    {
-        return it += size;
-    }
-
-    template<typename Iterator>
-    auto operator+(difference_type_t<associate_iterator<Iterator>> size, associate_iterator<Iterator> it)
-        -> associate_iterator<Iterator>
-    {
-        return it += size;
-    }
-
-    template<typename Iterator>
-    auto operator-(associate_iterator<Iterator> it, difference_type_t<associate_iterator<Iterator>> size)
-        -> associate_iterator<Iterator>
-    {
-        return it -= size;
-    }
-
-    template<typename Iterator>
-    auto operator-(const associate_iterator<Iterator>& lhs, const associate_iterator<Iterator>& rhs)
-        -> difference_type_t<associate_iterator<Iterator>>
-    {
-        return lhs.base() - rhs.base();
     }
 
     ////////////////////////////////////////////////////////////

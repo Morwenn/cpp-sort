@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,10 @@
  */
 #include <forward_list>
 #include <iterator>
-#include <catch.hpp>
+#include <vector>
+#include <catch2/catch.hpp>
 #include <cpp-sort/probes/max.h>
+#include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: max", "[probe][max]" )
 {
@@ -33,6 +35,9 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
         std::forward_list<int> li = { 12, 28, 17, 59, 13, 10, 39, 21, 31, 30 };
         CHECK( cppsort::probe::max(li) == 6 );
         CHECK( cppsort::probe::max(std::begin(li), std::end(li)) == 6 );
+
+        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        CHECK( cppsort::probe::max(tricky, &internal_compare<int>::compare_to) == 6 );
     }
 
     SECTION( "lower bound" )

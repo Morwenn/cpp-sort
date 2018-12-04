@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <limits>
+#include <type_traits>
 
 namespace cppsort
 {
@@ -77,6 +78,22 @@ namespace detail
             ++log;
         }
         return log;
+    }
+
+    // Halves a positive number, using unsigned division if possible
+
+    template<typename Integer>
+    constexpr auto half(Integer value)
+        -> std::enable_if_t<std::is_integral<Integer>::value, Integer>
+    {
+        return static_cast<Integer>(static_cast<std::make_unsigned_t<Integer>>(value) / 2);
+    }
+
+    template<typename T>
+    constexpr auto half(T value)
+        -> std::enable_if_t<not std::is_integral<T>::value, T>
+    {
+        return value / 2;
     }
 }}
 

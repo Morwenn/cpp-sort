@@ -27,7 +27,7 @@
 #include <random>
 #include <utility>
 #include <vector>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <cpp-sort/sort.h>
 #include "../algorithm.h"

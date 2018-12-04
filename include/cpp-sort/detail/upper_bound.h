@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2018 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
+#include "bitops.h"
 
 namespace cppsort
 {
@@ -45,18 +46,14 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         auto size = std::distance(first, last);
-        while (size > 0)
-        {
+        while (size > 0) {
             ForwardIterator it = first;
-            std::advance(it, size / 2);
-            if (not comp(value, proj(*it)))
-            {
+            std::advance(it, half(size));
+            if (not comp(value, proj(*it))) {
                 first = ++it;
-                size -= size / 2 + 1;
-            }
-            else
-            {
-                size /= 2;
+                size -= half(size) + 1;
+            } else {
+                size = half(size);
             }
         }
         return first;

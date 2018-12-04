@@ -174,6 +174,75 @@ namespace detail
                 return base()[pos * size() + size() - 1];
             }
 
+            ////////////////////////////////////////////////////////////
+            // Comparison operators
+
+            friend auto operator==(const group_iterator& lhs, const group_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() == rhs.base();
+            }
+
+            friend auto operator!=(const group_iterator& lhs, const group_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() != rhs.base();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Relational operators
+
+            friend auto operator<(const group_iterator& lhs, const group_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() < rhs.base();
+            }
+
+            friend auto operator<=(const group_iterator& lhs, const group_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() <= rhs.base();
+            }
+
+            friend auto operator>(const group_iterator& lhs, const group_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() > rhs.base();
+            }
+
+            friend auto operator>=(const group_iterator& lhs, const group_iterator& rhs)
+                -> bool
+            {
+                return lhs.base() >= rhs.base();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Arithmetic operators
+
+            friend auto operator+(group_iterator it, difference_type size)
+                -> group_iterator
+            {
+                return it += size;
+            }
+
+            friend auto operator+(difference_type size, group_iterator it)
+                -> group_iterator
+            {
+                return it += size;
+            }
+
+            friend auto operator-(group_iterator it, difference_type size)
+                -> group_iterator
+            {
+                return it -= size;
+            }
+
+            friend auto operator-(const group_iterator& lhs, const group_iterator& rhs)
+                -> difference_type
+            {
+                return (lhs.base() - rhs.base()) / lhs.size();
+            }
+
         private:
 
             Iterator _it;
@@ -185,91 +254,6 @@ namespace detail
         -> void
     {
         detail::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Comparison operators
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator==(const group_iterator<Iterator1>& lhs,
-                    const group_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() == rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator!=(const group_iterator<Iterator1>& lhs,
-                    const group_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() != rhs.base();
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Relational operators
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator<(const group_iterator<Iterator1>& lhs,
-                   const group_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() < rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator<=(const group_iterator<Iterator1>& lhs,
-                    const group_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() <= rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator>(const group_iterator<Iterator1>& lhs,
-                   const group_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() > rhs.base();
-    }
-
-    template<typename Iterator1, typename Iterator2>
-    auto operator>=(const group_iterator<Iterator1>& lhs,
-                    const group_iterator<Iterator2>& rhs)
-        -> bool
-    {
-        return lhs.base() >= rhs.base();
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Arithmetic operators
-
-    template<typename Iterator>
-    auto operator+(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
-        -> group_iterator<Iterator>
-    {
-        return it += size;
-    }
-
-    template<typename Iterator>
-    auto operator+(difference_type_t<group_iterator<Iterator>> size, group_iterator<Iterator> it)
-        -> group_iterator<Iterator>
-    {
-        return it += size;
-    }
-
-    template<typename Iterator>
-    auto operator-(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
-        -> group_iterator<Iterator>
-    {
-        return it -= size;
-    }
-
-    template<typename Iterator>
-    auto operator-(const group_iterator<Iterator>& lhs, const group_iterator<Iterator>& rhs)
-        -> difference_type_t<group_iterator<Iterator>>
-    {
-        return (lhs.base() - rhs.base()) / lhs.size();
     }
 
     ////////////////////////////////////////////////////////////
