@@ -1,4 +1,4 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.2.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.3.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
@@ -228,5 +228,5 @@ Libraries*](http://arxiv.org/abs/1505.01962).
 kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),
 slightly adapted to be 0-based and draw the network from top to bottom.
 
-* The CMake tools embedded in the projects include scripts from [RWTH-HPC/CMake-codecov](https://github.com/RWTH-HPC/CMake-codecov)
-and [Crascit/DownloadProject](https://github.com/Crascit/DownloadProject).
+* The CMake tools embedded in the projects include scripts from [RWTH-HPC/CMake-codecov](https://github.com/RWTH-HPC/CMake-codecov),
+[Crascit/DownloadProject](https://github.com/Crascit/DownloadProject) and [sakra/cotire](https://github.com/sakra/cotire).
