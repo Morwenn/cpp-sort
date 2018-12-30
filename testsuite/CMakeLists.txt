@@ -146,10 +146,12 @@ target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_FAST_COMPILE)
 target_compile_definitions(cpp-sort-testsuite PRIVATE CATCH_CONFIG_DISABLE_MATCHERS)
 
 # Use lld or the gold linker if possible
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
-elseif (UNIX AND NOT APPLE)
-    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+if (UNIX AND NOT APPLE)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
+    else()
+        set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+    endif()
 endif()
 
 # Optionally enable sanitizers
