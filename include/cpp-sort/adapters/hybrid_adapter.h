@@ -73,9 +73,9 @@ namespace cppsort
         // Avoid just a bit of redundancy
         template<typename Iterator, std::size_t N>
         using choice_for_it = choice<
-            (iterator_category_value<
+           (iterator_category_value<
                 iterator_category_t<Iterator>
-            > + 1) * N - 1
+           > + 1) * N - 1
         >;
 
         ////////////////////////////////////////////////////////////
@@ -122,23 +122,49 @@ namespace cppsort
                     is_stable<Sorter(Args...)>
                 >;
         };
-    }
 
-    ////////////////////////////////////////////////////////////
-    // Adapter
+        template <template <class...> class Flattenable, class TypeList, class Accumulator>
+        struct flatten_fold;
 
-    template<typename... Sorters>
-    struct hybrid_adapter:
-        public detail::check_iterator_category<Sorters...>,
-        public detail::check_is_always_stable<Sorters...>,
-        public sorter_facade_fptr<hybrid_adapter<Sorters...>>
-    {
+        template <
+                template <class...> class Flattenable,
+                template <class...> class TsList, class Front, class... Rest,
+                template <class...> class AsList, class... As
+        >
+        struct flatten_fold<Flattenable, TsList<Front, Rest...>, AsList<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<Rest...>, AsList<As..., Front>>::type;
+        };
+
+        template <
+                template <class...> class Flattenable,
+                template <class...> class TsList, class... InnerTs, class... Rest,
+                template <class...> class AsList, class... As
+        >
+        struct flatten_fold<Flattenable, TsList<Flattenable<InnerTs...>, Rest...>, AsList<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<InnerTs..., Rest...>, AsList<As...>>::type;
+        };
+
+        template <
+                template <class...> class Flattenable,
+                template <class...> class TsList,
+                class Accumulator
+        >
+        struct flatten_fold<Flattenable, TsList<>, Accumulator>
+        {
+            using type = Accumulator;
+        };
+
+        template<typename... Sorters>
+        struct hybrid_adapter_impl:
+                public detail::check_iterator_category<Sorters...>,
+                public detail::check_is_always_stable<Sorters...>,
+                public sorter_facade_fptr<hybrid_adapter_impl<Sorters...>>
+        {
         public:
 
-            hybrid_adapter() = default;
-
-            // Automatic deduction guide
-            constexpr explicit hybrid_adapter(Sorters...) noexcept {}
+            hybrid_adapter_impl() = default;
 
         private:
 
@@ -212,6 +238,19 @@ namespace cppsort
                         std::move(first), std::move(last),
                         std::forward<Args>(args)...
                 ));
+        };
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Adapter
+    template<typename... Sorters>
+    struct hybrid_adapter:
+            detail::flatten_fold<hybrid_adapter, hybrid_adapter<Sorters...>, detail::hybrid_adapter_impl<>>::type
+    {
+        hybrid_adapter() = default;
+
+        // Automatic deduction guide
+        constexpr explicit hybrid_adapter(Sorters...) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////
