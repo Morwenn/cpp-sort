@@ -45,7 +45,7 @@ namespace cppsort
 
         template<std::size_t Value>
         struct choice:
-            choice<Value - 1>
+                choice<Value - 1>
         {};
 
         template<>
@@ -73,9 +73,9 @@ namespace cppsort
         // Avoid just a bit of redundancy
         template<typename Iterator, std::size_t N>
         using choice_for_it = choice<
-            (iterator_category_value<
-                iterator_category_t<Iterator>
-            > + 1) * N - 1
+                (iterator_category_value<
+                        iterator_category_t<Iterator>
+                > + 1) * N - 1
         >;
 
         ////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ namespace cppsort
 
         template<typename Head, typename... Tail>
         struct sorters_merger:
-            Head, sorters_merger<Tail...>
+                Head, sorters_merger<Tail...>
         {
             using Head::operator();
             using Head::_detail_stability;
@@ -94,7 +94,7 @@ namespace cppsort
 
         template<typename Head>
         struct sorters_merger<Head>:
-            Head
+                Head
         {
             using Head::operator();
             using Head::_detail_stability;
@@ -110,35 +110,64 @@ namespace cppsort
         {
             template<typename... Args>
             auto operator()(choice<Ind>, Args&&... args) const
-                -> decltype(Sorter{}(std::forward<Args>(args)...))
+            -> decltype(Sorter{}(std::forward<Args>(args)...))
             {
                 return Sorter{}(std::forward<Args>(args)...);
             }
 
             template<typename... Args>
             static auto _detail_stability(choice<Ind>, Args&&... args)
-                -> std::enable_if_t<
+            -> std::enable_if_t<
                     is_invocable_v<Sorter, Args...>,
                     is_stable<Sorter(Args...)>
-                >;
+            >;
         };
-    }
 
-    ////////////////////////////////////////////////////////////
-    // Adapter
+        template <template <class...> class Flattenable, class TypeList, class Accumulator>
+        struct flatten_fold;
 
-    template<typename... Sorters>
-    struct hybrid_adapter:
-        public detail::check_iterator_category<Sorters...>,
-        public detail::check_is_always_stable<Sorters...>,
-        public sorter_facade_fptr<hybrid_adapter<Sorters...>>
-    {
+        template <
+                template <class...> class Flattenable,
+                template <class...> class TsList, class Front, class... Rest,
+                template <class...> class AsList, class... As
+        >
+        struct flatten_fold<Flattenable, TsList<Front, Rest...>, AsList<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<Rest...>, AsList<As..., Front>>::type;
+        };
+
+        template <
+                template <class...> class Flattenable,
+                template <class...> class TsList, class... InnerTs, class... Rest,
+                template <class...> class AsList, class... As
+        >
+        struct flatten_fold<Flattenable, TsList<Flattenable<InnerTs...>, Rest...>, AsList<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<InnerTs..., Rest...>, AsList<As...>>::type;
+        };
+
+        template <
+                template <class...> class Flattenable,
+                template <class...> class TsList,
+                class Accumulator
+        >
+        struct flatten_fold<Flattenable, TsList<>, Accumulator>
+        {
+            using type = Accumulator;
+        };
+
+        template<typename... Sorters>
+        struct hybrid_adapter_impl:
+                public detail::check_iterator_category<Sorters...>,
+                public detail::check_is_always_stable<Sorters...>,
+                public sorter_facade_fptr<hybrid_adapter_impl<Sorters...>>
+        {
         public:
 
-            hybrid_adapter() = default;
+            hybrid_adapter_impl() = default;
 
             // Automatic deduction guide
-            constexpr explicit hybrid_adapter(Sorters...) noexcept {}
+            constexpr explicit hybrid_adapter_impl(Sorters...) noexcept {}
 
         private:
 
@@ -151,67 +180,80 @@ namespace cppsort
             struct dispatch_sorter_impl<std::index_sequence<Indices...>>
             {
                 using type = detail::sorters_merger<
-                    detail::selection_wrapper<
-                        Sorters,
-                        sizeof...(Sorters) * detail::iterator_category_value<iterator_category<Sorters>>
-                        + sizeof...(Indices) - Indices - 1
+                        detail::selection_wrapper<
+                                Sorters,
+                                sizeof...(Sorters) * detail::iterator_category_value<iterator_category<Sorters>>
+                                + sizeof...(Indices) - Indices - 1
 
-                    >...
+                        >...
                 >;
             };
 
             // Dispatch-enabled sorter
             using dispatch_sorter = typename dispatch_sorter_impl<
-                std::make_index_sequence<sizeof...(Sorters)>
+                    std::make_index_sequence<sizeof...(Sorters)>
             >::type;
 
         public:
 
             template<typename Iterable, typename... Args>
             auto operator()(Iterable&& iterable, Args&&... args) const
-                -> decltype(dispatch_sorter{}(
+            -> decltype(dispatch_sorter{}(
                     detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
                     std::forward<Iterable>(iterable),
                     std::forward<Args>(args)...
-                ))
+            ))
             {
                 // Call the appropriate operator()
                 return dispatch_sorter{}(
-                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                    std::forward<Iterable>(iterable), std::forward<Args>(args)...
+                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                        std::forward<Iterable>(iterable), std::forward<Args>(args)...
                 );
             }
 
             template<typename Iterator, typename... Args>
             auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(dispatch_sorter{}(
-                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
-                        std::move(first), std::move(last),
-                        std::forward<Args>(args)...
-                ))
+            -> decltype(dispatch_sorter{}(
+                    detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                    std::move(first), std::move(last),
+                    std::forward<Args>(args)...
+            ))
             {
                 // Call the appropriate operator()
                 return dispatch_sorter{}(
-                    detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
-                    std::move(first), std::move(last), std::forward<Args>(args)...
+                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                        std::move(first), std::move(last), std::forward<Args>(args)...
                 );
             }
 
             template<typename Iterable, typename... Args>
             static auto _detail_stability(Iterable&& iterable, Args&&... args)
-                -> decltype(dispatch_sorter::_detail_stability(
+            -> decltype(dispatch_sorter::_detail_stability(
                     detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
                     std::forward<Iterable>(iterable),
                     std::forward<Args>(args)...
-                ));
+            ));
 
             template<typename Iterator, typename... Args>
             static auto _detail_stability(Iterator first, Iterator last, Args&&... args)
-                -> decltype(dispatch_sorter::_detail_stability(
-                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
-                        std::move(first), std::move(last),
-                        std::forward<Args>(args)...
-                ));
+            -> decltype(dispatch_sorter::_detail_stability(
+                    detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                    std::move(first), std::move(last),
+                    std::forward<Args>(args)...
+            ));
+        };
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Adapter
+    template<typename... Sorters>
+    struct hybrid_adapter:
+            detail::flatten_fold<hybrid_adapter, hybrid_adapter<Sorters...>, detail::hybrid_adapter_impl<>>::type
+    {
+        hybrid_adapter() = default;
+
+        // Automatic deduction guide
+        constexpr explicit hybrid_adapter(Sorters...) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////
@@ -219,7 +261,7 @@ namespace cppsort
 
     template<typename... Sorters, typename... Args>
     struct is_stable<hybrid_adapter<Sorters...>(Args...)>:
-        decltype(hybrid_adapter<Sorters...>::_detail_stability(std::declval<Args&>()...))
+            decltype(hybrid_adapter<Sorters...>::_detail_stability(std::declval<Args&>()...))
     {};
 }
 
