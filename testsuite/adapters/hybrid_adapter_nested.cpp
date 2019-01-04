@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include <iterator>
+#include <list>
 #include <vector>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sort.h>
@@ -29,54 +30,64 @@
 #include <cpp-sort/sorter_traits.h>
 #include <catch2/catch.hpp>
 
-// Type of sorter used for checks
-enum class sorter_type
+namespace
 {
-    forward,
-    bidirectional,
-    random_access
-};
-
-struct forward_sorter_impl
-{
-    template<typename ForwardIterator>
-    auto operator()(ForwardIterator, ForwardIterator) const
-    -> sorter_type
+    // Type of sorter used for checks
+    enum class sorter_type
     {
-        return sorter_type::forward;
-    }
+        forward,
+        bidirectional,
+        random_access
+    };
 
-    using iterator_category = std::forward_iterator_tag;
-};
-
-struct forward_sorter : cppsort::sorter_facade<forward_sorter_impl> {};
-
-struct bidirectional_sorter_impl
-{
-    template<typename BidirectionalIterator>
-    auto operator()(BidirectionalIterator, BidirectionalIterator) const
-    -> sorter_type
+    struct forward_sorter_impl
     {
-        return sorter_type::bidirectional;
-    }
+        template<typename ForwardIterator>
+        auto operator()(ForwardIterator, ForwardIterator) const
+            -> sorter_type
+        {
+            return sorter_type::forward;
+        }
 
-    using iterator_category = std::bidirectional_iterator_tag;
-};
-struct bidirectional_sorter : cppsort::sorter_facade<bidirectional_sorter_impl> {};
+        using iterator_category = std::forward_iterator_tag;
+    };
 
-struct random_access_sorter_impl
-{
-    template<typename RandomAccessIterator>
-    auto operator()(RandomAccessIterator, RandomAccessIterator) const
-    -> sorter_type
+    struct forward_sorter:
+        cppsort::sorter_facade<forward_sorter_impl>
+    {};
+
+    struct bidirectional_sorter_impl
     {
-        return sorter_type::random_access;
-    }
+        template<typename BidirectionalIterator>
+        auto operator()(BidirectionalIterator, BidirectionalIterator) const
+            -> sorter_type
+        {
+            return sorter_type::bidirectional;
+        }
 
-    using iterator_category = std::random_access_iterator_tag;
-};
+        using iterator_category = std::bidirectional_iterator_tag;
+    };
 
-struct random_access_sorter : cppsort::sorter_facade<random_access_sorter_impl> {};
+    struct bidirectional_sorter:
+        cppsort::sorter_facade<bidirectional_sorter_impl>
+    {};
+
+    struct random_access_sorter_impl
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator, RandomAccessIterator) const
+            -> sorter_type
+        {
+            return sorter_type::random_access;
+        }
+
+        using iterator_category = std::random_access_iterator_tag;
+    };
+
+    struct random_access_sorter:
+        cppsort::sorter_facade<random_access_sorter_impl>
+    {};
+}
 
 TEST_CASE( "nested hybrid_adapter types", "[hybrid_adapter]" )
 {
@@ -91,11 +102,11 @@ TEST_CASE( "nested hybrid_adapter types", "[hybrid_adapter]" )
     SECTION( "unwrapping from the front" )
     {
         cppsort::hybrid_adapter<
-                cppsort::hybrid_adapter<
-                        forward_sorter,
-                        random_access_sorter
-                >,
-                bidirectional_sorter
+            cppsort::hybrid_adapter<
+                forward_sorter,
+                random_access_sorter
+            >,
+            bidirectional_sorter
         > sorter;
 
         sorter_type res1 = sorter(vec);
@@ -108,11 +119,11 @@ TEST_CASE( "nested hybrid_adapter types", "[hybrid_adapter]" )
     SECTION( "unwrapping from the back" )
     {
         cppsort::hybrid_adapter<
-                bidirectional_sorter,
-                cppsort::hybrid_adapter<
-                        forward_sorter,
-                        random_access_sorter
-                >
+            bidirectional_sorter,
+            cppsort::hybrid_adapter<
+                forward_sorter,
+                random_access_sorter
+            >
         > sorter;
 
         sorter_type res = sorter(vec);
