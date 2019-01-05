@@ -152,20 +152,16 @@ target_compile_definitions(cpp-sort-testsuite
 # General settings, mostly warnings
 target_compile_options(cpp-sort-testsuite
     PRIVATE
-        -Wall -Wextra -Wcast-align -Winline -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs
+        -Wall -Wextra -Wcast-align -Winline -Wmissing-declarations -Wmissing-include-dirs
         -Wnon-virtual-dtor -Wodr -Wpedantic -Wredundant-decls -Wundef -Wunreachable-code
-        $<$<CXX_COMPILER_ID:GNU>: -Wuseless-cast -Wzero-as-null-pointer-constant>
+        $<$<CXX_COMPILER_ID:GNU>:-Wlogical-op -Wuseless-cast -Wzero-as-null-pointer-constant>
 )
 
 # Settings depending on debug/release mode
 target_compile_options(cpp-sort-testsuite
     PRIVATE
-        # Warnings that do not depend on the compiler
-        $<$<CONFIG:DEBUG>: -g>
-        $<$<CONFIG:RELEASE>: -O3>
-        # Warnings that depend on the compiler
-        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -O0>
-        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>: -Og>
+        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>:-O0>
+        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>:-Og>
 )
 
 # Use lld or the gold linker if possible
