@@ -183,7 +183,3 @@ include(CTest)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 catch_discover_tests(cpp-sort-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
-
-# Optimize build times
-set_property(TARGET cpp-sort-testsuite PROPERTY CXX_STANDARD 14)  # Required because of a cotire issue
-cotire(cpp-sort-testsuite)
