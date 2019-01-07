@@ -37,7 +37,8 @@ namespace
     {
         forward,
         bidirectional,
-        random_access
+        random_access,
+        random_access2
     };
 
     struct forward_sorter_impl
@@ -87,6 +88,22 @@ namespace
     struct random_access_sorter:
         cppsort::sorter_facade<random_access_sorter_impl>
     {};
+
+    struct random_access_sorter_impl2
+    {
+        template<typename RandomAccessIterator>
+        auto operator()(RandomAccessIterator, RandomAccessIterator) const
+            -> sorter_type
+        {
+            return sorter_type::random_access2;
+        }
+
+        using iterator_category = std::random_access_iterator_tag;
+    };
+
+    struct random_access_sorter2:
+        cppsort::sorter_facade<random_access_sorter_impl2>
+    {};
 }
 
 TEST_CASE( "nested hybrid_adapter types", "[hybrid_adapter]" )
@@ -132,4 +149,16 @@ TEST_CASE( "nested hybrid_adapter types", "[hybrid_adapter]" )
         sorter_type res2 = sorter(list);
         CHECK( res2 == sorter_type::bidirectional );
     }
+}
+
+TEST_CASE( "check that nested hybrid_adapter preserves the sorters order", "[hybrid_adapter]" )
+{
+    cppsort::hybrid_adapter<
+        random_access_sorter,
+        random_access_sorter2
+    > sorter;
+
+    std::vector<int> vec(3);
+    sorter_type res = sorter(vec);
+    CHECK( res == sorter_type::random_access );
 }
