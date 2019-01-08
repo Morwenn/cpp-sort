@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <string>
+#include <type_traits>
 #include <utility>
 
 namespace cppsort
@@ -96,7 +97,7 @@ namespace detail
             }
     };
 
-    template<typename Compare>
+    template<typename Compare, typename=typename std::is_empty<Compare>::type>
     struct three_way_compare:
         three_way_compare_base<three_way_compare<Compare>>
     {
@@ -117,8 +118,24 @@ namespace detail
             Compare compare;
     };
 
+    template<typename Compare>
+    struct three_way_compare<Compare, std::true_type>:
+        three_way_compare_base<three_way_compare<Compare>>
+    {
+        constexpr three_way_compare(Compare) {}
+
+        using three_way_compare_base<three_way_compare<Compare>>::operator();
+
+        constexpr auto base() const noexcept
+            -> Compare
+        {
+            // If the comparator is empty, we don't need to store it
+            return {};
+        }
+    };
+
     template<>
-    struct three_way_compare<std::less<>>:
+    struct three_way_compare<std::less<>, std::true_type>:
         three_way_compare_base<three_way_compare<std::less<>>>
     {
         constexpr three_way_compare(std::less<>) {}
@@ -145,7 +162,7 @@ namespace detail
     };
 
     template<>
-    struct three_way_compare<std::greater<>>:
+    struct three_way_compare<std::greater<>, std::true_type>:
         three_way_compare_base<three_way_compare<std::greater<>>>
     {
         constexpr three_way_compare(std::greater<>) {}
