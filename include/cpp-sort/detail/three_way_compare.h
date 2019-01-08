@@ -61,18 +61,14 @@ namespace detail
             auto le(T&& x, U&& y) const
                 -> decltype(auto)
             {
-                auto&& compare = derived().base();
-                return compare(std::forward<T>(x), std::forward<U>(y))
-                    || not compare(std::forward<U>(y), std::forward<T>(x));
+                return not derived().base()(std::forward<U>(y), std::forward<T>(x));
             }
 
             template<typename T, typename U>
             auto gt(T&& x, U&& y) const
                 -> decltype(auto)
             {
-                auto&& compare = derived().base();
-                return not compare(std::forward<T>(x), std::forward<U>(y))
-                    && compare(std::forward<U>(y), std::forward<T>(x));
+                return derived().base()(std::forward<U>(y), std::forward<T>(x));
             }
 
             template<typename T, typename U>
