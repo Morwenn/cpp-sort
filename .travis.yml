@@ -1,15 +1,13 @@
 language: cpp
 
-addons:
-  apt:
-    sources:
-      - llvm-toolchain-trusty-3.8
-      - ubuntu-toolchain-r-test
-    packages:
-      - clang-3.8
-      - g++-5
-      - lcov
-      - valgrind
+_packages:
+  - &clang clang-3.8
+  - &gcc g++-5
+
+_apt: &apt-common
+  sources:
+    - llvm-toolchain-trusty-3.8
+    - ubuntu-toolchain-r-test
 
 cache:
   ccache: true
@@ -21,42 +19,84 @@ matrix:
     - os: linux
       sudo: required
       env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *clang
+            - valgrind
       compiler: clang
 
     - os: linux
       sudo: required
       env: BUILD_TYPE=Debug SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *clang
       compiler: clang
 
     - os: linux
       sudo: required
       env: BUILD_TYPE=Debug SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *clang
       compiler: clang
 
     - os: linux
       sudo: required
       env: BUILD_TYPE=Release CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *clang
       compiler: clang
 
     # Linux gcc
     - os: linux
       sudo: false
       env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *gcc
+            - valgrind
       compiler: gcc
 
     - os: linux
       sudo: false
       env: BUILD_TYPE=Debug SANITIZE=undefined CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *gcc
       compiler: gcc
 
     - os: linux
       sudo: false
       env: BUILD_TYPE=Debug SANITIZE=address CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *gcc
       compiler: gcc
 
     - os: linux
       sudo: false
       env: BUILD_TYPE=Release CMAKE_GENERATOR="Unix Makefiles"
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *gcc
       compiler: gcc
 
     # OSX clang
@@ -75,6 +115,12 @@ matrix:
       sudo: false
       if: branch in (master, develop)
       env: BUILD_TYPE=Debug CMAKE_GENERATOR="Unix Makefiles" ENABLE_COVERAGE=true
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *gcc
+            - lcov
       compiler: gcc
 
     # Conan
@@ -84,6 +130,11 @@ matrix:
       python: "3.7"
       if: branch = master
       env: CC=clang CXX=clang++
+      addons:
+        apt:
+          <<: *apt-common
+          packages:
+            - *gcc
       install:
         - pip install conan
       script:
