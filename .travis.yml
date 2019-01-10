@@ -111,6 +111,7 @@ matrix:
         homebrew:
           update: true
           packages:
+            - ccache
             - cmake
             - valgrind
       compiler: clang
@@ -122,6 +123,7 @@ matrix:
         homebrew:
           update: true
           packages:
+            - ccache
             - cmake
       compiler: clang
 
@@ -160,16 +162,15 @@ matrix:
         - conan upload --all -r bintray cpp-sort/1.3.0@morwenn/stable
 
 before_install:
-  - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
-        brew install ccache;
-        export PATH="/usr/local/opt/ccache/libexec:$PATH";
-    fi
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
         sudo ln -s $(which ccache) /usr/lib/ccache/clang++;
         export CXXFLAGS="-Qunused-arguments";
     fi
 
 install:
+  - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
+        export PATH="/usr/local/opt/ccache/libexec:$PATH";
+    fi
   - if [[ $CXX = "g++" ]]; then export CXX="g++-5"; fi
   - if [[ $CXX = "clang++" ]]; then export CXX="clang++-3.8"; fi
 
@@ -182,7 +183,7 @@ script:
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
-        cmake --build build --config ${BUILD_TYPE} -- -jobs 2;
+        cmake --build build --config ${BUILD_TYPE} -j 2;
     else
         cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi
