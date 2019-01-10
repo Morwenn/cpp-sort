@@ -24,6 +24,7 @@ matrix:
           <<: *apt-common
           packages:
             - *clang
+            - *gcc
             - valgrind
       compiler: clang
 
@@ -35,6 +36,7 @@ matrix:
           <<: *apt-common
           packages:
             - *clang
+            - *gcc
       compiler: clang
 
     - os: linux
@@ -45,6 +47,7 @@ matrix:
           <<: *apt-common
           packages:
             - *clang
+            - *gcc
       compiler: clang
 
     - os: linux
@@ -55,6 +58,7 @@ matrix:
           <<: *apt-common
           packages:
             - *clang
+            - *gcc
       compiler: clang
 
     # Linux gcc
