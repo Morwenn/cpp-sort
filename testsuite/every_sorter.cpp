@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
+#include <deque>
 #include <iterator>
 #include <vector>
 #include <catch2/catch.hpp>
@@ -31,7 +32,7 @@
 #include <cpp-sort/utility/functional.h>
 #include "distributions.h"
 
-TEMPLATE_TEST_CASE( "test every normal sorter", "[sorters]",
+TEMPLATE_TEST_CASE( "test every normal sorter with vector", "[sorters]",
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -64,6 +65,43 @@ TEMPLATE_TEST_CASE( "test every normal sorter", "[sorters]",
     // tests, so it's not included here.
 
     std::vector<int> collection; collection.reserve(491);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 491, -125);
+
+    using sorter = TestType;
+    cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+}
+
+TEMPLATE_TEST_CASE( "test every normal sorter with deque", "[sorters]",
+                    cppsort::block_sorter<>,
+                    cppsort::block_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    >,
+                    cppsort::counting_sorter,
+                    cppsort::default_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::grail_sorter<>,
+                    cppsort::grail_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
+                    >,
+                    cppsort::heap_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter,
+                    cppsort::poplar_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::ska_sorter,
+                    cppsort::smooth_sorter,
+                    cppsort::spread_sorter,
+                    cppsort::std_sorter,
+                    cppsort::tim_sorter,
+                    cppsort::verge_sorter )
+{
+    std::deque<int> collection;
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
