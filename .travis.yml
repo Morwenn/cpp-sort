@@ -175,6 +175,7 @@ install:
   - if [[ $CXX = "clang++" ]]; then export CXX="clang++-3.8"; fi
 
 script:
+  - set -e
   - cmake -H. -Bbuild
           -DCMAKE_CONFIGURATION_TYPES="${BUILD_TYPE}"
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
@@ -194,6 +195,7 @@ script:
     else
         travis_wait ctest -C ${BUILD_TYPE} --output-on-failure -j 4;
     fi
+  - set +e
 
 after_success:
   - if [[ $ENABLE_COVERAGE = true ]]; then
