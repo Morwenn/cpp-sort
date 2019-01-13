@@ -190,10 +190,10 @@ script:
     fi
   - cd build
   - if [[ $USE_VALGRIND = true ]]; then
-        travis_wait ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure -j 4;
+        travis_wait ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure;
         find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
     else
-        travis_wait ctest -C ${BUILD_TYPE} --output-on-failure -j 4;
+        travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
     fi
   - set +e
 
