@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -63,6 +63,7 @@ namespace cppsort
     struct selection_sorter;
     struct ska_sorter;
     struct smooth_sorter;
+    struct split_sorter;
     struct spread_sorter;
     struct std_sorter;
     struct string_spread_sorter;

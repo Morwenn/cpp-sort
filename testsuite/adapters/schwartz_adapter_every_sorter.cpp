@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,6 +57,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter", "[schwart
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::split_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )
 {

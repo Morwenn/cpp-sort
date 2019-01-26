@@ -55,6 +55,7 @@ TEMPLATE_TEST_CASE( "test every normal sorter with vector", "[sorters]",
                     cppsort::selection_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )

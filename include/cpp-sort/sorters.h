@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@
 #include <cpp-sort/sorters/ska_sorter.h>
 #include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>
+#include <cpp-sort/sorters/split_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
