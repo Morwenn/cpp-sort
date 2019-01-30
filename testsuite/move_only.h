@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,9 @@
 // after a move has been performed and throws an exceptions
 // when it happens.
 //
+// It also checks that no self-move is performed, since the
+// standard algorithms can't rely on that to work either.
+//
 
 template<typename T>
 struct move_only
@@ -66,8 +69,7 @@ struct move_only
         can_read(true),
         value(std::move(other.value))
     {
-        if (not std::exchange(other.can_read, false))
-        {
+        if (not std::exchange(other.can_read, false)) {
             throw std::logic_error("illegal read from a moved-from value");
         }
     }
@@ -75,15 +77,16 @@ struct move_only
     auto operator=(move_only&& other)
         -> move_only&
     {
-        if (&other != this)
-        {
-            if (not std::exchange(other.can_read, false))
-            {
-                throw std::logic_error("illegal read from a moved-from value");
-            }
-            can_read = true;
-            value = std::move(other.value);
+        if (&other == this) {
+            throw std::logic_error("illegal self-move was performed");
         }
+
+        if (not std::exchange(other.can_read, false)) {
+            throw std::logic_error("illegal read from a moved-from value");
+        }
+        can_read = true;
+        value = std::move(other.value);
+
         return *this;
     }
 
