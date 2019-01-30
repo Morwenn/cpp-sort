@@ -190,7 +190,6 @@ script:
   - cd build
   - if [[ $USE_VALGRIND = true ]]; then
         travis_wait 40 ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure -j 4;
-        find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
     else
         travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
     fi
@@ -200,6 +199,11 @@ after_success:
         make gcov;
         make lcov;
         bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
+    fi
+
+after_failure:
+  - if [[ $USE_VALGRIND = true ]]; then
+        find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
     fi
 
 notifications:
