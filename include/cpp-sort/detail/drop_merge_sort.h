@@ -4,7 +4,7 @@
     A C++ reimplementation of a drop-merge sort, originally made by Emil Ernerfeldt:
     https://github.com/emilk/drop-merge-sort
 
-    Modified in 2017-2018 by Morwenn for inclusion into cpp-sort
+    Modified in 2017-2019 by Morwenn for inclusion into cpp-sort
 
     There are two versions of this function.
 
@@ -97,7 +97,15 @@ namespace detail
                     num_dropped_in_row = 0;
                 }
             } else {
-                *write = iter_move(read);
+                if (std::is_trivially_copyable<rvalue_reference>::value) {
+                    // If the type is trivially copyable, the potential self-move
+                    // should not trigger any issue
+                    *write = iter_move(read);
+                } else {
+                    if (read != write) {
+                        *write = iter_move(read);
+                    }
+                }
                 ++read;
                 ++write;
                 num_dropped_in_row = 0;
