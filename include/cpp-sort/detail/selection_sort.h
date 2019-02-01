@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2017 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <type_traits>
 #include <cpp-sort/utility/iter_move.h>
 #include "min_element.h"
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -41,21 +39,9 @@ namespace detail
                         Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
-
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
-
         for (ForwardIterator it = first ; it != last ; ++it) {
-            auto min_it = unchecked_min_element(it, last, compare, projection);
-            if (std::is_trivially_copyable<rvalue_reference>::value) {
-                // If the type is trivially copyable, the potential self-swap
-                // should not trigger any issue
-                iter_swap(it, min_it);
-            } else {
-                if (it != min_it) {
-                    iter_swap(it, min_it);
-                }
-            }
+            using utility::iter_swap;
+            iter_swap(it, unchecked_min_element(it, last, compare, projection));
         }
     }
 }}
