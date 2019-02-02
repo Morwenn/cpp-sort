@@ -43,13 +43,19 @@ namespace detail
                     Compare compare, Projection projection)
         -> void
     {
+        // This algorithm tries to isolate an approximate longest
+        // non-decreasing subsequence in the left portion of the
+        // collection, and the other elements in the right portion
+        // of the collection, then to sort the remaining elements
+        // and to merge both portions (LNDS)
+
         if (std::distance(first, last) < 2) return;
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Read and reorganize elements until middle is found
-        auto middle = first; // Last element of the LAS
+        auto middle = first; // Last element of the LNDS
         for (auto reader_it = std::next(first) ; reader_it != last ; ++reader_it) {
             if (comp(proj(*reader_it), proj(*middle))) {
                 // We remove the top of the subsequence as well as the new element
@@ -59,15 +65,13 @@ namespace detail
             } else {
                 // Everything is fine, add the new element to the subsequence
                 ++middle;
-                if (middle != reader_it) {
-                    iter_swap(middle, reader_it);
-                }
+                iter_swap(middle, reader_it);
             }
         }
 
         // Sort second part of the collection and merge
         pdq_sort(middle, last, compare, projection);
-        inplace_merge(first, middle, last, compare, projection);
+        inplace_merge(first, middle, last, std::move(compare), std::move(projection));
     }
 }}
 
