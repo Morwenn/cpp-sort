@@ -79,11 +79,17 @@ inline namespace i_need_a_namespace_for_proper_adl
         auto operator=(move_only&& other)
             -> move_only&
         {
-            if (&other == this) {
+            // Self-move should be ok if the object is already in a moved-from
+            // state because it incurs no data loss, but should otherwise be
+            // frowned upon
+            if (&other == this && can_read) {
                 throw std::logic_error("illegal self-move was performed");
             }
 
-            if (not std::exchange(other.can_read, false)) {
+            // If the two objects are not the same and we try to read from an
+            // object in a moved-from state, then it's a hard error because
+            // data might be lost
+            if (not std::exchange(other.can_read, false) && &other != this) {
                 throw std::logic_error("illegal read from a moved-from value");
             }
             can_read = true;
