@@ -86,14 +86,16 @@ inline namespace i_need_a_namespace_for_proper_adl
                 throw std::logic_error("illegal self-move was performed");
             }
 
+            // Assign before overwriting other.can_read
+            can_read = other.can_read;
+            value = std::move(other.value);
+
             // If the two objects are not the same and we try to read from an
             // object in a moved-from state, then it's a hard error because
             // data might be lost
             if (not std::exchange(other.can_read, false) && &other != this) {
                 throw std::logic_error("illegal read from a moved-from value");
             }
-            can_read = true;
-            value = std::move(other.value);
 
             return *this;
         }
