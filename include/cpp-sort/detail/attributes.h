@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@
 
 // CPPSORT_ATTRIBUTE_FALLTHROUGH
 
-#if __has_cpp_attribute(fallthrough)
+#if __has_cpp_attribute(fallthrough) && !(defined(__clang__) && __cplusplus < 201703L)
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[fallthrough]]
 #elif defined(__clang__)
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[clang::fallthrough]]
