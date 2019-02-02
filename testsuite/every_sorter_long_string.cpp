@@ -97,7 +97,7 @@ TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
     // comparison function
 
     std::vector<std::string> collection;
-    collection.reserve(250);
+    collection.reserve(491);
     auto distribution = shuffled_string{};
     distribution(std::back_inserter(collection), 491, -125);
 
