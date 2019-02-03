@@ -106,5 +106,6 @@ TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
 
     using sorter = TestType;
     cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     CHECK( bool(collection == copy) );
 }
