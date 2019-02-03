@@ -189,7 +189,7 @@ script:
     fi
   - cd build
   - if [[ $USE_VALGRIND = true ]]; then
-        travis_wait 40 ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure -j 4;
+        travis_wait 50 ctest -T memcheck -C ${BUILD_TYPE} --output-on-failure -j 4;
     else
         travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
     fi
