@@ -2,7 +2,7 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  *
- * Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
  *
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -210,12 +210,11 @@ namespace detail
 
         // merge operation without a buffer
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto MergeInPlace(RandomAccessIterator first1, RandomAccessIterator last1,
-                          RandomAccessIterator first2, RandomAccessIterator last2,
+        auto MergeInPlace(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
                           Compare compare, Projection projection)
             -> void
         {
-            if (first1 == last1 || first2 == last2) return;
+            if (first == middle || middle == last) return;
 
             /*
              this just repeatedly binary searches into B and rotates A into position.
@@ -240,19 +239,18 @@ namespace detail
 
             while (true) {
                 // find the first place in B where the first item in A needs to be inserted
-                RandomAccessIterator mid = lower_bound(first2, last2, proj(*first1), compare, projection);
+                RandomAccessIterator mid2 = lower_bound(middle, last, proj(*first), compare, projection);
 
                 // rotate A into place
-                auto amount = std::distance(last1, mid);
-                detail::rotate(first1, last1, mid);
-                if (last2 == mid) break;
+                auto amount = std::distance(middle, mid2);
+                detail::rotate(first, middle, mid2);
+                if (last == mid2) break;
 
                 // calculate the new A and B ranges
-                first2 = mid;
-                first1 += amount;
-                last1 = first2;
-                first1 = upper_bound(first1, last1, proj(*first1), compare, projection);
-                if (first1 == last1) break;
+                middle = mid2;
+                first += amount;
+                first = upper_bound(first, middle, proj(*first), compare, projection);
+                if (first == middle) break;
             }
         }
 
@@ -807,7 +805,7 @@ namespace detail
                                             MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
                                                           buffer2.start, compare, projection);
                                         } else {
-                                            MergeInPlace(lastA.start, lastA.end, lastA.end, B_split, compare, projection);
+                                            MergeInPlace(lastA.start, lastA.end, B_split, compare, projection);
                                         }
 
                                         if (buffer2.length() > 0 || (cache_size > 0 && block_size <= cache_size)) {
@@ -868,7 +866,7 @@ namespace detail
                                 MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
                                               buffer2.start, compare, projection);
                             } else {
-                                MergeInPlace(lastA.start, lastA.end, lastA.end, B.end, compare, projection);
+                                MergeInPlace(lastA.start, lastA.end, B.end, compare, projection);
                             }
                         }
                     }
