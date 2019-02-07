@@ -70,7 +70,7 @@ namespace detail
         }
 
         // Sort second part of the collection and merge
-        pdq_sort(middle, last, compare, projection);
+        pdqsort(middle, last, compare, projection);
         inplace_merge(first, middle, last, std::move(compare), std::move(projection));
     }
 }}
