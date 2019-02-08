@@ -21,6 +21,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
+#include "inplace_merge.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -499,11 +500,9 @@ namespace detail
                                 // the two ranges are in reverse order, so a simple rotation should fix it
                                 detail::rotate(A.start, A.end, B.end);
                             } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
-                                // these two ranges weren't already in order, so we'll need to merge them!
-                                detail::move(A.start, A.end, cache.begin());
-                                merge_move(cache.begin(), cache.begin() + A.length(),
-                                           B.start, B.end, A.start, compare,
-                                           projection, projection);
+                                // these two ranges weren't already in order, so we need to merge them
+                                buffered_inplace_merge(A.start, A.end, B.end, compare, projection,
+                                                       A.length(), B.length(), cache.begin());
                             }
                         }
                     }
