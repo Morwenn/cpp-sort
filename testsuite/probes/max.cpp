@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes/max.h>
+#include "../distributions.h"
 #include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: max", "[probe][max]" )
@@ -55,5 +56,16 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
         std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::max(li) == 10 );
         CHECK( cppsort::probe::max(std::begin(li), std::end(li)) == 10 );
+    }
+
+    SECTION( "regressions" )
+    {
+        std::vector<int> collection;
+        collection.reserve(100);
+        auto distribution = dist::ascending_sawtooth{};
+        distribution(std::back_inserter(collection), 100);
+
+        std::sort(std::begin(collection), std::end(collection));
+        CHECK( cppsort::probe::max(collection) == 0 );
     }
 }
