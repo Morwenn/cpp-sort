@@ -797,9 +797,10 @@ namespace detail
                                         // internal buffer exists we'll use it, otherwise we'll use a strictly
                                         // in-place merge algorithm
                                         if (cache_size > 0 && lastA.length() <= cache_size) {
-                                            merge_move(cache.begin(), cache.begin() + lastA.length(),
-                                                       lastA.end, B_split, lastA.start, compare,
-                                                       projection, projection);
+                                            half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
+                                                               lastA.end, B_split, lastA.start,
+                                                               std::min(lastA.length(), B_split - lastA.end),
+                                                               compare, projection);
                                         } else if (buffer2.length() > 0) {
                                             MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
                                                           buffer2.start, compare, projection);
@@ -858,9 +859,10 @@ namespace detail
 
                             // merge the last A block with the remaining B values
                             if (cache_size > 0 && lastA.length() <= cache_size) {
-                                merge_move(cache.begin(), cache.begin() + lastA.length(),
-                                           lastA.end, B.end, lastA.start, compare,
-                                           projection, projection);
+                                half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
+                                                   lastA.end, B.end, lastA.start,
+                                                   std::min(lastA.length(), B.end - lastA.end),
+                                                   compare, projection);
                             } else if (buffer2.length() > 0) {
                                 MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
                                               buffer2.start, compare, projection);
