@@ -1,0 +1,3 @@
+testsuite/**/*.{%{cpp}}
+include/cpp-sort/**/*.{%{cpp}}
+build/Catch2-src/single_include/catch2/catch.hpp

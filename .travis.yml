@@ -11,6 +11,9 @@ _apt: &apt-common
 
 cache:
   ccache: true
+  directories:
+    - build
+    - .mtime_cache
 
 matrix:
   include:
@@ -168,6 +171,7 @@ before_install:
     fi
 
 install:
+  - gem install mtime_cache
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
     fi
@@ -182,6 +186,7 @@ script:
           -DUSE_VALGRIND=${USE_VALGRIND}
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
+  - mtime_cache -g mtime_cache_globs.txt -c .mtime_cache/cache.json
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         cmake --build build --config ${BUILD_TYPE} -j 2;
     else
