@@ -179,7 +179,12 @@ endif()
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
 	target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
-	set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=${SANITIZE}")
+	set_property(
+        TARGET
+            cpp-sort-testsuite
+        APPEND_STRING PROPERTY LINK_FLAGS
+            " -fsanitize=${SANITIZE} -fno-sanitize-recover=all"
+    )
 endif()
 
 if (ENABLE_COVERAGE)
