@@ -2,7 +2,7 @@
  * Grail sorting
  *
  * (c) 2013 by Andrey Astrelin
- * Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
  *
  * Stable sorting that works in O(N*log(N)) worst time
  * and uses O(1) extra memory
@@ -240,8 +240,25 @@ namespace detail
                                  Compare compare, Projection projection)
         -> void
     {
-        merge_move(first, middle, middle, last, out,
-                   compare.base(), projection, projection);
+        using utility::iter_move;
+        auto&& proj = utility::as_function(projection);
+
+        auto p0 = first, p1 = middle;
+        while (p1 != last) {
+            if (p0 == middle || compare(proj(*p0), proj(*p1)) > 0) {
+                *out = iter_move(p1);
+                ++out; ++p1;
+            } else {
+                *out = iter_move(p0);
+                ++out; ++p0;
+            }
+        }
+        if (out != p0) {
+            while (p0 != middle) {
+                *out = iter_move(p0);
+                ++out; ++p0;
+            }
+        }
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
