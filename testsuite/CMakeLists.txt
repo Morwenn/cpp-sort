@@ -192,8 +192,8 @@ if (ENABLE_COVERAGE)
     add_coverage(cpp-sort-testsuite)
 
 	# Set flags specific to coverage builds
-	target_compile_options(cpp-sort-testsuite PRIVATE -fprofile-arcs -ftest-coverage)
-    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fprofile-arcs -ftest-coverage")
+	target_compile_options(cpp-sort-testsuite PRIVATE --coverage)
+    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
 
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
