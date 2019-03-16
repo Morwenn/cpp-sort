@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -107,6 +107,15 @@ namespace cppsort
             {
                 // No projection to handle, forward everything to the adapted sorter
                 return Sorter{}(std::move(first), std::move(last), std::move(compare));
+            }
+
+            template<typename ForwardIterator, typename Compare>
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare, utility::identity projection) const
+                -> decltype(Sorter{}(std::move(first), std::move(last), std::move(compare), projection))
+            {
+                // utility::identity does nothing, bypass schartz_adapter entirely
+                return Sorter{}(std::move(first), std::move(last), std::move(compare), projection);
             }
         };
     }
