@@ -35,7 +35,8 @@
 
 namespace
 {
-    template<typename T=double>
+    // double segfaults with MinGW-w64 64 bits in Release mode
+    template<typename T=float>
     struct wrapper
     {
         T value;
