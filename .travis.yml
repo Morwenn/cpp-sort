@@ -130,6 +130,17 @@ matrix:
             - cmake
       compiler: clang
 
+    # Windows GCC
+    - os: windows
+      language: sh
+      env: BUILD_TYPE=Debug CMAKE_GENERATOR="MinGW Makefiles"
+      compiler: gcc
+
+    - os: windows
+      language: sh
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="MinGW Makefiles"
+      compiler: gcc
+
     # Code coverage
     - os: linux
       sudo: false
@@ -186,6 +197,7 @@ script:
           -DUSE_VALGRIND=${USE_VALGRIND}
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
+          -DCMAKE_SH="CMAKE_SH-NOTFOUND"
   - mtime_cache -g mtime_cache_globs.txt -c .mtime_cache/cache.json
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         cmake --build build --config ${BUILD_TYPE} -j 2;
