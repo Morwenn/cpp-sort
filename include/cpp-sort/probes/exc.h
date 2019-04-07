@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/indirect_compare.h"
@@ -61,6 +62,8 @@ namespace probe
                 -> cppsort::detail::difference_type_t<ForwardIterator>
             {
                 using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
+                auto&& comp = ::cppsort::utility::as_function(compare);
+                auto&& proj = ::cppsort::utility::as_function(projection);
 
                 auto size = std::distance(first, last);
                 if (size < 2)
@@ -109,6 +112,17 @@ namespace probe
                     {
                         while (next != start)
                         {
+                            // If an element is in the place of another element that compares
+                            // equivalent, it means that this element was actually already in
+                            // a suitable place, so we count one more cycle as if it was an
+                            // already suitably placed element, this handles collections with
+                            // several elements which compare equivalent
+                            if (not comp(proj(*next), proj(*current)) &&
+                                not comp(proj(*current), proj(*next)))
+                            {
+                                ++cycles;
+                            }
+                            // Locate the next element of the cycle
                             current = next;
                             auto next_pos = std::distance(first, next);
                             next = iterators[next_pos];
