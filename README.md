@@ -1,4 +1,4 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.3.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.4.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)

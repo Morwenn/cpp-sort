@@ -178,8 +178,8 @@ endif()
 
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
-	target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
-	set_property(
+    target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
+    set_property(
         TARGET
             cpp-sort-testsuite
         APPEND_STRING PROPERTY LINK_FLAGS
@@ -191,8 +191,8 @@ if (ENABLE_COVERAGE)
     find_package(codecov)
     add_coverage(cpp-sort-testsuite)
 
-	# Set flags specific to coverage builds
-	target_compile_options(cpp-sort-testsuite PRIVATE --coverage)
+    # Set flags specific to coverage builds
+    target_compile_options(cpp-sort-testsuite PRIVATE --coverage)
     set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
 
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
