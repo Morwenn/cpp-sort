@@ -158,7 +158,7 @@ matrix:
     - os: linux
       sudo: required
       language: python
-      python: "3.7"
+      python: "3.6"
       if: branch = master
       env: CC=clang CXX=clang++
       addons:
