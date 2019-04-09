@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes/exc.h>
+#include "../distributions.h"
 #include "../internal_compare.h"
 
 TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
@@ -59,5 +60,16 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         CHECK( cppsort::probe::exc(li) == 10 );
         CHECK( cppsort::probe::exc(std::begin(li), std::end(li)) == 10 );
+    }
+
+    SECTION( "regressions" )
+    {
+        std::vector<int> collection;
+        collection.reserve(100);
+        auto distribution = dist::ascending_sawtooth{};
+        distribution(std::back_inserter(collection), 100);
+
+        std::sort(std::begin(collection), std::end(collection));
+        CHECK( cppsort::probe::exc(collection) == 0 );
     }
 }

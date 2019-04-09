@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
+#include "distributions.h"
 #include "move_only.h"
 
 TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
@@ -46,20 +47,23 @@ TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )
 {
-    // General test to make sure that every sorter compiles fine
-    // and works fine with move-only types, additionally checking
-    // that no read-after-move operation is performed
+    // General test to make sure that every sorter compiles fine with
+    // move-only types, additionally checking that no read-after-move
+    // operation is performed and that no self-move is performed
 
-    std::vector<move_only<double>> collection;
-    for (long i = -56.0 ; i < 366.0 ; ++i) {
-        collection.emplace_back(i);
-    }
+    std::vector<double> numbers;
+    numbers.reserve(491);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(numbers), 491, -125);
+
     std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::shuffle(std::begin(numbers), std::end(numbers), engine);
+    std::vector<move_only<double>> collection(std::begin(numbers), std::end(numbers));
 
     using sorter = TestType;
     cppsort::sort(sorter{}, collection);

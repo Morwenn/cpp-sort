@@ -2,10 +2,9 @@ cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.3.0 LANGUAGES CXX)
+project(cpp-sort VERSION 1.4.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
-include(cotire)
 include(GNUInstallDirs)
 
 # Project options
@@ -26,41 +25,33 @@ add_library(cpp-sort::cpp-sort ALIAS cpp-sort)
 
 # Install targets and files
 install(
-	TARGETS
-		cpp-sort
-	EXPORT
-		cpp-sort-targets
-	DESTINATION
-		${CMAKE_INSTALL_LIBDIR}
+    TARGETS cpp-sort
+    EXPORT cpp-sort-targets
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 install(
-	EXPORT
-		cpp-sort-targets
-	NAMESPACE
-		cpp-sort::
-	DESTINATION
-		"${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort"
+    EXPORT cpp-sort-targets
+    NAMESPACE cpp-sort::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort"
 )
 
 install(
-	DIRECTORY
-		"include/"
-	DESTINATION
-		"${CMAKE_INSTALL_INCLUDEDIR}"
+    DIRECTORY "include/"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 configure_package_config_file(
     ${CMAKE_SOURCE_DIR}/cmake/cpp-sort-config.cmake.in
     ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config.cmake
     INSTALL_DESTINATION
-		${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
+        ${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
 )
 
 write_basic_package_version_file(
     ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
     COMPATIBILITY
-		SameMajorVersion
+        SameMajorVersion
 )
 
 install(
@@ -71,11 +62,10 @@ install(
 )
 
 # Export target so that it can be used in subdirectories
-export(EXPORT cpp-sort-targets
-    FILE
-		${CMAKE_BINARY_DIR}/cmake/cpp-sort-targets.cmake
-    NAMESPACE
-		cpp-sort::
+export(
+    EXPORT cpp-sort-targets
+    FILE ${CMAKE_BINARY_DIR}/cmake/cpp-sort-targets.cmake
+    NAMESPACE cpp-sort::
 )
 
 # Build tests if this is the main project

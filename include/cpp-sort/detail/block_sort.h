@@ -2,7 +2,7 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  *
- * Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
  *
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -21,6 +21,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
+#include "inplace_merge.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -210,12 +211,11 @@ namespace detail
 
         // merge operation without a buffer
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto MergeInPlace(RandomAccessIterator first1, RandomAccessIterator last1,
-                          RandomAccessIterator first2, RandomAccessIterator last2,
+        auto MergeInPlace(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
                           Compare compare, Projection projection)
             -> void
         {
-            if (first1 == last1 || first2 == last2) return;
+            if (first == middle || middle == last) return;
 
             /*
              this just repeatedly binary searches into B and rotates A into position.
@@ -240,19 +240,18 @@ namespace detail
 
             while (true) {
                 // find the first place in B where the first item in A needs to be inserted
-                RandomAccessIterator mid = lower_bound(first2, last2, proj(*first1), compare, projection);
+                RandomAccessIterator mid2 = lower_bound(middle, last, proj(*first), compare, projection);
 
                 // rotate A into place
-                auto amount = std::distance(last1, mid);
-                detail::rotate(first1, last1, mid);
-                if (last2 == mid) break;
+                auto amount = std::distance(middle, mid2);
+                detail::rotate(first, middle, mid2);
+                if (last == mid2) break;
 
                 // calculate the new A and B ranges
-                first2 = mid;
-                first1 += amount;
-                last1 = first2;
-                first1 = upper_bound(first1, last1, proj(*first1), compare, projection);
-                if (first1 == last1) break;
+                middle = mid2;
+                first += amount;
+                first = upper_bound(first, middle, proj(*first), compare, projection);
+                if (first == middle) break;
             }
         }
 
@@ -501,11 +500,9 @@ namespace detail
                                 // the two ranges are in reverse order, so a simple rotation should fix it
                                 detail::rotate(A.start, A.end, B.end);
                             } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
-                                // these two ranges weren't already in order, so we'll need to merge them!
-                                detail::move(A.start, A.end, cache.begin());
-                                merge_move(cache.begin(), cache.begin() + A.length(),
-                                           B.start, B.end, A.start, compare,
-                                           projection, projection);
+                                // these two ranges weren't already in order, so we need to merge them
+                                buffered_inplace_merge(A.start, A.end, B.end, compare, projection,
+                                                       A.length(), B.length(), cache.begin());
                             }
                         }
                     }
@@ -544,7 +541,7 @@ namespace detail
                     difference_type find = buffer_size + buffer_size;
                     bool find_separately = false;
 
-                    if (block_size <= cache_size) {
+                    if (cache_size > 0 && block_size <= cache_size) {
                         // if every A block fits into the cache then we won't need the second internal buffer,
                         // so we really only need to find 'buffer_size' unique values
                         find = buffer_size;
@@ -600,7 +597,7 @@ namespace detail
                                 // so we still need to find a second separate buffer of at least √A unique values
                                 buffer1 = { A.start, A.start + count };
                                 find = buffer_size;
-                            } else if (block_size <= cache_size) {
+                            } else if (cache_size > 0 && block_size <= cache_size) {
                                 // we found the first and only internal buffer that we need, so we're done!
                                 buffer1 = { A.start, A.start + count };
                                 break;
@@ -644,7 +641,7 @@ namespace detail
                                 // so we still need to find a second separate buffer of at least √A unique values
                                 buffer1 = { B.end - count, B.end };
                                 find = buffer_size;
-                            } else if (block_size <= cache_size) {
+                            } else if (cache_size > 0 && block_size <= cache_size) {
                                 // we found the first and only internal buffer that we need, so we're done!
                                 buffer1 = { B.end - count, B.end };
                                 break;
@@ -765,7 +762,7 @@ namespace detail
 
                             // if the first unevenly sized A block fits into the cache, move it there for when we go to Merge it
                             // otherwise, if the second buffer is available, block swap the contents into that
-                            if (lastA.length() <= cache_size) {
+                            if (cache_size >  0 && lastA.length() <= cache_size) {
                                 detail::move(lastA.start, lastA.end, cache.begin());
                             } else if (buffer2.length() > 0) {
                                 detail::swap_ranges(lastA.start, lastA.end, buffer2.start);
@@ -799,18 +796,19 @@ namespace detail
                                         // if lastA fits into the external cache we'll use it, else if the second
                                         // internal buffer exists we'll use it, otherwise we'll use a strictly
                                         // in-place merge algorithm
-                                        if (lastA.length() <= cache_size) {
-                                            merge_move(cache.begin(), cache.begin() + lastA.length(),
-                                                       lastA.end, B_split, lastA.start, compare,
-                                                       projection, projection);
+                                        if (cache_size > 0 && lastA.length() <= cache_size) {
+                                            half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
+                                                               lastA.end, B_split, lastA.start,
+                                                               std::min(lastA.length(), B_split - lastA.end),
+                                                               compare, projection);
                                         } else if (buffer2.length() > 0) {
                                             MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
                                                           buffer2.start, compare, projection);
                                         } else {
-                                            MergeInPlace(lastA.start, lastA.end, lastA.end, B_split, compare, projection);
+                                            MergeInPlace(lastA.start, lastA.end, B_split, compare, projection);
                                         }
 
-                                        if (buffer2.length() > 0 || block_size <= cache_size) {
+                                        if (buffer2.length() > 0 || (cache_size > 0 && block_size <= cache_size)) {
                                             // move the previous A block into the cache or buffer2, since
                                             // that's where we need it to be when we go to merge it anyway
                                             if (block_size <= cache_size) {
@@ -860,15 +858,16 @@ namespace detail
                             }
 
                             // merge the last A block with the remaining B values
-                            if (lastA.length() <= cache_size) {
-                                merge_move(cache.begin(), cache.begin() + lastA.length(),
-                                           lastA.end, B.end, lastA.start, compare,
-                                           projection, projection);
+                            if (cache_size > 0 && lastA.length() <= cache_size) {
+                                half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
+                                                   lastA.end, B.end, lastA.start,
+                                                   std::min(lastA.length(), B.end - lastA.end),
+                                                   compare, projection);
                             } else if (buffer2.length() > 0) {
                                 MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
                                               buffer2.start, compare, projection);
                             } else {
-                                MergeInPlace(lastA.start, lastA.end, lastA.end, B.end, compare, projection);
+                                MergeInPlace(lastA.start, lastA.end, B.end, compare, projection);
                             }
                         }
                     }

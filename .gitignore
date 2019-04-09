@@ -29,6 +29,9 @@ build
 *.layout
 *.save-failed
 
+# VSCode files
+.vscode
+
 # Static analyzer files
 CppCheckResults.xml
 

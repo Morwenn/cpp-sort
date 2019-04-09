@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 // Semantic versioning macros
 
 #define CPPSORT_VERSION_MAJOR 1
-#define CPPSORT_VERSION_MINOR 3
+#define CPPSORT_VERSION_MINOR 4
 #define CPPSORT_VERSION_PATCH 0
 
 #endif // CPPSORT_VERSION_H_

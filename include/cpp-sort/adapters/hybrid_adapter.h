@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -73,9 +73,7 @@ namespace cppsort
         // Avoid just a bit of redundancy
         template<typename Iterator, std::size_t N>
         using choice_for_it = choice<
-            (iterator_category_value<
-                iterator_category_t<Iterator>
-            > + 1) * N - 1
+            (iterator_category_value<iterator_category_t<Iterator>> + 1) * N - 1
         >;
 
         ////////////////////////////////////////////////////////////
@@ -122,96 +120,134 @@ namespace cppsort
                     is_stable<Sorter(Args...)>
                 >;
         };
+
+        ////////////////////////////////////////////////////////////
+        // Mechanism used to unwrap nested hybrid_adapter
+
+        template<template<class...> class Flattenable, class TypeList, class Accumulator>
+        struct flatten_fold;
+
+        template<
+            template<typename...> class Flattenable,
+            template<typename...> class TsList, typename Front, typename... Rest,
+            template<typename...> class AsList, typename... As
+        >
+        struct flatten_fold<Flattenable, TsList<Front, Rest...>, AsList<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<Rest...>, AsList<As..., Front>>::type;
+        };
+
+        template<
+            template<typename...> class Flattenable,
+            template<typename...> class TsList, typename... InnerTs, typename... Rest,
+            template<typename...> class AsList, typename... As
+        >
+        struct flatten_fold<Flattenable, TsList<Flattenable<InnerTs...>, Rest...>, AsList<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<InnerTs..., Rest...>, AsList<As...>>::type;
+        };
+
+        template<
+            template<typename...> class Flattenable,
+            template<typename...> class TsList,
+            typename Accumulator
+        >
+        struct flatten_fold<Flattenable, TsList<>, Accumulator>
+        {
+            using type = Accumulator;
+        };
+
+        template<typename... Sorters>
+        struct hybrid_adapter_impl:
+            detail::check_iterator_category<Sorters...>,
+            detail::check_is_always_stable<Sorters...>,
+            sorter_facade_fptr<hybrid_adapter_impl<Sorters...>>
+        {
+            private:
+
+                // Associate and index to every sorter depending on
+                // its position in the parameter pack
+                template<typename>
+                struct dispatch_sorter_impl;
+
+                template<std::size_t... Indices>
+                struct dispatch_sorter_impl<std::index_sequence<Indices...>>
+                {
+                    using type = detail::sorters_merger<
+                        detail::selection_wrapper<
+                            Sorters,
+                            sizeof...(Sorters) * detail::iterator_category_value<iterator_category<Sorters>>
+                            + sizeof...(Indices) - Indices - 1
+
+                        >...
+                    >;
+                };
+
+                // Dispatch-enabled sorter
+                using dispatch_sorter = typename dispatch_sorter_impl<
+                    std::make_index_sequence<sizeof...(Sorters)>
+                >::type;
+
+            public:
+
+                template<typename Iterable, typename... Args>
+                auto operator()(Iterable&& iterable, Args&&... args) const
+                    -> decltype(dispatch_sorter{}(
+                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                        std::forward<Iterable>(iterable),
+                        std::forward<Args>(args)...
+                    ))
+                {
+                    // Call the appropriate operator()
+                    return dispatch_sorter{}(
+                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                        std::forward<Iterable>(iterable), std::forward<Args>(args)...
+                    );
+                }
+
+                template<typename Iterator, typename... Args>
+                auto operator()(Iterator first, Iterator last, Args&&... args) const
+                    -> decltype(dispatch_sorter{}(
+                            detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                            std::move(first), std::move(last),
+                            std::forward<Args>(args)...
+                    ))
+                {
+                    // Call the appropriate operator()
+                    return dispatch_sorter{}(
+                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                        std::move(first), std::move(last), std::forward<Args>(args)...
+                    );
+                }
+
+                template<typename Iterable, typename... Args>
+                static auto _detail_stability(Iterable&& iterable, Args&&... args)
+                    -> decltype(dispatch_sorter::_detail_stability(
+                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
+                        std::forward<Iterable>(iterable),
+                        std::forward<Args>(args)...
+                    ));
+
+                template<typename Iterator, typename... Args>
+                static auto _detail_stability(Iterator first, Iterator last, Args&&... args)
+                    -> decltype(dispatch_sorter::_detail_stability(
+                            detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
+                            std::move(first), std::move(last),
+                            std::forward<Args>(args)...
+                    ));
+        };
     }
 
     ////////////////////////////////////////////////////////////
     // Adapter
-
     template<typename... Sorters>
     struct hybrid_adapter:
-        public detail::check_iterator_category<Sorters...>,
-        public detail::check_is_always_stable<Sorters...>,
-        public sorter_facade_fptr<hybrid_adapter<Sorters...>>
+        detail::flatten_fold<hybrid_adapter, hybrid_adapter<Sorters...>, detail::hybrid_adapter_impl<>>::type
     {
-        public:
+        hybrid_adapter() = default;
 
-            hybrid_adapter() = default;
-
-            // Automatic deduction guide
-            constexpr explicit hybrid_adapter(Sorters...) noexcept {}
-
-        private:
-
-            // Associate and index to every sorter depending on
-            // its position in the parameter pack
-            template<typename>
-            struct dispatch_sorter_impl;
-
-            template<std::size_t... Indices>
-            struct dispatch_sorter_impl<std::index_sequence<Indices...>>
-            {
-                using type = detail::sorters_merger<
-                    detail::selection_wrapper<
-                        Sorters,
-                        sizeof...(Sorters) * detail::iterator_category_value<iterator_category<Sorters>>
-                        + sizeof...(Indices) - Indices - 1
-
-                    >...
-                >;
-            };
-
-            // Dispatch-enabled sorter
-            using dispatch_sorter = typename dispatch_sorter_impl<
-                std::make_index_sequence<sizeof...(Sorters)>
-            >::type;
-
-        public:
-
-            template<typename Iterable, typename... Args>
-            auto operator()(Iterable&& iterable, Args&&... args) const
-                -> decltype(dispatch_sorter{}(
-                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                    std::forward<Iterable>(iterable),
-                    std::forward<Args>(args)...
-                ))
-            {
-                // Call the appropriate operator()
-                return dispatch_sorter{}(
-                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                    std::forward<Iterable>(iterable), std::forward<Args>(args)...
-                );
-            }
-
-            template<typename Iterator, typename... Args>
-            auto operator()(Iterator first, Iterator last, Args&&... args) const
-                -> decltype(dispatch_sorter{}(
-                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
-                        std::move(first), std::move(last),
-                        std::forward<Args>(args)...
-                ))
-            {
-                // Call the appropriate operator()
-                return dispatch_sorter{}(
-                    detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
-                    std::move(first), std::move(last), std::forward<Args>(args)...
-                );
-            }
-
-            template<typename Iterable, typename... Args>
-            static auto _detail_stability(Iterable&& iterable, Args&&... args)
-                -> decltype(dispatch_sorter::_detail_stability(
-                    detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                    std::forward<Iterable>(iterable),
-                    std::forward<Args>(args)...
-                ));
-
-            template<typename Iterator, typename... Args>
-            static auto _detail_stability(Iterator first, Iterator last, Args&&... args)
-                -> decltype(dispatch_sorter::_detail_stability(
-                        detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
-                        std::move(first), std::move(last),
-                        std::forward<Args>(args)...
-                ));
+        // Automatic deduction guide
+        constexpr explicit hybrid_adapter(Sorters...) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////

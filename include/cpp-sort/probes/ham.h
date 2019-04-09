@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/indirect_compare.h"
@@ -61,6 +62,8 @@ namespace probe
                 -> cppsort::detail::difference_type_t<ForwardIterator>
             {
                 using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
+                auto&& comp = utility::as_function(compare);
+                auto&& proj = utility::as_function(projection);
 
                 auto size = std::distance(first, last);
                 if (size < 2) {
@@ -78,7 +81,7 @@ namespace probe
                 }
 
                 // Sort the iterators on pointed values
-                pdqsort(
+                cppsort::detail::pdqsort(
                     iterators.begin(), iterators.end(),
                     cppsort::detail::indirect_compare<Compare, Projection>(std::move(compare),
                                                                            std::move(projection)),
@@ -90,7 +93,8 @@ namespace probe
 
                 difference_type count = 0;
                 for (auto&& it: iterators) {
-                    if (it != first) {
+                    if (comp(proj(*first), proj(*it)) ||
+                        comp(proj(*it), proj(*first))) {
                         ++count;
                     }
                     ++first;

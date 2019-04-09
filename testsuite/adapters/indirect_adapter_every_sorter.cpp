@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@ TEMPLATE_TEST_CASE( "every sorter with indirect adapter", "[indirect_adapter]",
                     cppsort::selection_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::stable_adapter<cppsort::std_sorter>,

@@ -4,7 +4,7 @@
     A C++ reimplementation of a drop-merge sort, originally made by Emil Ernerfeldt:
     https://github.com/emilk/drop-merge-sort
 
-    Modified in 2017-2018 by Morwenn for inclusion into cpp-sort
+    Modified in 2017-2019 by Morwenn for inclusion into cpp-sort
 
     There are two versions of this function.
 
@@ -64,7 +64,7 @@ namespace detail
 
         constexpr difference_type recency = 8;
 
-        while (read != end) {
+        do {
             if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
 
                 if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
@@ -97,11 +97,24 @@ namespace detail
                     num_dropped_in_row = 0;
                 }
             } else {
-                *write = iter_move(read);
+                if (std::is_trivially_copyable<rvalue_reference>::value) {
+                    // If the type is trivially copyable, the potential self-move
+                    // should not trigger any issue
+                    *write = iter_move(read);
+                } else {
+                    if (read != write) {
+                        *write = iter_move(read);
+                    }
+                }
                 ++read;
                 ++write;
                 num_dropped_in_row = 0;
             }
+        } while (read != end);
+
+        // Don't bother with merging if there is nothing to merge
+        if (dropped.empty()) {
+            return;
         }
 
         // Sort the dropped elements
@@ -109,7 +122,7 @@ namespace detail
 
         auto back = end;
 
-        while (not dropped.empty()) {
+        do {
             auto& last_dropped = dropped.back();
 
             while (begin != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
@@ -120,7 +133,7 @@ namespace detail
             --back;
             *back = std::move(last_dropped);
             dropped.pop_back();
-        }
+        } while (not dropped.empty());
     }
 }}
 
