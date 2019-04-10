@@ -10,6 +10,7 @@ class CppSortConan(ConanFile):
     description = "Additional sorting algorithms & related tools"
     exports_sources = ("include/*", "CMakeLists.txt", "cmake/*")
     exports = "license.txt"
+    generators = "cmake", "txt"
     no_copy_source = True
 
     def package(self):
