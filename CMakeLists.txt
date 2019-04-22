@@ -48,11 +48,16 @@ configure_package_config_file(
         ${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
 )
 
+# Bypass automatic architeture check introduced by CMake,
+# use the ARCH_INDEPENDENT option for this in the future
+set(CPPSORT_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P})
+unset(CMAKE_SIZEOF_VOID_P)
 write_basic_package_version_file(
     ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
     COMPATIBILITY
         SameMajorVersion
 )
+set(CMAKE_SIZEOF_VOID_P ${CPPSORT_SIZEOF_VOID_P})
 
 install(
     FILES
