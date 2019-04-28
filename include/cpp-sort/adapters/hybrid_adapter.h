@@ -178,7 +178,6 @@ namespace cppsort
                             Sorters,
                             sizeof...(Sorters) * detail::iterator_category_value<iterator_category<Sorters>>
                             + sizeof...(Indices) - Indices - 1
-
                         >...
                     >;
                 };

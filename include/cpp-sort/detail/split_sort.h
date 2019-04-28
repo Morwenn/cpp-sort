@@ -30,6 +30,7 @@
 #include <iterator>
 #include <utility>
 #include <vector>
+#include <cpp-sort/utility/iter_move.h>
 #include "inplace_merge.h"
 #include "iterator_traits.h"
 #include "pdqsort.h"
@@ -65,6 +66,7 @@ namespace detail
             } else {
                 // Everything is fine, add the new element to the subsequence
                 ++middle;
+                using utility::iter_swap;
                 iter_swap(middle, reader_it);
             }
         }
