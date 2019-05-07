@@ -189,9 +189,9 @@ namespace detail
         int len;
         if (p1 < q1) {
             len = std::distance(p1, q1);
-            while (p1 < q1) {
+            do {
                 iter_swap(--q1, --q2);
-            }
+            } while (p1 < q1);
         } else {
             len = std::distance(p2, q2);
             atype = ftype;
@@ -254,10 +254,7 @@ namespace detail
             }
         }
         if (out != p0) {
-            while (p0 != middle) {
-                *out = iter_move(p0);
-                ++out; ++p0;
-            }
+            detail::move(p0, middle, out);
         }
     }
 
