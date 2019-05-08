@@ -1,124 +1,125 @@
-// -*- C++ -*-
-//===-------------------------- algorithm ---------------------------------===//
-//
-//                     The LLVM Compiler Infrastructure
-//
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
-//
-// //  Modified in 2016-2017 by Morwenn for inclusion into cpp-sort
-//
-//===----------------------------------------------------------------------===//
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2019 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 #ifndef CPPSORT_DETAIL_MOVE_H_
 #define CPPSORT_DETAIL_MOVE_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
-#include <cstring>
+#include <algorithm>
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/utility/iter_move.h>
+#include "type_traits.h"
 
 namespace cppsort
 {
 namespace detail
 {
     ////////////////////////////////////////////////////////////
-    // unwrap_iter
+    // Check whether iter_move is specialized
+    //
+    // The idea behind this check is that if an iterator has a
+    // dedicated iter_move found by ADL, then we ought to use it,
+    // otherwise we can fallback to std::move which is supposedly
+    // more optimized than what we would write by hand (notably
+    // for standard library iterators)
+    //
 
-    template<typename Iterator>
-    auto unwrap_iter(Iterator it)
-        -> Iterator
+    namespace hide_adl
     {
-        return it;
-    }
+        template<typename Iterator>
+        auto iter_move(Iterator) = delete;
 
-    template<typename T>
-    auto unwrap_iter(std::move_iterator<T*> it)
-        -> std::enable_if_t<
-            std::is_trivially_copy_assignable<T>::value,
-            T*
-        >
-    {
-        return it.base();
+        struct dummy_callable
+        {
+            template<typename Iterator>
+            auto operator()(Iterator it)
+                -> decltype(iter_move(it));
+
+            template<typename Iterator>
+            auto operator()(const std::reverse_iterator<Iterator>& it)
+                -> decltype(iter_move(it.base())); // only there for type information
+
+            template<typename Iterator>
+            auto operator()(const std::move_iterator<Iterator>& it)
+                -> decltype(iter_move(it.base()));
+        };
     }
 
     ////////////////////////////////////////////////////////////
     // move
 
     template<typename InputIterator, typename OutputIterator>
-    auto move_impl(InputIterator first, InputIterator last, OutputIterator result)
-        -> OutputIterator
-    {
-        using utility::iter_move;
-
-        for (; first != last; ++first, (void) ++result) {
-            *result = iter_move(first);
-        }
-        return result;
-    }
-
-    template<typename T, typename U>
-    auto move_impl(T* first, T* last, U* result)
+    auto move(InputIterator first, InputIterator last, OutputIterator result)
         -> std::enable_if_t<
-            std::is_same<std::remove_const_t<T>, U>::value &&
-            std::is_trivially_copy_assignable<U>::value,
-            U*
+            not is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            OutputIterator
         >
     {
-        const std::size_t n = static_cast<std::size_t>(last - first);
-        if (n > 0) {
-            std::memmove(result, first, n * sizeof(U));
-        }
-        return result + n;
+        return std::move(first, last, result);
     }
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> OutputIterator
+        -> std::enable_if_t<
+            is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            OutputIterator
+        >
     {
-        return move_impl(unwrap_iter(first), unwrap_iter(last), unwrap_iter(result));
+        for (; first != last; ++first, (void) ++result) {
+            using utility::iter_move;
+            *result = iter_move(first);
+        }
+        return result;
     }
 
     ////////////////////////////////////////////////////////////
     // move_backward
 
     template<typename InputIterator, typename OutputIterator>
-    auto move_backward_impl(InputIterator first, InputIterator last, OutputIterator result)
-        -> OutputIterator
+    auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
+        -> std::enable_if_t<
+            not is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            OutputIterator
+        >
     {
-        using utility::iter_move;
+        return std::move_backward(first, last, result);
+    }
 
+    template<typename InputIterator, typename OutputIterator>
+    auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
+        -> std::enable_if_t<
+            is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            OutputIterator
+        >
+    {
         while (first != last) {
+            using utility::iter_move;
             *--result = iter_move(--last);
         }
         return result;
-    }
-
-    template<typename T, typename U>
-    auto move_backward_impl(T* first, T* last, U* result)
-        -> std::enable_if_t<
-            std::is_same<std::remove_const_t<T>, U>::value &&
-            std::is_trivially_copy_assignable<U>::value,
-            U*
-        >
-    {
-        const std::size_t n = static_cast<std::size_t>(last - first);
-        if (n > 0) {
-            result -= n;
-            std::memmove(result, first, n * sizeof(U));
-        }
-        return result;
-    }
-
-    template<typename BidirectionalIterator1, typename BidirectionalIterator2>
-    auto move_backward(BidirectionalIterator1 first, BidirectionalIterator1 last,
-                       BidirectionalIterator2 result)
-        -> BidirectionalIterator2
-    {
-        return move_backward_impl(unwrap_iter(first), unwrap_iter(last), unwrap_iter(result));
     }
 }}
 
