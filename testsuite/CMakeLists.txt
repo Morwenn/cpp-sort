@@ -178,12 +178,15 @@ endif()
 
 # Optionally enable sanitizers
 if (UNIX AND SANITIZE)
-    target_compile_options(cpp-sort-testsuite PRIVATE -fsanitize=${SANITIZE})
+    target_compile_options(cpp-sort-testsuite PRIVATE
+        -fsanitize=${SANITIZE}
+        -fno-sanitize-recover=all
+    )
     set_property(
         TARGET
             cpp-sort-testsuite
         APPEND_STRING PROPERTY LINK_FLAGS
-            " -fsanitize=${SANITIZE} -fno-sanitize-recover=all"
+            " -fsanitize=${SANITIZE}"
     )
 endif()
 
