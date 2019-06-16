@@ -251,7 +251,7 @@ namespace cppsort
 
                 hybrid_adapter_impl() = default;
 
-                constexpr explicit hybrid_adapter_impl(Sorters&&... sorters):
+                constexpr explicit hybrid_adapter_impl(Sorters... sorters):
                     base_class(std::move(sorters)...)
                 {}
 
@@ -319,17 +319,7 @@ namespace cppsort
             hybrid_adapter<Sorters...>,
             detail::hybrid_adapter_impl<>
         >::type
-    {
-        hybrid_adapter() = default;
-
-        constexpr explicit hybrid_adapter(Sorters... sorters):
-            detail::flatten_fold<
-                hybrid_adapter,
-                hybrid_adapter<Sorters...>,
-                detail::hybrid_adapter_impl<>
-            >::type(std::move(sorters)...)
-        {}
-    };
+    {};
 
     ////////////////////////////////////////////////////////////
     // is_stable specializations
