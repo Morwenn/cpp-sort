@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,135 +39,146 @@
 
 namespace cppsort
 {
-    // Class that generates the required function pointers conversion
-    // operator depending on what the underlying sorter can handle
-
-    template<typename Sorter>
-    class sorter_facade_fptr
+    namespace detail
     {
-        protected:
+        // Helper class to allow to convert a sorter_facade into a variety
+        // of function pointers, but only if the wrapped sorter is empty:
+        // conversion to function pointer does not make sense when state
+        // is involved
 
-            // Function pointer types, a type alias is required
-            // for the function pointer conversion operator syntax
-            // to be valid
+        template<typename Sorter, bool IsEmpty>
+        class sorter_facade_fptr;
 
-            template<typename Iterable>
-            using fptr_t = detail::invoke_result_t<Sorter, Iterable&>(*)(Iterable&);
+        template<typename Sorter>
+        class sorter_facade_fptr<Sorter, true>
+        {
+            protected:
 
-            template<typename Iterable>
-            using fptr_rvalue_t = detail::invoke_result_t<Sorter, Iterable&&>(*)(Iterable&&);
+                // Function pointer types, a type alias is required
+                // for the function pointer conversion operator syntax
+                // to be valid
 
-            template<typename Iterable, typename Func>
-            using fptr_func_t = detail::invoke_result_t<Sorter, Iterable&, Func>(*)(Iterable&, Func);
+                template<typename Iterable>
+                using fptr_t = detail::invoke_result_t<Sorter, Iterable&>(*)(Iterable&);
 
-            template<typename Iterable, typename Func>
-            using fptr_rvalue_func_t = detail::invoke_result_t<Sorter, Iterable&&, Func>(*)(Iterable&&, Func);
+                template<typename Iterable>
+                using fptr_rvalue_t = detail::invoke_result_t<Sorter, Iterable&&>(*)(Iterable&&);
 
-            template<typename Iterable, typename Func1, typename Func2>
-            using fptr_func2_t
-                = detail::invoke_result_t<Sorter, Iterable&, Func1, Func2>(*)(Iterable&, Func1, Func2);
+                template<typename Iterable, typename Func>
+                using fptr_func_t = detail::invoke_result_t<Sorter, Iterable&, Func>(*)(Iterable&, Func);
 
-            template<typename Iterable, typename Func1, typename Func2>
-            using fptr_rvalue_func2_t
-                = detail::invoke_result_t<Sorter, Iterable&&, Func1, Func2>(*)(Iterable&&, Func1, Func2);
+                template<typename Iterable, typename Func>
+                using fptr_rvalue_func_t = detail::invoke_result_t<Sorter, Iterable&&, Func>(*)(Iterable&&, Func);
 
-            template<typename Iterator>
-            using fptr_it_t = detail::invoke_result_t<Sorter, Iterator, Iterator>(*)(Iterator, Iterator);
+                template<typename Iterable, typename Func1, typename Func2>
+                using fptr_func2_t
+                    = detail::invoke_result_t<Sorter, Iterable&, Func1, Func2>(*)(Iterable&, Func1, Func2);
 
-            template<typename Iterator, typename Func>
-            using fptr_func_it_t
-                = detail::invoke_result_t<Sorter, Iterator, Iterator, Func>(*)(Iterator, Iterator, Func);
+                template<typename Iterable, typename Func1, typename Func2>
+                using fptr_rvalue_func2_t
+                    = detail::invoke_result_t<Sorter, Iterable&&, Func1, Func2>(*)(Iterable&&, Func1, Func2);
 
-            template<typename Iterator, typename Func1, typename Func2>
-            using fptr_func2_it_t
-                = detail::invoke_result_t<Sorter, Iterator, Iterator, Func1, Func2>(*)(Iterator, Iterator, Func1, Func2);
+                template<typename Iterator>
+                using fptr_it_t = detail::invoke_result_t<Sorter, Iterator, Iterator>(*)(Iterator, Iterator);
 
-        public:
+                template<typename Iterator, typename Func>
+                using fptr_func_it_t
+                    = detail::invoke_result_t<Sorter, Iterator, Iterator, Func>(*)(Iterator, Iterator, Func);
 
-            ////////////////////////////////////////////////////////////
-            // Conversion to function pointers
+                template<typename Iterator, typename Func1, typename Func2>
+                using fptr_func2_it_t
+                    = detail::invoke_result_t<Sorter, Iterator, Iterator, Func1, Func2>(*)(Iterator, Iterator, Func1, Func2);
 
-            template<typename Iterable>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_t<Iterable>() const
-            {
-                return [](Iterable& iterable) {
-                    return Sorter{}(iterable);
-                };
-            }
+            public:
 
-            template<typename Iterable>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_rvalue_t<Iterable>() const
-            {
-                return [](Iterable&& iterable) {
-                    return Sorter{}(std::move(iterable));
-                };
-            }
+                ////////////////////////////////////////////////////////////
+                // Conversion to function pointers
 
-            template<typename Iterable, typename Func>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_func_t<Iterable, Func>() const
-            {
-                return [](Iterable& iterable, Func func) {
-                    return Sorter{}(iterable, func);
-                };
-            }
+                template<typename Iterable>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_t<Iterable>() const
+                {
+                    return [](Iterable& iterable) {
+                        return Sorter{}(iterable);
+                    };
+                }
 
-            template<typename Iterable, typename Func>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_rvalue_func_t<Iterable, Func>() const
-            {
-                return [](Iterable&& iterable, Func func) {
-                    return Sorter{}(std::move(iterable), func);
-                };
-            }
+                template<typename Iterable>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_rvalue_t<Iterable>() const
+                {
+                    return [](Iterable&& iterable) {
+                        return Sorter{}(std::move(iterable));
+                    };
+                }
 
-            template<typename Iterable, typename Func1, typename Func2>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_func2_t<Iterable, Func1, Func2>() const
-            {
-                return [](Iterable& iterable, Func1 func1, Func2 func2) {
-                    return Sorter{}(iterable, func1, func2);
-                };
-            }
+                template<typename Iterable, typename Func>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_func_t<Iterable, Func>() const
+                {
+                    return [](Iterable& iterable, Func func) {
+                        return Sorter{}(iterable, func);
+                    };
+                }
 
-            template<typename Iterable, typename Func1, typename Func2>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_rvalue_func2_t<Iterable, Func1, Func2>() const
-            {
-                return [](Iterable&& iterable, Func1 func1, Func2 func2) {
-                    return Sorter{}(std::move(iterable), func1, func2);
-                };
-            }
+                template<typename Iterable, typename Func>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_rvalue_func_t<Iterable, Func>() const
+                {
+                    return [](Iterable&& iterable, Func func) {
+                        return Sorter{}(std::move(iterable), func);
+                    };
+                }
 
-            template<typename Iterator>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_it_t<Iterator>() const
-            {
-                return [](Iterator first, Iterator last) {
-                    return Sorter{}(first, last);
-                };
-            }
+                template<typename Iterable, typename Func1, typename Func2>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_func2_t<Iterable, Func1, Func2>() const
+                {
+                    return [](Iterable& iterable, Func1 func1, Func2 func2) {
+                        return Sorter{}(iterable, func1, func2);
+                    };
+                }
 
-            template<typename Iterator, typename Func>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_func_it_t<Iterator, Func>() const
-            {
-                return [](Iterator first, Iterator last, Func func) {
-                    return Sorter{}(first, last, func);
-                };
-            }
+                template<typename Iterable, typename Func1, typename Func2>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_rvalue_func2_t<Iterable, Func1, Func2>() const
+                {
+                    return [](Iterable&& iterable, Func1 func1, Func2 func2) {
+                        return Sorter{}(std::move(iterable), func1, func2);
+                    };
+                }
 
-            template<typename Iterator, typename Func1, typename Func2>
-            CPPSORT_CONSTEXPR_AFTER_CXX14
-            operator fptr_func2_it_t<Iterator, Func1, Func2>() const
-            {
-                return [](Iterator first, Iterator last, Func1 func1, Func2 func2) {
-                    return Sorter{}(first, last, func1, func2);
-                };
-            }
-    };
+                template<typename Iterator>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_it_t<Iterator>() const
+                {
+                    return [](Iterator first, Iterator last) {
+                        return Sorter{}(first, last);
+                    };
+                }
+
+                template<typename Iterator, typename Func>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_func_it_t<Iterator, Func>() const
+                {
+                    return [](Iterator first, Iterator last, Func func) {
+                        return Sorter{}(first, last, func);
+                    };
+                }
+
+                template<typename Iterator, typename Func1, typename Func2>
+                CPPSORT_CONSTEXPR_AFTER_CXX14
+                operator fptr_func2_it_t<Iterator, Func1, Func2>() const
+                {
+                    return [](Iterator first, Iterator last, Func1 func1, Func2 func2) {
+                        return Sorter{}(first, last, func1, func2);
+                    };
+                }
+        };
+
+        template<typename Sorter>
+        class sorter_facade_fptr<Sorter, false> {};
+    }
 
     // This class takes an incomplete sorter, analyses it and creates
     // all the methods needed to complete it: additional overloads to
@@ -176,10 +187,21 @@ namespace cppsort
     template<typename Sorter>
     struct sorter_facade:
         Sorter,
-        sorter_facade_fptr<
-            sorter_facade<Sorter>
+        detail::sorter_facade_fptr<
+            sorter_facade<Sorter>,
+            std::is_empty<Sorter>::value
         >
     {
+        ////////////////////////////////////////////////////////////
+        // Constructors
+
+        sorter_facade() = default;
+
+        template<typename... Args>
+        constexpr sorter_facade(Args&&... args):
+            Sorter(std::forward<Args>(args)...)
+        {}
+
         ////////////////////////////////////////////////////////////
         // Non-comparison overloads
 

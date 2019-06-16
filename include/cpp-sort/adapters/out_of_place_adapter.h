@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
 #include "../detail/scope_exit.h"
@@ -46,7 +47,7 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter, typename ForwardIterator, typename Size, typename... Args>
-        auto sort_out_of_place(ForwardIterator first, Size size, Sorter sorter, Args&&... args)
+        auto sort_out_of_place(ForwardIterator first, Size size, const Sorter& sorter, Args&&... args)
             -> decltype(auto)
         {
             using utility::iter_move;
@@ -88,17 +89,22 @@ namespace cppsort
 
     template<typename Sorter>
     struct out_of_place_adapter:
+        utility::adapter_storage<Sorter>,
         detail::check_iterator_category<Sorter>,
         detail::check_is_always_stable<Sorter>,
-        sorter_facade_fptr<out_of_place_adapter<Sorter>>
+        detail::sorter_facade_fptr<
+            out_of_place_adapter<Sorter>,
+            std::is_empty<Sorter>::value
+        >
     {
         ////////////////////////////////////////////////////////////
         // Construction
 
         out_of_place_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit out_of_place_adapter(Sorter) noexcept {}
+        constexpr explicit out_of_place_adapter(Sorter sorter):
+            utility::adapter_storage<Sorter>(std::move(sorter))
+        {}
 
         ////////////////////////////////////////////////////////////
         // Wrap and call the sorter
@@ -108,7 +114,7 @@ namespace cppsort
             -> decltype(auto)
         {
             auto size = std::distance(first, last);
-            return detail::sort_out_of_place(first, size, Sorter{}, std::forward<Args>(args)...);
+            return detail::sort_out_of_place(first, size, this->get(), std::forward<Args>(args)...);
         }
 
         template<typename Iterable, typename... Args>
@@ -117,7 +123,7 @@ namespace cppsort
         {
             // Might be an optimization for forward/bidirectional iterables
             auto size = utility::size(iterable);
-            return detail::sort_out_of_place(std::begin(iterable), size, Sorter{}, std::forward<Args>(args)...);
+            return detail::sort_out_of_place(std::begin(iterable), size, this->get(), std::forward<Args>(args)...);
         }
     };
 

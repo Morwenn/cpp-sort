@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/checkers.h"
 #include "../detail/type_traits.h"
@@ -78,16 +79,21 @@ namespace cppsort
 
     template<typename Sorter>
     struct self_sort_adapter:
+        utility::adapter_storage<Sorter>,
         detail::check_iterator_category<Sorter>,
-        sorter_facade_fptr<self_sort_adapter<Sorter>>
+        detail::sorter_facade_fptr<
+            self_sort_adapter<Sorter>,
+            std::is_empty<Sorter>::value
+        >
     {
         ////////////////////////////////////////////////////////////
         // Construction
 
         self_sort_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit self_sort_adapter(Sorter) noexcept {}
+        constexpr explicit self_sort_adapter(Sorter sorter):
+            utility::adapter_storage<Sorter>(std::move(sorter))
+        {}
 
         ////////////////////////////////////////////////////////////
         // Function call operator
@@ -118,19 +124,19 @@ namespace cppsort
             -> std::enable_if_t<
                 not detail::has_sort_method<Iterable, Args...> &&
                 not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
             >
         {
-            return Sorter{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+            return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>
         auto operator()(Iterator first, Iterator last, Args&&... args) const
-            -> decltype(Sorter{}(std::move(first), std::move(last),
-                                 std::forward<Args>(args)...))
+            -> decltype(this->get()(std::move(first), std::move(last),
+                                    std::forward<Args>(args)...))
         {
-            return Sorter{}(std::move(first), std::move(last),
-                            std::forward<Args>(args)...);
+            return this->get()(std::move(first), std::move(last),
+                               std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////

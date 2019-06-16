@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include "checkers.h"
 
@@ -40,16 +41,21 @@ namespace cppsort
 {
     template<typename Sorter>
     struct stable_adapter<self_sort_adapter<Sorter>>:
+        utility::adapter_storage<Sorter>,
         detail::check_iterator_category<Sorter>,
-        sorter_facade_fptr<stable_adapter<self_sort_adapter<Sorter>>>
+        detail::sorter_facade_fptr<
+            stable_adapter<self_sort_adapter<Sorter>>,
+            std::is_empty<Sorter>::value
+        >
     {
         ////////////////////////////////////////////////////////////
         // Construction
 
         stable_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit stable_adapter(self_sort_adapter<Sorter>) noexcept {}
+        constexpr explicit stable_adapter(self_sort_adapter<Sorter> sorter):
+            utility::adapter_storage<Sorter>(std::move(sorter.get()))
+        {}
 
         ////////////////////////////////////////////////////////////
         // Generic cases
@@ -68,17 +74,19 @@ namespace cppsort
         auto operator()(Iterable&& iterable, Args&&... args) const
             -> std::enable_if_t<
                 not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                decltype(stable_adapter<Sorter>(this->get())(std::forward<Iterable>(iterable),
+                                                             std::forward<Args>(args)...))
             >
         {
-            return stable_adapter<Sorter>{}(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+            return stable_adapter<Sorter>(this->get())(std::forward<Iterable>(iterable),
+                                                       std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>
         auto operator()(Iterator first, Iterator last, Args&&... args) const
-            -> decltype(stable_adapter<Sorter>{}(first, last, std::forward<Args>(args)...))
+            -> decltype(stable_adapter<Sorter>(this->get())(first, last, std::forward<Args>(args)...))
         {
-            return stable_adapter<Sorter>{}(first, last, std::forward<Args>(args)...);
+            return stable_adapter<Sorter>(this->get())(first, last, std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////
@@ -89,7 +97,7 @@ namespace cppsort
         auto operator()(std::forward_list<T>& iterable) const
             -> void
         {
-            return iterable.sort();
+            iterable.sort();
         }
 
         template<
@@ -100,14 +108,14 @@ namespace cppsort
         auto operator()(std::forward_list<T>& iterable, Compare compare) const
             -> void
         {
-            return iterable.sort(utility::as_function(compare));
+            iterable.sort(utility::as_function(compare));
         }
 
         template<typename T>
         auto operator()(std::list<T>& iterable) const
             -> void
         {
-            return iterable.sort();
+            iterable.sort();
         }
 
         template<
@@ -118,7 +126,7 @@ namespace cppsort
         auto operator()(std::list<T>& iterable, Compare compare) const
             -> void
         {
-            return iterable.sort(utility::as_function(compare));
+            iterable.sort(utility::as_function(compare));
         }
 
         ////////////////////////////////////////////////////////////

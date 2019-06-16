@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cstddef>
 #include <type_traits>
+#include <utility>
 
 namespace cppsort
 {
@@ -35,18 +37,30 @@ namespace cppsort
     struct stable_adapter<hybrid_adapter<Sorters...>>:
         hybrid_adapter<stable_adapter<Sorters>...>
     {
-        ////////////////////////////////////////////////////////////
-        // Construction
+        private:
 
-        stable_adapter() = default;
+            template<std::size_t... Indices>
+            constexpr explicit stable_adapter(std::index_sequence<Indices...>, hybrid_adapter<Sorters...>&& sorters):
+                hybrid_adapter<stable_adapter<Sorters>...>(
+                    (stable_adapter<Sorters>(std::move(sorters).template get<Indices, Sorters>()))...
+                )
+            {}
 
-        // Automatic deduction guide
-        constexpr explicit stable_adapter(hybrid_adapter<Sorters...>) noexcept {}
+        public:
 
-        ////////////////////////////////////////////////////////////
-        // Sorter traits
+            ////////////////////////////////////////////////////////////
+            // Construction
 
-        using is_always_stable = std::true_type;
+            stable_adapter() = default;
+
+            constexpr explicit stable_adapter(hybrid_adapter<Sorters...> sorters):
+                stable_adapter(std::make_index_sequence<sizeof...(Sorters)>{}, std::move(sorters))
+            {}
+
+            ////////////////////////////////////////////////////////////
+            // Sorter traits
+
+            using is_always_stable = std::true_type;
     };
 }
 

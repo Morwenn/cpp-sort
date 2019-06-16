@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/checkers.h"
 #include "../detail/comparison_counter.h"
 
@@ -43,11 +44,18 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename ComparisonSorter, typename CountType>
+        template<typename Sorter, typename CountType>
         struct counting_adapter_impl:
-            check_iterator_category<ComparisonSorter>,
-            check_is_always_stable<ComparisonSorter>
+            utility::adapter_storage<Sorter>,
+            check_iterator_category<Sorter>,
+            check_is_always_stable<Sorter>
         {
+            counting_adapter_impl() = default;
+
+            constexpr explicit counting_adapter_impl(Sorter&& sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
+            {}
+
             template<
                 typename Iterable,
                 typename Compare = std::less<>,
@@ -60,7 +68,7 @@ namespace cppsort
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::forward<Iterable>(iterable), std::move(cmp));
+                this->get()(std::forward<Iterable>(iterable), std::move(cmp));
                 return count;
             }
 
@@ -76,7 +84,7 @@ namespace cppsort
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::move(first), std::move(last), std::move(cmp));
+                this->get()(std::move(first), std::move(last), std::move(cmp));
                 return count;
             }
 
@@ -94,7 +102,7 @@ namespace cppsort
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::forward<Iterable>(iterable), std::move(cmp), projection);
+                this->get()(std::forward<Iterable>(iterable), std::move(cmp), projection);
                 return count;
             }
 
@@ -112,24 +120,24 @@ namespace cppsort
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                ComparisonSorter{}(std::move(first), std::move(last),
-                                   std::move(cmp), std::move(projection));
+                this->get()(std::move(first), std::move(last), std::move(cmp), std::move(projection));
                 return count;
             }
         };
     }
 
-    template<typename ComparisonSorter, typename CountType>
+    template<typename Sorter, typename CountType>
     struct counting_adapter:
         sorter_facade<detail::counting_adapter_impl<
-            ComparisonSorter,
+            Sorter,
             CountType
         >>
     {
         counting_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit counting_adapter(ComparisonSorter) noexcept {}
+        constexpr explicit counting_adapter(Sorter sorter):
+            sorter_facade<detail::counting_adapter_impl<Sorter, CountType>>(std::move(sorter))
+        {}
     };
 
     ////////////////////////////////////////////////////////////
