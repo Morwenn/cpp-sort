@@ -210,8 +210,10 @@ script:
     else
         travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
     fi
+  - cd ..
 
 after_success:
+  - cd build
   - if [[ $ENABLE_COVERAGE = true ]]; then
         make gcov;
         make lcov;
@@ -219,6 +221,7 @@ after_success:
     fi
 
 after_failure:
+  - cd build
   - if [[ $USE_VALGRIND = true ]]; then
         find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
     fi
