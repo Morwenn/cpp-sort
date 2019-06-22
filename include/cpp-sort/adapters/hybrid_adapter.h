@@ -325,7 +325,7 @@ namespace cppsort
         template<typename... Args>
         hybrid_adapter(Args&&... args):
             detail::flatten_fold<
-                hybrid_adapter,
+                ::cppsort::hybrid_adapter,
                 hybrid_adapter<Sorters...>,
                 detail::hybrid_adapter_impl<>
             >::type(std::forward<Args>(args)...)
