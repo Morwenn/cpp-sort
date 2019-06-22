@@ -319,7 +319,18 @@ namespace cppsort
             hybrid_adapter<Sorters...>,
             detail::hybrid_adapter_impl<>
         >::type
-    {};
+    {
+        hybrid_adapter() = default;
+
+        template<typename... Args>
+        hybrid_adapter(Args&&... args):
+            detail::flatten_fold<
+                hybrid_adapter,
+                hybrid_adapter<Sorters...>,
+                detail::hybrid_adapter_impl<>
+            >::type(std::forward<Args>(args)...)
+        {}
+    };
 
     ////////////////////////////////////////////////////////////
     // is_stable specializations
