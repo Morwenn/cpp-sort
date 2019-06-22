@@ -41,7 +41,7 @@ namespace cppsort
 {
     template<typename Sorter>
     struct stable_adapter<self_sort_adapter<Sorter>>:
-        utility::adapter_storage<Sorter>,
+        utility::adapter_storage<stable_adapter<Sorter>>,
         detail::check_iterator_category<Sorter>,
         detail::sorter_facade_fptr<
             stable_adapter<self_sort_adapter<Sorter>>,
@@ -54,7 +54,9 @@ namespace cppsort
         stable_adapter() = default;
 
         constexpr explicit stable_adapter(self_sort_adapter<Sorter> sorter):
-            utility::adapter_storage<Sorter>(std::move(sorter.get()))
+            utility::adapter_storage<stable_adapter<Sorter>>(
+                stable_adapter<Sorter>(std::move(sorter.get()))
+            )
         {}
 
         ////////////////////////////////////////////////////////////
@@ -74,19 +76,17 @@ namespace cppsort
         auto operator()(Iterable&& iterable, Args&&... args) const
             -> std::enable_if_t<
                 not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(stable_adapter<Sorter>(this->get())(std::forward<Iterable>(iterable),
-                                                             std::forward<Args>(args)...))
+                decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
             >
         {
-            return stable_adapter<Sorter>(this->get())(std::forward<Iterable>(iterable),
-                                                       std::forward<Args>(args)...);
+            return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>
         auto operator()(Iterator first, Iterator last, Args&&... args) const
-            -> decltype(stable_adapter<Sorter>(this->get())(first, last, std::forward<Args>(args)...))
+            -> decltype(this->get()(first, last, std::forward<Args>(args)...))
         {
-            return stable_adapter<Sorter>(this->get())(first, last, std::forward<Args>(args)...);
+            return this->get()(first, last, std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////
