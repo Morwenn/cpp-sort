@@ -33,6 +33,7 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/projection_compare.h"
 #include "../detail/type_traits.h"
 
@@ -108,8 +109,15 @@ namespace cppsort
         {};
 
         template<typename Sorter>
-        struct container_aware_adapter_base
+        struct container_aware_adapter_base:
+            utility::adapter_storage<Sorter>
         {
+            container_aware_adapter_base() = default;
+
+            constexpr explicit container_aware_adapter_base(Sorter&& sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
+            {}
+
             template<
                 bool Stability = false,
                 typename Iterable
@@ -120,11 +128,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable))
+                        decltype(detail::adl_despair{}(this->get(), iterable))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable);
+                return detail::adl_despair{}(this->get(), iterable);
             }
 
             template<
@@ -137,11 +145,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&)>,
-                        decltype(cppsort::sort(Sorter{}, iterable))
+                        decltype(cppsort::sort(this->get(), iterable))
                     >
                 >
             {
-                return cppsort::sort(Sorter{}, iterable);
+                return cppsort::sort(this->get(), iterable);
             }
 
             template<
@@ -155,11 +163,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable, std::move(compare)))
+                        decltype(detail::adl_despair{}(this->get(), iterable, std::move(compare)))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable, std::move(compare));
+                return detail::adl_despair{}(this->get(), iterable, std::move(compare));
             }
 
             template<
@@ -174,11 +182,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare)>,
-                        decltype(cppsort::sort(Sorter{}, iterable, std::move(compare)))
+                        decltype(cppsort::sort(this->get(), iterable, std::move(compare)))
                     >
                 >
             {
-                return cppsort::sort(Sorter{}, iterable, std::move(compare));
+                return cppsort::sort(this->get(), iterable, std::move(compare));
             }
 
             template<
@@ -193,11 +201,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable, std::move(projection)))
+                        decltype(detail::adl_despair{}(this->get(), iterable, std::move(projection)))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable, std::move(projection));
+                return detail::adl_despair{}(this->get(), iterable, std::move(projection));
             }
 
             template<
@@ -212,12 +220,12 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable,
+                        decltype(detail::adl_despair{}(this->get(), iterable,
                                                        std::less<>{}, std::move(projection)))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable,
+                return detail::adl_despair{}(this->get(), iterable,
                                              std::less<>{}, std::move(projection));
             }
 
@@ -238,13 +246,13 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable,
+                        decltype(detail::adl_despair{}(this->get(), iterable,
                                                        detail::make_projection_compare(std::less<>{},
                                                                                        std::move(projection))))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable,
+                return detail::adl_despair{}(this->get(), iterable,
                                              detail::make_projection_compare(std::less<>{},
                                                                              std::move(projection)));
             }
@@ -267,11 +275,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Projection)>,
-                        decltype(cppsort::sort(Sorter{}, iterable, std::move(projection)))
+                        decltype(cppsort::sort(this->get(), iterable, std::move(projection)))
                     >
                 >
             {
-                return cppsort::sort(Sorter{}, iterable, std::move(projection));
+                return cppsort::sort(this->get(), iterable, std::move(projection));
             }
 
             template<
@@ -286,12 +294,12 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable,
+                        decltype(detail::adl_despair{}(this->get(), iterable,
                                                        std::move(compare), std::move(projection)))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable,
+                return detail::adl_despair{}(this->get(), iterable,
                                              std::move(compare), std::move(projection));
             }
 
@@ -312,13 +320,13 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(Sorter{}, iterable,
+                        decltype(detail::adl_despair{}(this->get(), iterable,
                                                        detail::make_projection_compare(std::move(compare),
                                                                                        std::move(projection))))
                     >
                 >
             {
-                return detail::adl_despair{}(Sorter{}, iterable,
+                return detail::adl_despair{}(this->get(), iterable,
                                              detail::make_projection_compare(std::move(compare),
                                                                              std::move(projection)));
             }
@@ -340,12 +348,12 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare, Projection)>,
-                        decltype(cppsort::sort(Sorter{}, iterable,
+                        decltype(cppsort::sort(this->get(), iterable,
                                                std::move(compare), std::move(projection)))
                     >
                 >
             {
-                return cppsort::sort(Sorter{}, iterable,
+                return cppsort::sort(this->get(), iterable,
                                      std::move(compare), std::move(projection));
             }
         };
@@ -361,8 +369,9 @@ namespace cppsort
     {
         container_aware_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit container_aware_adapter(Sorter) noexcept {}
+        constexpr explicit container_aware_adapter(Sorter sorter):
+            detail::container_aware_adapter_base<Sorter>(std::move(sorter))
+        {}
     };
 
     ////////////////////////////////////////////////////////////
