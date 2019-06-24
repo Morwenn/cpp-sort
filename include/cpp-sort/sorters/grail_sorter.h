@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,8 +68,8 @@ namespace cppsort
                     "grail_sorter requires at least random-access iterators"
                 );
 
-                grail_sort<BufferProvider>(std::move(first), std::move(last),
-                                           std::move(compare), std::move(projection));
+                grail::grail_sort<BufferProvider>(std::move(first), std::move(last),
+                                                  std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////
