@@ -37,31 +37,31 @@ namespace detail
 {
 namespace grail
 {
-    // cost: 2*len+nk^2/2
+    // cost: 2 * len + nk^2 / 2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto find_keys(RandomAccessIterator first, RandomAccessIterator last,
-                   int nkeys, Compare compare, Projection projection)
-        -> int
+                   difference_type_t<RandomAccessIterator> key_count,
+                   Compare compare, Projection projection)
+        -> difference_type_t<RandomAccessIterator>
     {
         auto&& proj = utility::as_function(projection);
 
-        int h = 1;
-        RandomAccessIterator h0 = first;
-        RandomAccessIterator u = std::next(first);
-        while (u != last && h < nkeys) {
-            int r = lower_bound(h0, h0 + h, proj(*u), compare.base(), projection) - h0;
-            if (r == h || compare(proj(*u), proj(h0[r])) != 0) {
-                h0 = detail::rotate(h0, h0 + h, u);
+        difference_type_t<RandomAccessIterator> dist = 1;
+        auto h0 = first;
+        for (auto u = std::next(first) ; u != last ; ++u) {
+            if (dist == key_count) break;
+            auto r = lower_bound(h0, h0 + dist, proj(*u), compare.base(), projection) - h0;
+            if (r == dist || compare(proj(*u), proj(h0[r])) != 0) {
+                h0 = detail::rotate(h0, h0 + dist, u);
                 detail::rotate(h0 + r, u, std::next(u));
-                ++h;
+                ++dist;
             }
-            ++u;
         }
-        detail::rotate(first, h0, h0 + h);
-        return h;
+        detail::rotate(first, h0, h0 + dist);
+        return dist;
     }
 
-    // cost: min(L1,L2)^2+max(L1,L2)
+    // cost: min(L1, L2)^2 + max(L1, L2)
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto merge_without_buffer(RandomAccessIterator first, RandomAccessIterator middle,
                               RandomAccessIterator last,
@@ -72,10 +72,11 @@ namespace grail
 
         if (std::distance(first, middle) < std::distance(middle, last)) {
             while (first != middle) {
-                auto h = lower_bound(middle, last, proj(*first), compare.base(), projection);
-                if (h != middle) {
-                    detail::rotate(first, middle, h);
-                    auto delta = std::distance(middle, h);
+                // Binary search left
+                auto it = lower_bound(middle, last, proj(*first), compare.base(), projection);
+                if (it != middle) {
+                    detail::rotate(first, middle, it);
+                    auto delta = std::distance(middle, it);
                     first += delta;
                     middle += delta;
                 }
@@ -86,10 +87,11 @@ namespace grail
             }
         } else {
             while (middle != last) {
-                auto h = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
-                if (h != middle) {
-                    detail::rotate(h, middle, last);
-                    auto delta = std::distance(h, middle);
+                // Binary search right
+                auto it = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
+                if (it != middle) {
+                    detail::rotate(it, middle, last);
+                    auto delta = std::distance(it, middle);
                     middle -= delta;
                     last -= delta;
                 }
@@ -111,21 +113,21 @@ namespace grail
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
-        RandomAccessIterator p0 = first;
-        RandomAccessIterator p1 = middle;
+        auto left_it = first;
+        auto right_it = middle;
 
-        while (p1 < last) {
-            if (p0 == middle || compare(proj(*p0), proj(*p1)) > 0) {
-                iter_swap(M, p1);
-                ++p1;
+        while (right_it != last) {
+            if (left_it == middle || compare(proj(*left_it), proj(*right_it)) > 0) {
+                iter_swap(M, right_it);
+                ++right_it;
             } else {
-                iter_swap(M, p0);
-                ++p0;
+                iter_swap(M, left_it);
+                ++left_it;
             }
             ++M;
         }
-        if (M != p0) {
-            detail::swap_ranges(M, M + std::distance(p0, middle), p0);
+        if (M != left_it) {
+            detail::swap_ranges(M, M + std::distance(left_it, middle), left_it);
         }
     }
 
@@ -138,9 +140,9 @@ namespace grail
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
-        RandomAccessIterator p0 = std::prev(M);
-        RandomAccessIterator p1 = std::prev(middle);
-        RandomAccessIterator p2 = std::prev(last);
+        auto p0 = std::prev(M),
+             p1 = std::prev(middle),
+             p2 = std::prev(last);
 
         while (p1 >= first) {
             if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
@@ -152,33 +154,34 @@ namespace grail
             }
             --p0;
         }
-        if (p2 != p0) {
-            while (p2 >= middle) {
+
+        if (p2 != p0 && p2 >= middle) {
+            do {
                 iter_swap(p0, p2);
                 --p0;
                 --p2;
-            }
+            } while (p2 != middle);
         }
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto smart_merge_with_buffer(RandomAccessIterator first, RandomAccessIterator middle,
-                                 RandomAccessIterator last, int lkeys,
-                                 int atype, Compare compare, Projection projection)
-        -> std::pair<int, int>
+    auto smart_merge_with_buffer(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
+                                 difference_type_t<RandomAccessIterator> block_len, int left_over_frag,
+                                 Compare compare, Projection projection)
+        -> std::pair<difference_type_t<RandomAccessIterator>, int>
     {
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
-        RandomAccessIterator p0 = first - lkeys,
-                             p1 = first,
-                             p2 = middle,
-                             q1 = p2,
-                             q2 = last;
+        auto p0 = first - block_len,
+             p1 = first,
+             p2 = middle,
+             q1 = p2,
+             q2 = last;
+        int frag_type  = 1 - left_over_frag;  // 1 if inverted
 
-        int ftype = 1 - atype;  // 1 if inverted
-        while (p1 < q1 && p2 < q2) {
-            if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
+        while (p1 != q1 && p2 != q2) {
+            if (compare(proj(*p1), proj(*p2)) - frag_type  < 0) {
                 iter_swap(p0, p1);
                 ++p1;
             } else {
@@ -188,7 +191,7 @@ namespace grail
             ++p0;
         }
 
-        int len;
+        difference_type_t<RandomAccessIterator> len;
         if (p1 < q1) {
             len = std::distance(p1, q1);
             do {
@@ -196,42 +199,42 @@ namespace grail
             } while (p1 < q1);
         } else {
             len = std::distance(p2, q2);
-            atype = ftype;
+            left_over_frag = frag_type;
         }
-        return { len, atype };
+        return { len, left_over_frag };
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto smart_merge_without_buffer(RandomAccessIterator first, RandomAccessIterator middle,
-                                    RandomAccessIterator last, int atype,
+                                    RandomAccessIterator last, int left_over_frag,
                                     Compare compare, Projection projection)
         -> std::pair<int, int>
     {
         auto&& proj = utility::as_function(projection);
 
         if (middle == last) {
-            return { std::distance(first, middle), atype };
+            return { std::distance(first, middle), left_over_frag };
         }
 
-        int ftype = 1 - atype;
-        if (first != middle && compare(proj(*std::prev(middle)), proj(*middle)) - ftype >= 0) {
+        int frag_type = 1 - left_over_frag;
+        if (first != middle && compare(proj(*std::prev(middle)), proj(*middle)) - frag_type >= 0) {
             while (first != middle) {
-                int h = ftype ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
-                              : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
+                auto h = frag_type ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
+                                   : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
                 if (h != 0) {
                     detail::rotate(first, middle, middle + h);
                     first += h;
                     middle += h;
                 }
                 if (middle == last) {
-                    return { std::distance(first, middle), atype };
+                    return { std::distance(first, middle), left_over_frag };
                 }
                 do {
                     ++first;
-                } while (first != middle && compare(proj(*first), proj(*middle)) - ftype < 0);
+                } while (first != middle && compare(proj(*first), proj(*middle)) - frag_type < 0);
             }
         }
-        return { std::distance(middle, last), ftype };
+        return { std::distance(middle, last), frag_type };
     }
 
     // Sort With Extra Buffer
