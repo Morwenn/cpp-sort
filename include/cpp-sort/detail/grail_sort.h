@@ -173,32 +173,31 @@ namespace grail
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
-        auto p0 = first - block_len,
-             p1 = first,
-             p2 = middle,
-             q1 = p2,
-             q2 = last;
+        auto out_it = first - block_len,
+             left_it = first,
+             right_it = middle;
         int frag_type  = 1 - left_over_frag;  // 1 if inverted
 
-        while (p1 != q1 && p2 != q2) {
-            if (compare(proj(*p1), proj(*p2)) - frag_type  < 0) {
-                iter_swap(p0, p1);
-                ++p1;
+        while (left_it != middle && right_it != last) {
+            if (compare(proj(*left_it), proj(*right_it)) - frag_type  < 0) {
+                iter_swap(out_it, left_it);
+                ++left_it;
             } else {
-                iter_swap(p0, p2);
-                ++p2;
+                iter_swap(out_it, right_it);
+                ++right_it;
             }
-            ++p0;
+            ++out_it;
         }
 
+        //auto p1 = left_it, q1 = middle, p2 = right_it, q2 = last;
         difference_type_t<RandomAccessIterator> len;
-        if (p1 < q1) {
-            len = std::distance(p1, q1);
+        if (left_it < middle) {
+            len = std::distance(left_it, middle);
             do {
-                iter_swap(--q1, --q2);
-            } while (p1 < q1);
+                iter_swap(--middle, --last);
+            } while (left_it != middle);
         } else {
-            len = std::distance(p2, q2);
+            len = std::distance(right_it, last);
             left_over_frag = frag_type;
         }
         return { len, left_over_frag };
@@ -219,12 +218,12 @@ namespace grail
         int frag_type = 1 - left_over_frag;
         if (first != middle && compare(proj(*std::prev(middle)), proj(*middle)) - frag_type >= 0) {
             while (first != middle) {
-                auto h = frag_type ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
-                                   : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
-                if (h != 0) {
-                    detail::rotate(first, middle, middle + h);
-                    first += h;
-                    middle += h;
+                auto len = frag_type ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
+                                     : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
+                if (len != 0) {
+                    detail::rotate(first, middle, middle + len);
+                    first += len;
+                    middle += len;
                 }
                 if (middle == last) {
                     return { std::distance(first, middle), left_over_frag };
@@ -248,59 +247,56 @@ namespace grail
         using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
-        auto p0 = first, p1 = middle;
-        while (p1 != last) {
-            if (p0 == middle || compare(proj(*p0), proj(*p1)) > 0) {
-                *out = iter_move(p1);
-                ++out; ++p1;
+        auto it = middle;
+        while (it != last) {
+            if (first == middle || compare(proj(*first), proj(*it)) > 0) {
+                *out = iter_move(it);
+                ++out;
+                ++it;
             } else {
-                *out = iter_move(p0);
-                ++out; ++p0;
+                *out = iter_move(first);
+                ++out;
+                ++first;
             }
         }
-        if (out != p0) {
-            detail::move(p0, middle, out);
+        if (out != first) {
+            detail::move(first, middle, out);
         }
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto smart_merge_with_extra_buffer(RandomAccessIterator first, RandomAccessIterator middle,
-                                       RandomAccessIterator last, int atype, int lkeys,
+                                       RandomAccessIterator last,
+                                       int left_over_frag, difference_type_t<RandomAccessIterator> block_len,
                                        Compare compare, Projection projection)
         -> std::pair<int, int>
     {
         using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
-        RandomAccessIterator p0 = first - lkeys,
-                             p1 = first,
-                             p2 = middle,
-                             q1 = p2,
-                             q2 = last;
+        auto out = first - block_len;
+        auto it = middle;
 
-        int ftype = 1 - atype;  // 1 if inverted
-        while (p1 < q1 && p2 < q2) {
-            if (compare(proj(*p1), proj(*p2)) - ftype < 0) {
-                *p0 = iter_move(p1);
-                ++p1;
+        int frag_type = 1 - left_over_frag;  // 1 if inverted
+        while (first < middle && it < last) {
+            if (compare(proj(*first), proj(*it)) - frag_type < 0) {
+                *out = iter_move(first);
+                ++first;
             } else {
-                *p0 = iter_move(p2);
-                ++p2;
+                *out = iter_move(it);
+                ++it;
             }
-            ++p0;
+            ++out;
         }
 
-        int len;
-        if (p1 < q1) {
-            len = std::distance(p1, q1);
-            while (p1 < q1) {
-                *--q2 = iter_move(--q1);
-            }
-        } else {
-            len = std::distance(p2, q2);
-            atype = ftype;
+        if (first < middle) {
+            auto left_over_len = std::distance(first, middle);
+            do {
+                *--last = iter_move(--middle);
+            } while (first != middle);
+            return { left_over_len, left_over_frag };
         }
-        return { len, atype };
+        return { std::distance(it, last), frag_type };
     }
 
     // arr - starting array. arr[-lblock..-1] - buffer (if havebuf).
