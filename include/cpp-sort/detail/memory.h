@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <limits>
-#include <memory>
 #include <new>
 #include <type_traits>
 #include "type_traits.h"
@@ -88,7 +87,8 @@ namespace detail
     >;
 
     ////////////////////////////////////////////////////////////
-    // Reimplement get_temporary_buffer because C++20
+    // Reimplement the functions get_temporary_buffer and
+    // return_temporary_buffer because of their removal in C++20
 
     template<typename T>
     auto get_temporary_buffer(ptrdiff_t count) noexcept
@@ -115,8 +115,20 @@ namespace detail
         return res;
     }
 
+    template<typename T>
+    auto return_temporary_buffer(T* ptr, std::size_t count) noexcept
+        -> void
+    {
+#ifdef __cpp_sized_deallocation
+        ::operator delete(ptr, count * sizeof(T));
+#else
+        (void)count;
+        ::operator delete(ptr);
+#endif
+    }
+
     ////////////////////////////////////////////////////////////
-    // Wrapper are std::unique_ptr for temporary buffers
+    // Thin wrapper around get/return_temporary_buffer
 
     template<typename T>
     class temporary_buffer
@@ -133,25 +145,43 @@ namespace detail
             // Construction & destruction
 
             temporary_buffer() = default;
-            temporary_buffer(temporary_buffer&&) = default;
             temporary_buffer(const temporary_buffer&) = delete;
+
+            temporary_buffer(temporary_buffer&& other) noexcept:
+                buffer(other.buffer),
+                buffer_size(other.buffer_size)
+            {
+                other.buffer = nullptr;
+                other.buffer_size = 0;
+            }
 
             constexpr temporary_buffer(std::nullptr_t) noexcept {}
 
-            explicit temporary_buffer(std::ptrdiff_t count)
+            explicit temporary_buffer(std::ptrdiff_t count) noexcept
             {
                 auto tmp = get_temporary_buffer<T>(count);
-                buffer.reset(tmp.first);
+                buffer = tmp.first;
                 buffer_size = tmp.second;
             }
 
-            ~temporary_buffer() = default;
+            ~temporary_buffer() noexcept
+            {
+                return_temporary_buffer<T>(buffer, buffer_size);
+            }
 
             ////////////////////////////////////////////////////////////
             // Assignment operator
 
-            temporary_buffer& operator=(temporary_buffer&&) = default;
             temporary_buffer& operator=(const temporary_buffer&) = delete;
+
+            auto operator=(temporary_buffer&& other) noexcept
+                -> temporary_buffer&
+            {
+                using std::swap;
+                swap(buffer, other.buffer);
+                swap(buffer_size, other.buffer_size);
+                return *this;
+            }
 
             ////////////////////////////////////////////////////////////
             // Data access
@@ -159,7 +189,7 @@ namespace detail
             auto data() const noexcept
                 -> pointer
             {
-                return buffer.get();
+                return buffer;
             }
 
             auto size() const noexcept
@@ -171,7 +201,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Modifiers
 
-            auto try_grow(std::ptrdiff_t count)
+            auto try_grow(std::ptrdiff_t count) noexcept
                 -> bool
             {
                 if (count <= buffer_size) {
@@ -180,18 +210,19 @@ namespace detail
                 auto tmp = get_temporary_buffer<T>(count);
                 if (tmp.second <= buffer_size) {
                     // If the allocated buffer isn't bigger, keep the old one
-                    ::operator delete(tmp.first, std::nothrow);
+                    return_temporary_buffer<T>(tmp.first, tmp.second);
                     return false;
                 }
                 // If the allocated buffer is big enough, replace the previous one
-                buffer.reset(tmp.first);
+                return_temporary_buffer(buffer, buffer_size);
+                buffer = tmp.first;
                 buffer_size = tmp.second;
                 return true;
             }
 
         private:
 
-            std::unique_ptr<T[], operator_deleter> buffer = nullptr;
+            T* buffer = nullptr;
             std::ptrdiff_t buffer_size = 0;
     };
 }}
