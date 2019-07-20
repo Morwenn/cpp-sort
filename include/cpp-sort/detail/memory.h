@@ -6,7 +6,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2016-2018 by Morwenn for inclusion into cpp-sort
+// Modified in 2016-2019 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_MEMORY_H_
@@ -30,11 +30,29 @@ namespace detail
 
     struct operator_deleter
     {
+        operator_deleter() = default;
+
+#ifdef __cpp_sized_deallocation
+        std::size_t size = 0;
+
+        constexpr explicit operator_deleter(std::size_t size) noexcept:
+            size(size)
+        {}
+
+        inline auto operator()(void* pointer) const noexcept
+            -> void
+        {
+            ::operator delete(pointer, size);
+        }
+#else
+        constexpr explicit operator_deleter(std::size_t) noexcept {}
+
         inline auto operator()(void* pointer) const noexcept
             -> void
         {
             ::operator delete(pointer);
         }
+#endif
     };
 
     ////////////////////////////////////////////////////////////

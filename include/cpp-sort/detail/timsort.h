@@ -407,8 +407,10 @@ namespace detail
             // Resize the merge buffer if the old one isn't big enough
             if (buffer_size < new_size) {
                 // Release memory first, then allocate again to prevent
-                // easily avoidable out-of-memory errors
+                // easily avoidable out-of-memory errors and make sized
+                // deallocation work properly
                 buffer.reset(nullptr);
+                buffer.get_deleter() = operator_deleter(new_size * sizeof(rvalue_reference));
                 buffer.reset(static_cast<rvalue_reference*>(
                     ::operator new(new_size * sizeof(rvalue_reference))
                 ));

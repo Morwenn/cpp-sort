@@ -86,7 +86,8 @@ namespace cppsort
                 // Collection of projected elements
                 auto size = std::distance(first, last);
                 std::unique_ptr<value_t, operator_deleter> projected(
-                    static_cast<value_t*>(::operator new(size * sizeof(value_t)))
+                    static_cast<value_t*>(::operator new(size * sizeof(value_t))),
+                    operator_deleter(size * sizeof(value_t))
                 );
                 destruct_n<value_t> d(0);
                 std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);

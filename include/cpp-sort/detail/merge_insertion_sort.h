@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -431,7 +431,8 @@ namespace detail
 
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
         std::unique_ptr<rvalue_reference, operator_deleter> cache(
-            static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference)))
+            static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference))),
+            operator_deleter(full_size * sizeof(rvalue_reference))
         );
         destruct_n<rvalue_reference> d(0);
         std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(cache.get(), d);

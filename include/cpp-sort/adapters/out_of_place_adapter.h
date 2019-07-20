@@ -55,7 +55,8 @@ namespace cppsort
 
             // Copy the collection into contiguous memory buffer
             std::unique_ptr<rvalue_reference, operator_deleter> buffer(
-                static_cast<rvalue_reference*>(::operator new(size * sizeof(rvalue_reference)))
+                static_cast<rvalue_reference*>(::operator new(size * sizeof(rvalue_reference))),
+                operator_deleter(size * sizeof(rvalue_reference))
             );
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
