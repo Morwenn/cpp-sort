@@ -48,6 +48,7 @@ set(
     comparators/case_insensitive_less.cpp
     comparators/natural_less.cpp
     comparators/total_less.cpp
+    comparators/transparent_comparators.cpp
 )
 
 set(
