@@ -108,21 +108,31 @@ namespace detail
     // Reimplement the functions get_temporary_buffer and
     // return_temporary_buffer because of their removal in C++20
 
+    /*
+     * @brief std::get_temporary_buffer on hormones
+     * @param count Desired number of objects
+     * @param min_count Number of objects small enough to give up
+     *
+     * This functions tries to allocate enough storage for at least
+     * \a count objects. Failing that it will try to allocate storage
+     * for fewer objects and will give up if it can't allocate more
+     * than \a min_size objects.
+     */
     template<typename T>
-    auto get_temporary_buffer(ptrdiff_t count) noexcept
+    auto get_temporary_buffer(std::ptrdiff_t count, std::ptrdiff_t min_count) noexcept
         -> std::pair<T*, std::ptrdiff_t>
     {
         std::pair<T*, std::ptrdiff_t> res(nullptr, 0);
 
         // Don't allocate more than possible
-        const ptrdiff_t max = std::numeric_limits<std::ptrdiff_t>::max() / sizeof(T);
+        constexpr ptrdiff_t max = std::numeric_limits<std::ptrdiff_t>::max() / sizeof(T);
         if (count > max) {
             count = max;
         }
 
         // Try to gradually allocate less memory until we get a valid buffer
         // or until the amount of memory to allocate reaches 0
-        while (count > 0) {
+        while (count > min_count) {
             res.first = static_cast<T*>(::operator new(count * sizeof(T), std::nothrow));
             if (res.first) {
                 res.second = count;
@@ -177,7 +187,7 @@ namespace detail
 
             explicit temporary_buffer(std::ptrdiff_t count) noexcept
             {
-                auto tmp = get_temporary_buffer<T>(count);
+                auto tmp = get_temporary_buffer<T>(count, 0);
                 buffer = tmp.first;
                 buffer_size = tmp.second;
             }
@@ -222,13 +232,9 @@ namespace detail
             auto try_grow(std::ptrdiff_t count) noexcept
                 -> bool
             {
-                if (count <= buffer_size) {
-                    return false;
-                }
-                auto tmp = get_temporary_buffer<T>(count);
-                if (tmp.second <= buffer_size) {
-                    // If the allocated buffer isn't bigger, keep the old one
-                    return_temporary_buffer<T>(tmp.first, tmp.second);
+                auto tmp = get_temporary_buffer<T>(count, buffer_size);
+                if (not tmp.first) {
+                    // If it failed to allocate a bigger buffer, keep the old one
                     return false;
                 }
                 // If the allocated buffer is big enough, replace the previous one
