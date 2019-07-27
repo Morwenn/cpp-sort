@@ -84,6 +84,8 @@ namespace cppsort
         };
     }
 
+    using total_less_t = detail::total_less_fn;
+
     namespace
     {
         constexpr auto&& total_less = utility::static_const<
@@ -96,7 +98,7 @@ namespace cppsort
     namespace utility
     {
         template<typename T>
-        struct is_probably_branchless_comparison<decltype(total_less), T>:
+        struct is_probably_branchless_comparison<cppsort::total_less_t, T>:
             std::is_integral<T>
         {};
     }

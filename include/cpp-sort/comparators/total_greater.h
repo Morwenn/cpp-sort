@@ -84,6 +84,8 @@ namespace cppsort
         };
     }
 
+    using total_greater_t = detail::total_greater_fn;
+
     namespace
     {
         constexpr auto&& total_greater = utility::static_const<
@@ -96,7 +98,7 @@ namespace cppsort
     namespace utility
     {
         template<typename T>
-        struct is_probably_branchless_comparison<decltype(total_greater), T>:
+        struct is_probably_branchless_comparison<cppsort::total_greater_t, T>:
             std::is_integral<T>
         {};
     }

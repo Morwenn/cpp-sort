@@ -288,6 +288,8 @@ namespace cppsort
         }
     }
 
+    using case_insensitive_less_t = detail::case_insensitive_less_fn;
+
     namespace
     {
         constexpr auto&& case_insensitive_less = utility::static_const<

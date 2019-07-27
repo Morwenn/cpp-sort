@@ -75,6 +75,8 @@ namespace cppsort
         };
     }
 
+    using partial_less_t = detail::partial_less_fn;
+
     namespace
     {
         constexpr auto&& partial_less = utility::static_const<
@@ -87,7 +89,7 @@ namespace cppsort
     namespace utility
     {
         template<typename T>
-        struct is_probably_branchless_comparison<decltype(partial_less), T>:
+        struct is_probably_branchless_comparison<cppsort::partial_less_t, T>:
             std::is_arithmetic<T>
         {};
     }

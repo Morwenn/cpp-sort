@@ -130,6 +130,8 @@ namespace cppsort
         };
     }
 
+    using natural_less_t = detail::natural_less_fn;
+
     namespace
     {
         constexpr auto&& natural_less = utility::static_const<

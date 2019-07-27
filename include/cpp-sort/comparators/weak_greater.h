@@ -83,6 +83,8 @@ namespace cppsort
         };
     }
 
+    using weak_greater_t = detail::weak_greater_fn;
+
     namespace
     {
         constexpr auto&& weak_greater = utility::static_const<
@@ -95,7 +97,7 @@ namespace cppsort
     namespace utility
     {
         template<typename T>
-        struct is_probably_branchless_comparison<decltype(weak_greater), T>:
+        struct is_probably_branchless_comparison<cppsort::weak_greater_t, T>:
             std::is_integral<T>
         {};
     }

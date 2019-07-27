@@ -75,6 +75,8 @@ namespace cppsort
         };
     }
 
+    using partial_greater_t = detail::partial_greater_fn;
+
     namespace
     {
         constexpr auto&& partial_greater = utility::static_const<
@@ -87,7 +89,7 @@ namespace cppsort
     namespace utility
     {
         template<typename T>
-        struct is_probably_branchless_comparison<decltype(partial_greater), T>:
+        struct is_probably_branchless_comparison<cppsort::partial_greater_t, T>:
             std::is_arithmetic<T>
         {};
     }

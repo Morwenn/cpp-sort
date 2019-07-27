@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
+#include <iterator>
 #include <set>
 #include <string>
 #include <vector>
@@ -120,7 +121,7 @@ TEST_CASE( "Check that comparators work as transparent comparators" )
 
     SECTION( "total_less" )
     {
-        std::set<string_wrapper, std::decay_t<decltype(cppsort::total_less)>> strings = { 1, 2, 3, 4 };
+        std::set<string_wrapper, cppsort::total_less_t> strings = { 1, 2, 3, 4 };
 
         CHECK( strings.find("1"s) != strings.end() );
         CHECK( strings.find("8"s) == strings.end() );
@@ -128,7 +129,7 @@ TEST_CASE( "Check that comparators work as transparent comparators" )
 
     SECTION( "case_insensitive_less" )
     {
-        std::set<string_wrapper, std::decay_t<decltype(cppsort::case_insensitive_less)>> strings = { 1, 2, 3, 4 };
+        std::set<string_wrapper, cppsort::case_insensitive_less_t> strings = { 1, 2, 3, 4 };
 
         CHECK( strings.find("1"s) != strings.end() );
         CHECK( strings.find("8"s) == strings.end() );
@@ -136,7 +137,7 @@ TEST_CASE( "Check that comparators work as transparent comparators" )
 
     SECTION( "natural_less" )
     {
-        std::set<string_wrapper, std::decay_t<decltype(cppsort::natural_less)>> strings = { 1, 2, 3, 4 };
+        std::set<string_wrapper, cppsort::natural_less_t> strings = { 1, 2, 3, 4 };
 
         CHECK( strings.find("1"s) != strings.end() );
         CHECK( strings.find("8"s) == strings.end() );
