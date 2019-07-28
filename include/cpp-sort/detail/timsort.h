@@ -430,6 +430,15 @@ namespace detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
+            if (len1 == 1) {
+                detail::rotate_left(base1, base2 + len2);
+                return;
+            }
+            if (len2 == 1) {
+                detail::rotate_right(base1, base2 + len2);
+                return;
+            }
+
             resize_buffer(len1);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
@@ -440,21 +449,13 @@ namespace detail
             }
 
             auto cursor1 = buffer.get();
-            iterator cursor2 = base2;
-            iterator dest = base1;
+            auto cursor2 = base2;
+            auto dest = base1;
 
             *dest = iter_move(cursor2);
             ++dest;
             ++cursor2;
-            if (--len2 == 0) {
-                detail::move(cursor1, cursor1 + len1, dest);
-                return;
-            }
-            if (len1 == 1) {
-                detail::move(cursor2, cursor2 + len2, dest);
-                dest[len2] = iter_move(cursor1);
-                return;
-            }
+            --len2;
 
             int minGallop(minGallop_);
 
@@ -577,6 +578,15 @@ namespace detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
+            if (len1 == 1) {
+                detail::rotate_left(base1, base2 + len2);
+                return;
+            }
+            if (len2 == 1) {
+                detail::rotate_right(base1, base2 + len2);
+                return;
+            }
+
             resize_buffer(len2);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
@@ -586,24 +596,14 @@ namespace detail
                 ::new(ptr) rvalue_reference(iter_move(it));
             }
 
-            iterator cursor1  = base1 + (len1 - 1);
-            auto cursor2    = buffer.get() + (len2 - 1);
-            iterator dest     = base2 + (len2 - 1);
+            auto cursor1 = base1 + (len1 - 1);
+            auto cursor2 = buffer.get() + (len2 - 1);
+            auto dest = base2 + (len2 - 1);
 
             *dest = iter_move(cursor1);
             --dest;
             --cursor1;
-            if (--len1 == 0) {
-                detail::move(buffer.get(), buffer.get() + len2, dest - (len2 - 1));
-                return;
-            }
-            if (len2 == 1) {
-                dest    -= len1;
-                cursor1 -= len1;
-                detail::move_backward(cursor1 + 1, cursor1 + (1 + len1), dest + (1 + len1));
-                *dest = iter_move(cursor2);
-                return;
-            }
+            --len1;
 
             int minGallop( minGallop_ );
 
