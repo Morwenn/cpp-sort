@@ -210,10 +210,14 @@ script:
     else
         travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
     fi
-  - cd ..
+  - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+        cd ..;
+    fi
 
 after_success:
-  - cd build
+  - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+        cd build;
+    fi
   - if [[ $ENABLE_COVERAGE = true ]]; then
         make gcov;
         make lcov;
@@ -221,7 +225,9 @@ after_success:
     fi
 
 after_failure:
-  - cd build
+  - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+        cd build;
+    fi
   - if [[ $USE_VALGRIND = true ]]; then
         find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
     fi
