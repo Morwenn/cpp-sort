@@ -173,7 +173,7 @@ matrix:
       after_success:
         - conan remote add bintray https://api.bintray.com/conan/morwenn/cpp-sort
         - conan user -r bintray -p ${CONAN_PASSWORD} morwenn
-        - conan upload --all -r bintray cpp-sort/1.4.0@morwenn/stable
+        - conan upload --all -r bintray cpp-sort/1.5.0@morwenn/stable
 
 before_install:
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then

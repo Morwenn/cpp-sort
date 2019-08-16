@@ -3,7 +3,7 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.4.0"
+    version = "1.5.0"
     license = "https://github.com/Morwenn/cpp-sort/blob/master/license.txt"
     url = "https://github.com/Morwenn/cpp-sort"
     author = "Morwenn <morwenn29@hotmail.fr>"
