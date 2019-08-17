@@ -65,7 +65,7 @@ namespace utility
             return Sorter{}(std::forward<Args>(args)...);
         }
 
-        auto get() const
+        constexpr auto get() const
             -> Sorter
         {
             return Sorter{};
@@ -100,25 +100,25 @@ namespace utility
             return sorter(std::forward<Args>(args)...);
         }
 
-        auto get() &
+        constexpr auto get() &
             -> Sorter&
         {
             return static_cast<Sorter&>(sorter);
         }
 
-        auto get() const&
+        constexpr auto get() const&
             -> const Sorter&
         {
             return static_cast<const Sorter&>(sorter);
         }
 
-        auto get() &&
+        constexpr auto get() &&
             -> Sorter&&
         {
             return static_cast<Sorter&&>(sorter);
         }
 
-        auto get() const&&
+        constexpr auto get() const&&
             -> const Sorter&&
         {
             return static_cast<const Sorter&&>(sorter);

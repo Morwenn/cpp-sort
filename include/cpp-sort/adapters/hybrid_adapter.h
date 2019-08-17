@@ -213,7 +213,7 @@ namespace cppsort
             // Access a sorter by index & type
 
             template<std::size_t N, typename Sorter>
-            auto get() &&
+            constexpr auto get() &&
                 -> decltype(auto)
             {
                 return hybrid_adapter_storage_leaf<
@@ -323,7 +323,7 @@ namespace cppsort
         hybrid_adapter() = default;
 
         template<typename... Args>
-        hybrid_adapter(Args&&... args):
+        constexpr hybrid_adapter(Args&&... args):
             detail::flatten_fold<
                 ::cppsort::hybrid_adapter,
                 hybrid_adapter<Sorters...>,
