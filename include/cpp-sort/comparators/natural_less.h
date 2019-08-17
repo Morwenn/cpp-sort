@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,9 +39,9 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Natural order for char sequences
 
-        template<typename ForwardIterator>
-        auto natural_less_impl(ForwardIterator begin1, ForwardIterator end1,
-                               ForwardIterator begin2, ForwardIterator end2)
+        template<typename ForwardIterator1, typename ForwardIterator2>
+        auto natural_less_impl(ForwardIterator1 begin1, ForwardIterator1 end1,
+                               ForwardIterator2 begin2, ForwardIterator2 end2)
             -> bool
         {
             while (begin1 != end1 && begin2 != end2) {
@@ -105,8 +105,8 @@ namespace cppsort
             return begin1 == end1 && begin2 != end2;
         }
 
-        template<typename T>
-        auto natural_less(const T& lhs, const T& rhs)
+        template<typename T, typename U>
+        auto natural_less(const T& lhs, const U& rhs)
             -> bool
         {
             return natural_less_impl(std::begin(lhs), std::end(lhs),
@@ -125,8 +125,12 @@ namespace cppsort
             {
                 return natural_less(std::forward<T>(lhs), std::forward<U>(rhs));
             }
+
+            using is_transparent = void;
         };
     }
+
+    using natural_less_t = detail::natural_less_fn;
 
     namespace
     {

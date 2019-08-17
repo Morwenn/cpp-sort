@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,12 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "iterator_traits.h"
 #include "nth_element.h"
 #include "quicksort.h"
 #include "swap_ranges.h"
@@ -156,7 +158,12 @@ namespace detail
             auto pivot = detail::nth_element(first, last, size_left, size, compare, projection);
             internal_mergesort(first, pivot, size_left, pivot, compare, projection);
 
-            first = pivot;
+            if (std::is_base_of<std::random_access_iterator_tag, iterator_category_t<ForwardIterator>>::value) {
+                // Avoid weird codegen bug with MinGW-w64 (see GitHub issue #151)
+                std::advance(first, size_left);
+            } else {
+                first = pivot;
+            }
             size -= size_left;
         }
         small_sort(first, last, size, std::move(compare), std::move(projection));

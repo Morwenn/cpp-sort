@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,8 +78,12 @@ namespace cppsort
             {
                 return weak_less(std::forward<T>(lhs), std::forward<U>(rhs));
             }
+
+            using is_transparent = void;
         };
     }
+
+    using weak_less_t = detail::weak_less_fn;
 
     namespace
     {
@@ -93,7 +97,7 @@ namespace cppsort
     namespace utility
     {
         template<typename T>
-        struct is_probably_branchless_comparison<decltype(weak_less), T>:
+        struct is_probably_branchless_comparison<cppsort::weak_less_t, T>:
             std::is_integral<T>
         {};
     }

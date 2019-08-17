@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,7 +89,10 @@ namespace cppsort
     template<>
     struct container_aware_adapter<merge_sorter>:
         detail::container_aware_adapter_base<merge_sorter>,
-        sorter_facade_fptr<container_aware_adapter<merge_sorter>>
+        detail::sorter_facade_fptr<
+            container_aware_adapter<merge_sorter>,
+            std::is_empty<merge_sorter>::value
+        >
     {
         using detail::container_aware_adapter_base<merge_sorter>::operator();
 

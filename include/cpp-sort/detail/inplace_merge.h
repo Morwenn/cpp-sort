@@ -82,21 +82,37 @@ namespace detail
             ++result;
         }
 
-        for (; first1 != last1 ; ++result) {
-            if (first2 == last2) {
-                detail::move(first1, last1, result);
-                return;
-            }
+        if (first1 == last1) {
+            // first2 through last2 are already in the right spot
+            return;
+        }
+
+        if (first2 == last2) {
+            detail::move(first1, last1, result);
+            return;
+        }
+
+        while (true) {
+            CPPSORT_ASSUME(first1 != last1);
+            CPPSORT_ASSUME(first2 != last2);
 
             if (comp(proj(*first2), proj(*first1))) {
                 *result = iter_move(first2);
                 ++first2;
+                if (first2 == last2) {
+                    detail::move(first1, last1, ++result);
+                    return;
+                }
             } else {
                 *result = iter_move(first1);
                 ++first1;
+                if (first1 == last1) {
+                    // first2 through last2 are already in the right spot
+                    return;
+                }
             }
+            ++result;
         }
-        // first2 through last2 are already in the right spot.
     }
 
     ////////////////////////////////////////////////////////////

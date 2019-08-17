@@ -35,6 +35,7 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
@@ -51,9 +52,16 @@ namespace cppsort
 
         template<typename Sorter>
         struct schwartz_adapter_impl:
+            utility::adapter_storage<Sorter>,
             check_iterator_category<Sorter>,
             check_is_always_stable<Sorter>
         {
+            schwartz_adapter_impl() = default;
+
+            constexpr explicit schwartz_adapter_impl(Sorter&& sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
+            {}
+
             template<
                 typename ForwardIterator,
                 typename Compare,
@@ -78,7 +86,8 @@ namespace cppsort
                 // Collection of projected elements
                 auto size = std::distance(first, last);
                 std::unique_ptr<value_t, operator_deleter> projected(
-                    static_cast<value_t*>(::operator new(size * sizeof(value_t)))
+                    static_cast<value_t*>(::operator new(size * sizeof(value_t))),
+                    operator_deleter(size * sizeof(value_t))
                 );
                 destruct_n<value_t> d(0);
                 std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);
@@ -89,7 +98,7 @@ namespace cppsort
                 }
 
                 // Indirectly sort the original sequence
-                return Sorter{}(
+                return this->get()(
                     make_associate_iterator(projected.get()),
                     make_associate_iterator(projected.get() + size),
                     std::move(compare),
@@ -106,7 +115,7 @@ namespace cppsort
                 >
             {
                 // No projection to handle, forward everything to the adapted sorter
-                return Sorter{}(std::move(first), std::move(last), std::move(compare));
+                return this->get()(std::move(first), std::move(last), std::move(compare));
             }
 
             template<typename ForwardIterator, typename Compare>
@@ -115,7 +124,7 @@ namespace cppsort
                 -> decltype(Sorter{}(std::move(first), std::move(last), std::move(compare), projection))
             {
                 // utility::identity does nothing, bypass schartz_adapter entirely
-                return Sorter{}(std::move(first), std::move(last), std::move(compare), projection);
+                return this->get()(std::move(first), std::move(last), std::move(compare), projection);
             }
         };
     }
@@ -126,8 +135,9 @@ namespace cppsort
     {
         schwartz_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit schwartz_adapter(Sorter) noexcept {}
+        constexpr explicit schwartz_adapter(Sorter sorter):
+            sorter_facade<detail::schwartz_adapter_impl<Sorter>>(std::move(sorter))
+        {}
     };
 
     ////////////////////////////////////////////////////////////

@@ -173,7 +173,7 @@ matrix:
       after_success:
         - conan remote add bintray https://api.bintray.com/conan/morwenn/cpp-sort
         - conan user -r bintray -p ${CONAN_PASSWORD} morwenn
-        - conan upload --all -r bintray cpp-sort/1.4.0@morwenn/stable
+        - conan upload --all -r bintray cpp-sort/1.5.0@morwenn/stable
 
 before_install:
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
@@ -210,8 +210,14 @@ script:
     else
         travis_wait ctest -C ${BUILD_TYPE} --output-on-failure;
     fi
+  - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+        cd ..;
+    fi
 
 after_success:
+  - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+        cd build;
+    fi
   - if [[ $ENABLE_COVERAGE = true ]]; then
         make gcov;
         make lcov;
@@ -219,6 +225,9 @@ after_success:
     fi
 
 after_failure:
+  - if [[ $TRAVIS_OS_NAME = "windows" ]]; then
+        cd build;
+    fi
   - if [[ $USE_VALGRIND = true ]]; then
         find ./Testing/Temporary -type f -name "MemoryChecker.*.log" -size +1300c | xargs cat;
     fi

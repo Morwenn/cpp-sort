@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/associate_iterator.h"
@@ -109,8 +110,15 @@ namespace cppsort
 
         template<typename Sorter>
         struct stable_adapter_impl:
+            utility::adapter_storage<Sorter>,
             check_iterator_category<Sorter>
         {
+            stable_adapter_impl() = default;
+
+            constexpr explicit stable_adapter_impl(Sorter&& sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
+            {}
+
             template<
                 typename Iterator,
                 typename Compare = std::less<>,
@@ -131,7 +139,8 @@ namespace cppsort
 
                 auto size = std::distance(first, last);
                 std::unique_ptr<value_t, operator_deleter> iterators(
-                    static_cast<value_t*>(::operator new(size * sizeof(value_t)))
+                    static_cast<value_t*>(::operator new(size * sizeof(value_t))),
+                    operator_deleter(size * sizeof(value_t))
                 );
                 destruct_n<value_t> d(0);
                 std::unique_ptr<value_t, destruct_n<value_t>&> h2(iterators.get(), d);
@@ -146,7 +155,7 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Sort but takes the index into account to ensure stability
 
-                return Sorter{}(
+                return this->get()(
                     make_associate_iterator(iterators.get()),
                     make_associate_iterator(iterators.get() + size),
                     make_stable_compare(std::move(compare), std::move(projection))
@@ -167,30 +176,35 @@ namespace cppsort
     {
         make_stable() = default;
 
-        // Automatic deduction guide
-        constexpr explicit make_stable(Sorter) noexcept {}
+        constexpr explicit make_stable(Sorter sorter):
+            sorter_facade<detail::stable_adapter_impl<Sorter>>(std::move(sorter))
+        {}
     };
 
     // Actual sorter
     template<typename Sorter>
     struct stable_adapter:
+        utility::adapter_storage<Sorter>,
         detail::check_iterator_category<Sorter>,
-        sorter_facade_fptr<stable_adapter<Sorter>>
+        detail::sorter_facade_fptr<
+            stable_adapter<Sorter>,
+            std::is_empty<Sorter>::value
+        >
     {
         stable_adapter() = default;
 
-        // Automatic deduction guide
-        constexpr explicit stable_adapter(Sorter) noexcept {}
-
+        constexpr explicit stable_adapter(Sorter sorter):
+            utility::adapter_storage<Sorter>(std::move(sorter))
+        {}
 
         template<
             typename... Args,
             typename = std::enable_if_t<is_stable_v<Sorter(Args...)>>
         >
         auto operator()(Args&&... args) const
-            -> decltype(Sorter{}(std::forward<Args>(args)...))
+            -> decltype(this->get()(std::forward<Args>(args)...))
         {
-            return Sorter{}(std::forward<Args>(args)...);
+            return this->get()(std::forward<Args>(args)...);
         }
 
         template<
@@ -199,9 +213,9 @@ namespace cppsort
             typename = void
         >
         auto operator()(Args&&... args) const
-            -> decltype(make_stable<Sorter>{}(std::forward<Args>(args)...))
+            -> decltype(make_stable<Sorter>(this->get())(std::forward<Args>(args)...))
         {
-            return make_stable<Sorter>{}(std::forward<Args>(args)...);
+            return make_stable<Sorter>(this->get())(std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////
@@ -212,11 +226,11 @@ namespace cppsort
 }
 
 #ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_
-#include "../detail/stable_adapter_hybrid_adapter.h"
+#   include "../detail/stable_adapter_hybrid_adapter.h"
 #endif
 
 #ifdef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_DONE_
-#include "../detail/stable_adapter_self_sort_adapter.h"
+#   include "../detail/stable_adapter_self_sort_adapter.h"
 #endif
 
 #define CPPSORT_ADAPTERS_STABLE_ADAPTER_DONE_

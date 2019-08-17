@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include "../detail/any_all.h"
 #include "../detail/is_in_pack.h"
 
 namespace cppsort
@@ -45,7 +46,10 @@ namespace cppsort
         small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>
     >:
         fixed_sorter_traits<FixedSizeSorter>,
-        sorter_facade_fptr<schwartz_adapter<small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>>>
+        detail::sorter_facade_fptr<
+            schwartz_adapter<small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>>,
+            detail::all(std::is_empty<FixedSizeSorter<Indices>>::value...)
+        >
     {
         template<
             typename T,
@@ -82,7 +86,10 @@ namespace cppsort
     template<template<std::size_t> class FixedSizeSorter>
     struct schwartz_adapter<small_array_adapter<FixedSizeSorter, void>>:
         fixed_sorter_traits<FixedSizeSorter>,
-        sorter_facade_fptr<schwartz_adapter<small_array_adapter<FixedSizeSorter, void>>>
+        detail::sorter_facade_fptr<
+            schwartz_adapter<small_array_adapter<FixedSizeSorter, void>>,
+            true // TODO: not sure how to specify that one
+        >
     {
         template<
             typename T,
