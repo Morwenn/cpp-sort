@@ -42,8 +42,28 @@
 
 namespace cppsort
 {
+    // Useful forward declaration
+    template<typename... Sorters>
+    struct hybrid_adapter;
+
     namespace detail
     {
+        ////////////////////////////////////////////////////////////
+        // Trait to detect hybrid_adapter
+
+        template<typename T>
+        struct is_hybrid_adapter_impl:
+            std::false_type
+        {};
+
+        template<typename... Sorters>
+        struct is_hybrid_adapter_impl<hybrid_adapter<Sorters...>>:
+            std::true_type
+        {};
+
+        template<typename T>
+        using is_hybrid_adapter = is_hybrid_adapter_impl<remove_cvref_t<T>>;
+
         ////////////////////////////////////////////////////////////
         // Overload resolution tool
 
@@ -54,42 +74,6 @@ namespace cppsort
 
         template<>
         struct choice<0> {};
-
-        ////////////////////////////////////////////////////////////
-        // Mechanism used to unwrap nested hybrid_adapter
-
-        template<template<class...> class Flattenable, class TypeList, class Accumulator>
-        struct flatten_fold;
-
-        template<
-            template<typename...> class Flattenable,
-            template<typename...> class TsList, typename Front, typename... Rest,
-            template<typename...> class AsList, typename... As
-        >
-        struct flatten_fold<Flattenable, TsList<Front, Rest...>, AsList<As...>>
-        {
-            using type = typename flatten_fold<Flattenable, TsList<Rest...>, AsList<As..., Front>>::type;
-        };
-
-        template<
-            template<typename...> class Flattenable,
-            template<typename...> class TsList, typename... InnerTs, typename... Rest,
-            template<typename...> class AsList, typename... As
-        >
-        struct flatten_fold<Flattenable, TsList<Flattenable<InnerTs...>, Rest...>, AsList<As...>>
-        {
-            using type = typename flatten_fold<Flattenable, TsList<InnerTs..., Rest...>, AsList<As...>>::type;
-        };
-
-        template<
-            template<typename...> class Flattenable,
-            template<typename...> class TsList,
-            typename Accumulator
-        >
-        struct flatten_fold<Flattenable, TsList<>, Accumulator>
-        {
-            using type = Accumulator;
-        };
 
         ////////////////////////////////////////////////////////////
         // Associate a priority to iterator categories, there is
@@ -210,16 +194,57 @@ namespace cppsort
             >::hybrid_adapter_storage_impl;
 
             ////////////////////////////////////////////////////////////
-            // Access a sorter by index & type
+            // Access a sorter by index
 
-            template<std::size_t N, typename Sorter>
-            auto get() &&
+            template<std::size_t N>
+            constexpr auto get() &
                 -> decltype(auto)
             {
+                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+
                 return hybrid_adapter_storage_leaf<
-                    sizeof...(Sorters) * iterator_category_value<iterator_category<Sorter>>
+                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
                     + sizeof...(Indices) - N - 1,
-                    Sorter
+                    sorter_t
+                >::get();
+            }
+
+            template<std::size_t N>
+            constexpr auto get() const&
+                -> decltype(auto)
+            {
+                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+
+                return hybrid_adapter_storage_leaf<
+                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
+                    + sizeof...(Indices) - N - 1,
+                    sorter_t
+                >::get();
+            }
+
+            template<std::size_t N>
+            constexpr auto get() &&
+                -> decltype(auto)
+            {
+                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+
+                return hybrid_adapter_storage_leaf<
+                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
+                    + sizeof...(Indices) - N - 1,
+                    sorter_t
+                >::get();
+            }
+
+            template<std::size_t N>
+            constexpr auto get() const&&
+                -> decltype(auto)
+            {
+                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+
+                return hybrid_adapter_storage_leaf<
+                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
+                    + sizeof...(Indices) - N - 1,
+                    sorter_t
                 >::get();
             }
         };
@@ -251,8 +276,15 @@ namespace cppsort
 
                 hybrid_adapter_impl() = default;
 
-                constexpr explicit hybrid_adapter_impl(Sorters... sorters):
-                    base_class(std::move(sorters)...)
+                template<std::size_t... Indices>
+                constexpr explicit hybrid_adapter_impl(std::tuple<Sorters&&...>&& sorters,
+                                                       std::index_sequence<Indices...>):
+                    base_class(std::move(std::get<Indices>(sorters))...)
+                {}
+
+                template<std::size_t... Indices>
+                constexpr explicit hybrid_adapter_impl(std::tuple<Sorters&&...>&& sorters):
+                    hybrid_adapter_impl(std::move(sorters), std::make_index_sequence<sizeof...(Sorters)>{})
                 {}
 
                 ////////////////////////////////////////////////////////////
@@ -307,6 +339,42 @@ namespace cppsort
                             std::forward<Args>(args)...
                     ));
         };
+
+        ////////////////////////////////////////////////////////////
+        // Mechanism used to unwrap nested hybrid_adapter
+
+        template<template<class...> class Flattenable, class TypeList, class Accumulator>
+        struct flatten_fold;
+
+        template<
+            template<typename...> class Flattenable,
+            template<typename...> class TsList, typename Front, typename... Rest,
+            typename... As
+        >
+        struct flatten_fold<Flattenable, TsList<Front, Rest...>, hybrid_adapter_impl<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<Rest...>, hybrid_adapter_impl<As..., Front>>::type;
+        };
+
+        template<
+            template<typename...> class Flattenable,
+            template<typename...> class TsList, typename... InnerTs, typename... Rest,
+            typename... As
+        >
+        struct flatten_fold<Flattenable, TsList<Flattenable<InnerTs...>, Rest...>, hybrid_adapter_impl<As...>>
+        {
+            using type = typename flatten_fold<Flattenable, TsList<InnerTs..., Rest...>, hybrid_adapter_impl<As...>>::type;
+        };
+
+        template<
+            template<typename...> class Flattenable,
+            template<typename...> class TsList,
+            typename Accumulator
+        >
+        struct flatten_fold<Flattenable, TsList<>, Accumulator>
+        {
+            using type = Accumulator;
+        };
     }
 
     ////////////////////////////////////////////////////////////
@@ -320,16 +388,56 @@ namespace cppsort
             detail::hybrid_adapter_impl<>
         >::type
     {
-        hybrid_adapter() = default;
+        private:
 
-        template<typename... Args>
-        hybrid_adapter(Args&&... args):
-            detail::flatten_fold<
+            using base_class = typename detail::flatten_fold<
                 ::cppsort::hybrid_adapter,
                 hybrid_adapter<Sorters...>,
                 detail::hybrid_adapter_impl<>
-            >::type(std::forward<Args>(args)...)
-        {}
+            >::type;
+
+            template<typename... Args, std::size_t... Indices>
+            static constexpr auto get_sorters_from_impl(detail::hybrid_adapter_impl<Args...>&& value,
+                                                        std::index_sequence<Indices...>)
+                -> decltype(auto)
+            {
+                return std::forward_as_tuple(value.template get<Indices>()...);
+            }
+
+            template<typename... Args>
+            static constexpr auto get_sorters_from_impl(detail::hybrid_adapter_impl<Args...>&& value)
+                -> decltype(auto)
+            {
+                return get_sorters_from_impl(std::move(value), std::make_index_sequence<sizeof...(Args)>{});
+            }
+
+            template<typename Sorter>
+            static constexpr auto get_flat_tuple(Sorter&& value)
+                -> std::enable_if_t<
+                    not detail::is_hybrid_adapter<Sorter>::value,
+                    std::tuple<std::remove_reference_t<Sorter>&&>
+                >
+            {
+                return std::forward_as_tuple(std::move(value));
+            }
+
+            template<typename Sorter>
+            static constexpr auto get_flat_tuple(Sorter&& value)
+                -> std::enable_if_t<
+                    detail::is_hybrid_adapter<Sorter>::value,
+                    decltype(get_sorters_from_impl(std::move(value)))
+                >
+            {
+                return get_sorters_from_impl(std::move(value));
+            }
+
+        public:
+
+            hybrid_adapter() = default;
+
+            constexpr hybrid_adapter(Sorters... sorters):
+                base_class(std::tuple_cat(get_flat_tuple(std::move(sorters))...))
+            {}
     };
 
     ////////////////////////////////////////////////////////////
