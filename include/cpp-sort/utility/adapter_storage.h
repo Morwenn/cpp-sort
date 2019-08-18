@@ -79,9 +79,14 @@ namespace utility
 
         adapter_storage() = default;
 
-        explicit constexpr adapter_storage(Sorter sorter)
+        explicit constexpr adapter_storage(const Sorter& sorter)
             noexcept(std::is_nothrow_copy_constructible<Sorter>::value):
             sorter(sorter)
+        {}
+
+        explicit constexpr adapter_storage(Sorter&& sorter)
+            noexcept(std::is_nothrow_copy_constructible<Sorter>::value):
+            sorter(std::move(sorter))
         {}
 
         template<typename... Args>
