@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.5.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
-[![Conan Package](https://img.shields.io/badge/conan-1.5.0-blue.svg)](https://bintray.com/morwenn/cpp-sort/cpp-sort%3Amorwenn)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.5.1-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Conan Package](https://img.shields.io/badge/conan-1.5.1-blue.svg)](https://bintray.com/morwenn/cpp-sort/cpp-sort%3Amorwenn)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)

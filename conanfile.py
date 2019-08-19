@@ -3,8 +3,8 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.5.0"
-    license = "https://github.com/Morwenn/cpp-sort/blob/master/license.txt"
+    version = "1.5.1"
+    license = "MIT"
     url = "https://github.com/Morwenn/cpp-sort"
     author = "Morwenn <morwenn29@hotmail.fr>"
     description = "Additional sorting algorithms & related tools"
