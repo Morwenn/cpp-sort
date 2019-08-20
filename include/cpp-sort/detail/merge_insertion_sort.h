@@ -45,7 +45,6 @@
 #include "swap_ranges.h"
 #include "type_traits.h"
 
-
 #if __has_include(<ext/bitmap_allocator.h>)
 #   include <ext/bitmap_allocator.h>
 #endif

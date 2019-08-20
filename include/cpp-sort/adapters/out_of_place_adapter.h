@@ -38,6 +38,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
 #include "../detail/scope_exit.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
