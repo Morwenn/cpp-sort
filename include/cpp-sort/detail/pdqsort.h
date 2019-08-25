@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015-2017 Orson Peters
-    Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -123,46 +123,6 @@ namespace detail
                     do {
                         *sift = iter_move(sift_1);
                     } while (--sift != begin && comp(tmp_proj, proj(*--sift_1)));
-
-                    *sift = std::move(tmp);
-                    limit += cur - sift;
-                }
-            }
-
-            return true;
-        }
-
-        // Attempts to use insertion sort on [begin, end). Will return false if more than
-        // partial_insertion_sort_limit elements were moved, and abort sorting. Otherwise it will
-        // successfully sort and return true. Assumes *(begin - 1) is an element smaller than or
-        // equal to any element in [begin, end).
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto unguarded_partial_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                              Compare compare, Projection projection)
-            -> bool
-        {
-            if (begin == end) return true;
-
-            using utility::iter_move;
-            auto&& comp = utility::as_function(compare);
-            auto&& proj = utility::as_function(projection);
-
-            int limit = 0;
-            for (RandomAccessIterator cur = begin + 1; cur != end; ++cur) {
-                if (limit > partial_insertion_sort_limit) return false;
-
-                RandomAccessIterator sift = cur;
-                RandomAccessIterator sift_1 = cur - 1;
-
-                // Compare first so we can avoid 2 moves for an element already positioned correctly.
-                if (comp(proj(*sift), proj(*sift_1))) {
-                    auto tmp = iter_move(sift);
-                    auto&& tmp_proj = proj(tmp);
-
-                    do {
-                        *sift = iter_move(sift_1);
-                        --sift;
-                    } while (comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
                     limit += cur - sift;
@@ -555,7 +515,7 @@ namespace detail
                     // sequence try to use insertion sort.
                     if (already_partitioned &&
                         partial_insertion_sort(begin, pivot_pos, compare, projection) &&
-                        unguarded_partial_insertion_sort(pivot_pos + 1, end, compare, projection)) {
+                        partial_insertion_sort(pivot_pos + 1, end, compare, projection)) {
                         return;
                     }
                 }
