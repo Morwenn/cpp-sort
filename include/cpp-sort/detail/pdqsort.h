@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
-#include <cstdint>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
@@ -132,19 +131,6 @@ namespace detail
             return true;
         }
 
-        template<typename T>
-        auto align_cacheline(T* ptr)
-            -> T*
-        {
-#ifdef UINTPTR_MAX
-            std::uintptr_t ip = reinterpret_cast<std::uintptr_t>(ptr);
-#else
-            std::size_t ip = reinterpret_cast<std::size_t>(ptr);
-#endif
-            ip = (ip + cacheline_size - 1) & -cacheline_size;
-            return reinterpret_cast<T*>(ip);
-        }
-
         template<typename RandomAccessIterator>
         auto swap_offsets(RandomAccessIterator first, RandomAccessIterator last,
                           unsigned char* offsets_l, unsigned char* offsets_r,
@@ -215,11 +201,11 @@ namespace detail
             }
 
             // The following branchless partitioning is derived from "BlockQuicksort: How Branch
-            // Mispredictions don’t affect Quicksort" by Stefan Edelkamp and Armin Weiss.
-            unsigned char offsets_l_storage[block_size + cacheline_size];
-            unsigned char offsets_r_storage[block_size + cacheline_size];
-            unsigned char* offsets_l = align_cacheline(offsets_l_storage);
-            unsigned char* offsets_r = align_cacheline(offsets_r_storage);
+            // Mispredictions don't affect Quicksort" by Stefan Edelkamp and Armin Weiss.
+            alignas(cacheline_size) unsigned char offsets_l_storage[block_size];
+            alignas(cacheline_size) unsigned char offsets_r_storage[block_size];
+            unsigned char* offsets_l = offsets_l_storage;
+            unsigned char* offsets_r = offsets_r_storage;
             int num_l, num_r, start_l, start_r;
             num_l = num_r = start_l = start_r = 0;
 
