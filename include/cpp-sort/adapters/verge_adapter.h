@@ -68,7 +68,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::bidirectional_iterator_tag,
+                        std::random_access_iterator_tag,
                         iterator_category_t<RandomAccessIterator>
                     >::value,
                     "verge_adapter requires at least random-access iterators"
@@ -93,7 +93,6 @@ namespace cppsort
     {
         verge_adapter() = default;
 
-        // Automatic deduction guide
         constexpr explicit verge_adapter(FallbackSorter sorter):
             sorter_facade<detail::verge_adapter_impl<FallbackSorter>>(std::move(sorter))
         {}
