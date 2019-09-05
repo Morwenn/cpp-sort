@@ -23,7 +23,9 @@
  */
 #include <algorithm>
 #include <deque>
+#include <forward_list>
 #include <iterator>
+#include <list>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sort.h>
@@ -32,13 +34,12 @@
 #include <cpp-sort/utility/functional.h>
 #include "distributions.h"
 
-TEMPLATE_TEST_CASE( "test every normal sorter with vector", "[sorters]",
+TEMPLATE_TEST_CASE( "test every random-access sorter with vector", "[sorters]",
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
                     cppsort::counting_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
@@ -74,13 +75,12 @@ TEMPLATE_TEST_CASE( "test every normal sorter with vector", "[sorters]",
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
 
-TEMPLATE_TEST_CASE( "test every normal sorter with deque", "[sorters]",
+TEMPLATE_TEST_CASE( "test every random-access sorter with deque", "[sorters]",
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
                     cppsort::counting_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
@@ -105,6 +105,41 @@ TEMPLATE_TEST_CASE( "test every normal sorter with deque", "[sorters]",
     std::deque<int> collection;
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
+
+    using sorter = TestType;
+    cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+}
+
+TEMPLATE_TEST_CASE( "test every bidirectional sorter with list", "[sorters]",
+                    cppsort::counting_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::verge_sorter )
+{
+    std::list<int> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 491, -125);
+
+    using sorter = TestType;
+    cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+}
+
+TEMPLATE_TEST_CASE( "test every forward sorter with forward_list", "[sorters]",
+                    cppsort::counting_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter )
+{
+    std::list<int> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::front_inserter(collection), 491, -125);
 
     using sorter = TestType;
     cppsort::sort(sorter{}, collection);
