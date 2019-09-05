@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 #include "inplace_merge.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
-#include "quicksort.h"
+#include "quick_merge_sort.h"
 #include "reverse.h"
 
 namespace cppsort
@@ -52,15 +52,14 @@ namespace detail
         using difference_type = difference_type_t<BidirectionalIterator>;
         difference_type dist = std::distance(first, last);
 
-        if (dist < 80)
-        {
+        if (dist < 80) {
             // vergesort is inefficient for small collections
-            quicksort(std::move(first), std::move(last), dist,
-                      std::move(compare), std::move(projection));
+            quick_merge_sort(std::move(first), std::move(last), dist,
+                             std::move(compare), std::move(projection));
             return;
         }
 
-        // Limit under which quicksort is used
+        // Limit under which quick_merge_sort is used
         int unstable_limit = dist / log2(dist);
 
         // Beginning of an unstable partition, last if the
@@ -77,13 +76,11 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        while (true)
-        {
+        while (true) {
             BidirectionalIterator begin_rng = current;
 
             // Decreasing range
-            while (next != last)
-            {
+            while (next != last) {
                 if (comp(proj(*current), proj(*next))) break;
                 ++current;
                 ++next;
@@ -91,27 +88,23 @@ namespace detail
 
             // Reverse and merge
             dist = std::distance(begin_rng, next);
-            if (dist > unstable_limit)
-            {
-                if (begin_unstable != last)
-                {
-                    quicksort(begin_unstable, begin_rng, size_unstable, compare, projection);
+            if (dist > unstable_limit) {
+                if (begin_unstable != last) {
+                    quick_merge_sort(begin_unstable, begin_rng, size_unstable, compare, projection);
                     detail::reverse(begin_rng, next);
                     detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
                     detail::inplace_merge(first, begin_unstable, next, compare, projection);
                     begin_unstable = last;
                     size_unstable = 0;
-                }
-                else
-                {
+                } else {
                     detail::reverse(begin_rng, next);
                     detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
-            }
-            else
-            {
+            } else {
                 size_unstable += dist;
-                if (begin_unstable == last) begin_unstable = begin_rng;
+                if (begin_unstable == last) {
+                    begin_unstable = begin_rng;
+                }
             }
 
             if (next == last) break;
@@ -122,8 +115,7 @@ namespace detail
             begin_rng = current;
 
             // Increasing range
-            while (next != last)
-            {
+            while (next != last) {
                 if (comp(proj(*next), proj(*current))) break;
                 ++current;
                 ++next;
@@ -131,25 +123,21 @@ namespace detail
 
             // Merge
             dist = std::distance(begin_rng, next);
-            if (dist > unstable_limit)
-            {
-                if (begin_unstable != last)
-                {
-                    quicksort(begin_unstable, begin_rng, size_unstable, compare, projection);
+            if (dist > unstable_limit) {
+                if (begin_unstable != last) {
+                    quick_merge_sort(begin_unstable, begin_rng, size_unstable, compare, projection);
                     detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
                     detail::inplace_merge(first, begin_unstable, next, compare, projection);
                     begin_unstable = last;
                     size_unstable = 0;
-                }
-                else
-                {
+                } else {
                     detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
-            }
-            else
-            {
+            } else {
                 size_unstable += dist;
-                if (begin_unstable == last) begin_unstable = begin_rng;
+                if (begin_unstable == last) {
+                    begin_unstable = begin_rng;
+                }
             }
 
             if (next == last) break;
@@ -158,9 +146,8 @@ namespace detail
             ++next;
         }
 
-        if (begin_unstable != last)
-        {
-            quicksort(begin_unstable, last, size_unstable, compare, projection);
+        if (begin_unstable != last) {
+            quick_merge_sort(begin_unstable, last, size_unstable, compare, projection);
             detail::inplace_merge(first, begin_unstable, last,
                                   std::move(compare), std::move(projection));
         }
