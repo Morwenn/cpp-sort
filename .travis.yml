@@ -198,6 +198,7 @@ script:
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
           -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+          -DBUILD_EXAMPLES=ON
   - mtime_cache -g mtime_cache_globs.txt -c .mtime_cache/cache.json
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         cmake --build build --config ${BUILD_TYPE} -j 2;

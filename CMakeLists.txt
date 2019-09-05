@@ -9,6 +9,7 @@ include(GNUInstallDirs)
 
 # Project options
 option(BUILD_TESTING "Build the cpp-sort test suite" ON)
+option(BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
 option(ENABLE_COVERAGE "Whether to make suitable build for code coverage" OFF)
 option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
 
@@ -73,8 +74,14 @@ export(
     NAMESPACE cpp-sort::
 )
 
-# Build tests if this is the main project
-if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
-    enable_testing()
-    add_subdirectory(testsuite)
+# Build tests and/or examples if this is the main project
+if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    if (BUILD_TESTING)
+        enable_testing()
+        add_subdirectory(testsuite)
+    endif()
+
+    if (BUILD_EXAMPLES)
+        add_subdirectory(examples)
+    endif()
 endif()
