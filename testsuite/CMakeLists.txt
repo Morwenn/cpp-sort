@@ -11,9 +11,57 @@ add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 include(Catch)
 
-# Make a single executable for the whole test suite
-add_executable(cpp-sort-testsuite
+macro(configure_tests target)
+    target_link_libraries(${target} PRIVATE
+        Catch2::Catch2
+        cpp-sort::cpp-sort
+    )
 
+    # Somewhat speed up Catch2 compile times
+    target_compile_definitions(${target} PRIVATE
+        CATCH_CONFIG_FAST_COMPILE
+        CATCH_CONFIG_DISABLE_MATCHERS
+    )
+
+    # More warnings and settings
+    cppsort_add_warnings(${target})
+    target_compile_options(${target} PRIVATE
+        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>:-O0>
+        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>:-Og>
+    )
+
+    # Use lld or the gold linker if possible
+    if (UNIX AND NOT APPLE)
+        if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
+        else()
+            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+        endif()
+    endif()
+
+    # Optionally enable sanitizers
+    if (UNIX AND SANITIZE)
+        target_compile_options(${target} PRIVATE
+            -fsanitize=${SANITIZE}
+            -fno-sanitize-recover=all
+        )
+        set_property(TARGET ${target}
+            APPEND_STRING PROPERTY LINK_FLAGS
+                " -fsanitize=${SANITIZE}"
+        )
+    endif()
+
+    if (ENABLE_COVERAGE)
+        find_package(codecov)
+        add_coverage(${target})
+
+        # Set flags specific to coverage builds
+        target_compile_options(${target} PRIVATE --coverage)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
+    endif()
+endmacro()
+
+add_executable(main-tests
     # General tests
     main.cpp
     every_instantiated_sorter.cpp
@@ -114,61 +162,27 @@ add_executable(cpp-sort-testsuite
     utility/buffer.cpp
     utility/iter_swap.cpp
 )
+configure_tests(main-tests)
 
-target_link_libraries(cpp-sort-testsuite PRIVATE
-    Catch2::Catch2
-    cpp-sort::cpp-sort
+add_executable(heap-memory-exhaustion-tests
+    # These tests are in a separate executable because we replace
+    # the global [de]allocation functions in order to test the
+    # algorithms that have a fallback when heap exhaustion occurs,
+    # which isn't something we want for the main tests
+    main.cpp
+    new_delete.cpp
+    heap_memory_exhaustion.cpp
 )
+configure_tests(heap-memory-exhaustion-tests)
 
-# Somewhat speed up Catch2 compile times
-target_compile_definitions(cpp-sort-testsuite PRIVATE
-    CATCH_CONFIG_FAST_COMPILE
-    CATCH_CONFIG_DISABLE_MATCHERS
-)
-
-# More warnings and settings
-cppsort_add_warnings(cpp-sort-testsuite)
-target_compile_options(cpp-sort-testsuite PRIVATE
-    $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>:-O0>
-    $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>:-Og>
-)
-
-# Use lld or the gold linker if possible
-if (UNIX AND NOT APPLE)
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
-    else()
-        set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
-    endif()
-endif()
-
-# Optionally enable sanitizers
-if (UNIX AND SANITIZE)
-    target_compile_options(cpp-sort-testsuite PRIVATE
-        -fsanitize=${SANITIZE}
-        -fno-sanitize-recover=all
-    )
-    set_property(
-        TARGET
-            cpp-sort-testsuite
-        APPEND_STRING PROPERTY LINK_FLAGS
-            " -fsanitize=${SANITIZE}"
-    )
-endif()
-
+# Configure coverage
 if (ENABLE_COVERAGE)
-    find_package(codecov)
-    add_coverage(cpp-sort-testsuite)
-
-    # Set flags specific to coverage builds
-    target_compile_options(cpp-sort-testsuite PRIVATE --coverage)
-    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
-
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
 
+# Configure Valgrind
 if (USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
@@ -180,4 +194,5 @@ endif()
 include(CTest)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-catch_discover_tests(cpp-sort-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
+catch_discover_tests(main-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
