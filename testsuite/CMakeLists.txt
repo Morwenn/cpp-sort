@@ -164,16 +164,18 @@ add_executable(main-tests
 )
 configure_tests(main-tests)
 
-add_executable(heap-memory-exhaustion-tests
-    # These tests are in a separate executable because we replace
-    # the global [de]allocation functions in order to test the
-    # algorithms that have a fallback when heap exhaustion occurs,
-    # which isn't something we want for the main tests
-    main.cpp
-    new_delete.cpp
-    heap_memory_exhaustion.cpp
-)
-configure_tests(heap-memory-exhaustion-tests)
+if (NOT "${SANITIZE}" MATCHES "address|memory")
+    add_executable(heap-memory-exhaustion-tests
+        # These tests are in a separate executable because we replace
+        # the global [de]allocation functions in order to test the
+        # algorithms that have a fallback when heap exhaustion occurs,
+        # which isn't something we want for the main tests
+        main.cpp
+        new_delete.cpp
+        heap_memory_exhaustion.cpp
+    )
+    configure_tests(heap-memory-exhaustion-tests)
+endif()
 
 # Configure coverage
 if (ENABLE_COVERAGE)
@@ -195,4 +197,6 @@ include(CTest)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 catch_discover_tests(main-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
-catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+if (NOT "${SANITIZE}" MATCHES "address|memory")
+    catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+endif()
