@@ -137,7 +137,7 @@ TEMPLATE_TEST_CASE( "test every forward sorter with forward_list", "[sorters]",
                     cppsort::quick_sorter,
                     cppsort::selection_sorter )
 {
-    std::list<int> collection;
+    std::forward_list<int> collection;
     auto distribution = dist::shuffled{};
     distribution(std::front_inserter(collection), 491, -125);
 
