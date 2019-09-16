@@ -43,8 +43,8 @@ install(
 )
 
 configure_package_config_file(
-    ${CMAKE_SOURCE_DIR}/cmake/cpp-sort-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-sort-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config.cmake
     INSTALL_DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
 )
@@ -62,15 +62,15 @@ set(CMAKE_SIZEOF_VOID_P ${CPPSORT_SIZEOF_VOID_P})
 
 install(
     FILES
-        ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config.cmake
-        ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
 )
 
 # Export target so that it can be used in subdirectories
 export(
     EXPORT cpp-sort-targets
-    FILE ${CMAKE_BINARY_DIR}/cmake/cpp-sort-targets.cmake
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-targets.cmake
     NAMESPACE cpp-sort::
 )
 
