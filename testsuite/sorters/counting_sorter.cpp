@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/counting_sorter.h>
-#include <cpp-sort/sort.h>
 #include "../distributions.h"
 
 TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
@@ -42,15 +41,15 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
     {
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
-        cppsort::sort(cppsort::counting_sorter{}, vec);
+        cppsort::counting_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "sort with unsigned int iterators" )
     {
-        std::list<unsigned> li;;
+        std::list<unsigned> li;
         distribution(std::back_inserter(li), size, 0u);
-        cppsort::sort(cppsort::counting_sorter{}, std::begin(li), std::end(li));
+        cppsort::counting_sort(std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
 
@@ -58,7 +57,7 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
     {
         std::vector<long long> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, 1568);
-        cppsort::sort(cppsort::counting_sorter{}, vec);
+        cppsort::counting_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -66,9 +65,19 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
     {
         std::forward_list<unsigned long long> li;
         distribution(std::front_inserter(li), size, 0ULL);
-        cppsort::sort(cppsort::counting_sorter{}, std::begin(li), std::end(li));
+        cppsort::counting_sort(std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
+
+#ifdef __SIZEOF_INT128__
+    SECTION( "sort with unsigned int128 iterators" )
+    {
+        std::list<__uint128_t> li;;
+        distribution(std::back_inserter(li), size, __uint128_t(0));
+        cppsort::counting_sort(std::begin(li), std::end(li));
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+    }
+#endif
 
     SECTION( "GitHub issue #103" )
     {
