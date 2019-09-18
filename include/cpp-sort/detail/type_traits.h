@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -250,21 +250,18 @@ namespace detail
     // available (e.g. -std=c++17)
 
 #ifdef __SIZEOF_INT128__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
     template<typename T>
     struct is_integral:
         std::is_integral<T>
     {};
 
     template<>
-    struct is_integral<signed __int128>:
+    struct is_integral<__int128_t>:
         std::true_type
     {};
 
     template<>
-    struct is_integral<unsigned __int128>:
+    struct is_integral<__uint128_t>:
         std::true_type
     {};
 
@@ -274,7 +271,7 @@ namespace detail
     {};
 
     template<>
-    struct is_signed<signed __int128>:
+    struct is_signed<__int128_t>:
         std::true_type
     {};
 
@@ -284,13 +281,10 @@ namespace detail
     {};
 
     template<>
-    struct is_unsigned<unsigned __int128>:
+    struct is_unsigned<__uint128_t>:
         std::true_type
     {};
-
-#pragma GCC diagnostic pop
 #else
-
     template<typename T>
     using is_integral = std::is_integral<T>;
 
@@ -299,7 +293,6 @@ namespace detail
 
     template<typename T>
     using is_unsigned = std::is_unsigned<T>;
-
 #endif
 }}
 
