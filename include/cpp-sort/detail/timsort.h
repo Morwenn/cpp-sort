@@ -80,7 +80,7 @@ namespace detail
         static constexpr int min_merge = 32;
         static constexpr int min_gallop = 7;
 
-        int minGallop_ = min_gallop;
+        difference_type minGallop_ = min_gallop;
 
         // Buffer used for merges
         std::unique_ptr<rvalue_reference, operator_deleter> buffer;
@@ -458,12 +458,12 @@ namespace detail
             ++cursor2;
             --len2;
 
-            int minGallop(minGallop_);
+            difference_type minGallop = minGallop_;
 
             // outer:
             while (true) {
-                int count1 = 0;
-                int count2 = 0;
+                difference_type count1 = 0;
+                difference_type count2 = 0;
 
                 bool break_outer = false;
                 do {
@@ -552,7 +552,7 @@ namespace detail
                 minGallop += 2;
             } // end of "outer" loop
 
-            minGallop_ = std::min(minGallop, 1);
+            minGallop_ = std::min<difference_type>(minGallop, 1);
 
             if (len1 == 1) {
                 assert( len2 > 0 );
@@ -606,12 +606,12 @@ namespace detail
             --cursor1;
             --len1;
 
-            int minGallop( minGallop_ );
+            difference_type minGallop = minGallop_;
 
             // outer:
             while (true) {
-                int count1 = 0;
-                int count2 = 0;
+                difference_type count1 = 0;
+                difference_type count2 = 0;
 
                 bool break_outer = false;
                 do {
@@ -700,7 +700,7 @@ namespace detail
                 minGallop += 2;
             } // end of "outer" loop
 
-            minGallop_ = std::min(minGallop, 1);
+            minGallop_ = std::min<difference_type>(minGallop, 1);
 
             if (len2 == 1) {
                 assert( len1 > 0 );
