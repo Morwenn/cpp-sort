@@ -1,6 +1,11 @@
 include(cpp-sort-utils)
 include(DownloadProject)
 
+# Test suite options
+option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
+option(ENABLE_COVERAGE "Whether to produce code coverage" OFF)
+set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize")
+
 # Download and configure Catch2 for the tests
 download_project(PROJ Catch2
                  GIT_REPOSITORY https://github.com/catchorg/Catch2

@@ -10,8 +10,6 @@ include(GNUInstallDirs)
 # Project options
 option(BUILD_TESTING "Build the cpp-sort test suite" ON)
 option(BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
-option(ENABLE_COVERAGE "Whether to make suitable build for code coverage" OFF)
-option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
 
 # Create cpp-sort library and configure it
 add_library(cpp-sort INTERFACE)
