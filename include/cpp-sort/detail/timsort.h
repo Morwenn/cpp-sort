@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort.
+ * Copyright (c) 2015-2019 Morwenn.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -597,13 +597,12 @@ namespace detail
                 ::new(ptr) rvalue_reference(iter_move(it));
             }
 
-            auto cursor1 = base1 + (len1 - 1);
+            auto cursor1 = base1 + len1;
             auto cursor2 = buffer.get() + (len2 - 1);
             auto dest = base2 + (len2 - 1);
 
-            *dest = iter_move(cursor1);
+            *dest = iter_move(--cursor1);
             --dest;
-            --cursor1;
             --len1;
 
             difference_type minGallop = minGallop_;
@@ -613,6 +612,12 @@ namespace detail
                 difference_type count1 = 0;
                 difference_type count2 = 0;
 
+                // The next loop is a hot path of the algorithm, so we decrement
+                // eagerly the cursor so that it always points directly to the value
+                // to compare, but we have to implement some trickier logic to make
+                // sure that it points to the next value again by the end of said loop
+                --cursor1;
+
                 bool break_outer = false;
                 do {
                     assert( len1 > 0 );
@@ -621,21 +626,21 @@ namespace detail
                     if (comp(proj(*cursor2), proj(*cursor1))) {
                         *dest = iter_move(cursor1);
                         --dest;
-                        --cursor1;
                         ++count1;
                         count2 = 0;
                         if (--len1 == 0) {
                             break_outer = true;
                             break;
                         }
-                    }
-                    else {
+                        --cursor1;
+                    } else {
                         *dest = iter_move(cursor2);
                         --dest;
                         --cursor2;
                         ++count2;
                         count1 = 0;
                         if (--len2 == 1) {
+                            ++cursor1;
                             break_outer = true;
                             break;
                         }
@@ -643,6 +648,8 @@ namespace detail
                 } while ((count1 | count2) < minGallop);
                 if (break_outer) {
                     break;
+                } else {
+                    ++cursor1; // See comment before the loop
                 }
 
                 do {
@@ -654,7 +661,7 @@ namespace detail
                         dest -= count1;
                         cursor1 -= count1;
                         len1 -= count1;
-                        detail::move_backward(cursor1 + 1, cursor1 + (1 + count1), dest + (1 + count1));
+                        detail::move_backward(cursor1, cursor1 + count1, dest + (1 + count1));
 
                         if (len1 == 0) {
                             break_outer = true;
@@ -669,7 +676,7 @@ namespace detail
                         break;
                     }
 
-                    count2 = len2 - gallopLeft(*cursor1, buffer.get(), len2, len2 - 1, compare, projection);
+                    count2 = len2 - gallopLeft(*std::prev(cursor1), buffer.get(), len2, len2 - 1, compare, projection);
                     if (count2 != 0) {
                         dest -= count2;
                         cursor2 -= count2;
@@ -680,9 +687,8 @@ namespace detail
                             break;
                         }
                     }
-                    *dest = iter_move(cursor1);
+                    *dest = iter_move(--cursor1);
                     --dest;
-                    --cursor1;
                     if (--len1 == 0) {
                         break_outer = true;
                         break;
@@ -705,10 +711,9 @@ namespace detail
             if (len2 == 1) {
                 assert( len1 > 0 );
                 dest -= len1;
-                detail::move_backward(cursor1 + (1 - len1), cursor1 + 1, dest + (1 + len1));
+                detail::move_backward(cursor1 - len1, cursor1, dest + (1 + len1));
                 *dest = iter_move(cursor2);
-            }
-            else {
+            } else {
                 assert( len2 != 0 && "comparison function violates its general contract");
                 assert( len1 == 0 );
                 assert( len2 > 1 );
