@@ -112,7 +112,6 @@ matrix:
       env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Ninja"
       addons:
         homebrew:
-          update: true
           packages:
             - ccache
             - cmake
@@ -125,7 +124,6 @@ matrix:
       env: BUILD_TYPE=Release CMAKE_GENERATOR="Ninja"
       addons:
         homebrew:
-          update: true
           packages:
             - ccache
             - cmake
