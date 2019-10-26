@@ -31,8 +31,8 @@ macro(configure_tests target)
     # More warnings and settings
     cppsort_add_warnings(${target})
     target_compile_options(${target} PRIVATE
-        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>:-O0>
-        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>:-Og>
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-O0>
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-Og>
     )
 
     # Use lld or the gold linker if possible
