@@ -22,10 +22,12 @@ macro(configure_tests target)
         cpp-sort::cpp-sort
     )
 
-    # Somewhat speed up Catch2 compile times
     target_compile_definitions(${target} PRIVATE
+        # Somewhat speed up Catch2 compile times
         CATCH_CONFIG_FAST_COMPILE
         CATCH_CONFIG_DISABLE_MATCHERS
+        # Enable assertions for more thorough tests
+        CPPSORT_ENABLE_ASSERTIONS
     )
 
     # More warnings and settings

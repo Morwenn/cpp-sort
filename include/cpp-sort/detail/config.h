@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,6 +78,22 @@
 #   define CPPSORT_UNREACHABLE __assume(false)
 #else
 #   define CPPSORT_UNREACHABLE
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_ASSERT
+
+// We want a slightly finer-grain control over assertions
+// than just relying on NDEBUG, so assertions have to be
+// explicitly enabled in cpp-sort
+
+#ifndef CPPSORT_ASSERT
+#   ifdef CPPSORT_ENABLE_ASSERTIONS
+#       include <cassert>
+#       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
+#   else
+#       define CPPSORT_ASSERT(...)
+#   endif
 #endif
 
 #endif // CPPSORT_DETAIL_CONFIG_H_
