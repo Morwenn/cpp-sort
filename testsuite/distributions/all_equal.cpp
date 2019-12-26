@@ -49,6 +49,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with all_equal distribution", "[
                     cppsort::quick_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::spin_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
