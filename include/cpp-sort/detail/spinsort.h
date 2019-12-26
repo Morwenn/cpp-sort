@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <new>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -26,6 +27,7 @@
 #include "boost_common/range.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
+#include "memory.h"
 #include "type_traits.h"
 #include "upper_bound.h"
 
@@ -320,147 +322,112 @@ namespace detail
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         class spinsort
         {
-            //------------------------------------------------------------------------
-            //               DEFINITIONS AND CONSTANTS
-            //------------------------------------------------------------------------
-            using value_t = value_type_t<RandomAccessIterator>;
-            using range_it = range<RandomAccessIterator>;
-            using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
-            using range_buf = range<rvalue_reference*>;
-            // When the number of elements to sort is smaller than Sort_min, are sorted
-            // by the insertion sort algorithm
-            static constexpr std::uint32_t Sort_min = 36;
+            private:
 
-            //------------------------------------------------------------------------
-            //                      VARIABLES
-            //------------------------------------------------------------------------
-            // Pointer to the auxiliary memory
-            rvalue_reference* ptr;
+                using value_t = value_type_t<RandomAccessIterator>;
+                using range_it = range<RandomAccessIterator>;
+                using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
+                using range_buf = range<rvalue_reference*>;
 
-            // Number of elements in the auxiliary memory
-            std::size_t nptr;
+                // When the number of elements to sort is smaller than Sort_min, are sorted
+                // by the insertion sort algorithm
+                static constexpr std::uint32_t Sort_min = 36;
 
-            // construct indicate if the auxiliary memory in initialized, and owner
-            // indicate if the auxiliary memory had been created inside the object
-            // or had been received as a parameter
-            bool construct = false, owner = false;
+                // Pointer to the auxiliary memory
+                std::unique_ptr<rvalue_reference, operator_deleter> ptr;
 
-            //------------------------------------------------------------------------
-            //                   PRIVATE FUNCTIONS
-            //------------------------------------------------------------------------
+                // Number of elements in the auxiliary memory
+                std::size_t nptr;
 
-            //-------------------------------------------------------------------------
-            //  function : spinsort
-            /// @brief constructor of the struct
-            //
-            /// @param first : iterator to the first element of the range to sort
-            /// @param last : iterator after the last element to the range to sort
-            /// @param comp : object for to compare two elements pointed by RandomAccessIterator
-            ///               iterators
-            /// @param paux : pointer to the auxiliary memory provided. If nullptr, the
-            ///               memory is created inside the class
-            /// @param naux : number of elements pointed by paux
-            //------------------------------------------------------------------------
-            spinsort(RandomAccessIterator first, RandomAccessIterator last,
-                     Compare compare, Projection projection,
-                     rvalue_reference* paux, std::size_t naux):
-                ptr(paux),
-                nptr(naux),
-                construct(false),
-                owner(false)
-            {
-                range<RandomAccessIterator> range_input(first, last);
-                assert(range_input.valid());
+                // construct indicate if the auxiliary memory in initialized
+                bool construct = false;
 
-                std::size_t nelem = range_input.size();
+            public:
 
-                nptr = (nelem + 1) >> 1;
-                std::size_t nelem_1 = nptr;
-                std::size_t nelem_2 = nelem - nelem_1;
+                //-------------------------------------------------------------------------
+                //  function : spinsort
+                /// @brief constructor
+                //
+                /// @param first : iterator to the first element of the range to sort
+                /// @param last : iterator after the last element to the range to sort
+                /// @param comp : object for to compare two elements pointed by RandomAccessIterator
+                ///               iterators
+                //------------------------------------------------------------------------
+                spinsort(RandomAccessIterator first, RandomAccessIterator last,
+                         Compare compare, Projection projection):
+                    ptr(nullptr),
+                    nptr(0),
+                    construct(false)
+                {
+                    range<RandomAccessIterator> range_input(first, last);
+                    assert(range_input.valid());
 
-                if (nelem <= (Sort_min << 1)) {
-                    insertion_sort(range_input.first, range_input.last,
-                                   std::move(compare), std::move(projection));
-                    return;
+                    std::size_t nelem = range_input.size();
+                    if (nelem <= (Sort_min << 1)) {
+                        insertion_sort(range_input.first, range_input.last,
+                                       std::move(compare), std::move(projection));
+                        return;
+                    }
+
+                    nptr = (nelem + 1) >> 1;
+                    std::size_t nelem_1 = nptr;
+                    std::size_t nelem_2 = nelem - nelem_1;
+                    ptr.reset(static_cast<rvalue_reference*>(
+                        ::operator new(nptr * sizeof(rvalue_reference))
+                    ));
+                    range_buf range_aux(ptr.get(), (ptr.get() + nptr));
+
+                    //---------------------------------------------------------------------
+                    //                  Process
+                    //---------------------------------------------------------------------
+                    std::uint32_t nlevel = nbits64(((nelem + Sort_min - 1) / Sort_min) - 1) - 1;
+                    assert(nlevel != 0);
+
+                    if ((nlevel & 1) == 1) {
+                        //----------------------------------------------------------------
+                        // if the number of levels is odd, the data are in the first
+                        // parameter of range_sort, and the results appear in the second
+                        // parameter
+                        //----------------------------------------------------------------
+                        range_it range_1(first, first + nelem_2), range_2(first + nelem_2, last);
+                        range_aux = move_construct(range_aux, range_2);
+                        construct = true;
+
+                        range_sort(range_aux, range_2, compare, projection, nlevel);
+                        range_buf rng_bx(range_aux.first, range_aux.first + nelem_2);
+
+                        range_sort(range_1, rng_bx, compare, projection, nlevel);
+                        merge_half(range_input, rng_bx, range_2, compare, projection);
+                    } else {
+                        //----------------------------------------------------------------
+                        // If the number of levels is even, the data are in the second
+                        // parameter of range_sort, and the results are in the same
+                        //  parameter
+                        //----------------------------------------------------------------
+                        range_it range_1(first, first + nelem_1);
+                        range_it range_2(first + nelem_1, last);
+                        range_aux = move_construct(range_aux, range_1);
+                        construct = true;
+
+                        range_sort(range_1, range_aux, compare, projection, nlevel);
+
+                        range_1.last = range_1.first + range_2.size();
+                        range_sort(range_1, range_2, compare, projection, nlevel);
+                        merge_half(range_input, range_aux, range_2, compare, projection);
+                    }
                 }
 
-                if (ptr == nullptr) {
-                    ptr = std::get_temporary_buffer<rvalue_reference>(nptr).first;
-                    if (ptr == nullptr) throw std::bad_alloc();
-                    owner = true;
+                //-----------------------------------------------------------------------
+                //  function :~spinsort
+                /// @brief destructor. Destroy the elements if construct is true
+                //-----------------------------------------------------------------------
+                ~spinsort()
+                {
+                    if (construct) {
+                        destroy(range<rvalue_reference*>(ptr.get(), ptr.get() + nptr));
+                        construct = false;
+                    }
                 }
-                range_buf range_aux(ptr, (ptr + nptr));
-
-                //---------------------------------------------------------------------
-                //                  Process
-                //---------------------------------------------------------------------
-                std::uint32_t nlevel = nbits64(((nelem + Sort_min - 1) / Sort_min) - 1) - 1;
-                assert(nlevel != 0);
-
-                if ((nlevel & 1) == 1) {
-                    //----------------------------------------------------------------
-                    // if the number of levels is odd, the data are in the first
-                    // parameter of range_sort, and the results appear in the second
-                    // parameter
-                    //----------------------------------------------------------------
-                    range_it range_1(first, first + nelem_2), range_2(first + nelem_2, last);
-                    range_aux = move_construct(range_aux, range_2);
-                    construct = true;
-
-                    range_sort(range_aux, range_2, compare, projection, nlevel);
-                    range_buf rng_bx(range_aux.first, range_aux.first + nelem_2);
-
-                    range_sort(range_1, rng_bx, compare, projection, nlevel);
-                    merge_half(range_input, rng_bx, range_2, compare, projection);
-                } else {
-                    //----------------------------------------------------------------
-                    // If the number of levels is even, the data are in the second
-                    // parameter of range_sort, and the results are in the same
-                    //  parameter
-                    //----------------------------------------------------------------
-                    range_it range_1(first, first + nelem_1);
-                    range_it range_2(first + nelem_1, last);
-                    range_aux = move_construct(range_aux, range_1);
-                    construct = true;
-
-                    range_sort(range_1, range_aux, compare, projection, nlevel);
-
-                    range_1.last = range_1.first + range_2.size();
-                    range_sort(range_1, range_2, compare, projection, nlevel);
-                    merge_half(range_input, range_aux, range_2, compare, projection);
-                }
-            }
-
-        public:
-            //------------------------------------------------------------------------
-            //                   PUBLIC FUNCTIONS
-            //-------------------------------------------------------------------------
-            spinsort(RandomAccessIterator first, RandomAccessIterator last,
-                     Compare compare, Projection projection):
-                spinsort(first, last, compare, projection, nullptr, 0)
-            {}
-
-            spinsort(RandomAccessIterator first, RandomAccessIterator last,
-                     Compare compare, Projection projection, range_buf range_aux):
-                spinsort(first, last, compare, projection, range_aux.first, range_aux.size())
-            {}
-
-            //-----------------------------------------------------------------------
-            //  function :~spinsort
-            /// @brief destructor of the struct. Destroy the elements if construct is
-            /// true,
-            ///        and return the memory if owner is true
-            //-----------------------------------------------------------------------
-            ~spinsort()
-            {
-                if (construct) {
-                    destroy(range<rvalue_reference*>(ptr, ptr + nptr));
-                    construct = false;
-                }
-                if (owner && ptr != nullptr) {
-                    std::return_temporary_buffer(ptr);
-                }
-            }
         };
     }
 
