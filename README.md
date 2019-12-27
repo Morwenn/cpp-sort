@@ -118,7 +118,7 @@ following compilers:
 * g++5 or more recent
 * MinGW-w64 g++5 or more recent
 * clang++3.8 or more recent
-* AppleClang shipping with Xcode 8.3 (not tested anymore but might work with earlier 8 iterations)
+* AppleClang shipping with Xcode 9.4 (used to work with older versions but they aren't tested anymore)
 * It is notably tested with both libstdc++ and libc++
 
 The compilers listed above are the ones tested specifically, and the library is also tested with

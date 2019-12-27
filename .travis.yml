@@ -108,7 +108,7 @@ matrix:
 
     # OSX clang
     - os: osx
-      osx_image: xcode9.2
+      osx_image: xcode9.4
       env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Ninja"
       addons:
         homebrew:
@@ -121,7 +121,7 @@ matrix:
       compiler: clang
 
     - os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9.4
       env: BUILD_TYPE=Release CMAKE_GENERATOR="Ninja"
       addons:
         homebrew:
