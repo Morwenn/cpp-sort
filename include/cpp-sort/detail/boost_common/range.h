@@ -14,7 +14,6 @@
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 
-#include <cassert>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -22,6 +21,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "util/algorithm.h"
 #include "util/merge.h"
+#include "../config.h"
 #include "../iterator_traits.h"
 #include "../move.h"
 
@@ -150,7 +150,7 @@ namespace boost_common
     auto move_forward(const range<Iter2_t>& dest, const range<Iter1_t>& src)
         -> range<Iter2_t>
     {
-        assert(dest.size() >= src.size());
+        CPPSORT_ASSERT(dest.size() >= src.size());
         auto it_aux = cppsort::detail::move(src.first, src.last, dest.first);
         return range<Iter2_t>(dest.first, it_aux);
     }
@@ -167,7 +167,7 @@ namespace boost_common
     auto move_backward(const range<Iter2_t>& dest, const range<Iter1_t>& src)
         -> range<Iter2_t>
     {
-        assert(dest.size() >= src.size());
+        CPPSORT_ASSERT(dest.size() >= src.size());
         auto it_aux = cppsort::detail::move_backward(src.first, src.last, dest.first + src.size());
         return range<Iter2_t>(dest.first, dest.src.size());
     }

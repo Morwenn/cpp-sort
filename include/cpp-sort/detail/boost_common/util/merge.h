@@ -22,6 +22,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "algorithm.h"
+#include "../../config.h"
 #include "../../iterator_traits.h"
 #include "../../move.h"
 
@@ -110,10 +111,8 @@ namespace util
         -> Iter2_t
     {
         using utility::iter_move;
+        CPPSORT_ASSERT((buf2 - buf_out) == (end_buf1 - buf1));
 
-#ifdef __BS_DEBUG
-        assert ( (buf2 - buf_out) == ( end_buf1 - buf1));
-#endif
         constexpr std::size_t MIN_CHECK = 1024;
 
         auto&& comp = utility::as_function(compare);

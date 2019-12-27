@@ -25,6 +25,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
 #include "boost_common/range.h"
+#include "config.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
 #include "memory.h"
@@ -97,7 +98,7 @@ namespace detail
         {
             using utility::iter_move;
 
-            assert(std::size_t(last - mid) <= rng_aux.size());
+            CPPSORT_ASSERT(std::size_t(last - mid) <= rng_aux.size());
 
             if (mid == last) return;
             //insertionsort ( mid, last, comp);
@@ -234,12 +235,9 @@ namespace detail
                         Compare compare, Projection projection, std::uint32_t level)
             -> void
         {
-            //-----------------------------------------------------------------------
-            //                  program
-            //-----------------------------------------------------------------------
             using range_it1 = range<Iter1_t>;
             using range_it2 = range<Iter2_t>;
-            assert(range1.size() == range2.size() && level != 0);
+            CPPSORT_ASSERT(range1.size() == range2.size() && level != 0);
 
             //------------------- check if sort --------------------------------------
             if (range1.size() > 1024) {
@@ -294,14 +292,12 @@ namespace detail
                 return;
             }
 
-#ifdef __BS_DEBUG
-            assert (rng_aux.size () >= rng_data.size ());
-#endif
+            CPPSORT_ASSERT (rng_aux.size () >= rng_data.size ());
 
             range<Iter2_t> rng_buffer(rng_aux.first, rng_aux.first + rng_data.size());
             std::uint32_t nlevel =
                             nbits64(((rng_data.size() + sort_min - 1) / sort_min) - 1);
-            //assert (nlevel != 0);
+            //CPPSORT_ASSERT(nlevel != 0);
 
             if ((nlevel & 1) == 0) {
                 range_sort(rng_buffer, rng_data, compare, projection, nlevel);
@@ -360,7 +356,7 @@ namespace detail
                     construct(false)
                 {
                     range<RandomAccessIterator> range_input(first, last);
-                    assert(range_input.valid());
+                    CPPSORT_ASSERT(range_input.valid());
 
                     std::size_t nelem = range_input.size();
                     if (nelem <= (Sort_min << 1)) {
@@ -381,7 +377,7 @@ namespace detail
                     //                  Process
                     //---------------------------------------------------------------------
                     std::uint32_t nlevel = nbits64(((nelem + Sort_min - 1) / Sort_min) - 1) - 1;
-                    assert(nlevel != 0);
+                    CPPSORT_ASSERT(nlevel != 0);
 
                     if ((nlevel & 1) == 1) {
                         //----------------------------------------------------------------
