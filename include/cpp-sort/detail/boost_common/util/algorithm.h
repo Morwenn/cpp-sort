@@ -28,39 +28,6 @@ namespace boost_common
 {
 namespace util
 {
-    // this array represent the number of bits needed for to represent the
-    // first 256 numbers
-    static constexpr const std::uint32_t tmsb[256] = {
-        0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-        5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-        6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-        7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-        8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
-    };
-
-    //---------------------------------------------------------------------------
-    //  function : nbits64
-    /// @brief Obtain the number of bits of a number equal or greater than num
-    /// @param num : Number to examine
-    /// @exception none
-    /// @return Number of bits
-    //---------------------------------------------------------------------------
-    inline auto nbits64(std::uint64_t num) noexcept
-        -> std::uint32_t
-    {
-        std::uint32_t Pos = (num & 0xffffffff00000000ULL) ? 32 : 0;
-        if ((num >> Pos) & 0xffff0000ULL) Pos += 16;
-        if ((num >> Pos) & 0xff00ULL) Pos += 8;
-        return (tmsb[num >> Pos] + Pos);
-    }
-
     //-----------------------------------------------------------------------------
     //  function : destroy_object
     /// @brief destroy an object in the memory specified by ptr

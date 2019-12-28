@@ -25,6 +25,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
 #include "boost_common/range.h"
+#include "bitops.h"
 #include "config.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
@@ -39,7 +40,6 @@ namespace detail
     namespace spin_detail
     {
         using boost_common::range;
-        using boost_common::util::nbits64;
 
         ////////////////////////////////////////////////////////////
         // Equivalent to C++17 std::not_fn
@@ -93,7 +93,7 @@ namespace detail
         template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
         auto insert_partial_sort(Iter1_t first, Iter1_t mid, Iter1_t last,
                                  Compare compare, Projection projection,
-                                 const range<Iter2_t> &rng_aux)
+                                 const range<Iter2_t>& rng_aux)
             -> void
         {
             using utility::iter_move;
@@ -292,12 +292,10 @@ namespace detail
                 return;
             }
 
-            CPPSORT_ASSERT (rng_aux.size () >= rng_data.size ());
-
+            CPPSORT_ASSERT(rng_aux.size () >= rng_data.size());
             range<Iter2_t> rng_buffer(rng_aux.first, rng_aux.first + rng_data.size());
-            std::uint32_t nlevel =
-                            nbits64(((rng_data.size() + sort_min - 1) / sort_min) - 1);
-            //CPPSORT_ASSERT(nlevel != 0);
+            CPPSORT_ASSERT(((rng_data.size() + sort_min - 1) / sort_min) - 1 > 0);
+            std::uint32_t nlevel = detail::log2(((rng_data.size() + sort_min - 1) / sort_min) - 1) + 1;
 
             if ((nlevel & 1) == 0) {
                 range_sort(rng_buffer, rng_data, compare, projection, nlevel);
@@ -376,7 +374,7 @@ namespace detail
                     //---------------------------------------------------------------------
                     //                  Process
                     //---------------------------------------------------------------------
-                    std::uint32_t nlevel = nbits64(((nelem + Sort_min - 1) / Sort_min) - 1) - 1;
+                    std::uint32_t nlevel = detail::log2(((nelem + Sort_min - 1) / Sort_min) - 1);
                     CPPSORT_ASSERT(nlevel != 0);
 
                     if ((nlevel & 1) == 1) {
