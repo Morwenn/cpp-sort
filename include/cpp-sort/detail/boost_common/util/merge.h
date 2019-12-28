@@ -22,7 +22,9 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../../config.h"
+#include "../../inplace_merge.h"
 #include "../../iterator_traits.h"
+#include "../../merge_move.h"
 #include "../../move.h"
 
 namespace cppsort
@@ -44,20 +46,24 @@ namespace util
     /// @param end_buf2 : final iterator of the second buffer
     /// @param buf_out : buffer where move the elements merged
     /// @param compare : comparison object
+    /// @param projection : projection object
     //-----------------------------------------------------------------------------
-    template<typename Iter1_t, typename Iter2_t, typename Iter3_t, typename Compare, typename Projection>
-    auto merge(Iter1_t buf1, const Iter1_t end_buf1, Iter2_t buf2, const Iter2_t end_buf2, Iter3_t buf_out,
+    template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename RandomAccessIterator3,
+             typename Compare, typename Projection>
+    auto merge(RandomAccessIterator1 buf1, RandomAccessIterator1 end_buf1,
+               RandomAccessIterator2 buf2, RandomAccessIterator2 end_buf2,
+               RandomAccessIterator3 buf_out,
                Compare compare, Projection projection)
-        -> Iter3_t
+        -> RandomAccessIterator3
     {
         using utility::iter_move;
 
-        constexpr std::size_t MIN_CHECK = 1024;
+        constexpr std::size_t min_size = 1024;
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (std::size_t((end_buf1 - buf1) + (end_buf2 - buf2)) >= MIN_CHECK) {
+        if (std::size_t((end_buf1 - buf1) + (end_buf2 - buf2)) >= min_size) {
             if (buf1 == end_buf1) return cppsort::detail::move(buf2, end_buf2, buf_out);
             if (buf2 == end_buf2) return cppsort::detail::move(buf1, end_buf1, buf_out);
 
@@ -72,20 +78,8 @@ namespace util
             }
         }
 
-        while (buf1 != end_buf1 && buf2 != end_buf2) {
-            if (not comp(proj(*buf2), proj(*buf1))) {
-                *buf_out = iter_move(buf1);
-                ++buf1;
-            } else {
-                *buf_out = iter_move(buf2);
-                ++buf2;
-            }
-            ++buf_out;
-        }
-
-        return (buf1 == end_buf1) ?
-            cppsort::detail::move(buf2, end_buf2, buf_out) :
-            cppsort::detail::move(buf1, end_buf1, buf_out);
+        return cppsort::detail::merge_move(buf1, end_buf1, buf2, end_buf2, buf_out,
+                                           compare, projection, projection);
     }
 
     //---------------------------------------------------------------------------
@@ -101,23 +95,26 @@ namespace util
     /// @param buf_out : iterator to the first element to the buffer where put
     ///                  the result
     /// @param compare : object for Compare two elements of the type pointed
-    ///                  by the Iter1_t and Iter2_t
+    ///                  by the RandomAccessIterator1 and RandomAccessIterator2
+    /// @param projection : projection object
     //---------------------------------------------------------------------------
-    template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
-    auto merge_half(Iter1_t buf1, const Iter1_t end_buf1,
-                    Iter2_t buf2, const Iter2_t end_buf2, Iter2_t buf_out,
+    template<typename RandomAccessIterator1, typename RandomAccessIterator2,
+             typename Compare, typename Projection>
+    auto merge_half(RandomAccessIterator1 buf1, RandomAccessIterator1 end_buf1,
+                    RandomAccessIterator2 buf2, RandomAccessIterator2 end_buf2,
+                    RandomAccessIterator2 buf_out,
                     Compare compare, Projection projection)
-        -> Iter2_t
+        -> RandomAccessIterator2
     {
         using utility::iter_move;
-        CPPSORT_ASSERT((buf2 - buf_out) == (end_buf1 - buf1));
+        CPPSORT_ASSERT(buf2 - buf_out == end_buf1 - buf1);
 
-        constexpr std::size_t MIN_CHECK = 1024;
+        constexpr std::size_t min_size = 1024;
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (std::size_t((end_buf1 - buf1) + (end_buf2 - buf2)) >= MIN_CHECK) {
+        if (std::size_t((end_buf1 - buf1) + (end_buf2 - buf2)) >= min_size) {
             if (buf1 == end_buf1) return end_buf2;
             if (buf2 == end_buf2) return cppsort::detail::move(buf1, end_buf1, buf_out);
 
@@ -132,18 +129,9 @@ namespace util
             }
         }
 
-        while (buf1 != end_buf1 && buf2 != end_buf2) {
-
-            if (not comp(proj(*buf2), proj(*buf1))) {
-                *buf_out = iter_move(buf1);
-                ++buf1;
-            } else {
-                *buf_out = iter_move(buf2);
-                ++buf2;
-            }
-            ++buf_out;
-        }
-        return (buf2 == end_buf2) ? cppsort::detail::move(buf1, end_buf1, buf_out) : end_buf2;
+        cppsort::detail::half_inplace_merge(buf1, end_buf1, buf2, end_buf2, buf_out,
+                                            end_buf1 - buf1, compare, projection);
+        return end_buf2;
     }
 }}}}
 

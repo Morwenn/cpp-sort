@@ -125,20 +125,6 @@ namespace boost_common
     };
 
     //-----------------------------------------------------------------------------
-    //  function : concat
-    /// @brief concatenate two contiguous ranges
-    /// @param it1 : first range
-    /// @param it2 : second range
-    /// @return  range resulting of the concatenation
-    //-----------------------------------------------------------------------------
-    template<typename Iter_t>
-    auto concat(const range<Iter_t>& it1, const range<Iter_t>& it2)
-        -> range<Iter_t>
-    {
-        return range<Iter_t>(it1.first, it2.last);
-    }
-
-    //-----------------------------------------------------------------------------
     //  function : move_forward
     /// @brief Move initialized objets from the range src to dest
     /// @param dest : range where move the objects
@@ -182,6 +168,7 @@ namespace boost_common
     /// @param src1 : first range to merge
     /// @param src2 : second range to merge
     /// @param compare : comparison object
+    /// @param projection : projection object
     /// @return range with the elements merged and the size adjusted
     //-----------------------------------------------------------------------------
     template<typename Iter1_t, typename Iter2_t, typename Iter3_t, typename Compare, typename Projection>
@@ -205,6 +192,7 @@ namespace boost_common
     ///               range where deposit the final results
     /// @param compare : object for compare two elements of the type pointed
     ///                  by the Iter1_t and Iter2_t
+    /// @param projection : projection object
     /// @return : range with the two buffers merged
     //---------------------------------------------------------------------------
     template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>

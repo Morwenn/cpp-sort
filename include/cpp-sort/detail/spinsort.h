@@ -75,25 +75,26 @@ namespace detail
             return not_fn_t<std::decay_t<Predicate>>(std::forward<Predicate>(pred));
         }
 
-        template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
-        auto sort_range_sort(const range<Iter1_t>& rng_data, const range<Iter2_t>& rng_aux,
+        template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
+        auto sort_range_sort(const range<RandomAccessIterator1>& rng_data, const range<RandomAccessIterator2>& rng_aux,
                              Compare compare, Projection projection)
             -> void;
 
         //-----------------------------------------------------------------------------
-        //  function : insert_partial_sort
-        /// @brief : Insertion sort of elements sorted
-        /// @param first: iterator to the first element of the range
-        /// @param mid : last pointer of the sorted data, and first pointer to the
-        ///               elements to insert
-        /// @param last : iterator to the next element of the last in the range
-        /// @param comp :
-        /// @comments : the two ranges are sorted
+        // function : insert_partial_sort
+        // @brief : Insertion sort of elements sorted
+        // @param first: iterator to the first element of the range
+        // @param mid : last pointer of the sorted data, and first pointer to the
+        //               elements to insert
+        // @param last : iterator to the next element of the last in the range
+        // @param compare : comparison function
+        // @param projection : projection function
+        // @comments : the two ranges are sorted
         //-----------------------------------------------------------------------------
-        template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
-        auto insert_partial_sort(Iter1_t first, Iter1_t mid, Iter1_t last,
+        template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
+        auto insert_partial_sort(RandomAccessIterator1 first, RandomAccessIterator1 mid, RandomAccessIterator1 last,
                                  Compare compare, Projection projection,
-                                 const range<Iter2_t>& rng_aux)
+                                 const range<RandomAccessIterator2>& rng_aux)
             -> void
         {
             using utility::iter_move;
@@ -111,7 +112,7 @@ namespace detail
             // sorted part
             // the data are inserted in rng_aux
             //-----------------------------------------------------------------------
-            std::vector<Iter1_t> viter;
+            std::vector<RandomAccessIterator1> viter;
             auto beta = rng_aux.first;
             auto data = rng_aux.first;
 
@@ -122,7 +123,7 @@ namespace detail
 
             std::size_t ndata = last - mid;
 
-            Iter1_t linf = first, lsup = mid;
+            RandomAccessIterator1 linf = first, lsup = mid;
             for (std::uint32_t i = 0 ; i < ndata ; ++i) {
                 auto it1 = detail::upper_bound(linf, lsup, proj(*(data + i)), compare, projection);
                 viter.push_back(it1);
@@ -132,8 +133,8 @@ namespace detail
             // moving the elements
             viter.push_back(mid);
             for (std::uint32_t i = viter.size() - 1; i != 0; --i) {
-                Iter1_t src = viter[i], limit = viter[i - 1];
-                Iter1_t dest = src + i;
+                RandomAccessIterator1 src = viter[i], limit = viter[i - 1];
+                RandomAccessIterator1 dest = src + i;
                 while (src != limit) {
                     *(--dest) = iter_move(--src);
                 }
@@ -143,22 +144,22 @@ namespace detail
 
         //-----------------------------------------------------------------------------
         //  function : check_stable_sort
-        /// @brief check if the elements between first and last are sorted or reverse
-        ///        sorted. If the number of elements not sorted is small, insert in
-        ///        the sorted part
-        /// @param range_input : range with the elements to sort
-        /// @param range_buffer : range with the elements sorted
-        /// @param comp : object for to compare two elements
-        /// @param level : when is 1, sort with the insertionsort algorithm
-        ///                if not make a recursive call splitting the ranges
+        // @brief check if the elements between first and last are sorted or reverse
+        //        sorted. If the number of elements not sorted is small, insert in
+        //        the sorted part
+        // @param range_input : range with the elements to sort
+        // @param range_buffer : range with the elements sorted
+        // @param comp : object for to compare two elements
+        // @param level : when is 1, sort with the insertionsort algorithm
+        //                if not make a recursive call splitting the ranges
         //
-        /// @comments : if the number of levels is odd, the data are in the first
-        /// parameter of range_sort, and the results appear in the second parameter
-        /// If the number of levels is even, the data are in the second
-        /// parameter of range_sort, and the results are in the same parameter
+        // @comments : if the number of levels is odd, the data are in the first
+        // parameter of range_sort, and the results appear in the second parameter
+        // If the number of levels is even, the data are in the second
+        // parameter of range_sort, and the results are in the same parameter
         //-----------------------------------------------------------------------------
-        template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
-        auto check_stable_sort(const range<Iter1_t>& rng_data, const range<Iter2_t>& rng_aux,
+        template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
+        auto check_stable_sort(const range<RandomAccessIterator1>& rng_data, const range<RandomAccessIterator2>& rng_aux,
                                Compare compare, Projection projection)
             -> bool
         {
@@ -181,7 +182,7 @@ namespace detail
 
             // insert the elements between it1 and last
             if (std::size_t(rng_data.last - it) < min_insert_partial_sort) {
-                sort_range_sort(range<Iter1_t>(it, rng_data.last), rng_aux, compare, projection);
+                sort_range_sort(range<RandomAccessIterator1>(it, rng_data.last), rng_aux, compare, projection);
                 insert_partial_sort(rng_data.first, it, rng_data.last, compare, projection, rng_aux);
                 return true;
             }
@@ -208,7 +209,7 @@ namespace detail
 
             // insert the elements between it1 and last
             if (it != rng_data.last) {
-                sort_range_sort(range<Iter1_t>(it, rng_data.last), rng_aux, compare, projection);
+                sort_range_sort(range<RandomAccessIterator1>(it, rng_data.last), rng_aux, compare, projection);
                 insert_partial_sort(rng_data.first, it, rng_data.last, compare, projection, rng_aux);
             }
             return true;
@@ -216,27 +217,27 @@ namespace detail
 
         //-----------------------------------------------------------------------------
         //  function : range_sort
-        /// @brief this function divide r_input in two parts, sort it,and merge moving
-        ///        the elements to range_buf
-        /// @param range_input : range with the elements to sort
-        /// @param range_buffer : range with the elements sorted
-        /// @param comp : object for to compare two elements
-        /// @param level : when is 1, sort with the insertionsort algorithm
-        ///                if not make a recursive call splitting the ranges
+        // @brief this function divide r_input in two parts, sort it,and merge moving
+        //        the elements to range_buf
+        // @param range_input : range with the elements to sort
+        // @param range_buffer : range with the elements sorted
+        // @param comp : object for to compare two elements
+        // @param level : when is 1, sort with the insertionsort algorithm
+        //                if not make a recursive call splitting the ranges
         //
-        /// @comments : if the number of levels is odd, the data are in the first
-        /// parameter of range_sort, and the results appear in the second parameter
-        /// If the number of levels is even, the data are in the second
-        /// parameter of range_sort, and the results are in the same parameter
-        /// The two ranges must have the same size
+        // @comments : if the number of levels is odd, the data are in the first
+        // parameter of range_sort, and the results appear in the second parameter
+        // If the number of levels is even, the data are in the second
+        // parameter of range_sort, and the results are in the same parameter
+        // The two ranges must have the same size
         //-----------------------------------------------------------------------------
-        template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
-        auto range_sort(const range<Iter1_t>& range1, const range<Iter2_t>& range2,
+        template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
+        auto range_sort(const range<RandomAccessIterator1>& range1, const range<RandomAccessIterator2>& range2,
                         Compare compare, Projection projection, std::uint32_t level)
             -> void
         {
-            using range_it1 = range<Iter1_t>;
-            using range_it2 = range<Iter2_t>;
+            using range_it1 = range<RandomAccessIterator1>;
+            using range_it2 = range<RandomAccessIterator2>;
             CPPSORT_ASSERT(range1.size() == range2.size() && level != 0);
 
             //------------------- check if sort --------------------------------------
@@ -273,15 +274,15 @@ namespace detail
 
         //-----------------------------------------------------------------------------
         //  function : sort_range_sort
-        /// @brief this sort elements using the range_sort function and receiving a
-        ///        buffer of initialized memory
-        /// @param rng_data : range with the elements to sort
-        /// @param rng_aux : range of at least the same memory than rng_data used as
-        ///                  auxiliary memory in the sorting
-        /// @param comp : object for to compare two elements
+        // @brief this sort elements using the range_sort function and receiving a
+        //        buffer of initialized memory
+        // @param rng_data : range with the elements to sort
+        // @param rng_aux : range of at least the same memory than rng_data used as
+        //                  auxiliary memory in the sorting
+        // @param comp : object for to compare two elements
         //-----------------------------------------------------------------------------
-        template<typename Iter1_t, typename Iter2_t, typename Compare, typename Projection>
-        auto sort_range_sort(const range<Iter1_t>& rng_data, const range<Iter2_t>& rng_aux,
+        template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
+        auto sort_range_sort(const range<RandomAccessIterator1>& rng_data, const range<RandomAccessIterator2>& rng_aux,
                              Compare compare, Projection projection)
             -> void
         {
@@ -293,7 +294,7 @@ namespace detail
             }
 
             CPPSORT_ASSERT(rng_aux.size () >= rng_data.size());
-            range<Iter2_t> rng_buffer(rng_aux.first, rng_aux.first + rng_data.size());
+            range<RandomAccessIterator2> rng_buffer(rng_aux.first, rng_aux.first + rng_data.size());
             CPPSORT_ASSERT(((rng_data.size() + sort_min - 1) / sort_min) - 1 > 0);
             std::uint32_t nlevel = detail::log2(((rng_data.size() + sort_min - 1) / sort_min) - 1) + 1;
 
@@ -309,9 +310,9 @@ namespace detail
         // spinsort
 
         //---------------------------------------------------------------------------
-        /// @struct spin_sort
-        /// @brief  This class implement s stable sort algorithm with 1 thread, with
-        ///         an auxiliary memory of N/2 elements
+        // @struct spin_sort
+        // @brief  This class implement s stable sort algorithm with 1 thread, with
+        //         an auxiliary memory of N/2 elements
         //----------------------------------------------------------------------------
         template<typename RandomAccessIterator, typename Compare, typename Projection>
         class spinsort
@@ -337,12 +338,13 @@ namespace detail
 
                 //-------------------------------------------------------------------------
                 //  function : spinsort
-                /// @brief constructor
+                // @brief constructor
                 //
-                /// @param first : iterator to the first element of the range to sort
-                /// @param last : iterator after the last element to the range to sort
-                /// @param comp : object for to compare two elements pointed by RandomAccessIterator
-                ///               iterators
+                // @param first : iterator to the first element of the range to sort
+                // @param last : iterator after the last element to the range to sort
+                // @param compare : object for to compare two elements pointed by RandomAccessIterator
+                //                  iterators
+                // @param projection : projection object
                 //------------------------------------------------------------------------
                 spinsort(RandomAccessIterator first, RandomAccessIterator last,
                          Compare compare, Projection projection):
