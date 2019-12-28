@@ -333,9 +333,6 @@ namespace detail
                 // Number of elements in the auxiliary memory
                 std::size_t nptr;
 
-                // construct indicate if the auxiliary memory in initialized
-                bool construct = false;
-
             public:
 
                 //-------------------------------------------------------------------------
@@ -350,9 +347,10 @@ namespace detail
                 spinsort(RandomAccessIterator first, RandomAccessIterator last,
                          Compare compare, Projection projection):
                     ptr(nullptr),
-                    nptr(0),
-                    construct(false)
+                    nptr(0)
                 {
+                    using utility::iter_move;
+
                     range<RandomAccessIterator> range_input(first, last);
                     CPPSORT_ASSERT(range_input.valid());
 
@@ -371,6 +369,9 @@ namespace detail
                     ));
                     range_buf range_aux(ptr.get(), (ptr.get() + nptr));
 
+                    destruct_n<rvalue_reference> d(0);
+                    std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(ptr.get(), d);
+
                     //---------------------------------------------------------------------
                     //                  Process
                     //---------------------------------------------------------------------
@@ -384,8 +385,11 @@ namespace detail
                         // parameter
                         //----------------------------------------------------------------
                         range_it range_1(first, first + nelem_2), range_2(first + nelem_2, last);
-                        range_aux = move_construct(range_aux, range_2);
-                        construct = true;
+                        rvalue_reference* p = range_aux.first;
+                        for (auto it = range_2.first ; it != range_2.last ; ++d, (void) ++it, ++p) {
+                            ::new(p) rvalue_reference(iter_move(it));
+                        }
+                        range_aux.last = p;
 
                         range_sort(range_aux, range_2, compare, projection, nlevel);
                         range_buf rng_bx(range_aux.first, range_aux.first + nelem_2);
@@ -400,26 +404,17 @@ namespace detail
                         //----------------------------------------------------------------
                         range_it range_1(first, first + nelem_1);
                         range_it range_2(first + nelem_1, last);
-                        range_aux = move_construct(range_aux, range_1);
-                        construct = true;
+
+                        rvalue_reference* p = range_aux.first;
+                        for (auto it = range_1.first ; it != range_1.last ; ++d, (void) ++it, ++p) {
+                            ::new(p) rvalue_reference(iter_move(it));
+                        }
+                        range_aux.last = p;
 
                         range_sort(range_1, range_aux, compare, projection, nlevel);
-
                         range_1.last = range_1.first + range_2.size();
                         range_sort(range_1, range_2, compare, projection, nlevel);
                         merge_half(range_input, range_aux, range_2, compare, projection);
-                    }
-                }
-
-                //-----------------------------------------------------------------------
-                //  function :~spinsort
-                /// @brief destructor. Destroy the elements if construct is true
-                //-----------------------------------------------------------------------
-                ~spinsort()
-                {
-                    if (construct) {
-                        destroy(range<rvalue_reference*>(ptr.get(), ptr.get() + nptr));
-                        construct = false;
                     }
                 }
         };

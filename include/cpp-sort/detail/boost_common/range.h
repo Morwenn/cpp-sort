@@ -19,7 +19,6 @@
 #include <memory>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
-#include "util/algorithm.h"
 #include "util/merge.h"
 #include "../config.h"
 #include "../iterator_traits.h"
@@ -170,34 +169,6 @@ namespace boost_common
         CPPSORT_ASSERT(dest.size() >= src.size());
         auto it_aux = cppsort::detail::move_backward(src.first, src.last, dest.first + src.size());
         return range<Iter2_t>(dest.first, dest.src.size());
-    }
-
-    //-----------------------------------------------------------------------------
-    //  function : uninit_move
-    /// @brief Move uninitialized objets from the range src creating them in  dest
-    ///
-    /// @param dest : range where move and create the objects
-    /// @param src : range from where move the objects
-    /// @return range with the objects moved and the size adjusted
-    //-----------------------------------------------------------------------------
-    template<typename Iter_t, typename Value_t=value_type_t<Iter_t>>
-    auto move_construct(const range<Value_t*>& dest, const range<Iter_t>& src)
-        -> range<Value_t*>
-    {
-        auto ptr_aux = util::move_construct(dest.first, src.first, src.last);
-        return range<Value_t*>(dest.first, ptr_aux);
-    }
-
-    //-----------------------------------------------------------------------------
-    //  function : destroy
-    /// @brief destroy a range of objects
-    /// @param rng : range to destroy
-    //-----------------------------------------------------------------------------
-    template<typename Iter_t>
-    auto destroy(range<Iter_t> rng)
-        -> void
-    {
-        util::destroy(rng.first, rng.last);
     }
 
     //-----------------------------------------------------------------------------
