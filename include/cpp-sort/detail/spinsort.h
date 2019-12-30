@@ -30,6 +30,7 @@
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
 #include "memory.h"
+#include "move.h"
 #include "type_traits.h"
 #include "upper_bound.h"
 
@@ -387,11 +388,7 @@ namespace detail
                         // parameter
                         //----------------------------------------------------------------
                         range_it range_1(first, first + nelem_2), range_2(first + nelem_2, last);
-                        rvalue_reference* p = range_aux.first;
-                        for (auto it = range_2.first ; it != range_2.last ; ++d, (void) ++it, ++p) {
-                            ::new(p) rvalue_reference(iter_move(it));
-                        }
-                        range_aux.last = p;
+                        range_aux.last = uninitialized_move(range_2.first, range_2.last, range_aux.first, d);
 
                         range_sort(range_aux, range_2, compare, projection, nlevel);
                         range_buf rng_bx(range_aux.first, range_aux.first + nelem_2);
@@ -406,12 +403,7 @@ namespace detail
                         //----------------------------------------------------------------
                         range_it range_1(first, first + nelem_1);
                         range_it range_2(first + nelem_1, last);
-
-                        rvalue_reference* p = range_aux.first;
-                        for (auto it = range_1.first ; it != range_1.last ; ++d, (void) ++it, ++p) {
-                            ::new(p) rvalue_reference(iter_move(it));
-                        }
-                        range_aux.last = p;
+                        range_aux.last = uninitialized_move(range_1.first, range_1.last, range_aux.first, d);
 
                         range_sort(range_1, range_aux, compare, projection, nlevel);
                         range_1.last = range_1.first + range_2.size();

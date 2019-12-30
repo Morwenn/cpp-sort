@@ -158,20 +158,14 @@ namespace detail
         destruct_n<rvalue_reference> d(0);
         std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buff, d);
         if (len1 <= len2) {
-            rvalue_reference* p = buff;
-            for (BidirectionalIterator i = first; i != middle; ++d, (void) ++i, ++p) {
-                ::new(p) rvalue_reference(iter_move(i));
-            }
-            half_inplace_merge(buff, p, middle, last, first, len1,
+            auto ptr = uninitialized_move(first, middle, buff, d);
+            half_inplace_merge(buff, ptr, middle, last, first, len1,
                                std::move(compare), std::move(projection));
         } else {
-            rvalue_reference* p = buff;
-            for (BidirectionalIterator i = middle; i != last; ++d, (void) ++i, ++p) {
-                ::new(p) rvalue_reference(iter_move(i));
-            }
+            auto ptr = uninitialized_move(middle, last, buff, d);
             using RBi = std::reverse_iterator<BidirectionalIterator>;
             using Rv = std::reverse_iterator<rvalue_reference*>;
-            half_inplace_merge(Rv(p), Rv(buff),
+            half_inplace_merge(Rv(ptr), Rv(buff),
                                RBi(middle), RBi(first),
                                RBi(last), len2,
                                invert<Compare>(compare), std::move(projection));
@@ -248,16 +242,10 @@ namespace detail
                 rvalue_reference,
                 destruct_n<rvalue_reference>&
             > h2(buffer, d);
-
-            rvalue_reference* buff_it = buffer;
-            for (auto it = f0 ; it != f1 ; ++d, (void) ++it) {
-                using utility::iter_move;
-                ::new(buff_it) rvalue_reference(iter_move(it));
-                ++buff_it;
-            }
+            auto buff_ptr = uninitialized_move(f0, f1, buffer, d);
 
             half_inplace_merge(
-                buffer, buff_it, f1, std::next(f1, n1), f0,
+                buffer, buff_ptr, f1, std::next(f1, n1), f0,
                 n0, std::move(compare), std::move(projection)
             );
             return;

@@ -437,16 +437,10 @@ namespace detail
         std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(cache.get(), d);
 
         rvalue_reference* buff_it = cache.get();
-        for (auto&& it: chain)
-        {
+        for (auto&& it: chain) {
             auto begin = it.base();
             auto end = begin + it.size();
-            for (auto inner_it = begin ; inner_it != end ; ++d, (void) ++inner_it)
-            {
-                using utility::iter_move;
-                ::new(buff_it) rvalue_reference(iter_move(inner_it));
-                ++buff_it;
-            }
+            buff_it = uninitialized_move(begin, end, buff_it, d);
         }
         detail::move(cache.get(), cache.get() + full_size, first.base());
     }

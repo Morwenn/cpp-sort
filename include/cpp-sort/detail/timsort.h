@@ -443,11 +443,7 @@ namespace detail
             resize_buffer(len1);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
-
-            rvalue_reference* ptr = buffer.get();
-            for (auto it = base1 ; it != base1 + len1 ; ++d, (void) ++it, ++ptr) {
-                ::new(ptr) rvalue_reference(iter_move(it));
-            }
+            uninitialized_move(base1, base1 + len1, buffer.get(), d);
 
             auto cursor1 = buffer.get();
             auto cursor2 = base2;
@@ -591,11 +587,7 @@ namespace detail
             resize_buffer(len2);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
-
-            rvalue_reference* ptr = buffer.get();
-            for (auto it = base2 ; it != base2 + len2 ; ++d, (void) ++it, ++ptr) {
-                ::new(ptr) rvalue_reference(iter_move(it));
-            }
+            uninitialized_move(base2, base2 + len2, buffer.get(), d);
 
             auto cursor1 = base1 + len1;
             auto cursor2 = buffer.get() + (len2 - 1);
