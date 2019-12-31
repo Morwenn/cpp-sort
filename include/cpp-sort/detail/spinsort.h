@@ -27,6 +27,7 @@
 #include "boost_common/range.h"
 #include "bitops.h"
 #include "config.h"
+#include "insertion_sort.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
 #include "memory.h"
@@ -101,10 +102,9 @@ namespace detail
             using utility::iter_move;
 
             CPPSORT_ASSERT(std::size_t(last - mid) <= rng_aux.size());
-
-            if (mid == last) return;
-            //insertionsort ( mid, last, comp);
-            if (first == mid) return;
+            if (mid == last || first == mid) {
+                return;
+            }
 
             auto&& proj = utility::as_function(projection);
 
