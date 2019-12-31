@@ -156,6 +156,7 @@ add_executable(main-tests
     sorters/poplar_sorter.cpp
     sorters/ska_sorter.cpp
     sorters/ska_sorter_projection.cpp
+    sorters/spin_sorter.cpp
     sorters/spread_sorter.cpp
     sorters/spread_sorter_defaults.cpp
     sorters/spread_sorter_projection.cpp
