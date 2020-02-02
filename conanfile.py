@@ -5,7 +5,7 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.5.1"
+    version = "1.6.0"
     description = "Additional sorting algorithms & related tools"
     topics = "conan", "cpp-sort", "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"
