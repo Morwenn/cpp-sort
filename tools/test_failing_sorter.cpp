@@ -37,10 +37,12 @@ struct shuffled_string:
 template<typename Sorter>
 void test(const char* name)
 {
+    const int size = 491;
+
     std::vector<std::string> collection;
-    collection.reserve(491);
+    collection.reserve(size);
     auto distribution = shuffled_string{};
-    distribution(std::back_inserter(collection), 491, -125);
+    distribution(std::back_inserter(collection), size, -125);
 
     auto copy = collection;
     std::sort(std::begin(copy), std::end(copy));
@@ -69,13 +71,18 @@ void test(const char* name)
         << "par: " << cppsort::probe::par(copy2) << '\n'
         << "rem: " << cppsort::probe::rem(copy2) << '\n'
         << "runs: " << cppsort::probe::runs(copy2) << '\n'
-        << "\n\n";
+        << '\n';
+
+    if (size < 40) {
+        std::cout << "unsorted collection:\n";
+        for (const auto& elem: copy2) {
+            std::cout << elem << ' ';
+        }
+        std::cout << "\n\n";
+    }
 }
 
 int main()
 {
-    using namespace cppsort;
-
-    //test<block_sorter<utility::dynamic_buffer<utility::half>>>("block_sort");
-    test<grail_sorter<utility::dynamic_buffer<utility::sqrt>>>("grail_sort");
+    test<cppsort::poplar_sorter2>("poplar_sort");
 }

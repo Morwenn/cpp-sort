@@ -2,15 +2,14 @@ cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.5.1 LANGUAGES CXX)
+project(cpp-sort VERSION 1.6.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # Project options
 option(BUILD_TESTING "Build the cpp-sort test suite" ON)
-option(ENABLE_COVERAGE "Whether to make suitable build for code coverage" OFF)
-option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
+option(BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
 
 # Create cpp-sort library and configure it
 add_library(cpp-sort INTERFACE)
@@ -42,8 +41,8 @@ install(
 )
 
 configure_package_config_file(
-    ${CMAKE_SOURCE_DIR}/cmake/cpp-sort-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-sort-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config.cmake
     INSTALL_DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
 )
@@ -61,20 +60,26 @@ set(CMAKE_SIZEOF_VOID_P ${CPPSORT_SIZEOF_VOID_P})
 
 install(
     FILES
-        ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config.cmake
-        ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/cpp-sort
 )
 
 # Export target so that it can be used in subdirectories
 export(
     EXPORT cpp-sort-targets
-    FILE ${CMAKE_BINARY_DIR}/cmake/cpp-sort-targets.cmake
+    FILE ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-targets.cmake
     NAMESPACE cpp-sort::
 )
 
-# Build tests if this is the main project
-if (BUILD_TESTING AND (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR))
-    enable_testing()
-    add_subdirectory(testsuite)
+# Build tests and/or examples if this is the main project
+if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    if (BUILD_TESTING)
+        enable_testing()
+        add_subdirectory(testsuite)
+    endif()
+
+    if (BUILD_EXAMPLES)
+        add_subdirectory(examples)
+    endif()
 endif()

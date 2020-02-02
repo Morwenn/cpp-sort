@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015-2017 Orson Peters
-    Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
-#include <cstdint>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
@@ -38,6 +37,10 @@
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "iter_sort3.h"
+
+#ifdef __MINGW32__
+#   include <cstdint> // std::uintptr_t
+#endif
 
 namespace cppsort
 {
@@ -132,46 +135,7 @@ namespace detail
             return true;
         }
 
-        // Attempts to use insertion sort on [begin, end). Will return false if more than
-        // partial_insertion_sort_limit elements were moved, and abort sorting. Otherwise it will
-        // successfully sort and return true. Assumes *(begin - 1) is an element smaller than or
-        // equal to any element in [begin, end).
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto unguarded_partial_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                              Compare compare, Projection projection)
-            -> bool
-        {
-            if (begin == end) return true;
-
-            using utility::iter_move;
-            auto&& comp = utility::as_function(compare);
-            auto&& proj = utility::as_function(projection);
-
-            int limit = 0;
-            for (RandomAccessIterator cur = begin + 1; cur != end; ++cur) {
-                if (limit > partial_insertion_sort_limit) return false;
-
-                RandomAccessIterator sift = cur;
-                RandomAccessIterator sift_1 = cur - 1;
-
-                // Compare first so we can avoid 2 moves for an element already positioned correctly.
-                if (comp(proj(*sift), proj(*sift_1))) {
-                    auto tmp = iter_move(sift);
-                    auto&& tmp_proj = proj(tmp);
-
-                    do {
-                        *sift = iter_move(sift_1);
-                        --sift;
-                    } while (comp(tmp_proj, proj(*--sift_1)));
-
-                    *sift = std::move(tmp);
-                    limit += cur - sift;
-                }
-            }
-
-            return true;
-        }
-
+#ifdef __MINGW32__
         template<typename T>
         auto align_cacheline(T* ptr)
             -> T*
@@ -184,6 +148,7 @@ namespace detail
             ip = (ip + cacheline_size - 1) & -cacheline_size;
             return reinterpret_cast<T*>(ip);
         }
+#endif
 
         template<typename RandomAccessIterator>
         auto swap_offsets(RandomAccessIterator first, RandomAccessIterator last,
@@ -255,11 +220,18 @@ namespace detail
             }
 
             // The following branchless partitioning is derived from "BlockQuicksort: How Branch
-            // Mispredictions don’t affect Quicksort" by Stefan Edelkamp and Armin Weiss.
+            // Mispredictions don't affect Quicksort" by Stefan Edelkamp and Armin Weiss.
+#ifdef __MINGW32__
             unsigned char offsets_l_storage[block_size + cacheline_size];
             unsigned char offsets_r_storage[block_size + cacheline_size];
             unsigned char* offsets_l = align_cacheline(offsets_l_storage);
             unsigned char* offsets_r = align_cacheline(offsets_r_storage);
+#else
+            alignas(cacheline_size) unsigned char offsets_l_storage[block_size];
+            alignas(cacheline_size) unsigned char offsets_r_storage[block_size];
+            unsigned char* offsets_l = offsets_l_storage;
+            unsigned char* offsets_r = offsets_r_storage;
+#endif
             int num_l, num_r, start_l, start_r;
             num_l = num_r = start_l = start_r = 0;
 
@@ -555,7 +527,7 @@ namespace detail
                     // sequence try to use insertion sort.
                     if (already_partitioned &&
                         partial_insertion_sort(begin, pivot_pos, compare, projection) &&
-                        unguarded_partial_insertion_sort(pivot_pos + 1, end, compare, projection)) {
+                        partial_insertion_sort(pivot_pos + 1, end, compare, projection)) {
                         return;
                     }
                 }

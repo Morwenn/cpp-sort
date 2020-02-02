@@ -191,7 +191,7 @@ namespace dist
         auto operator()(OutputIterator out, std::size_t size) const
             -> void
         {
-            std::size_t limit = size / cppsort::detail::log2(size) * 1.1;
+            std::size_t limit = size / cppsort::detail::log2(size) * 0.9;
             for (std::size_t i = 0 ; i < size ; ++i) {
                 *out++ = i % limit;
             }
@@ -205,7 +205,7 @@ namespace dist
         auto operator()(OutputIterator out, std::size_t size) const
             -> void
         {
-            std::size_t limit = size / cppsort::detail::log2(size) * 1.1;
+            std::size_t limit = size / cppsort::detail::log2(size) * 0.9;
             while (size--) {
                 *out++ = size % limit;
             }

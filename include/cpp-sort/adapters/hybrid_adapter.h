@@ -79,20 +79,20 @@ namespace cppsort
         // Associate a priority to iterator categories, there is
         // probably a trick to automate that...
 
-        template<typename>
-        std::size_t iterator_category_value;
+        namespace // GitHub issue #158
+        {
+            template<typename>
+            std::size_t iterator_category_value;
 
-        template<>
-        constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 3;
+            template<>
+            constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 2;
 
-        template<>
-        constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 2;
+            template<>
+            constexpr std::size_t iterator_category_value<std::bidirectional_iterator_tag> = 1;
 
-        template<>
-        constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 1;
-
-        template<>
-        constexpr std::size_t iterator_category_value<std::input_iterator_tag> = 0;
+            template<>
+            constexpr std::size_t iterator_category_value<std::forward_iterator_tag> = 0;
+        }
 
         // Avoid just a bit of redundancy
         template<typename Iterator, std::size_t N>

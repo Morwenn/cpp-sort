@@ -108,26 +108,28 @@ matrix:
 
     # OSX clang
     - os: osx
-      osx_image: xcode9.2
-      env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Xcode"
+      osx_image: xcode9.4
+      env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Ninja"
       addons:
         homebrew:
           update: true
           packages:
             - ccache
             - cmake
+            - ninja
             - valgrind
       compiler: clang
 
     - os: osx
-      osx_image: xcode8.3
-      env: BUILD_TYPE=Release CMAKE_GENERATOR="Xcode"
+      osx_image: xcode9.4
+      env: BUILD_TYPE=Release CMAKE_GENERATOR="Ninja"
       addons:
         homebrew:
           update: true
           packages:
             - ccache
             - cmake
+            - ninja
       compiler: clang
 
     # Windows GCC
@@ -154,27 +156,6 @@ matrix:
             - lcov
       compiler: gcc
 
-    # Conan
-    - os: linux
-      sudo: required
-      language: python
-      python: "3.6"
-      if: branch = master
-      env: CC=clang CXX=clang++
-      addons:
-        apt:
-          <<: *apt-common
-          packages:
-            - *gcc
-      install:
-        - pip install conan
-      script:
-        - conan create . morwenn/stable
-      after_success:
-        - conan remote add bintray https://api.bintray.com/conan/morwenn/cpp-sort
-        - conan user -r bintray -p ${CONAN_PASSWORD} morwenn
-        - conan upload --all -r bintray cpp-sort/1.5.1@morwenn/stable
-
 before_install:
   - if [[ $TRAVIS_OS_NAME = "linux" && $CXX = "clang++" ]]; then
         sudo ln -s $(which ccache) /usr/lib/ccache/clang++;
@@ -186,8 +167,8 @@ install:
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
         export PATH="/usr/local/opt/ccache/libexec:$PATH";
     fi
-  - if [[ $CXX = "g++" ]]; then export CXX="g++-5"; fi
-  - if [[ $CXX = "clang++" ]]; then export CXX="clang++-3.8"; fi
+  - if [[ $CXX = "g++" && $TRAVIS_OS_NAME != "osx" ]]; then export CXX="g++-5"; fi
+  - if [[ $CXX = "clang++" && $TRAVIS_OS_NAME != "osx" ]]; then export CXX="clang++-3.8"; fi
 
 script:
   - cmake -H. -Bbuild
@@ -198,9 +179,10 @@ script:
           -DENABLE_COVERAGE=${ENABLE_COVERAGE}
           -G"${CMAKE_GENERATOR}"
           -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+          -DBUILD_EXAMPLES=ON
   - mtime_cache -g mtime_cache_globs.txt -c .mtime_cache/cache.json
   - if [[ $TRAVIS_OS_NAME = "osx" ]]; then
-        cmake --build build --config ${BUILD_TYPE} -j 2;
+        cmake --build build --config ${BUILD_TYPE};
     else
         cmake --build build --config ${BUILD_TYPE} -- -j2;
     fi

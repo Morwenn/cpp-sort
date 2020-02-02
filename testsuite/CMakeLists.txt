@@ -1,4 +1,10 @@
+include(cpp-sort-utils)
 include(DownloadProject)
+
+# Test suite options
+option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
+option(ENABLE_COVERAGE "Whether to produce code coverage" OFF)
+set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 
 # Download and configure Catch2 for the tests
 download_project(PROJ Catch2
@@ -10,11 +16,75 @@ add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
 list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 include(Catch)
 
-# Define test files
+macro(configure_tests target)
+    target_link_libraries(${target} PRIVATE
+        Catch2::Catch2
+        cpp-sort::cpp-sort
+    )
 
-set(
-    ADAPTERS_TESTS
+    target_compile_definitions(${target} PRIVATE
+        # Somewhat speed up Catch2 compile times
+        CATCH_CONFIG_FAST_COMPILE
+        CATCH_CONFIG_DISABLE_MATCHERS
+        # Enable assertions for more thorough tests
+        CPPSORT_ENABLE_ASSERTIONS
+    )
 
+    # More warnings and settings
+    cppsort_add_warnings(${target})
+    target_compile_options(${target} PRIVATE
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-O0>
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-Og>
+    )
+
+    # Use lld or the gold linker if possible
+    if (UNIX AND NOT APPLE)
+        if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
+        else()
+            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
+        endif()
+    endif()
+
+    # Optionally enable sanitizers
+    if (UNIX AND SANITIZE)
+        target_compile_options(${target} PRIVATE
+            -fsanitize=${SANITIZE}
+            -fno-sanitize-recover=all
+        )
+        set_property(TARGET ${target}
+            APPEND_STRING PROPERTY LINK_FLAGS
+                " -fsanitize=${SANITIZE}"
+        )
+    endif()
+
+    if (ENABLE_COVERAGE)
+        find_package(codecov)
+        add_coverage(${target})
+
+        # Set flags specific to coverage builds
+        target_compile_options(${target} PRIVATE --coverage)
+        set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
+    endif()
+endmacro()
+
+add_executable(main-tests
+    # General tests
+    main.cpp
+    every_instantiated_sorter.cpp
+    every_sorter.cpp
+    every_sorter_internal_compare.cpp
+    every_sorter_long_string.cpp
+    every_sorter_move_only.cpp
+    every_sorter_no_post_iterator.cpp
+    every_sorter_span.cpp
+    is_stable.cpp
+    rebind_iterator_category.cpp
+    sorter_facade.cpp
+    sorter_facade_defaults.cpp
+    sorter_facade_iterable.cpp
+
+    # Adapters tests
     adapters/container_aware_adapter.cpp
     adapters/container_aware_adapter_forward_list.cpp
     adapters/container_aware_adapter_list.cpp
@@ -40,20 +110,14 @@ set(
     adapters/small_array_adapter_is_stable.cpp
     adapters/stable_adapter_every_sorter.cpp
     adapters/verge_adapter_every_sorter.cpp
-)
 
-set(
-    COMPARATORS_TESTS
-
+    # Comparators tests
     comparators/case_insensitive_less.cpp
     comparators/natural_less.cpp
     comparators/total_less.cpp
     comparators/transparent_comparators.cpp
-)
 
-set(
-    DISTRIBUTIONS_TESTS
-
+    # Distributions tests
     distributions/all_equal.cpp
     distributions/alternating.cpp
     distributions/alternating_16_values.cpp
@@ -66,11 +130,8 @@ set(
     distributions/push_middle.cpp
     distributions/shuffled.cpp
     distributions/shuffled_16_values.cpp
-)
 
-set(
-    PROBES_TESTS
-
+    # Probes tests
     probes/dis.cpp
     probes/enc.cpp
     probes/exc.cpp
@@ -83,11 +144,8 @@ set(
     probes/rem.cpp
     probes/runs.cpp
     probes/relations.cpp
-)
 
-set(
-    SORTERS_TESTS
-
+    # Sorters tests
     sorters/counting_sorter.cpp
     sorters/default_sorter.cpp
     sorters/default_sorter_fptr.cpp
@@ -98,15 +156,13 @@ set(
     sorters/poplar_sorter.cpp
     sorters/ska_sorter.cpp
     sorters/ska_sorter_projection.cpp
+    sorters/spin_sorter.cpp
     sorters/spread_sorter.cpp
     sorters/spread_sorter_defaults.cpp
     sorters/spread_sorter_projection.cpp
     sorters/std_sorter.cpp
-)
 
-set(
-    UTILITY_TESTS
-
+    # Utilities tests
     utility/adapter_storage.cpp
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
@@ -114,98 +170,29 @@ set(
     utility/buffer.cpp
     utility/iter_swap.cpp
 )
+configure_tests(main-tests)
 
-# Make one executable for the whole testsuite
-add_executable(
-    cpp-sort-testsuite
-
-    main.cpp
-    every_instantiated_sorter.cpp
-    every_sorter.cpp
-    every_sorter_internal_compare.cpp
-    every_sorter_long_string.cpp
-    every_sorter_move_only.cpp
-    every_sorter_no_post_iterator.cpp
-    every_sorter_span.cpp
-    is_stable.cpp
-    rebind_iterator_category.cpp
-    sorter_facade.cpp
-    sorter_facade_defaults.cpp
-    sorter_facade_iterable.cpp
-    ${ADAPTERS_TESTS}
-    ${COMPARATORS_TESTS}
-    ${DISTRIBUTIONS_TESTS}
-    ${PROBES_TESTS}
-    ${SORTERS_TESTS}
-    ${UTILITY_TESTS}
-)
-
-target_link_libraries(cpp-sort-testsuite
-    PRIVATE
-        Catch2::Catch2
-        cpp-sort::cpp-sort
-)
-
-# Somewhat speed up Catch2 compile times
-target_compile_definitions(cpp-sort-testsuite
-    PRIVATE
-        CATCH_CONFIG_FAST_COMPILE
-        CATCH_CONFIG_DISABLE_MATCHERS
-)
-
-# General settings, mostly warnings
-target_compile_options(cpp-sort-testsuite
-    PRIVATE
-        -Wall -Wextra -Wcast-align -Winline -Wmissing-declarations -Wmissing-include-dirs
-        -Wnon-virtual-dtor -Wodr -Wpedantic -Wredundant-decls -Wundef -Wunreachable-code
-        $<$<CXX_COMPILER_ID:GNU>:-Wlogical-op -Wuseless-cast -Wzero-as-null-pointer-constant>
-        # The warning when initializing an std::array is just too much of a bother
-        $<$<CXX_COMPILER_ID:Clang>:-Wno-missing-braces>
-)
-
-# Settings depending on debug/release mode
-target_compile_options(cpp-sort-testsuite
-    PRIVATE
-        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>:-O0>
-        $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:GNU>>:-Og>
-)
-
-# Use lld or the gold linker if possible
-if (UNIX AND NOT APPLE)
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
-    else()
-        set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
-    endif()
+if (NOT "${SANITIZE}" MATCHES "address|memory")
+    add_executable(heap-memory-exhaustion-tests
+        # These tests are in a separate executable because we replace
+        # the global [de]allocation functions in order to test the
+        # algorithms that have a fallback when heap exhaustion occurs,
+        # which isn't something we want for the main tests
+        main.cpp
+        new_delete.cpp
+        heap_memory_exhaustion.cpp
+    )
+    configure_tests(heap-memory-exhaustion-tests)
 endif()
 
-# Optionally enable sanitizers
-if (UNIX AND SANITIZE)
-    target_compile_options(cpp-sort-testsuite PRIVATE
-        -fsanitize=${SANITIZE}
-        -fno-sanitize-recover=all
-    )
-    set_property(
-        TARGET
-            cpp-sort-testsuite
-        APPEND_STRING PROPERTY LINK_FLAGS
-            " -fsanitize=${SANITIZE}"
-    )
-endif()
-
+# Configure coverage
 if (ENABLE_COVERAGE)
-    find_package(codecov)
-    add_coverage(cpp-sort-testsuite)
-
-    # Set flags specific to coverage builds
-    target_compile_options(cpp-sort-testsuite PRIVATE --coverage)
-    set_property(TARGET cpp-sort-testsuite APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
-
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
 
+# Configure Valgrind
 if (USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
@@ -217,4 +204,7 @@ endif()
 include(CTest)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
-catch_discover_tests(cpp-sort-testsuite EXTRA_ARGS --rng-seed ${RNG_SEED})
+catch_discover_tests(main-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+if (NOT "${SANITIZE}" MATCHES "address|memory")
+    catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+endif()

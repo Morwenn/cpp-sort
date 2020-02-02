@@ -1,7 +1,7 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.5.1-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
-[![Conan Package](https://img.shields.io/badge/conan-1.5.1-blue.svg)](https://bintray.com/morwenn/cpp-sort/cpp-sort%3Amorwenn)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.6.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Conan Package](https://img.shields.io/badge/conan-1.6.0-blue.svg)](https://bintray.com/conan/conan-center/cpp-sort%3A_)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+[![License](https://img.shields.io/:license-mit-blue.svg)](https://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
@@ -110,40 +110,31 @@ These results were generated with MinGW g++ 6.1.0 with the compiler options
 introduction look good. You can find more commented benchmarks in the [dedicated
 wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
-# Compiler support
+# Compiler support & tooling
 
 **cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
-or more recent versions of these compilers. So far, the build matrix + home tests give
-the following supports:
-* Works on Linux with both g++5 and clang++3.8
-* Works on OSX with Xcode 8
-* Works on Windows with MinGW-w64 g++5
-* Works with both libstdc++ and libc++
-* Passes Valgrind checks on Linux and OSX, with every tested compiler
-* Passes undefined sanitizer checks on Linux with both g++ and clang++
-* Passes address sanitizers checks on Linux with clang++
+or more recent versions of these compilers. So far, the library should work with the
+following compilers:
+* g++5 or more recent
+* MinGW-w64 g++5 or more recent
+* clang++3.8 or more recent
+* AppleClang shipping with Xcode 9.4 (used to work with older versions but they aren't tested anymore)
+* It is notably tested with both libstdc++ and libc++
 
-Last time I tried it did not work with MSVC 2017. Future development on the C++14 branch
-will try to remain compatible with the compiler versions listed above. Some sanitizer tests
-are not listed above, not because they trigger error, but because I didn't manage to make
-them build properly.
+The compilers listed above are the ones tested specifically, and the library is also tested with
+the most recent versions of those compilers on a regular basis. All the other compiler versions
+in-between are untested, but should also work. Feel free to open an issue if it isn't the case.
 
-The repository also contains an experimental [C++17 branch](https://github.com/Morwenn/cpp-sort/tree/c++17)
-which requires the most recent versions of g++ and clang++, and will probably require even
-more recent versions until the C++17 support of both compilers is stable enough. It is
-worth noting that code written against the C++14 branch is not guaranteed to work with the
-C++17 branch as the new language and standard library features replaced some of the utility
-headers; those changes [are documented](https://github.com/Morwenn/cpp-sort/wiki/Changelog).
-The C++17 branch already has more features than the C++14 one, and will at some point have
-significant features that the C++14 branch won't have, such as proper handling of execution
-policies to implement parallel sorting algorithms. At some later point in the future, the
-C++17 branch will likely become the main branch, and the C++14 branch will only receive bug
-fixes and smallish updates.
+Last time I tried it did not work with the latest MSVC. Future development on the C++14 branch
+will try to remain compatible with the compiler versions listed above. I might try to make it
+work with it in the future.
 
-The long-term goal is to make the library evolve with the C++ standard, and the kind of
-differences that already exist between the C++14 and C++17 branches will also exist between
-the future branches. Some features such as concepts and standard ranges will likely shape the
-future of the library.
+The features in the library might differ depending on the C++ version used and on the compiler
+extensions enabled. Those changes [are documented](https://github.com/Morwenn/cpp-sort/wiki/Changelog)
+in the wiki.
+
+The main repository contains additional support for standard tooling such as CMake or Conan;
+you can read more about those [in the wiki](https://github.com/Morwenn/cpp-sort/wiki/Tooling).
 
 # Thanks
 
@@ -167,7 +158,7 @@ parts of the benchmarks come from there as well.
 of a Timsort](https://github.com/gfx/cpp-TimSort).
 
 * The three algorithms used by `spread_sorter` come from Steven Ross [Boost.Sort
-module](http://www.boost.org/doc/libs/1_59_0/libs/sort/doc/html/index.html).
+module](https://www.boost.org/doc/libs/1_71_0/libs/sort/doc/html/index.html).
 
 * [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function),
 [`utility::static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const),
@@ -185,7 +176,7 @@ reimplementation](https://github.com/adrian17/cpp-drop-merge-sort) of Emil Erner
 [drop-merge sort](https://github.com/emilk/drop-merge-sort).
 
 * Many enhanced standard algorithms are directly adapted from their counterparts
-in [libc++](http://libcxx.llvm.org/), enhanced to handle both projections and
+in [libc++](https://libcxx.llvm.org/), enhanced to handle both projections and
 proxy iterators.
 
 * The library internally uses an `inplace_merge` function that works with forward
@@ -209,7 +200,7 @@ of the algorithm.
 [GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
 
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
-Perl's [`Algorithm::Networksort` module](http://search.cpan.org/~jgamble/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
+Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
 
 * The algorithms 17 and 18 used by `sorting_network_sorter` correspond to the ones found
 by Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
@@ -221,9 +212,9 @@ Huge thanks for this contribution :) You can find a full list of most well-known
 networks up to 32 inputs on his website.
 
 * Some of the optimizations used by `sorting_network_sorter` come from [this
-discussion](http://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
+discussion](https://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
 backed by the article [*Applying Sorting Networks to Synthesize Optimized Sorting
-Libraries*](http://arxiv.org/abs/1505.01962).
+Libraries*](https://arxiv.org/abs/1505.01962).
 
 * The LaTeX scripts used to draw the sorting networks are modified versions of
 kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),

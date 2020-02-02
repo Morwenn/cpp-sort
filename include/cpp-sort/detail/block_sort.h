@@ -3,7 +3,6 @@
  * https://github.com/BonzaiThePenguin/WikiSort
  *
  * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
- *
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
 #define CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -12,7 +11,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <iterator>
@@ -21,6 +19,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
+#include "config.h"
 #include "inplace_merge.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
@@ -577,7 +576,7 @@ namespace detail
                         for (last = A.start, count = 1; count < find ; last = index, (void) ++count) {
                             index = FindLastForward(std::next(last), A.end, *last, compare, projection, find - count);
                             if (index == A.end) break;
-                            assert(index < A.end);
+                            CPPSORT_ASSERT(index < A.end);
                         }
                         index = last;
 
@@ -621,7 +620,7 @@ namespace detail
                         for (last = std::prev(B.end), count = 1; count < find; last = std::prev(index), (void) ++count) {
                             index = FindFirstBackward(B.start, last, *last, compare, projection, find - count);
                             if (index == B.start) break;
-                            assert(index > B.start);
+                            CPPSORT_ASSERT(index > B.start);
                         }
                         index = last;
 
@@ -703,7 +702,7 @@ namespace detail
 
                     // the first buffer NEEDS to be large enough to tag each of the evenly sized A blocks,
                     // so this was originally here to test the math for adjusting block_size above
-                    //assert((iterator.length() + 1)/block_size <= buffer_size);
+                    //CPPSORT_ASSERT((iterator.length() + 1)/block_size <= buffer_size);
 
                     // now that the two internal buffers have been created, it's time to merge each A+B combination at this level of the merge sort!
                     iterator.begin();

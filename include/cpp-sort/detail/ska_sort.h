@@ -1,5 +1,5 @@
 //          Copyright Malte Skarupke 2016.
-// Modified in 2017-2018 by Morwenn for inclusion into cpp-sort.
+// Modified in 2017-2019 by Morwenn for inclusion into cpp-sort.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -129,21 +129,18 @@ namespace detail
     }
 
 #ifdef __SIZEOF_INT128__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-    inline auto to_unsigned_or_bool(__int128 l)
+    inline auto to_unsigned_or_bool(__int128_t l)
         -> unsigned long long
     {
-        return static_cast<unsigned __int128>(l)
-             + static_cast<unsigned __int128>(__int128(1) << (CHAR_BIT * sizeof(__int128) - 1));
+        return static_cast<__uint128_t>(l)
+             + static_cast<__uint128_t>(__int128_t(1) << (CHAR_BIT * sizeof(__int128_t) - 1));
     }
 
-    inline auto to_unsigned_or_bool(unsigned __int128 l)
-        -> unsigned __int128
+    inline auto to_unsigned_or_bool(__uint128_t l)
+        -> __uint128_t
     {
         return l;
     }
-#pragma GCC diagnostic pop
 #endif
 
     inline auto to_unsigned_or_bool(float f)
@@ -273,14 +270,11 @@ namespace detail
     };
 
 #ifdef __SIZEOF_INT128__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
     template<>
     struct UnsignedForSize<16>
     {
-        using type = unsigned __int128;
+        using type = __uint128_t;
     };
-#pragma GCC diagnostic pop
 #endif
 
     template<typename T>
@@ -891,13 +885,10 @@ namespace detail
     {};
 
 #ifdef __SIZEOF_INT128__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
     template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold, typename CurrentSubKey>
-    struct InplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, unsigned __int128>:
+    struct InplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, __uint128_t>:
         UnsignedInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, 16>
     {};
-#pragma GCC diagnostic pop
 #endif
 
     template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold,

@@ -44,6 +44,7 @@ TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function compari
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::spin_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,

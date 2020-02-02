@@ -1,5 +1,10 @@
-from conans import ConanFile, CMake, tools
-import os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os.path
+
+from conans import ConanFile, CMake
+
 
 class CppsortTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
@@ -11,5 +16,5 @@ class CppsortTestConan(ConanFile):
         cmake.build()
 
     def test(self):
-        os.chdir("bin")
-        self.run(".%sexample" % os.sep)
+        bin_path = os.path.join("bin", "test_package")
+        self.run(bin_path, run_environment=True)

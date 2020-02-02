@@ -1,10 +1,12 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
@@ -44,6 +46,13 @@ int main()
 {
     using namespace std::chrono_literals;
 
+    // Always use a steady clock
+    using clock_type = std::conditional_t<
+        std::chrono::high_resolution_clock::is_steady,
+        std::chrono::high_resolution_clock,
+        std::chrono::steady_clock
+    >;
+
     std::pair<std::string, distr_f<std::vector, value_t>> distributions[] = {
         { "shuffled",               shuffled()              },
         { "shuffled_16_values",     shuffled_16_values()    },
@@ -75,8 +84,8 @@ int main()
             for (auto size: sizes) {
                 std::vector<std::uint64_t> cycles;
 
-                auto total_start = std::chrono::high_resolution_clock::now();
-                auto total_end = std::chrono::high_resolution_clock::now();
+                auto total_start = clock_type::now();
+                auto total_end = clock_type::now();
                 while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 5s) {
                     std::vector<value_t> collection;
                     distribution.second(std::back_inserter(collection), size);
@@ -85,7 +94,7 @@ int main()
                     std::uint64_t end = rdtsc();
                     assert(std::is_sorted(std::begin(collection), std::end(collection)));
                     cycles.push_back(double(end - start) / size + 0.5);
-                    total_end = std::chrono::high_resolution_clock::now();
+                    total_end = clock_type::now();
                 }
 
                 std::sort(std::begin(cycles), std::end(cycles));

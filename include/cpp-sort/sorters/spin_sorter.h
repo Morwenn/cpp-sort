@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
-#define CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
+#ifndef CPPSORT_SORTERS_SPIN_SORTER_H_
+#define CPPSORT_SORTERS_SPIN_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -33,27 +33,20 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/functional.h>
-#include "../detail/vergesort.h"
+#include <cpp-sort/utility/static_const.h>
+#include "../detail/iterator_traits.h"
+#include "../detail/spinsort.h"
 
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
-    // Adapter
+    // Sorter
 
     namespace detail
     {
-        template<typename FallbackSorter>
-        struct verge_adapter_impl:
-            utility::adapter_storage<FallbackSorter>
+        struct spin_sorter_impl
         {
-            verge_adapter_impl() = default;
-
-            constexpr explicit verge_adapter_impl(FallbackSorter&& sorter):
-                utility::adapter_storage<FallbackSorter>(std::move(sorter))
-            {}
-
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
@@ -71,12 +64,11 @@ namespace cppsort
                         std::random_access_iterator_tag,
                         iterator_category_t<RandomAccessIterator>
                     >::value,
-                    "verge_adapter requires at least random-access iterators"
+                    "spin_sorter requires at least random-access iterators"
                 );
 
-                vergesort(std::move(first), std::move(last),
-                          std::move(compare), std::move(projection),
-                          this->get());
+                spinsort(std::move(first), std::move(last),
+                         std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////
@@ -87,16 +79,18 @@ namespace cppsort
         };
     }
 
-    template<typename FallbackSorter>
-    struct verge_adapter:
-        sorter_facade<detail::verge_adapter_impl<FallbackSorter>>
-    {
-        verge_adapter() = default;
+    struct spin_sorter:
+        sorter_facade<detail::spin_sorter_impl>
+    {};
 
-        constexpr explicit verge_adapter(FallbackSorter sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter>>(std::move(sorter))
-        {}
-    };
+    ////////////////////////////////////////////////////////////
+    // Sort function
+
+    namespace
+    {
+        constexpr auto&& spin_sort
+            = utility::static_const<spin_sorter>::value;
+    }
 }
 
-#endif // CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
+#endif // CPPSORT_SORTERS_SPIN_SORTER_H_

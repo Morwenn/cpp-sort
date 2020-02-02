@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort.
+ * Copyright (c) 2015-2019 Morwenn.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -33,7 +33,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cassert>
 #include <iterator>
 #include <memory>
 #include <new>
@@ -42,6 +41,7 @@
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "memory.h"
@@ -80,7 +80,7 @@ namespace detail
         static constexpr int min_merge = 32;
         static constexpr int min_gallop = 7;
 
-        int minGallop_ = min_gallop;
+        difference_type minGallop_ = min_gallop;
 
         // Buffer used for merges
         std::unique_ptr<rvalue_reference, operator_deleter> buffer;
@@ -94,7 +94,7 @@ namespace detail
         static auto sort(iterator const lo, iterator const hi, Compare compare, Projection projection)
             -> void
         {
-            assert( lo <= hi );
+            CPPSORT_ASSERT(lo <= hi);
 
             difference_type nRemaining = std::distance(lo, hi);
             if (nRemaining < 2) {
@@ -126,17 +126,17 @@ namespace detail
                 nRemaining -= runLen;
             } while (nRemaining != 0);
 
-            assert( cur == hi );
+            CPPSORT_ASSERT(cur == hi);
             ts.mergeForceCollapse(compare, projection);
-            assert( ts.pending_.size() == 1 );
+            CPPSORT_ASSERT(ts.pending_.size() == 1);
         } // sort()
 
         static auto binarySort(iterator const lo, iterator const hi, iterator start,
                                Compare compare, Projection projection)
             -> void
         {
-            assert( lo <= start );
-            assert( start <= hi );
+            CPPSORT_ASSERT(lo <= start);
+            CPPSORT_ASSERT(start <= hi);
 
             using utility::iter_move;
             auto&& proj = utility::as_function(projection);
@@ -145,7 +145,7 @@ namespace detail
                 ++start;
             }
             for (; start < hi; ++start) {
-                assert(lo <= start);
+                CPPSORT_ASSERT(lo <= start);
                 auto pivot = iter_move(start);
 
                 iterator const pos = upper_bound(lo, start, proj(pivot), compare, projection);
@@ -160,7 +160,7 @@ namespace detail
                                              Compare compare, Projection projection)
             -> difference_type
         {
-            assert( lo < hi );
+            CPPSORT_ASSERT(lo < hi);
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -186,7 +186,7 @@ namespace detail
         static auto minRunLength(difference_type n)
             -> difference_type
         {
-            assert( n >= 0 );
+            CPPSORT_ASSERT(n >= 0);
 
             difference_type r = 0;
             while (n >= min_merge) {
@@ -241,18 +241,18 @@ namespace detail
             -> void
         {
             difference_type const stackSize = pending_.size();
-            assert( stackSize >= 2 );
-            assert( i >= 0 );
-            assert( i == stackSize - 2 || i == stackSize - 3 );
+            CPPSORT_ASSERT(stackSize >= 2);
+            CPPSORT_ASSERT(i >= 0);
+            CPPSORT_ASSERT(i == stackSize - 2 || i == stackSize - 3);
 
             iterator base1 = pending_[i].base;
             difference_type len1 = pending_[i].len;
             iterator base2 = pending_[i + 1].base;
             difference_type len2 = pending_[i + 1].len;
 
-            assert( len1 > 0 );
-            assert( len2 > 0 );
-            assert( base1 + len1 == base2 );
+            CPPSORT_ASSERT(len1 > 0);
+            CPPSORT_ASSERT(len2 > 0);
+            CPPSORT_ASSERT(base1 + len1 == base2);
 
             pending_[i].len = len1 + len2;
 
@@ -263,7 +263,7 @@ namespace detail
             pending_.pop_back();
 
             difference_type const k = gallopRight(*base2, base1, len1, 0, compare, projection);
-            assert( k >= 0 );
+            CPPSORT_ASSERT(k >= 0);
 
             base1 += k;
             len1 -= k;
@@ -273,7 +273,7 @@ namespace detail
             }
 
             len2 = gallopLeft(base1[len1 - 1], base2, len2, len2 - 1, compare, projection);
-            assert( len2 >= 0 );
+            CPPSORT_ASSERT(len2 >= 0);
             if (len2 == 0) {
                 return;
             }
@@ -291,9 +291,9 @@ namespace detail
                         Compare compare, Projection projection)
             -> difference_type
         {
-            assert( len > 0 );
-            assert( hint >= 0 );
-            assert( hint < len );
+            CPPSORT_ASSERT(len > 0);
+            CPPSORT_ASSERT(hint >= 0);
+            CPPSORT_ASSERT(hint < len);
 
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
@@ -337,9 +337,9 @@ namespace detail
                 lastOfs = hint - ofs;
                 ofs = hint - tmp;
             }
-            assert( -1 <= lastOfs );
-            assert( lastOfs < ofs );
-            assert( ofs <= len );
+            CPPSORT_ASSERT(-1 <= lastOfs);
+            CPPSORT_ASSERT(lastOfs < ofs);
+            CPPSORT_ASSERT(ofs <= len);
 
             return lower_bound(base+(lastOfs+1), base+ofs, key_proj, compare, projection) - base;
         }
@@ -349,9 +349,9 @@ namespace detail
                          Compare compare, Projection projection)
             -> difference_type
         {
-            assert( len > 0 );
-            assert( hint >= 0 );
-            assert( hint < len );
+            CPPSORT_ASSERT(len > 0);
+            CPPSORT_ASSERT(hint >= 0);
+            CPPSORT_ASSERT(hint < len);
 
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
@@ -395,9 +395,9 @@ namespace detail
                 lastOfs += hint;
                 ofs += hint;
             }
-            assert( -1 <= lastOfs );
-            assert( lastOfs < ofs );
-            assert( ofs <= len );
+            CPPSORT_ASSERT(-1 <= lastOfs);
+            CPPSORT_ASSERT(lastOfs < ofs);
+            CPPSORT_ASSERT(ofs <= len);
 
             return upper_bound(base+(lastOfs+1), base+ofs, key_proj, compare, projection) - base;
         }
@@ -423,9 +423,9 @@ namespace detail
                      Compare compare, Projection projection)
             -> void
         {
-            assert( len1 > 0 );
-            assert( len2 > 0 );
-            assert( base1 + len1 == base2 );
+            CPPSORT_ASSERT(len1 > 0);
+            CPPSORT_ASSERT(len2 > 0);
+            CPPSORT_ASSERT(base1 + len1 == base2);
 
             using utility::iter_move;
             auto&& comp = utility::as_function(compare);
@@ -443,11 +443,7 @@ namespace detail
             resize_buffer(len1);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
-
-            rvalue_reference* ptr = buffer.get();
-            for (auto it = base1 ; it != base1 + len1 ; ++d, (void) ++it, ++ptr) {
-                ::new(ptr) rvalue_reference(iter_move(it));
-            }
+            uninitialized_move(base1, base1 + len1, buffer.get(), d);
 
             auto cursor1 = buffer.get();
             auto cursor2 = base2;
@@ -458,17 +454,17 @@ namespace detail
             ++cursor2;
             --len2;
 
-            int minGallop(minGallop_);
+            difference_type minGallop = minGallop_;
 
             // outer:
             while (true) {
-                int count1 = 0;
-                int count2 = 0;
+                difference_type count1 = 0;
+                difference_type count2 = 0;
 
                 bool break_outer = false;
                 do {
-                    assert( len1 > 1 );
-                    assert( len2 > 0 );
+                    CPPSORT_ASSERT(len1 > 1);
+                    CPPSORT_ASSERT(len2 > 0);
 
                     if (comp(proj(*cursor2), proj(*cursor1))) {
                         *dest = iter_move(cursor2);
@@ -498,8 +494,8 @@ namespace detail
                 }
 
                 do {
-                    assert( len1 > 1 );
-                    assert( len2 > 0 );
+                    CPPSORT_ASSERT(len1 > 1);
+                    CPPSORT_ASSERT(len2 > 0);
 
                     count1 = gallopRight(*cursor2, cursor1, len1, 0, compare, projection);
                     if (count1 != 0) {
@@ -552,17 +548,17 @@ namespace detail
                 minGallop += 2;
             } // end of "outer" loop
 
-            minGallop_ = std::min(minGallop, 1);
+            minGallop_ = std::min<difference_type>(minGallop, 1);
 
             if (len1 == 1) {
-                assert( len2 > 0 );
+                CPPSORT_ASSERT(len2 > 0);
                 detail::move(cursor2, cursor2 + len2, dest);
                 dest[len2] = iter_move(cursor1);
             }
             else {
-                assert( len1 != 0 && "comparison function violates its general contract" );
-                assert( len2 == 0 );
-                assert( len1 > 1 );
+                CPPSORT_ASSERT(len1 != 0 && "comparison function violates its general contract");
+                CPPSORT_ASSERT(len2 == 0);
+                CPPSORT_ASSERT(len1 > 1);
                 detail::move(cursor1, cursor1 + len1, dest);
             }
         }
@@ -571,9 +567,9 @@ namespace detail
                      Compare compare, Projection projection)
             -> void
         {
-            assert( len1 > 0 );
-            assert( len2 > 0 );
-            assert( base1 + len1 == base2 );
+            CPPSORT_ASSERT(len1 > 0);
+            CPPSORT_ASSERT(len2 > 0);
+            CPPSORT_ASSERT(base1 + len1 == base2);
 
             using utility::iter_move;
             auto&& comp = utility::as_function(compare);
@@ -591,51 +587,52 @@ namespace detail
             resize_buffer(len2);
             destruct_n<rvalue_reference> d(0);
             std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
+            uninitialized_move(base2, base2 + len2, buffer.get(), d);
 
-            rvalue_reference* ptr = buffer.get();
-            for (auto it = base2 ; it != base2 + len2 ; ++d, (void) ++it, ++ptr) {
-                ::new(ptr) rvalue_reference(iter_move(it));
-            }
-
-            auto cursor1 = base1 + (len1 - 1);
+            auto cursor1 = base1 + len1;
             auto cursor2 = buffer.get() + (len2 - 1);
             auto dest = base2 + (len2 - 1);
 
-            *dest = iter_move(cursor1);
+            *dest = iter_move(--cursor1);
             --dest;
-            --cursor1;
             --len1;
 
-            int minGallop( minGallop_ );
+            difference_type minGallop = minGallop_;
 
             // outer:
             while (true) {
-                int count1 = 0;
-                int count2 = 0;
+                difference_type count1 = 0;
+                difference_type count2 = 0;
+
+                // The next loop is a hot path of the algorithm, so we decrement
+                // eagerly the cursor so that it always points directly to the value
+                // to compare, but we have to implement some trickier logic to make
+                // sure that it points to the next value again by the end of said loop
+                --cursor1;
 
                 bool break_outer = false;
                 do {
-                    assert( len1 > 0 );
-                    assert( len2 > 1 );
+                    CPPSORT_ASSERT(len1 > 0);
+                    CPPSORT_ASSERT(len2 > 1);
 
                     if (comp(proj(*cursor2), proj(*cursor1))) {
                         *dest = iter_move(cursor1);
                         --dest;
-                        --cursor1;
                         ++count1;
                         count2 = 0;
                         if (--len1 == 0) {
                             break_outer = true;
                             break;
                         }
-                    }
-                    else {
+                        --cursor1;
+                    } else {
                         *dest = iter_move(cursor2);
                         --dest;
                         --cursor2;
                         ++count2;
                         count1 = 0;
                         if (--len2 == 1) {
+                            ++cursor1;
                             break_outer = true;
                             break;
                         }
@@ -643,18 +640,20 @@ namespace detail
                 } while ((count1 | count2) < minGallop);
                 if (break_outer) {
                     break;
+                } else {
+                    ++cursor1; // See comment before the loop
                 }
 
                 do {
-                    assert( len1 > 0 );
-                    assert( len2 > 1 );
+                    CPPSORT_ASSERT(len1 > 0);
+                    CPPSORT_ASSERT(len2 > 1);
 
                     count1 = len1 - gallopRight(*cursor2, base1, len1, len1 - 1, compare, projection);
                     if (count1 != 0) {
                         dest -= count1;
                         cursor1 -= count1;
                         len1 -= count1;
-                        detail::move_backward(cursor1 + 1, cursor1 + (1 + count1), dest + (1 + count1));
+                        detail::move_backward(cursor1, cursor1 + count1, dest + (1 + count1));
 
                         if (len1 == 0) {
                             break_outer = true;
@@ -669,7 +668,7 @@ namespace detail
                         break;
                     }
 
-                    count2 = len2 - gallopLeft(*cursor1, buffer.get(), len2, len2 - 1, compare, projection);
+                    count2 = len2 - gallopLeft(*std::prev(cursor1), buffer.get(), len2, len2 - 1, compare, projection);
                     if (count2 != 0) {
                         dest -= count2;
                         cursor2 -= count2;
@@ -680,9 +679,8 @@ namespace detail
                             break;
                         }
                     }
-                    *dest = iter_move(cursor1);
+                    *dest = iter_move(--cursor1);
                     --dest;
-                    --cursor1;
                     if (--len1 == 0) {
                         break_outer = true;
                         break;
@@ -700,18 +698,17 @@ namespace detail
                 minGallop += 2;
             } // end of "outer" loop
 
-            minGallop_ = std::min(minGallop, 1);
+            minGallop_ = std::min<difference_type>(minGallop, 1);
 
             if (len2 == 1) {
-                assert( len1 > 0 );
+                CPPSORT_ASSERT(len1 > 0);
                 dest -= len1;
-                detail::move_backward(cursor1 + (1 - len1), cursor1 + 1, dest + (1 + len1));
+                detail::move_backward(cursor1 - len1, cursor1, dest + (1 + len1));
                 *dest = iter_move(cursor2);
-            }
-            else {
-                assert( len2 != 0 && "comparison function violates its general contract");
-                assert( len1 == 0 );
-                assert( len2 > 1 );
+            } else {
+                CPPSORT_ASSERT(len2 != 0 && "comparison function violates its general contract");
+                CPPSORT_ASSERT(len1 == 0);
+                CPPSORT_ASSERT(len2 > 1);
                 detail::move(buffer.get(), buffer.get() + len2, dest - (len2 - 1));
             }
         }

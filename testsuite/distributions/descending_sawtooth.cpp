@@ -23,6 +23,7 @@
  */
 #include <algorithm>
 #include <iterator>
+#include <list>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sort.h>
@@ -31,7 +32,7 @@
 #include <cpp-sort/utility/functional.h>
 #include "../distributions.h"
 
-TEMPLATE_TEST_CASE( "test sorter with descending_sawtooth distribution", "[distributions]",
+TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distribution", "[distributions]",
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -49,6 +50,7 @@ TEMPLATE_TEST_CASE( "test sorter with descending_sawtooth distribution", "[distr
                     cppsort::quick_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::spin_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -59,6 +61,22 @@ TEMPLATE_TEST_CASE( "test sorter with descending_sawtooth distribution", "[distr
     collection.reserve(10'000);
     auto distribution = dist::descending_sawtooth{};
     distribution(std::back_inserter(collection), 10'000);
+
+    using sorter = TestType;
+    cppsort::sort(sorter{}, collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+}
+
+TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_sawtooth distribution", "[distributions]",
+                    cppsort::drop_merge_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::verge_sorter )
+{
+    std::list<int> collection;
+    auto distribution = dist::descending_sawtooth{};
+    distribution(std::back_inserter(collection), 1000);
 
     using sorter = TestType;
     cppsort::sort(sorter{}, collection);

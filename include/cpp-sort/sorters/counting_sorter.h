@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/counting_sort.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -48,7 +49,7 @@ namespace cppsort
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last) const
                 -> std::enable_if_t<
-                    std::is_integral<value_type_t<ForwardIterator>>::value
+                    detail::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
                 static_assert(
@@ -65,7 +66,7 @@ namespace cppsort
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
                 -> std::enable_if_t<
-                    std::is_integral<value_type_t<ForwardIterator>>::value
+                    detail::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
                 static_assert(

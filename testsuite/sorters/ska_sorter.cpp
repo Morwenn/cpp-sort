@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2018 Morwenn
+ * Copyright (c) 2017-2019 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,6 +49,17 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         cppsort::sort(cppsort::ska_sort, vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
+
+#ifdef __SIZEOF_INT128__
+    SECTION( "sort with unsigned int128 iterable" )
+    {
+        std::vector<__uint128_t> vec(100'000);
+        std::iota(std::begin(vec), std::end(vec), __uint128_t(0));
+        std::shuffle(std::begin(vec), std::end(vec), engine);
+        cppsort::sort(cppsort::ska_sort, vec);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+#endif
 
     SECTION( "sort with unsigned int iterators" )
     {
