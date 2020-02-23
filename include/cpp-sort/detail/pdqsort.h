@@ -2,7 +2,7 @@
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015-2017 Orson Peters
-    Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
+    Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.
@@ -78,9 +78,9 @@ namespace detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            for (RandomAccessIterator cur = begin + 1; cur != end; ++cur) {
-                RandomAccessIterator sift = cur;
-                RandomAccessIterator sift_1 = cur - 1;
+            for (auto cur = std::next(begin); cur != end; ++cur) {
+                auto sift = cur;
+                auto sift_1 = std::prev(cur);
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
@@ -111,12 +111,10 @@ namespace detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            int limit = 0;
-            for (RandomAccessIterator cur = begin + 1; cur != end; ++cur) {
-                if (limit > partial_insertion_sort_limit) return false;
-
-                RandomAccessIterator sift = cur;
-                RandomAccessIterator sift_1 = cur - 1;
+            difference_type_t<RandomAccessIterator> limit = 0;
+            for (auto cur = std::next(begin); cur != end; ++cur) {
+                auto sift = cur;
+                auto sift_1 = std::prev(cur);
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
@@ -130,6 +128,8 @@ namespace detail
                     *sift = std::move(tmp);
                     limit += cur - sift;
                 }
+
+                if (limit > partial_insertion_sort_limit) return false;
             }
 
             return true;
@@ -277,7 +277,7 @@ namespace detail
             }
 
             int l_size = 0, r_size = 0;
-            int unknown_left = (last - first) - ((num_r || num_l) ? block_size : 0);
+            int unknown_left = int(last - first) - ((num_r || num_l) ? block_size : 0);
             if (num_r) {
                 // Handle leftover block by assigning the unknown elements to the other block.
                 l_size = unknown_left;
