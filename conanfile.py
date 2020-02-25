@@ -14,11 +14,11 @@ class CppSortConan(ConanFile):
     author = "Morwenn <morwenn29@hotmail.fr>"
 
     # Minimal export (excludes tests, coverage, etc.)
+    exports = ["license.txt"]
     exports_sources = [
         "include/*",
         "CMakeLists.txt",
-        "cmake/cpp-sort-config.cmake.in",
-        "license.txt"
+        "cmake/cpp-sort-config.cmake.in"
     ]
     no_copy_source = True
 
