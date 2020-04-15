@@ -167,6 +167,7 @@ add_executable(main-tests
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
     utility/branchless_traits.cpp
+    utility/chainable_projections.cpp
     utility/buffer.cpp
     utility/iter_swap.cpp
 )
