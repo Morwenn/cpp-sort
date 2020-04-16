@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -142,8 +142,6 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
     // as_projection, as_comparison and some additional sorter_facade
     // overloads
 
-    struct wrapper { int value; };
-
     // Collection to sort
     std::vector<int> collection(100);
     std::iota(std::begin(collection), std::end(collection), 0);
@@ -157,7 +155,6 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
     SECTION( "comparison_sorter" )
     {
-        vec = collection;
         auto res1 = cppsort::sort(comp_sort, vec, func);
         CHECK( res1 == call::iterable );
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
@@ -217,7 +214,6 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
     SECTION( "projection_sorter" )
     {
-        vec = collection;
         auto res1 = cppsort::sort(proj_sort, vec, cppsort::utility::as_projection(func));
         CHECK( res1 == call::iterable );
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
