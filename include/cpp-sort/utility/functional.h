@@ -65,27 +65,6 @@ namespace utility
     // actually inherit from it
     struct projection_base {};
 
-    /*template<typename Function>
-    struct projection_base:
-        detail::projection_base_base
-    {
-        template<typename... Args>
-        auto operator()(Args&&... args)
-            -> cppsort::detail::invoke_result_t<Function&, Args...>
-        {
-            auto&& func = static_cast<Function&>(*this);
-            return func(std::forward<Args>(args)...);
-        }
-
-        template<typename... Args>
-        auto operator()(Args&&... args) const
-            -> cppsort::detail::invoke_result_t<const Function&, Args...>
-        {
-            auto&& func = static_cast<const Function&>(*this);
-            return func(std::forward<Args>(args)...);
-        }
-    };*/
-
     namespace detail
     {
         template<typename T, typename U>
