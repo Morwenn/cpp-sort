@@ -2,7 +2,7 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  *
- * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
 #define CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -58,7 +58,7 @@ namespace detail
     // combine a linear search with a binary search to reduce the number of comparisons in situations
     // where have some idea as to how many unique values there are and where the next value might be
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindFirstForward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+    auto FindFirstForward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                           Compare compare, Projection projection,
                           difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
@@ -70,7 +70,7 @@ namespace detail
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        auto&& value_proj = proj(value);
+        auto&& value_proj = proj(std::forward<T>(value));
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
@@ -85,7 +85,7 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindLastForward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+    auto FindLastForward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                          Compare compare, Projection projection,
                          difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
@@ -97,7 +97,7 @@ namespace detail
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        auto&& value_proj = proj(value);
+        auto&& value_proj = proj(std::forward<T>(value));
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
@@ -112,7 +112,7 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindFirstBackward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+    auto FindFirstBackward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                            Compare compare, Projection projection,
                            difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
@@ -124,7 +124,7 @@ namespace detail
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        auto&& value_proj = proj(value);
+        auto&& value_proj = proj(std::forward<T>(value));
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
@@ -139,7 +139,7 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
-    auto FindLastBackward(RandomAccessIterator first, RandomAccessIterator last, const T & value,
+    auto FindLastBackward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                           Compare compare, Projection projection,
                           difference_type_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
@@ -151,7 +151,7 @@ namespace detail
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        auto&& value_proj = proj(value);
+        auto&& value_proj = proj(std::forward<T>(value));
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;

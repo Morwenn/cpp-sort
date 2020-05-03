@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -308,7 +308,7 @@ namespace detail
         auto&& pivot1 = proj(*last_1);
         auto middle1 = detail::partition(
             first, last_1,
-            [&](const auto& elem) { return comp(proj(elem), pivot1); }
+            [&](auto&& elem) { return comp(proj(elem), pivot1); }
         );
 
         // Put the pivot in its final position and partition
@@ -316,7 +316,7 @@ namespace detail
         auto&& pivot2 = proj(*middle1);
         auto middle2 = detail::partition(
             std::next(middle1), last,
-            [&](const auto& elem) { return not comp(pivot2, proj(elem)); }
+            [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
         );
 
         // Recursive call: heuristic trick here: in real world cases,

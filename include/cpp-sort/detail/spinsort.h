@@ -3,7 +3,7 @@
 /// @brief Spin Sort algorithm
 ///
 /// @author Copyright (c) 2016 Francisco José Tapia (fjtapia@gmail.com )
-///         Modified in 2019 by Morwenn for inclusion into cpp-sort
+///         Modified in 2019-2020 by Morwenn for inclusion into cpp-sort
 ///         Distributed under the Boost Software License, Version 1.0.
 ///         ( See accompanying file LICENSE_1_0.txt or copy at
 ///           http://www.boost.org/LICENSE_1_0.txt  )
@@ -58,15 +58,23 @@ namespace detail
                 not_fn_t() = delete;
 
                 explicit not_fn_t(Predicate predicate):
-                    predicate(predicate)
+                    predicate(std::move(predicate))
                 {}
 
                 template<typename T1, typename T2>
-                auto operator()(const T1& x, const T2& y)
+                auto operator()(T1&& x, T2&& y)
                     -> bool
                 {
                     auto&& pred = utility::as_function(predicate);
-                    return not pred(x, y);
+                    return not pred(std::forward<T1>(x), std::forward<T2>(y));
+                }
+
+                template<typename T1, typename T2>
+                auto operator()(T1&& x, T2&& y) const
+                    -> bool
+                {
+                    auto&& pred = utility::as_function(predicate);
+                    return not pred(std::forward<T1>(x), std::forward<T2>(y));
                 }
         };
 

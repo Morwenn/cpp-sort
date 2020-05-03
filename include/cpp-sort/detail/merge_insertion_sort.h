@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cstdint>
 #include <iterator>
 #include <list>
@@ -44,6 +43,7 @@
 #include "swap_if.h"
 #include "swap_ranges.h"
 #include "type_traits.h"
+#include "upper_bound.h"
 
 #if __has_include(<ext/bitmap_allocator.h>)
 #   include <ext/bitmap_allocator.h>
@@ -98,6 +98,7 @@ namespace detail
 
             ////////////////////////////////////////////////////////////
             // Element access
+
 
             auto operator*() const
                 -> reference
@@ -393,11 +394,12 @@ namespace detail
                 --pe;
                 it -= 2;
 
-                auto insertion_point = std::upper_bound(
+                auto insertion_point = detail::upper_bound(
                     std::begin(chain), *pe, proj(*it),
-                    [=](const auto& lhs, const auto& rhs) mutable {
+                    [&](auto&& lhs, auto&& rhs) {
                         return comp(lhs, proj(*rhs));
-                    }
+                    },
+                    utility::identity{}
                 );
                 chain.insert(insertion_point, it);
             } while (pe != current_pend);
@@ -411,11 +413,12 @@ namespace detail
         // matter so forward traversal is ok
         while (current_pend != std::end(pend))
         {
-            auto insertion_point = std::upper_bound(
+            auto insertion_point = detail::upper_bound(
                 std::begin(chain), *current_pend, proj(*current_it),
-                [=](const auto& lhs, const auto& rhs) mutable {
+                [&](auto&& lhs, auto&& rhs) {
                     return comp(lhs, proj(*rhs));
-                }
+                },
+                utility::identity{}
             );
             chain.insert(insertion_point, current_it);
             current_it += 2;
