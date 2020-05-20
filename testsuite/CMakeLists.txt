@@ -92,6 +92,7 @@ add_executable(main-tests
     adapters/counting_adapter.cpp
     adapters/every_adapter_fptr.cpp
     adapters/every_adapter_internal_compare.cpp
+    adapters/every_adapter_non_const_compare.cpp
     adapters/every_adapter_stateful_sorter.cpp
     adapters/hybrid_adapter_is_stable.cpp
     adapters/hybrid_adapter_many_sorters.cpp

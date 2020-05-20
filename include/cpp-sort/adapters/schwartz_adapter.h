@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,17 @@ namespace cppsort
 {
     namespace detail
     {
+        struct data_getter
+        {
+            template<typename T>
+            constexpr auto operator()(T&& value) const noexcept
+                -> decltype(auto)
+            {
+                // Braces matter here
+                return (std::forward<T>(value).data);
+            }
+        };
+
         ////////////////////////////////////////////////////////////
         // Adapter
 
@@ -102,7 +113,7 @@ namespace cppsort
                     make_associate_iterator(projected.get()),
                     make_associate_iterator(projected.get() + size),
                     std::move(compare),
-                    [](const auto& value) -> auto& { return value.data; }
+                    data_getter{}
                 );
             }
 
