@@ -6,14 +6,22 @@ option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
 option(ENABLE_COVERAGE "Whether to produce code coverage" OFF)
 set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 
-# Download and configure Catch2 for the tests
-download_project(PROJ Catch2
-                 GIT_REPOSITORY https://github.com/catchorg/Catch2
-                 GIT_TAG master
-                 UPDATE_DISCONNECTED 1
-)
-add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
-list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
+# Find & configure Catch2 for the tests
+message(STATUS "Looking for Catch2 2.5.0+")
+find_package(Catch2 2.5.0 QUIET)  # At least TEMPLATE_TEST_CASE
+if (TARGET Catch2::Catch2)
+    get_target_property(Catch2_INCLUDE_DIRECTORY Catch2::Catch2 INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "Catch2 found: ${Catch2_INCLUDE_DIRECTORY}")
+else()
+    message(STATUS "Catch2 not found")
+    download_project(PROJ Catch2
+                     GIT_REPOSITORY https://github.com/catchorg/Catch2
+                     GIT_TAG master
+                     UPDATE_DISCONNECTED 1
+    )
+    add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
+    list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
+endif()
 include(Catch)
 
 macro(configure_tests target)
