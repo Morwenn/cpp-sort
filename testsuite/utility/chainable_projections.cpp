@@ -43,6 +43,15 @@ namespace
             return -value;
         }
     };
+
+    struct proj2:
+        cppsort::utility::projection_base
+    {
+        int operator()(int value)
+        {
+            return -value;
+        }
+    };
 }
 
 TEST_CASE( "Pipe a projection_base and function pointer",
@@ -53,15 +62,32 @@ TEST_CASE( "Pipe a projection_base and function pointer",
     std::mt19937_64 engine(Catch::rngSeed());
     std::shuffle(std::begin(vec), std::end(vec), engine);
 
-    proj1 projection;
+    proj1 projection1;
+    proj2 projection2;
 
-    // Basic check
-    cppsort::spin_sort(vec, &wrapper::value | projection);
-    CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
+    SECTION( "const projection" )
+    {
+        cppsort::spin_sort(vec, &wrapper::value | projection1);
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
+    }
 
-    // Check that the result is also a projection_base
-    cppsort::spin_sort(vec, &wrapper::value | projection | std::negate<>{});
-    CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
+    SECTION( "chained const projection" )
+    {
+        cppsort::spin_sort(vec, &wrapper::value | projection1 | std::negate<>{});
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
+    }
+
+    SECTION( "non-const projection" )
+    {
+        cppsort::spin_sort(vec, &wrapper::value | projection2);
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
+    }
+
+    SECTION( "chained non-const projection" )
+    {
+        cppsort::spin_sort(vec, &wrapper::value | projection2 | std::negate<>{});
+        CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
+    }
 }
 
 
@@ -73,12 +99,13 @@ TEST_CASE( "Pipe a projection_base several times",
     distribution(std::back_inserter(vec), 80, -38);
     auto vec2 = vec;
 
-    proj1 projection;
+    proj1 projection1;
+    proj2 projection2;
 
-    cppsort::spin_sort(vec, projection | projection);
+    cppsort::spin_sort(vec, projection1 | projection2);
     CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
-    cppsort::spin_sort(vec2, projection | projection | projection);
+    cppsort::spin_sort(vec2, projection2 | projection1 | projection2);
     CHECK( std::is_sorted(std::begin(vec2), std::end(vec2), std::greater<>{}) );
 }
 
