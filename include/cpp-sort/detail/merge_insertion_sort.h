@@ -29,7 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <cstdint>
 #include <iterator>
-#include <list>
 #include <new>
 #include <type_traits>
 #include <utility>
@@ -37,6 +36,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "fixed_size_list.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
@@ -44,10 +44,6 @@
 #include "swap_ranges.h"
 #include "type_traits.h"
 #include "upper_bound.h"
-
-#if __has_include(<ext/bitmap_allocator.h>)
-#   include <ext/bitmap_allocator.h>
-#endif
 
 namespace cppsort
 {
@@ -335,19 +331,14 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Separate main chain and pend elements
 
-#if __has_include(<ext/bitmap_allocator.h>)
-        using list_t = std::list<
-            group_iterator<RandomAccessIterator>,
-            __gnu_cxx::bitmap_allocator<group_iterator<RandomAccessIterator>>
-        >;
-#else
-        using list_t = std::list<group_iterator<RandomAccessIterator>>;
-#endif
+        using list_t = fixed_size_list<group_iterator<RandomAccessIterator>>;
 
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
-        list_t chain = { first, std::next(first) };
+        list_t chain(size);
+        chain.push_back(first);
+        chain.push_back(std::next(first));
 
         // Upper bounds for the insertion of pend elements
         std::vector<typename list_t::iterator> pend;
