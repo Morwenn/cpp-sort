@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2018 Morwenn
+ * Copyright (c) 2017-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -81,8 +81,8 @@ namespace utility
                 std::is_volatile<T>
             >::value,
             is_probably_branchless_comparison<
-                std::remove_cv_t<std::remove_reference_t<Compare>>,
-                std::remove_cv_t<std::remove_reference_t<T>>
+                cppsort::detail::remove_cvref_t<Compare>,
+                cppsort::detail::remove_cvref_t<T>
             >,
             detail::is_probably_branchless_comparison_impl<Compare, T>
         >
@@ -118,8 +118,8 @@ namespace utility
                 std::is_volatile<T>
             >::value,
             is_probably_branchless_projection<
-                std::remove_cv_t<std::remove_reference_t<Projection>>,
-                std::remove_cv_t<std::remove_reference_t<T>>
+                cppsort::detail::remove_cvref_t<Projection>,
+                cppsort::detail::remove_cvref_t<T>
             >,
             detail::is_probably_branchless_projection_impl<Projection, T>
         >
