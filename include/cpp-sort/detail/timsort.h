@@ -96,7 +96,7 @@ namespace detail
         {
             CPPSORT_ASSERT(lo <= hi);
 
-            difference_type nRemaining = std::distance(lo, hi);
+            difference_type nRemaining = hi - lo;
             if (nRemaining < 2) {
                 return; // nothing to do
             }

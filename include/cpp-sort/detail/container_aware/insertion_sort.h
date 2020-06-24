@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,14 +53,14 @@ namespace cppsort
         {
             auto&& proj = utility::as_function(projection);
 
-            auto it = std::begin(collection);
-            auto last = std::end(collection);
+            auto it = collection.begin();
+            auto last = collection.end();
             if (it == last) return;
 
             ++it;
             while (it != last)
             {
-                auto insertion_point = upper_bound(std::begin(collection), it, proj(*it),
+                auto insertion_point = upper_bound(collection.begin(), it, proj(*it),
                                                    compare, projection);
                 if (insertion_point == it)
                 {

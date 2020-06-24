@@ -4,7 +4,7 @@
     A C++ reimplementation of a drop-merge sort, originally made by Emil Ernerfeldt:
     https://github.com/emilk/drop-merge-sort
 
-    Modified in 2017-2019 by Morwenn for inclusion into cpp-sort
+    Modified in 2017-2020 by Morwenn for inclusion into cpp-sort
 
     There are two versions of this function.
 
@@ -118,7 +118,7 @@ namespace detail
         }
 
         // Sort the dropped elements
-        pdqsort(std::begin(dropped), std::end(dropped), compare, projection);
+        pdqsort(dropped.begin(), dropped.end(), compare, projection);
 
         auto back = end;
 

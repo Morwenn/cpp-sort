@@ -5,7 +5,7 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-//         Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
+//         Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 #ifndef CPPSORT_DETAIL_HEAPSORT_H_
@@ -14,7 +14,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -88,7 +87,7 @@ namespace detail
         -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
-        difference_type n = std::distance(first, last);
+        difference_type n = last - first;
         if (n > 1) {
             // start from the first parent, there is no need to consider children
             for (difference_type start = (n - 2) / 2; start >= 0; --start) {

@@ -1,7 +1,7 @@
 /*
  * File: Smoothsort.hh
  * Author: Keith Schwarz (htiek@cs.stanford.edu)
- *         Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
+ *         Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
  *
  * An implementation of Dijkstra's Smoothsort algorithm, a modification of
  * heapsort that runs in O(n lg n) in the worst case, but O(n) if the data
@@ -21,7 +21,6 @@
 #include <bitset>
 #include <cstddef>
 #include <cstdint>
-#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -215,7 +214,7 @@ namespace detail
           lastHeapSize = shape.smallestTreeSize;
 
           /* If this is the very first heap in the tree, we're done. */
-          if (std::size_t(std::distance(begin, itr)) == kLeonardoNumbers[lastHeapSize] - 1)
+          if (std::size_t(itr - begin) == kLeonardoNumbers[lastHeapSize] - 1)
             break;
 
           /* We want to swap the previous root with this one if it's strictly
@@ -374,7 +373,7 @@ namespace detail
            * room for the next Leonardo number and one extra element.
            */
         default:
-          if (std::size_t(std::distance(end + 1, heapEnd)) < kLeonardoNumbers[shape.smallestTreeSize - 1] + 1)
+          if (std::size_t(heapEnd - (end + 1)) < kLeonardoNumbers[shape.smallestTreeSize - 1] + 1)
             isLast = true;
           break;
         }
@@ -466,7 +465,7 @@ namespace detail
         -> void
     {
       /* Edge case: Check that the range isn't empty or a singleton. */
-      if (std::distance(begin, end) < 2) return;
+      if ((end - begin) < 2) return;
 
       /* Construct a shape object describing the empty heap. */
       smoothsort_detail::HeapShape shape;

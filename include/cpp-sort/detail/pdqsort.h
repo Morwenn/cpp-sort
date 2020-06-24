@@ -444,7 +444,7 @@ namespace detail
 
             // Use a while loop for tail recursion elimination.
             while (true) {
-                difference_type size = std::distance(begin, end);
+                difference_type size = end - begin;
 
                 // Insertion sort is faster for small arrays.
                 if (size < insertion_sort_threshold) {
@@ -486,8 +486,8 @@ namespace detail
                 bool already_partitioned = part_result.second;
 
                 // Check for a highly unbalanced partition.
-                difference_type l_size = std::distance(begin, pivot_pos);
-                difference_type r_size = std::distance(pivot_pos + 1, end);
+                difference_type l_size = pivot_pos - begin;
+                difference_type r_size = end - (pivot_pos + 1);
                 bool highly_unbalanced = l_size < size / 8 || r_size < size / 8;
 
                 // If we got a highly unbalanced partition we shuffle elements to break many patterns.
@@ -553,7 +553,7 @@ namespace detail
             utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
             utility::is_probably_branchless_projection_v<Projection, value_type>;
 
-        if (std::distance(begin, end) < 2) return;
+        if ((end - begin) < 2) return;
         pdqsort_detail::pdqsort_loop<RandomAccessIterator, Compare, Projection, is_branchless>(
             std::move(begin), std::move(end),
             std::move(compare), std::move(projection),

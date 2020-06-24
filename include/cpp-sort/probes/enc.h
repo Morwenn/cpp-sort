@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -77,7 +77,7 @@ namespace probe
                     bool value_is_smaller = true;
 
                     auto size = lists.size();
-                    auto res_it = std::begin(lists);
+                    auto res_it = lists.begin();
                     while (size > 0) {
                         auto it = res_it;
                         std::advance(it, size / 2);
@@ -93,7 +93,7 @@ namespace probe
                         }
                     }
 
-                    if (res_it != std::end(lists)) {
+                    if (res_it != lists.end()) {
                         // Change the head or tail of the found encroaching list
                         // if any has been found
                         if (value_is_smaller) {

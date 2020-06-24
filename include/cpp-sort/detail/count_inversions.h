@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -70,7 +69,7 @@ namespace detail
             if (comp(*first2, *first1)) {
                 *result = iter_move(first2);
                 ++first2;
-                inversions += std::distance(first1, middle);
+                inversions += middle - first1;
             } else {
                 *result = iter_move(first1);
                 ++first1;
@@ -80,7 +79,7 @@ namespace detail
         // Move everything back to the original array, note that
         // everything after first2 hasn't been moved to the cache
         // since it's already in its final place
-        detail::move(cache, cache + std::distance(first, first2), first);
+        detail::move(cache, cache + (first2 - first), first);
 
         return inversions;
     }
@@ -95,13 +94,13 @@ namespace detail
                           RandomAccessIterator2 cache, Compare compare)
         -> ResultType
     {
-        auto size = std::distance(first, last);
+        auto size = last - first;
         if (size < 2) {
             return 0;
         }
 
         ResultType inversions = 0;
-        auto middle = std::next(first, size / 2);
+        auto middle = first + size / 2;
 
         inversions += count_inversions<ResultType>(first, middle, cache, compare);
         inversions += count_inversions<ResultType>(middle, last, cache, compare);

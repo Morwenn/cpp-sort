@@ -51,7 +51,7 @@ namespace detail
         auto length() const
             -> difference_type_t<Iterator>
         {
-            return std::distance(start, end);
+            return end - start;
         }
     };
 
@@ -65,7 +65,7 @@ namespace detail
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
 
-        difference_type size = std::distance(first, last);
+        difference_type size = last - first;
         if (size == 0) return first;
 
         auto&& comp = utility::as_function(compare);
@@ -92,7 +92,7 @@ namespace detail
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
 
-        difference_type size = std::distance(first, last);
+        difference_type size = last - first;
         if (size == 0) return first;
 
         auto&& comp = utility::as_function(compare);
@@ -119,7 +119,7 @@ namespace detail
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
 
-        difference_type size = std::distance(first, last);
+        difference_type size = last - first;
         if (size == 0) return first;
 
         auto&& comp = utility::as_function(compare);
@@ -146,7 +146,7 @@ namespace detail
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
 
-        difference_type size = std::distance(first, last);
+        difference_type size = last - first;
         if (size == 0) return first;
 
         auto&& comp = utility::as_function(compare);
@@ -181,7 +181,7 @@ namespace detail
             // when this algorithm is finished, 'buffer' will contain its original contents, but in a different order
             RandomAccessIterator A_index = buffer;
             RandomAccessIterator B_index = first2;
-            RandomAccessIterator A_last = buffer + std::distance(first1, last1);
+            RandomAccessIterator A_last = buffer + (last1 - first1);
             RandomAccessIterator B_last = last2;
             RandomAccessIterator insert_index = first1;
 
@@ -242,7 +242,7 @@ namespace detail
                 RandomAccessIterator mid2 = lower_bound(middle, last, proj(*first), compare, projection);
 
                 // rotate A into place
-                auto amount = std::distance(middle, mid2);
+                auto amount = mid2 - middle;
                 detail::rotate(first, middle, mid2);
                 if (last == mid2) break;
 
@@ -337,7 +337,7 @@ namespace detail
             using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
             using difference_type = difference_type_t<RandomAccessIterator>;
 
-            difference_type size = std::distance(first, last);
+            difference_type size = last - first;
             if (size < 15) {
                 insertion_sort(std::move(first), std::move(last),
                                std::move(compare), std::move(projection));
@@ -776,7 +776,7 @@ namespace detail
                                         // figure out where to split the previous B block, and rotate it at the split
                                         RandomAccessIterator B_split = lower_bound(lastB.start, lastB.end, proj(*indexA),
                                                                                    compare, projection);
-                                        difference_type B_remaining = std::distance(B_split, lastB.end);
+                                        difference_type B_remaining = lastB.end - B_split;
 
                                         // swap the minimum A block to the beginning of the rolling A blocks
                                         RandomAccessIterator minA = blockA.start;

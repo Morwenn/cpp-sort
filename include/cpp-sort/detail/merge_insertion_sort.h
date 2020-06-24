@@ -314,8 +314,7 @@ namespace detail
         // Group elements by pairs
 
         auto end = has_stray ? std::prev(last) : last;
-        for (auto it = first ; it != end ; it += 2)
-        {
+        for (auto it = first ; it != end ; it += 2) {
             iter_swap_if(it, it + 1, compare, projection);
         }
 
@@ -344,28 +343,25 @@ namespace detail
         std::vector<typename list_t::iterator> pend;
         pend.reserve((size + 1) / 2 - 1);
 
-        for (auto it = first + 2 ; it != end ; it += 2)
-        {
-            auto tmp = chain.insert(std::end(chain), std::next(it));
+        for (auto it = first + 2 ; it != end ; it += 2) {
+            auto tmp = chain.insert(chain.end(), std::next(it));
             pend.push_back(tmp);
         }
 
         // Add the last element to pend if it exists; when it
         // exists, it always has to be inserted in the full chain,
         // so giving it chain.end() as end insertion point is ok
-        if (has_stray)
-        {
-            pend.push_back(std::end(chain));
+        if (has_stray) {
+            pend.push_back(chain.end());
         }
 
         ////////////////////////////////////////////////////////////
         // Binary insertion into the main chain
 
         auto current_it = first + 2;
-        auto current_pend = std::begin(pend);
+        auto current_pend = pend.begin();
 
-        for (int k = 0 ; ; ++k)
-        {
+        for (int k = 0 ; ; ++k) {
             // Should be safe: in this code, std::distance should always return
             // a positive number, so there is of risk comparing funny values
             using size_type = std::common_type_t<
@@ -375,18 +371,17 @@ namespace detail
 
             // Find next index
             auto dist = jacobsthal_diff[k];
-            if (dist > static_cast<size_type>(std::distance(current_pend, std::end(pend)))) break;
+            if (dist > static_cast<size_type>(pend.end() - current_pend)) break;
 
-            auto it = std::next(current_it, dist * 2);
-            auto pe = std::next(current_pend, dist);
+            auto it = current_it + dist * 2;
+            auto pe = current_pend + dist;
 
-            do
-            {
+            do {
                 --pe;
                 it -= 2;
 
                 auto insertion_point = detail::upper_bound(
-                    std::begin(chain), *pe, proj(*it),
+                    chain.begin(), *pe, proj(*it),
                     [&](auto&& lhs, auto&& rhs) {
                         return comp(lhs, proj(*rhs));
                     },
@@ -395,17 +390,16 @@ namespace detail
                 chain.insert(insertion_point, it);
             } while (pe != current_pend);
 
-            std::advance(current_it, dist * 2);
-            std::advance(current_pend, dist);
+            current_it += dist * 2;
+            current_pend += dist;
         }
 
         // If there are pend elements left, insert them into
         // the main chain, the order of insertion does not
         // matter so forward traversal is ok
-        while (current_pend != std::end(pend))
-        {
+        while (current_pend != pend.end()) {
             auto insertion_point = detail::upper_bound(
-                std::begin(chain), *current_pend, proj(*current_it),
+                chain.begin(), *current_pend, proj(*current_it),
                 [&](auto&& lhs, auto&& rhs) {
                     return comp(lhs, proj(*rhs));
                 },

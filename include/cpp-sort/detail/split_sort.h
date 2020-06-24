@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
-#include <vector>
 #include <cpp-sort/utility/iter_move.h>
 #include "inplace_merge.h"
 #include "iterator_traits.h"
@@ -50,7 +49,7 @@ namespace detail
         // of the collection, then to sort the remaining elements
         // and to merge both portions (LNDS)
 
-        if (std::distance(first, last) < 2) return;
+        if (last - first < 2) return;
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
