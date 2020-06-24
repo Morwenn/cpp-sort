@@ -21,6 +21,7 @@ class CppSortConan(ConanFile):
         "cmake/cpp-sort-config.cmake.in"
     ]
     no_copy_source = True
+    settings = "os", "compiler", "build_type", "arch"
 
     def package(self):
         # Install with CMake
