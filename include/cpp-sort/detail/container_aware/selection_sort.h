@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,8 +49,8 @@ namespace cppsort
                                  Compare compare, Projection projection)
             -> void
         {
-            auto it = std::begin(collection);
-            auto last = std::end(collection);
+            auto it = collection.begin();
+            auto last = collection.end();
             while (it != last)
             {
                 auto min_it = min_element(it, last, compare, projection);

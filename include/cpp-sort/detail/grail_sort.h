@@ -2,7 +2,7 @@
  * Grail sorting
  *
  * (c) 2013 by Andrey Astrelin
- * Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
+ * Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
  *
  * Stable sorting that works in O(N*log(N)) time
  * and uses O(1) extra memory
@@ -70,13 +70,13 @@ namespace grail
     {
         auto&& proj = utility::as_function(projection);
 
-        if (std::distance(first, middle) < std::distance(middle, last)) {
+        if (middle - first < last - middle) {
             while (first != middle) {
                 // Binary search left
                 auto it = lower_bound(middle, last, proj(*first), compare.base(), projection);
                 if (it != middle) {
                     detail::rotate(first, middle, it);
-                    auto delta = std::distance(middle, it);
+                    auto delta = it - middle;
                     first += delta;
                     middle += delta;
                 }
@@ -91,7 +91,7 @@ namespace grail
                 auto it = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
                 if (it != middle) {
                     detail::rotate(it, middle, last);
-                    auto delta = std::distance(it, middle);
+                    auto delta = middle - it;
                     middle -= delta;
                     last -= delta;
                 }
@@ -127,7 +127,7 @@ namespace grail
             ++M;
         }
         if (M != left_it) {
-            detail::swap_ranges(M, M + std::distance(left_it, middle), left_it);
+            detail::swap_ranges(M, M + (middle - left_it), left_it);
         }
     }
 
@@ -192,12 +192,12 @@ namespace grail
         //auto p1 = left_it, q1 = middle, p2 = right_it, q2 = last;
         difference_type_t<RandomAccessIterator> len;
         if (left_it < middle) {
-            len = std::distance(left_it, middle);
+            len = middle - left_it;
             do {
                 iter_swap(--middle, --last);
             } while (left_it != middle);
         } else {
-            len = std::distance(right_it, last);
+            len = last - right_it;
             left_over_frag = frag_type;
         }
         return { len, left_over_frag };
@@ -212,7 +212,7 @@ namespace grail
         auto&& proj = utility::as_function(projection);
 
         if (middle == last) {
-            return { std::distance(first, middle), left_over_frag };
+            return { (middle - first), left_over_frag };
         }
 
         int frag_type = 1 - left_over_frag;
@@ -226,14 +226,14 @@ namespace grail
                     middle += len;
                 }
                 if (middle == last) {
-                    return { std::distance(first, middle), left_over_frag };
+                    return { (middle - first), left_over_frag };
                 }
                 do {
                     ++first;
                 } while (first != middle && compare(proj(*first), proj(*middle)) - frag_type < 0);
             }
         }
-        return { std::distance(middle, last), frag_type };
+        return { (last - middle), frag_type };
     }
 
     // Sort With Extra Buffer
@@ -290,13 +290,13 @@ namespace grail
         }
 
         if (first < middle) {
-            auto left_over_len = std::distance(first, middle);
+            auto left_over_len = middle - first;
             do {
                 *--last = iter_move(--middle);
             } while (first != middle);
             return { left_over_len, left_over_frag };
         }
-        return { std::distance(it, last), frag_type };
+        return { (last - it), frag_type };
     }
 
     // arr - starting array. arr[-lblock..-1] - buffer (if havebuf).
@@ -441,7 +441,7 @@ namespace grail
         using utility::iter_move;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
-        auto size = std::distance(first, last);
+        auto size = last - first;
 
         int kbuf = std::min(K, LExtBuf);
         while (kbuf & (kbuf - 1)) {
@@ -471,7 +471,7 @@ namespace grail
                     merge_left_with_extra_buffer(p0, p0+h, p0+(h+h), p0-h, compare, projection);
                     p0 += 2 * h;
                 }
-                int rest = std::distance(p0, last);
+                int rest = last - p0;
                 if (rest > h) {
                     merge_left_with_extra_buffer(p0, p0+h, last, p0-h, compare, projection);
                 } else {
@@ -506,7 +506,7 @@ namespace grail
                 merge_left(p0, p0+h, p0+(h+h), p0-h, compare, projection);
                 p0 += 2 * h;
             }
-            int rest = std::distance(p0, last);
+            int rest = last - p0;
             if (rest > h) {
                 merge_left(p0, p0+h, last, p0-h, compare, projection);
             } else {
@@ -618,7 +618,7 @@ namespace grail
             }
         }
 
-        auto size = std::distance(first, last);
+        auto size = last - first;
         for (int h = 2 ; h < size ; h *= 2) {
             auto p0 = first;
             auto p1 = last - 2 * h;
@@ -626,7 +626,7 @@ namespace grail
                 merge_without_buffer(p0, p0 + h, p0 + (h + h), compare, projection);
                 p0 += 2 * h;
             }
-            int rest = std::distance(p0, last);
+            int rest = last - p0;
             if (rest > h) {
                 merge_without_buffer(p0, p0 + h, last, compare, projection);
             }
@@ -640,7 +640,7 @@ namespace grail
                      Compare compare, Projection projection)
         -> void
     {
-        auto size = std::distance(first, last);
+        auto size = last - first;
         if (size < 16) {
             insertion_sort(first, last, compare.base(), std::move(projection));
             return;
@@ -675,7 +675,7 @@ namespace grail
         }
 
         // 2*cbuf are built
-        while (std::distance(ptr, last) > (cbuf *= 2)) {
+        while ((last - ptr) > (cbuf *= 2)) {
             int lb = lblock;
             bool chavebuf = havebuf;
             if (not havebuf) {
@@ -693,7 +693,7 @@ namespace grail
                 }
             }
 
-            combine_blocks(first, ptr, std::distance(ptr, last), cbuf, lb,
+            combine_blocks(first, ptr, last - ptr, cbuf, lb,
                            chavebuf, extbuf, chavebuf && lb <= LExtBuf,
                            compare, projection);
         }
@@ -710,7 +710,7 @@ namespace grail
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
 
         // Allocate temporary buffer
-        auto size = std::distance(first, last);
+        auto size = last - first;
         typename BufferProvider::template buffer<rvalue_reference> buffer(size);
 
         using compare_t = std::remove_reference_t<decltype(utility::as_function(compare))>;

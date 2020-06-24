@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -102,9 +102,9 @@ namespace detail
 
         // Find the poplar with the bigger root
         // We can assume that there is always at least one poplar
-        auto last = std::prev(std::end(poplars));
+        auto last = std::prev(poplars.end());
         auto bigger = last;
-        for (auto it = std::begin(poplars) ; it != last ; ++it) {
+        for (auto it = poplars.begin() ; it != last ; ++it) {
             if (comp(proj(*bigger->root()), proj(*it->root()))) {
                 bigger = it;
             }
@@ -124,7 +124,7 @@ namespace detail
         -> void
     {
         using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
-        poplar_size_t size = std::distance(first, last);
+        poplar_size_t size = last - first;
         if (size < 16) {
             // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
@@ -148,7 +148,7 @@ namespace detail
         using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
 
         // Size of the unsorted subsequence
-        poplar_size_t size = std::distance(first, last);
+        poplar_size_t size = last - first;
         if (size < 2) return;
 
         std::vector<poplar<RandomAccessIterator>> poplars;
@@ -170,7 +170,7 @@ namespace detail
         // Make the poplar heap
         auto it = first;
         do {
-            if (poplar_size_t(std::distance(it, last)) >= poplar_size) {
+            if (poplar_size_t(last - it) >= poplar_size) {
                 auto begin = it;
                 auto end = it + poplar_size;
                 make_poplar(begin, end, compare, projection);

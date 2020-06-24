@@ -580,6 +580,20 @@ namespace detail
         }
 
         template<typename RandomAccessIterator, typename Projection>
+        static auto sort_partition(RandomAccessIterator partition_begin, RandomAccessIterator partition_end,
+                                   std::ptrdiff_t num_elements, Projection projection,
+                                   void (*next_sort)(RandomAccessIterator, RandomAccessIterator, std::ptrdiff_t, Projection, void*),
+                                   void* sort_data)
+            -> void
+        {
+            if (not StdSortIfLessThanThreshold<StdSortThreshold>(partition_begin, partition_end, num_elements, projection)) {
+                UnsignedInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold,
+                                      CurrentSubKey, NumBytes, Offset + 1>::sort(
+                    partition_begin, partition_end, num_elements, projection, next_sort, sort_data);
+            }
+        }
+
+        template<typename RandomAccessIterator, typename Projection>
         static auto american_flag_sort(RandomAccessIterator begin, RandomAccessIterator end, Projection projection,
                                        void (*next_sort)(RandomAccessIterator, RandomAccessIterator, std::ptrdiff_t, Projection, void*),
                                        void* sort_data)
@@ -646,12 +660,7 @@ namespace detail
                     std::size_t end_offset = partitions[*it].next_offset;
                     auto partition_end = begin + end_offset;
                     std::ptrdiff_t num_elements = end_offset - start_offset;
-                    if (not StdSortIfLessThanThreshold<StdSortThreshold>(partition_begin, partition_end,
-                                                                         num_elements, projection)) {
-                        UnsignedInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold,
-                                              CurrentSubKey, NumBytes, Offset + 1>::sort(
-                            partition_begin, partition_end, num_elements, projection, next_sort, sort_data);
-                    }
+                    sort_partition(partition_begin, partition_end, num_elements, projection, next_sort, sort_data);
                     start_offset = end_offset;
                     partition_begin = partition_end;
                 }
@@ -712,10 +721,7 @@ namespace detail
                     auto partition_begin = begin + start_offset;
                     auto partition_end = begin + end_offset;
                     std::ptrdiff_t num_elements = end_offset - start_offset;
-                    if (not StdSortIfLessThanThreshold<StdSortThreshold>(partition_begin, partition_end, num_elements, projection)) {
-                        UnsignedInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, NumBytes, Offset + 1>::sort(partition_begin, partition_end, num_elements,
-                                                                                                                                      projection, next_sort, sort_data);
-                    }
+                    sort_partition(partition_begin, partition_end, num_elements, projection, next_sort, sort_data);
                 }
             }
         }

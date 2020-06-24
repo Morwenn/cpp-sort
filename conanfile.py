@@ -5,7 +5,7 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.6.0"
+    version = "1.7.0"
     description = "Additional sorting algorithms & related tools"
     topics = "conan", "cpp-sort", "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"
@@ -14,13 +14,14 @@ class CppSortConan(ConanFile):
     author = "Morwenn <morwenn29@hotmail.fr>"
 
     # Minimal export (excludes tests, coverage, etc.)
+    exports = ["license.txt"]
     exports_sources = [
         "include/*",
         "CMakeLists.txt",
-        "cmake/cpp-sort-config.cmake.in",
-        "license.txt"
+        "cmake/cpp-sort-config.cmake.in"
     ]
     no_copy_source = True
+    settings = "os", "compiler", "build_type", "arch"
 
     def package(self):
         # Install with CMake

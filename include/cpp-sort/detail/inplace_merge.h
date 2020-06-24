@@ -6,12 +6,12 @@
 // This file is dual licensed under the MIT and the University of Illinois Open
 // Source Licenses. See LICENSE.TXT for details.
 //
-// Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 
 // Copyright (c) 2009 Alexander Stepanov and Paul McJones
-// Modified in 2015-2019 by Morwenn for inclusion into cpp-sort
+// Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
 //
 // Permission to use, copy, modify, distribute and sell this software
 // and its documentation for any purpose is hereby granted without
@@ -131,15 +131,23 @@ namespace detail
             invert() {}
 
             explicit invert(Predicate predicate):
-                predicate(predicate)
+                predicate(std::move(predicate))
             {}
 
             template<typename T1, typename T2>
-            auto operator()(const T1& x, const T2& y)
+            auto operator()(T1&& x, T2&& y)
                 -> bool
             {
                 auto&& pred = utility::as_function(predicate);
-                return pred(y, x);
+                return pred(std::forward<T2>(y), std::forward<T1>(x));
+            }
+
+            template<typename T1, typename T2>
+            auto operator()(T1&& x, T2&& y) const
+                -> bool
+            {
+                auto&& pred = utility::as_function(predicate);
+                return pred(std::forward<T2>(y), std::forward<T1>(x));
             }
     };
 

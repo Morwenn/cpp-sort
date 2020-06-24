@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,12 @@
 
 TEST_CASE( "relations between measures of presortedness", "[probe]" )
 {
-    std::vector<int> sequence; sequence.reserve(100);
+    constexpr std::vector<int>::difference_type size = 100;
+
+    std::vector<int> sequence;
+    sequence.reserve(size);
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(sequence), 100, 0);
+    distribution(std::back_inserter(sequence), size, 0);
 
     // The computer science literature lists a number of
     // relations between the results of different measures
@@ -65,7 +68,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // A New Measure of Presortedness
     // by Vladimir Estivill-Castro and Derick Wood
     CHECK( par <= inv );
-    CHECK( rem <= sequence.size() * (1 - 1 / (par + 1)) );
+    CHECK( rem <= size * (1 - 1 / (par + 1)) );
 
     // Intuitive result: a descending run can be seen as several
     // ascending runs

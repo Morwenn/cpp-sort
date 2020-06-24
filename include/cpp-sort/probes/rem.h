@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,10 +90,10 @@ namespace probe
 
                 while (first != last) {
                     auto it = cppsort::detail::upper_bound(
-                        std::begin(stack_tops), std::end(stack_tops),
+                        stack_tops.begin(), stack_tops.end(),
                         proj(*first), deref_compare, deref_proj);
 
-                    if (it == std::end(stack_tops)) {
+                    if (it == stack_tops.end()) {
                         // The element is bigger than everything else,
                         // create a new "stack" to put it
                         stack_tops.emplace_back(first);

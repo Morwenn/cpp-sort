@@ -1,3 +1,5 @@
+#  -*- coding: utf-8 -*-
+
 import math
 import os
 from textwrap import wrap
@@ -27,6 +29,7 @@ for filename in os.listdir("profiles"):
     data = {}
     for line in open(os.path.join("profiles", filename)):
         size, distribution, algo, *results = line.split()
+        algo = algo.replace('%%', ' ')  # Handle pseudo-spaces in algo names
         size = int(size)
         distribution = distribution_names[distribution]
         results = [int(result) for result in results]
@@ -94,6 +97,7 @@ for filename in os.listdir("profiles"):
         figure = pyplot.gcf()
         figure.set_size_inches(8 * .75, 6 * .75)
         pyplot.show()
-        pyplot.savefig(os.path.join("plots", os.path.splitext(filename)[0] + ".png"), dpi = 100, bbox_inches="tight")
+        os.makedirs("plots", exist_ok=True)
+        pyplot.savefig(os.path.join("plots", os.path.splitext(filename)[0] + ".png"), dpi=100, bbox_inches="tight")
 
         pyplot.clf()

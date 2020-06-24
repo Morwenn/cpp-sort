@@ -1,3 +1,7 @@
+# Project-specific directory
+benchmarks/plots
+build
+
 # Compiled Object files
 *.slo
 *.lo
@@ -19,9 +23,6 @@
 *.exe
 *.out
 *.app
-
-# Build directory
-build
 
 # Code::Blocks files
 *.cbp

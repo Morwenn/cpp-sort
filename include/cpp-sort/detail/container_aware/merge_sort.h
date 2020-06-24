@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,10 +52,10 @@ namespace cppsort
             if (collection.size() < 2) return;
 
             // Extract left part
-            auto first = std::begin(collection);
+            auto first = collection.begin();
             auto middle = std::next(first, collection.size() / 2);
             std::list<Args...> left(collection.get_allocator());
-            left.splice(std::begin(left), collection, first, middle);
+            left.splice(left.begin(), collection, first, middle);
 
             // Recursively sort, then merge
             list_merge_sort(left, compare, projection);

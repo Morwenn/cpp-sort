@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.6.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
-[![Conan Package](https://img.shields.io/badge/conan-1.6.0-blue.svg)](https://bintray.com/conan/conan-center/cpp-sort%3A_)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.7.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Conan Package](https://img.shields.io/badge/conan-1.7.0-blue.svg)](https://bintray.com/conan/conan-center/cpp-sort%3A_)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
@@ -115,8 +115,8 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 **cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
 or more recent versions of these compilers. So far, the library should work with the
 following compilers:
-* g++5 or more recent
-* MinGW-w64 g++5 or more recent
+* g++5.5 or more recent
+* MinGW-w64 g++5.5 or more recent
 * clang++3.8 or more recent
 * AppleClang shipping with Xcode 9.4 (used to work with older versions but they aren't tested anymore)
 * It is notably tested with both libstdc++ and libc++

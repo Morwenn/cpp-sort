@@ -27,7 +27,7 @@
 // Semantic versioning macros
 
 #define CPPSORT_VERSION_MAJOR 1
-#define CPPSORT_VERSION_MINOR 6
+#define CPPSORT_VERSION_MINOR 7
 #define CPPSORT_VERSION_PATCH 0
 
 #endif // CPPSORT_VERSION_H_

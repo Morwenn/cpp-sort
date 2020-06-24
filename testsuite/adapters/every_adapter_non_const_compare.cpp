@@ -1,0 +1,181 @@
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2020 Morwenn
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#include <algorithm>
+#include <iterator>
+#include <vector>
+#include <catch2/catch.hpp>
+#include <cpp-sort/adapters.h>
+#include <cpp-sort/fixed_sorters.h>
+#include <cpp-sort/sorters/merge_sorter.h>
+#include <cpp-sort/sorters/poplar_sorter.h>
+#include <cpp-sort/sorters/selection_sorter.h>
+#include "../algorithm.h"
+#include "../distributions.h"
+
+namespace
+{
+    // identity, but avoids special cases
+    struct fake_identity
+    {
+        template<typename T>
+        constexpr auto operator()(T&& value) const noexcept
+            -> T&&
+        {
+            return std::forward<T>(value);
+        }
+    };
+}
+
+TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
+{
+    auto distribution = dist::shuffled{};
+
+    std::vector<int> vec; vec.reserve(65);
+    distribution(std::back_inserter(vec), 65, 0);
+    std::list<int> li;
+    distribution(std::back_inserter(li), 65, 0);
+
+    auto non_const_compare = [](int& lhs, int& rhs) { return lhs < rhs; };
+
+    SECTION( "counting_adapter" )
+    {
+        using sorter = cppsort::counting_adapter<
+            cppsort::selection_sorter
+        >;
+
+        // Sort and check it's sorted
+        std::size_t res = sorter{}(vec, non_const_compare);
+        CHECK( res == 2080 );
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+
+    SECTION( "hybrid_adapter" )
+    {
+        using sorter = cppsort::hybrid_adapter<
+            cppsort::merge_sorter,
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+
+    SECTION( "indirect_adapter" )
+    {
+        using sorter = cppsort::indirect_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+
+    SECTION( "out_of_place_adapter" )
+    {
+        using sorter = cppsort::out_of_place_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+
+        sorter{}(li, non_const_compare);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+    }
+
+    SECTION( "schwartz_adapter" )
+    {
+        using sorter = cppsort::schwartz_adapter<
+            cppsort::detail::poplar_sorter_impl
+        >;
+
+        sorter{}(vec, non_const_compare, fake_identity{});
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+
+    SECTION( "self_sort_adapter" )
+    {
+        using sorter = cppsort::self_sort_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+
+        sorter{}(li, non_const_compare);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+    }
+
+    SECTION( "stable_adapter<self_sort_adapter>" )
+    {
+        using sorter = cppsort::stable_adapter<
+            cppsort::self_sort_adapter<cppsort::poplar_sorter>
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+
+        sorter{}(li, non_const_compare);
+        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+    }
+
+    SECTION( "small_array_adapter" )
+    {
+        using namespace cppsort;
+
+        std::array<int, 6> arr = {{ 4, 3, 2, 5, 6, 1 }};
+
+        auto to_sort = arr;
+        small_array_adapter<low_comparisons_sorter>{}(to_sort, non_const_compare);
+        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+
+        to_sort = arr;
+        small_array_adapter<low_moves_sorter>{}(to_sort, non_const_compare);
+        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+
+        to_sort = arr;
+        small_array_adapter<sorting_network_sorter>{}(to_sort, non_const_compare);
+        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+    }
+
+    SECTION( "stable_adapter" )
+    {
+        using sorter = cppsort::stable_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+
+    SECTION( "verge_adapter" )
+    {
+        using sorter = cppsort::verge_adapter<
+            cppsort::poplar_sorter
+        >;
+
+        sorter{}(vec, non_const_compare);
+        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+    }
+}

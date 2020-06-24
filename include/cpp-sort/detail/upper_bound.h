@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ namespace detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
-    auto upper_bound(ForwardIterator first, ForwardIterator last,
-                     const T& value,
+    auto upper_bound(ForwardIterator first, ForwardIterator last, T&& value,
                      Compare compare, Projection projection)
         -> ForwardIterator
     {

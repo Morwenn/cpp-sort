@@ -4,9 +4,6 @@ include(cpp-sort-utils)
 foreach(filename bubble_sorter.cpp list_selection_sorter.cpp)
     get_filename_component(name ${filename} NAME_WE)
     add_executable(${name} ${filename})
-    target_link_libraries(${name} PRIVATE
-        Catch2::Catch2
-        cpp-sort::cpp-sort
-    )
+    target_link_libraries(${name} PRIVATE cpp-sort::cpp-sort)
     cppsort_add_warnings(${name})
 endforeach()

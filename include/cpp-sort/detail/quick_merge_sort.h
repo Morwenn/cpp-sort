@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018-2019 Morwenn
+ * Copyright (c) 2018-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,10 +44,10 @@ namespace detail
 {
     constexpr int qmsort_limit = 32;
 
-    template<typename InputIterator1, typename InputIterator2, typename OutputIterator,
+    template<typename ForwardIterator1, typename ForwardIterator2, typename OutputIterator,
              typename Size, typename Compare, typename Projection>
-    auto internal_half_inplace_merge(InputIterator1 first1, InputIterator1 last1,
-                                     InputIterator2 first2, InputIterator2 last2,
+    auto internal_half_inplace_merge(ForwardIterator1 first1, ForwardIterator1 last1,
+                                     ForwardIterator2 first2, ForwardIterator2 last2,
                                      OutputIterator result, Size size_left,
                                      Compare compare, Projection projection)
         -> void

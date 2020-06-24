@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
-#include <iterator>
 #include <vector>
 #include "iterator_traits.h"
 #include "minmax_element_and_is_sorted.h"
@@ -78,7 +77,7 @@ namespace detail
             ++counts[*it - min];
         }
 
-        for (auto rit = std::rbegin(counts) ; rit != std::rend(counts) ; ++rit)
+        for (auto rit = counts.rbegin() ; rit != counts.rend() ; ++rit)
         {
             auto count = *rit;
             first = std::fill_n(first, count, max--);

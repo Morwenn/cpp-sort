@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,21 +30,77 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include "../detail/type_traits.h"
-
-#ifdef __cpp_template_auto
-#   include <cpp-sort/utility/as_function.h>
-#endif
 
 namespace cppsort
 {
 namespace utility
 {
     ////////////////////////////////////////////////////////////
+    // Base type to allow piping projections
+
+    // Literally just to check that other classes
+    // actually inherit from it
+    struct projection_base {};
+
+    namespace detail
+    {
+        template<typename T, typename U>
+        struct projection_base_pipe_result:
+            projection_base
+        {
+            T lhs;
+            U rhs;
+
+            projection_base_pipe_result(T lhs, U rhs):
+                lhs(std::move(lhs)),
+                rhs(std::move(rhs))
+            {}
+
+            template<typename Arg>
+            constexpr auto operator()(Arg&& value)
+                noexcept(noexcept(rhs(lhs(std::forward<Arg>(value)))))
+                -> decltype(rhs(lhs(std::forward<Arg>(value))))
+            {
+                return rhs(lhs(std::forward<Arg>(value)));
+            }
+
+            template<typename Arg>
+            constexpr auto operator()(Arg&& value) const
+                noexcept(noexcept(rhs(lhs(std::forward<Arg>(value)))))
+                -> decltype(rhs(lhs(std::forward<Arg>(value))))
+            {
+                return rhs(lhs(std::forward<Arg>(value)));
+            }
+        };
+    }
+
+    template<
+        typename T,
+        typename U,
+        typename = std::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value ||
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<U>>::value
+        >
+    >
+    constexpr auto operator|(T&& lhs, U&& rhs)
+        -> decltype(auto)
+    {
+        using lhs_t = cppsort::detail::remove_cvref_t<decltype(as_function(std::forward<T>(lhs)))>;
+        using rhs_t = cppsort::detail::remove_cvref_t<decltype(as_function(std::forward<U>(rhs)))>;
+        return detail::projection_base_pipe_result<lhs_t, rhs_t>(
+            as_function(std::forward<T>(lhs)),
+            as_function(std::forward<U>(rhs))
+        );
+    }
+
+    ////////////////////////////////////////////////////////////
     // Identity (mostly useful for projections)
 
-    struct identity
+    struct identity:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const noexcept
@@ -61,13 +117,15 @@ namespace utility
         std::true_type
     {};
 
+
     ////////////////////////////////////////////////////////////
     // Transform overload in unary or binary function
 
     namespace detail
     {
         template<typename Function>
-        struct as_projection_fn
+        struct as_projection_fn:
+            projection_base
         {
             private:
 
@@ -91,34 +149,34 @@ namespace utility
 
                 template<typename T>
                 constexpr auto operator()(T&& arg) &
-                    noexcept(noexcept(_func(std::forward<T>(arg))))
-                    -> decltype(_func(std::forward<T>(arg)))
+                    noexcept(noexcept(as_function(_func)(std::forward<T>(arg))))
+                    -> decltype(as_function(_func)(std::forward<T>(arg)))
                 {
-                    return _func(std::forward<T>(arg));
+                    return as_function(_func)(std::forward<T>(arg));
                 }
 
                 template<typename T>
                 constexpr auto operator()(T&& arg) &&
-                    noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
-                    -> decltype(std::move(_func)(std::forward<T>(arg)))
+                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(arg))))
+                    -> decltype(std::move(as_function(_func))(std::forward<T>(arg)))
                 {
-                    return std::move(_func)(std::forward<T>(arg));
+                    return std::move(as_function(_func))(std::forward<T>(arg));
                 }
 
                 template<typename T>
                 constexpr auto operator()(T&& arg) const&
-                    noexcept(noexcept(_func(std::forward<T>(arg))))
-                    -> decltype(_func(std::forward<T>(arg)))
+                    noexcept(noexcept(as_function(_func)(std::forward<T>(arg))))
+                    -> decltype(as_function(_func)(std::forward<T>(arg)))
                 {
-                    return _func(std::forward<T>(arg));
+                    return as_function(_func)(std::forward<T>(arg));
                 }
 
                 template<typename T>
                 constexpr auto operator()(T&& arg) const&&
-                    noexcept(noexcept(std::move(_func)(std::forward<T>(arg))))
-                    -> decltype(std::move(_func)(std::forward<T>(arg)))
+                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(arg))))
+                    -> decltype(std::move(as_function(_func))(std::forward<T>(arg)))
                 {
-                    return std::move(_func)(std::forward<T>(arg));
+                    return std::move(as_function(_func))(std::forward<T>(arg));
                 }
         };
 
@@ -157,34 +215,34 @@ namespace utility
 
                 template<typename T, typename U>
                 constexpr auto operator()(T&& lhs, U&& rhs) &
-                    noexcept(noexcept(_func(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(_func(std::forward<T>(lhs), std::forward<U>(rhs)))
+                    noexcept(noexcept(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
-                    return _func(std::forward<T>(lhs), std::forward<U>(rhs));
+                    return as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
                 }
 
                 template<typename T, typename U>
                 constexpr auto operator()(T&& lhs, U&& rhs) &&
-                    noexcept(noexcept(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
+                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
-                    return std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
+                    return std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs));
                 }
 
                 template<typename T, typename U>
                 constexpr auto operator()(T&& lhs, U&& rhs) const&
-                    noexcept(noexcept(_func(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(_func(std::forward<T>(lhs), std::forward<U>(rhs)))
+                    noexcept(noexcept(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
-                    return _func(std::forward<T>(lhs), std::forward<U>(rhs));
+                    return as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
                 }
 
                 template<typename T, typename U>
                 constexpr auto operator()(T&& lhs, U&& rhs) const&&
-                    noexcept(noexcept(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
+                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
-                    return std::move(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
+                    return std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs));
                 }
         };
 
