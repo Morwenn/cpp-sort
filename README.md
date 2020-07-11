@@ -202,11 +202,11 @@ of the algorithm.
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
 Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
 
-* The algorithms 17 and 18 used by `sorting_network_sorter` correspond to the ones found
-by Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
+* The algorithm 17 used by `sorting_network_sorter` correspond to the ones found by
+Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
 Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam and Miikkulainen.
 
-* The algorithms 19 to 26 and 28 used by `sorting_network_sorter` have been found and
+* The algorithms 18 to 26 and 28 used by `sorting_network_sorter` have been found and
 proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
 Huge thanks for this contribution :) You can find a full list of most well-known sorting
 networks up to 32 inputs on his website.
