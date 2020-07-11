@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ namespace detail
             sorting_network_sorter<16u>{}(first, first+16u, compare, projection);
             sorting_network_sorter<13u>{}(first+16u, first+29u, compare, projection);
 
-            iter_swap_if(first + 0u, first + 16u, compare, projection);
+            iter_swap_if(first, first + 16u, compare, projection);
             iter_swap_if(first + 8u, first + 24u, compare, projection);
             iter_swap_if(first + 8u, first + 16u, compare, projection);
             iter_swap_if(first + 4u, first + 20u, compare, projection);
