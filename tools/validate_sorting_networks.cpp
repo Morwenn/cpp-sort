@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -94,18 +94,17 @@ auto for_each_gray_permutation(std::array<T, N>& collection, Function func)
     if (size <= 20 || size < header_size) {
         // The problem size is small enough or we can't gain
         // enough from parallel jobs, go full sequential
-        for_each_gray_permutation_inner(std::begin(collection), std::end(collection),
+        for_each_gray_permutation_inner(collection.begin(), collection.end(),
                                         collection, std::move(func));
     } else {
         // The goal of the following algorithm is to use a many threads as possible, etc.
         std::vector<std::thread> jobs;
 
-        auto first = std::begin(collection);
-        for_each_gray_permutation_inner(first, first + header_size, collection, [&](std::array<T, N>& arr) {
-            auto copy = arr;
+        auto first = collection.begin();
+        for_each_gray_permutation_inner(first, first + header_size, collection, [&](std::array<T, N> arr) {
             jobs.emplace_back(for_each_gray_permutation_inner<iterator, T, N, Function&>,
-                              std::begin(copy) + header_size, std::end(copy),
-                              std::ref(copy), std::ref(func));
+                              arr.begin() + header_size, arr.end(),
+                              std::ref(arr), std::ref(func));
             return true;
         });
 
@@ -129,11 +128,11 @@ auto validate_sorting_network()
 
     cppsort::sorting_network_sorter<N> sorter;
     std::array<T, N> collection;
-    std::fill(std::begin(collection), std::end(collection), 0);
+    std::fill(collection.begin(), collection.end(), 0);
 
     std::atomic<bool> error_occurred(false);
     bool expected = false;
-    for_each_gray_permutation(collection, [&](std::array<T, N>& arr) {
+    for_each_gray_permutation(collection, [&](const std::array<T, N>& arr) {
         // Copy then sort collection
         std::array<int, N> to_sort = arr;
         sorter(to_sort);
