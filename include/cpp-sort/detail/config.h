@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -93,6 +93,21 @@
 #       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
 #   else
 #       define CPPSORT_ASSERT(...)
+#   endif
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_DEPRECATED
+
+// [[deprecated]] is available since C++14, hence why this
+// macro is not in attributes.h: we hide it behind a macro
+// to make sure that it can be silenced
+
+#ifndef CPPSORT_DEPRECATED
+#   ifndef CPPSORT_DISABLE_DEPRECATION_WARNINGS
+#       define CPPSORT_DEPRECATED(message) [[deprecated(message)]]
+#   else
+#       define CPPSORT_DEPRECATED(message)
 #   endif
 #endif
 

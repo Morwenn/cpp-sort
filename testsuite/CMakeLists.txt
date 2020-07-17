@@ -36,6 +36,8 @@ macro(configure_tests target)
         CATCH_CONFIG_DISABLE_MATCHERS
         # Enable assertions for more thorough tests
         CPPSORT_ENABLE_ASSERTIONS
+        # We test deprecated code but we don't want it to warn
+        CPPSORT_DISABLE_DEPRECATION_WARNINGS
     )
 
     # More warnings and settings
