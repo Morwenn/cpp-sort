@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -145,11 +144,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&)>,
-                        decltype(cppsort::sort(this->get(), iterable))
+                        decltype(this->get()(iterable))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable);
+                return this->get()(iterable);
             }
 
             template<
@@ -182,11 +181,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare)>,
-                        decltype(cppsort::sort(this->get(), iterable, std::move(compare)))
+                        decltype(this->get()(iterable, std::move(compare)))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable, std::move(compare));
+                return this->get()(iterable, std::move(compare));
             }
 
             template<
@@ -275,11 +274,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Projection)>,
-                        decltype(cppsort::sort(this->get(), iterable, std::move(projection)))
+                        decltype(this->get()(iterable, std::move(projection)))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable, std::move(projection));
+                return this->get()(iterable, std::move(projection));
             }
 
             template<
@@ -348,13 +347,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare, Projection)>,
-                        decltype(cppsort::sort(this->get(), iterable,
-                                               std::move(compare), std::move(projection)))
+                        decltype(this->get()(iterable, std::move(compare), std::move(projection)))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable,
-                                     std::move(compare), std::move(projection));
+                return this->get()(iterable, std::move(compare), std::move(projection));
             }
         };
     }
