@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2018-2019 Morwenn
+ * Copyright (c) 2018-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,10 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
+#include "../detail/iterator_traits.h"
+#include "../detail/memory.h"
 #include "../detail/scope_exit.h"
 #include "../detail/type_traits.h"
 
