@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/default_sorter.h>
+#include "detail/config.h"
 #include "detail/type_traits.h"
 
 namespace cppsort
@@ -40,6 +41,7 @@ namespace cppsort
     // With default_sorter
 
     template<typename Iterable>
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterable&& iterable)
         -> void
     {
@@ -51,6 +53,7 @@ namespace cppsort
         typename Compare,
         typename = std::enable_if_t<not is_sorter_v<Iterable, Compare>>
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterable&& iterable, Compare compare)
         -> void
     {
@@ -66,6 +69,7 @@ namespace cppsort
             not is_projection_sorter_v<Iterable, Compare, Projection>
         >
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterable&& iterable, Compare compare, Projection projection)
         -> void
     {
@@ -74,6 +78,7 @@ namespace cppsort
     }
 
     template<typename Iterator>
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterator first, Iterator last)
         -> void
     {
@@ -85,6 +90,7 @@ namespace cppsort
         typename Compare,
         typename = std::enable_if_t<not is_sorter_iterator_v<Compare, Iterator>>
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterator first, Iterator last, Compare compare)
         -> void
     {
@@ -101,6 +107,7 @@ namespace cppsort
             not is_projection_sorter_iterator_v<Compare, Iterator, Projection>
         >
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterator first, Iterator last, Compare compare, Projection projection)
         -> void
     {
@@ -118,6 +125,7 @@ namespace cppsort
             is_sorter_v<Sorter, Iterable>
         >
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(const Sorter&, Iterable&& iterable)
         -> decltype(auto)
     {
@@ -133,6 +141,7 @@ namespace cppsort
             is_projection_sorter<Sorter, Iterable, Func>
         >::value>
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(const Sorter&, Iterable&& iterable, Func func)
         -> decltype(auto)
     {
@@ -145,6 +154,7 @@ namespace cppsort
         typename Compare,
         typename Projection
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(const Sorter&, Iterable&& iterable,
                      Compare compare, Projection projection)
         -> decltype(auto)
@@ -160,6 +170,7 @@ namespace cppsort
             stable_adapter<Sorter>, Iterator
         >>
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(const Sorter&, Iterator first, Iterator last)
         -> decltype(auto)
     {
@@ -175,6 +186,7 @@ namespace cppsort
             is_projection_sorter_iterator_v<stable_adapter<Sorter>, Iterator, Func>
         >
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(const Sorter&, Iterator first, Iterator last, Func func)
         -> decltype(auto)
     {
@@ -187,6 +199,7 @@ namespace cppsort
         typename Compare,
         typename Projection
     >
+    CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(const Sorter&, Iterator first, Iterator last,
                      Compare compare, Projection projection)
         -> decltype(auto)
