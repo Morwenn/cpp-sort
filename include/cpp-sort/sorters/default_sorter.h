@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Unstable sorter
 
-    struct default_sorter:
+    struct CPPSORT_DEPRECATED("default_sorter is deprecated and will be removed in version 2.0.0")
+    default_sorter:
         self_sort_adapter<
             hybrid_adapter<
                 small_array_adapter<
@@ -59,7 +60,7 @@ namespace cppsort
     // Stable sorter
 
     template<>
-    struct stable_adapter<default_sorter>:
+    struct CPPSORT_DEPRECATED("default_sorter is deprecated and will be removed in version 2.0.0")stable_adapter<default_sorter>:
         merge_sorter
     {};
 }
