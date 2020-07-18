@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/fixed_sorters.h>
-#include <cpp-sort/sort.h>
 #include "../algorithm.h"
 
 TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
@@ -59,18 +58,18 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
     {
         std::array<wrapper, 0> collection;
 
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
     }
 
     SECTION( "size 1" )
     {
         std::array<wrapper, 1> collection;
 
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
     }
 
     SECTION( "size 2" )
@@ -79,17 +78,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -100,17 +99,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -121,17 +120,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -142,17 +141,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -163,17 +162,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_comparisons_sort, collection, &wrapper::value);
+        low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(low_moves_sort, collection, &wrapper::value);
+        low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
         std::shuffle(std::begin(collection), std::end(collection), engine);
-        cppsort::sort(sorting_network_sort, collection, &wrapper::value);
+        sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }

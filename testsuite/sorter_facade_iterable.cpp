@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
 #include <type_traits>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -133,78 +132,64 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
 
     SECTION( "with comparison only" )
     {
-        call res1 = cppsort::sort(comparison_sorter{}, vec, std::less<>{});
+        call res1 = comparison_sorter{}(vec, std::less<>{});
         CHECK( res1 == call::iterable );
-        call res2 = cppsort::sort(comparison_sorter{}, std::begin(vec), std::end(vec),
-                                  std::less<>{});
+        call res2 = comparison_sorter{}(std::begin(vec), std::end(vec), std::less<>{});
         CHECK( res2 == call::iterator );
 
-        call res3 = cppsort::sort(comparison_sorter{}, vec, std::greater<>{});
+        call res3 = comparison_sorter{}(vec, std::greater<>{});
         CHECK( res3 == call::iterable );
-        call res4 = cppsort::sort(comparison_sorter{}, std::begin(vec), std::end(vec),
-                                  std::greater<>{});
+        call res4 = comparison_sorter{}(std::begin(vec), std::end(vec), std::greater<>{});
         CHECK( res4 == call::iterator );
     }
 
     SECTION( "with projection only" )
     {
-        call res1 = cppsort::sort(projection_sorter{}, vec, cppsort::utility::identity{});
+        call res1 = projection_sorter{}(vec, cppsort::utility::identity{});
         CHECK( res1 == call::iterable );
-        call res2 = cppsort::sort(projection_sorter{}, std::begin(vec), std::end(vec),
-                                  cppsort::utility::identity{});
+        call res2 = projection_sorter{}(std::begin(vec), std::end(vec), cppsort::utility::identity{});
         CHECK( res2 == call::iterator );
 
-        call res3 = cppsort::sort(projection_sorter{}, vec_wrap, &wrapper::value);
+        call res3 = projection_sorter{}(vec_wrap, &wrapper::value);
         CHECK( res3 == call::iterable );
-        call res4 = cppsort::sort(projection_sorter{}, std::begin(vec_wrap), std::end(vec_wrap),
-                                  &wrapper::value);
+        call res4 = projection_sorter{}(std::begin(vec_wrap), std::end(vec_wrap), &wrapper::value);
         CHECK( res4 == call::iterator );
     }
 
     SECTION( "with both comparison and projection" )
     {
-        call res1 = cppsort::sort(comparison_projection_sorter{}, vec, std::less<>{});
+        call res1 = comparison_projection_sorter{}(vec, std::less<>{});
         CHECK( res1 == call::iterable );
-        call res2 = cppsort::sort(comparison_projection_sorter{},
-                                  std::begin(vec), std::end(vec),
-                                  std::less<>{});
+        call res2 = comparison_projection_sorter{}(std::begin(vec), std::end(vec), std::less<>{});
         CHECK( res2 == call::iterator );
 
-        call res3 = cppsort::sort(comparison_projection_sorter{}, vec, std::greater<>{});
+        call res3 = comparison_projection_sorter{}(vec, std::greater<>{});
         CHECK( res3 == call::iterable );
-        call res4 = cppsort::sort(comparison_projection_sorter{},
-                                  std::begin(vec), std::end(vec),
-                                  std::greater<>{});
+        call res4 = comparison_projection_sorter{}(std::begin(vec), std::end(vec), std::greater<>{});
         CHECK( res4 == call::iterator );
 
-        call res5 = cppsort::sort(comparison_projection_sorter{}, vec, cppsort::utility::identity{});
+        call res5 = comparison_projection_sorter{}(vec, cppsort::utility::identity{});
         CHECK( res5 == call::iterable );
-        call res6 = cppsort::sort(comparison_projection_sorter{},
-                                  std::begin(vec), std::end(vec),
-                                  cppsort::utility::identity{});
+        call res6 = comparison_projection_sorter{}(std::begin(vec), std::end(vec),
+                                                   cppsort::utility::identity{});
         CHECK( res6 == call::iterator );
 
-        call res7 = cppsort::sort(comparison_projection_sorter{}, vec_wrap, &wrapper::value);
+        call res7 = comparison_projection_sorter{}(vec_wrap, &wrapper::value);
         CHECK( res7 == call::iterable );
-        call res8 = cppsort::sort(comparison_projection_sorter{},
-                                  std::begin(vec_wrap), std::end(vec_wrap),
-                                  &wrapper::value);
+        call res8 = comparison_projection_sorter{}(std::begin(vec_wrap), std::end(vec_wrap),
+                                                   &wrapper::value);
         CHECK( res8 == call::iterator );
 
-        call res9 = cppsort::sort(comparison_projection_sorter{}, vec,
-                                  std::greater<>{}, cppsort::utility::identity{});
+        call res9 = comparison_projection_sorter{}(vec, std::greater<>{}, cppsort::utility::identity{});
         CHECK( res9 == call::iterable );
-        call res10 = cppsort::sort(comparison_projection_sorter{},
-                                   std::begin(vec), std::end(vec),
-                                   std::greater<>{}, cppsort::utility::identity{});
+        call res10 = comparison_projection_sorter{}(std::begin(vec), std::end(vec),
+                                                    std::greater<>{}, cppsort::utility::identity{});
         CHECK( res10 == call::iterator );
 
-        call res11 = cppsort::sort(comparison_projection_sorter{}, vec_wrap,
-                                   std::greater<>{}, &wrapper::value);
+        call res11 = comparison_projection_sorter{}(vec_wrap, std::greater<>{}, &wrapper::value);
         CHECK( res11 == call::iterable );
-        call res12 = cppsort::sort(comparison_projection_sorter{},
-                                   std::begin(vec_wrap), std::end(vec_wrap),
-                                   std::greater<>{}, &wrapper::value);
+        call res12 = comparison_projection_sorter{}(std::begin(vec_wrap), std::end(vec_wrap),
+                                                    std::greater<>{}, &wrapper::value);
         CHECK( res12 == call::iterator );
     }
 }

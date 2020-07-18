@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/schwartz_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include "../algorithm.h"
@@ -68,8 +67,8 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter", "[schwart
     std::mt19937 engine(Catch::rngSeed());
     std::shuffle(std::begin(collection), std::end(collection), engine);
 
-    using sorter = cppsort::schwartz_adapter<TestType>;
-    cppsort::sort(sorter{}, collection, &wrapper<>::value);
+    cppsort::schwartz_adapter<TestType> sorter;
+    sorter(collection, &wrapper<>::value);
     CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper<>::value) );
 }
@@ -90,39 +89,39 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
 
     SECTION( "ska_sorter" )
     {
-        using sorter = cppsort::schwartz_adapter<cppsort::ska_sorter>;
+        cppsort::schwartz_adapter<cppsort::ska_sorter> sorter;
 
-        cppsort::sort(sorter{}, collection, &wrapper<>::value);
+        sorter(collection, &wrapper<>::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper<>::value) );
 
-        cppsort::sort(sorter{}, collection2, &wrapper<int>::value);
+        sorter(collection2, &wrapper<int>::value);
         CHECK( helpers::is_sorted(std::begin(collection2), std::end(collection2),
                                   std::less<>{}, &wrapper<int>::value) );
 
-        cppsort::sort(sorter{}, collection3, &wrapper<std::string>::value);
+        sorter(collection3, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(std::begin(collection3), std::end(collection3),
                                   std::less<>{}, &wrapper<std::string>::value) );
     }
 
     SECTION( "spread_sorter" )
     {
-        using sorter = cppsort::schwartz_adapter<cppsort::spread_sorter>;
+        cppsort::schwartz_adapter<cppsort::spread_sorter> sorter;
 
-        cppsort::sort(sorter{}, collection, &wrapper<>::value);
+        sorter(collection, &wrapper<>::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper<>::value) );
 
-        cppsort::sort(sorter{}, collection2, &wrapper<int>::value);
+        sorter(collection2, &wrapper<int>::value);
         CHECK( helpers::is_sorted(std::begin(collection2), std::end(collection2),
                                   std::less<>{}, &wrapper<int>::value) );
 
-        cppsort::sort(sorter{}, collection3, &wrapper<std::string>::value);
+        sorter(collection3, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(std::begin(collection3), std::end(collection3),
                                   std::less<>{}, &wrapper<std::string>::value) );
 
         std::shuffle(std::begin(collection3), std::end(collection3), engine);
-        cppsort::sort(sorter{}, collection3, std::greater<>{}, &wrapper<std::string>::value);
+        sorter(collection3, std::greater<>{}, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(std::begin(collection3), std::end(collection3),
                                   std::greater<>{}, &wrapper<std::string>::value) );
     }

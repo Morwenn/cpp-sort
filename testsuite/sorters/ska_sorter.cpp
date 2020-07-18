@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2017-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/ska_sorter.h>
-#include <cpp-sort/sort.h>
 
 TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
 {
@@ -46,7 +45,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         std::vector<int> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, vec);
+        cppsort::ska_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -56,7 +55,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         std::vector<__uint128_t> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), __uint128_t(0));
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, vec);
+        cppsort::ska_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 #endif
@@ -66,7 +65,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         std::vector<unsigned> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0u);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, std::begin(vec), std::end(vec));
+        cppsort::ska_sort(std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -75,7 +74,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         std::vector<float> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0.0f);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, vec);
+        cppsort::ska_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -84,7 +83,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         std::vector<double> vec(100'000);
         std::iota(std::begin(vec), std::end(vec), 0.0);
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, std::begin(vec), std::end(vec));
+        cppsort::ska_sort(std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -96,11 +95,11 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         }
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, vec);
+        cppsort::ska_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::ska_sort, std::begin(vec), std::end(vec));
+        cppsort::ska_sort(std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 }

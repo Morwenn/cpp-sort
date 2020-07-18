@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
-#include <cpp-sort/sort.h>
 #include "../algorithm.h"
 
 TEST_CASE( "merge_insertion_sorter tests with projections",
@@ -47,27 +46,26 @@ TEST_CASE( "merge_insertion_sorter tests with projections",
 
     SECTION( "sort with random-access iterable" )
     {
-        cppsort::sort(cppsort::merge_insertion_sorter{}, vec, &wrapper::value);
+        cppsort::merge_insertion_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        cppsort::sort(cppsort::merge_insertion_sorter{}, vec, std::greater<>{}, &wrapper::value);
+        cppsort::merge_insertion_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        cppsort::sort(cppsort::merge_insertion_sorter{}, std::begin(vec), std::end(vec), &wrapper::value);
+        cppsort::merge_insertion_sort(std::begin(vec), std::end(vec), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        cppsort::sort(cppsort::merge_insertion_sorter{},
-                      std::begin(vec), std::end(vec),
-                      std::greater<>{}, &wrapper::value);
+        cppsort::merge_insertion_sort(std::begin(vec), std::end(vec),
+                                      std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 }

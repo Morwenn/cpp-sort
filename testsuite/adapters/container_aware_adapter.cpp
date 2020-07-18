@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
 #include <type_traits>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/container_aware_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include "../algorithm.h"
 
@@ -56,39 +55,37 @@ namespace foobar
 TEST_CASE( "basic tests with container_aware_adapter",
            "[container_aware_adapter]" )
 {
-    using sorter = cppsort::container_aware_adapter<
+    using sorter_t = cppsort::container_aware_adapter<
         cppsort::merge_sorter
     >;
+    sorter_t sorter;
 
     // Cool list to "sort"
     foobar::cool_list<int> collection;
 
     SECTION( "with comparison" )
     {
-        CHECK( sorter{}(collection, std::greater<>{}) );
-        CHECK( cppsort::sort(sorter{}, collection, std::greater<>{}) );
-        CHECK( not cppsort::is_stable<sorter(foobar::cool_list<int>&, std::greater<>)>::value );
+        CHECK( sorter(collection, std::greater<>{}) );
+        CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>)>::value );
     }
 
     SECTION( "with projection" )
     {
-        CHECK( sorter{}(collection, std::negate<>{}) );
-        CHECK( cppsort::sort(sorter{}, collection, std::negate<>{}) );
-        CHECK( not cppsort::is_stable<sorter(foobar::cool_list<int>&, std::negate<>)>::value );
+        CHECK( sorter(collection, std::negate<>{}) );
+        CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::negate<>)>::value );
     }
 
     SECTION( "with automagic comparison-projection" )
     {
-        CHECK( sorter{}(collection, std::greater<>{}, std::negate<>{}) );
-        CHECK( cppsort::sort(sorter{}, collection, std::greater<>{}, std::negate<>{}) );
-        CHECK( not cppsort::is_stable<sorter(foobar::cool_list<int>&, std::greater<>, std::negate<>)>::value );
+        CHECK( sorter(collection, std::greater<>{}, std::negate<>{}) );
+        CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>, std::negate<>)>::value );
     }
 
     SECTION( "more about stability" )
     {
-        CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::list<int>::iterator, std::list<int>::iterator)>::value );
-        CHECK( cppsort::is_stable<sorter(foobar::cool_list<int>::iterator,
-                                         foobar::cool_list<int>::iterator)>::value );
+        CHECK( cppsort::is_stable<sorter_t(std::list<int>&)>::value );
+        CHECK( cppsort::is_stable<sorter_t(std::list<int>::iterator, std::list<int>::iterator)>::value );
+        CHECK( cppsort::is_stable<sorter_t(foobar::cool_list<int>::iterator,
+                                           foobar::cool_list<int>::iterator)>::value );
     }
 }

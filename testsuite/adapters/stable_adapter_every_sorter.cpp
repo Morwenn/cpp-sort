@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
 #include <random>
 #include <vector>
 #include <catch2/catch.hpp>
+#include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorters.h>
-#include <cpp-sort/stable_sort.h>
 #include <cpp-sort/utility/buffer.h>
 
 namespace
@@ -53,7 +53,7 @@ namespace
     }
 }
 
-TEMPLATE_TEST_CASE( "every sorter with stable adapter", "[stable_adapter]",
+TEMPLATE_TEST_CASE( "every sorter with stable_adapter", "[stable_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -86,7 +86,7 @@ TEMPLATE_TEST_CASE( "every sorter with stable adapter", "[stable_adapter]",
         wrap.order = count++;
     }
 
-    using sorter = TestType;
-    cppsort::stable_sort(sorter{}, collection, &wrapper::value);
+    cppsort::stable_adapter<TestType> sorter;
+    sorter(collection, &wrapper::value);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

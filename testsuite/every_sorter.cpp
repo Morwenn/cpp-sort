@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <list>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
@@ -71,8 +70,8 @@ TEMPLATE_TEST_CASE( "test every random-access sorter with vector", "[sorters]",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
-    using sorter = TestType;
-    cppsort::sort(sorter{}, collection);
+    TestType sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
 
@@ -108,8 +107,8 @@ TEMPLATE_TEST_CASE( "test every random-access sorter with deque", "[sorters]",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
-    using sorter = TestType;
-    cppsort::sort(sorter{}, collection);
+    TestType sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
 
@@ -127,8 +126,8 @@ TEMPLATE_TEST_CASE( "test every bidirectional sorter with list", "[sorters]",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
-    using sorter = TestType;
-    cppsort::sort(sorter{}, collection);
+    TestType sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
 
@@ -143,7 +142,7 @@ TEMPLATE_TEST_CASE( "test every forward sorter with forward_list", "[sorters]",
     auto distribution = dist::shuffled{};
     distribution(std::front_inserter(collection), 491, -125);
 
-    using sorter = TestType;
-    cppsort::sort(sorter{}, collection);
+    TestType sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

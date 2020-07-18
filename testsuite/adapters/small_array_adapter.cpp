@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -136,59 +135,59 @@ TEST_CASE( "small array adapter",
 
     SECTION( "without explicit indices not domain" )
     {
-        using sorter = cppsort::small_array_adapter<fixed_sorter>;
+        cppsort::small_array_adapter<fixed_sorter> sorter;
 
-        auto res1 = cppsort::sort(sorter{}, array);
+        auto res1 = sorter(array);
         CHECK( res1 == sorter_type::fixed_without_domain );
-        auto res2 = cppsort::sort(sorter{}, big_array);
+        auto res2 = sorter(big_array);
         CHECK( res2 == sorter_type::fixed_without_domain );
     }
 
     SECTION( "with domain without explicit indices" )
     {
-        using sorter = cppsort::small_array_adapter<fixed_sorter_with_domain>;
+        cppsort::small_array_adapter<fixed_sorter_with_domain> sorter;
 
-        auto res = cppsort::sort(sorter{}, array);
+        auto res = sorter(array);
         CHECK( res == sorter_type::fixed_with_domain );
     }
 
     SECTION( "with explicit indices" )
     {
-        using sorter = cppsort::small_array_adapter<
+        cppsort::small_array_adapter<
             fixed_sorter,
             std::make_index_sequence<14u>
-        >;
+        > sorter;
 
-        auto res = cppsort::sort(sorter{}, array);
+        auto res = sorter(array);
         CHECK( res == sorter_type::fixed_without_domain );
     }
 
     SECTION( "with indices in hybrid_adapter" )
     {
-        using sorter = cppsort::hybrid_adapter<
+        cppsort::hybrid_adapter<
             cppsort::small_array_adapter<
                 fixed_sorter,
                 std::make_index_sequence<14u>
             >,
             regular_sorter
-        >;
+        > sorter;
 
-        auto res1 = cppsort::sort(sorter{}, array);
+        auto res1 = sorter(array);
         CHECK( res1 == sorter_type::fixed_without_domain );
-        auto res2 = cppsort::sort(sorter{}, big_array);
+        auto res2 = sorter(big_array);
         CHECK( res2 == sorter_type::regular );
     }
 
     SECTION( "with domain in hybrid_adapter" )
     {
-        using sorter = cppsort::hybrid_adapter<
+        cppsort::hybrid_adapter<
             cppsort::small_array_adapter<fixed_sorter_with_domain>,
             regular_sorter
-        >;
+        > sorter;
 
-        auto res1 = cppsort::sort(sorter{}, array);
+        auto res1 = sorter(array);
         CHECK( res1 == sorter_type::fixed_with_domain );
-        auto res2 = cppsort::sort(sorter{}, big_array);
+        auto res2 = sorter(big_array);
         CHECK( res2 == sorter_type::regular );
     }
 
@@ -197,13 +196,13 @@ TEST_CASE( "small array adapter",
         struct wrapper { int value; };
         std::array<wrapper, 7> collection;
 
-        using sorter = cppsort::small_array_adapter<
+        cppsort::small_array_adapter<
             fixed_sorter_with_domain
-        >;
+        > sorter;
 
-        auto res1 = cppsort::sort(sorter{}, collection, std::greater<>{}, &wrapper::value);
+        auto res1 = sorter(collection, std::greater<>{}, &wrapper::value);
         CHECK( res1 == sorter_type::fixed_with_domain );
-        auto res2 = cppsort::sort(sorter{}, collection, &wrapper::value);
+        auto res2 = sorter(collection, &wrapper::value);
         CHECK( res2 == sorter_type::fixed_with_domain );
     }
 }

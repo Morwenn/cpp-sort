@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/std_sorter.h>
-#include <cpp-sort/sort.h>
 #include "../algorithm.h"
 
 TEST_CASE( "std_sorter tests", "[std_sorter]" )
@@ -44,25 +43,25 @@ TEST_CASE( "std_sorter tests", "[std_sorter]" )
 
     SECTION( "sort with iterable" )
     {
-        cppsort::sort(cppsort::std_sorter{}, vec);
+        cppsort::std_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "sort with iterable and compare" )
     {
-        cppsort::sort(cppsort::std_sorter{}, vec, std::greater<>{});
+        cppsort::std_sort(vec, std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 
     SECTION( "sort with iterators" )
     {
-        cppsort::sort(cppsort::std_sorter{}, std::begin(vec), std::end(vec));
+        cppsort::std_sort(std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "sort with iterators and compare" )
     {
-        cppsort::sort(cppsort::std_sorter{}, std::begin(vec), std::end(vec), std::greater<>{});
+        cppsort::std_sort(std::begin(vec), std::end(vec), std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 }
@@ -83,25 +82,25 @@ TEST_CASE( "std_sorter tests with projections",
 
     SECTION( "sort with iterable" )
     {
-        cppsort::sort(cppsort::std_sorter{}, vec, &wrapper::value);
+        cppsort::std_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with iterable and compare" )
     {
-        cppsort::sort(cppsort::std_sorter{}, vec, std::greater<>{}, &wrapper::value);
+        cppsort::std_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with iterators" )
     {
-        cppsort::sort(cppsort::std_sorter{}, std::begin(vec), std::end(vec), &wrapper::value);
+        cppsort::std_sort(std::begin(vec), std::end(vec), &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "sort with iterators and compare" )
     {
-        cppsort::sort(cppsort::std_sorter{}, std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value);
+        cppsort::std_sort(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 }

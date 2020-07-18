@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/comparators/case_insensitive_less.h>
 #include <cpp-sort/refined.h>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/sorters/heap_sorter.h>
 
 namespace sub
 {
@@ -80,14 +80,14 @@ TEST_CASE( "case-insensitive string comparison with case_insensitive_less" )
 
     SECTION( "implicit global locale" )
     {
-        cppsort::sort(array, cppsort::case_insensitive_less);
+        cppsort::heap_sort(array, cppsort::case_insensitive_less);
         CHECK( array == expected );
     }
 
     SECTION( "explicit global locale" )
     {
         std::locale locale;
-        cppsort::sort(array, cppsort::case_insensitive_less(locale));
+        cppsort::heap_sort(array, cppsort::case_insensitive_less(locale));
         CHECK( array == expected );
     }
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <random>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <cpp-sort/utility/functional.h>
 
@@ -48,11 +47,11 @@ TEST_CASE( "spread_sorter generate overloads",
         std::iota(std::begin(vec), std::end(vec), 0);
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec, std::less<>{});
+        cppsort::spread_sort(vec, std::less<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<>{}) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec), std::less<>{});
+        cppsort::spread_sort(std::begin(vec), std::end(vec), std::less<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<>{}) );
     }
 
@@ -62,11 +61,11 @@ TEST_CASE( "spread_sorter generate overloads",
         std::iota(std::begin(vec), std::end(vec), 0);
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec, cppsort::utility::identity{});
+        cppsort::spread_sort(vec, cppsort::utility::identity{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec), cppsort::utility::identity{});
+        cppsort::spread_sort(std::begin(vec), std::end(vec), cppsort::utility::identity{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
@@ -76,11 +75,11 @@ TEST_CASE( "spread_sorter generate overloads",
         std::iota(std::begin(vec), std::end(vec), 0);
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec, std::less<>{}, cppsort::utility::identity{});
+        cppsort::spread_sort(vec, std::less<>{}, cppsort::utility::identity{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, std::begin(vec), std::end(vec), std::less<>{}, cppsort::utility::identity{});
+        cppsort::spread_sort(std::begin(vec), std::end(vec), std::less<>{}, cppsort::utility::identity{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 }

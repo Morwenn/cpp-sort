@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 
@@ -94,24 +93,24 @@ TEST_CASE( "iterator category rebinder",
 
     SECTION( "with hybrid_adapter" )
     {
-        using sorter = cppsort::hybrid_adapter<
+        cppsort::hybrid_adapter<
             foo_sorter,
             cppsort::rebind_iterator_category<
                 bar_sorter,
                 std::bidirectional_iterator_tag
             >
-        >;
+        > sorter;
 
         std::forward_list<float> collection1(3);
-        sorter_type res1 = cppsort::sort(sorter{}, collection1);
+        sorter_type res1 = sorter(collection1);
         CHECK( res1 == sorter_type::foo );
 
         std::list<float> collection2(3);
-        sorter_type res2 = cppsort::sort(sorter{}, collection2);
+        sorter_type res2 = sorter(collection2);
         CHECK( res2 == sorter_type::bar );
 
         std::vector<float> collection3(3);
-        sorter_type res3 = cppsort::sort(sorter{}, collection3);
+        sorter_type res3 = sorter(collection3);
         CHECK( res3 == sorter_type::bar );
     }
 }

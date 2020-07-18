@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/merge_sorter.h>
-#include <cpp-sort/sort.h>
 #include "../distributions.h"
 
 TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
@@ -41,53 +40,53 @@ TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
 
     SECTION( "sort with random-access iterable" )
     {
-        cppsort::sort(cppsort::merge_sorter{}, vec);
+        cppsort::merge_sort(vec);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        cppsort::sort(cppsort::merge_sorter{}, vec, std::greater<>{});
+        cppsort::merge_sort(vec, std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        cppsort::sort(cppsort::merge_sorter{}, std::begin(vec), std::end(vec));
+        cppsort::merge_sort(std::begin(vec), std::end(vec));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        cppsort::sort(cppsort::merge_sorter{}, std::begin(vec), std::end(vec), std::greater<>{});
+        cppsort::merge_sort(std::begin(vec), std::end(vec), std::greater<>{});
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 
     SECTION( "sort with bidirectional iterators" )
     {
         std::list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li));
+        cppsort::merge_sort(std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
 
     SECTION( "sort with bidirectional iterators and compare" )
     {
         std::list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li), std::greater<>{});
+        cppsort::merge_sort(std::begin(li), std::end(li), std::greater<>{});
         CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
     }
 
     SECTION( "sort with forward iterators" )
     {
         std::forward_list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li));
+        cppsort::merge_sort(std::begin(li), std::end(li));
         CHECK( std::is_sorted(std::begin(li), std::end(li)) );
     }
 
     SECTION( "sort with forward iterators and compare" )
     {
         std::forward_list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(cppsort::merge_sorter{}, std::begin(li), std::end(li), std::greater<>{});
+        cppsort::merge_sort(std::begin(li), std::end(li), std::greater<>{});
         CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
     }
 }

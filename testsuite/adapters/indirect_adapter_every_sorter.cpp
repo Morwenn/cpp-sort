@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include "../distributions.h"
 
@@ -59,7 +58,7 @@ TEMPLATE_TEST_CASE( "every sorter with indirect adapter", "[indirect_adapter]",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 412, -125.0);
 
-    using sorter = cppsort::indirect_adapter<TestType>;
-    cppsort::sort(sorter{}, collection);
+    cppsort::indirect_adapter<TestType> sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

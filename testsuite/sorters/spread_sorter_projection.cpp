@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sort.h>
 #include "../algorithm.h"
 
 TEST_CASE( "spread_sorter tests with projections",
@@ -41,13 +40,11 @@ TEST_CASE( "spread_sorter tests with projections",
     SECTION( "sort with int iterable" )
     {
         std::vector<std::pair<int, float>> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
+        for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, i);
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec,
-                      &std::pair<int, float>::first);
+        cppsort::spread_sort(vec, &std::pair<int, float>::first);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, float>::second) );
     }
@@ -55,13 +52,11 @@ TEST_CASE( "spread_sorter tests with projections",
     SECTION( "sort with unsigned int iterators" )
     {
         std::vector<std::pair<unsigned, float>> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
+        for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, i);
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec,
-                      &std::pair<unsigned, float>::first);
+        cppsort::spread_sort(vec, &std::pair<unsigned, float>::first);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<unsigned, float>::second) );
     }
@@ -69,13 +64,11 @@ TEST_CASE( "spread_sorter tests with projections",
     SECTION( "sort with float iterable" )
     {
         std::vector<std::pair<int, float>> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
+        for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, i);
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec,
-                      &std::pair<int, float>::second);
+        cppsort::spread_sort(vec, &std::pair<int, float>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, float>::first) );
     }
@@ -83,13 +76,11 @@ TEST_CASE( "spread_sorter tests with projections",
     SECTION( "sort with double iterators" )
     {
         std::vector<std::pair<int, double>> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
+        for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, i);
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec,
-                      &std::pair<int, double>::second);
+        cppsort::spread_sort(vec, &std::pair<int, double>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, double>::first) );
     }
@@ -99,12 +90,11 @@ TEST_CASE( "spread_sorter tests with projections",
         struct wrapper { std::string value; };
 
         std::vector<wrapper> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
+        for (int i = 0 ; i < 100'000 ; ++i) {
             vec.push_back({std::to_string(i)});
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec, &wrapper::value);
+        cppsort::spread_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -114,12 +104,11 @@ TEST_CASE( "spread_sorter tests with projections",
         struct wrapper { std::string value; };
 
         std::vector<wrapper> vec;
-        for (int i = 0 ; i < 100'000 ; ++i)
-        {
+        for (int i = 0 ; i < 100'000 ; ++i) {
             vec.push_back({std::to_string(i)});
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::sort(cppsort::spread_sorter{}, vec, std::greater<>{}, &wrapper::value);
+        cppsort::spread_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::greater<>{}, &wrapper::value) );
     }

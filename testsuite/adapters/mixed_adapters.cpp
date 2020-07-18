@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/counting_adapter.h>
 #include <cpp-sort/adapters/indirect_adapter.h>
+#include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/schwartz_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include "../algorithm.h"
@@ -52,52 +52,52 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 
     SECTION( "schwartz_adapter over indirect_adapter" )
     {
-        using sorter = cppsort::schwartz_adapter<
+        cppsort::schwartz_adapter<
             cppsort::indirect_adapter<
                 cppsort::selection_sorter
             >
-        >;
+        > sorter;
 
-        cppsort::sort(sorter{}, collection, &wrapper::value);
+        sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "indirect_adapter over schwartz_adapter" )
     {
-        using sorter = cppsort::indirect_adapter<
+        cppsort::indirect_adapter<
             cppsort::schwartz_adapter<
                 cppsort::selection_sorter
             >
-        >;
+        > sorter;
 
-        cppsort::sort(sorter{}, collection, &wrapper::value);
+        sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "schwartz_adapter over schwartz_adapter" )
     {
-        using sorter = cppsort::schwartz_adapter<
+        cppsort::schwartz_adapter<
             cppsort::schwartz_adapter<
                 cppsort::selection_sorter
             >
-        >;
+        > sorter;
 
-        cppsort::sort(sorter{}, collection, &wrapper::value);
+        sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "indirect_adapter over indirect_adapter" )
     {
-        using sorter = cppsort::indirect_adapter<
+        cppsort::indirect_adapter<
             cppsort::indirect_adapter<
                 cppsort::selection_sorter
             >
-        >;
+        > sorter;
 
-        cppsort::sort(sorter{}, collection, &wrapper::value);
+        sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
     }
@@ -108,7 +108,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 //
 
 TEST_CASE( "stability of counting_adapter over self_sort_adapter",
-           "[counting_adapter][is_stable]" )
+           "[counting_adapter][self_sort_adapter][is_stable]" )
 {
     // Big checks to ensure that mixed sorters have a valid stability
 

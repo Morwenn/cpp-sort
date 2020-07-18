@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2017-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/verge_adapter.h>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include "../distributions.h"
@@ -57,7 +56,7 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 412, -125.0);
 
-    using sorter = cppsort::verge_adapter<TestType>;
-    cppsort::sort(sorter{}, collection);
+    cppsort::verge_adapter<TestType> sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

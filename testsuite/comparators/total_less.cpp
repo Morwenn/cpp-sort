@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 #include <limits>
 #include <catch2/catch.hpp>
 #include <cpp-sort/comparators/total_less.h>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/sorters/heap_sorter.h>
 
 TEST_CASE( "IEEE 754 totalOrder implementation" )
 {
@@ -33,7 +33,7 @@ TEST_CASE( "IEEE 754 totalOrder implementation" )
     static constexpr double inf = std::numeric_limits<double>::infinity();
 
     double array[] = { +1.0, +inf, -1.0, -nan, +0.0, -inf, +nan, -0.0 };
-    cppsort::sort(array, cppsort::total_less);
+    cppsort::heap_sort(array, cppsort::total_less);
 
     // Check for IEEE 754 totalOrder,
     // ignore quiet vs. signaling NaNs

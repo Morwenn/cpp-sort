@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2017-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
 #include <iterator>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
@@ -61,7 +60,7 @@ TEMPLATE_TEST_CASE( "test sorter with push_middle distribution", "[distributions
     auto distribution = dist::push_middle{};
     distribution(std::back_inserter(collection), 10'000);
 
-    using sorter = TestType;
-    cppsort::sort(sorter{}, collection);
+    TestType sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }

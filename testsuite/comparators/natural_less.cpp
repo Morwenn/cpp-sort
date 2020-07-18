@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 #include <string>
 #include <catch2/catch.hpp>
 #include <cpp-sort/comparators/natural_less.h>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/sorters/heap_sorter.h>
 
 TEST_CASE( "string natural sort with natural_less" )
 {
@@ -38,7 +38,7 @@ TEST_CASE( "string natural sort with natural_less" )
         "Yay 45",
         "Yay 1234"
     };
-    cppsort::sort(array, cppsort::natural_less);
+    cppsort::heap_sort(array, cppsort::natural_less);
 
     std::array<std::string, 7> expected = {
         "Yay",
