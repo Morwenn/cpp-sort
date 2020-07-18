@@ -70,7 +70,6 @@ namespace example
 #include <random>
 #include <vector>
 #include <cpp-sort/adapters/container_aware_adapter.h>
-#include <cpp-sort/sort.h>
 
 int main()
 {
@@ -82,10 +81,10 @@ int main()
     example::list<int> li(std::begin(vec), std::end(vec));
 
     // Sort with container_aware_adapter
-    using sorter = cppsort::container_aware_adapter<
+    cppsort::container_aware_adapter<
         cppsort::selection_sorter
-    >;
-    cppsort::sort(sorter{}, li);
+    > sorter;
+    sorter(li);
 
     assert(std::is_sorted(std::begin(li), std::end(li)));
 }
