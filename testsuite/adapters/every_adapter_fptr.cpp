@@ -33,7 +33,7 @@
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "function pointer test for every adapter",
            "[adapters][function_pointer]" )

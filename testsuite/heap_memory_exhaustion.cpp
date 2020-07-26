@@ -28,8 +28,8 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
-#include "distributions.h"
-#include "memory_exhaustion.h"
+#include <testing-tools/distributions.h>
+#include <testing-tools/memory_exhaustion.h>
 
 //
 // Specific tests to check that a selection of sorters still run fine

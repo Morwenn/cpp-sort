@@ -26,7 +26,7 @@
 #include <cpp-sort/sort.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/utility/functional.h>
-#include "algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "test sorting C arrays", "[sort]" )
 {

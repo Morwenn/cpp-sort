@@ -26,8 +26,8 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
-#include "distributions.h"
-#include "internal_compare.h"
+#include <testing-tools/distributions.h>
+#include <testing-tools/internal_compare.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function comparison",
                     "[sorters][as_function]",

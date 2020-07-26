@@ -28,7 +28,7 @@
 #include <cpp-sort/adapters/verge_adapter.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,

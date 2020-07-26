@@ -28,8 +28,8 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spin_sorter.h>
 #include <cpp-sort/utility/functional.h>
-#include "../algorithm.h"
-#include "../distributions.h"
+#include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
 
 namespace
 {

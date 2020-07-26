@@ -28,7 +28,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/counting_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
 {

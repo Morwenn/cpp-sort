@@ -30,8 +30,8 @@
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include "../algorithm.h"
-#include "../distributions.h"
+#include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
 
 namespace
 {

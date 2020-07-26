@@ -28,7 +28,7 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]",
                     cppsort::block_sorter<>,

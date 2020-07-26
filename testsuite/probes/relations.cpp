@@ -25,7 +25,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "relations between measures of presortedness", "[probe]" )
 {

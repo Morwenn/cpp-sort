@@ -26,7 +26,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spin_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "spin_sorter tests", "[spin_sorter]" )
 {

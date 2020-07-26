@@ -34,7 +34,7 @@
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 //
 // Tests several adapters at once

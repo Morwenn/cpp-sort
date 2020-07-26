@@ -31,7 +31,7 @@
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "container_aware_adapter and std::list",
            "[container_aware_adapter]" )

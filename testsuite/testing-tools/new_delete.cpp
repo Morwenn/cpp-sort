@@ -24,7 +24,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <new>
-#include "memory_exhaustion.h"
+#include <testing-tools/memory_exhaustion.h>
 
 //
 // Replace the global new and delete for the purpose of testing

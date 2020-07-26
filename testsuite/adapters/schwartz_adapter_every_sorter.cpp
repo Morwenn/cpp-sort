@@ -30,7 +30,7 @@
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 namespace
 {

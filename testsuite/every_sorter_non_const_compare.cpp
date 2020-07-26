@@ -27,7 +27,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
-#include "distributions.h"
+#include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,

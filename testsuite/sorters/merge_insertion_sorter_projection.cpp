@@ -28,7 +28,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "merge_insertion_sorter tests with projections",
            "[merge_insertion_sorter][projection]" )

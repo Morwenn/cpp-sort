@@ -28,7 +28,7 @@
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorters.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "every sorter with indirect adapter", "[indirect_adapter]",
                     cppsort::block_sorter<>,

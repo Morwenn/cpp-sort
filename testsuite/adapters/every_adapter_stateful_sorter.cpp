@@ -33,7 +33,7 @@
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters/quick_merge_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 namespace
 {

@@ -28,9 +28,9 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
-#include "../algorithm.h"
-#include "../distributions.h"
-#include "../span.h"
+#include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
+#include <testing-tools/span.h>
 
 TEST_CASE( "basic tests with indirect_adapter",
            "[indirect_adapter]" )

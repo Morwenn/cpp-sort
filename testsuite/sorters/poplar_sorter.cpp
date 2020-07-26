@@ -26,7 +26,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/poplar_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "poplar_sorter tests", "[poplar_sorter]" )
 {

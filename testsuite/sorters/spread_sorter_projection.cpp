@@ -29,7 +29,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spread_sorter.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "spread_sorter tests with projections",
            "[spread_sorter][projection]" )

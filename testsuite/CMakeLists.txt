@@ -25,6 +25,10 @@ endif()
 include(Catch)
 
 macro(configure_tests target)
+    # Make testing tools easiyl available to tests
+    # regardless of the directory of the test
+    target_include_directories(${target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
     target_link_libraries(${target} PRIVATE
         Catch2::Catch2
         cpp-sort::cpp-sort
@@ -192,7 +196,7 @@ if (NOT "${SANITIZE}" MATCHES "address|memory")
         # algorithms that have a fallback when heap exhaustion occurs,
         # which isn't something we want for the main tests
         main.cpp
-        new_delete.cpp
+        testing-tools/new_delete.cpp
         heap_memory_exhaustion.cpp
     )
     configure_tests(heap-memory-exhaustion-tests)

@@ -31,9 +31,9 @@
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include "../algorithm.h"
-#include "../distributions.h"
-#include "../internal_compare.h"
+#include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
+#include <testing-tools/internal_compare.h>
 
 TEST_CASE( "test most adapters with a pointer to member function comparison",
            "[adapters][as_function]" )

@@ -28,8 +28,8 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
-#include "distributions.h"
-#include "move_only.h"
+#include <testing-tools/distributions.h>
+#include <testing-tools/move_only.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,

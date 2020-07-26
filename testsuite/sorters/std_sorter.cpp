@@ -29,7 +29,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/std_sorter.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "std_sorter tests", "[std_sorter]" )
 {

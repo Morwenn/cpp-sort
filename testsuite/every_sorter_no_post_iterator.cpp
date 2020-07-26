@@ -28,7 +28,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
-#include "no_post_iterator.h"
+#include <testing-tools/no_post_iterator.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,

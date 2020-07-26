@@ -29,7 +29,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/default_sorter.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "default sorter function pointer tests",
            "[default_sorter][function_pointer]" )

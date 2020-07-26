@@ -29,7 +29,7 @@
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/fixed_sorters.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
            "[schwartz_adapter]" )

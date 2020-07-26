@@ -30,7 +30,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sort.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "default sorter tests", "[default_sorter]" )
 {

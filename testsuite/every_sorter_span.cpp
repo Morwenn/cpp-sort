@@ -28,8 +28,8 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include "distributions.h"
-#include "span.h"
+#include <testing-tools/distributions.h>
+#include <testing-tools/span.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     cppsort::block_sorter<>,

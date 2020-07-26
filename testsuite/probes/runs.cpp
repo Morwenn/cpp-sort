@@ -26,7 +26,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes/runs.h>
-#include "../internal_compare.h"
+#include <testing-tools/internal_compare.h>
 
 TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
 {

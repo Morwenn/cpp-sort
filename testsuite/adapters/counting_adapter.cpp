@@ -32,9 +32,9 @@
 #include <cpp-sort/adapters/counting_adapter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
-#include "../algorithm.h"
-#include "../distributions.h"
-#include "../span.h"
+#include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
+#include <testing-tools/span.h>
 
 TEST_CASE( "basic counting_adapter tests",
            "[counting_adapter][selection_sorter]" )

@@ -26,8 +26,8 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes/max.h>
-#include "../distributions.h"
-#include "../internal_compare.h"
+#include <testing-tools/distributions.h>
+#include <testing-tools/internal_compare.h>
 
 TEST_CASE( "presortedness measure: max", "[probe][max]" )
 {

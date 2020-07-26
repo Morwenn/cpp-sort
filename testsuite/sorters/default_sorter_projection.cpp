@@ -31,7 +31,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sort.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "default sorter tests with projections",
            "[default_sorter][projection]" )

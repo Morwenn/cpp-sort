@@ -31,7 +31,7 @@
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
 #include <cpp-sort/sorter_facade.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 namespace
 {

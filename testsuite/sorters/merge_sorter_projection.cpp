@@ -30,7 +30,7 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/merge_sorter.h>
-#include "../algorithm.h"
+#include <testing-tools/algorithm.h>
 
 TEST_CASE( "merge_sorter tests with projections",
            "[merge_sorter][projection]" )
