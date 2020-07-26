@@ -23,13 +23,11 @@
  */
 #include <algorithm>
 #include <iterator>
-#include <random>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include "distributions.h"
-#include "move_only.h"
 
 TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
@@ -59,15 +57,9 @@ TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
     std::vector<int> collection;
     collection.reserve(50);
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 0, 25);
+    distribution(std::back_inserter(collection), 50, -25);
 
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
-
-    auto sort = TestType{};
-    sort(collection, [](const int& lhs, const int& rhs) { return lhs < rhs; });
-    //sort(collection, [](const int& lhs, int& rhs) { return lhs < rhs; });
-    //sort(collection, [](int& lhs, const int& rhs) { return lhs < rhs; });
-    sort(collection, [](int& lhs, int& rhs) { return lhs < rhs; });
+    TestType sorter;
+    sorter(collection, [](int& lhs, int& rhs) { return lhs < rhs; });
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
