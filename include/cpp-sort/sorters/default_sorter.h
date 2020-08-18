@@ -40,6 +40,18 @@
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
+    // Stable sorter
+
+    // Declare the specialization first to avoid deprecation
+    // warning at definition time
+    struct default_sorter;
+
+    template<>
+    struct stable_adapter<default_sorter>:
+        merge_sorter
+    {};
+
+    ////////////////////////////////////////////////////////////
     // Unstable sorter
 
     struct CPPSORT_DEPRECATED("default_sorter is deprecated and will be removed in version 2.0.0")
@@ -54,14 +66,6 @@ namespace cppsort
                 pdq_sorter
             >
         >
-    {};
-
-    ////////////////////////////////////////////////////////////
-    // Stable sorter
-
-    template<>
-    struct CPPSORT_DEPRECATED("default_sorter is deprecated and will be removed in version 2.0.0")stable_adapter<default_sorter>:
-        merge_sorter
     {};
 }
 
