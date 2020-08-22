@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/vergesort.h"
@@ -48,6 +49,31 @@ namespace cppsort
         struct verge_sorter_impl
         {
             template<
+                typename BidirectionalIterable,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_v<Projection, BidirectionalIterable, Compare>
+                >
+            >
+            auto operator()(BidirectionalIterable&& iterable,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        iterator_category_t<decltype(std::begin(iterable))>
+                    >::value,
+                    "verge_sorter requires at least bidirectional iterators"
+                );
+
+                vergesort(std::begin(iterable), std::end(iterable),
+                          utility::size(iterable),
+                          std::move(compare), std::move(projection));
+            }
+
+            template<
                 typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
@@ -61,13 +87,14 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::bidirectional_iterator_tag,
+                        std::forward_iterator_tag,
                         iterator_category_t<BidirectionalIterator>
                     >::value,
                     "verge_sorter requires at least bidirectional iterators"
                 );
 
-                vergesort(std::move(first), std::move(last),
+                auto size = std::distance(first, last);
+                vergesort(std::move(first), std::move(last), size,
                           std::move(compare), std::move(projection));
             }
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2017-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ namespace cppsort
                     "verge_adapter requires at least random-access iterators"
                 );
 
-                vergesort(std::move(first), std::move(last),
+                vergesort(std::move(first), std::move(last), last - first,
                           std::move(compare), std::move(projection),
                           this->get());
             }

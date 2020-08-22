@@ -45,29 +45,27 @@ namespace detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
+                   difference_type_t<BidirectionalIterator> size,
                    Compare compare, Projection projection,
                    std::bidirectional_iterator_tag)
         -> void
     {
-        using difference_type = difference_type_t<BidirectionalIterator>;
-        difference_type dist = std::distance(first, last);
-
-        if (dist < 80) {
+        if (size < 80) {
             // vergesort is inefficient for small collections
-            quick_merge_sort(std::move(first), std::move(last), dist,
+            quick_merge_sort(std::move(first), std::move(last), size,
                              std::move(compare), std::move(projection));
             return;
         }
 
         // Limit under which quick_merge_sort is used
-        int unstable_limit = dist / log2(dist);
+        int unstable_limit = size / log2(size);
 
         // Beginning of an unstable partition, last if the
         // previous partition is stable
         BidirectionalIterator begin_unstable = last;
 
         // Size of the unstable partition
-        difference_type size_unstable = 0;
+        difference_type_t<BidirectionalIterator> size_unstable = 0;
 
         // Pair of iterators to iterate through the collection
         BidirectionalIterator next = is_sorted_until(first, last, compare, projection);
@@ -87,8 +85,8 @@ namespace detail
             }
 
             // Reverse and merge
-            dist = std::distance(begin_rng, next);
-            if (dist > unstable_limit) {
+            size = std::distance(begin_rng, next);
+            if (size > unstable_limit) {
                 if (begin_unstable != last) {
                     quick_merge_sort(begin_unstable, begin_rng, size_unstable, compare, projection);
                     detail::reverse(begin_rng, next);
@@ -101,7 +99,7 @@ namespace detail
                     detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
             } else {
-                size_unstable += dist;
+                size_unstable += size;
                 if (begin_unstable == last) {
                     begin_unstable = begin_rng;
                 }
@@ -122,8 +120,8 @@ namespace detail
             }
 
             // Merge
-            dist = std::distance(begin_rng, next);
-            if (dist > unstable_limit) {
+            size = std::distance(begin_rng, next);
+            if (size > unstable_limit) {
                 if (begin_unstable != last) {
                     quick_merge_sort(begin_unstable, begin_rng, size_unstable, compare, projection);
                     detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection);
@@ -134,7 +132,7 @@ namespace detail
                     detail::inplace_merge(first, begin_rng, next, compare, projection);
                 }
             } else {
-                size_unstable += dist;
+                size_unstable += size;
                 if (begin_unstable == last) {
                     begin_unstable = begin_rng;
                 }
@@ -156,14 +154,12 @@ namespace detail
     template<typename RandomAccessIterator, typename Compare,
              typename Projection, typename Fallback>
     auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
+                   difference_type_t<RandomAccessIterator> size,
                    Compare compare, Projection projection, Fallback fallback,
                    std::random_access_iterator_tag)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
-        difference_type dist = last - first;
-
-        if (dist < 128) {
+        if (size < 128) {
             // Vergesort is inefficient for small collections
             fallback(std::move(first), std::move(last),
                      std::move(compare), std::move(projection));
@@ -171,7 +167,7 @@ namespace detail
         }
 
         // Limit under which pdqsort is used to sort a sub-sequence
-        const difference_type unstable_limit = dist / log2(dist);
+        const difference_type_t<RandomAccessIterator> unstable_limit = size / log2(size);
 
         // Vergesort detects big runs in ascending or descending order,
         // and remember where each run ends by storing the end iterator
@@ -313,12 +309,13 @@ namespace detail
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
+                   difference_type_t<RandomAccessIterator> size,
                    Compare compare, Projection projection,
                    std::random_access_iterator_tag category)
         -> void
     {
         using sorter = cppsort::pdq_sorter;
-        vergesort(std::move(first), std::move(last),
+        vergesort(std::move(first), std::move(last), size,
                   std::move(compare), std::move(projection),
                   sorter{}, category);
     }
@@ -326,21 +323,23 @@ namespace detail
     template<typename BidirectionalIterator, typename Compare,
              typename Projection, typename Fallback>
     auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
+                   difference_type_t<BidirectionalIterator> size,
                    Compare compare, Projection projection, Fallback fallback)
         -> void
     {
-        vergesort(std::move(first), std::move(last),
+        vergesort(std::move(first), std::move(last), size,
                   std::move(compare), std::move(projection),
                   std::move(fallback), std::random_access_iterator_tag{});
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
+                   difference_type_t<BidirectionalIterator> size,
                    Compare compare, Projection projection)
         -> void
     {
         using category = iterator_category_t<BidirectionalIterator>;
-        vergesort(std::move(first), std::move(last),
+        vergesort(std::move(first), std::move(last), size,
                   std::move(compare), std::move(projection),
                   category{});
     }
