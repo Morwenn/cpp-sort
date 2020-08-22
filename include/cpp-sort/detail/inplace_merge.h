@@ -198,8 +198,7 @@ namespace detail
         f0_0 = std::move(f0);
         n0_0 = n0 / 2;
         f0_1 = std::next(f0_0, n0_0);
-        f1_1 = lower_bound(f1, std::next(f1, n1), proj(*f0_1),
-                           std::move(compare), std::move(projection));
+        f1_1 = lower_bound_n(f1, n1, proj(*f0_1), std::move(compare), std::move(projection));
         f1_0 = detail::rotate(f0_1, std::move(f1), f1_1);
         n0_1 = std::distance(f0_1, f1_0);
         ++f1_0;
@@ -222,8 +221,7 @@ namespace detail
         f0_0 = f0;
         n0_1 = n1 / 2;
         f1_1 = std::next(f1, n0_1);
-        f0_1 = upper_bound(f0, std::next(f0, n0), proj(*f1_1),
-                           std::move(compare), std::move(projection));
+        f0_1 = upper_bound_n(f0, n0, proj(*f1_1), std::move(compare), std::move(projection));
         ++f1_1;
         f1_0 = detail::rotate(f0_1, std::move(f1), f1_1);
         n0_0 = std::distance(f0_0, f0_1);

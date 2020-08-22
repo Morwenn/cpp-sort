@@ -28,8 +28,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
+#include "iterator_traits.h"
 
 namespace cppsort
 {
@@ -37,14 +39,13 @@ namespace detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
-    auto lower_bound(ForwardIterator first, ForwardIterator last, T&& value,
-                     Compare compare, Projection projection)
+    auto lower_bound_n(ForwardIterator first, difference_type_t<ForwardIterator> size,
+                       T&& value, Compare compare, Projection projection)
         -> ForwardIterator
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        auto size = std::distance(first, last);
         while (size > 0) {
             ForwardIterator it = first;
             std::advance(it, half(size));
@@ -56,6 +57,17 @@ namespace detail
             }
         }
         return first;
+    }
+
+    template<typename ForwardIterator, typename T,
+             typename Compare, typename Projection>
+    auto lower_bound(ForwardIterator first, ForwardIterator last, T&& value,
+                     Compare compare, Projection projection)
+        -> ForwardIterator
+    {
+        return lower_bound_n(first, std::distance(first, last),
+                             std::forward<T>(value),
+                             std::move(compare), std::move(projection));
     }
 }}
 
