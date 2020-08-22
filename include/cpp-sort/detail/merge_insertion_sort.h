@@ -300,7 +300,7 @@ namespace detail
             1537228672809129216u, 3074457345618258432u, 6148914691236516864u
         };
 
-        auto size = std::distance(first, last);
+        auto size = last - first;
         if (size < 2) return;
 
         auto&& comp = utility::as_function(compare);
@@ -363,7 +363,7 @@ namespace detail
 
         for (int k = 0 ; ; ++k) {
             // Should be safe: in this code, std::distance should always return
-            // a positive number, so there is of risk comparing funny values
+            // a positive number, so there is no risk of comparing funny values
             using size_type = std::common_type_t<
                 std::uint_fast64_t,
                 typename list_t::difference_type
