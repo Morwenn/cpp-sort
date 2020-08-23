@@ -22,15 +22,16 @@
  * THE SOFTWARE.
  */
 #include <algorithm>
-#include <array>
 #include <cstddef>
-#include <iterator>
+#include <forward_list>
+#include <list>
 #include <random>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
+#include <testing-tools/algorithm.h>
 
 namespace
 {
@@ -53,7 +54,7 @@ namespace
     }
 }
 
-TEMPLATE_TEST_CASE( "every sorter with stable_adapter", "[stable_adapter]",
+TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -80,13 +81,55 @@ TEMPLATE_TEST_CASE( "every sorter with stable_adapter", "[stable_adapter]",
         wrap.value = count++ % 17;
     }
     std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
-    count = 0;
-    for (wrapper& wrap: collection) {
-        wrap.order = count++;
-    }
+    std::shuffle(collection.begin(), collection.end(), engine);
+    helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
     cppsort::stable_adapter<TestType> sorter;
     sorter(collection, &wrapper::value);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+}
+
+TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_adapter]",
+                    cppsort::drop_merge_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::verge_sorter )
+{
+    std::vector<wrapper> collection(412);
+    std::size_t count = 0;
+    for (wrapper& wrap: collection) {
+        wrap.value = count++ % 17;
+    }
+    std::mt19937 engine(Catch::rngSeed());
+    std::shuffle(collection.begin(), collection.end(), engine);
+    helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
+
+    std::list<wrapper> li(collection.begin(), collection.end());
+    cppsort::stable_adapter<TestType> sorter;
+    sorter(li, &wrapper::value);
+    CHECK( std::is_sorted(li.begin(), li.end()) );
+}
+
+TEMPLATE_TEST_CASE( "every forward sorter with with stable_adapter", "[stable_adapter]",
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter )
+{
+    std::vector<wrapper> collection(412);
+    std::size_t count = 0;
+    for (wrapper& wrap: collection) {
+        wrap.value = count++ % 17;
+    }
+    std::mt19937 engine(Catch::rngSeed());
+    std::shuffle(collection.begin(), collection.end(), engine);
+    helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
+
+    std::forward_list<wrapper> fli(collection.begin(), collection.end());
+    cppsort::stable_adapter<TestType> sorter;
+    sorter(fli, &wrapper::value);
+    CHECK( std::is_sorted(fli.begin(), fli.end()) );
 }
