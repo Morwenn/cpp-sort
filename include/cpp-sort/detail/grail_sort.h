@@ -50,7 +50,7 @@ namespace grail
         auto h0 = first;
         for (auto u = std::next(first) ; u != last ; ++u) {
             if (dist == key_count) break;
-            auto r = lower_bound(h0, h0 + dist, proj(*u), compare.base(), projection) - h0;
+            auto r = lower_bound_n(h0, dist, proj(*u), compare.base(), projection) - h0;
             if (r == dist || compare(proj(*u), proj(h0[r])) != 0) {
                 h0 = detail::rotate(h0, h0 + dist, u);
                 detail::rotate(h0 + r, u, std::next(u));

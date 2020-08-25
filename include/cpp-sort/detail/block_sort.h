@@ -134,8 +134,7 @@ namespace detail
                                    std::move(compare), std::move(projection));
             }
         }
-        return lower_bound(index, index + skip, value_proj,
-                           std::move(compare), std::move(projection));
+        return lower_bound_n(index, skip, value_proj, std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
@@ -161,8 +160,7 @@ namespace detail
                                    std::move(compare), std::move(projection));
             }
         }
-        return upper_bound(index, index + skip, value_proj,
-                           std::move(compare), std::move(projection));
+        return upper_bound_n(index, skip, value_proj, std::move(compare), std::move(projection));
     }
 
     namespace Wiki
