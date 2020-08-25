@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -56,7 +55,7 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> cppsort::detail::difference_type_t<RandomAccessIterator>
             {
-                auto size = std::distance(first, last);
+                auto size = last - first;
 
                 auto res = 0;
                 while (size > 0) {
