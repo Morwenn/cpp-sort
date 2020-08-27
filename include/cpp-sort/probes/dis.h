@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -62,24 +62,20 @@ namespace probe
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                if (first == last || std::next(first) == last)
-                {
+                if (first == last || std::next(first) == last) {
                     return 0;
                 }
 
                 difference_type max_dist = 0;
-                for (auto it1 = first ; it1 != last ; ++it1)
-                {
+                for (auto it1 = first ; it1 != last ; ++it1) {
                     auto&& value = proj(*it1);
-                    for (auto it2 = std::next(it1) ; it2 != last ; ++it2)
-                    {
-                        if (comp(proj(*it2), value))
-                        {
-                            max_dist = std::max(
-                                max_dist,
-                                std::distance(it1, it2)
-                            );
+
+                    difference_type dist = 1; // Distance between it1 and it2
+                    for (auto it2 = std::next(it1) ; it2 != last ; ++it2) {
+                        if (comp(proj(*it2), value)) {
+                            max_dist = std::max(max_dist, dist);
                         }
+                        ++dist;
                     }
                 }
                 return max_dist;
