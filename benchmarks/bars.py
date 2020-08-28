@@ -89,15 +89,13 @@ for filename in os.listdir("profiles"):
         ax.invert_yaxis()
         ax.relim()
         ax.autoscale_view()
-        pyplot.ylim(pyplot.ylim()[0]+1, pyplot.ylim()[1]-1)
-        pyplot.legend(loc="lower right", fontsize=12)
+        pyplot.ylim(pyplot.ylim()[0] + 1, pyplot.ylim()[1] - 1)
 
         pyplot.title("Sorting $10^{}$ elements".format(round(math.log(size, 10))))
+        pyplot.legend(loc="lower right", fontsize=12)
 
         figure = pyplot.gcf()
-        figure.set_size_inches(8 * .75, 6 * .75)
-        pyplot.show()
-        os.makedirs("plots", exist_ok=True)
-        pyplot.savefig(os.path.join("plots", os.path.splitext(filename)[0] + ".png"), dpi=100, bbox_inches="tight")
+        figure.set_size_inches(10, 6)
 
+        pyplot.show()
         pyplot.clf()
