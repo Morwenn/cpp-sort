@@ -33,14 +33,14 @@
     #endif
 #endif
 
-template<template<typename...> class Collection, typename T>
-using distr_f = void (*)(std::back_insert_iterator<Collection<T>>, std::size_t);
-
-template<template<typename...> class Collection, typename T>
-using sort_f = void (*)(Collection<T>&);
-
 // Type of data to sort during the benchmark
 using value_t = int;
+// Type of collection to sort
+using collection_t = std::vector<value_t>;
+
+// Handy function pointer aliases
+using distr_f = void (*)(std::back_insert_iterator<collection_t>, std::size_t);
+using sort_f = void (*)(collection_t&);
 
 int main()
 {
@@ -53,7 +53,7 @@ int main()
         std::chrono::steady_clock
     >;
 
-    std::pair<std::string, distr_f<std::vector, value_t>> distributions[] = {
+    std::pair<std::string, distr_f> distributions[] = {
         { "shuffled",               shuffled()              },
         { "shuffled_16_values",     shuffled_16_values()    },
         { "all_equal",              all_equal()             },
@@ -68,7 +68,7 @@ int main()
         { "alternating_16_values",  alternating_16_values() }
     };
 
-    std::pair<std::string, sort_f<std::vector, value_t>> sorts[] = {
+    std::pair<std::string, sort_f> sorts[] = {
         { "heap_sort",      cppsort::heap_sort      },
         { "pdq_sort",       cppsort::pdq_sort       },
         { "quick_sort",     cppsort::quick_sort     },
