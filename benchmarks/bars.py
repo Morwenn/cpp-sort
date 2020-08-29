@@ -63,7 +63,10 @@ for filename in os.listdir("profiles"):
         spacing = 1
         groupwidth = groupsize * barwidth + spacing
 
-        colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#800080", "#3ADF00", "#800000"]
+        # Colorblind-friendly palette (https://gist.github.com/thriveth/8560036)
+        colors = ['#377eb8', '#ff7f00', '#4daf4a',
+                  '#f781bf', '#a65628', '#984ea3',
+                  '#999999', '#e41a1c', '#dede00']
         for i, algo in enumerate(algos):
             heights = [numpy.median(data[size][distribution][algo]) for distribution in distributions]
             errors = [numpy.std(data[size][distribution][algo]) for distribution in distributions]
