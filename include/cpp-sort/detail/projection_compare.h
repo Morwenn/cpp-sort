@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include <tuple>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "type_traits.h"
 
 namespace cppsort
 {
@@ -40,8 +41,8 @@ namespace detail
     {
         private:
 
-            using compare_t = decltype(utility::as_function(std::declval<Compare&>()));
-            using projection_t = decltype(utility::as_function(std::declval<Projection&>()));
+            using compare_t = remove_cvref_t<decltype(utility::as_function(std::declval<Compare&>()))>;
+            using projection_t = remove_cvref_t<decltype(utility::as_function(std::declval<Projection&>()))>;
             std::tuple<compare_t, projection_t> data;
 
         public:
