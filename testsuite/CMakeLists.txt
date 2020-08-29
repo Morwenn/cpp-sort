@@ -198,7 +198,7 @@ if (NOT "${SANITIZE}" MATCHES "address|memory")
         main.cpp
         testing-tools/new_delete.cpp
         heap_memory_exhaustion.cpp
-        probes/heap_memory_exhaustion_probes.cpp
+        probes/every_probe_heap_memory_exhaustion.cpp
     )
     configure_tests(heap-memory-exhaustion-tests)
 endif()
