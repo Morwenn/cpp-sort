@@ -89,6 +89,7 @@ add_executable(main-tests
     every_sorter.cpp
     every_sorter_internal_compare.cpp
     every_sorter_long_string.cpp
+    every_sorter_move_compare_projection.cpp
     every_sorter_move_only.cpp
     every_sorter_no_post_iterator.cpp
     every_sorter_non_const_compare.cpp
@@ -160,6 +161,7 @@ add_executable(main-tests
     probes/rem.cpp
     probes/runs.cpp
     probes/relations.cpp
+    probes/every_probe_move_compare_projection.cpp
 
     # Sorters tests
     sorters/counting_sorter.cpp
