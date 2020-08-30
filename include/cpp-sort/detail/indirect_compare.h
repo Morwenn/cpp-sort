@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,6 +58,13 @@ namespace detail
                 return comp(proj(*lhs), proj(*rhs));
             }
     };
+
+    template<typename Compare, typename Projection=utility::identity>
+    auto make_indirect_compare(Compare compare, Projection projection={})
+        -> indirect_compare<Compare, Projection>
+    {
+        return { compare, projection };
+    }
 }}
 
 #endif // CPPSORT_DETAIL_INDIRECT_COMPARE_H_
