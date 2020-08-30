@@ -511,6 +511,25 @@ namespace detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
+                       BidirectionalIterator last,
+                       Compare compare, Projection projection,
+                       difference_type_t<BidirectionalIterator> len1,
+                       difference_type_t<BidirectionalIterator> len2,
+                       std::bidirectional_iterator_tag)
+        -> void
+    {
+        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
+        temporary_buffer<rvalue_reference> buffer(std::min(len1, len2));
+
+        using category = iterator_category_t<BidirectionalIterator>;
+        inplace_merge(std::move(first), std::move(middle), std::move(last),
+                      std::move(compare), std::move(projection),
+                      len1, len2, buffer.data(), buffer.size(),
+                      category{});
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                        BidirectionalIterator last, Compare compare, Projection projection,
                        std::bidirectional_iterator_tag)
         -> void
@@ -543,6 +562,20 @@ namespace detail
         inplace_merge(std::move(first), std::move(middle), std::move(last),
                       std::move(compare), std::move(projection),
                       category{});
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
+                       BidirectionalIterator last,
+                       Compare compare, Projection projection,
+                       difference_type_t<BidirectionalIterator> len1,
+                       difference_type_t<BidirectionalIterator> len2)
+        -> void
+    {
+        using category = iterator_category_t<BidirectionalIterator>;
+        inplace_merge(std::move(first), std::move(middle), std::move(last),
+                      std::move(compare), std::move(projection),
+                      len1, len2, category{});
     }
 
     // Buffered overload, which also happens to take the length of the
