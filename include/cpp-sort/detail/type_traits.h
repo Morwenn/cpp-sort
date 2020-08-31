@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -243,6 +243,22 @@ namespace detail
 
     template<typename T>
     using remove_cvref_t = typename remove_cvref<T>::type;
+
+    ////////////////////////////////////////////////////////////
+    // std::is_bounded_array from C++20
+
+    template<typename T>
+    struct is_bounded_array:
+        std::false_type
+    {};
+
+    template<typename T, std::size_t N>
+    struct is_bounded_array<T[N]>:
+        std::true_type
+    {};
+
+    template<typename T>
+    constexpr bool is_bounded_array_v = is_bounded_array<T>::value;
 
     ////////////////////////////////////////////////////////////
     // Type traits to take __int128 into account even when the
