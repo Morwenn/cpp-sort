@@ -87,7 +87,7 @@ int main()
                 auto total_start = clock_type::now();
                 auto total_end = clock_type::now();
                 while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 5s) {
-                    std::vector<value_t> collection;
+                    collection_t collection;
                     distribution.second(std::back_inserter(collection), size);
                     std::uint64_t start = rdtsc();
                     sort.second(collection);
