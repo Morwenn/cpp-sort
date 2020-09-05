@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <iostream>
 #include <iterator>
 #include <string>
@@ -79,8 +80,15 @@ int main()
 
     std::size_t sizes[] = { 1'000'000 };
 
+    // Poor seed, yet enough for our benchmarks
+    std::uint_fast32_t seed = std::time(nullptr);
+
     for (auto& distribution: distributions) {
         for (auto& sort: sorts) {
+            // Seed the distribution manually to ensure that all algorithms
+            // sort the same collections when there is randomness
+            distributions_prng.seed(seed);
+
             for (auto size: sizes) {
                 std::vector<std::uint64_t> cycles;
 

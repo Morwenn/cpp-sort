@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,9 @@
 #include <vector>
 #include <cpp-sort/detail/bitops.h>
 
+// Pseudo-random number generator, used by some distributions
+thread_local std::mt19937_64 distributions_prng(std::time(nullptr));
+
 ////////////////////////////////////////////////////////////
 // Distributions for benchmarks
 //
@@ -40,7 +43,7 @@
 //
 
 template<typename Derived>
-struct distribution
+struct base_distribution
 {
     template<typename OutputIterator>
     using fptr_t = void(*)(OutputIterator, std::size_t);
@@ -56,21 +59,17 @@ struct distribution
 };
 
 struct shuffled:
-    distribution<shuffled>
+    base_distribution<shuffled>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        // Pseudo-random number generator
-        thread_local std::mt19937_64 engine(std::time(nullptr));
-
         std::vector<int> vec;
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             vec.emplace_back(i);
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), distributions_prng);
         std::move(std::begin(vec), std::end(vec), out);
     }
 
@@ -78,21 +77,17 @@ struct shuffled:
 };
 
 struct shuffled_16_values:
-    distribution<shuffled_16_values>
+    base_distribution<shuffled_16_values>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        // Pseudo-random number generator
-        thread_local std::mt19937_64 engine(std::time(nullptr));
-
         std::vector<int> vec;
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             vec.emplace_back(i % 16);
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), distributions_prng);
         std::move(std::begin(vec), std::end(vec), out);
     }
 
@@ -100,14 +95,13 @@ struct shuffled_16_values:
 };
 
 struct all_equal:
-    distribution<all_equal>
+    base_distribution<all_equal>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = 0;
         }
     }
@@ -116,14 +110,13 @@ struct all_equal:
 };
 
 struct ascending:
-    distribution<ascending>
+    base_distribution<ascending>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = i;
         }
     }
@@ -132,14 +125,13 @@ struct ascending:
 };
 
 struct descending:
-    distribution<descending>
+    base_distribution<descending>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        while (size--)
-        {
+        while (size--) {
             *out++ = size;
         }
     }
@@ -148,18 +140,16 @@ struct descending:
 };
 
 struct pipe_organ:
-    distribution<pipe_organ>
+    base_distribution<pipe_organ>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        for (std::size_t i = 0 ; i < size / 2 ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size / 2 ; ++i) {
             *out++ = i;
         }
-        for (std::size_t i = size / 2 ; i < size ; ++i)
-        {
+        for (std::size_t i = size / 2 ; i < size ; ++i) {
             *out++ = size - i;
         }
     }
@@ -168,16 +158,14 @@ struct pipe_organ:
 };
 
 struct push_front:
-    distribution<push_front>
+    base_distribution<push_front>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        if (size > 0)
-        {
-            for (std::size_t i = 0 ; i < size - 1 ; ++i)
-            {
+        if (size > 0) {
+            for (std::size_t i = 0 ; i < size - 1 ; ++i) {
                 *out++ = i;
             }
             *out = 0;
@@ -188,18 +176,15 @@ struct push_front:
 };
 
 struct push_middle:
-    distribution<push_middle>
+    base_distribution<push_middle>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        if (size > 0)
-        {
-            for (std::size_t i = 0 ; i < size ; ++i)
-            {
-                if (i != size / 2)
-                {
+        if (size > 0) {
+            for (std::size_t i = 0 ; i < size ; ++i) {
+                if (i != size / 2) {
                     *out++ = i;
                 }
             }
@@ -211,15 +196,14 @@ struct push_middle:
 };
 
 struct ascending_sawtooth:
-    distribution<ascending_sawtooth>
+    base_distribution<ascending_sawtooth>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
         std::size_t limit = size / cppsort::detail::log2(size) + 50;
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = i % limit;
         }
     }
@@ -228,7 +212,7 @@ struct ascending_sawtooth:
 };
 
 struct ascending_sawtooth_bad:
-    distribution<ascending_sawtooth_bad>
+    base_distribution<ascending_sawtooth_bad>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
@@ -244,15 +228,14 @@ struct ascending_sawtooth_bad:
 };
 
 struct descending_sawtooth:
-    distribution<descending_sawtooth>
+    base_distribution<descending_sawtooth>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
         std::size_t limit = size / cppsort::detail::log2(size) + 50;
-        while (size--)
-        {
+        while (size--) {
             *out++ = size % limit;
         }
     }
@@ -261,7 +244,7 @@ struct descending_sawtooth:
 };
 
 struct descending_sawtooth_bad:
-    distribution<descending_sawtooth_bad>
+    base_distribution<descending_sawtooth_bad>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
@@ -277,14 +260,13 @@ struct descending_sawtooth_bad:
 };
 
 struct alternating:
-    distribution<alternating>
+    base_distribution<alternating>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = (i % 2) ? i : -i;
         }
     }
@@ -293,14 +275,13 @@ struct alternating:
 };
 
 struct alternating_16_values:
-    distribution<alternating_16_values>
+    base_distribution<alternating_16_values>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
         -> void
     {
-        for (std::size_t i = 0 ; i < size ; ++i)
-        {
+        for (std::size_t i = 0 ; i < size ; ++i) {
             *out++ = (i % 2) ? i % 16 : -(i % 16);
         }
     }
@@ -309,7 +290,7 @@ struct alternating_16_values:
 };
 
 struct sparse_inversions:
-    distribution<sparse_inversions>
+    base_distribution<sparse_inversions>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
@@ -326,7 +307,7 @@ struct sparse_inversions:
 };
 
 struct vergesort_killer:
-    distribution<vergesort_killer>
+    base_distribution<vergesort_killer>
 {
     template<typename OutputIterator>
     auto operator()(OutputIterator out, std::size_t size) const
