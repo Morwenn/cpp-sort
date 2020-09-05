@@ -35,6 +35,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 
@@ -44,8 +45,58 @@ namespace probe
 {
     namespace detail
     {
+        template<typename ForwardIterator, typename Compare, typename Projection>
+        auto dis_probe_algo(ForwardIterator first, ForwardIterator last,
+                            cppsort::detail::difference_type_t<ForwardIterator> size,
+                            Compare compare, Projection projection)
+            -> ::cppsort::detail::difference_type_t<ForwardIterator>
+        {
+            using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
+            auto&& comp = utility::as_function(compare);
+            auto&& proj = utility::as_function(projection);
+
+            if (size < 2) {
+                return 0;
+            }
+
+            difference_type max_dist = 0;
+            auto it1 = first;
+            do {
+                auto&& value = proj(*it1);
+
+                difference_type dist = 1; // Distance between it1 and it2
+                for (auto it2 = std::next(it1) ; it2 != last ; ++it2) {
+                    if (comp(proj(*it2), value)) {
+                        max_dist = std::max(max_dist, dist);
+                    }
+                    ++dist;
+                }
+
+                ++it1;
+                --size;
+            } while (max_dist < size);
+            return max_dist;
+        }
+
         struct dis_impl
         {
+            template<
+                typename ForwardIterable,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_v<Projection, ForwardIterable, Compare>
+                >
+            >
+            auto operator()(ForwardIterable&& iterable,
+                            Compare compare={}, Projection projection={}) const
+                -> decltype(auto)
+            {
+                return dis_probe_algo(std::begin(iterable), std::end(iterable),
+                                      utility::size(iterable),
+                                      std::move(compare), std::move(projection));
+            }
+
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
@@ -56,29 +107,10 @@ namespace probe
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> cppsort::detail::difference_type_t<ForwardIterator>
+                -> decltype(auto)
             {
-                using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
-                auto&& comp = utility::as_function(compare);
-                auto&& proj = utility::as_function(projection);
-
-                if (first == last || std::next(first) == last) {
-                    return 0;
-                }
-
-                difference_type max_dist = 0;
-                for (auto it1 = first ; it1 != last ; ++it1) {
-                    auto&& value = proj(*it1);
-
-                    difference_type dist = 1; // Distance between it1 and it2
-                    for (auto it2 = std::next(it1) ; it2 != last ; ++it2) {
-                        if (comp(proj(*it2), value)) {
-                            max_dist = std::max(max_dist, dist);
-                        }
-                        ++dist;
-                    }
-                }
-                return max_dist;
+                return dis_probe_algo(first, last, std::distance(first, last),
+                                      std::move(compare), std::move(projection));
             }
         };
     }
