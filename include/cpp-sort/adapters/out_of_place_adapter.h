@@ -95,7 +95,6 @@ namespace cppsort
     template<typename Sorter>
     struct out_of_place_adapter:
         utility::adapter_storage<Sorter>,
-        detail::check_iterator_category<Sorter>,
         detail::check_is_always_stable<Sorter>,
         detail::sorter_facade_fptr<
             out_of_place_adapter<Sorter>,
@@ -130,6 +129,11 @@ namespace cppsort
             auto size = utility::size(iterable);
             return detail::sort_out_of_place(std::begin(iterable), size, this->get(), std::forward<Args>(args)...);
         }
+
+        ////////////////////////////////////////////////////////////
+        // Sorter traits
+
+        using iterator_category = std::forward_iterator_tag;
     };
 
     ////////////////////////////////////////////////////////////
