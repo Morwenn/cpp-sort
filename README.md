@@ -199,6 +199,9 @@ of the algorithm.
 * The algorithm used by `grail_sorter` has been adapted from Mrrl's
 [GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
 
+* The algorithm used by `indirect_adapter` with forward or bidirectional iterators is a
+slightly modified version of Matthew Bentley's [indiesort](https://github.com/mattreecebentley/plf_indiesort).
+
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
 Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
 

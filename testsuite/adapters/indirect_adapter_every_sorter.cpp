@@ -30,7 +30,7 @@
 #include <cpp-sort/sorters.h>
 #include <testing-tools/distributions.h>
 
-TEMPLATE_TEST_CASE( "every sorter with indirect adapter", "[indirect_adapter]",
+TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indirect_adapter]",
                     cppsort::block_sorter<>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -57,6 +57,41 @@ TEMPLATE_TEST_CASE( "every sorter with indirect adapter", "[indirect_adapter]",
     std::vector<double> collection; collection.reserve(412);
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 412, -125.0);
+
+    cppsort::indirect_adapter<TestType> sorter;
+    sorter(collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+}
+
+TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indirect_adapter]",
+                    cppsort::drop_merge_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter, // Check extended support
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::verge_sorter )
+{
+    std::list<double> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 412, -125.0);
+
+    cppsort::indirect_adapter<TestType> sorter;
+    sorter(collection);
+    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+}
+
+TEMPLATE_TEST_CASE( "every forward sorter with with indirect_adapter", "[indirect_adapter]",
+                    cppsort::merge_sorter,
+                    cppsort::pdq_sorter, // Check extended support
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter )
+{
+    std::forward_list<double> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::front_inserter(collection), 412, -125.0);
 
     cppsort::indirect_adapter<TestType> sorter;
     sorter(collection);
