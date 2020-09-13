@@ -48,7 +48,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <limits>
 #include <memory>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
@@ -118,13 +117,10 @@ namespace detail
         auto exit_function = make_scope_success([&] {
 #endif
 
-            // This special value indicates that the element being pointed to in that tuple has been sorted already:
-            constexpr difference_type sorted = std::numeric_limits<difference_type>::max();
-
             // Sort the actual elements via the tuple array:
             index = 0;
             for (auto current_tuple = sort_array; current_tuple != tuple_pointer; ++current_tuple, ++index) {
-                if (current_tuple->original_index != index && current_tuple->original_index != sorted) {
+                if (current_tuple->original_index != index) {
                     auto end_value = iter_move(current_tuple->original_location);
 
                     difference_type destination_index = index;
@@ -135,11 +131,12 @@ namespace detail
 
                         destination_index = source_index;
                         source_index = sort_array[destination_index].original_index;
-                        sort_array[destination_index].original_index = sorted;
+                        sort_array[destination_index].original_index = destination_index;
                     } while (source_index != index);
                     *(sort_array[destination_index].original_location) = std::move(end_value);
                 }
             }
+
 #ifdef __cpp_lib_uncaught_exceptions
         });
 
