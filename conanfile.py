@@ -14,7 +14,7 @@ class CppSortConan(ConanFile):
     author = "Morwenn <morwenn29@hotmail.fr>"
 
     # Minimal export (excludes tests, coverage, etc.)
-    exports = ["license.txt"]
+    exports = ["LICENSE.txt", "NOTICE.txt"]
     exports_sources = [
         "include/*",
         "CMakeLists.txt",
@@ -31,8 +31,9 @@ class CppSortConan(ConanFile):
         cmake.install()
         cmake.patch_config_paths()
 
-        # Copy license file
-        self.copy("license.txt", dst="licenses")
+        # Copy license files
+        self.copy("LICENSE.txt", dst="licenses")
+        self.copy("NOTICE.txt", dst="licenses")
 
     def package_id(self):
         self.info.header_only()
