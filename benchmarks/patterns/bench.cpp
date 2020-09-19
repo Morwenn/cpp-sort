@@ -107,6 +107,7 @@ int main()
 
     // Poor seed, yet enough for our benchmarks
     std::uint_fast32_t seed = std::time(nullptr);
+    std::cerr << "SEED: " << seed << '\n';
 
     for (auto& distribution: distributions) {
         for (auto& sort: sorts) {
