@@ -35,7 +35,7 @@ def main():
                    '#f781bf', '#a65628', '#984ea3',
                    '#999999', '#e41a1c', '#dede00']
     colors = iter(palette)
-    markers = iter(['o', '^', 's', 'p', 'P', '*', 'H', 'X', 'D', 'v'])
+    markers = iter(['o', '^', 's', 'p', 'v', '*', 'H', 'X', 'd', 'P', '+'])
 
     ax = pyplot.gca()
 
@@ -61,7 +61,6 @@ def main():
     ax.set_ylabel('Time [s]')
     ax.set_xscale('log', basex=2)
     ax.set_yscale('log')
-    pyplot.xlim(pyplot.xlim()[0] / 2, pyplot.xlim()[1] * 2)
 
     pyplot.title("Sorting std::vector<int>")
     pyplot.legend(loc='best')

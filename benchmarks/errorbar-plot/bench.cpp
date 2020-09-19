@@ -149,7 +149,7 @@ int main(int argc, char** argv)
             double avg = average(times);
 
             std::ostringstream ss;
-            ss << pow_of_2++ << ", "
+            ss << ++pow_of_2 << ", "
                << size << ", "
                << avg << ", "
                << standard_deviation(times, avg) << '\n';
