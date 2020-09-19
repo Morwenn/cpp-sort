@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Copyright (c) 2018-2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 import os.path
 
 from conans import ConanFile, CMake

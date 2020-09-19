@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# Copyright (c) 2018-2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 from conans import CMake, ConanFile
 
 

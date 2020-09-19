@@ -210,3 +210,20 @@ In addition, certain files include the notices provided below.
 // 2. Altered source versions must be plainly marked as such, and must not be
 // 	misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
+
+----------------------
+
+# Distributed under the OSI-approved MIT License.  See accompanying
+# file LICENSE or https://github.com/Crascit/DownloadProject for details.
+
+----------------------
+
+# This file is part of CMake-codecov.
+#
+# Copyright (c)
+#   2015-2017 RWTH Aachen University, Federal Republic of Germany
+#
+# See the LICENSE file in the package base directory for details
+#
+# Written by Alexander Haase, alexander.haase@rwth-aachen.de
+#

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# Copyright (c) 2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 """
 This script is mainly used to simplify benchmarks between different
 versions of the library: it allows to rename every mention of the

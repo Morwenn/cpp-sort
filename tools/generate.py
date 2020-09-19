@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+# Copyright (c) 2015-2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 import sys
 
 

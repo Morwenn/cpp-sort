@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 include(cpp-sort-utils)
 
 # Quick & dirty script to compile the examples
