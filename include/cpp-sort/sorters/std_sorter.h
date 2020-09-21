@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_STD_SORTER_H_
@@ -105,7 +105,13 @@ namespace cppsort
     template<>
     struct stable_adapter<std_sorter>:
         sorter_facade<detail::std_stable_sorter_impl>
-    {};
+    {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(std_sorter) noexcept:
+            sorter_facade<detail::std_stable_sorter_impl>()
+        {}
+    };
 
     ////////////////////////////////////////////////////////////
     // Sort function

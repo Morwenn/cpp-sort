@@ -85,3 +85,19 @@ TEST_CASE( "std_sorter tests with projections",
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}, &wrapper::value) );
     }
 }
+
+TEST_CASE( "stable_adapter<std_sorter> tests",
+           "[std_sorter][stable_adapter]" )
+{
+    // Pseudo-random number engine
+    std::mt19937_64 engine(Catch::rngSeed());
+
+    // Collection to sort
+    std::vector<int> vec(80);
+    std::iota(vec.begin(), vec.end(), 0);
+    std::shuffle(vec.begin(), vec.end(), engine);
+
+    auto sort = cppsort::stable_adapter<cppsort::std_sorter>(cppsort::std_sort);
+    sort(vec);
+    CHECK( std::is_sorted(vec.begin(), vec.end()) );
+}
