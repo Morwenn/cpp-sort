@@ -18,13 +18,13 @@ should be trivial enough:
 ```cpp
 #include <array>
 #include <iostream>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/sorters/smooth_sorter.h>
 
 int main()
 {
-    std::array<int, 5u> arr = { 5, 8, 3, 2, 9 };
-    cppsort::sort(arr);
-    
+    std::array<int, 5> arr = { 5, 8, 3, 2, 9 };
+    cppsort::smooth_sort(arr);
+
     // prints 2 3 5 8 9
     for (int val: arr) {
         std::cout << val << ' ';
@@ -63,15 +63,14 @@ int main()
 
     // When used, this sorter will use a pattern-defeating quicksort
     // to sort random-access collections, and a mergesort otherwise
-    using sorter = cppsort::hybrid_adapter<
+    cppsort::hybrid_adapter<
         cppsort::pdq_sorter,
         cppsort::merge_sorter
-    >;
-    sorter sort;
+    > sorter;
 
     // Sort li and vec in reverse order using their value member
-    sort(li, std::greater<>{}, &wrapper::value);
-    sort(vec, std::greater<>{}, &wrapper::value);
+    sorter(li, std::greater<>{}, &wrapper::value);
+    sorter(vec, std::greater<>{}, &wrapper::value);
 
     assert(std::equal(
         std::begin(li), std::end(li),
