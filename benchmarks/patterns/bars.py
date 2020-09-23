@@ -118,13 +118,12 @@ def main():
             pyplot.xlabel("Cycles per element")
 
             # Turn off ticks for y-axis.
-            pyplot.tick_params(
-                   axis="y",
-                   which="both",
-                   left="off",
-                   right="off",
-                   labelleft="on",
-                   pad=45)
+            pyplot.tick_params(axis="y",
+                               which="both",
+                               left="off",
+                               right="off",
+                               labelleft="on",
+                               pad=45)
 
             ax = pyplot.gca()
             ax.invert_yaxis()

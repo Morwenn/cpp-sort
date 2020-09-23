@@ -43,7 +43,7 @@ auto distribution = shuffled{};
 
 // Sizes of the collections to sort
 std::uint64_t size_min = 1u << 1;
-std::uint64_t size_max = 1u << 19;
+std::uint64_t size_max = 1u << 22;
 
 // Maximum time to let the benchmark run for a given size before giving up
 auto max_run_time = 60s;

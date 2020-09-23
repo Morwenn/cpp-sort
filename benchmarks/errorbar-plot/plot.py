@@ -12,8 +12,8 @@ from matplotlib import pyplot
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot the benchmark results.")
-    parser.add_argument('root', help="directory with the resut files to plot")
+    parser = argparse.ArgumentParser(description="Plot the results of the errorbar-plot benchmark.")
+    parser.add_argument('root', help="directory with the result files to plot")
     parser.add_argument('--alternative-palette', dest='use_alt_palette',
                         action='store_true', default=False,
                         help="Use another color palette")
