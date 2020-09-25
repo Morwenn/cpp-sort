@@ -112,6 +112,19 @@ Integer sorting is a rather specific scenario for which many solutions exist: co
 
 `spread_sort` and `ska_sort` are two hybrid radix sorts, which are less impacted by the values than `counting_sort`. Of those two `ska_sort` is the clear winner. `pdq_sort` is interesting because it performs almost as well as hybrix radix sorts for integers despite being a comparison sort, which makes it an extremely versatile general-purpose algorithm - it is still more affected than the other algorithms by the data patterns, but as we can see all of the algorithms above are affected by patterns.
 
+## Small array sorters
+
+Some sorting algorithms are particularly suited to sort very small collections: the ones provided by `<cpp-sort/fixed_sorters.h>`, but also the very simple ones such as `insertion_sort` or `selection_sort`. Most other sorting algorithms fallback to one of these when sorting a small collection.
+
+![Benchmark speed of small sorts with increasing size for std::array<int>](https://i.imgur.com/dOa3vyl.png)
+![Benchmark speed of small sorts with increasing size for std::array<long double>](https://i.imgur.com/4WRtPYP.png)
+
+As far as only speed matters, sorting networks tend to win in these artificial benchmarks, but in a real world scenario the cost of loading the network code for a specific size again and again tends to make them slower. A sorting network can be fast when it is used over and over again.
+
+The spikes in the otherwise smooth sorting networks curve when sorting arrays of integers are weird: they don't exist for the `long double` benchmark but are consistent across runs for the `int` scenario. Interestingly enough those spikes seem to follow the `insertion_sort` curve.
+
+`low_moves_sorter` uses a modified selection sort above a small threshold, which might explain why the artefacts in the two curves have similar shapes.
+
 # Measures of presortedness
 
 This benchmark for [measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness) is small and only intends to show the cost that these tools might incur. It is not meant to be exhaustive in any way.

@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     # Add a legend
     plt.legend(values, names, loc='upper left')
+    plt.title('Sorting std::array<int>')
     plt.xlabel('Number of elements to sort')
     plt.ylabel('Cycles')
     plt.show()
