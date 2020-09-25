@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 def fetch_results(fresults):
     results = fresults.readline().split(' ')
     results.pop()
-    return [int(elem) for elem in results]
+    return [float(elem) for elem in results]
 
     
 if __name__ == '__main__':
@@ -27,13 +27,13 @@ if __name__ == '__main__':
             # Remove EOL character
             results.pop()
             # Plot the results
-            intresults = [int(elem) for elem in results]
-            xaxis = list(range(len(intresults)))
-            val, = plt.plot(xaxis, intresults)
+            results = [float(elem) for elem in results]
+            xaxis = list(range(len(results)))
+            val, = plt.plot(xaxis, results)
             values.append(val)
 
     # Add a legend
     plt.legend(values, names, loc='upper left')
     plt.xlabel('Number of elements to sort')
-    plt.ylabel('Execution time (ms)')
+    plt.ylabel('Cycles')
     plt.show()
