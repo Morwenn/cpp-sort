@@ -201,6 +201,8 @@ auto iter_swap(Iterator lhs, Iterator rhs)
 #include <cpp-sort/utility/make_integer_range.h>
 ```
 
+***WARNING:** `make_integer_range` and `make_index_range` are deprecated in version 1.8.0 and removed in version 2.0.0.*
+
 The class template `make_integer_range` can be used wherever an [`std::integer_sequence`](http://en.cppreference.com/w/cpp/utility/integer_sequence) can be used. An `integer_range` takes a type template parameter that shall be an integer type, then three integer template parameters which correspond to the beginning of the range, the end of the range and the « step ».
 
 ```cpp
