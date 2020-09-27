@@ -112,6 +112,18 @@ Integer sorting is a rather specific scenario for which many solutions exist: co
 
 `spread_sort` and `ska_sort` are two hybrid radix sorts, which are less impacted by the values than `counting_sort`. Of those two `ska_sort` is the clear winner. `pdq_sort` is interesting because it performs almost as well as hybrix radix sorts for integers despite being a comparison sort, which makes it an extremely versatile general-purpose algorithm - it is still more affected than the other algorithms by the data patterns, but as we can see all of the algorithms above are affected by patterns.
 
+## *Inv*-adaptive algorithms
+
+Some sorting algorithms are specifically designed to be fast when there are only a few inversions in the collection, they are known as *Inv*-adaptive algorithms since the amount of work they perform is dependent on the result of the measure of presortedness *Inv(X)*. There are two such algorithms in **cpp-sort**: `drop_merge_sort` and `split_sort` (which probably makes them *Rem*-adaptive too). Both work by removing elements from the collections to leave a *longest ascending subsequence*, sorting the removed elements and merging the two sorted sequences back into one.
+
+The following plot shows how fast those algorithms are depending on the percentage of inversions in the collection to sort. They are benchmarked against `pdq_sort` because it is the algorithm they use internally to sort the remaining unsorted elements prior to the merge, which makes it easy to compare the gains and overheads of those algorithms compared to a raw `pdq_sort`.
+
+![Benchmark speed of Inv-adaptive sorts with an increasing percentage of inversions for std::vector<int>](https://i.imgur.com/MYRdAKc.png)
+
+As long as there are up to 30~40% of inversions in the collection, `drop_merge_sort` and `split_sort` offer an advantage over a raw `pdq_sort`. Interestingly `drop_merge_sort` is the best when there are few inversions but `split_sort` is more robust: it can handle more inversions than `drop_merge_sort` before being slower than `pdq_sort`, and has a lower overhead when the number of inversions is high.
+
+Both algorithms can be interesting depending on the sorting scenario.
+
 ## Small array sorters
 
 Some sorting algorithms are particularly suited to sort very small collections: the ones provided by `<cpp-sort/fixed_sorters.h>`, but also the very simple ones such as `insertion_sort` or `selection_sort`. Most other sorting algorithms fallback to one of these when sorting a small collection.

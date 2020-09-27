@@ -302,21 +302,39 @@ struct alternating_16_values:
     static constexpr const char* output = "alternating_16_values.txt";
 };
 
-struct sparse_inversions:
-    base_distribution<sparse_inversions>
+struct inversions:
+    base_distribution<inversions>
 {
+    // Percentage of chances that an "out-of-place" value
+    // is produced for each position, the goal is to test
+    // Inv-adaptive algorithms
+    double factor;
+
+    constexpr explicit inversions(double factor) noexcept:
+        factor(factor)
+    {}
+
     template<typename OutputIterator, typename Projection=cppsort::utility::identity>
     auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
         -> void
     {
         auto&& proj = cppsort::utility::as_function(projection);
-        const auto size_run = size / cppsort::detail::log2(size) + 30;
+
+        // Generate a percentage of error
+        std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
+        // Generate a random value
+        std::uniform_int_distribution<std::size_t> value_dis(0, size - 1);
+
         for (std::size_t i = 0 ; i < size ; ++i) {
-            *out++ = proj((i % size_run) == 0 ? 0 : i);
+            if (percent_dis(distributions_prng) < factor) {
+                *out++ = value_dis(distributions_prng);
+            } else {
+                *out++ = i;
+            }
         }
     }
 
-    static constexpr const char* output = "alternating_16_values.txt";
+    static constexpr const char* output = "inversions.txt";
 };
 
 struct vergesort_killer:

@@ -2,7 +2,6 @@
  * Copyright (c) 2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
@@ -11,14 +10,13 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include <ratio>
-#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
 #include "distributions.h"
 #include "filesystem.h"
+#include "rdtsc.h"
 #include "statistics.h"
 
 using namespace std::chrono_literals;
@@ -34,20 +32,16 @@ using collection_t = std::vector<value_t>;
 // Sorting algorithms to benchmark
 using sort_f = void (*)(collection_t&);
 std::pair<std::string, sort_f> sorts[] = {
-    { "heap_sort",      cppsort::heap_sort      },
-    { "poplar_sort",    cppsort::poplar_sort    },
-    { "smooth_sort",    cppsort::smooth_sort    }
+    { "drop_merge_sort",    cppsort::drop_merge_sort    },
+    { "pdq_sort",           cppsort::pdq_sort           },
+    { "split_sort",         cppsort::split_sort         }
 };
 
-// Distribution to benchmark against
-auto distribution = shuffled{};
-
-// Sizes of the collections to sort
-std::uint64_t size_min = 1u << 1;
-std::uint64_t size_max = 1u << 22;
+// Size of the collections to sort
+constexpr std::size_t size = 1'000'000;
 
 // Maximum time to let the benchmark run for a given size before giving up
-auto max_run_time = 60s;
+auto max_run_time = 3s;
 // Maximum number of benchmark runs per size
 std::size_t max_runs_per_size = 25;
 
@@ -55,7 +49,7 @@ std::size_t max_runs_per_size = 25;
 ////////////////////////////////////////////////////////////
 // Benchmark code proper
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
     // Choose the output directory
     std::string output_directory = ".";
@@ -85,38 +79,30 @@ int main(int argc, char** argv)
         // sort the same collections when there is randomness
         distributions_prng.seed(seed);
 
-        // Sort the collection as long as needed
-        std::uint64_t pow_of_2 = 0;  // For logs
-        for (auto size = size_min ; size <= size_max ; size <<= 1) {
-            std::vector<double> times;
+        for (int idx = 0 ; idx <= 100 ; ++idx) {
+            double factor = 0.01 * idx;
+            auto dist = inversions(factor);
+
+            std::vector<std::uint64_t> cycles;
 
             auto total_start = clock_type::now();
             auto total_end = clock_type::now();
             while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
-                   times.size() < max_runs_per_size) {
+                   cycles.size() < max_runs_per_size) {
                 collection_t collection;
-                distribution(std::back_inserter(collection), size);
-                auto start = clock_type::now();
+                dist(std::back_inserter(collection), size);
+                std::uint64_t start = rdtsc();
                 sort.second(collection);
-                auto end = clock_type::now();
+                std::uint64_t end = rdtsc();
                 assert(std::is_sorted(std::begin(collection), std::end(collection)));
-                times.push_back(std::chrono::duration<double, std::milli>(end - start).count());
+                cycles.push_back(double(end - start) / size + 0.5);
                 total_end = clock_type::now();
             }
 
             // Compute and display stats & numbers
-            double avg = average(times);
-
-            std::ostringstream ss;
-            ss << ++pow_of_2 << ", "
-               << size << ", "
-               << avg << ", "
-               << standard_deviation(times, avg) << '\n';
-            output_file << ss.str();
-            std::cout << ss.str();
-
-            // Abort if the allocated time was merely enough to benchmark a single run
-            if (times.size() < 2) break;
+            double avg = average(cycles);
+            output_file << idx << ", " << avg << '\n';
+            std::cout << idx << ", " << avg << std::endl;
         }
     }
 }
