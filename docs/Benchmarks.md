@@ -124,6 +124,16 @@ As long as there are up to 30~40% of inversions in the collection, `drop_merge_s
 
 Both algorithms can be interesting depending on the sorting scenario.
 
+## Expensive moves, cheap comparisons
+
+Sometimes we have to sort a collection whose elements are expensive to move around but cheap to compare. In such a situation we can use `indirect_adapter` which sorts iterators to the elements and moves the elements into their direct place once the sorting order is known.
+
+The following example uses a collection of `std::array<doube, 100>` whose first element is the only one compared during the sort. Albeit a bit artificial, it illustrates the point well enough.
+
+![Benchmark heap_sort vs. indirect_adapter(heap_sort) for a collection of std::array<double, 100>](https://i.imgur.com/mYUaxRT.png)
+
+The improvements are not always as clear as in this benchmark, but it shows that `indirect_adapter` might be an interesting tool to have in your sorting toolbox in such a scenario.
+
 ## Small array sorters
 
 Some sorting algorithms are particularly suited to sort very small collections: the ones provided by `<cpp-sort/fixed_sorters.h>`, but also the very simple ones such as `insertion_sort` or `selection_sort`. Most other sorting algorithms fallback to one of these when sorting a small collection.
