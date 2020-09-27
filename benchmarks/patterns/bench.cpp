@@ -113,10 +113,10 @@ int main()
 
                 std::sort(std::begin(cycles), std::end(cycles));
 
-                std::cerr << size << ' ' << distribution.first << ' ' << sort.first
-                          << ' ' << cycles[cycles.size() / 2] << '\n';
-                std::cout << size << ' ' << distribution.first << ' ' << sort.first
-                          << ' ' << cycles[cycles.size() / 2] << '\n';
+                std::cerr << size << ", " << distribution.first << ", " << sort.first
+                          << ", " << cycles[cycles.size() / 2] << '\n';
+                std::cout << size << ", " << distribution.first << ", " << sort.first
+                          << ", " << cycles[cycles.size() / 2] << '\n';
             }
         }
     }

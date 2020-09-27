@@ -59,8 +59,9 @@ def main():
     for file in root.iterdir():
         data = {}
         for line in file.open():
-            size, distribution, algo, *results = line.split()
-            algo = algo.replace('%%', ' ')  # Handle pseudo-spaces in algo names
+            size, distribution, algo, *results = [
+                string.strip() for string in line.split(',')
+            ]
             size = int(size)
             distribution = distribution_names[distribution]
             results = [int(result) for result in results]
