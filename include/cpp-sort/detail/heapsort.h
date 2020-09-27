@@ -1,13 +1,16 @@
+/*
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //===----------------------------------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-// This file is dual licensed under the MIT and the University of Illinois Open
-// Source Licenses. See LICENSE.TXT for details.
-//
-//         Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
-//
-//===----------------------------------------------------------------------===//
+//===----------------------------------------------------------------------===/
+
 #ifndef CPPSORT_DETAIL_HEAPSORT_H_
 #define CPPSORT_DETAIL_HEAPSORT_H_
 

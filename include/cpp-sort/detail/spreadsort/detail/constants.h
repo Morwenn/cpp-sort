@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //constant definitions for the Boost Sort library
 
 //          Copyright Steven J. Ross 2001 - 2014
@@ -6,8 +11,6 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org/libs/sort for library home page.
-
-// Modified in 2015 by Morwenn for inclusion into cpp-sort
 
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_CONSTANTS_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_CONSTANTS_H_

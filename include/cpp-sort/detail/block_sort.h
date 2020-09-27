@@ -1,8 +1,11 @@
 /*
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
- *
- * Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
  */
 #ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
 #define CPPSORT_DETAIL_BLOCK_SORT_H_
@@ -19,8 +22,8 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
+#include "buffered_inplace_merge.h"
 #include "config.h"
-#include "inplace_merge.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -134,8 +137,7 @@ namespace detail
                                    std::move(compare), std::move(projection));
             }
         }
-        return lower_bound(index, index + skip, value_proj,
-                           std::move(compare), std::move(projection));
+        return lower_bound_n(index, skip, value_proj, std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
@@ -161,8 +163,7 @@ namespace detail
                                    std::move(compare), std::move(projection));
             }
         }
-        return upper_bound(index, index + skip, value_proj,
-                           std::move(compare), std::move(projection));
+        return upper_bound_n(index, skip, value_proj, std::move(compare), std::move(projection));
     }
 
     namespace Wiki

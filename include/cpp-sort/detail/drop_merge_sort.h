@@ -1,10 +1,13 @@
 /*
+ * Copyright (c) 2017-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
     The MIT license (MIT)
 
     A C++ reimplementation of a drop-merge sort, originally made by Emil Ernerfeldt:
     https://github.com/emilk/drop-merge-sort
-
-    Modified in 2017-2020 by Morwenn for inclusion into cpp-sort
 
     There are two versions of this function.
 

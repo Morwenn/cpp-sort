@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2017 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //Templated Spreadsort-based implementation of float_sort and float_mem_cast
 
 //          Copyright Steven J. Ross 2001 - 2014.
@@ -11,9 +16,6 @@
 Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
-
-// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
-
 #ifndef CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_
 

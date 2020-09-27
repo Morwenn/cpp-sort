@@ -1,0 +1,229 @@
+cpp-sort
+
+The MIT License (MIT)
+
+Copyright (c) Morwenn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+----------------------------------------------------
+
+In addition, certain files include the notices provided below.
+
+
+
+/*
+ * WikiSort: a public domain implementation of "Block Sort"
+ * https://github.com/BonzaiThePenguin/WikiSort
+ */
+
+----------------------
+
+//===----------------------------------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+----------------------
+
+//----------------------------------------------------------------------------
+/// @file merge.hpp
+/// @brief low level merge functions
+///
+/// @author Copyright (c) 2016 Francisco Jose Tapia (fjtapia@gmail.com )
+///         Distributed under the Boost Software License, Version 1.0.
+///         ( See accompanying file LICENSE_1_0.txt or copy at
+///           http://www.boost.org/LICENSE_1_0.txt  )
+/// @version 0.1
+///
+/// @remarks
+//-----------------------------------------------------------------------------
+
+----------------------
+
+//----------------------------------------------------------------------------
+/// @file range.hpp
+/// @brief Define a range [first, last), and the associated operations
+///
+/// @author Copyright (c) 2016 Francisco José Tapia (fjtapia@gmail.com )
+///         Distributed under the Boost Software License, Version 1.0.
+///         ( See accompanyingfile LICENSE_1_0.txt or copy at
+///           http://www.boost.org/LICENSE_1_0.txt  )
+/// @version 0.1
+///
+/// @remarks
+//-----------------------------------------------------------------------------
+
+----------------------
+
+//----------------------------------------------------------------------------
+/// @file spinsort.hpp
+/// @brief Spin Sort algorithm
+///
+/// @author Copyright (c) 2016 Francisco José Tapia (fjtapia@gmail.com )
+///         Distributed under the Boost Software License, Version 1.0.
+///         ( See accompanying file LICENSE_1_0.txt or copy at
+///           http://www.boost.org/LICENSE_1_0.txt  )
+/// @version 0.1
+///
+/// @remarks
+//-----------------------------------------------------------------------------
+
+----------------------
+
+/*
+    The MIT license (MIT)
+
+    A C++ reimplementation of a drop-merge sort, originally made by Emil Ernerfeldt:
+    https://github.com/emilk/drop-merge-sort
+
+    There are two versions of this function.
+
+    The first one is identical to the reference Rust implementation.
+    It doesn't support uncopyable types.
+    Here, it's used only for trivially copyable types.
+    (just like the Rust version, which required the Copy trait).
+
+    The second version is copy-free, so it supports noncopyable types like std::unique_ptr.
+    It's also more efficient for types with expensive copying, like std::string.
+    However, being copy-free involves some extra bookkeeping, so for trivial types
+    it's a bit less efficient than the original function - which is why I use both versions.
+*/
+
+----------------------
+
+/*
+    pdqsort.h - Pattern-defeating quicksort.
+
+    Copyright (c) 2015 Orson Peters
+
+    This software is provided 'as-is', without any express or implied warranty. In no event will the
+    authors be held liable for any damages arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose, including commercial
+    applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not claim that you wrote the
+       original software. If you use this software in a product, an acknowledgment in the product
+       documentation would be appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+       being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
+
+----------------------
+
+/*
+ * Grail sorting
+ *
+ * (c) 2013 by Andrey Astrelin
+ *
+ * Stable sorting that works in O(N*log(N)) time
+ * and uses O(1) extra memory
+ *
+ */
+
+----------------------
+
+// Range v3 library
+//
+//  Copyright Eric Niebler 2013-2014
+//
+//  Use, modification and distribution is subject to the
+//  Boost Software License, Version 1.0. (See accompanying
+//  file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+// Project home: https://github.com/ericniebler/range-v3
+//
+
+----------------------
+
+//          Copyright Malte Skarupke 2016.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See http://www.boost.org/LICENSE_1_0.txt)
+//
+
+----------------------
+
+/*
+ * File: Smoothsort.hh
+ * Author: Keith Schwarz (htiek@cs.stanford.edu)
+ *
+ * An implementation of Dijkstra's Smoothsort algorithm, a modification of
+ * heapsort that runs in O(n lg n) in the worst case, but O(n) if the data
+ * are already sorted.  For more information about how this algorithm works
+ * and some of the details necessary for its proper operation, please see
+ *
+ *              http://www.keithschwarz.com/smoothsort/
+ *
+ * This implementation is designed to work on a 64-bit machine.
+ */
+
+----------------------
+
+//          Copyright Steven J. Ross 2001 - 2014.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+// See http://www.boost.org/libs/sort for library home page.
+
+----------------------
+
+// Copyright (c) 2020, Matthew Bentley (mattreecebentley@gmail.com) www.plflib.org
+
+// zLib license (https://www.zlib.net/zlib_license.html):
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+// 	claim that you wrote the original software. If you use this software
+// 	in a product, an acknowledgement in the product documentation would be
+// 	appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+// 	misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+
+----------------------
+
+# Distributed under the OSI-approved MIT License.  See accompanying
+# file LICENSE or https://github.com/Crascit/DownloadProject for details.
+
+----------------------
+
+# This file is part of CMake-codecov.
+#
+# Copyright (c)
+#   2015-2017 RWTH Aachen University, Federal Republic of Germany
+#
+# See the LICENSE file in the package base directory for details
+#
+# Written by Alexander Haase, alexander.haase@rwth-aachen.de
+#

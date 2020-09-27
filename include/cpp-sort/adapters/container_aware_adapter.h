@@ -1,25 +1,6 @@
 /*
- * The MIT License (MIT)
- *
- * Copyright (c) 2016-2019 Morwenn
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2016-2020 Morwenn
+ * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_
 #define CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_
@@ -30,7 +11,6 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -145,11 +125,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&)>,
-                        decltype(cppsort::sort(this->get(), iterable))
+                        decltype(this->get()(iterable))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable);
+                return this->get()(iterable);
             }
 
             template<
@@ -182,11 +162,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare)>,
-                        decltype(cppsort::sort(this->get(), iterable, std::move(compare)))
+                        decltype(this->get()(iterable, std::move(compare)))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable, std::move(compare));
+                return this->get()(iterable, std::move(compare));
             }
 
             template<
@@ -275,11 +255,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Projection)>,
-                        decltype(cppsort::sort(this->get(), iterable, std::move(projection)))
+                        decltype(this->get()(iterable, std::move(projection)))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable, std::move(projection));
+                return this->get()(iterable, std::move(projection));
             }
 
             template<
@@ -348,13 +328,11 @@ namespace cppsort
                     conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare, Projection)>,
-                        decltype(cppsort::sort(this->get(), iterable,
-                                               std::move(compare), std::move(projection)))
+                        decltype(this->get()(iterable, std::move(compare), std::move(projection)))
                     >
                 >
             {
-                return cppsort::sort(this->get(), iterable,
-                                     std::move(compare), std::move(projection));
+                return this->get()(iterable, std::move(compare), std::move(projection));
             }
         };
     }

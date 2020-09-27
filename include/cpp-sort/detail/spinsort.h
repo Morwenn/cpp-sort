@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2019-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //----------------------------------------------------------------------------
 /// @file spinsort.hpp
 /// @brief Spin Sort algorithm
 ///
 /// @author Copyright (c) 2016 Francisco José Tapia (fjtapia@gmail.com )
-///         Modified in 2019-2020 by Morwenn for inclusion into cpp-sort
 ///         Distributed under the Boost Software License, Version 1.0.
 ///         ( See accompanying file LICENSE_1_0.txt or copy at
 ///           http://www.boost.org/LICENSE_1_0.txt  )
@@ -11,6 +15,7 @@
 ///
 /// @remarks
 //-----------------------------------------------------------------------------
+
 #ifndef CPPSORT_DETAIL_SPINSORT_H_
 #define CPPSORT_DETAIL_SPINSORT_H_
 

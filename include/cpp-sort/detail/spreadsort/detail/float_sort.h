@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2017 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 // Details for templated Spreadsort-based float_sort.
 
 //          Copyright Steven J. Ross 2001 - 2014.
@@ -11,9 +16,6 @@
 Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
-
-// Modified in 2015-2017 by Morwenn for inclusion into cpp-sort
-
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_
 

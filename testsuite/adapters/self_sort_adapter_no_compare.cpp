@@ -1,25 +1,6 @@
 /*
- * The MIT License (MIT)
- *
- * Copyright (c) 2015-2018 Morwenn
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <functional>
@@ -31,8 +12,7 @@
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/sort.h>
-#include "../distributions.h"
+#include <testing-tools/distributions.h>
 
 namespace
 {
@@ -95,9 +75,9 @@ TEST_CASE( "self-sortable object without comparison",
         // Make sure the sort method is used when no
         // comparator is given
 
-        using sorter = cppsort::self_sort_adapter<
+        cppsort::self_sort_adapter<
             dummy_sorter
-        >;
+        > sorter;
 
         // Fill the collection
         std::vector<int> tmp; tmp.reserve(size);
@@ -106,7 +86,7 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
-        auto res = cppsort::sort(sorter{}, collection);
+        auto res = sorter(collection);
         CHECK( res == sorter_type::self_sortable );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
@@ -116,9 +96,9 @@ TEST_CASE( "self-sortable object without comparison",
         // Make sure the fallback sorter is used when a
         // comparator is given
 
-        using sorter = cppsort::self_sort_adapter<
+        cppsort::self_sort_adapter<
             dummy_sorter
-        >;
+        > sorter;
 
         // Fill the collection
         std::vector<int> tmp; tmp.reserve(size);
@@ -127,7 +107,7 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
 
         // Sort and check it's sorted
-        auto res = cppsort::sort(sorter{}, collection, std::less<>{});
+        auto res = sorter(collection, std::less<>{});
         CHECK( res == sorter_type::dummy_sorter );
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }

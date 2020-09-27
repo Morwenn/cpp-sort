@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2016 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //Templated Spreadsort-based implementation of integer_sort
 
 //          Copyright Steven J. Ross 2001 - 2014.
@@ -14,9 +19,6 @@ Phil Endecott and Frank Gennari
 Doxygen comments by Paul A. Bristow Jan 2015
 
 */
-
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
-
 #ifndef CPPSORT_DETAIL_SPREADSORT_INTEGER_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_INTEGER_SORT_H_
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2019-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
 #include <algorithm>
 #include <iostream>
 #include <iterator>

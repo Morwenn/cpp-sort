@@ -1,5 +1,9 @@
+/*
+ * Copyright (c) 2017-2019 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //          Copyright Malte Skarupke 2016.
-// Modified in 2017-2019 by Morwenn for inclusion into cpp-sort.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See http://www.boost.org/LICENSE_1_0.txt)
 //

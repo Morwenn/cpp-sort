@@ -18,13 +18,13 @@ should be trivial enough:
 ```cpp
 #include <array>
 #include <iostream>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/sorters/smooth_sorter.h>
 
 int main()
 {
-    std::array<int, 5u> arr = { 5, 8, 3, 2, 9 };
-    cppsort::sort(arr);
-    
+    std::array<int, 5> arr = { 5, 8, 3, 2, 9 };
+    cppsort::smooth_sort(arr);
+
     // prints 2 3 5 8 9
     for (int val: arr) {
         std::cout << val << ' ';
@@ -63,15 +63,14 @@ int main()
 
     // When used, this sorter will use a pattern-defeating quicksort
     // to sort random-access collections, and a mergesort otherwise
-    using sorter = cppsort::hybrid_adapter<
+    cppsort::hybrid_adapter<
         cppsort::pdq_sorter,
         cppsort::merge_sorter
-    >;
-    sorter sort;
+    > sorter;
 
     // Sort li and vec in reverse order using their value member
-    sort(li, std::greater<>{}, &wrapper::value);
-    sort(vec, std::greater<>{}, &wrapper::value);
+    sorter(li, std::greater<>{}, &wrapper::value);
+    sorter(vec, std::greater<>{}, &wrapper::value);
 
     assert(std::equal(
         std::begin(li), std::end(li),
@@ -199,14 +198,17 @@ of the algorithm.
 * The algorithm used by `grail_sorter` has been adapted from Mrrl's
 [GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
 
+* The algorithm used by `indirect_adapter` with forward or bidirectional iterators is a
+slightly modified version of Matthew Bentley's [indiesort](https://github.com/mattreecebentley/plf_indiesort).
+
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
 Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
 
-* The algorithms 17 and 18 used by `sorting_network_sorter` correspond to the ones found
-by Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
+* The algorithm 17 used by `sorting_network_sorter` correspond to the ones found by
+Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
 Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam and Miikkulainen.
 
-* The algorithms 19 to 26 and 28 used by `sorting_network_sorter` have been found and
+* The algorithms 18 to 26 and 28 used by `sorting_network_sorter` have been found and
 proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
 Huge thanks for this contribution :) You can find a full list of most well-known sorting
 networks up to 32 inputs on his website.
@@ -222,3 +224,6 @@ slightly adapted to be 0-based and draw the network from top to bottom.
 
 * The CMake tools embedded in the projects include scripts from [RWTH-HPC/CMake-codecov](https://github.com/RWTH-HPC/CMake-codecov)
 and [Crascit/DownloadProject](https://github.com/Crascit/DownloadProject).
+
+* Some of the benchmarks use a [colorblind-friendly palette](https://gist.github.com/thriveth/8560036)
+developed by Thøger Rivera-Thorsen.

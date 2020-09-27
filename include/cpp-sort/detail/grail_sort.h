@@ -1,8 +1,12 @@
 /*
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
  * Grail sorting
  *
  * (c) 2013 by Andrey Astrelin
- * Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
  *
  * Stable sorting that works in O(N*log(N)) time
  * and uses O(1) extra memory
@@ -50,7 +54,7 @@ namespace grail
         auto h0 = first;
         for (auto u = std::next(first) ; u != last ; ++u) {
             if (dist == key_count) break;
-            auto r = lower_bound(h0, h0 + dist, proj(*u), compare.base(), projection) - h0;
+            auto r = lower_bound_n(h0, dist, proj(*u), compare.base(), projection) - h0;
             if (r == dist || compare(proj(*u), proj(h0[r])) != 0) {
                 h0 = detail::rotate(h0, h0 + dist, u);
                 detail::rotate(h0 + r, u, std::next(u));

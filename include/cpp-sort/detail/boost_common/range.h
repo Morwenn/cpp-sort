@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2019 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //----------------------------------------------------------------------------
 /// @file range.hpp
 /// @brief Define a range [first, last), and the associated operations
 ///
 /// @author Copyright (c) 2016 Francisco José Tapia (fjtapia@gmail.com )
-///         Modified in 2019 by Morwenn for inclusion into cpp-sort
 ///         Distributed under the Boost Software License, Version 1.0.
 ///         ( See accompanyingfile LICENSE_1_0.txt or copy at
 ///           http://www.boost.org/LICENSE_1_0.txt  )
@@ -11,6 +15,7 @@
 ///
 /// @remarks
 //-----------------------------------------------------------------------------
+
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 

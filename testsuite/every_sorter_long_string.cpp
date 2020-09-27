@@ -1,25 +1,6 @@
 /*
- * The MIT License (MIT)
- *
- * Copyright (c) 2019 Morwenn
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2019-2020 Morwenn
+ * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <iterator>
@@ -28,11 +9,10 @@
 #include <utility>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/sort.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include "distributions.h"
+#include <testing-tools/distributions.h>
 
 namespace
 {
@@ -105,8 +85,8 @@ TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
     auto copy = collection;
     std::sort(std::begin(copy), std::end(copy));
 
-    using sorter = TestType;
-    cppsort::sort(sorter{}, collection);
+    TestType sorter;
+    sorter(collection);
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     CHECK( bool(collection == copy) );
 }

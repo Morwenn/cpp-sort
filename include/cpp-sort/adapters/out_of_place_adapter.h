@@ -1,25 +1,6 @@
 /*
- * The MIT License (MIT)
- *
- * Copyright (c) 2018-2019 Morwenn
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2018-2020 Morwenn
+ * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_OUT_OF_PLACE_ADAPTER_H_
 #define CPPSORT_ADAPTERS_OUT_OF_PLACE_ADAPTER_H_
@@ -36,7 +17,10 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
+#include "../detail/iterator_traits.h"
+#include "../detail/memory.h"
 #include "../detail/scope_exit.h"
 #include "../detail/type_traits.h"
 
@@ -92,7 +76,6 @@ namespace cppsort
     template<typename Sorter>
     struct out_of_place_adapter:
         utility::adapter_storage<Sorter>,
-        detail::check_iterator_category<Sorter>,
         detail::check_is_always_stable<Sorter>,
         detail::sorter_facade_fptr<
             out_of_place_adapter<Sorter>,
@@ -127,6 +110,11 @@ namespace cppsort
             auto size = utility::size(iterable);
             return detail::sort_out_of_place(std::begin(iterable), size, this->get(), std::forward<Args>(args)...);
         }
+
+        ////////////////////////////////////////////////////////////
+        // Sorter traits
+
+        using iterator_category = std::forward_iterator_tag;
     };
 
     ////////////////////////////////////////////////////////////

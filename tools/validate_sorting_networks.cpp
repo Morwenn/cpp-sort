@@ -1,25 +1,6 @@
 /*
- * The MIT License (MIT)
- *
- * Copyright (c) 2015-2018 Morwenn
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <array>
@@ -94,18 +75,17 @@ auto for_each_gray_permutation(std::array<T, N>& collection, Function func)
     if (size <= 20 || size < header_size) {
         // The problem size is small enough or we can't gain
         // enough from parallel jobs, go full sequential
-        for_each_gray_permutation_inner(std::begin(collection), std::end(collection),
+        for_each_gray_permutation_inner(collection.begin(), collection.end(),
                                         collection, std::move(func));
     } else {
         // The goal of the following algorithm is to use a many threads as possible, etc.
         std::vector<std::thread> jobs;
 
-        auto first = std::begin(collection);
-        for_each_gray_permutation_inner(first, first + header_size, collection, [&](std::array<T, N>& arr) {
-            auto copy = arr;
+        auto first = collection.begin();
+        for_each_gray_permutation_inner(first, first + header_size, collection, [&](std::array<T, N> arr) {
             jobs.emplace_back(for_each_gray_permutation_inner<iterator, T, N, Function&>,
-                              std::begin(copy) + header_size, std::end(copy),
-                              std::ref(copy), std::ref(func));
+                              arr.begin() + header_size, arr.end(),
+                              std::ref(arr), std::ref(func));
             return true;
         });
 
@@ -129,11 +109,11 @@ auto validate_sorting_network()
 
     cppsort::sorting_network_sorter<N> sorter;
     std::array<T, N> collection;
-    std::fill(std::begin(collection), std::end(collection), 0);
+    std::fill(collection.begin(), collection.end(), 0);
 
     std::atomic<bool> error_occurred(false);
     bool expected = false;
-    for_each_gray_permutation(collection, [&](std::array<T, N>& arr) {
+    for_each_gray_permutation(collection, [&](const std::array<T, N>& arr) {
         // Copy then sort collection
         std::array<int, N> to_sort = arr;
         sorter(to_sort);

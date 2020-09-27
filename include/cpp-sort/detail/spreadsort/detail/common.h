@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2018 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 // Contains get_min_count, the core optimization of the spreadsort algorithm.
 // Also has other helper functions commonly useful across variants.
 
@@ -12,9 +17,6 @@
 Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
-
-// Modified in 2015-2018 by Morwenn for inclusion into cpp-sort
-
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_
 

@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2019-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //----------------------------------------------------------------------------
 /// @file merge.hpp
 /// @brief low level merge functions
 ///
 /// @author Copyright (c) 2016 Francisco Jose Tapia (fjtapia@gmail.com )
-///         Modified in 2019 by Morwenn for inclusion into cpp-sort
 ///         Distributed under the Boost Software License, Version 1.0.
 ///         ( See accompanying file LICENSE_1_0.txt or copy at
 ///           http://www.boost.org/LICENSE_1_0.txt  )
@@ -11,6 +15,7 @@
 ///
 /// @remarks
 //-----------------------------------------------------------------------------
+
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_
 
@@ -21,8 +26,8 @@
 #include <type_traits>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "../../buffered_inplace_merge.h"
 #include "../../config.h"
-#include "../../inplace_merge.h"
 #include "../../iterator_traits.h"
 #include "../../merge_move.h"
 #include "../../move.h"

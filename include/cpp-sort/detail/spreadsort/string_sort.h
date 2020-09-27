@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015-2016 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
 //Templated hybrid string_sort
 
 //          Copyright Steven J. Ross 2001 - 2009.
@@ -11,9 +16,6 @@
 Some improvements suggested by:
 Phil Endecott and Frank Gennari
 */
-
-// Modified in 2015-2016 by Morwenn for inclusion into cpp-sort
-
 #ifndef CPPSORT_DETAIL_SPREADSORT_STRING_SORT_H_
 #define CPPSORT_DETAIL_SPREADSORT_STRING_SORT_H_
 

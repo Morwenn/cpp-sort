@@ -1,11 +1,13 @@
-// -*- C++ -*-
-//===-------------------------- algorithm ---------------------------------===//
+/*
+ * Copyright (c) 2019 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+//===----------------------------------------------------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//
-// Modified in 2019 by Morwenn for inclusion into cpp-sort
 //
 //===----------------------------------------------------------------------===//
 

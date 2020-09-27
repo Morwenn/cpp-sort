@@ -1,0 +1,24 @@
+name: Wiki Deployment
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'docs/**'    
+
+jobs:
+  sync-wiki-files:
+    name: Sync Wiki Files
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout /docs
+        uses: actions/checkout@master
+      - name: Sync .wiki with /docs
+        uses: SwiftDocOrg/github-wiki-publish-action@rsync
+        with:
+          path: docs/
+        env:
+          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.DEPLOY_TO_WIKI_ACCESS_TOKEN }}

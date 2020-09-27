@@ -1,8 +1,12 @@
 /*
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
     pdqsort.h - Pattern-defeating quicksort.
 
     Copyright (c) 2015-2017 Orson Peters
-    Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
 
     This software is provided 'as-is', without any express or implied warranty. In no event will the
     authors be held liable for any damages arising from the use of this software.

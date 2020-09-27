@@ -1,25 +1,6 @@
 /*
- * The MIT License (MIT)
- *
  * Copyright (c) 2016-2020 Morwenn
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
 #define CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
@@ -300,7 +281,7 @@ namespace detail
             1537228672809129216u, 3074457345618258432u, 6148914691236516864u
         };
 
-        auto size = std::distance(first, last);
+        auto size = last - first;
         if (size < 2) return;
 
         auto&& comp = utility::as_function(compare);
@@ -363,7 +344,7 @@ namespace detail
 
         for (int k = 0 ; ; ++k) {
             // Should be safe: in this code, std::distance should always return
-            // a positive number, so there is of risk comparing funny values
+            // a positive number, so there is no risk of comparing funny values
             using size_type = std::common_type_t<
                 std::uint_fast64_t,
                 typename list_t::difference_type

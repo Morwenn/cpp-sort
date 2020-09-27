@@ -1,7 +1,11 @@
 /*
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
  * File: Smoothsort.hh
  * Author: Keith Schwarz (htiek@cs.stanford.edu)
- *         Modified in 2015-2020 by Morwenn for inclusion into cpp-sort
  *
  * An implementation of Dijkstra's Smoothsort algorithm, a modification of
  * heapsort that runs in O(n lg n) in the worst case, but O(n) if the data

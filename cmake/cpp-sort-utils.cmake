@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 # Add a selection of warnings to a target
 macro(cppsort_add_warnings target)
     target_compile_options(${target} PRIVATE

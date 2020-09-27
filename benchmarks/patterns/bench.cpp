@@ -1,8 +1,34 @@
+/*
+ * Copyright (c) 2015-2020 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+/*
+    pdqsort.h - Pattern-defeating quicksort.
+
+    Copyright (c) 2015 Orson Peters
+
+    This software is provided 'as-is', without any express or implied warranty. In no event will the
+    authors be held liable for any damages arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose, including commercial
+    applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not claim that you wrote the
+       original software. If you use this software in a product, an acknowledgment in the product
+       documentation would be appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be misrepresented as
+       being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <iostream>
 #include <iterator>
 #include <string>
@@ -11,36 +37,16 @@
 #include <vector>
 #include <cpp-sort/sorters.h>
 #include "distributions.h"
-
-#ifdef _WIN32
-    #include <intrin.h>
-    #define rdtsc __rdtsc
-#else
-    #ifdef __i586__
-        static __inline__ unsigned long long rdtsc() {
-            unsigned long long int x;
-            __asm__ volatile(".byte 0x0f, 0x31" : "=A" (x));
-            return x;
-        }
-    #elif defined(__x86_64__)
-        static __inline__ unsigned long long rdtsc(){
-            unsigned hi, lo;
-            __asm__ __volatile__("rdtsc" : "=a"(lo), "=d"(hi));
-            return ((unsigned long long) lo) | (((unsigned long long) hi) << 32);
-        }
-    #else
-        #error no rdtsc implementation
-    #endif
-#endif
-
-template<template<typename...> class Collection, typename T>
-using distr_f = void (*)(std::back_insert_iterator<Collection<T>>, std::size_t);
-
-template<template<typename...> class Collection, typename T>
-using sort_f = void (*)(Collection<T>&);
+#include "rdtsc.h"
 
 // Type of data to sort during the benchmark
 using value_t = int;
+// Type of collection to sort
+using collection_t = std::vector<value_t>;
+
+// Handy function pointer aliases
+using distr_f = void (*)(std::back_insert_iterator<collection_t>, std::size_t);
+using sort_f = void (*)(collection_t&);
 
 int main()
 {
@@ -53,7 +59,7 @@ int main()
         std::chrono::steady_clock
     >;
 
-    std::pair<std::string, distr_f<std::vector, value_t>> distributions[] = {
+    std::pair<std::string, distr_f> distributions[] = {
         { "shuffled",               shuffled()              },
         { "shuffled_16_values",     shuffled_16_values()    },
         { "all_equal",              all_equal()             },
@@ -68,7 +74,7 @@ int main()
         { "alternating_16_values",  alternating_16_values() }
     };
 
-    std::pair<std::string, sort_f<std::vector, value_t>> sorts[] = {
+    std::pair<std::string, sort_f> sorts[] = {
         { "heap_sort",      cppsort::heap_sort      },
         { "pdq_sort",       cppsort::pdq_sort       },
         { "quick_sort",     cppsort::quick_sort     },
@@ -79,15 +85,23 @@ int main()
 
     std::size_t sizes[] = { 1'000'000 };
 
+    // Poor seed, yet enough for our benchmarks
+    std::uint_fast32_t seed = std::time(nullptr);
+    std::cerr << "SEED: " << seed << '\n';
+
     for (auto& distribution: distributions) {
         for (auto& sort: sorts) {
+            // Seed the distribution manually to ensure that all algorithms
+            // sort the same collections when there is randomness
+            distributions_prng.seed(seed);
+
             for (auto size: sizes) {
                 std::vector<std::uint64_t> cycles;
 
                 auto total_start = clock_type::now();
                 auto total_end = clock_type::now();
                 while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 5s) {
-                    std::vector<value_t> collection;
+                    collection_t collection;
                     distribution.second(std::back_inserter(collection), size);
                     std::uint64_t start = rdtsc();
                     sort.second(collection);
@@ -99,10 +113,10 @@ int main()
 
                 std::sort(std::begin(cycles), std::end(cycles));
 
-                std::cerr << size << ' ' << distribution.first << ' ' << sort.first
-                          << ' ' << cycles[cycles.size() / 2] << '\n';
-                std::cout << size << ' ' << distribution.first << ' ' << sort.first
-                          << ' ' << cycles[cycles.size() / 2] << '\n';
+                std::cerr << size << ", " << distribution.first << ", " << sort.first
+                          << ", " << cycles[cycles.size() / 2] << '\n';
+                std::cout << size << ", " << distribution.first << ", " << sort.first
+                          << ", " << cycles[cycles.size() / 2] << '\n';
             }
         }
     }
