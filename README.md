@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.7.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
-[![Conan Package](https://img.shields.io/badge/conan-1.7.0-blue.svg)](https://bintray.com/conan/conan-center/cpp-sort%3A_)
+[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.8.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases)
+[![Conan Package](https://img.shields.io/badge/conan-1.8.0-blue.svg)](https://bintray.com/conan/conan-center/cpp-sort%3A_)
 [![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://doge.mit-license.org)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
@@ -34,8 +34,8 @@ int main()
 
 # The main features & the extra features
 
-**cpp-sort** actually provides a full set of sorting-related features. Here are the main
-building blocks of the library:
+**cpp-sort** provides a full set of sorting-related features. Here are the main building blocks
+of the library:
 * Every sorting algorithm exists as a function object called a [sorter](https://github.com/Morwenn/cpp-sort/wiki/Sorters)
 * Sorters can be wrapped in [sorter adapters](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters) to augment their behaviour
 * The library provides a [sorter facade](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) to easily build sorters
@@ -99,13 +99,13 @@ and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wik
 
 The following graph has been generated with a script found in the benchmarks
 directory. It shows the time needed for a sorting algorithm to sort one million
-shuffled `std::array<int, N>` of sizes 0 to 15. It compares the sorters generally
+shuffled `std::array<int, N>` of sizes 0 to 32. It compares the sorters generally
 used to sort small arrays:
 
-![small shuffled int arrays](https://i.imgur.com/mpV0Qur.png)
+![Benchmark speed of small sorts with increasing size for std::array<int>](https://i.imgur.com/dOa3vyl.png)
 
-These results were generated with MinGW g++ 6.1.0 with the compiler options
-`-std=c++1z -O2 -march=native`. That benchmark is just an example to make this
+These results were generated with MinGW-w64 g++ 10.1 with the compiler options
+`-std=c++2a -O3 -march=native`. That benchmark is merely an example to make this
 introduction look good. You can find more commented benchmarks in the [dedicated
 wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
