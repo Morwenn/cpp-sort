@@ -6,6 +6,7 @@ The following things need be done prior to the release if they didn't happen dur
 development phase:
 - [ ] Update the documentation.
 - [ ] Update the releases notes.
+- [ ] Keep track of the things that will be changed in 2.0.0.
 
 ### Before the release
 
@@ -30,3 +31,7 @@ development phase:
 - [ ] Push the new version to Bincrafters.
 - [ ] Add the new version to Conan Center Index.
 - [ ] Brag about it where relevant.
+
+- [ ] Merge master into 2.0.0-develop branch.
+- [ ] Fix merge issues.
+- [ ] Improve as needed with C++17 and C++20 features.
