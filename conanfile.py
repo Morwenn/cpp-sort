@@ -26,6 +26,10 @@ class CppSortConan(ConanFile):
     no_copy_source = True
     settings = "os", "compiler", "build_type", "arch"
 
+    def configure(self):
+        if self.settings.get_safe("compiler.cppstd"):
+            tools.check_min_cppstd(self, 14)
+
     def package(self):
         # Install with CMake
         cmake = CMake(self)
@@ -35,8 +39,8 @@ class CppSortConan(ConanFile):
         cmake.patch_config_paths()
 
         # Copy license files
-        self.copy("LICENSE.txt", dst="licenses")
-        self.copy("NOTICE.txt", dst="licenses")
+        for file in ["LICENSE.txt", "NOTICE.txt"]:
+            self.copy(file, dst="licenses")
 
     def package_id(self):
         self.info.header_only()
