@@ -26,6 +26,7 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
 #include "../detail/scope_exit.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {

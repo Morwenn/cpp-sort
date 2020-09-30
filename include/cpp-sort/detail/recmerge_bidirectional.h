@@ -26,7 +26,6 @@
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "rotate.h"
-#include "type_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort
