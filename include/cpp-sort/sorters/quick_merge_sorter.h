@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_QUICK_MERGE_SORTER_H_
@@ -82,7 +82,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category = std::random_access_iterator_tag;
+            using iterator_category = std::forward_iterator_tag;
             using is_always_stable = std::false_type;
         };
     }
