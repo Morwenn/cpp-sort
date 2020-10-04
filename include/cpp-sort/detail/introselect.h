@@ -250,7 +250,7 @@ namespace detail
             iter_sort3(first, it1, it2, compare, projection);
             iter_sort3(it3, middle, it4, compare, projection);
             iter_sort3(it5, it6, last_1, compare, projection);
-            auto median_it = iter_sort3(it1, middle, it4, std::move(compare), std::move(projection));
+            auto median_it = iter_sort3(it1, middle, it6, std::move(compare), std::move(projection));
             return std::make_pair(median_it, last_1);
         } else {
             auto last_1 = last_it(first, last, size);
