@@ -31,7 +31,6 @@ development phase:
 - [ ] Push the new version to Bincrafters.
 - [ ] Add the new version to Conan Center Index.
 - [ ] Brag about it where relevant.
-
 - [ ] Merge master into 2.0.0-develop branch.
 - [ ] Fix merge issues.
 - [ ] Improve as needed with C++17 and C++20 features.
