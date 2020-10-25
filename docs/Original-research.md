@@ -23,7 +23,7 @@ The vergesort is a new sorting algorithm which combines merge operations on almo
 
 While vergesort has been designed to work with random-access iterators, there also exists a version that works with bidirectional iterators. The algorithm is slightly different and a bit slower because it can't as easily jump through the collection. The complexity of that bidirectional iterators algorithm can get down to the same time as the random-access one when `quick_merge_sort` is used as the fallback algorithm.
 
-The actual cmplexity of the algorithm is O(n log n log log n), but interestingly it is only reached in one of its paths that is among the fastest in practice.
+The actual cmplexity of the algorithm is O(n log n log log n), but interestingly it is only reached in one of its paths that is among the fastest in practice. It is also possible to make vergesort stable but tweaking its reverse runs detection algorithm and making it fallback to a stable sorting algorithm.
 
 This sorting algorithm has been split as a separate project. You can read more about in the [dedicated repository][vergesort].
 

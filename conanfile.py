@@ -8,7 +8,7 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.8.0"
+    version = "1.8.1"
     description = "Additional sorting algorithms & related tools"
     topics = "conan", "cpp-sort", "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"
