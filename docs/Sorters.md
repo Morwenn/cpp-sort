@@ -228,11 +228,12 @@ Implements a flavour of [QuickMergeSort](https://arxiv.org/abs/1307.3033).
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | log n       | No          | Random-access |
-| n           | n log n     | n log n     | log² n      | No          | Forward       |
+| n           | n log n     | n log n     | log² n      | No          | Bidirectional |
+| n           | n log² n    | n log² n    | log² n      | No          | Forward       |
 
 QuickMergeSort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergeSort used by `quick_merge_sorter` actually uses an equivalent of [`std::nth_element`](https://en.cppreference.com/w/cpp/algorithm/nth_element) to partition the collection in 1/3-2/3 parts in order to maximize the size of the partition (2 thirds of the space) that can be merge-sorted using the other partition as a swap buffer.
 
-The log n memory is due to top-down mergesort stack recursion in the random-access version, while the memory of the forward version use is dominated by the mutually recursive [introselect](https://en.wikipedia.org/wiki/Introselect) algorithm which is used to implement an `nth_element` equivalent for forward iterators.
+The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The log n memory is due to top-down mergesort stack recursion in the random-access version, while the memory of the forward version use is dominated by the mutually recursive [introselect](https://en.wikipedia.org/wiki/Introselect) algorithm which is used to implement an `nth_element` equivalent for forward iterators.
 
 This sorter can't throw `std::bad_alloc`.
 
@@ -248,13 +249,14 @@ Implements a [quicksort](https://en.wikipedia.org/wiki/Quicksort).
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | log² n      | No          | Forward       |
+| n           | n log n     | n log n     | log² n      | No          | Bidirectional |
+| n           | n log² n    | n log² n    | log² n      | No          | Forward       |
 
 Despite the name, this sorter actually implements some flavour of introsort: if quicksort performs more than 2*log(n) steps, it falls back to a [median-of-medians](https://en.wikipedia.org/wiki/Median_of_medians) pivot selection instead of the usual median-of-9 one. The median-of-medians selection being mutually recursive with an introselect algorithm explains the use of log²n stack memory.
 
 This sorter can't throw `std::bad_alloc`.
 
-*Changed in version 1.2.0:* `quick_sorter` used to run in O(n²), but a fallback to median-of-medians pivot selection was introduced to make it run in O(n log n), the tradeoff being the log²n space used by stack recursion (as opposed to the previous log n one).
+*Changed in version 1.2.0:* `quick_sorter` used to run in O(n²), but a fallback to median-of-medians pivot selection was introduced to make it run in O(n log n) or O(n log² n) depending of the iterator category, the tradeoff being the log² n space used by stack recursion (as opposed to the previous log n one).
 
 ### `selection_sorter`
 

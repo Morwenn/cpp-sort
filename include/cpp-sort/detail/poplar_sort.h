@@ -133,7 +133,9 @@ namespace detail
         if (size < 2) return;
 
         std::vector<poplar<RandomAccessIterator>> poplars;
-        poplars.reserve(log2(size));
+        // Harvey & Zatloukal, The Post-Order Heap:
+        // [...] the number of trees, k, is at most floor(lg(n + 1)) + 1
+        poplars.reserve(log2(size + 1) + 1);
 
         //
         // Size of the biggest poplar in the array, which always is a number

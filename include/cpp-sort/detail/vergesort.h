@@ -54,6 +54,7 @@ namespace detail
 
         // Pair of iterators to iterate through the collection
         auto next = is_sorted_until(first, last, compare, projection);
+        if (next == last) return;
         auto current = std::prev(next);
 
         while (true) {

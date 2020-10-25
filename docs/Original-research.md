@@ -1,31 +1,31 @@
 While most of **cpp-sort**'s algorithms are actually taken from other open-source projects, and/or naive implementations of well-known sorting algorithms, it also contains a bit of original research. Most of the things described here are far from being ground-breaking discoveries, but even slight improvements to known algorithms deserve to at least be documented so that they can be reused, so... here we go.
 
-You can find some experiments and interesting pieces of code [in my Gist](https://gist.github.com/Morwenn) too - generally related to this library -, even though it doesn't always come with proper explanation or build instructions.
+You can find some experiments and interesting pieces of code [in my Gist][morwenn-gist] too - generally related to this library -, even though it doesn't always come with proper explanation or build instructions.
 
-### Of iterator categories & algorithms complexity
+### Of iterator categories & algorithm complexities
 
-One of the main observations which naturally occured as long as I was putting together this library was about the best complexity tradeoffs between running and memory depending on the iterator categories of the different sorting algorithms (only taking comparison sorts into account):
-* Algorithms that work on random-access iterators can run in O(n log n) time with O(1) extra memory, and can even be stable with such guarantees (block sort being the best example)
-* Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergeSort can be implemented with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion)
-* Stable algorithms that work on bidirectional iterators can run in O(n log n) time with O(n) extra memory (mergesort), or in O(n log²n) with O(1) extra memory (mergesort with in-place merge)
-* Algorithms that work on forward iterators have the same known bounds than the ones that work with bidirectional iterators
+One of the main observations which naturally occured as long as I was putting together this library was about the best complexity tradeoffs between time and memory depending on the iterator categories of the different sorting algorithms (only taking comparison sorts into account):
+* Algorithms that work on random-access iterators can run in O(n log n) time with O(1) extra memory, and can even be stable with such guarantees (block sort being the best example).
+* Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergeSort [can be implemented][https://github.com/Morwenn/quick_merge_sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
+* Stable algorithms that work on bidirectional iterators can run in O(n log n) time with O(n) extra memory (mergesort), or in O(n log² n) time with O(1) extra memory (mergesort with in-place merge).
+* Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the the ones working on bidirectional iterators: mergesort works just as well.
+* Unstable algorithms that work on forward iterators can run in O(n log² n) time and O(1) space, QuickMergeSort being once again the prime example of such an algorithm.
 * Taking advantage of the list data structure allows for sorting algorithms running in O(n log n) time with O(1) extra memory, be it for stable sorting (mergesort) or unstable sorting (melsort), but those techniques can't be generically retrofitted to generically work with bidirectional iterators
 
 Now, those observations/claims are there to be challenged: if you know of any stable comparison sorting algorithm that runs on bidirectional iterators in O(n log n) with O(1) extra memory, don't hesitate to be the ones challenging those claims :)
 
 ### Vergesort
 
-The vergesort is a new sorting algorithm which combines merge operations on almost sorted data, and falls back to a [pattern-defeating quicksort][1] when the data is not sorted enough. Just like TimSort, it achieves linear time on some patterns, generally for almost sorted data, and should never be worse than O(n log n) in the worst case. This last statement has not been proven, but the many benchmarks show that it is only slightly slower than a pattern-defeating quicksort for shuffled data, which is its worst case, so...
+The vergesort is a new sorting algorithm which combines merge operations on almost sorted data, and falls back to another sorting algorithm when the data is not sorted enough. Somehow it can be considered as a cheap preprocessing step to take advantage of almost-sorted data when possible. Just like TimSort, it achieves linear time on some patterns, generally for almost sorted data, and should never be worse than O(n log n) in the worst case. This last statement has not been proven, but the many benchmarks show that it is only slightly slower than a pattern-defeating quicksort for shuffled data, which is its worst case, so...
 
     Best        Average     Worst       Memory      Stable
     n           n log n     n log n     n           No
 
-While vergesort has been designed to work with random-access iterators, there also exists a version that works with bidirectional iterators. The algorithm is slightly different and a bit slower. Basically, it falls back on a regular quicksort instead of a pattern-defeating quicksort since the latter has to fall back to a heapsort, which only works with random-access iterators. The complexity for the bidirectional iterators version is as follows:
+While vergesort has been designed to work with random-access iterators, there also exists a version that works with bidirectional iterators. The algorithm is slightly different and a bit slower because it can't as easily jump through the collection. The complexity of that bidirectional iterators algorithm can get down to the same time as the random-access one when `quick_merge_sort` is used as the fallback algorithm.
 
-    Best        Average     Worst       Memory      Stable
-    n           n log n     n²          n           No
+The actual cmplexity of the algorithm is O(n log n log log n), but interestingly it is only reached in one of its paths that is among the fastest in practice. It is also possible to make vergesort stable but tweaking its reverse runs detection algorithm and making it fallback to a stable sorting algorithm.
 
-This sorting algorithm has been split as a separate project. You can read more about in the [dedicated repository][2].
+This sorting algorithm has been split as a separate project. You can read more about in the [dedicated repository][vergesort].
 
 ### Double insertion sort
 
@@ -49,7 +49,7 @@ Anyway, the nice property of this half-cleaning is that it can be performed on n
 
 ### Sorting networks for 23 and 24 inputs
 
-While trying to reimplement size-optimal sorting networks as described by [*Finding Better Sorting Networks*][3], I ended up implementing a sorting network for 24 inputs whose size was equivalent to that of the one described in the paper (123 compare-exchange units). However, it seems that this sorting network does not use an odd-even merge network but another merge network, obtained by the method described in the previous section. From this network, it was also trivial to generate the corresponding network for 23 inputs, whose size also corresponds to the best-known one for that many inputs (118). The depth of both networks is 18, which is probably one more than the depth of the sorting networks using the odd-even merge (if I'm not mistaken, the depth of the odd-even merge is one less). Here are the two networks and the corresponding 0-based sequences of indices:
+While trying to reimplement size-optimal sorting networks as described by [*Finding Better Sorting Networks*][better-sorting-networks], I ended up implementing a sorting network for 24 inputs whose size was equivalent to that of the one described in the paper (123 compare-exchange units). However, it seems that this sorting network does not use an odd-even merge network but another merge network, obtained by the method described in the previous section. From this network, it was also trivial to generate the corresponding network for 23 inputs, whose size also corresponds to the best-known one for that many inputs (118). The depth of both networks is 18, which is probably one more than the depth of the sorting networks using the odd-even merge (if I'm not mistaken, the depth of the odd-even merge is one less). Here are the two networks and the corresponding 0-based sequences of indices:
 
 ![Sorting network 23](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-23.png)
 
@@ -97,7 +97,7 @@ While trying to reimplement size-optimal sorting networks as described by [*Find
 
 The following sorting network for 29 inputs has 165 compare-exchange-units, which is one less that the most size-optimal 29-input sorting networks that I could find in the litterature. Here is how I generated it: first it sorts the first 16 inputs and the last 13 inputs independently. Then it merges the two sorted subarrays using a size 32 Batcher odd-even merge network (the version that does not need the inputs to be interleaved), where all compare-exchange units working on indexes greater than 28 have been dropped. Dropping comparators in such a way is ok: consider that the values at the indexes [29, 32) are greater than every other value in the array to sort, and it will become intuitive that dropping them generates a correct merging network of a smaller size.
 
-That said, even though I have been unable to find a 29-input sorting network with as few compare-exchange units as 165 in the litterature, I can't claim that I found the technique used to generate it: the unclassified 1971 paper [*A Generalization of the Divide-Sort-Merge Strategy for Sorting Networks*][8] by David C. Van Voorhis already describes the as follows:
+That said, even though I have been unable to find a 29-input sorting network with as few compare-exchange units as 165 in the litterature, I can't claim that I found the technique used to generate it: the unclassified 1971 paper [*A Generalization of the Divide-Sort-Merge Strategy for Sorting Networks*][divide-sort-merge-strategy] by David C. Van Voorhis already describes the as follows:
 
 > The improved 26-,27-,28-, and 34-sorters all use two initial sort units, one of them the particularly efficient 16-sorter designed by M. W. Green, followed by Batcher's [2,2] merge network.
 
@@ -167,27 +167,35 @@ The paper does not mention a better result than 166 CEUs for the 29-input sortin
 
 ### Mountain sort
 
-The mountain sort is a new indirect sorting algorithm designed to perform a minimal number of move operations on the elements of the collection to sort. It derives from [cycle sort][4] and [Exact-Sort][5] but is still slightly different: the goal of cycle sort is to perform a minimal number of writes to the original array, and while Exact-Sort indeed performs the same number of moves and writes to the original array than cycle sort, the description says that it's the best algorithm to sort fridges by price, so its goal would actually be closer to that of mountain sort. However, both have a rather similar implementation: find cycles of values to rotate, swap the first value into a temporary variable, find where it goes, swap the contents of the temporary variable with the value in the location, find where the new value goes, etc... Exact-Sort is a bit more optimized but the lookup still makes it a O(n²) algorithm. Mountain sort chooses to consume more memory and to store the iterators and to sort them beforehand so that the move part can be done with only one write to a temporary variable per cycle. I don't think that any sorting algorithm can perform less moves than mountain sort. Its basic implementation relies on `std::sort` to sort the iterators, more or less leading to the following complexity:
+The mountain sort is a new indirect sorting algorithm designed to perform a minimal number of move operations on the elements of the collection to sort. It derives from [cycle sort][cycle-sort] and [Exact-Sort][exact-sort] but is still slightly different: the goal of cycle sort is to perform a minimal number of writes to the original array, and while Exact-Sort indeed performs the same number of moves and writes to the original array than cycle sort, the description says that it's the best algorithm to sort fridges by price, so its goal would actually be closer to that of mountain sort. However, both have a rather similar implementation: find cycles of values to rotate, swap the first value into a temporary variable, find where it goes, swap the contents of the temporary variable with the value in the location, find where the new value goes, etc... Exact-Sort is a bit more optimized but the lookup still makes it a O(n²) algorithm. Mountain sort chooses to consume more memory and to store the iterators and to sort them beforehand so that the move part can be done with only one write to a temporary variable per cycle. I don't think that any sorting algorithm can perform less moves than mountain sort. Its basic implementation relies on `std::sort` to sort the iterators, more or less leading to the following complexity:
 
     Best        Average     Worst       Memory      Stable
     n log n     n log n     n log n     n           No
 
-However, **cpp-sort** implements it [as a sorter adapter][6] so you can actually choose the sorting algorithm that will be used to sort the iterators, making it possible to use a stable sorting algorithm instead. Note that the memory footprint of the algorithm is negligible when the size of the elements to sort is big since only iterators and booleans are stored. It makes mountain sort the ideal sorting algorithm when the objects to sort are huge and the comparisons are cheap (remember: you may want to sort fridges by price, or mountains by height). You can find a standalone implementation of mountain sort in [the dedicated repository][7].
+However, **cpp-sort** implements it [as a sorter adapter][indirect_adapter] so you can actually choose the sorting algorithm that will be used to sort the iterators, making it possible to use a stable sorting algorithm instead. Note that the memory footprint of the algorithm is negligible when the size of the elements to sort is big since only iterators and booleans are stored. It makes mountain sort the ideal sorting algorithm when the objects to sort are huge and the comparisons are cheap (remember: you may want to sort fridges by price, or mountains by height). You can find a standalone implementation of mountain sort in [the dedicated repository][mountain_sort].
 
 ### Improvements to poplar sort & poplar heap
 
-**cpp-sort** ships an implementation of a poplar sort which roughly follows the algorithm as described by Coenraad Bron and Wim H. Hesselink in their paper *Smoothsort revisited*. However, I later managed to improve the space complexity of the algorithm by making the underlying poplar heap data structure a proper implicit data structure. You can read more about this experiment in the [dedicated project page][9]. The algorithm used by `poplar_heap` does not used the O(1) space complexity algorithm because it was measured to be slower on average that the old algorithm with O(log n) space complexity.
+**cpp-sort** ships an implementation of a poplar sort which roughly follows the algorithm as described by Coenraad Bron and Wim H. Hesselink in their paper *Smoothsort revisited*. However, I later managed to improve the space complexity of the algorithm by making the underlying poplar heap data structure a proper implicit data structure. You can read more about this experiment in the [dedicated project page][poplar-heap]. The algorithm used by `poplar_heap` does not used the O(1) space complexity algorithm because it was measured to be slower on average that the old algorithm with O(log n) space complexity.
 
-I later realized that the data structure I called *poplar heap* had already been described by Nicholas J. A. Harvey and Kevin Zatloukal under the name [*post-order heap*][10]. I however believe that some of the heap construction methods described in my repository are novel.
+I later realized that the data structure I called *poplar heap* had already been described by Nicholas J. A. Harvey and Kevin Zatloukal under the name [*post-order heap*][post-order-heap]. I however believe that some of the heap construction methods described in my repository are novel.
+
+### quick_merge_sort
+
+I borrowed some ideas from Edelkamp and Weiß QuickXsort and QuickMergesort algorithms, and came up with a version of QuickMergesort that uses a median-of-median selection algorithm to split the collection into two partitions respectively two thirds and one thirds of the original one. This allows to use an internal mergesort on the left partition while maximizing the number of elements merged in one pass. Then the algorithm is recursively called on the smaller partition, leading to an algorithm that can run in O(n log n) time and O(1) space on bidirectional iterators.
+
+Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv] afew years later decribing the same flavour of QuickMergesort with properly computed algorithmic complexities. I have a [standalone implementation][quick-merge-sort] of `quick_merge_sort` in another repository, albeit currently lacking a proper explanation of how it works. It has the time and space complexity mentioned earlier, as opposed to the **cpp-sort** version of the algorithm where I chose to have theoretically worse algorithms from a complexity point of view, but that are nonetheless generally faster in practice.
 
 
-  [1]: https://github.com/orlp/pdqsort
-  [2]: https://github.com/Morwenn/vergesort
-  [3]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
-  [4]: https://en.wikipedia.org/wiki/Cycle_sort
-  [5]: http://www.geocities.ws/p356spt/
-  [6]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
-  [7]: https://github.com/Morwenn/mountain-sort
-  [8]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
-  [9]: https://github.com/Morwenn/poplar-heap
-  [10]: https://people.csail.mit.edu/nickh/Publications/PostOrderHeap/FUN04-PostOrderHeap.pdf
+  [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
+  [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
+  [divide-sort-merge-strategy]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
+  [exact-sort]: http://www.geocities.ws/p356spt/
+  [indirect_adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
+  [morwenn-gist]: https://gist.github.com/Morwenn
+  [mountain_sort]: https://github.com/Morwenn/mountain-sort
+  [poplar-heap]: https://github.com/Morwenn/poplar-heap
+  [post-order-heap]: https://people.csail.mit.edu/nickh/Publications/PostOrderHeap/FUN04-PostOrderHeap.pdf
+  [quick-merge-sort]: https://github.com/Morwenn/quick_merge_sort
+  [quick-merge-sort-arxiv]: https://arxiv.org/pdf/1804.10062.pdf
+  [vergesort]: https://github.com/Morwenn/vergesort
