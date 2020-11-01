@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -10,9 +10,9 @@
 #include <utility>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/sort.h>
+#include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/stable_sort.h>
 #include <cpp-sort/utility/functional.h>
 
 namespace
@@ -46,15 +46,17 @@ TEST_CASE( "try mixed comparison/projection function object",
     std::shuffle(std::begin(collection), std::end(collection), engine);
 
     tricky_function func;
+    cppsort::default_sorter sorter;
+    cppsort::stable_adapter<cppsort::default_sorter> stable_sorter;
 
     SECTION( "without an untransformed function" )
     {
         auto vec = collection;
-        cppsort::sort(vec, func);
+        sorter(vec, func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::sort(std::begin(vec), std::end(vec), func);
+        sorter(std::begin(vec), std::end(vec), func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
@@ -62,97 +64,97 @@ TEST_CASE( "try mixed comparison/projection function object",
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::sort(cppsort::pdq_sort, vec, func);
+        cppsort::pdq_sort(vec, func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::sort(cppsort::pdq_sort, std::begin(vec), std::end(vec), func);
+        cppsort::pdq_sort(std::begin(vec), std::end(vec), func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(vec, func);
+        stable_sorter(vec, func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(std::begin(vec), std::end(vec), func);
+        stable_sorter(std::begin(vec), std::end(vec), func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(cppsort::pdq_sort, vec, func);
+        cppsort::stable_adapter<cppsort::pdq_sorter>{}(vec, func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(cppsort::pdq_sort, std::begin(vec), std::end(vec), func);
+        cppsort::stable_adapter<cppsort::pdq_sorter>{}(std::begin(vec), std::end(vec), func);
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 
     SECTION( "with a function wrapped in as_projection" )
     {
         auto vec = collection;
-        cppsort::sort(vec, cppsort::utility::as_projection(func));
+        sorter(vec, cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
+        sorter(std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::sort(cppsort::pdq_sort, vec, cppsort::utility::as_projection(func));
+        cppsort::pdq_sort(vec, cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::sort(cppsort::pdq_sort, std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
+        cppsort::pdq_sort(std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::stable_sort(vec, cppsort::utility::as_projection(func));
+        stable_sorter(vec, cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::stable_sort(std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
+        stable_sorter(std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::stable_sort(cppsort::pdq_sort, vec, cppsort::utility::as_projection(func));
+        cppsort::stable_adapter<cppsort::pdq_sorter>{}(vec, cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
 
         vec = collection;
-        cppsort::stable_sort(cppsort::pdq_sort, std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
+        cppsort::stable_adapter<cppsort::pdq_sorter>{}(std::begin(vec), std::end(vec), cppsort::utility::as_projection(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
     }
 
     SECTION( "with a function wrapped in as_comparison" )
     {
         auto vec = collection;
-        cppsort::sort(vec, cppsort::utility::as_comparison(func));
+        sorter(vec, cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::sort(std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
+        sorter(std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::sort(cppsort::pdq_sort, vec, cppsort::utility::as_comparison(func));
+        cppsort::pdq_sort(vec, cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::sort(cppsort::pdq_sort, std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
+        cppsort::pdq_sort(std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(vec, cppsort::utility::as_comparison(func));
+        stable_sorter(vec, cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
+        stable_sorter(std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(cppsort::pdq_sort, vec, cppsort::utility::as_comparison(func));
+        cppsort::stable_adapter<cppsort::pdq_sorter>{}(vec, cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
 
         vec = collection;
-        cppsort::stable_sort(cppsort::pdq_sort, std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
+        cppsort::stable_adapter<cppsort::pdq_sorter>{}(std::begin(vec), std::end(vec), cppsort::utility::as_comparison(func));
         CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
     }
 }

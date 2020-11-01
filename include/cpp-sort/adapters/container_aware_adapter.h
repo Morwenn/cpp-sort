@@ -21,7 +21,7 @@ namespace cppsort
 {
     namespace detail
     {
-        // Hide the generic cppsort::sort
+        // Hide potential out-of-scope sort()
         struct nope_type {};
         template<typename... Args>
         auto sort(Args&&...)

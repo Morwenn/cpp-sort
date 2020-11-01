@@ -153,7 +153,7 @@ This kind of comparison sorters help to compare things that don't have an overlo
 
 ```cpp
 // Sort collection in reverse order with std::sort
-cppsort::sort(collection, std_sorter{}, std::greater<>{});
+cppsort::std_sort(collection, std::greater<>{});
 ```
 
 It is worth noting that every *comparison sorter* provided by the library transforms the comparison parameter with [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function) before actually using it. It allows to use pointers to member functions of the `lhs.compare_to(rhs)` kind out-of-the-box.
@@ -207,7 +207,7 @@ Note that most of the algorithms (actually, every *projection sorter* provided b
 ```cpp
 struct wrapper { int value; }
 std::vector<wrapper> vec = { {5}, {9}, {6}, {1}, {2}, {8}, {3}, {0}, {7}, {4} };
-cppsort::sort(vec, selection_sorter{}, &wrapper::value);
+cppsort::selection_sort(vec, &wrapper::value);
 ```
 
 Thanks to that small trick, the `selection_sorter` will sort `vec`, using the member data `wrapper::value` instead of a full `wrapper` instance (which cannot be compared) to perform the comparisons on.
