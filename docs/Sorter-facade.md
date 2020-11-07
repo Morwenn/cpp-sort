@@ -169,4 +169,8 @@ auto operator()(Iterator first, Iterator last,
     -> /* implementation-defined */;
 ```
 
+When [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity) is available, special overloads are provided with the same behaviour as the `utility::identity` ones.
+
 While it does not appear in this documentation, `sorter_facade` actually relies on an extensive amount of SFINAE tricks to ensure that only the `operator()` overloads that are needed and viable are generated. For example, the magic `std::less<>` overloads won't be generated if the wrapped *sorter implementation* already accepts a comparison function.
+
+*Changed in version 1.9.0:* when `std::identity` is available, special overloads are provided.

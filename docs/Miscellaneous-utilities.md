@@ -125,6 +125,8 @@ This buffer provider allocates on the heap a number of elements depending on a g
 #include <cpp-sort/utility/functional.h>
 ```
 
+***WARNING:** `utility::identity` is removed in version 2.0.0, use `std::identity` instead.*
+
 This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [[Chainable projections]] for more information.
 
 Also available in this header, the struct `identity` is a function object that can type any value of any movable type and return it as is. It is used as a default for every projection parameter in the library so that sorters view the values as they are by default, without a modification.
@@ -141,7 +143,7 @@ struct identity:
 };
 ```
 
-It is equivalent to the proposed `std::identity` from the [Ranges TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4560.pdf) and will probably be replaced by the standard function object the day it makes its way into the standard.
+It is equivalent to the C++20 [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity). Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
 
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:
 * `half`: returns the passed value divided by 2.
@@ -174,6 +176,8 @@ This utility is modeled after [`std::integral_constant`](http://en.cppreference.
 *Warning: `function_constant` is only available since C++17.*
 
 *New in version 1.7.0:* `projection_base` and chainable projections.
+
+*Changed in version 1.9.0:* `std::identity` is now also supported wherever the library has special behavior for `utility::identity`.
 
 ### `iter_move` and `iter_swap`
 
