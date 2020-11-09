@@ -400,7 +400,7 @@ The following sorters are available but will only work for some specific types i
 #include <cpp-sort/sorters/counting_sorter.h>
 ```
 
-`counting_sorter` implements a simple [counting sort](https://en.wikipedia.org/wiki/Counting_sort). This sorter also supports reverse sorting with `std::greater<>`.
+`counting_sorter` implements a simple [counting sort](https://en.wikipedia.org/wiki/Counting_sort). This sorter also supports reverse sorting with `std::greater<>` or `std::ranges::greater`.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -411,6 +411,8 @@ This sorter works with any type satisfying the trait `std::is_integral` (as well
 \* *Since the original integers are discarded and overwritten, whether the algorithm is stable or not does not mean much. Moreover, it can only sort integers, so the potential stability problems shouldn't even be observable.*
 
 *Changed in version 1.6.0:* support for `[un]signed __int128`.
+
+*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
 
 ### `ska_sorter`
 
@@ -451,7 +453,7 @@ It comes into three main flavours (available individually if needed):
 
 * `integer_spread_sorter` works with any type satisfying the trait `std::is_integral`.
 * `float_spread_sorter` works with any type satisfying the trait `std::numeric_limits::is_iec559` whose size is the same as `std::uint32_t` or `std::uin64_t`.
-* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes). This sorter also supports reverse sorting with `std::greater<>`. In C++17 it also works with `std::string_view` and `std::wstring_view` (if `wchar_t` is 2 bytes).
+* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes). This sorter also supports reverse sorting with `std::greater<>` and `std::ranges::greater`. In C++17 it also works with `std::string_view` and `std::wstring_view` (if `wchar_t` is 2 bytes).
 
 These sorters accept projections as long as their simplest form can handle the result of the projection. The three of them are aggregated into one main sorter the following way:
 
@@ -464,3 +466,5 @@ struct spread_sorter:
     >
 {};
 ```
+
+*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).

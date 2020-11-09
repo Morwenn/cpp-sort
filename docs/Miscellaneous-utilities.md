@@ -79,8 +79,8 @@ constexpr bool is_probably_branchless_comparison_v
 ```
 
 This trait tells whether the comparison function `Compare` is likely to generate branchless code when comparing two instances of `T`. By default it considers that the following comparison functions are likely to be branchless:
-* `std::less<>` and `std::less<T>` for any `T` which satisfies [`std::is_arithmetic`](http://en.cppreference.com/w/cpp/types/is_arithmetic)
-* `std::greater<>` and `std::greater<T>` for any `T` which satisfies [`std::is_arithmetic`](http://en.cppreference.com/w/cpp/types/is_arithmetic)
+* `std::less<>`, `std::ranges::less` and `std::less<T>` for any `T` which satisfies [`std::is_arithmetic`](http://en.cppreference.com/w/cpp/types/is_arithmetic)
+* `std::greater<>`, `std::ranges::greater` and `std::greater<T>` for any `T` which satisfies [`std::is_arithmetic`](http://en.cppreference.com/w/cpp/types/is_arithmetic)
 
 ```cpp
 template<typename Projection, typename T>
@@ -93,9 +93,14 @@ constexpr bool is_probably_branchless_projection_v
 
 This trait tells whether the projection function `Projection` is likely to generate branchless code when called with an instance of `T`. By default it considers that the following projection functions are likely to be branchless:
 * `cppsort::utility::identity` for any type
+* `std::identity` for any type (when available)
 * Any type that satisfies [`std::is_member_function_pointer`](http://en.cppreference.com/w/cpp/types/is_member_function_pointer) provided it is called with an instance of the appropriate class
 
 These traits can be specialized for user-defined types. If one of the traits is specialized to consider that a user-defined type is likely to be branchless with a comparison/projection function, cv-qualified and reference-qualified versions of the same user-defined type will also be considered to produce branchless code when compared/projected with the same function.
+
+*Changed in version 1.9.0:* conditional support for [`std::ranges::less`](https://en.cppreference.com/w/cpp/utility/functional/ranges/less) and [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
+
+*Changed in version 1.9.0:* conditional support for [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity).
 
 ### Buffer providers
 

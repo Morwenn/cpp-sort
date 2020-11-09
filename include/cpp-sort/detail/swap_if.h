@@ -112,6 +112,64 @@ namespace detail
     }
 #endif
 
+#ifdef __cpp_lib_ranges
+    template<typename Integer>
+    auto swap_if(Integer& x, Integer& y, std::ranges::less comp, utility::identity) noexcept
+        -> std::enable_if_t<std::is_integral<Integer>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Float>
+    auto swap_if(Float& x, Float& y, std::ranges::less comp, utility::identity) noexcept
+        -> std::enable_if_t<std::is_floating_point<Float>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Integer>
+    auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, utility::identity) noexcept
+        -> std::enable_if_t<std::is_integral<Integer>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Float>
+    auto swap_if(Float& x, Float& y, std::ranges::greater comp, utility::identity) noexcept
+        -> std::enable_if_t<std::is_floating_point<Float>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Integer>
+    auto swap_if(Integer& x, Integer& y, std::ranges::less comp, std::identity) noexcept
+        -> std::enable_if_t<std::is_integral<Integer>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Float>
+    auto swap_if(Float& x, Float& y, std::ranges::less comp, std::identity) noexcept
+        -> std::enable_if_t<std::is_floating_point<Float>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Integer>
+    auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, std::identity) noexcept
+        -> std::enable_if_t<std::is_integral<Integer>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+
+    template<typename Float>
+    auto swap_if(Float& x, Float& y, std::ranges::greater comp, std::identity) noexcept
+        -> std::enable_if_t<std::is_floating_point<Float>::value>
+    {
+        return swap_if(x, y, comp, utility::identity{});
+    }
+#endif
+
     ////////////////////////////////////////////////////////////
     // iter_swap_if
 

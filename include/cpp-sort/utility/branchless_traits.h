@@ -33,6 +33,13 @@ namespace utility
             std::is_arithmetic<T>
         {};
 
+#ifdef __cpp_lib_ranges
+        template<typename T>
+        struct is_probably_branchless_comparison_impl<std::ranges::less, T>:
+            std::is_arithmetic<T>
+        {};
+#endif
+
         template<typename T>
         struct is_probably_branchless_comparison_impl<std::less<T>, T>:
             std::is_arithmetic<T>
@@ -42,6 +49,13 @@ namespace utility
         struct is_probably_branchless_comparison_impl<std::greater<>, T>:
             std::is_arithmetic<T>
         {};
+
+#ifdef __cpp_lib_ranges
+        template<typename T>
+        struct is_probably_branchless_comparison_impl<std::ranges::greater, T>:
+            std::is_arithmetic<T>
+        {};
+#endif
 
         template<typename T>
         struct is_probably_branchless_comparison_impl<std::greater<T>, T>:
