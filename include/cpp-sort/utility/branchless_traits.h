@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
+#include "../detail/config.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -83,6 +84,13 @@ namespace utility
         struct is_probably_branchless_projection_impl:
             std::is_member_object_pointer<Projection>
         {};
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+        template<typename T>
+        struct is_probably_branchless_projection_impl<std::identity, T>:
+            std::true_type
+        {};
+#endif
     }
 
     // Strip types from cv and reference qualifications if needed
