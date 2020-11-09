@@ -77,8 +77,7 @@ namespace cppsort
                     is_projection_v<Projection, Iterable, Compare>
                 >
             >
-            auto operator()(Iterable&& iterable, Compare compare={},
-                            Projection projection={}) const
+            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
                 -> CountType
             {
                 CountType count(0);
