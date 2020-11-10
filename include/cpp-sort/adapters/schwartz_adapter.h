@@ -18,6 +18,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"

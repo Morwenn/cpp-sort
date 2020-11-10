@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -28,7 +28,6 @@ Doxygen comments by Paul A. Bristow Jan 2015
 #include <functional>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include "detail/constants.h"
 #include "detail/integer_sort.h"
 #include "../pdqsort.h"
@@ -80,12 +79,8 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \remark  *  S is a constant called max_splits, defaulting to 11 (except for strings where it is the log of the character size).
 
 */
-  template<
-    typename RandomAccessIter,
-    typename Projection = utility::identity
-  >
-  auto integer_sort(RandomAccessIter first, RandomAccessIter last,
-                    Projection projection={})
+  template<typename RandomAccessIter, typename Projection>
+  auto integer_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
       -> void
   {
     auto&& proj = utility::as_function(projection);
