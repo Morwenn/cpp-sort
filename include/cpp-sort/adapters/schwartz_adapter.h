@@ -22,6 +22,7 @@
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
+#include "../detail/config.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
 #include "../detail/type_traits.h"
@@ -177,6 +178,25 @@ namespace cppsort
                 // utility::identity does nothing, bypass schartz_adapter entirely
                 return this->get()(std::move(first), std::move(last), std::move(compare), projection);
             }
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+            template<typename ForwardIterable, typename Compare>
+            auto operator()(ForwardIterable&& iterable, Compare compare, std::identity projection) const
+                -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
+            {
+                // std::identity does nothing, bypass schartz_adapter entirely
+                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
+            }
+
+            template<typename ForwardIterator, typename Compare>
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare, std::identity projection) const
+                -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
+            {
+                // std::identity does nothing, bypass schartz_adapter entirely
+                return this->get()(std::move(first), std::move(last), std::move(compare), projection);
+            }
+#endif
         };
     }
 
