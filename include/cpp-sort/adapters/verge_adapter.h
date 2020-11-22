@@ -55,9 +55,9 @@ namespace cppsort
                     "verge_adapter requires at least random-access iterators"
                 );
 
-                vergesort(std::move(first), std::move(last), last - first,
-                          std::move(compare), std::move(projection),
-                          this->get());
+                verge::sort(std::move(first), std::move(last), last - first,
+                            std::move(compare), std::move(projection),
+                            this->get());
             }
 
             ////////////////////////////////////////////////////////////

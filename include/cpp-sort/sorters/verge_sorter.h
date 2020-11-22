@@ -49,9 +49,9 @@ namespace cppsort
                     "verge_sorter requires at least bidirectional iterators"
                 );
 
-                vergesort(std::begin(iterable), std::end(iterable),
-                          utility::size(iterable),
-                          std::move(compare), std::move(projection));
+                verge::sort(std::begin(iterable), std::end(iterable),
+                            utility::size(iterable),
+                            std::move(compare), std::move(projection));
             }
 
             template<
@@ -75,8 +75,8 @@ namespace cppsort
                 );
 
                 auto size = std::distance(first, last);
-                vergesort(std::move(first), std::move(last), size,
-                          std::move(compare), std::move(projection));
+                verge::sort(std::move(first), std::move(last), size,
+                            std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

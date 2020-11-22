@@ -14,24 +14,82 @@
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
+#include "config.h"
 #include "inplace_merge.h"
-#include "is_sorted_until.h"
 #include "iterator_traits.h"
+#include "lower_bound.h"
 #include "quick_merge_sort.h"
 #include "reverse.h"
+#include "rotate.h"
+#include "upper_bound.h"
 
 namespace cppsort
 {
 namespace detail
 {
+namespace verge
+{
+    template<typename Iterator>
+    struct run
+    {
+        Iterator end;
+        difference_type_t<Iterator> size;
+    };
+
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
-                   difference_type_t<BidirectionalIterator> size,
-                   Compare compare, Projection projection,
-                   std::bidirectional_iterator_tag)
+    auto merge_runs(BidirectionalIterator first, std::list<verge::run<BidirectionalIterator>>& runs,
+                    Compare compare, Projection projection)
         -> void
     {
-        if (size < 80) {
+        if (runs.size() < 2) return;
+
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        // Merge runs pairwise until there are no runs left
+        do {
+            auto begin = first;
+            for (auto it = runs.begin() ; it != runs.end() && it != std::prev(runs.end()) ; ++it) {
+                auto next_it = std::next(it);
+
+                // Merge the runs, micro-optimize for size 1 because it can happen,
+                // and the generic inplace_merge algorithm cares not
+                if (it->size == 1) {
+                    auto&& target = proj(*begin);
+                    if (comp(proj(*it->end), target)) {
+                        auto insert_it = detail::lower_bound_n(it->end, next_it->size, target, compare, projection);
+                        detail::rotate_left(first, insert_it);
+                    } else {
+                    }
+                } else if (next_it->size == 1) {
+                    auto&& target = proj(*std::prev(next_it->end));
+                    if (comp(target, proj(*std::prev(it->end)))) {
+                        auto insert_it = detail::upper_bound_n(begin, it->size, target, compare, projection);
+                        detail::rotate_right(insert_it, next_it->end);
+                    }
+                } else {
+                    detail::inplace_merge(begin, it->end, next_it->end, compare, projection,
+                                          it->size, next_it->size);
+                }
+
+                // Compute the size of the new merged run
+                next_it->size += it->size;
+                // Remove the middle iterator to order to fuse the two
+                // consecutive runs, and advance to the next pair
+                it = runs.erase(it);
+                begin = it->end;
+            }
+        } while (runs.size() > 1);
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto sort(BidirectionalIterator first, BidirectionalIterator last,
+              difference_type_t<BidirectionalIterator> size,
+              Compare compare, Projection projection,
+              std::bidirectional_iterator_tag)
+        -> void
+    {
+        if (size < 128) {
             // vergesort is inefficient for small collections
             quick_merge_sort(std::move(first), std::move(last), size,
                              std::move(compare), std::move(projection));
@@ -43,67 +101,79 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         // Limit under which quick_merge_sort is used
-        int unstable_limit = size / log2(size);
+        int minrun_limit = size / log2(size);
 
-        // Beginning of an unstable partition, last if the
-        // previous partition is stable
-        auto begin_unstable = last;
+        // Vergesort detects big runs in ascending or descending order,
+        // and remembers where each run ends by storing the end iterator
+        // of each run in this list, then it performs a k-way merge
+        std::list<verge::run<BidirectionalIterator>> runs;
 
-        // Size of the unstable partition
-        difference_type size_unstable = 0;
+        // Beginning of an "unsorted" partition, last if the previous
+        // partition is sorted: as long as the algorithm does not find a
+        // big enough run, it "accumulates" contiguous unsorted elements,
+        // and sorts them all at once when it reaches the end of such a
+        // partition, to ensure that a minimal number of calls to the
+        // fallback algorithm are performed
+        auto begin_unsorted = last;
+
+        // Size of the current unsorted partition
+        difference_type size_unsorted = 0;
 
         // Pair of iterators to iterate through the collection
-        auto next = is_sorted_until(first, last, compare, projection);
-        if (next == last) return;
-        auto current = std::prev(next);
+        auto current = first;
+        auto next = std::next(current);
+
+        // Choose whether to look for an ascending or descending
+        // run depending on the value of the first two elements;
+        // when comparing equivalent there is a bias towards
+        // ascending runs because they don't have to be reversed
+        if (comp(proj(*next), proj(*current))) {
+            goto find_descending;
+        } else {
+            goto find_ascending;
+        }
 
         while (true) {
-            // Decreasing range
-            {
+
+            // This main loop uses goto here and there, but it is written in such
+            // a way that gotos are not part of the hot path: there are O(log n)
+            // gotos performed while the loop itself is O(n).
+            //
+            // The job of this loop is to find ascending and descending runs that
+            // are big enough according to vergesort's heuristic. In order to do
+            // that we perform a linear scan with the following intuition: when we
+            // reach two elements whose order does not match that of the run we are
+            // currently trying to identify, we know that we have reached the limit
+            // of the current run. When it happens, there are two possible scenarios:
+            // - The run we found is big enough, we add it whole to the list of runs
+            //   to merge later. We take the next two elements and compare them to
+            //   decide whether we should start looking for an ascending or for a
+            //   descending run next.
+            // - The run we found is not big enough, so we consider the last *two*
+            //   elements to be potentially part of the next run. We then start
+            //   looking for a run whose direction matches that of the two elements
+            //   we just compared.
+            //
+            // The result is that the hot path it the one that constantly fails to
+            // find big enough runs, and it naturally performs a kind of ping-pong
+            // between looking for ascending and descending runs. So this loop is
+            // optimized for this scenario: when we start looking for a run we
+            // already know the order of the first two elements. However when we
+            // find a big enough run we only consider the last compared element to
+            // be part of the next run, and not the last two like we do in the hot
+            // path. This break the ping-pong pattern, so we use goto to jump directly
+            // to the run detection code corresponding to the order of the new two
+            // elements.
+
+            find_ascending: {
+                CPPSORT_ASSERT(not comp(proj(*next), proj(*current)));
+
                 auto begin_rng = current;
-
-                difference_type run_size = 1;
-                while (next != last) {
-                    if (comp(proj(*current), proj(*next))) break;
-                    ++current;
-                    ++next;
-                    ++run_size;
-                }
-
-                // Reverse and merge
-                if (run_size > unstable_limit) {
-                    if (begin_unstable != last) {
-                        quick_merge_sort(begin_unstable, begin_rng, size_unstable, compare, projection);
-                        detail::reverse(begin_rng, next);
-                        detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection,
-                                              size_unstable, run_size);
-                        detail::inplace_merge(first, begin_unstable, next, compare, projection,
-                                              std::distance(first, begin_unstable), size_unstable + run_size);
-                        begin_unstable = last;
-                        size_unstable = 0;
-                    } else {
-                        detail::reverse(begin_rng, next);
-                        detail::inplace_merge(first, begin_rng, next, compare, projection,
-                                              std::distance(first, begin_rng), run_size);
-                    }
-                } else {
-                    size_unstable += run_size;
-                    if (begin_unstable == last) {
-                        begin_unstable = begin_rng;
-                    }
-                }
-
-                if (next == last) break;
-
                 ++current;
                 ++next;
-            }
 
-            // Increasing range
-            {
-                auto begin_rng = current;
-
-                difference_type run_size = 1;
+                // Find an ascending run
+                difference_type run_size = 2;
                 while (next != last) {
                     if (comp(proj(*next), proj(*current))) break;
                     ++current;
@@ -111,48 +181,111 @@ namespace detail
                     ++run_size;
                 }
 
-                // Merge
-                if (run_size > unstable_limit) {
-                    if (begin_unstable != last) {
-                        quick_merge_sort(begin_unstable, begin_rng, size_unstable, compare, projection);
-                        detail::inplace_merge(begin_unstable, begin_rng, next, compare, projection,
-                                              size_unstable, run_size);
-                        detail::inplace_merge(first, begin_unstable, next, compare, projection,
-                                              std::distance(first, begin_unstable), size_unstable + run_size);
-                        begin_unstable = last;
-                        size_unstable = 0;
+                if (run_size > minrun_limit) {
+                    if (begin_unsorted != last) {
+                        quick_merge_sort(begin_unsorted, begin_rng, size_unsorted, compare, projection);
+                        runs.push_back({ begin_rng, size_unsorted} );
+                        runs.push_back({ next, run_size });
+                        begin_unsorted = last;
+                        size_unsorted = 0;
                     } else {
-                        detail::inplace_merge(first, begin_rng, next, compare, projection,
-                                              std::distance(first, begin_rng), run_size);
+                        runs.push_back({ next, run_size });
                     }
+                    if (next == last) break;
+
+                    // Find and start a new run
+                    ++current;
+                    ++next;
+                    if (next == last) {
+                        begin_unsorted = current;
+                        size_unsorted = 0;
+                        break;
+                    }
+                    if (comp(proj(*next), proj(*current))) {
+                        goto find_descending;
+                    } else {
+                        goto find_ascending;
+                    }
+
                 } else {
-                    size_unstable += run_size;
-                    if (begin_unstable == last) {
-                        begin_unstable = begin_rng;
+                    size_unsorted += (run_size - 1);
+                    if (begin_unsorted == last) {
+                        begin_unsorted = begin_rng;
                     }
                 }
 
                 if (next == last) break;
+            }
 
+            find_descending: {
+                CPPSORT_ASSERT(comp(proj(*next), proj(*current)));
+
+                auto begin_rng = current;
                 ++current;
                 ++next;
+
+                // Find a descending run
+                difference_type run_size = 2;
+                while (next != last) {
+                    if (comp(proj(*current), proj(*next))) break;
+                    ++current;
+                    ++next;
+                    ++run_size;
+                }
+
+                if (run_size > minrun_limit) {
+                    if (begin_unsorted != last) {
+                        quick_merge_sort(begin_unsorted, begin_rng, size_unsorted, compare, projection);
+                        runs.push_back({ begin_rng, size_unsorted });
+                        detail::reverse(begin_rng, next);
+                        runs.push_back({ next, run_size });
+                        begin_unsorted = last;
+                        size_unsorted = 0;
+                    } else {
+                        detail::reverse(begin_rng, next);
+                        runs.push_back({ next, run_size });
+                    }
+
+                    // Find and start a new run
+                    if (next == last) break;
+                    ++current;
+                    ++next;
+                    if (next == last) {
+                        begin_unsorted = current;
+                        size_unsorted = 0;
+                        break;
+                    }
+                    if (comp(proj(*next), proj(*current))) {
+                        goto find_descending;
+                    } else {
+                        goto find_ascending;
+                    }
+                } else {
+                    size_unsorted += (run_size - 1);
+                    if (begin_unsorted == last) {
+                        begin_unsorted = begin_rng;
+                    }
+                }
+
+                if (next == last) break;
             }
         }
 
-        if (begin_unstable != last) {
-            quick_merge_sort(begin_unstable, last, size_unstable, compare, projection);
-            detail::inplace_merge(first, begin_unstable, last,
-                                  std::move(compare), std::move(projection),
-                                  std::distance(first, begin_unstable), size_unstable);
+        if (begin_unsorted != last) {
+            quick_merge_sort(begin_unsorted, last, size_unsorted, compare, projection);
+            runs.push_back({ last, size_unsorted + 1 });
         }
+
+        // Last step: merge the runs
+        verge::merge_runs(first, runs, std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename Compare,
              typename Projection, typename Fallback>
-    auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
-                   difference_type_t<RandomAccessIterator> size,
-                   Compare compare, Projection projection, Fallback fallback,
-                   std::random_access_iterator_tag)
+    auto sort(RandomAccessIterator first, RandomAccessIterator last,
+              difference_type_t<RandomAccessIterator> size,
+              Compare compare, Projection projection, Fallback fallback,
+              std::random_access_iterator_tag)
         -> void
     {
         if (size < 128) {
@@ -162,49 +295,54 @@ namespace detail
             return;
         }
 
-        // Limit under which pdqsort is used to sort a sub-sequence
-        const difference_type_t<RandomAccessIterator> unstable_limit = size / log2(size);
-
-        // Vergesort detects big runs in ascending or descending order,
-        // and remember where each run ends by storing the end iterator
-        // of each run in this list, then it merges everything in the end
-        std::list<RandomAccessIterator> runs;
-
-        // Beginning of an unstable partition, or last if the previous
-        // partition is stable
-        RandomAccessIterator begin_unstable = last;
+        // See the bidirectional overload for the description of
+        // the following variables
+        const difference_type_t<RandomAccessIterator> minrun_limit = size / log2(size);
+        std::list<verge::run<RandomAccessIterator>> runs;
+        auto begin_unsorted = last;
 
         // Pair of iterators to iterate through the collection
-        RandomAccessIterator current = first;
-        RandomAccessIterator next = std::next(first);
+        auto current = first;
+        auto next = std::next(first);
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         while (true) {
-            // Beginning of the current sequence
-            RandomAccessIterator begin_range = current;
 
-            // If the last part of the collection to sort isn't
-            // big enough, consider that it is an unstable sequence
-            if (last - next <= unstable_limit) {
-                if (begin_unstable == last) {
-                    begin_unstable = begin_range;
+            // The random-access version of vergesort does not have to perform a linear
+            // scan over the whole collection like the bidirectional version does:
+            // instead it "jumps" n / log n elements at the same time, and start scanning
+            // to the left and to the right of the position to check whether it landed in
+            // a big enough run. In a collection that is truly shuffled, checking that
+            // there is no such partition in the scanning area should be really fast, and
+            // vergesort will perform log n jumps through the collection before falling
+            // back to the adapted sorting algorithm, making it a cheap preprocessing
+            // step.
+
+            // Beginning of the current sequence
+            auto begin_range = current;
+
+            // If the last part of the collection to sort is not
+            // big enough, consider that it is an unsorted sequence
+            if (last - next <= minrun_limit) {
+                if (begin_unsorted == last) {
+                    begin_unsorted = begin_range;
                 }
                 break;
             }
 
             // Set backward iterators
-            current += unstable_limit;
-            next += unstable_limit;
+            current += minrun_limit;
+            next += minrun_limit;
 
             // Set forward iterators
-            RandomAccessIterator current2 = current;
-            RandomAccessIterator next2 = next;
+            auto current2 = current;
+            auto next2 = next;
 
             if (comp(proj(*next), proj(*current))) {
-                // Found a decreasing sequence, move iterators
-                // to the limits of the sequence
+                // Found an increasing run, scan to the left and to the right
+                // until the limits of the run are reached
                 do {
                     --current;
                     --next;
@@ -221,26 +359,26 @@ namespace detail
                 }
 
                 // Check whether we found a big enough sorted sequence
-                if (next2 - current >= unstable_limit) {
+                if (next2 - current >= minrun_limit) {
                     detail::reverse(current, next2);
-                    if ((current - begin_range) && begin_unstable == last) {
-                        begin_unstable = begin_range;
+                    if ((current - begin_range) && begin_unsorted == last) {
+                        begin_unsorted = begin_range;
                     }
-                    if (begin_unstable != last) {
-                        fallback(begin_unstable, current, compare, projection);
-                        runs.push_back(current);
-                        begin_unstable = last;
+                    if (begin_unsorted != last) {
+                        fallback(begin_unsorted, current, compare, projection);
+                        runs.push_back({ current, current - begin_unsorted });
+                        begin_unsorted = last;
                     }
-                    runs.push_back(next2);
+                    runs.push_back({ next2, next2 - current });
                 } else {
                     // Remember the beginning of the unsorted sequence
-                    if (begin_unstable == last) {
-                        begin_unstable = begin_range;
+                    if (begin_unsorted == last) {
+                        begin_unsorted = begin_range;
                     }
                 }
             } else {
-                // Found an increasing sequence, move iterators
-                // to the limits of the sequence
+                // Found an increasing run, scan to the left and to the right
+                // until the limits of the run are reached
                 do {
                     --current;
                     --next;
@@ -257,20 +395,20 @@ namespace detail
                 }
 
                 // Check whether we found a big enough sorted sequence
-                if (next2 - current >= unstable_limit) {
-                    if ((current - begin_range) && begin_unstable == last) {
-                        begin_unstable = begin_range;
+                if (next2 - current >= minrun_limit) {
+                    if ((current - begin_range) && begin_unsorted == last) {
+                        begin_unsorted = begin_range;
                     }
-                    if (begin_unstable != last) {
-                        fallback(begin_unstable, current, compare, projection);
-                        runs.push_back(current);
-                        begin_unstable = last;
+                    if (begin_unsorted != last) {
+                        fallback(begin_unsorted, current, compare, projection);
+                        runs.push_back({ current, current - begin_unsorted });
+                        begin_unsorted = last;
                     }
-                    runs.push_back(next2);
+                    runs.push_back({ next2, next2 - current });
                 } else {
                     // Remember the beginning of the unsorted sequence
-                    if (begin_unstable == last) {
-                        begin_unstable = begin_range;
+                    if (begin_unsorted == last) {
+                        begin_unsorted = begin_range;
                     }
                 }
             }
@@ -281,62 +419,52 @@ namespace detail
             next = std::next(next2);
         }
 
-        if (begin_unstable != last) {
+        if (begin_unsorted != last) {
             // If there are unsorted elements left, sort them
-            runs.push_back(last);
-            fallback(begin_unstable, last, compare, projection);
+            fallback(begin_unsorted, last, compare, projection);
+            runs.push_back({ last, last - begin_unsorted });
         }
 
-        if (runs.size() < 2) return;
-
-        // Merge runs pairwise until there aren't runs left
-        do {
-            auto begin = first;
-            for (auto it = runs.begin() ; it != runs.end() && it != std::prev(runs.end()) ; ++it) {
-                detail::inplace_merge(begin, *it, *std::next(it), compare, projection);
-                // Remove the middle iterator and advance
-                it = runs.erase(it);
-                begin = *it;
-            }
-        } while (runs.size() > 1);
+        // Last step: merge the runs
+        verge::merge_runs(first, runs, std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto vergesort(RandomAccessIterator first, RandomAccessIterator last,
-                   difference_type_t<RandomAccessIterator> size,
-                   Compare compare, Projection projection,
-                   std::random_access_iterator_tag category)
+    auto sort(RandomAccessIterator first, RandomAccessIterator last,
+              difference_type_t<RandomAccessIterator> size,
+              Compare compare, Projection projection,
+              std::random_access_iterator_tag category)
         -> void
     {
         using sorter = cppsort::pdq_sorter;
-        vergesort(std::move(first), std::move(last), size,
-                  std::move(compare), std::move(projection),
-                  sorter{}, category);
+        verge::sort(std::move(first), std::move(last), size,
+                    std::move(compare), std::move(projection),
+                    sorter{}, category);
     }
 
     template<typename BidirectionalIterator, typename Compare,
              typename Projection, typename Fallback>
-    auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
-                   difference_type_t<BidirectionalIterator> size,
-                   Compare compare, Projection projection, Fallback fallback)
+    auto sort(BidirectionalIterator first, BidirectionalIterator last,
+              difference_type_t<BidirectionalIterator> size,
+              Compare compare, Projection projection, Fallback fallback)
         -> void
     {
-        vergesort(std::move(first), std::move(last), size,
-                  std::move(compare), std::move(projection),
-                  std::move(fallback), std::random_access_iterator_tag{});
+        verge::sort(std::move(first), std::move(last), size,
+                    std::move(compare), std::move(projection),
+                    std::move(fallback), std::random_access_iterator_tag{});
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto vergesort(BidirectionalIterator first, BidirectionalIterator last,
-                   difference_type_t<BidirectionalIterator> size,
-                   Compare compare, Projection projection)
+    auto sort(BidirectionalIterator first, BidirectionalIterator last,
+              difference_type_t<BidirectionalIterator> size,
+              Compare compare, Projection projection)
         -> void
     {
         using category = iterator_category_t<BidirectionalIterator>;
-        vergesort(std::move(first), std::move(last), size,
-                  std::move(compare), std::move(projection),
-                  category{});
+        verge::sort(std::move(first), std::move(last), size,
+                    std::move(compare), std::move(projection),
+                    category{});
     }
-}}
+}}}
 
 #endif // CPPSORT_DETAIL_VERGESORT_H_
