@@ -6,10 +6,10 @@ You can find some experiments and interesting pieces of code [in my Gist][morwen
 
 One of the main observations which naturally occured as long as I was putting together this library was about the best complexity tradeoffs between time and memory depending on the iterator categories of the different sorting algorithms (only taking comparison sorts into account):
 * Algorithms that work on random-access iterators can run in O(n log n) time with O(1) extra memory, and can even be stable with such guarantees (block sort being the best example).
-* Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergeSort [can be implemented][https://github.com/Morwenn/quick_merge_sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
+* Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergesort [can be implemented][https://github.com/Morwenn/quick_merge_sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
 * Stable algorithms that work on bidirectional iterators can run in O(n log n) time with O(n) extra memory (mergesort), or in O(n log² n) time with O(1) extra memory (mergesort with in-place merge).
 * Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the the ones working on bidirectional iterators: mergesort works just as well.
-* Unstable algorithms that work on forward iterators can run in O(n log² n) time and O(1) space, QuickMergeSort being once again the prime example of such an algorithm.
+* Unstable algorithms that work on forward iterators can run in O(n log² n) time and O(1) space, QuickMergesort being once again the prime example of such an algorithm.
 * Taking advantage of the list data structure allows for sorting algorithms running in O(n log n) time with O(1) extra memory, be it for stable sorting (mergesort) or unstable sorting (melsort), but those techniques can't be generically retrofitted to generically work with bidirectional iterators
 
 Now, those observations/claims are there to be challenged: if you know of any stable comparison sorting algorithm that runs on bidirectional iterators in O(n log n) with O(1) extra memory, don't hesitate to be the ones challenging those claims :)

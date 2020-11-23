@@ -127,9 +127,9 @@ namespace detail
                           Compare compare, Projection projection)
         -> void
     {
-        // This flavour of QuickMergeSort splits the collection in [2/3, 1/3]
+        // This flavour of QuickMergesort splits the collection in [2/3, 1/3]
         // partitions where the right partition is used as an internal buffer
-        // to apply mergesort to the left partition, then QuickMergeSort is
+        // to apply mergesort to the left partition, then QuickMergesort is
         // recursively applied to the smaller right partition
 
         while (size > qmsort_limit) {

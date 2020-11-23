@@ -223,7 +223,7 @@ This sorter is a bit faster or a bit slower than `smooth_sorter` depending on th
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 ```
 
-Implements a flavour of [QuickMergeSort](https://arxiv.org/abs/1307.3033).
+Implements a flavour of [QuickMergesort](https://arxiv.org/abs/1307.3033).
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -231,7 +231,7 @@ Implements a flavour of [QuickMergeSort](https://arxiv.org/abs/1307.3033).
 | n           | n log n     | n log n     | log² n      | No          | Bidirectional |
 | n           | n log² n    | n log² n    | log² n      | No          | Forward       |
 
-QuickMergeSort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergeSort used by `quick_merge_sorter` actually uses an equivalent of [`std::nth_element`](https://en.cppreference.com/w/cpp/algorithm/nth_element) to partition the collection in 1/3-2/3 parts in order to maximize the size of the partition (2 thirds of the space) that can be merge-sorted using the other partition as a swap buffer.
+QuickMergesort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergesort used by `quick_merge_sorter` actually uses an equivalent of [`std::nth_element`](https://en.cppreference.com/w/cpp/algorithm/nth_element) to partition the collection in 1/3-2/3 parts in order to maximize the size of the partition (2 thirds of the space) that can be merge-sorted using the other partition as a swap buffer.
 
 The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The log n memory is due to top-down mergesort stack recursion in the random-access version, while the memory of the forward version use is dominated by the mutually recursive [introselect](https://en.wikipedia.org/wiki/Introselect) algorithm which is used to implement an `nth_element` equivalent for forward iterators.
 
@@ -382,7 +382,7 @@ Implements a [vergesort](https://github.com/Morwenn/vergesort) algorithm backed 
 | n           | n log n     | n log n log log n | n           | No          | Bidirectional |
 | n           | n log n     | n log n           | log² n      | No          | Bidirectional |
 
-Vergesort is a [*Runs*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#runs) algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergeSort otherwise).
+Vergesort is a [*Runs*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#runs) algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergesort otherwise).
 
 Vergesort's complexity is bound either by its optimization layer or by the fallback sorter's complexity:
 * When it doesn't find big runs, the complexity is bound by the fallback sorter: depending on the category of iterators you can refer to the tables of either `pdq_sorter` or `quick_merge_sorter`.
