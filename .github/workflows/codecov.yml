@@ -1,0 +1,52 @@
+name: Coverage Upload to Codecov
+
+on:
+  push:
+    branches:
+      - coverage-action
+      - master
+      - develop
+      - 2.0.0-develop
+    paths:
+      - 'include/**'
+      - 'testsuite/**'
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  upload-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v2
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{runner.workspace}}
+        run: >
+          cmake -H${{github.event.repository.name}} -Bbuild
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+          -DENABLE_COVERAGE=true
+          -G"Unix Makefiles"
+
+      - name: Build with coverage
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake --build . --config $BUILD_TYPE -j 2
+
+      - name: Run the test suite
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: ctest -C Release --output-on-failure
+
+      - name: Create coverage info
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: make gcov
+
+      - name: Upload coverage info
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
