@@ -93,14 +93,14 @@ namespace detail
         -> void
     {
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
-        auto&& comp = as_function(compare);
-        auto&& proj = as_function(projection);
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
 
-        // Shrink the problem size on the left side
+        // Shrink the problem size on the left side, makes the
+        // size computation potentially cheaper
         while (first != middle && not comp(proj(*middle), proj(*first))) {
             ++first;
         }
-
         if (first == middle) return;
 
         auto n0 = std::distance(first, middle);
@@ -138,12 +138,21 @@ namespace detail
         -> void
     {
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
+        using category = iterator_category_t<BidirectionalIterator>;
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        // Shrink the problem size on the left side, makes the
+        // size computation potentially cheaper
+        while (first != middle && not comp(proj(*middle), proj(*first))) {
+            ++first;
+        }
+        if (first == middle) return;
 
         auto len1 = std::distance(first, middle);
         auto len2 = std::distance(middle, last);
-        temporary_buffer<rvalue_reference> buffer(std::min(len1, len2));
 
-        using category = iterator_category_t<BidirectionalIterator>;
+        temporary_buffer<rvalue_reference> buffer(std::min(len1, len2));
         inplace_merge(std::move(first), std::move(middle), std::move(last),
                       std::move(compare), std::move(projection),
                       len1, len2, buffer.data(), buffer.size(),
