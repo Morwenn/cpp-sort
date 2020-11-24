@@ -241,6 +241,12 @@ namespace cppsort
 
         using is_always_stable = std::true_type;
     };
+
+    // Accidental nesting can happen, unwrap
+    template<typename Sorter>
+    struct stable_adapter<stable_adapter<Sorter>>:
+        stable_adapter<Sorter>
+    {};
 }
 
 #ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_
