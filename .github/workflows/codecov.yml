@@ -1,3 +1,6 @@
+# Copyright (c) 2020 Morwenn
+# SPDX-License-Identifier: MIT
+
 name: Coverage Upload to Codecov
 
 on:
@@ -48,5 +51,5 @@ jobs:
 
       - name: Upload coverage info
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{runner.workspace}}
         run: bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
