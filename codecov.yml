@@ -3,7 +3,7 @@
 
 coverage:
   ignore:
-    - "testsuite/**/*"
+    - "testsuite"
     # This unrolled version of a merge-insertion sort derivative was tested
     # exhaustively for every permutation of an integer sequence of 9 elements,
     # thus we don't include it

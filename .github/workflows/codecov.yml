@@ -6,7 +6,6 @@ name: Coverage Upload to Codecov
 on:
   push:
     branches:
-      - coverage-action
       - master
       - develop
       - 2.0.0-develop
@@ -50,6 +49,6 @@ jobs:
         run: make gcov
 
       - name: Upload coverage info
-        shell: bash
-        working-directory: ${{runner.workspace}}
-        run: bash <(curl -s https://codecov.io/bash) -X gcov || echo "Codecov did not collect coverage reports";
+        uses: codecov/codecov-action@v1.0.15
+        with:
+          directory: ${{runner.workspace}}/build
