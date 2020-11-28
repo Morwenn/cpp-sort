@@ -29,12 +29,19 @@ namespace detail
 {
 namespace verge
 {
+    ////////////////////////////////////////////////////////////
+    // Run helper class, represents a non-decreasing run with
+    // its size and end iterator
+
     template<typename Iterator>
     struct run
     {
         Iterator end;
         difference_type_t<Iterator> size;
     };
+
+    ////////////////////////////////////////////////////////////
+    // Merge a list of runs with a k-way merge
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto merge_runs(BidirectionalIterator first, std::list<verge::run<BidirectionalIterator>>& runs,
@@ -82,11 +89,13 @@ namespace verge
         } while (runs.size() > 1);
     }
 
+    ////////////////////////////////////////////////////////////
+    // Vergesort main algorithms
+
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto sort(BidirectionalIterator first, BidirectionalIterator last,
-              difference_type_t<BidirectionalIterator> size,
-              Compare compare, Projection projection,
-              std::bidirectional_iterator_tag)
+    auto sort_bidirectional(BidirectionalIterator first, BidirectionalIterator last,
+                            difference_type_t<BidirectionalIterator> size,
+                            Compare compare, Projection projection)
         -> void
     {
         if (size < 128) {
@@ -280,12 +289,10 @@ namespace verge
         verge::merge_runs(first, runs, std::move(compare), std::move(projection));
     }
 
-    template<typename RandomAccessIterator, typename Compare,
-             typename Projection, typename Fallback>
-    auto sort(RandomAccessIterator first, RandomAccessIterator last,
-              difference_type_t<RandomAccessIterator> size,
-              Compare compare, Projection projection, Fallback fallback,
-              std::random_access_iterator_tag)
+    template<typename RandomAccessIterator, typename Compare, typename Projection, typename Fallback>
+    auto sort_random_access(RandomAccessIterator first, RandomAccessIterator last,
+                            difference_type_t<RandomAccessIterator> size,
+                            Compare compare, Projection projection, Fallback fallback)
         -> void
     {
         if (size < 128) {
@@ -341,7 +348,7 @@ namespace verge
             auto next2 = next;
 
             if (comp(proj(*next), proj(*current))) {
-                // Found an increasing run, scan to the left and to the right
+                // Found a decreasing run, scan to the left and to the right
                 // until the limits of the run are reached
                 do {
                     --current;
@@ -429,29 +436,48 @@ namespace verge
         verge::merge_runs(first, runs, std::move(compare), std::move(projection));
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto sort(RandomAccessIterator first, RandomAccessIterator last,
-              difference_type_t<RandomAccessIterator> size,
-              Compare compare, Projection projection,
-              std::random_access_iterator_tag category)
+    ////////////////////////////////////////////////////////////
+    // Vergesort main interface
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection, typename Fallback>
+    auto sort(std::bidirectional_iterator_tag,
+              BidirectionalIterator first, BidirectionalIterator last,
+              difference_type_t<BidirectionalIterator> size,
+              Compare compare, Projection projection, Fallback /* fallback */)
         -> void
     {
-        using sorter = cppsort::pdq_sorter;
-        verge::sort(std::move(first), std::move(last), size,
-                    std::move(compare), std::move(projection),
-                    sorter{}, category);
+        // This overload exists purely for the sake of genericity
+        // and to make future evolutions easier, it is actually
+        // never called with anything else than pdq_sorter as a
+        // fallback for now, which can't even be used by the
+        // bidirectional algorithm
+        sort_bidirectional(std::move(first), std::move(last), size,
+                           std::move(compare), std::move(projection));
     }
 
-    template<typename BidirectionalIterator, typename Compare,
-             typename Projection, typename Fallback>
+    template<typename RandomAccessIterator, typename Compare, typename Projection, typename Fallback>
+    auto sort(std::random_access_iterator_tag,
+              RandomAccessIterator first, RandomAccessIterator last,
+              difference_type_t<RandomAccessIterator> size,
+              Compare compare, Projection projection, Fallback fallback)
+        -> void
+    {
+        // Forward every parameter as is
+        sort_random_access(std::move(first), std::move(last), size,
+                           std::move(compare), std::move(projection),
+                           std::move(fallback));
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection, typename Fallback>
     auto sort(BidirectionalIterator first, BidirectionalIterator last,
               difference_type_t<BidirectionalIterator> size,
               Compare compare, Projection projection, Fallback fallback)
         -> void
     {
-        verge::sort(std::move(first), std::move(last), size,
+        verge::sort(iterator_category_t<BidirectionalIterator>{},
+                    std::move(first), std::move(last), size,
                     std::move(compare), std::move(projection),
-                    std::move(fallback), std::random_access_iterator_tag{});
+                    std::move(fallback));
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
@@ -460,10 +486,9 @@ namespace verge
               Compare compare, Projection projection)
         -> void
     {
-        using category = iterator_category_t<BidirectionalIterator>;
         verge::sort(std::move(first), std::move(last), size,
                     std::move(compare), std::move(projection),
-                    category{});
+                    cppsort::pdq_sorter{});
     }
 }}}
 
