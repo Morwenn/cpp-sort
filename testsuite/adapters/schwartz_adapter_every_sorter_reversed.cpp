@@ -12,16 +12,13 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
-namespace
-{
-    // double segfaults with MinGW-w64 64 bits in Release mode
-    template<typename T=float>
-    struct wrapper
-    {
-        T value;
-    };
-}
+// NOTE: this test used to use wrapper<double>, but it was later
+//       switched to wrapper<float> because the former segfaults
+//       with MinGW-w64 64 bits in Release mode
+template<typename T=float>
+using wrapper = generic_wrapper<T>;
 
 TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse iterators",
                     "[schwartz_adapter][reverse_iterator]",

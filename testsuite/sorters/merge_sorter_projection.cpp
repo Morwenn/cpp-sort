@@ -12,6 +12,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "merge_sorter tests with projections",
            "[merge_sorter][projection]" )
@@ -20,7 +21,7 @@ TEST_CASE( "merge_sorter tests with projections",
     std::mt19937_64 engine(Catch::rngSeed());
 
     // Wrapper to hide the integer
-    struct wrapper { int value; };
+    using wrapper = generic_wrapper<int>;
 
     // Collection to sort
     std::vector<wrapper> vec(80);

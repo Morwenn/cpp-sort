@@ -11,6 +11,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "spread_sorter tests with projections",
            "[spread_sorter][projection]" )
@@ -68,7 +69,7 @@ TEST_CASE( "spread_sorter tests with projections",
 
     SECTION( "sort with std::string iterators" )
     {
-        struct wrapper { std::string value; };
+        using wrapper = generic_wrapper<std::string>;
 
         std::vector<wrapper> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {
@@ -82,7 +83,7 @@ TEST_CASE( "spread_sorter tests with projections",
 
     SECTION( "reverse sort with std::string iterators" )
     {
-        struct wrapper { std::string value; };
+        using wrapper = generic_wrapper<std::string>;
 
         std::vector<wrapper> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {

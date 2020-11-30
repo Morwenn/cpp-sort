@@ -13,27 +13,9 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
-namespace
-{
-    struct wrapper
-    {
-        int value;
-        int order;
-    };
-
-    auto operator<(const wrapper& lhs, const wrapper& rhs)
-        -> bool
-    {
-        if (lhs.value < rhs.value) {
-            return true;
-        }
-        if (rhs.value < lhs.value) {
-            return false;
-        }
-        return lhs.order < rhs.order;
-    }
-}
+using wrapper = generic_stable_wrapper<int>;
 
 TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,

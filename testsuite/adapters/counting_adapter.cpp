@@ -16,6 +16,9 @@
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/span.h>
+#include <testing-tools/wrapper.h>
+
+using wrapper = generic_wrapper<int>;
 
 TEST_CASE( "basic counting_adapter tests",
            "[counting_adapter][selection_sorter]" )
@@ -42,8 +45,6 @@ TEST_CASE( "basic counting_adapter tests",
 
     SECTION( "with projections" )
     {
-        struct wrapper { int value; };
-
         // Pseudo-random number engine
         std::mt19937_64 engine(Catch::rngSeed());
 
@@ -103,8 +104,6 @@ TEST_CASE( "counting_adapter with span",
 
     SECTION( "with projections" )
     {
-        struct wrapper { int value; };
-
         // Pseudo-random number engine
         std::mt19937_64 engine(Catch::rngSeed());
 

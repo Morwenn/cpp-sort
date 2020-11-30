@@ -11,11 +11,12 @@
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/wrapper.h>
+
+using wrapper = generic_wrapper<int>;
 
 namespace
 {
-    struct wrapper { int value; };
-
     struct proj1:
         cppsort::utility::projection_base
     {

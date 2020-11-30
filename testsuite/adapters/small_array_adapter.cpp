@@ -14,6 +14,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <testing-tools/wrapper.h>
 
 namespace
 {
@@ -174,7 +175,7 @@ TEST_CASE( "small array adapter",
 
     SECTION( "with domain and projections" )
     {
-        struct wrapper { int value; };
+        using wrapper = generic_wrapper<int>;
         std::array<wrapper, 7> collection;
 
         cppsort::small_array_adapter<

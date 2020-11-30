@@ -25,6 +25,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/wrapper.h>
 
 namespace
 {
@@ -95,7 +96,7 @@ TEST_CASE( "hybrid_adapter over adapters that change iterator category",
 TEST_CASE( "indirect sort with Schwartzian transform",
            "[indirect_adapter][schwartz_adapter]" )
 {
-    struct wrapper { short value; };
+    using wrapper = generic_wrapper<short>;
 
     std::vector<wrapper> collection(334);
     helpers::iota(std::begin(collection), std::end(collection), -93, &wrapper::value);

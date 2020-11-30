@@ -10,6 +10,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <testing-tools/wrapper.h>
 
 namespace
 {
@@ -69,7 +70,7 @@ TEST_CASE( "sorter_facade miscellaneous checks",
     // Some checks to make sure that sorter_facade always
     // forwards the value correctly in the most common cases
 
-    struct wrapper { int value; };
+    using wrapper = generic_wrapper<int>;
 
     // Collection to "sort"
     std::vector<int> vec;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -13,6 +13,7 @@
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sort.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "default sorter tests with projections",
            "[default_sorter][projection]" )
@@ -21,7 +22,7 @@ TEST_CASE( "default sorter tests with projections",
     std::mt19937_64 engine(Catch::rngSeed());
 
     // Wrapper to hide the integer
-    struct wrapper { int value; };
+    using wrapper = generic_wrapper<int>;
 
     // Collection to sort
     std::vector<wrapper> vec(80);

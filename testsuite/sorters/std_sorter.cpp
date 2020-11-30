@@ -11,6 +11,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "std_sorter tests", "[std_sorter]" )
 {
@@ -54,7 +55,7 @@ TEST_CASE( "std_sorter tests with projections",
     std::mt19937_64 engine(Catch::rngSeed());
 
     // Wrapper to hide the integer
-    struct wrapper { int value; };
+    using wrapper = generic_wrapper<int>;
 
     // Collection to sort
     std::vector<wrapper> vec(80);
