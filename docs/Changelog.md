@@ -1,4 +1,4 @@
-This page describes the features that change in **cpp-sort** depending on the C++ version with which it is compiled (C++14 or later) as well as the support for miscellaneous compiler extensions; for a full changelog between actual releases, you can check the dedicated [releases page](https://github.com/Morwenn/cpp-sort/releases).
+This page describes the features that change in **cpp-sort** depending on the C++ version with which it is compiled (C++14 or later) as well as the support for miscellaneous compiler extensions; for a full changelog between actual releases, you can check the dedicated [releases page][cpp-sort-releases].
 
 ## C++14 features
 
@@ -9,10 +9,10 @@ While **cpp-sort** theoretically requires a fully C++14-compliant compiler, a fe
 
 ## C++17 features
 
-When compiled with C++17, **cpp-sort** might gain a few additional features depending on the level of C++17 support provided by the compiler. The availability of most of the features depends on the presence of corresponding [feature-testing macros](https://wg21.link/SD6). The support for feature-testing macros being optional in C++17, it is possible that some of the features listed below aren't available even though the compiler is implements them. If it is the case and it is a problem for you, don't hesitate to open an issue so that we can explicitly support the given compiler.
+When compiled with C++17, **cpp-sort** might gain a few additional features depending on the level of C++17 support provided by the compiler. The availability of most of the features depends on the presence of corresponding [feature-testing macros][feature-test-macros]. The support for feature-testing macros being optional in C++17, it is possible that some of the features listed below aren't available even though the compiler is implements them. If it is the case and it is a problem for you, don't hesitate to open an issue so that we can explicitly support the given compiler.
 
 **New features:**
-* `string_spread_sort` now accepts [`std::string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view) and sometimes `std::wstring_view`.
+* `string_spread_sort` now accepts [`std::string_view`][std-string-view] and sometimes `std::wstring_view`.
 
     This feature is made available through the check `__cplusplus > 201402L && __has_include(<string_view>)`.
 
@@ -40,7 +40,7 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     This feature is made available through the check `__cpp_lib_uncaught_exceptions`.
 
-* New [`function_constant`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) utility to micro-optimize function pointers and class member pointers.
+* New [`function_constant`][cpp-sort-function-objects] utility to micro-optimize function pointers and class member pointers.
 
     ```cpp
     insertion_sort(collection, function_constant<&foo::bar>{});
@@ -61,19 +61,39 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
 ## C++20 features
 
-When compiled with C++20, **cpp-sort** might gain a few additional features depending on the level of C++20 support provided by the compiler. The availability of those features depends on the presence of corresponding [feature-testing macros](https://wg21.link/SD6) when possible, even though some checks are more granular. Don't hesitate to open an issue if your compiler and standard library supports one of those features but it doesn't seem to work in **cpp-sort**.
+When compiled with C++20, **cpp-sort** might gain a few additional features depending on the level of C++20 support provided by the compiler. The availability of those features depends on the presence of corresponding [feature-testing macros][feature-test-macros] when possible, even though some checks are more granular. Don't hesitate to open an issue if your compiler and standard library supports one of those features but it doesn't seem to work in **cpp-sort**.
 
 **New features:**
-* When available, [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity) benefits from dedicated support wherever [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) is supported, with equivalent semantics.
+* When available, [`std::identity`][std-identity] benefits from dedicated support wherever [`utility::identity`][cpp-sort-function-objects] is supported, with equivalent semantics.
 
-* When available, [`std::ranges::less`](https://en.cppreference.com/w/cpp/utility/functional/ranges/less) and [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater) benefit from dedicated support wherever [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void) and [`std::greater<>`](https://en.cppreference.com/w/cpp/utility/functional/greater_void) are supported, with equivalent semantics.
+* When available, [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater] benefit from dedicated support wherever [`std::less<>`][std-less-void] and [`std::greater<>`][std-greater-void] are supported, with equivalent semantics.
 
 ## Other features
 
-**cpp-sort** tries to take advantage of more than just standard features when possible, and also to provide extended support for some compiler-specific extensions. Below is a list of the impact that non-standard features might have on the library:
+**cpp-sort** tries to take advantage of more than just standard features when possible by using implementation-specific tweaks to improve the user experience. The following improvements might be available depending on the your standard implementation:
 
-**Extension-specific support:**
-* 128-bit integers support: `ska_sorter` has dedicated support for 128-bit integers (`unsigned __int128` or `__uint128_t` and its signed counterpart), no matter whether the standard library is also instrumented for those types. This support should be available as long as `__SIZEOF_INT128__` is defined by the compiler.
+**Additional features:**
+* 128-bit integers support: [`counting_sorter`][counting-sorter] and [`ska_sorter`][ska-sorter] have dedicated support for 128-bit integers (`unsigned __int128` or `__uint128_t` and its signed counterpart), no matter whether the standard library is also instrumented for those types. This support should be available as long as the macro `__SIZEOF_INT128__` is defined.
 
 **Performance improvements:**
 * Bit manipulation intrinsics: there are a few places where bit tricks are used to perform a few operations faster. Some of those operations are made faster with bitwise manipulation intrinsics when those are available.
+
+* Assumptions: some algorithms use assumptions in select places to make the compiler generate more efficient code. Whether such assumptions are available depend on the compiler.
+
+* When using libstdc++ or libc++, the return type of [`std::mem_fn`][std-mem-fn] is considered ["probably branchless"][branchless-traits] when it wraps a pointer to data member, which can improve the speed of [`pdq_sorter`][pdq-sorter] and everything that relies on it in some scenarios.
+
+
+  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
+  [counting-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#counting_sorter
+  [cpp-sort-function-objects]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
+  [cpp-sort-releases]: https://github.com/Morwenn/cpp-sort/releases
+  [feature-test-macros]: https://wg21.link/SD6
+  [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
+  [ska-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#ska_sorter
+  [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
+  [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
+  [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
+  [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
+  [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
+  [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view)
