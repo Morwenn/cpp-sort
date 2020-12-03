@@ -66,7 +66,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \post The elements in the range [@c first, @c last) are sorted in ascending order.
 
    \throws std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors, or any operations on iterators throw.
+   the right shift, subtraction of right-shifted elements, projections, or any operations on iterators throw.
 
    \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
    \warning Invalid arguments cause undefined behaviour.

@@ -101,7 +101,7 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
         CHECK( res2 == sorter_type::descending );
     }
 
-    SECTION( "with another functor" )
+    SECTION( "with another function object" )
     {
         sorter_type res1 = sorter(vec, std::less_equal<>{});
         CHECK( res1 == sorter_type::generic );

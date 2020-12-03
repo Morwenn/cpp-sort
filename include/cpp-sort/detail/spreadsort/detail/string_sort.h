@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -87,7 +87,7 @@ namespace spreadsort
       }
     }
 
-    //This comparison functor assumes strings are identical up to char_offset
+    //This comparator assumes strings are identical up to char_offset
     template<typename Projection, typename Unsigned_char_type>
     struct offset_less_than
     {
