@@ -111,6 +111,8 @@ namespace cppsort
         constexpr explicit stable_adapter(std_sorter) noexcept:
             sorter_facade<detail::std_stable_sorter_impl>()
         {}
+
+        using type = stable_adapter<std_sorter>;
     };
 
     ////////////////////////////////////////////////////////////

@@ -30,7 +30,9 @@ namespace cppsort
     template<>
     struct stable_adapter<default_sorter>:
         merge_sorter
-    {};
+    {
+        using type = merge_sorter;
+    };
 
     ////////////////////////////////////////////////////////////
     // Unstable sorter

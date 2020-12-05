@@ -133,7 +133,7 @@ namespace cppsort
         }
 
         ////////////////////////////////////////////////////////////
-        // Adapter
+        // make_stable_impl
 
         template<typename Sorter>
         struct make_stable_impl:
@@ -187,6 +187,9 @@ namespace cppsort
         };
     }
 
+    ////////////////////////////////////////////////////////////
+    // make_stable
+
     // Expose the underlying mechanism
     template<typename Sorter>
     struct make_stable:
@@ -199,7 +202,9 @@ namespace cppsort
         {}
     };
 
-    // Actual sorter
+    ////////////////////////////////////////////////////////////
+    // stable_adapter
+
     template<typename Sorter>
     struct stable_adapter:
         utility::adapter_storage<Sorter>,
@@ -240,13 +245,57 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
+        using type = stable_adapter<Sorter>;
     };
 
     // Accidental nesting can happen, unwrap
     template<typename Sorter>
     struct stable_adapter<stable_adapter<Sorter>>:
         stable_adapter<Sorter>
-    {};
+    {
+        using type = stable_adapter<Sorter>;
+    };
+
+    ////////////////////////////////////////////////////////////
+    // stable_t
+
+    namespace detail
+    {
+        template<typename Sorter, typename=void>
+        struct stable_t_impl_false
+        {
+            // The sorter is not always stable and does not have
+            // a type member named 'type'
+            using type = stable_adapter<Sorter>;
+        };
+
+        template<typename Sorter>
+        struct stable_t_impl_false<Sorter, detail::void_t<typename stable_adapter<Sorter>::type>>
+        {
+            // The sorter is not always stable but has a type member
+            // called 'type', use that one
+            using type = typename stable_adapter<Sorter>::type;
+        };
+
+        template<typename Sorter, bool>
+        struct stable_t_impl
+        {
+            // The sorter is always stable, alias it directly
+            using type = Sorter;
+        };
+
+        template<typename Sorter>
+        struct stable_t_impl<Sorter, false>
+        {
+            using type = typename stable_t_impl_false<Sorter>::type;
+        };
+    }
+
+    template<typename Sorter>
+    using stable_t = typename detail::stable_t_impl<
+        Sorter,
+        cppsort::is_always_stable_v<Sorter>
+    >::type;
 }
 
 #ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_

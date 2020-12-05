@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_STABLE_ADAPTER_SELF_SORT_ADAPTER_H_
@@ -22,7 +22,7 @@ namespace cppsort
 {
     template<typename Sorter>
     struct stable_adapter<self_sort_adapter<Sorter>>:
-        utility::adapter_storage<stable_adapter<Sorter>>,
+        utility::adapter_storage<stable_t<Sorter>>,
         detail::check_iterator_category<Sorter>,
         detail::sorter_facade_fptr<
             stable_adapter<self_sort_adapter<Sorter>>,
@@ -35,8 +35,8 @@ namespace cppsort
         stable_adapter() = default;
 
         constexpr explicit stable_adapter(self_sort_adapter<Sorter> sorter):
-            utility::adapter_storage<stable_adapter<Sorter>>(
-                stable_adapter<Sorter>(std::move(sorter.get()))
+            utility::adapter_storage<stable_t<Sorter>>(
+                stable_t<Sorter>(std::move(sorter.get()))
             )
         {}
 
@@ -114,6 +114,7 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
+        using type = stable_adapter<self_sort_adapter<Sorter>>;
     };
 }
 

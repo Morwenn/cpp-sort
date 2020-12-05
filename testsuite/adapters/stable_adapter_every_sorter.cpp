@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
     std::shuffle(collection.begin(), collection.end(), engine);
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
-    cppsort::stable_adapter<TestType> sorter;
+    cppsort::stable_t<TestType> sorter;
     sorter(collection, &wrapper::value);
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
@@ -71,7 +71,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_a
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
     std::list<wrapper> li(collection.begin(), collection.end());
-    cppsort::stable_adapter<TestType> sorter;
+    cppsort::stable_t<TestType> sorter;
     sorter(li, &wrapper::value);
     CHECK( std::is_sorted(li.begin(), li.end()) );
 }
@@ -92,7 +92,7 @@ TEMPLATE_TEST_CASE( "every forward sorter with with stable_adapter", "[stable_ad
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
     std::forward_list<wrapper> fli(collection.begin(), collection.end());
-    cppsort::stable_adapter<TestType> sorter;
+    cppsort::stable_t<TestType> sorter;
     sorter(fli, &wrapper::value);
     CHECK( std::is_sorted(fli.begin(), fli.end()) );
 }
