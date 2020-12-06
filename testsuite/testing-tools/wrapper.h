@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
+#include <utility>
 
 ////////////////////////////////////////////////////////////
 // Wrapper around a simple type
@@ -21,6 +21,35 @@ template<typename T>
 struct generic_wrapper
 {
     T value;
+
+    generic_wrapper() = default;
+    generic_wrapper(const generic_wrapper&) = default;
+    generic_wrapper(generic_wrapper&&) = default;
+
+    constexpr generic_wrapper(const T& other_value):
+        value(other_value)
+    {}
+
+    constexpr generic_wrapper(T&& other_value):
+        value(std::move(other_value))
+    {}
+
+    generic_wrapper& operator=(const generic_wrapper&) = default;
+    generic_wrapper& operator=(generic_wrapper&&) = default;
+
+    constexpr auto operator=(const T& other_value)
+        -> generic_wrapper&
+    {
+        value = other_value;
+        return *this;
+    }
+
+    constexpr auto operator=(T&& other_value)
+        -> generic_wrapper&
+    {
+        value = std::move(other_value);
+        return *this;
+    }
 };
 
 ////////////////////////////////////////////////////////////
@@ -36,6 +65,35 @@ struct generic_stable_wrapper
 {
     T value;
     int order;
+
+    generic_stable_wrapper() = default;
+    generic_stable_wrapper(const generic_stable_wrapper&) = default;
+    generic_stable_wrapper(generic_stable_wrapper&&) = default;
+
+    constexpr generic_stable_wrapper(const T& other_value):
+        value(other_value)
+    {}
+
+    constexpr generic_stable_wrapper(T&& other_value):
+        value(std::move(other_value))
+    {}
+
+    generic_stable_wrapper& operator=(const generic_stable_wrapper&) = default;
+    generic_stable_wrapper& operator=(generic_stable_wrapper&&) = default;
+
+    constexpr auto operator=(const T& other_value)
+        -> generic_stable_wrapper&
+    {
+        value = other_value;
+        return *this;
+    }
+
+    constexpr auto operator=(T&& other_value)
+        -> generic_stable_wrapper&
+    {
+        value = std::move(other_value);
+        return *this;
+    }
 
     friend auto operator<(const generic_stable_wrapper& lhs, const generic_stable_wrapper& rhs)
         -> bool

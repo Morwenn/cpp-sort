@@ -3,15 +3,17 @@
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
-#include <deque>
+#include <functional>
 #include <iterator>
 #include <random>
 #include <string>
+#include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/schwartz_adapter.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
 #include <testing-tools/wrapper.h>
 
 // NOTE: this test used to use wrapper<double>, but it was later
@@ -41,46 +43,48 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )
 {
-    std::vector<wrapper<>> collection(412);
-    helpers::iota(std::begin(collection), std::end(collection), -125, &wrapper<>::value);
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::vector<wrapper<>> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
-    sorter(std::rbegin(collection), std::rend(collection), &wrapper<>::value);
-    CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+    sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
+    CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                               std::greater<>{}, &wrapper<>::value) );
 }
 
 TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse iterators",
            "[schwartz_adapter][reverse_iterator]" )
 {
-    std::vector<wrapper<>> collection(412);
-    helpers::iota(std::begin(collection), std::end(collection), -125, &wrapper<>::value);
-    std::vector<wrapper<int>> collection2(412);
-    helpers::iota(std::begin(collection2), std::end(collection2), -125, &wrapper<int>::value);
-    std::vector<wrapper<std::string>> collection3;
-    for (int i = -125 ; i < 287 ; ++i) { collection3.push_back({std::to_string(i)}); }
+    auto distribution = dist::shuffled{};
 
+    std::vector<wrapper<>> collection;
+    distribution(std::back_inserter(collection), 412, -125);
+
+    std::vector<wrapper<int>> collection2;
+    distribution(std::back_inserter(collection2), 412, -125);
+
+    std::vector<wrapper<std::string>> collection3;
+    for (int i = -125 ; i < 287 ; ++i) {
+        collection3.push_back({std::to_string(i)});
+    }
     std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
-    std::shuffle(std::begin(collection2), std::end(collection2), engine);
-    std::shuffle(std::begin(collection3), std::end(collection3), engine);
+    std::shuffle(collection3.begin(), collection3.end(), engine);
 
     SECTION( "ska_sorter" )
     {
         cppsort::schwartz_adapter<cppsort::ska_sorter> sorter;
 
-        sorter(std::rbegin(collection), std::rend(collection), &wrapper<>::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::greater<>{}, &wrapper<>::value) );
 
-        sorter(std::rbegin(collection2), std::rend(collection2), &wrapper<int>::value);
-        CHECK( helpers::is_sorted(std::begin(collection2), std::end(collection2),
+        sorter(collection2.rbegin(), collection2.rend(), &wrapper<int>::value);
+        CHECK( helpers::is_sorted(collection2.begin(), collection2.end(),
                                   std::greater<>{}, &wrapper<int>::value) );
 
-        sorter(std::rbegin(collection3), std::rend(collection3), &wrapper<std::string>::value);
-        CHECK( helpers::is_sorted(std::begin(collection3), std::end(collection3),
+        sorter(collection3.rbegin(), collection3.rend(), &wrapper<std::string>::value);
+        CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::greater<>{}, &wrapper<std::string>::value) );
     }
 
@@ -88,22 +92,22 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
     {
         cppsort::schwartz_adapter<cppsort::spread_sorter> sorter;
 
-        sorter(std::rbegin(collection), std::rend(collection), &wrapper<>::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::greater<>{}, &wrapper<>::value) );
 
-        sorter(std::rbegin(collection2), std::rend(collection2), &wrapper<int>::value);
-        CHECK( helpers::is_sorted(std::begin(collection2), std::end(collection2),
+        sorter(collection2.rbegin(), collection2.rend(), &wrapper<int>::value);
+        CHECK( helpers::is_sorted(collection2.begin(), collection2.end(),
                                   std::greater<>{}, &wrapper<int>::value) );
 
-        sorter(std::rbegin(collection3), std::rend(collection3), &wrapper<std::string>::value);
-        CHECK( helpers::is_sorted(std::begin(collection3), std::end(collection3),
+        sorter(collection3.rbegin(), collection3.rend(), &wrapper<std::string>::value);
+        CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::greater<>{}, &wrapper<std::string>::value) );
 
-        std::shuffle(std::begin(collection3), std::end(collection3), engine);
-        sorter(std::rbegin(collection3), std::rend(collection3),
+        std::shuffle(collection3.begin(), collection3.end(), engine);
+        sorter(collection3.rbegin(), collection3.rend(),
                std::greater<>{}, &wrapper<std::string>::value);
-        CHECK( helpers::is_sorted(std::begin(collection3), std::end(collection3),
+        CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::less<>{}, &wrapper<std::string>::value) );
     }
 }

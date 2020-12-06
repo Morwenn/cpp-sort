@@ -6,7 +6,6 @@
 #include <functional>
 #include <iterator>
 #include <list>
-#include <random>
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
@@ -98,10 +97,9 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 {
     using wrapper = generic_wrapper<short>;
 
-    std::vector<wrapper> collection(334);
-    helpers::iota(std::begin(collection), std::end(collection), -93, &wrapper::value);
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    std::vector<wrapper> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 334, -93);
 
     SECTION( "schwartz_adapter over indirect_adapter" )
     {

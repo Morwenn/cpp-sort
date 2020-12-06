@@ -5,10 +5,12 @@
 #include <algorithm>
 #include <iterator>
 #include <random>
+#include <string>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
+#include <testing-tools/distributions.h>
 #include <testing-tools/no_post_iterator.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
@@ -35,19 +37,16 @@ TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::verge_sorter )
 {
     std::vector<int> collection;
-    for (int i = 56 ; i < 366 ; ++i) {
-        collection.emplace_back(i);
-    }
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection), std::end(collection), engine);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 310, -56);
 
     // Iterators with no post-increment and no post-decrement
-    auto first = make_no_post_iterator(std::begin(collection));
-    auto last = make_no_post_iterator(std::end(collection));
+    auto first = make_no_post_iterator(collection.begin());
+    auto last = make_no_post_iterator(collection.end());
 
     TestType sorter;
     sorter(first, last);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "test type-specific sorters with no_post_iterator further",
@@ -56,44 +55,39 @@ TEMPLATE_TEST_CASE( "test type-specific sorters with no_post_iterator further",
                     cppsort::spread_sorter )
 {
     TestType sorter;
+    auto distribution = dist::shuffled{};
 
     std::vector<float> collection_float;
-    for (float i = 56.0f ; i < 366.0f ; ++i) {
-        collection_float.emplace_back(i);
-    }
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(std::begin(collection_float), std::end(collection_float), engine);
+    distribution(std::back_inserter(collection_float), 310, -56);
 
     // Iterators with no post-increment and no post-decrement
-    auto first_float = make_no_post_iterator(std::begin(collection_float));
-    auto last_float = make_no_post_iterator(std::end(collection_float));
+    auto first_float = make_no_post_iterator(collection_float.begin());
+    auto last_float = make_no_post_iterator(collection_float.end());
 
     sorter(first_float, last_float);
-    CHECK( std::is_sorted(std::begin(collection_float), std::end(collection_float)) );
+    CHECK( std::is_sorted(collection_float.begin(), collection_float.end()) );
 
     std::vector<double> collection_double;
-    for (double i = 56.0 ; i < 366.0 ; ++i) {
-        collection_double.emplace_back(i);
-    }
-    std::shuffle(std::begin(collection_double), std::end(collection_double), engine);
+    distribution(std::back_inserter(collection_double), 310, -56);
 
     // Iterators with no post-increment and no post-decrement
-    auto first_double = make_no_post_iterator(std::begin(collection_double));
-    auto last_double = make_no_post_iterator(std::end(collection_double));
+    auto first_double = make_no_post_iterator(collection_double.begin());
+    auto last_double = make_no_post_iterator(collection_double.end());
 
     sorter(first_double, last_double);
-    CHECK( std::is_sorted(std::begin(collection_double), std::end(collection_double)) );
+    CHECK( std::is_sorted(collection_double.begin(), collection_double.end()) );
 
     std::vector<std::string> collection_str;
     for (long i = 56 ; i < 366 ; ++i) {
         collection_str.emplace_back(std::to_string(i));
     }
-    std::shuffle(std::begin(collection_str), std::end(collection_str), engine);
+    std::mt19937 engine(Catch::rngSeed());
+    std::shuffle(collection_str.begin(), collection_str.end(), engine);
 
     // Iterators with no post-increment and no post-decrement
-    auto first_str = make_no_post_iterator(std::begin(collection_str));
-    auto last_str = make_no_post_iterator(std::end(collection_str));
+    auto first_str = make_no_post_iterator(collection_str.begin());
+    auto last_str = make_no_post_iterator(collection_str.end());
 
     sorter(first_str, last_str);
-    CHECK( std::is_sorted(std::begin(collection_str), std::end(collection_str)) );
+    CHECK( std::is_sorted(collection_str.begin(), collection_str.end()) );
 }

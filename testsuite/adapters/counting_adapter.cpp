@@ -4,10 +4,9 @@
  */
 #include <algorithm>
 #include <cstddef>
+#include <functional>
 #include <iterator>
 #include <list>
-#include <numeric>
-#include <random>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters/counting_adapter.h>
@@ -35,29 +34,25 @@ TEST_CASE( "basic counting_adapter tests",
         // Fill the collection
         std::list<int> collection;
         auto distribution = dist::shuffled{};
-        distribution(std::back_inserter(collection), 65, 0);
+        distribution(std::back_inserter(collection), 65);
 
         // Sort and check it's sorted
         std::size_t res = sorter(collection);
         CHECK( res == 2080 );
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "with projections" )
     {
-        // Pseudo-random number engine
-        std::mt19937_64 engine(Catch::rngSeed());
-
         // Fill the collection
-        std::vector<wrapper> tmp(80);
-        helpers::iota(std::begin(tmp), std::end(tmp), 0, &wrapper::value);
-        std::shuffle(std::begin(tmp), std::end(tmp), engine);
-        std::list<wrapper> collection(std::begin(tmp), std::end(tmp));
+        std::list<wrapper> collection;
+        auto distribution = dist::shuffled{};
+        distribution(std::back_inserter(collection), 80);
 
         // Sort and check it's sorted
         std::size_t res = sorter(collection, &wrapper::value);
         CHECK( res == 3160 );
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 }
@@ -78,7 +73,7 @@ TEST_CASE( "counting_adapter tests with std_sorter",
 
         // Sort and check it's sorted
         sorter(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }
 
@@ -99,24 +94,20 @@ TEST_CASE( "counting_adapter with span",
         // Sort and check it's sorted
         std::size_t res = sorter(make_span(collection));
         CHECK( res == 2080 );
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "with projections" )
     {
-        // Pseudo-random number engine
-        std::mt19937_64 engine(Catch::rngSeed());
-
         // Fill the collection
-        std::vector<wrapper> tmp(80);
-        helpers::iota(std::begin(tmp), std::end(tmp), 0, &wrapper::value);
-        std::shuffle(std::begin(tmp), std::end(tmp), engine);
-        std::list<wrapper> collection(std::begin(tmp), std::end(tmp));
+        std::list<wrapper> collection;
+        auto distribution = dist::shuffled{};
+        distribution(std::back_inserter(collection), 80, 0);
 
         // Sort and check it's sorted
         std::size_t res = sorter(make_span(collection), &wrapper::value);
         CHECK( res == 3160 );
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 }

@@ -7,7 +7,6 @@
 #include <deque>
 #include <iterator>
 #include <limits>
-#include <numeric>
 #include <random>
 #include <string>
 #include <tuple>
@@ -15,57 +14,52 @@
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/ska_sorter.h>
+#include <testing-tools/distributions.h>
 
 TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(Catch::rngSeed());
+    auto distribution = dist::shuffled{};
 
     SECTION( "sort with int iterable" )
     {
-        std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::vector<int> vec;
+        distribution(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
 #ifdef __SIZEOF_INT128__
     SECTION( "sort with unsigned int128 iterable" )
     {
-        std::vector<__uint128_t> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), __uint128_t(0));
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::vector<__uint128_t> vec;
+        distribution(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 #endif
 
     SECTION( "sort with unsigned int iterators" )
     {
-        std::vector<unsigned> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0u);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::ska_sort(std::begin(vec), std::end(vec));
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        std::vector<unsigned> vec;
+        distribution(std::back_inserter(vec), 100'000);
+        cppsort::ska_sort(vec.begin(), vec.end());
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with float iterable" )
     {
-        std::vector<float> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0.0f);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::vector<float> vec;
+        distribution(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with double iterators" )
     {
-        std::vector<double> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0.0);
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::ska_sort(std::begin(vec), std::end(vec));
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        std::vector<double> vec;
+        distribution(std::back_inserter(vec), 100'000);
+        cppsort::ska_sort(vec.begin(), vec.end());
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with std::string" )
@@ -75,13 +69,16 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
             vec.push_back(std::to_string(i));
         }
 
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::ska_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        // Pseudo-random number engine
+        std::mt19937_64 engine(Catch::rngSeed());
 
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        cppsort::ska_sort(std::begin(vec), std::end(vec));
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        std::shuffle(vec.begin(), vec.end(), engine);
+        cppsort::ska_sort(vec);
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
+
+        std::shuffle(vec.begin(), vec.end(), engine);
+        cppsort::ska_sort(vec.begin(), vec.end());
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }
 
