@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_DISTRIBUTIONS_H_
@@ -215,6 +215,29 @@ namespace dist
         {
             for (std::size_t i = 0 ; i < size ; ++i) {
                 *out++ = (i % 2) ? i % 16 : -(i % 16);
+            }
+        }
+    };
+
+    struct descending_plateau:
+        distribution<descending_plateau>
+    {
+        template<typename OutputIterator>
+        auto operator()(OutputIterator out, std::size_t size) const
+            -> void
+        {
+            std::size_t i = size;
+            while (i > 2 * size / 3) {
+                *out++ = i;
+                --i;
+            }
+            while (i > size / 3) {
+                *out++ = size / 2;
+                --i;
+            }
+            while (i > 0) {
+                *out++ = i;
+                --i;
             }
         }
     };

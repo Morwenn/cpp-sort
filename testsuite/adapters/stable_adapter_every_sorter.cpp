@@ -4,7 +4,6 @@
  */
 #include <algorithm>
 #include <forward_list>
-#include <iterator>
 #include <list>
 #include <vector>
 #include <catch2/catch.hpp>
@@ -16,6 +15,16 @@
 #include <testing-tools/wrapper.h>
 
 using wrapper = generic_stable_wrapper<int>;
+
+// Those tests do not prove that the algorithms sort stably,
+// but are meant to sometimes identify cases where they don't
+//
+// In order to achieve that, each element is associated to
+// its original position in the collection to sort, then the
+// collection is sorted accorded to its "value" and we check
+// that the collection is indeed sorted, but also that
+// the original position of elements with equivalent values
+// are also in ascending order
 
 TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
@@ -38,14 +47,25 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )
 {
-    std::vector<wrapper> collection;
-    auto distribution = dist::shuffled_16_values{};
-    distribution(std::back_inserter(collection), 412);
+    cppsort::stable_t<TestType> sorter;
+    std::vector<wrapper> collection(412);
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
-    cppsort::stable_t<TestType> sorter;
-    sorter(collection, &wrapper::value);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    SECTION( "shuffled_16_values" )
+    {
+        auto distribution = dist::shuffled_16_values{};
+        distribution(collection.begin(), collection.size());
+        sorter(collection, &wrapper::value);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
+
+    SECTION( "descending_plateau" )
+    {
+        auto distribution = dist::descending_plateau{};
+        distribution(collection.begin(), collection.size());
+        sorter(collection, &wrapper::value);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
 }
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_adapter]",
@@ -57,14 +77,25 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_a
                     cppsort::selection_sorter,
                     cppsort::verge_sorter )
 {
-    std::list<wrapper> collection;
-    auto distribution = dist::shuffled_16_values{};
-    distribution(std::back_inserter(collection), 412);
+    cppsort::stable_t<TestType> sorter;
+    std::list<wrapper> collection(412);
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
-    cppsort::stable_t<TestType> sorter;
-    sorter(collection, &wrapper::value);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    SECTION( "shuffled_16_values" )
+    {
+        auto distribution = dist::shuffled_16_values{};
+        distribution(collection.begin(), collection.size());
+        sorter(collection, &wrapper::value);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
+
+    SECTION( "descending_plateau" )
+    {
+        auto distribution = dist::descending_plateau{};
+        distribution(collection.begin(), collection.size());
+        sorter(collection, &wrapper::value);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with with stable_adapter", "[stable_adapter]",
@@ -73,12 +104,24 @@ TEMPLATE_TEST_CASE( "every forward sorter with with stable_adapter", "[stable_ad
                     cppsort::quick_sorter,
                     cppsort::selection_sorter )
 {
-    std::forward_list<wrapper> collection;
-    auto distribution = dist::shuffled_16_values{};
-    distribution(std::front_inserter(collection), 412);
+    cppsort::stable_t<TestType> sorter;
+    const int size = 412;
+    std::forward_list<wrapper> collection(size);
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
-    cppsort::stable_t<TestType> sorter;
-    sorter(collection, &wrapper::value);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    SECTION( "shuffled_16_values" )
+    {
+        auto distribution = dist::shuffled_16_values{};
+        distribution(collection.begin(), size);
+        sorter(collection, &wrapper::value);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
+
+    SECTION( "descending_plateau" )
+    {
+        auto distribution = dist::descending_plateau{};
+        distribution(collection.begin(), size);
+        sorter(collection, &wrapper::value);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
 }
