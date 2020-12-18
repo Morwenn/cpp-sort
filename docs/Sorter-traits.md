@@ -127,7 +127,7 @@ template<typename Sorter>
 using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 ```
 
-Some tools need to know which category of iterators a sorting algorithm can work with. Therefore, a well-defined sorter shall provide one of the standard library [iterator tags](http://en.cppreference.com/w/cpp/iterator/iterator_tags) in order to document that.
+Some tools need to know which category of iterators a sorting algorithm can work with. Therefore, a well-defined sorter shall provide one of the standard library [iterator tags](https://en.cppreference.com/w/cpp/iterator/iterator_tags) in order to document that.
 
 When a sorter is adapted so that it may be used with several categories of iterators, the resulting sorter's iterator category will correspond to the most permissive among the original sorters. For example, if an [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter) merges sorting algorithms with `std::forward_iterator_tag` and `std::random_access_iterator_tag`, the resulting sorter's category will be `std::forward_iterator_tag` since it is guaranteed to work with any iterable type which has *at least* forward iterators.
 
@@ -142,7 +142,7 @@ constexpr bool is_always_stable_v
     = is_always_stable<Sorter>::value;
 ```
 
-This type trait is always either [`std::true_type`](http://en.cppreference.com/w/cpp/types/integral_constant) or `std::false_type` and tells whether a sorting algorithm is always [stable](https://en.wikipedia.org/wiki/Sorting_algorithm#Stability) or not. This information may be useful in some contexts, most notably to make sure that [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) can use a stable sorter directly instead of artificially making it stable.
+This type trait is always either [`std::true_type`](https://en.cppreference.com/w/cpp/types/integral_constant) or `std::false_type` and tells whether a sorting algorithm is always [stable](https://en.wikipedia.org/wiki/Sorting_algorithm#Stability) or not. This information may be useful in some contexts, most notably to make sure that [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) can use a stable sorter directly instead of artificially making it stable.
 
 When a sorter adapter is used, the *resulting sorter* is stable if and only if its stability can be guaranteed and unstable otherwise, even when the *adapted sorter* may be stable (for example, [`self_sort_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter)'s `is_always_stable` is aliased to `std::false_type` since it is impossible to guarantee the stability of every `sort` method).
 
@@ -208,6 +208,6 @@ struct fixed_sorter_traits;
 
 This class template can be specialized for any fixed-size sorter and exposes the following properties:
 
-* `domain`: a specialization of [`std::index_sequence`](http://en.cppreference.com/w/cpp/utility/integer_sequence) containing all the sizes for which a specialization of the fixed-size sorter exists. If this trait isn't specified, it is assumed that the fixed-size sorter can be specialized for any value of `N`.
+* `domain`: a specialization of [`std::index_sequence`](https://en.cppreference.com/w/cpp/utility/integer_sequence) containing all the sizes for which a specialization of the fixed-size sorter exists. If this trait isn't specified, it is assumed that the fixed-size sorter can be specialized for any value of `N`.
 * `iterator_category`: the category of iterators every specialization of the fixed-size sorter is guaranteed to work with. Individual specializations may work with less strict iterator categories.
-* `is_always_stable`: an alias for [`std::true_type`](http://en.cppreference.com/w/cpp/types/integral_constant) if every specialization of the fixed-size sorter is guaranteed to always be stable, and `std::false_type` otherwise.
+* `is_always_stable`: an alias for [`std::true_type`](https://en.cppreference.com/w/cpp/types/integral_constant) if every specialization of the fixed-size sorter is guaranteed to always be stable, and `std::false_type` otherwise.

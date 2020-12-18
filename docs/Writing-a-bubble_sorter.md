@@ -163,7 +163,7 @@ auto bubble_sort(BidirectionalIterator first, BidirectionalIterator last,
 }
 ```
 
-Note that in C++17, it is preferred to use directly [`std::invoke`](http://en.cppreference.com/w/cpp/utility/functional/invoke) to call the comparison function instead of transforming it with `as_function`.
+Note that in C++17, it is preferred to use directly [`std::invoke`](https://en.cppreference.com/w/cpp/utility/functional/invoke) to call the comparison function instead of transforming it with `as_function`.
 
 ## Using `bubble_sorter` with forward iterators
 
@@ -413,7 +413,7 @@ namespace
 inline constexpr auto&& bubble_sort = bubble_sorter{};
 ```
 
-The utility [`static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const) is a variable template used to avoid ODR problem. Understanding the details is a bit tough; you can read [Eric Niebler's original article](http://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) about this pattern if you want to learn more about it. Basically it is a poor man's substitute to compensate the lack of `inline` variables pre-C++17.
+The utility [`static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const) is a variable template used to avoid ODR problem. Understanding the details is a bit tough; you can read [Eric Niebler's original article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) about this pattern if you want to learn more about it. Basically it is a poor man's substitute to compensate the lack of `inline` variables pre-C++17.
 
 ## Better error messages
 

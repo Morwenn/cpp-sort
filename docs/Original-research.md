@@ -190,7 +190,7 @@ Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [divide-sort-merge-strategy]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
-  [exact-sort]: http://www.geocities.ws/p356spt/
+  [exact-sort]: https://www.geocities.ws/p356spt/
   [indirect_adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
   [morwenn-gist]: https://gist.github.com/Morwenn
   [mountain_sort]: https://github.com/Morwenn/mountain-sort

@@ -332,7 +332,7 @@ SplitSort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measure
 #include <cpp-sort/sorters/std_sorter.h>
 ```
 
-Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort) to sort a collection. While the complexity guarantees are only partial in the standard, here is what's expected:
+Uses the standard library [`std::sort`](https://en.cppreference.com/w/cpp/algorithm/sort) to sort a collection. While the complexity guarantees are only partial in the standard, here is what's expected:
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -340,14 +340,14 @@ Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorit
 
 \* *`std::sort` is mandated by the standard to be O(n log n), but the libc++ implementation of the algorithm - despite non-trivial optimizations - [is still O(n²)](https://bugs.llvm.org/show_bug.cgi?id=20837). If you are using another standard library implementation then `std_sorter` should be O(n log n) for randon-access iterators, as expected.*
 
-The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) has an explicit specialization for `std_sorter` which calls [`std::stable_sort`](http://en.cppreference.com/w/cpp/algorithm/stable_sort) instead. Its complexity depends on whether it can allocate additional memory or not. While the complexity guarantees are only partial in the standard, here is what's expected:
+The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) has an explicit specialization for `std_sorter` which calls [`std::stable_sort`](https://en.cppreference.com/w/cpp/algorithm/stable_sort) instead. Its complexity depends on whether it can allocate additional memory or not. While the complexity guarantees are only partial in the standard, here is what's expected:
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n log n     | n log n     | n log n     | n           | Yes         | Random-access |
 | n log² n    | n log² n    | n log² n    | 1           | Yes         | Random-access |
 
-`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could the the best choice to sort an [`std::vector<bool>`](http://en.cppreference.com/w/cpp/container/vector_bool).
+`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could the the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
 
 This sorter can't throw `std::bad_alloc`.
 

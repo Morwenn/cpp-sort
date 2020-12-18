@@ -71,7 +71,7 @@ The analysis is pretty simple here:
 
 # Bidirectional iterables
 
-Sorting algorithms that handle non-random-access iterators are often second class citizens, but **cpp-sort** still provides a few ones. The most interesting part is that we can see how generic sorting algorithms perform compared to algorithms such as [`std::list::sort`](http://en.cppreference.com/w/cpp/container/list/sort) which are aware of the data structure they are sorting.
+Sorting algorithms that handle non-random-access iterators are often second class citizens, but **cpp-sort** still provides a few ones. The most interesting part is that we can see how generic sorting algorithms perform compared to algorithms such as [`std::list::sort`](https://en.cppreference.com/w/cpp/container/list/sort) which are aware of the data structure they are sorting.
 
 ![Benchmark speed of sorts with increasing size for std::list<double>](https://i.imgur.com/Z2BDhpz.png)
 

@@ -1,4 +1,4 @@
-While comparators are not inherent to sorting *per se*, most sorting algorithms (at least in this library) are *comparison sorts*, hence providing some common useful comparators along with the sorters can be useful. Every comparator in this module satisfies the [`BinaryPredicate`](http://en.cppreference.com/w/cpp/concept/BinaryPredicate) library concept.
+While comparators are not inherent to sorting *per se*, most sorting algorithms (at least in this library) are *comparison sorts*, hence providing some common useful comparators along with the sorters can be useful. Every comparator in this module satisfies the [`BinaryPredicate`](https://en.cppreference.com/w/cpp/concept/BinaryPredicate) library concept.
 
 Every non-refined comparator described below is also a [transparent comparator][transparent-comparator]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
 
@@ -25,7 +25,7 @@ The comparators `total_less` and `total_order` are [customization points][custom
 
 That said, the comparators are currently unable to discriminate between quiet and signaling NaNs, so they compare equivalent. When it doesn't handle a type natively and ADL doesn't find any suitable `total_less` function in a class namespace, `cppsort::total_less` does *not* fall back to `operator<`; see [P0100][P0100] for the rationale (it applies to the whole `total_*` family of customization points).
 
-Total order comparators are considered as [generating branchless code](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) when comparing instances of a type that satisfies [`std::is_integral`](http://en.cppreference.com/w/cpp/types/is_integral).
+Total order comparators are considered as [generating branchless code](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) when comparing instances of a type that satisfies [`std::is_integral`](https://en.cppreference.com/w/cpp/types/is_integral).
 
 *Changed in version 1.5.0:* `total_greater` and `total_less` are respectively of type `total_greater_t` and `total_less_t`.
 
@@ -47,7 +47,7 @@ The comparators `weak_less` and `weak_order` are [customization points][custom-p
 
 When it doesn't handle a type natively and ADL doesn't find any suitable `weak_less` function in a class namespace, `cppsort::weak_less` falls back to `cppsort::total_less` since a total order is also a weak order (it applies to the whole `weak_*` family of customization points).
 
-Weak order comparators are considered as [generating branchless code](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) when comparing instances of a type that satisfies [`std::is_integral`](http://en.cppreference.com/w/cpp/types/is_integral).
+Weak order comparators are considered as [generating branchless code](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) when comparing instances of a type that satisfies [`std::is_integral`](https://en.cppreference.com/w/cpp/types/is_integral).
 
 *Changed in version 1.5.0:* `weak_greater` and `weak_less` are respectively of type `weak_greater_t` and `weak_less_t`.
 
@@ -62,7 +62,7 @@ The comparators `partial_less` and `partial_order` are [customization points][cu
 
 When it doesn't handle a type natively and ADL doesn't find any suitable `partial_less` function in a class namespace, `cppsort::partial_less` falls back to `cppsort::weak_less` since a weak order is also a partial order (it applies to the whole `partial_*` family of customization points).
 
-Partial order comparators are considered as [generating branchless code](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) when comparing instances of a type that satisfies [`std::is_arithmetic`](http://en.cppreference.com/w/cpp/types/is_arithmetic).
+Partial order comparators are considered as [generating branchless code](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) when comparing instances of a type that satisfies [`std::is_arithmetic`](https://en.cppreference.com/w/cpp/types/is_arithmetic).
 
 *Changed in version 1.5.0:* `partial_greater` and `partial_less` are respectively of type `partial_greater_t` and `partial_less_t`.
 
@@ -113,14 +113,14 @@ The two-parameter version of the customization point calls the three-parameter o
 
   [case-sensitivity]: https://en.wikipedia.org/wiki/Case_sensitivity
   [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler%20-%20Lawrence%20Crowl%20-%20CppCon%202015
-  [custom-point]: http://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
-  [is-digit]: http://en.cppreference.com/w/cpp/string/byte/isdigit
+  [custom-point]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
+  [is-digit]: https://en.cppreference.com/w/cpp/string/byte/isdigit
   [natural-sort]: https://en.wikipedia.org/wiki/Natural_sort_order
   [P0100]: http://open-std.org/JTC1/SC22/WG21/docs/papers/2015/p0100r1.html
   [partial-order]: https://en.wikipedia.org/wiki/Partially_ordered_set#Formal_definition
   [refining]: https://github.com/Morwenn/cpp-sort/wiki/Refined-functions
-  [std-locale]: http://en.cppreference.com/w/cpp/locale/locale
-  [to-lower]: http://en.cppreference.com/w/cpp/locale/ctype/tolower
+  [std-locale]: https://en.cppreference.com/w/cpp/locale/locale
+  [to-lower]: https://en.cppreference.com/w/cpp/locale/ctype/tolower
   [total-order]: https://en.wikipedia.org/wiki/Total_order
   [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
   [weak-order]: https://en.wikipedia.org/wiki/Weak_ordering
