@@ -50,7 +50,7 @@ namespace detail
         // Inhibit construction of the node with a value
         union { T value; };
 
-        // Pointers to th previous and next nodes
+        // Pointers to the previous and next nodes
         fixed_size_list_node* prev;
         fixed_size_list_node* next;
     };
