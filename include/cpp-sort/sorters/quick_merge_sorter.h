@@ -74,8 +74,9 @@ namespace cppsort
                     "quick_merge_sorter requires at least forward iterators"
                 );
 
-                auto dist = std::distance(first, last);
-                quick_merge_sort(std::move(first), std::move(last), dist,
+                using std::distance; // Hack for sized_iterator
+                quick_merge_sort(std::move(first), std::move(last),
+                                 distance(first, last),
                                  std::move(compare), std::move(projection));
             }
 

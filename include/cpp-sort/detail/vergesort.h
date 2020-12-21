@@ -11,7 +11,9 @@
 #include <iterator>
 #include <list>
 #include <utility>
+#include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
+#include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 #include "config.h"
@@ -21,6 +23,7 @@
 #include "quick_merge_sort.h"
 #include "reverse.h"
 #include "rotate.h"
+#include "sized_iterator.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -92,16 +95,24 @@ namespace verge
     ////////////////////////////////////////////////////////////
     // Vergesort main algorithms
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto sort_bidirectional(BidirectionalIterator first, BidirectionalIterator last,
-                            difference_type_t<BidirectionalIterator> size,
-                            Compare compare, Projection projection)
+    template<
+        bool Stable,
+        typename BidirectionalIterator,
+        typename Compare,
+        typename Projection,
+        typename Fallback
+    >
+    auto sort(std::bidirectional_iterator_tag,
+              BidirectionalIterator first, BidirectionalIterator last,
+              difference_type_t<BidirectionalIterator> size,
+              Compare compare, Projection projection, Fallback fallback)
         -> void
     {
         if (size < 128) {
             // vergesort is inefficient for small collections
-            quick_merge_sort(std::move(first), std::move(last), size,
-                             std::move(compare), std::move(projection));
+            fallback(make_sized_iterator(first, size),
+                     make_sized_iterator(last, size),
+                     std::move(compare), std::move(projection));
             return;
         }
 
@@ -109,7 +120,7 @@ namespace verge
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        // Limit under which quick_merge_sort is used
+        // Limit under which fallback is used
         int minrun_limit = size / log2(size);
 
         // Vergesort detects big runs in ascending or descending order,
@@ -135,7 +146,8 @@ namespace verge
         // Choose whether to look for an ascending or descending
         // run depending on the value of the first two elements;
         // when comparing equivalent there is a bias towards
-        // ascending runs because they don't have to be reversed
+        // ascending runs because they don't have to be reversed,
+        // and is always the right thing to do when sorting stably
         if (comp(proj(*next), proj(*current))) {
             goto find_descending;
         } else {
@@ -181,7 +193,7 @@ namespace verge
                 ++current;
                 ++next;
 
-                // Find an ascending run
+                // Find a non-descending run
                 difference_type run_size = 2;
                 while (next != last) {
                     if (comp(proj(*next), proj(*current))) break;
@@ -192,7 +204,9 @@ namespace verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        quick_merge_sort(begin_unsorted, begin_rng, size_unsorted, compare, projection);
+                        fallback(make_sized_iterator(begin_unsorted, size_unsorted),
+                                 make_sized_iterator(begin_rng, size_unsorted),
+                                 compare, projection);
                         runs.push_back({ begin_rng, size_unsorted} );
                         runs.push_back({ next, run_size });
                         begin_unsorted = last;
@@ -215,7 +229,6 @@ namespace verge
                     } else {
                         goto find_ascending;
                     }
-
                 } else {
                     size_unsorted += (run_size - 1);
                     if (begin_unsorted == last) {
@@ -233,18 +246,30 @@ namespace verge
                 ++current;
                 ++next;
 
-                // Find a descending run
                 difference_type run_size = 2;
-                while (next != last) {
-                    if (comp(proj(*current), proj(*next))) break;
-                    ++current;
-                    ++next;
-                    ++run_size;
+                if (Stable) {
+                    // Find a strictly descending run
+                    while (next != last) {
+                        if (not comp(proj(*next), proj(*current))) break;
+                        ++current;
+                        ++next;
+                        ++run_size;
+                    }
+                } else {
+                    // Find a non-ascending run
+                    while (next != last) {
+                        if (comp(proj(*current), proj(*next))) break;
+                        ++current;
+                        ++next;
+                        ++run_size;
+                    }
                 }
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        quick_merge_sort(begin_unsorted, begin_rng, size_unsorted, compare, projection);
+                        fallback(make_sized_iterator(begin_unsorted, size_unsorted),
+                                 make_sized_iterator(begin_rng, size_unsorted),
+                                 compare, projection);
                         runs.push_back({ begin_rng, size_unsorted });
                         detail::reverse(begin_rng, next);
                         runs.push_back({ next, run_size });
@@ -281,18 +306,33 @@ namespace verge
         }
 
         if (begin_unsorted != last) {
-            quick_merge_sort(begin_unsorted, last, size_unsorted, compare, projection);
-            runs.push_back({ last, size_unsorted + 1 });
+            // When run_size is added to size_unsorted, we retrieve one from
+            // it because it assumes that the last element is part of the
+            // next run, so we add one back here to compensate
+            ++size_unsorted;
+            if (size_unsorted > 1) {
+                fallback(make_sized_iterator(begin_unsorted, size_unsorted),
+                         make_sized_iterator(last, size_unsorted),
+                         compare, projection);
+            }
+            runs.push_back({ last, size_unsorted });
         }
 
         // Last step: merge the runs
         verge::merge_runs(first, runs, std::move(compare), std::move(projection));
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection, typename Fallback>
-    auto sort_random_access(RandomAccessIterator first, RandomAccessIterator last,
-                            difference_type_t<RandomAccessIterator> size,
-                            Compare compare, Projection projection, Fallback fallback)
+    template<
+        bool Stable,
+        typename RandomAccessIterator,
+        typename Compare,
+        typename Projection,
+        typename Fallback
+    >
+    auto sort(std::random_access_iterator_tag,
+              RandomAccessIterator first, RandomAccessIterator last,
+              difference_type_t<RandomAccessIterator> size,
+              Compare compare, Projection projection, Fallback fallback)
         -> void
     {
         if (size < 128) {
@@ -348,21 +388,45 @@ namespace verge
             auto next2 = next;
 
             if (comp(proj(*next), proj(*current))) {
-                // Found a decreasing run, scan to the left and to the right
+                // Found a descending run, scan to the left and to the right
                 // until the limits of the run are reached
-                do {
-                    --current;
-                    --next;
-                    if (comp(proj(*current), proj(*next))) break;
-                } while (current != begin_range);
-                if (comp(proj(*current), proj(*next))) ++current;
+                if (Stable) {
+                    // Find a strictly descending run to avoid breaking
+                    // the stability of the algorithm with reverse()
+                    do {
+                        --current;
+                        --next;
+                        if (not comp(proj(*next), proj(*current))) break;
+                    } while (current != begin_range);
+                    if (not comp(proj(*next), proj(*current))) {
+                        ++current;
+                    }
 
-                ++current2;
-                ++next2;
-                while (next2 != last) {
-                    if (comp(proj(*current2), proj(*next2))) break;
                     ++current2;
                     ++next2;
+                    while (next2 != last) {
+                        if (not comp(proj(*next2), proj(*current2))) break;
+                        ++current2;
+                        ++next2;
+                    }
+                } else {
+                    // Find a non-ascending sequence
+                    do {
+                        --current;
+                        --next;
+                        if (comp(proj(*current), proj(*next))) break;
+                    } while (current != begin_range);
+                    if (comp(proj(*current), proj(*next))) {
+                        ++current;
+                    }
+
+                    ++current2;
+                    ++next2;
+                    while (next2 != last) {
+                        if (comp(proj(*current2), proj(*next2))) break;
+                        ++current2;
+                        ++next2;
+                    }
                 }
 
                 // Check whether we found a big enough sorted sequence
@@ -384,8 +448,8 @@ namespace verge
                     }
                 }
             } else {
-                // Found an increasing run, scan to the left and to the right
-                // until the limits of the run are reached
+                // Found an non-descending run, scan to the left and to
+                // the right until the limits of the run are reached
                 do {
                     --current;
                     --next;
@@ -439,56 +503,76 @@ namespace verge
     ////////////////////////////////////////////////////////////
     // Vergesort main interface
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection, typename Fallback>
-    auto sort(std::bidirectional_iterator_tag,
-              BidirectionalIterator first, BidirectionalIterator last,
-              difference_type_t<BidirectionalIterator> size,
-              Compare compare, Projection projection, Fallback /* fallback */)
-        -> void
+    template<typename Sorter>
+    auto get_maybe_stable(std::true_type, Sorter&& sorter)
+        -> cppsort::stable_adapter<Sorter>
     {
-        // This overload exists purely for the sake of genericity
-        // and to make future evolutions easier, it is actually
-        // never called with anything else than pdq_sorter as a
-        // fallback for now, which can't even be used by the
-        // bidirectional algorithm
-        sort_bidirectional(std::move(first), std::move(last), size,
-                           std::move(compare), std::move(projection));
+        return cppsort::stable_adapter<Sorter>(std::move(sorter));
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection, typename Fallback>
-    auto sort(std::random_access_iterator_tag,
-              RandomAccessIterator first, RandomAccessIterator last,
-              difference_type_t<RandomAccessIterator> size,
-              Compare compare, Projection projection, Fallback fallback)
-        -> void
+    template<typename Sorter>
+    auto get_maybe_stable(std::false_type, Sorter&& sorter)
+        -> Sorter
     {
-        // Forward every parameter as is
-        sort_random_access(std::move(first), std::move(last), size,
-                           std::move(compare), std::move(projection),
-                           std::move(fallback));
+        return std::move(sorter);
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection, typename Fallback>
+    template<
+        bool Stable,
+        typename BidirectionalIterator,
+        typename Compare,
+        typename Projection,
+        typename Fallback
+    >
     auto sort(BidirectionalIterator first, BidirectionalIterator last,
               difference_type_t<BidirectionalIterator> size,
               Compare compare, Projection projection, Fallback fallback)
         -> void
     {
-        verge::sort(iterator_category_t<BidirectionalIterator>{},
-                    std::move(first), std::move(last), size,
-                    std::move(compare), std::move(projection),
-                    std::move(fallback));
+        // Adapt the fallback sorter depending on whether a stable
+        // or an unstable sort is wanted
+        verge::sort<true>(iterator_category_t<BidirectionalIterator>{},
+                          std::move(first), std::move(last), size,
+                          std::move(compare), std::move(projection),
+                          get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    constexpr auto default_sorter_for_impl(std::bidirectional_iterator_tag)
+        -> cppsort::quick_merge_sorter
+    {
+        return {};
+    }
+
+    constexpr auto default_sorter_for_impl(std::random_access_iterator_tag)
+        -> cppsort::pdq_sorter
+    {
+        return {};
+    }
+
+    template<typename Iterator>
+    constexpr auto default_sorter_for(Iterator)
+        -> decltype(auto)
+    {
+        iterator_category_t<Iterator> category;
+        return default_sorter_for_impl(category);
+    }
+
+    template<
+        bool Stable,
+        typename BidirectionalIterator,
+        typename Compare,
+        typename Projection
+    >
     auto sort(BidirectionalIterator first, BidirectionalIterator last,
               difference_type_t<BidirectionalIterator> size,
               Compare compare, Projection projection)
         -> void
     {
-        verge::sort(std::move(first), std::move(last), size,
-                    std::move(compare), std::move(projection),
-                    cppsort::pdq_sorter{});
+        // Pick a default sorter based on the iterator category when
+        // none is provided
+        verge::sort<Stable>(first, last, size,
+                            std::move(compare), std::move(projection),
+                            default_sorter_for(first));
     }
 }}}
 

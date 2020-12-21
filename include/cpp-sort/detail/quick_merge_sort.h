@@ -17,6 +17,7 @@
 #include "iterator_traits.h"
 #include "nth_element.h"
 #include "quicksort.h"
+#include "sized_iterator.h"
 #include "swap_ranges.h"
 
 namespace cppsort
@@ -148,6 +149,18 @@ namespace detail
             size -= size_left;
         }
         small_sort(first, last, size, std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto quick_merge_sort(sized_iterator<ForwardIterator> first, sized_iterator<ForwardIterator> last,
+                          difference_type_t<ForwardIterator> size,
+                          Compare compare, Projection projection)
+        -> void
+    {
+        // Hack to get the stable bidirectional version of vergesort
+        // to work correctly without duplicating tons of code
+        quick_merge_sort(first.base(), last.base(), size,
+                         std::move(compare), std::move(projection));
     }
 }}
 

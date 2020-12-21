@@ -388,7 +388,11 @@ Vergesort's complexity is bound either by its optimization layer or by the fallb
 * When it doesn't find big runs, the complexity is bound by the fallback sorter: depending on the category of iterators you can refer to the tables of either `pdq_sorter` or `quick_merge_sorter`.
 * When it does find big runs, vergesort's complexity is bound by the merging phase of its optimization layer. In such a case, `inplace_merge` is used to merge the runs: it will use additional memory if any is available, in which case vergesort is O(n log n). If there isn't much extra memory available, it may still require O(log n) extra memory (and thus raise an `std::bad_alloc` if there isn't that much memory available) in which case the complexity falls to O(n log n log log n). It should not happen that much, and the additional *log log n* factor is likely irrelevant for most real-world applications.
 
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. This make the specialization stable, and faster than just using `make_stable`.
+
 *Changed in version 1.6.0:* when sorting a collection made of bidirectional iterators, `verge_sorter` falls back to `quick_merge_sorter` instead of `quick_sorter`.
+
+*New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
 
 ## Type-specific sorters
 

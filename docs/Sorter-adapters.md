@@ -244,8 +244,10 @@ One can provide a dedicated stable algorithm by explicitly specializing `stable_
 
 * [`default_sorter`][default-sorter]
 * [`std_sorter`][std-sorter]
+* [`verge_sorter`][verge-sorter]
 * [`hybrid_adapter`][hybrid-adapter]
 * [`self_sort_adapter`][self-sort-adapter]
+* [`verge_adapter`][verge-adapter]
 
 If such a user specialization is provided, it shall alias `is_always_stable` to `std::true_type` and provide a `type` member type which follows the rules mentioned earlier.
 
@@ -284,6 +286,10 @@ template<typename Sorter>
 struct verge_adapter;
 ```
 
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and faster than just using `make_stable`.
+
+*New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
+
 
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
@@ -302,4 +308,6 @@ struct verge_adapter;
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [std-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#std_sorter
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
+  [verge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#verge_adapter
+  [verge-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#verge_sorter
   [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/master/fallbacks.md
