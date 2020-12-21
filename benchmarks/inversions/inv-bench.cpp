@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
         for (int idx = 0 ; idx <= 100 ; ++idx) {
             double factor = 0.01 * idx;
-            auto dist = inversions(factor);
+            auto distribution = dist::inversions(factor);
 
             std::vector<std::uint64_t> cycles;
 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
             while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
                    cycles.size() < max_runs_per_size) {
                 collection_t collection;
-                dist(std::back_inserter(collection), size);
+                distribution(std::back_inserter(collection), size);
                 std::uint64_t start = rdtsc();
                 sort.second(collection);
                 std::uint64_t end = rdtsc();

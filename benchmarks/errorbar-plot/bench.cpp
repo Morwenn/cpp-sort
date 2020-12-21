@@ -40,7 +40,7 @@ std::pair<std::string, sort_f> sorts[] = {
 };
 
 // Distribution to benchmark against
-auto distribution = shuffled{};
+auto distribution = dist::shuffled{};
 
 // Sizes of the collections to sort
 std::uint64_t size_min = 1u << 1;

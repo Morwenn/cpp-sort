@@ -9,14 +9,17 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cpp-sort/adapters.h>
 #include <cpp-sort/probes.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include "../testsuite/distributions.h"
+#include "../benchmarks/benchmarking-tools/distributions.h"
+#include "../testsuite/testing-tools/algorithm.h"
+#include "../testsuite/testing-tools/wrapper.h"
 
 struct shuffled_string:
-    dist::distribution<shuffled_string>
+    dist::base_distribution<shuffled_string>
 {
     template<typename OutputIterator, typename T=long long int>
     auto operator()(OutputIterator out, long long int size, T start=T(0)) const
@@ -31,7 +34,7 @@ struct shuffled_string:
         T end = start + size;
         for (auto i = start ; i < end ; ++i) {
             auto s = std::to_string(i);
-            vec.push_back(std::string(100 - s.size(), '0') + std::move(s));
+            vec.push_back(std::string(50 - s.size(), '0') + std::move(s));
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
         std::move(std::begin(vec), std::end(vec), out);
@@ -44,12 +47,11 @@ void test(const char* name)
     const int size = 491;
 
     std::vector<std::string> collection;
-    collection.reserve(size);
     auto distribution = shuffled_string{};
-    distribution(std::back_inserter(collection), size, -125);
+    distribution(std::back_inserter(collection), size);
 
     auto copy = collection;
-    std::sort(std::begin(copy), std::end(copy));
+    cppsort::quick_sort(std::begin(copy), std::end(copy));
 
     std::cout << std::boolalpha << name << '\n';
     auto sorter = Sorter{};
@@ -60,7 +62,7 @@ void test(const char* name)
     std::cout << (collection == copy) << '\n';
     std::cout << "were some elements altered? ";
     auto copy2 = collection;
-    std::sort(std::begin(collection), std::end(collection));
+    cppsort::quick_sort(std::begin(collection), std::end(collection));
     std::cout << (collection != copy) << '\n';
 
     std::cout << '\n'
@@ -88,5 +90,5 @@ void test(const char* name)
 
 int main()
 {
-    test<cppsort::poplar_sorter2>("poplar_sort");
+    test<cppsort::stable_adapter<cppsort::verge_sorter>>("verge_sort");
 }
