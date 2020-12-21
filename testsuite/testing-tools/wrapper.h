@@ -95,7 +95,14 @@ struct generic_stable_wrapper
         return *this;
     }
 
-    friend auto operator<(const generic_stable_wrapper& lhs, const generic_stable_wrapper& rhs)
+    friend constexpr auto operator==(const generic_stable_wrapper& lhs, const generic_stable_wrapper& rhs)
+        -> bool
+    {
+        return lhs.value == rhs.value
+            && lhs.order == rhs.order;
+    }
+
+    friend constexpr auto operator<(const generic_stable_wrapper& lhs, const generic_stable_wrapper& rhs)
         -> bool
     {
         if (lhs.value < rhs.value) {
