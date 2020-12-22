@@ -44,10 +44,10 @@ The project's CMake files do offer some options, but they are mainly used to con
 conan search cpp-sort --remote=conan-center
 ```
 
-And then install any version to your local cache as follows (here with version 1.5.1):
+And then install any version to your local cache as follows (here with version 1.9.0):
 
 ```sh
-conan install cpp-sort/1.5.1
+conan install cpp-sort/1.9.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to use the source available in this GitHub repository.
