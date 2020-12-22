@@ -10,14 +10,10 @@
 #include <type_traits>
 #include <vector>
 #include <catch2/catch.hpp>
-#include <cpp-sort/adapters/counting_adapter.h>
-#include <cpp-sort/adapters/hybrid_adapter.h>
-#include <cpp-sort/adapters/indirect_adapter.h>
-#include <cpp-sort/adapters/out_of_place_adapter.h>
-#include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/adapters/schwartz_adapter.h>
+#include <cpp-sort/adapters.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/sorters/grail_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
@@ -207,4 +203,23 @@ TEST_CASE( "stability of counting_adapter over self_sort_adapter",
         CHECK( cppsort::is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)>::value );
         CHECK( cppsort::is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)>::value );
     }
+}
+
+TEST_CASE( "stable_adapter over verge_adapter",
+           "[stable_adapter][verge_adapter]" )
+{
+    using wrapper = generic_stable_wrapper<int>;
+    std::vector<wrapper> collection;
+    auto distribution = dist::descending_plateau{};
+    distribution(std::back_inserter(collection), 400);
+    helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
+
+    cppsort::stable_adapter<
+        cppsort::verge_adapter<
+            cppsort::grail_sorter<>
+        >
+    > sorter;
+
+    sorter(collection, &wrapper::value);
+    CHECK( helpers::is_sorted(collection.begin(), collection.end()) );
 }

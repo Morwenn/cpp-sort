@@ -87,7 +87,7 @@ namespace cppsort
         stable_adapter() = default;
 
         constexpr explicit stable_adapter(verge_adapter<FallbackSorter> sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>(std::move(sorter))
+            sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>(std::move(sorter).get())
         {}
     };
 }
