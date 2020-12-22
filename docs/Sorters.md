@@ -313,7 +313,7 @@ Implements a [spinsort](https://www.boost.org/doc/libs/1_72_0/libs/sort/doc/html
 #include <cpp-sort/sorters/split_sorter.h>
 ```
 
-Implements an in-place *SplitSort* as descirbed in *Splitsort—an adaptive sorting algorithm* by Levcopoulos and Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
+Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by Levcopoulos and Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -323,6 +323,8 @@ SplitSort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measure
 * It only works with random-access iterators.
 * While it uses O(n) extra memory to merge some elements, it can run perfectly fine with O(1) extra memory.
 * Benchmarks shows that drop-merge sort is better when few elements aren't in place, but SplitSort has a lower overhead on random data while still performing better than most general-purpose sorting algorithms when the data is already somewhat sorted.
+
+This sorter can't throw `std::bad_alloc`.
 
 *New in version 1.4.0*
 
