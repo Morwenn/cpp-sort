@@ -147,6 +147,7 @@ add_executable(main-tests
     distributions/ascending_sawtooth.cpp
     distributions/descending.cpp
     distributions/descending_sawtooth.cpp
+    distributions/median_of_3_killer.cpp
     distributions/pipe_organ.cpp
     distributions/push_front.cpp
     distributions/push_middle.cpp

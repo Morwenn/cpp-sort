@@ -241,6 +241,31 @@ namespace dist
             }
         }
     };
+
+    struct median_of_3_killer:
+        distribution<median_of_3_killer>
+    {
+        // This distribution comes from *A Killer Adversary for Quicksort*
+        // by M. D. McIlroy, and is supposed to trick several quicksort
+        // implementations with common pivot selection methods go quadratic
+
+        template<typename OutputIterator>
+        auto operator()(OutputIterator out, std::size_t size) const
+            -> void
+        {
+            std::size_t j = size / 2;
+            for (std::size_t i = 1 ; i < j + 1 ; ++i) {
+                if (i % 2 != 0) {
+                    *out++ = i;
+                } else {
+                    *out++ = j + i - 1;
+                }
+            }
+            for (std::size_t i = 1 ; i < j + 1 ; ++i) {
+                *out++ = 2 * i;
+            }
+        }
+    };
 }
 
 #endif // CPPSORT_TESTSUITE_DISTRIBUTIONS_H_
