@@ -153,13 +153,13 @@ None of the container-aware algorithms invalidates iterators.
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
 ```
 
-Implements the Ford-Johnson merge-insertion sort. I am no researcher and I couldn't find the algorithm's complexity on the internet, so you will have nice question marks instead. This algorithm isn't meant to actually be used and is mostly interesting from a computer science point of view: for really small collections, it has an optimal worst case for the number of comparisons performed; it has been proven that for some sizes, no algorithm can perform fewer comparisons. That said, the algorithm has a rather big memory overhead and performs many move operations; it is really too slow for any real world use.
+Implements the Ford-Johnson merge-insertion sort. This algorithm isn't meant to actually be used and is mostly interesting from a computer science point of view: for really small collections, it has an optimal worst case for the number of comparisons performed. It has indeed been proved that for some sizes, no algorithm can perform fewer comparisons. That said, the algorithm has a rather big memory overhead and performs many move operations; it is really too slow for any real world use.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | ?           | n log n     | n log n     | n           | No          | Random-access |
 
-*Until version 1.7.0:* it is worth noting that the algorithm uses GNU's [`bitmap_allocator`](https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html) when possible at some places instead of the default allocator. I noticed speed improvements up to 25%, but that still doesn't make the algorithm anywhere near fast.
+*Until version 1.7.0:* the algorithm used GNU's [`bitmap_allocator`](https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html) with `std::list` when possible instead of the default allocator, leading to speed improvements up to 25%.
 
 *Changed in version 1.7.0:* the `std::list` used by the algorithm has been replaced with a custom list implementation whose speed does not depend on the availability of some allocator, and which should be faster than the previous implementation in any case (still not anywhere near fast).
 
