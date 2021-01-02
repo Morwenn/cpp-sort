@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -557,11 +557,13 @@ namespace detail
             utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
             utility::is_probably_branchless_projection_v<Projection, value_type>;
 
-        if ((end - begin) < 2) return;
+        auto size = end - begin;
+        if (size < 2) return;
+
         pdqsort_detail::pdqsort_loop<RandomAccessIterator, Compare, Projection, is_branchless>(
             std::move(begin), std::move(end),
             std::move(compare), std::move(projection),
-            detail::log2(end - begin));
+            detail::log2(size));
     }
 }}
 
