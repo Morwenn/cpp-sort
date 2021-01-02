@@ -10,6 +10,9 @@ on:
       - develop
       - 2.0.0-develop
     paths:
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'codecov.yml'
       - 'include/**'
       - 'testsuite/**'
 
