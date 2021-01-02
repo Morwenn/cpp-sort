@@ -20,6 +20,7 @@ development phase:
   - [ ] README.md
   - [ ] version.h
   - [ ] Home.md in the documentation
+  - [ ] Tooling.md/Conan in the documentation
 - [ ] Find a name for the new version.
 - [ ] Open a merge request, let the CI do its job.
 - [ ] Merge `develop` into `master`.
