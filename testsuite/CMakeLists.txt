@@ -19,7 +19,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v2.13.2
+                     GIT_TAG v2.13.4
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
@@ -191,8 +191,8 @@ add_executable(main-tests
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
     utility/branchless_traits.cpp
-    utility/chainable_projections.cpp
     utility/buffer.cpp
+    utility/chainable_projections.cpp
     utility/iter_swap.cpp
 )
 configure_tests(main-tests)
