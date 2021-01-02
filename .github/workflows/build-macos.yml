@@ -6,51 +6,54 @@ name: MacOS Builds
 on:
   push:
     paths:
+      - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
       - 'include/**'
       - 'testsuite/**'
   pull_request:
     paths:
+      - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
       - 'include/**'
       - 'testsuite/**'
-  
+
 jobs:
   build:
     runs-on: macos-10.15
+
     strategy:
       matrix:
         cxx: [clang++-11, g++-9]
         build_type: [Debug, Release]
-        generator: Ninja
+        generator: [Ninja]
         include:
           - sanitize: address
           - sanitize: undefined
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Configure CMake
-      working-directory: ${{runner.workspace}}
-      env:
-        CXX: ${{matrix.cxx}}
-      run: >
-        cmake -H${{github.event.repository.name}} -Bbuild
-        -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}}
-        -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
-        -DSANITIZE=${{matrix.sanitize}}
-        -G"${{matrix.generator}}"
-        -DBUILD_EXAMPLES=ON
+      - name: Configure CMake
+        working-directory: ${{runner.workspace}}
+        env:
+          CXX: ${{matrix.cxx}}
+        run: >
+          cmake -H${{github.event.repository.name}} -Bbuild
+          -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}}
+          -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+          -DSANITIZE=${{matrix.sanitize}}
+          -G"${{matrix.generator}}"
+          -DBUILD_EXAMPLES=ON
         
-    - name: Build the test suite
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      run: cmake --build . --config ${{matrix.build_type}} -j 2
+      - name: Build the test suite
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake --build . --config ${{matrix.build_type}} -j 2
 
-    - name: Run the test suite
-      env:
-        CTEST_OUTPUT_ON_FAILURE: 1
-      working-directory: ${{runner.workspace}}/build
-      run: ctest -C ${{matrix.build_type}} -j 2
+      - name: Run the test suite
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
+        working-directory: ${{runner.workspace}}/build
+        run: ctest -C ${{matrix.build_type}} -j 2
