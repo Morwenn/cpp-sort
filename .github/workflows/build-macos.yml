@@ -25,7 +25,9 @@ jobs:
 
     strategy:
       matrix:
-        cxx: [clang++-11, g++-9]
+        cxx:
+          - g++-9
+          - $(brew --prefix llvm)/bin/clang  # Clang 11
         build_type: [Debug, Release]
         generator: [Ninja]
         include:
