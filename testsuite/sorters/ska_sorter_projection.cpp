@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -73,7 +73,7 @@ TEST_CASE( "ska_sorter tests with projections",
 
         std::vector<wrapper> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {
-            vec.push_back({std::to_string(i)});
+            vec.emplace_back(std::to_string(i));
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::ska_sort(vec, &wrapper::value);

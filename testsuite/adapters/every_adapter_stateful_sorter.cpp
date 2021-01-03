@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -42,11 +42,11 @@ namespace
             cppsort::quick_merge_sort(std::move(first), std::move(last), std::move(compare));
             if (std::is_same<IteratorCategory, std::forward_iterator_tag>::value) {
                 return 1;
-            } else if (std::is_same<IteratorCategory, std::bidirectional_iterator_tag>::value) {
-                return 2;
-            } else {
-                return 3;
             }
+            if (std::is_same<IteratorCategory, std::bidirectional_iterator_tag>::value) {
+                return 2;
+            }
+            return 3;
         }
 
         using iterator_category = IteratorCategory;

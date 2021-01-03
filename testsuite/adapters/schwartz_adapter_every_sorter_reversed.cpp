@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -66,7 +66,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
 
     std::vector<wrapper<std::string>> collection3;
     for (int i = -125 ; i < 287 ; ++i) {
-        collection3.push_back({std::to_string(i)});
+        collection3.emplace_back(std::to_string(i));
     }
     std::mt19937 engine(Catch::rngSeed());
     std::shuffle(collection3.begin(), collection3.end(), engine);

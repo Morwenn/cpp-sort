@@ -26,7 +26,7 @@ namespace sub
         return res_t::without_locale;
     }
 
-    inline auto case_insensitive_less(const foo&, const foo&, const std::locale)
+    inline auto case_insensitive_less(const foo&, const foo&, const std::locale&)
         -> res_t
     {
         return res_t::with_locale;
