@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Morwenn
+# Copyright (c) 2020-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MacOS Builds
@@ -26,14 +26,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Default configuration corresponds to a release
+        # build without additional tooling, also provides
+        # default options for other builds
         cxx:
           - g++-9
           - $(brew --prefix llvm)/bin/clang++  # Clang 11
-        build_type: [Debug, Release]
-        generator: [Ninja]
+        build_type: [Release]
+        sanitize: ['']
+
+        # Below are debug builds with tooling
         include:
-          - sanitize: address
-          - sanitize: undefined
+          # GCC builds
+          - cxx: g++-9
+            build_type: Debug
+            sanitize: address
+          - cxx: g++-9
+            build_type: Debug
+            sanitize: undefined
+          # Clang builds
+          - cxx: $(brew --prefix llvm)/bin/clang++
+            build_type: Debug
+            sanitize: address
+          - cxx: $(brew --prefix llvm)/bin/clang++
+            build_type: Debug
+            sanitize: undefined
 
     steps:
       - uses: actions/checkout@v2
@@ -47,7 +64,7 @@ jobs:
                 -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} \
                 -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
                 -DSANITIZE=${{matrix.sanitize}} \
-                -G"${{matrix.generator}}" \
+                -GNinja \
                 -DBUILD_EXAMPLES=ON
         
       - name: Build the test suite

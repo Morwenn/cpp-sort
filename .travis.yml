@@ -109,20 +109,6 @@ matrix:
             - *gcc
       compiler: gcc
 
-    # OSX clang
-    # - os: osx
-      # osx_image: xcode9.4
-      # env: BUILD_TYPE=Debug USE_VALGRIND=true CMAKE_GENERATOR="Ninja"
-      # addons:
-        # homebrew:
-          # update: true
-          # packages:
-            # - ccache
-            # - cmake
-            # - ninja
-            # - valgrind
-      # compiler: clang
-
     # Windows GCC
     - os: windows
       language: sh
