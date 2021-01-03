@@ -24,10 +24,11 @@ jobs:
     runs-on: macos-10.15
 
     strategy:
+      fail-fast: false
       matrix:
         cxx:
           - g++-9
-          - $(brew --prefix llvm)/bin/clang  # Clang 11
+          - $(brew --prefix llvm)/bin/clang++  # Clang 11
         build_type: [Debug, Release]
         generator: [Ninja]
         include:

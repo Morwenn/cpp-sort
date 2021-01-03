@@ -123,18 +123,6 @@ matrix:
             # - valgrind
       # compiler: clang
 
-    # - os: osx
-      # osx_image: xcode9.4
-      # env: BUILD_TYPE=Release CMAKE_GENERATOR="Ninja"
-      # addons:
-        # homebrew:
-          # update: true
-          # packages:
-            # - ccache
-            # - cmake
-            # - ninja
-      # compiler: clang
-
     # Windows GCC
     - os: windows
       language: sh
