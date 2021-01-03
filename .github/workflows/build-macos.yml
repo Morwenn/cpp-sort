@@ -40,15 +40,14 @@ jobs:
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
-        env:
-          CXX: ${{matrix.cxx}}
-        run: >
-          cmake -H${{github.event.repository.name}} -Bbuild
-          -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}}
-          -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
-          -DSANITIZE=${{matrix.sanitize}}
-          -G"${{matrix.generator}}"
-          -DBUILD_EXAMPLES=ON
+        run: |
+          export CXX=${{matrix.cxx}}
+          cmake -H${{github.event.repository.name}} -Bbuild \
+                -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} \
+                -DCMAKE_BUILD_TYPE=${{matrix.build_type}} \
+                -DSANITIZE=${{matrix.sanitize}} \
+                -G"${{matrix.generator}}" \
+                -DBUILD_EXAMPLES=ON
         
       - name: Build the test suite
         shell: bash
