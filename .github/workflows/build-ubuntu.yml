@@ -6,6 +6,7 @@ name: Ubuntu Builds
 on:
   push:
     paths:
+      - '.github/workflows/build-ubuntu.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
@@ -13,6 +14,7 @@ on:
       - 'testsuite/**'
   pull_request:
     paths:
+      - '.github/workflows/build-ubuntu.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'

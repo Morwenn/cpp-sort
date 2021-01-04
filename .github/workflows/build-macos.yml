@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 Morwenn
+# Copyright (c) 2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MacOS Builds
@@ -6,6 +6,7 @@ name: MacOS Builds
 on:
   push:
     paths:
+      - '.github/workflows/build-macos.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
@@ -13,6 +14,7 @@ on:
       - 'testsuite/**'
   pull_request:
     paths:
+      - '.github/workflows/build-macos.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
