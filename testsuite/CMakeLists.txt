@@ -220,7 +220,7 @@ endif()
 
 # Configure Valgrind
 if (USE_VALGRIND)
-    find_program(MEMORYCHECK_COMMAND valgrind)
+    find_program(MEMORYCHECK_COMMAND valgrind REQUIRED)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
     if (APPLE)
         set(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/valgrind-osx.supp)
