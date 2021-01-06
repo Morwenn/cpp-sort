@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_COUNTING_ADAPTER_H_
@@ -82,7 +82,7 @@ namespace cppsort
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp), projection);
+                this->get()(std::forward<Iterable>(iterable), std::move(cmp), std::move(projection));
                 return count;
             }
 
