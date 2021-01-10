@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -28,7 +28,23 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
+    SECTION( "sort with unsigned int iterators" )
+    {
+        std::vector<unsigned> vec;
+        distribution(std::back_inserter(vec), 100'000);
+        cppsort::ska_sort(vec.begin(), vec.end());
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
+    }
+
 #ifdef __SIZEOF_INT128__
+    SECTION( "sort with int128 iterable" )
+    {
+        std::vector<__int128_t> vec;
+        distribution(std::back_inserter(vec), 100'000, -10'000);
+        cppsort::ska_sort(vec);
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
+    }
+
     SECTION( "sort with unsigned int128 iterable" )
     {
         std::vector<__uint128_t> vec;
@@ -37,14 +53,6 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 #endif
-
-    SECTION( "sort with unsigned int iterators" )
-    {
-        std::vector<unsigned> vec;
-        distribution(std::back_inserter(vec), 100'000);
-        cppsort::ska_sort(vec.begin(), vec.end());
-        CHECK( std::is_sorted(vec.begin(), vec.end()) );
-    }
 
     SECTION( "sort with float iterable" )
     {
