@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SCHWARTZ_ADAPTER_H_
@@ -18,6 +18,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
@@ -41,7 +42,18 @@ namespace cppsort
                 return (std::forward<T>(value).data);
             }
         };
+    }
 
+    namespace utility
+    {
+        template<typename T>
+        struct is_probably_branchless_projection<cppsort::detail::data_getter, T>:
+            std::true_type
+        {};
+    }
+
+    namespace detail
+    {
         ////////////////////////////////////////////////////////////
         // Algorithm proper
 
