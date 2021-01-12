@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Copyright (c) 2015-2020 Morwenn.
+ * Copyright (c) 2015-2021 Morwenn.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -287,8 +287,8 @@ namespace detail
         }
 
         template<typename T, typename Iter>
-        auto gallopLeft(T&& key, Iter const base, difference_type const len, difference_type const hint,
-                        Compare compare, Projection projection)
+        static auto gallopLeft(T&& key, Iter const base, difference_type const len, difference_type const hint,
+                               Compare compare, Projection projection)
             -> difference_type
         {
             CPPSORT_ASSERT(len > 0);
@@ -345,8 +345,8 @@ namespace detail
         }
 
         template<typename T, typename Iter>
-        auto gallopRight(T&& key, Iter const base, difference_type const len, difference_type const hint,
-                         Compare compare, Projection projection)
+        static auto gallopRight(T&& key, Iter const base, difference_type const len, difference_type const hint,
+                                Compare compare, Projection projection)
             -> difference_type
         {
             CPPSORT_ASSERT(len > 0);
