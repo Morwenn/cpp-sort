@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
@@ -18,7 +18,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
@@ -31,61 +30,11 @@
 
 namespace cppsort
 {
-    namespace detail
-    {
-        ////////////////////////////////////////////////////////////
-        // indirect_projection
-
-        template<typename Projection>
-        struct indirect_projection
-        {
-            explicit indirect_projection(Projection projection):
-                projection(std::move(projection))
-            {}
-
-            template<typename RandomAccessIterator>
-            constexpr auto operator()(RandomAccessIterator it) const
-                -> decltype(auto)
-            {
-                auto&& proj = utility::as_function(projection);
-                return proj(*it);
-            }
-
-            template<typename RandomAccessIterator>
-            constexpr auto operator()(RandomAccessIterator it)
-                -> decltype(auto)
-            {
-                auto&& proj = utility::as_function(projection);
-                return proj(*it);
-            }
-
-            Projection projection;
-        };
-
-        template<typename Projection>
-        auto make_indirect_projection(Projection projection)
-            -> indirect_projection<Projection>
-        {
-            return indirect_projection<Projection>(std::move(projection));
-        }
-    }
-
-    namespace utility
-    {
-        template<typename Projection, typename T>
-        struct is_probably_branchless_projection<
-            cppsort::detail::indirect_projection<Projection>,
-            T
-        >:
-            is_probably_branchless_projection<Projection, T>
-        {};
-    }
+    ////////////////////////////////////////////////////////////
+    // Adapter
 
     namespace detail
     {
-        ////////////////////////////////////////////////////////////
-        // Indirect sort functions
-
         template<typename ForwardIterator, typename Sorter, typename Compare, typename Projection>
         auto sort_indirectly(std::forward_iterator_tag, Sorter&& sorter,
                              ForwardIterator first, ForwardIterator last,
@@ -106,6 +55,7 @@ namespace cppsort
             -> decltype(auto)
         {
             using utility::iter_move;
+            auto&& proj = utility::as_function(projection);
 
             ////////////////////////////////////////////////////////////
             // Indirectly sort the iterators
@@ -126,7 +76,9 @@ namespace cppsort
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(
                 iterators.get(), iterators.get() + size, std::move(compare),
-                make_indirect_projection(std::move(projection))
+                [&proj](RandomAccessIterator it) -> decltype(auto) {
+                    return proj(*it);
+                }
             );
 #else
             // Work around the sorters that return void
@@ -175,13 +127,12 @@ namespace cppsort
 
             return std::forward<Sorter>(sorter)(
                 iterators.get(), iterators.get() + size, std::move(compare),
-                make_indirect_projection(std::move(projection))
+                [&proj](RandomAccessIterator it) -> decltype(auto) {
+                    return proj(*it);
+                }
             );
 #endif
         }
-
-        ////////////////////////////////////////////////////////////
-        // Adapter
 
         template<typename Sorter>
         struct indirect_adapter_impl:
