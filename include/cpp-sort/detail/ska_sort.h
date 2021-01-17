@@ -541,7 +541,6 @@ namespace detail
     auto StdSortFallback(RandomAccessIterator begin, RandomAccessIterator end, Projection projection)
         -> void
     {
-        auto&& proj = utility::as_function(projection);
         pdqsort(std::move(begin), std::move(end), std::less<>{}, std::move(projection));
     }
 
