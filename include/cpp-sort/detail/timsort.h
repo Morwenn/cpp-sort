@@ -250,10 +250,6 @@ namespace detail
             iterator base2 = pending_[i + 1].base;
             difference_type len2 = pending_[i + 1].len;
 
-            CPPSORT_ASSERT(len1 > 0);
-            CPPSORT_ASSERT(len2 > 0);
-            CPPSORT_ASSERT(base1 + len1 == base2);
-
             pending_[i].len = len1 + len2;
 
             if (i == stackSize - 3) {
@@ -261,6 +257,16 @@ namespace detail
             }
 
             pending_.pop_back();
+
+            mergeConsecutiveRuns(base1, len1, base2, len2, std::move(compare), std::move(projection));
+        }
+
+        void mergeConsecutiveRuns(iterator base1, difference_type len1, iterator base2, difference_type len2,
+                                  Compare compare, Projection projection)
+        {
+            CPPSORT_ASSERT(len1 > 0);
+            CPPSORT_ASSERT(len2 > 0);
+            CPPSORT_ASSERT(base1 + len1 == base2);
 
             difference_type const k = gallopRight(*base2, base1, len1, 0, compare, projection);
             CPPSORT_ASSERT(k >= 0);
