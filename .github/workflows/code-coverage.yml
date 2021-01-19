@@ -53,6 +53,7 @@ jobs:
         run: make gcov
 
       - name: Upload coverage info
-        uses: codecov/codecov-action@v1.0.15
+        uses: codecov/codecov-action@v1.2.1
         with:
           directory: ${{runner.workspace}}/build
+          functionalities: gcov
