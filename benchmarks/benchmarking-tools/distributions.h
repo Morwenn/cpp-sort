@@ -303,6 +303,33 @@ namespace dist
         static constexpr const char* output = "alternating_16_values.txt";
     };
 
+    struct descending_plateau:
+        base_distribution<descending_plateau>
+    {
+        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+            -> void
+        {
+            auto&& proj = cppsort::utility::as_function(projection);
+
+            std::size_t i = size;
+            while (i > 2 * size / 3) {
+                *out++ = proj(i);
+                --i;
+            }
+            while (i > size / 3) {
+                *out++ = proj(size / 2);
+                --i;
+            }
+            while (i > 0) {
+                *out++ = proj(i);
+                --i;
+            }
+        }
+
+        static constexpr const char* output = "descending_plateau.txt";
+    };
+
     struct inversions:
         base_distribution<inversions>
     {
