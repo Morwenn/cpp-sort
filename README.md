@@ -203,6 +203,10 @@ of the algorithm.
 * The algorithm used by `indirect_adapter` with forward or bidirectional iterators is a
 slightly modified version of Matthew Bentley's [indiesort](https://github.com/mattreecebentley/plf_indiesort).
 
+* The implementation of the random-access overload of `nth_element` used by some of the algorithms
+comes from Danila Kutenin's [miniselect library](https://github.com/danlark1/miniselect) and uses
+Andrei Alexandrescu's [*AdaptiveQuickselect*](https://arxiv.org/abs/1606.00484) algorithm.
+
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
 Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
 

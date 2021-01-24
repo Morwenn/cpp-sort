@@ -213,6 +213,19 @@ In addition, certain files include the notices provided below.
 
 ----------------------
 
+/*          Copyright Andrei Alexandrescu, 2016-.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          https://boost.org/LICENSE_1_0.txt)
+ */
+/*          Copyright Danila Kutenin, 2020-.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          https://boost.org/LICENSE_1_0.txt)
+ */
+
+----------------------
+
 # Distributed under the OSI-approved MIT License.  See accompanying
 # file LICENSE or https://github.com/Crascit/DownloadProject for details.
 

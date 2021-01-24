@@ -223,7 +223,7 @@ This sorter is a bit faster or a bit slower than `smooth_sorter` depending on th
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 ```
 
-Implements a flavour of [QuickMergesort](https://arxiv.org/abs/1307.3033).
+Implements a flavour of [QuickMergesort][quick-mergesort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -231,13 +231,17 @@ Implements a flavour of [QuickMergesort](https://arxiv.org/abs/1307.3033).
 | n           | n log n     | n log n     | log² n      | No          | Bidirectional |
 | n           | n log² n    | n log² n    | log² n      | No          | Forward       |
 
-QuickMergesort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergesort used by `quick_merge_sorter` actually uses an equivalent of [`std::nth_element`](https://en.cppreference.com/w/cpp/algorithm/nth_element) to partition the collection in 1/3-2/3 parts in order to maximize the size of the partition (2 thirds of the space) that can be merge-sorted using the other partition as a swap buffer.
+QuickMergesort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergesort used by `quick_merge_sorter` uses a [selection algorithm][selection-algorithm] to split the collection into partitions containing 2/3 and 1/3 of the elements respectively. This allows to use an internal mergesort of the biggest partition (2/3 of the elements) using the other partition (1/3 of the elements) as a swap buffer.
 
-The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The log n memory is due to top-down mergesort stack recursion in the random-access version, while the memory of the forward version use is dominated by the mutually recursive [introselect](https://en.wikipedia.org/wiki/Introselect) algorithm which is used to implement an `nth_element` equivalent for forward iterators.
+The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The space complexity is dominated by the stack recursion in the selection algorithms:
+* log n for the random-access version, which uses Andrei Alexandrescu's [*AdaptiveQuickselect*][adaptive-quickselect].
+* log² n for the forward and bidirectional versions, which use the mutually recursive [introselect][introselect] algorithm.
 
 This sorter can't throw `std::bad_alloc`.
 
 *New in version 1.2.0*
+
+*Changed in version 1.9.0:* the random-access version now runs in O(n log n) instead of accidentally running in O(n²).
 
 ### `quick_sorter`
 
@@ -474,3 +478,9 @@ struct spread_sorter:
 ```
 
 *Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
+
+
+  [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [introselect]: https://en.wikipedia.org/wiki/Introselect
+  [quick-mergesort]: https://arxiv.org/abs/1307.3033
+  [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm
