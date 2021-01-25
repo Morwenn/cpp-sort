@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -116,7 +116,7 @@ namespace detail
         const difference_type m2 = last - middle;
         if (m1 == m2)
         {
-            detail::swap_ranges(first, middle, middle);
+            detail::swap_ranges_inner(first, middle, middle);
             return middle;
         }
         const difference_type g = gcd(m1, m2);

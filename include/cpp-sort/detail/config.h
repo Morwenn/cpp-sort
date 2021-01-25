@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
@@ -97,6 +97,22 @@
 #       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
 #   else
 #       define CPPSORT_ASSERT(...)
+#   endif
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_AUDIT
+
+// Some debug checks might be way too expensive for most
+// scenarios, but still of great help when debugging tough
+// problems, hence this audit feature
+
+#ifndef CPPSORT_AUDIT
+#   ifdef CPPSORT_ENABLE_AUDITS
+#       include <cassert>
+#       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
+#   else
+#       define CPPSORT_AUDIT(...)
 #   endif
 #endif
 

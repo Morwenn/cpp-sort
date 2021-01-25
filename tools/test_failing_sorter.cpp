@@ -11,6 +11,7 @@
 #include <vector>
 
 #define CPPSORT_ENABLE_ASSERTIONS
+//#define CPPSORT_ENABLE_AUDITS
 
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/probes.h>

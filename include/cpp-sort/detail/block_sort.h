@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -206,7 +206,7 @@ namespace detail
             }
 
             // BlockSwap
-            detail::swap_ranges(std::move(A_index), std::move(A_last), std::move(insert_index));
+            detail::swap_ranges_overlap(std::move(A_index), std::move(A_last), std::move(insert_index));
         }
 
         // merge operation without a buffer
@@ -765,7 +765,7 @@ namespace detail
                             if (cache_size >  0 && lastA.length() <= cache_size) {
                                 detail::move(lastA.start, lastA.end, cache.begin());
                             } else if (buffer2.length() > 0) {
-                                detail::swap_ranges(lastA.start, lastA.end, buffer2.start);
+                                detail::swap_ranges_overlap(lastA.start, lastA.end, buffer2.start);
                             }
 
                             if (blockA.length() > 0) {
@@ -786,7 +786,7 @@ namespace detail
                                                 minA = findA;
                                             }
                                         }
-                                        detail::swap_ranges(blockA.start, blockA.start + block_size, minA);
+                                        detail::swap_ranges_overlap(blockA.start, blockA.start + block_size, minA);
 
                                         // swap the first item of the previous A block back with its original value, which is stored in buffer1
                                         iter_swap(blockA.start, indexA);
@@ -815,8 +815,8 @@ namespace detail
                                                 detail::move(blockA.start, blockA.start + block_size, cache.begin());
                                                 detail::move(B_split, B_split + B_remaining, blockA.start + (block_size - B_remaining));
                                             } else {
-                                                detail::swap_ranges(blockA.start, blockA.start + block_size, buffer2.start);
-                                                detail::swap_ranges(B_split, B_split + B_remaining, blockA.start + (block_size - B_remaining));
+                                                detail::swap_ranges_overlap(blockA.start, blockA.start + block_size, buffer2.start);
+                                                detail::swap_ranges_overlap(B_split, B_split + B_remaining, blockA.start + (block_size - B_remaining));
                                             }
                                         } else {
                                             // we are unable to use the 'buffer2' trick to speed up the rotation operation since buffer2 doesn't exist, so perform a normal rotation
@@ -841,7 +841,7 @@ namespace detail
                                         blockB.end = blockB.start;
                                     } else {
                                         // roll the leftmost A block to the end by swapping it with the next B block
-                                        detail::swap_ranges(blockA.start, blockA.start + block_size, blockB.start);
+                                        detail::swap_ranges_overlap(blockA.start, blockA.start + block_size, blockB.start);
                                         lastB = { blockA.start, blockA.start + block_size };
 
                                         blockA.start += block_size;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
@@ -54,7 +54,7 @@ namespace detail
 
         for (; first1 != last1; ++result) {
             if (first2 == last2) {
-                detail::swap_ranges(first1, last1, result);
+                detail::swap_ranges_inner(first1, last1, result);
                 return;
             }
 
@@ -77,7 +77,7 @@ namespace detail
                                          Compare compare, Projection projection)
         -> void
     {
-        auto buffer_end = detail::swap_ranges(first, middle, buffer);
+        auto buffer_end = detail::swap_ranges_inner(first, middle, buffer);
         internal_half_inplace_merge(buffer, buffer_end, middle, last, first, size_left,
                                     std::move(compare), std::move(projection));
     }
