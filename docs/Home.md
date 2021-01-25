@@ -31,14 +31,6 @@ If the library throws any other exception, it will likely come from user code. T
 
 *New in version 1.4.0*
 
-### Support for predicates accepting non-`const` parameters
-
-Following the resolution of the standard library issues [LWG3031][lwg3031], there is implementation freedom for standard library algorithms to accept predicates that take their arguments by non-`const` reference. It is the responsibility of the caller to ensure that, should the predicate accept its arguments by both `const` and non-`const` reference, the results are consistent between overloads.
-
-**cpp-sort** fully supports predicates that take their arguments via non-`const` reference provided that the guarantees outlined in the previous paragraph are respected.
-
-*New in version 1.7.0*
-
 ## Library information & configuration
 
 ### Versioning
@@ -87,5 +79,4 @@ If you ever feel that this wiki is incomplete, that it needs more examples or mo
 
 Hope you have fun!
 
-  [lwg3031]: https://wg21.link/LWG3031
   [swappable]: https://en.cppreference.com/w/cpp/concepts/swappable
