@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTER_FACADE_H_
@@ -11,11 +11,11 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/refined.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include "detail/config.h"
-#include "detail/projection_compare.h"
 #include "detail/type_traits.h"
 
 namespace cppsort
@@ -1023,16 +1023,16 @@ namespace cppsort
                 detail::has_comparison_sort_iterator<
                     Sorter,
                     Iterator,
-                    detail::projection_compare<std::less<>, refined_t<decltype(*first), Projection>>
+                    projection_compare<std::less<>, refined_t<decltype(*first), Projection>>
                 >::value,
                 decltype(Sorter::operator()(first, last,
-                                            detail::make_projection_compare(std::less<>{},
-                                                                            refined<decltype(*first)>(std::move(projection)))))
+                                            make_projection_compare(std::less<>{},
+                                                                    refined<decltype(*first)>(std::move(projection)))))
             >
         {
             return Sorter::operator()(first, last,
-                                      detail::make_projection_compare(std::less<>{},
-                                                                      refined<decltype(*first)>(std::move(projection))));
+                                      make_projection_compare(std::less<>{},
+                                                              refined<decltype(*first)>(std::move(projection))));
         }
 
         template<typename Iterator, typename Compare, typename Projection>
@@ -1048,17 +1048,17 @@ namespace cppsort
                 detail::has_comparison_sort_iterator<
                     Sorter,
                     Iterator,
-                    detail::projection_compare<
+                    projection_compare<
                         refined_t<decltype(*first), Compare>,
                         refined_t<decltype(*first), Projection>
                     >
                 >::value,
-                decltype(Sorter::operator()(first, last, detail::make_projection_compare(
+                decltype(Sorter::operator()(first, last, make_projection_compare(
                     refined<decltype(*first)>(std::move(compare)),
                     refined<decltype(*first)>(std::move(projection)))))
             >
         {
-            return Sorter::operator()(first, last, detail::make_projection_compare(
+            return Sorter::operator()(first, last, make_projection_compare(
                 refined<decltype(*first)>(std::move(compare)),
                 refined<decltype(*first)>(std::move(projection))));
         }
@@ -1080,16 +1080,16 @@ namespace cppsort
                 detail::has_comparison_sort<
                     Sorter,
                     Iterable,
-                    detail::projection_compare<
+                    projection_compare<
                         std::less<>,
                         refined_t<decltype(*std::begin(iterable)), Projection>
                     >
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(
+                decltype(Sorter::operator()(std::forward<Iterable>(iterable), make_projection_compare(
                     std::less<>{}, refined<decltype(*std::begin(iterable))>(std::move(projection)))))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(
+            return Sorter::operator()(std::forward<Iterable>(iterable), make_projection_compare(
                 std::less<>{}, refined<decltype(*std::begin(iterable))>(std::move(projection))));
         }
 
@@ -1110,7 +1110,7 @@ namespace cppsort
                 not detail::has_comparison_sort<
                     Sorter,
                     Iterable,
-                    detail::projection_compare<
+                    projection_compare<
                         std::less<>,
                         refined_t<decltype(*std::begin(iterable)), Projection>
                     >
@@ -1118,19 +1118,19 @@ namespace cppsort
                 detail::has_comparison_sort_iterator<
                     Sorter,
                     decltype(std::begin(iterable)),
-                    detail::projection_compare<
+                    projection_compare<
                         std::less<>,
                         refined_t<decltype(*std::begin(iterable)), Projection>
                     >
                 >::value,
                 decltype(Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                            detail::make_projection_compare(std::less<>{},
-                                                                            refined<decltype(*std::begin(iterable))>(std::move(projection)))))
+                                            make_projection_compare(std::less<>{},
+                                                                    refined<decltype(*std::begin(iterable))>(std::move(projection)))))
             >
         {
             return Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                      detail::make_projection_compare(std::less<>{},
-                                                                      refined<decltype(*std::begin(iterable))>(std::move(projection))));
+                                      make_projection_compare(std::less<>{},
+                                                              refined<decltype(*std::begin(iterable))>(std::move(projection))));
         }
 
         template<typename Iterable, typename Compare, typename Projection>
@@ -1145,17 +1145,17 @@ namespace cppsort
                 detail::has_comparison_sort<
                     Sorter,
                     Iterable,
-                    detail::projection_compare<
+                    projection_compare<
                         refined_t<decltype(*std::begin(iterable)), Compare>,
                         refined_t<decltype(*std::begin(iterable)), Projection>
                     >
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(
+                decltype(Sorter::operator()(std::forward<Iterable>(iterable), make_projection_compare(
                     refined<decltype(*std::begin(iterable))>(std::move(compare)),
                     refined<decltype(*std::begin(iterable))>(std::move(projection)))))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable), detail::make_projection_compare(
+            return Sorter::operator()(std::forward<Iterable>(iterable), make_projection_compare(
                 refined<decltype(*std::begin(iterable))>(std::move(compare)),
                 refined<decltype(*std::begin(iterable))>(std::move(projection))));
         }
@@ -1172,7 +1172,7 @@ namespace cppsort
                 not detail::has_comparison_sort<
                     Sorter,
                     Iterable,
-                    detail::projection_compare<
+                    projection_compare<
                         refined_t<decltype(*std::begin(iterable)), Compare>,
                         refined_t<decltype(*std::begin(iterable)), Projection>
                     >
@@ -1180,17 +1180,17 @@ namespace cppsort
                 detail::has_comparison_sort_iterator<
                     Sorter,
                     decltype(std::begin(iterable)),
-                    detail::projection_compare<
+                    projection_compare<
                         refined_t<decltype(*std::begin(iterable)), Compare>,
                         refined_t<decltype(*std::begin(iterable)), Projection>
                     >
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), detail::make_projection_compare(
+                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), make_projection_compare(
                     refined<decltype(*std::begin(iterable))>(std::move(compare)),
                     refined<decltype(*std::begin(iterable))>(std::move(projection)))))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable), detail::make_projection_compare(
+            return Sorter::operator()(std::begin(iterable), std::end(iterable), make_projection_compare(
                 refined<decltype(*std::begin(iterable))>(std::move(compare)),
                 refined<decltype(*std::begin(iterable))>(std::move(projection))));
         }
