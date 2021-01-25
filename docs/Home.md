@@ -67,11 +67,15 @@ Some old components undergo deprecation before being removed in the following ma
 
 *New in version 1.8.0*
 
-### Assertions
+### Assertions & audits
 
 Some algorithms have assertions to guard against accidental logic issues (mostly in algorithms adapted from other projects), but they are disabled by default. You can enable these assertions by defining the preprocessor macro `CPPSORT_ENABLE_ASSERTIONS`. This new macro still honours `NDEBUG`, so assertions won't be enabled anyway if `NDEBUG` is defined.
 
+A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms.
+
 *New in version 1.6.0*
+
+*New in version 1.9.0*: `CPPSORT_ENABLE_AUDITS`
 
 ## Miscellaneous
 
