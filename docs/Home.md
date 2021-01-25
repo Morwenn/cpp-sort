@@ -31,6 +31,12 @@ If the library throws any other exception, it will likely come from user code. T
 
 *New in version 1.4.0*
 
+### Determinism & reproducibility
+
+So far every algorithm in the library is deterministic: for a given input, one should always get the exact same sequence of operations performed. It was a deliberate choice not to use algorithms such as random pivot quicksort or random sampling algorithms.
+
+The library does not contain multithreaded algorithms either for now, further guaranteeing reproducibility.
+
 ## Library information & configuration
 
 ### Versioning
