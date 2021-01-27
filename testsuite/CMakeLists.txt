@@ -12,6 +12,11 @@ option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" ${USE_VALGR
 option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" ${ENABLE_COVERAGE})
 set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 
+# Apparently ENABLE_COVERAGE is needed either way
+if (CPPSORT_ENABLE_COVERAGE)
+    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
+endif()
+
 # Find & configure Catch2 for the tests
 message(STATUS "Looking for Catch2 2.6.0+")
 find_package(Catch2 2.6.0 QUIET)
