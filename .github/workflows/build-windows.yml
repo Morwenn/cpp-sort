@@ -41,7 +41,7 @@ jobs:
                 -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} `
                 -DCMAKE_BUILD_TYPE=${{matrix.build_type}} `
                 -G"MinGW Makefiles" `
-                -DBUILD_EXAMPLES=ON
+                -DCPPSORT_BUILD_EXAMPLES=ON
 
       - name: Build the test suite
         working-directory: ${{runner.workspace}}/build

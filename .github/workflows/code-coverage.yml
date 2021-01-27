@@ -34,7 +34,7 @@ jobs:
         run: >
           cmake -H${{github.event.repository.name}} -Bbuild
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
-          -DENABLE_COVERAGE=true
+          -DCPPSORT_ENABLE_COVERAGE=true
           -G"Unix Makefiles"
 
       - name: Build with coverage

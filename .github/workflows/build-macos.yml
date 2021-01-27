@@ -51,9 +51,9 @@ jobs:
           cmake -H${{github.event.repository.name}} -Bbuild \
                 -DCMAKE_CONFIGURATION_TYPES=${{matrix.config.build_type}} \
                 -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
-                -DSANITIZE=${{matrix.config.sanitize}} \
+                -DCPPSORT_SANITIZE=${{matrix.config.sanitize}} \
                 -GNinja \
-                -DBUILD_EXAMPLES=ON
+                -DCPPSORT_BUILD_EXAMPLES=ON
 
       - name: Build the test suite
         shell: bash
