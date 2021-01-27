@@ -1,13 +1,16 @@
-# Copyright (c) 2015-2020 Morwenn
+# Copyright (c) 2015-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
 include(DownloadProject)
 
 # Test suite options
-option(USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
-option(ENABLE_COVERAGE "Whether to produce code coverage" OFF)
-set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize")
+option(USE_VALGRIND "Whether to run the tests with Valgrind (deprecated, use CPPSORT_USE_VALGRIND)" OFF)
+option(ENABLE_COVERAGE "Whether to produce code coverage (deprecated, use CPPSORT_ENABLE_COVERAGE)" OFF)
+set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize (deprecated, use CPPSORT_SANITIZE)")
+option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" ${USE_VALGRIND})
+option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" ${ENABLE_COVERAGE})
+set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 
 # Find & configure Catch2 for the tests
 message(STATUS "Looking for Catch2 2.6.0+")
@@ -28,7 +31,7 @@ endif()
 include(Catch)
 
 macro(configure_tests target)
-    # Make testing tools easiyl available to tests
+    # Make testing tools easily available to tests
     # regardless of the directory of the test
     target_include_directories(${target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -64,18 +67,18 @@ macro(configure_tests target)
     endif()
 
     # Optionally enable sanitizers
-    if (UNIX AND SANITIZE)
+    if (UNIX AND CPPSORT_SANITIZE)
         target_compile_options(${target} PRIVATE
-            -fsanitize=${SANITIZE}
+            -fsanitize=${CPPSORT_SANITIZE}
             -fno-sanitize-recover=all
         )
         set_property(TARGET ${target}
             APPEND_STRING PROPERTY LINK_FLAGS
-                " -fsanitize=${SANITIZE}"
+                " -fsanitize=${CPPSORT_SANITIZE}"
         )
     endif()
 
-    if (ENABLE_COVERAGE)
+    if (CPPSORT_ENABLE_COVERAGE)
         find_package(codecov)
         add_coverage(${target})
 
@@ -197,7 +200,7 @@ add_executable(main-tests
 )
 configure_tests(main-tests)
 
-if (NOT "${SANITIZE}" MATCHES "address|memory")
+if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     add_executable(heap-memory-exhaustion-tests
         # These tests are in a separate executable because we replace
         # the global [de]allocation functions in order to test the
@@ -212,14 +215,13 @@ if (NOT "${SANITIZE}" MATCHES "address|memory")
 endif()
 
 # Configure coverage
-if (ENABLE_COVERAGE)
-    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
+if (CPPSORT_ENABLE_COVERAGE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
 
 # Configure Valgrind
-if (USE_VALGRIND)
+if (CPPSORT_USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind REQUIRED)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
     if (APPLE)
@@ -231,6 +233,6 @@ include(CTest)
 
 string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
 catch_discover_tests(main-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
-if (NOT "${SANITIZE}" MATCHES "address|memory")
+if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
 endif()

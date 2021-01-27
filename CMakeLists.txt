@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2020 Morwenn
+# Copyright (c) 2015-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
@@ -11,8 +11,10 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # Project options
-option(BUILD_TESTING "Build the cpp-sort test suite" ON)
-option(BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
+option(BUILD_TESTING "Build the cpp-sort test suite (deprecated, use CPPSORT_BUILD_TESTING)" ON)
+option(BUILD_EXAMPLES "Build the cpp-sort examples (deprecated, use CPPSORT_BUILD_EXAMPLES)" OFF)
+option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ${BUILD_TESTING})
+option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" ${BUILD_EXAMPLES})
 
 # Create cpp-sort library and configure it
 add_library(cpp-sort INTERFACE)
@@ -77,12 +79,12 @@ export(
 
 # Build tests and/or examples if this is the main project
 if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    if (BUILD_TESTING)
+    if (CPPSORT_BUILD_TESTING)
         enable_testing()
         add_subdirectory(testsuite)
     endif()
 
-    if (BUILD_EXAMPLES)
+    if (CPPSORT_BUILD_EXAMPLES)
         add_subdirectory(examples)
     endif()
 endif()
