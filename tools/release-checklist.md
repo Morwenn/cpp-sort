@@ -21,6 +21,7 @@ development phase:
   - [ ] version.h
   - [ ] Home.md in the documentation
   - [ ] Tooling.md/Conan in the documentation
+- [ ] Make sure that the Conan recipe works.
 - [ ] Find a name for the new version.
 - [ ] Open a merge request, let the CI do its job.
 - [ ] Merge `develop` into `master`.
