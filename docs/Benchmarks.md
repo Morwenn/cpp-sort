@@ -134,6 +134,21 @@ The following example uses a collection of `std::array<doube, 100>` whose first 
 
 The improvements are not always as clear as in this benchmark, but it shows that `indirect_adapter` might be an interesting tool to have in your sorting toolbox in such a scenario.
 
+## Sorting stably without heap memory
+
+Only a few algorithms allow to sort a collection stably without using extra heap memory: `grail_sort` and `block_sort` can accept a fixed-size buffer (possibly of size 0) while `merge_sort` has a fallback algorithm when no heap memory is available.
+
+![Benchmark speed of stable sorts with no heap memory with increasing size for std::vector<double>](https://i.imgur.com/1a64irX.png)
+![Benchmark speed of stable sorts with no heap memory with increasing size for std::deque<double>](https://i.imgur.com/U5uD8Er.png)
+![Detail of the previous benchmark](https://i.imgur.com/owUictQ.png)
+
+`merge_sort` is definitely losing this benchmark. Interestingly enough `block_sort` is way better with a fixed buffer of 512 elements while it hardly affects `grail_sort` at all. For `std::deque`, `grail_sort` is almost always the fastest no matter what.
+
+![Benchmark stable sorts with no heap memory over different patterns for std::vector<double>](https://i.imgur.com/74YxCLI.png)
+![Benchmark stable sorts with no heap memory over different patterns for std::deque<double>](https://i.imgur.com/jqek5Ii.png)
+
+Here `merge_sort` still loses the battle, but it also displays an impressive enough adaptiveness to presortedness and patterns.
+
 ## Small array sorters
 
 Some sorting algorithms are particularly suited to sort very small collections: the ones provided by `<cpp-sort/fixed_sorters.h>`, but also the very simple ones such as `insertion_sort` or `selection_sort`. Most other sorting algorithms fallback to one of these when sorting a small collection.
