@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -40,7 +40,7 @@
 #include "rdtsc.h"
 
 // Type of data to sort during the benchmark
-using value_t = int;
+using value_t = double;
 // Type of collection to sort
 using collection_t = std::vector<value_t>;
 

@@ -1,6 +1,6 @@
 #  -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2020 Morwenn
+# Copyright (c) 2015-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 # Copyright (c) 2015 Orson Peters <orsonpeters@gmail.com>
@@ -137,7 +137,7 @@ def main():
             ax.autoscale_view()
             pyplot.ylim(pyplot.ylim()[0] + 1, pyplot.ylim()[1] - 1)
 
-            pyplot.title("Sorting a std::deque<long double> with $10^{}$ elements".format(round(math.log(size, 10))))
+            pyplot.title("Sorting a std::vector<double> with $10^{}$ elements".format(round(math.log(size, 10))))
             pyplot.legend(loc="best")
 
             figure = pyplot.gcf()
