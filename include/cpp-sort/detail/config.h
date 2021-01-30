@@ -46,9 +46,9 @@
 #   define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #else
 #   if defined(__cpp_lib_ranges)
-#       CPPSORT_STD_IDENTITY_AVAILABLE 1
+#       define CPPSORT_STD_IDENTITY_AVAILABLE 1
 #   else
-#       CPPSORT_STD_IDENTITY_AVAILABLE 0
+#       define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #   endif
 #endif
 
