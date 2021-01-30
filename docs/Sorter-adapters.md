@@ -6,7 +6,7 @@ Sorter adapters are the main reason for using sorter function objects instead of
 
 In this documentation, we will call *adapted sorters* the sorters passed to the adapters and *resulting sorter* the sorter class that results from the adaption of a sorter by an adapter. If not specified, the stability and the iterator category of the *resulting sorter* is that of the *adapted sorter* provided there is a single *adapted sorter*.
 
-In C++17, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides](http://en.cppreference.com/w/cpp/language/class_template_argument_deduction). The following example illustrates how it simplifies their use:
+In C++17, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides][ctad]. The following example illustrates how it simplifies their use:
 
 ```cpp
 // C++14
@@ -22,7 +22,7 @@ Most of the library's *sorter adapters* can store the passed *sorters* in their 
 * If the *sorter adapter* adapts a single *sorter*, then it has a member function called `get()` which returns a reference to the internal *sorter* whose reference and `const` qualifications match those of the *sorter adapter* instance. If the *sorter adapter* is empty and default-constructible, then a default-constructed instance of the type of the *original sorter* is returned instead.
 * If the *sorter adapter* is empty and default-constructible, then it can be converted to any function pointer whose signature matches that of its `operator()`.
 
-It is worth noting that in the current state of things, sorters & adapters are expected to have a `const operator()`, and thus don't play nice with *mutable sorters*. There are plans to properly handle *mutable sorters* in the future: you can track [the corresponding issue](https://github.com/Morwenn/cpp-sort/issues/104).
+It is worth noting that in the current state of things, sorters & adapters are expected to have a `const operator()`, and thus don't play nice with *mutable sorters*. There are plans to properly handle *mutable sorters* in the future: you can track [the corresponding issue][issue-104].
 
 *Changed in version 1.5.0:* adapters can store the sorters they adapt, enabling the use of *stateful sorters*. The overall semantics of sorters and adapters have evolved accordingly.
 
@@ -95,7 +95,7 @@ This adapter uses `cppsort::iterator_category` to check the iterator category of
 
 If `hybrid_adapter` is nested in another `hybrid_adapter`, those are flattened: for example `hybrid_adapter<A, hybrid_adapter<B, C>, D>` is flattened to `hybrid_adapter<A, B, C, D>`. This unwrapping exists so that the iterator categories of the sorters in the inner `hybrid_adapter` are seen by the outer one, and not only the fused iterator category of the inner `hybrid_adapter`.
 
-If `hybrid_adapter` is wrapped into [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter), it wraps every *adapted sorter* into `stable_adapter`, forwarding it to better get the specific behaviour f some sorters or adapters when wrapped into it.
+If `hybrid_adapter` is wrapped into [`stable_adapter`][stable-adapter], it wraps every *adapted sorter* into `stable_adapter`, forwarding it to better get the specific behaviour f some sorters or adapters when wrapped into it.
 
 The *resulting sorter*'s `is_always_stable` is `std::true_type` if and only if every *adapted sorter*'s `is_always_stable` is `std::true_type`. `is_stable` is specialized so that it will return the stability of the called *adapted sorter* with the given parameters. The iterator category of the *resulting sorter* is the most permissive iterator category among the *adapted sorters*.
 
@@ -107,7 +107,7 @@ The *resulting sorter*'s `is_always_stable` is `std::true_type` if and only if e
 #include <cpp-sort/adapters/indirect_adapter.h>
 ```
 
-This adapter implements an indirect sort: a sorting algorithm that actually sorts the iterators rather than the values themselves, then uses the sorted iterators to move the actual values to their final position in the original collection. The actual algorithm used is a [mountain sort](https://github.com/Morwenn/mountain-sort), whose goal is to sort a collection while performing a minimal number of *move operations* on the elements of the collection. This indirect adapter copies the iterators and sorts them with the given sorter before performing cycles in a way close to a [cycle sort](https://en.wikipedia.org/wiki/Cycle_sort) to actually move the elements. There are a few differences though: while the cycle sort always has a O(n²) complexity, the *resulting sorter* of `indirect_adapter` has the complexity of the *adapted sorter*. However, it stores n additional iterators as well as n additional booleans and performs up to (3/2)n move operations once the iterators have been sorted; these operations are not significant enough to change the complexity of the *adapted sorter*, but they do represent a rather big additional constant factor.
+This adapter implements an indirect sort: a sorting algorithm that actually sorts the iterators rather than the values themselves, then uses the sorted iterators to move the actual values to their final position in the original collection. The actual algorithm used is a [mountain sort][mountain-sort], whose goal is to sort a collection while performing a minimal number of *move operations* on the elements of the collection. This indirect adapter copies the iterators and sorts them with the given sorter before performing cycles in a way close to a [cycle sort][cycle-sort] to actually move the elements. There are a few differences though: while the cycle sort always has a O(n²) complexity, the *resulting sorter* of `indirect_adapter` has the complexity of the *adapted sorter*. However, it stores n additional iterators as well as n additional booleans and performs up to (3/2)n move operations once the iterators have been sorted; these operations are not significant enough to change the complexity of the *adapted sorter*, but they do represent a rather big additional constant factor.
 
 Note that `indirect_adapter` provides a rather good exception guarantee: as long as the collection of iterators is being sorted, if an exception is thrown, the collection to sort will remain in its original state. However, it doesn't provide the *strong exception guarantee* since exceptions could still be thrown when the elements are moved to their sorted position.
 
@@ -118,7 +118,7 @@ template<typename Sorter>
 class indirect_adapter;
 ```
 
-The *resulting sorter* accepts forward iterators, and the iterator category of the *adapted sorter* does not matter. Note that this algorithm performs even fewer move operations than [`low_moves_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters#low_moves_sorter), but at the cost of a higher constant factor that may not always be worth it for small collections.
+The *resulting sorter* accepts forward iterators, and the iterator category of the *adapted sorter* does not matter. Note that this algorithm performs even fewer move operations than [`low_moves_sorter`][low-moves-sorter], but at the cost of a higher constant factor that may not always be worth it for small collections.
 
 *Changed in version 1.3.0:* `indirect_adapter` now returns the result of the *adapted sorter* in C++17 mode.
 
@@ -151,7 +151,7 @@ The *resulting sorter* accepts forward iterators, and the iterator category of t
 #include <cpp-sort/adapters/schwartz_adapter.h>
 ```
 
-This adapter implements a [Schwartzian transform](https://en.wikipedia.org/wiki/Schwartzian_transform) that helps to reduce the runtime cost when projections are expensive. A regular sorting algorithm generally projects elements on-the-fly during a comparison, that is, every time a sorting algorithm performs a comparison, it projects both operands before comparing the results, which is ok when the projection operation is cheap, but which might become a problem when the projection is more expensive. A sorter wrapped into `schwartz_adapter` will instead precompute the projection for every element in the collection to sort, then sort the original collection according to the projected elements. Compared to a raw sorter, it requires O(n) additional space to store the projected elements.
+This adapter implements a [Schwartzian transform][schwartzian-transform] that helps to reduce the runtime cost when projections are expensive. A regular sorting algorithm generally projects elements on-the-fly during a comparison, that is, every time a sorting algorithm performs a comparison, it projects both operands before comparing the results, which is ok when the projection operation is cheap, but which might become a problem when the projection is more expensive. A sorter wrapped into `schwartz_adapter` will instead precompute the projection for every element in the collection to sort, then sort the original collection according to the projected elements. Compared to a raw sorter, it requires O(n) additional space to store the projected elements.
 
 `schwartz_adapter` returns the result of the *adapted sorter* if any.
 
@@ -172,7 +172,7 @@ The mechanism used to synchronize the collection of projected objects with the o
 #include <cpp-sort/adapters/self_sort_adapter.h>
 ```
 
-This adapter takes a sorter and, if the collection to sort has a suitable `sort` method, it is used to sort the collection. Otherwise, if the collection to sort has a suitable `stable_sort` method, it is used to sort the collection. Otherwise, the *adapted sorter* is used instead to sort the collection. If `self_sort_adapter` is wrapped into [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter), if the collection to sort has a suitable `stable_sort` method, it is used to sort the collection (the `sort` methods of `std::list` and `std::forward_list` are special-cased and called by this adapter too). Otherwise, the *adapted sorter* wrapped into `stable_adapter` is used instead to sort the collection.
+This adapter takes a sorter and, if the collection to sort has a suitable `sort` method, it is used to sort the collection. Otherwise, if the collection to sort has a suitable `stable_sort` method, it is used to sort the collection. Otherwise, the *adapted sorter* is used instead to sort the collection. If `self_sort_adapter` is wrapped into [`stable_adapter`][stable-adapter], if the collection to sort has a suitable `stable_sort` method, it is used to sort the collection (the `sort` methods of `std::list` and `std::forward_list` are special-cased and called by this adapter too). Otherwise, the *adapted sorter* wrapped into `stable_adapter` is used instead to sort the collection.
 
 This sorter adapter allows to support out-of-the-box sorting for `std::list` and `std::forward_list` as well as other user-defined classes that implement a `sort` method with a compatible interface.
 
@@ -183,7 +183,7 @@ template<typename Sorter>
 struct self_sort_adapter;
 ```
 
-Since it is impossible to guarantee the stability of the `sort` method of a given iterable, the *resulting sorter*'s `is_always_stable` is `std::false_type`. However, [`is_stable`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_stable) will be `std::true_type` if a container's `stable_sort` is called or if a call to the *adapted sorter* is stable. A special case considers valid calls to `std::list::sort` and `std::forward_list::sort` to be stable.
+Since it is impossible to guarantee the stability of the `sort` method of a given iterable, the *resulting sorter*'s `is_always_stable` is `std::false_type`. However, [`is_stable`][is-stable] will be `std::true_type` if a container's `stable_sort` is called or if a call to the *adapted sorter* is stable. A special case considers valid calls to `std::list::sort` and `std::forward_list::sort` to be stable.
 
 ### `small_array_adapter`
 
@@ -191,7 +191,7 @@ Since it is impossible to guarantee the stability of the `sort` method of a give
 #include <cpp-sort/adapters/small_array_adapter.h>
 ```
 
-This adapter is not a regular sorter adapter, but a *fixed-size sorter adapter*. It wraps a [fixed-size sorter](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters) and calls it whenever it is passed a fixed-size C array or an `std::array` with an appropriate size.
+This adapter is not a regular sorter adapter, but a *fixed-size sorter adapter*. It wraps a [fixed-size sorter][fixed-size-sorter] and calls it whenever it is passed a fixed-size C array or an `std::array` with an appropriate size.
 
 ```cpp
 template<
@@ -201,7 +201,7 @@ template<
 struct small_array_adapter;
 ```
 
-The `Indices` parameter may be either `void` or a specialization of the standard class template [`std::index_sequence`](http://en.cppreference.com/w/cpp/utility/integer_sequence). When it is `void`, `small_array_adapter` will try to call the underlying fixed-size sorter for C arrays or `std::array` instances of any size. If an `std::index_sequence` specialization is given instead, the adapter will try to call the underlying fixed-size sorter only if the size of the array to be sorted appears in the index sequence. If the template parameter `Indices` is omitted, this class will check whether the [`fixed_sorter_traits`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits) specialization for the given fixed-size sorter contains a type named `domain` and use it as indices; if such a type does not exist, `void` will be used as `Indices`.
+The `Indices` parameter may be either `void` or a specialization of the standard class template [`std::index_sequence`][std-index-sequence]. When it is `void`, `small_array_adapter` will try to call the underlying fixed-size sorter for C arrays or `std::array` instances of any size. If an `std::index_sequence` specialization is given instead, the adapter will try to call the underlying fixed-size sorter only if the size of the array to be sorted appears in the index sequence. If the template parameter `Indices` is omitted, this class will check whether the [`fixed_sorter_traits`][fixed-sorter-traits] specialization for the given fixed-size sorter contains a type named `domain` and use it as indices; if such a type does not exist, `void` will be used as `Indices`.
 
 The `operator()` overloads are SFINAEd out if a collection not handled by the fixed-size sorter is passed (*e.g.* wrong type or array too big). These soft errors allow `small_array_adapter` to play nice with `hybrid_adapter`. For example, if one wants to call `low_moves_sorter` when a sorter is given an array of size 0 to 8 and `pdq_sorter` otherwise, they could easily create an appropriate sorter the following way:
 
@@ -219,13 +219,19 @@ using sorter = cppsort::hybrid_adapter<
 
 *Warning: this adapter only supports default-constructible stateless sorters.*
 
-### `stable_adapter`
+### `stable_adapter`, `make_stable` and `stable_t`
 
 ```cpp
 #include <cpp-sort/adapters/stable_adapter.h>
 ```
 
-This adapter takes a sorter and alters its behavior (if needed) to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and, whenever two elements compare equivalent, the algorithm uses the starting position of the compared elements to make sure that their relative starting positions are preserved. Compared to a raw sorter, it requires O(n) additional space to store the starting positions.
+This adapter takes a sorter and alters its behavior (if needed) to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and, whenever two elements compare equivalent, the algorithm compares the starting positions of the elements to ensure that their relative starting positions are preserved. Compared to a raw sorter, it requires O(n) additional space to store the starting positions.
+
+If the *adapted sorter* already implements a stable sorting algorithm when called with a specific set of parameters (if [`is_stable`][is-stable] is `std::true_type` for the parameters), then the *resulting sorter* will call the *adapted sorter* directly.
+
+`stable_adapter` and its specializations might expose a `type` member type which aliases the *adapter sorter* or some intermediate sorter which is always stable, or the *resulting sorter* otherwise. Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting.
+
+The *resulting sorter* is always stable.
 
 `stable_adapter` returns the result of the *adapted sorter* if any.
 
@@ -234,16 +240,18 @@ template<typename Sorter>
 struct stable_adapter;
 ```
 
-However, if the *adapted sorter* already implements a stable sorting algorithm when called with a specific set of parameters (if [`is_stable`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_stable) is `std::true_type` for the parameters), then the *resulting sorter* will call the *adapted sorter* directly. The *resulting sorter* is always stable.
+One can provide a dedicated stable algorithm by explicitly specializing `stable_adapter` to bypass the automatic transformation and allow optimizations, which can be useful when a pair of stable and unstable sorting algorithms are closely related. For example, while [`std_sorter`][std-sorter] calls [`std::sort`][std-sort], the explicit specialization `stable_adapter<std_sorter>` calls [`std::stable_sort`][std-stable-sort] instead. In **cpp-sort**, `stable_adapter` has specializations for the following components:
 
-One can provide a dedicated stable algorithm by explicitly specializing `stable_adapter` to bypass the automatic transformation and allow optimizations (this isn't clean *per se*, but...), which can be useful when a pair of stable and unstable sorting algorithms are closely related. For example, while [`std_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#std_sorter) calls [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort), the explicit specialization `stable_adapter<std_sorter>` actually calls [`std::stable_sort`](http://en.cppreference.com/w/cpp/algorithm/stable_sort) instead. In **cpp-sort**, `stable_adapter` has specializations for the following sorters and adapters:
+* [`default_sorter`][default-sorter]
+* [`std_sorter`][std-sorter]
+* [`verge_sorter`][verge-sorter]
+* [`hybrid_adapter`][hybrid-adapter]
+* [`self_sort_adapter`][self-sort-adapter]
+* [`verge_adapter`][verge-adapter]
 
-* [`default_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#default_sorter)
-* [`std_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#std_sorter)
-* [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter)
-* [`self_sort_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter)
+If such a user specialization is provided, it shall alias `is_always_stable` to `std::true_type` and provide a `type` member type which follows the rules mentioned earlier.
 
-While `stable_adapter` is the "high-level" adapter whenever one wants a stable sorting algorithm, the header also provides `make_stable`, which directly exposes the raw mechanism used to transform an unstable sorter into a stable one without applying any of the short-circuits described above:
+While `stable_adapter` is the "high-level" adapter to use whenever one wants a stable sorting algorithm, the header also provides `make_stable`, which directly exposes the raw mechanism used to transform an unstable sorter into a stable one without applying any of the short-circuits described above:
 
 ```cpp
 template<typename Sorter>
@@ -252,13 +260,24 @@ struct make_stable;
 
 Contrary to `stable_adapter`, `make_stable` isn't meant to be specialized by end users. In C++17, `make_stable` like most of the other adapters can take advantage of deduction guides.
 
+The header also provides the `stable_t` type alias, which either alias the passed sorter if it is always stable, or `stable_adapter<Sorter>` otherwise.
+
+```cpp
+template<typename Sorter>
+using stable_t = /* implementation-defined */;
+```
+
+*New in version 1.9.0:* `stable_t`
+
+It is roughly equivalent to `stable_adapter<Sorter>::type`, except that it doesn't instantiate `stable_adapter<Sorter>` when it doesn't need to. It can be used to reduce the template nesting and improve error messages in some places, and as such is often a better alternative to a raw `stable_adapter`.
+
 ### `verge_adapter`
 
 ```cpp
 #include <cpp-sort/adapters/verge_adapter.h>
 ```
 
-While the library already provides a `verge_sorter` built on top of `pdq_sorter`, the true power of vergesort is to add a fast *Runs*-adaptive layer on top of any sorting algorithm to make it handle data with big runs better while not being noticeably slower for the distributions that the vergesort layer can't handle. [This page](https://github.com/Morwenn/vergesort/blob/master/fallbacks.md) contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
+While the library already provides a `verge_sorter` built on top of `pdq_sorter`, the true power of vergesort is to add a fast *Runs*-adaptive layer on top of any sorting algorithm to make it handle data with big runs better while not being noticeably slower for the distributions that the vergesort layer can't handle. [This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
 
 `verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It only accepts random-access iterables.
 
@@ -266,3 +285,29 @@ While the library already provides a `verge_sorter` built on top of `pdq_sorter`
 template<typename Sorter>
 struct verge_adapter;
 ```
+
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and faster than just using `make_stable`.
+
+*New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
+
+
+  [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
+  [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
+  [default-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#default_sorter
+  [fixed-size-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters
+  [fixed-sorter-traits]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits
+  [hybrid-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter
+  [is-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_stable
+  [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
+  [low-moves-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters#low_moves_sorter
+  [mountain-sort]: https://github.com/Morwenn/mountain-sort
+  [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
+  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter
+  [self-sort-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter
+  [std-index-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
+  [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
+  [std-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#std_sorter
+  [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
+  [verge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#verge_adapter
+  [verge-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#verge_sorter
+  [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/master/fallbacks.md

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2018-2020 Morwenn
+# Copyright (c) 2018-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 from conans import CMake, ConanFile
@@ -8,7 +8,7 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.8.1"
+    version = "1.9.0"
     description = "Additional sorting algorithms & related tools"
     topics = "conan", "cpp-sort", "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"

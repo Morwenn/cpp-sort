@@ -25,12 +25,19 @@ target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 ### Building cpp-sort
 
 The project's CMake files do offer some options, but they are mainly used to configure the test suite and the examples:
-* `BUILD_TESTING`: whether to build the test suite, defaults to `ON`.
-* `BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`. 
-* `ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
-* `USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
+* `CPPSORT_BUILD_TESTING`: whether to build the test suite, defaults to `ON`.
+* `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`. 
+* `CPPSORT_ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
+* `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
+* `CPPSORT_SANITIZE`: values to pass to the `-fsanitize` falgs of compilers that supports them, default to empty.
+
+The same options exist without the `CPPSORT_` prefix exist, but are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default the values of the equivalent unprefixed options.
 
 *New in version 1.6.0:* added the option `BUILD_EXAMPLES`.
+
+*New in version 1.9.0:* options with the `CPPSORT_` prefix.
+
+***WARNING:** options without a `CPPSORT_` prefixed are deprecated in version 1.9.0 and removed in version 2.0.0.*
 
 [Catch2][catch2] 2.6.0 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest Catch2 release will be downloaded.
 
@@ -44,10 +51,10 @@ The project's CMake files do offer some options, but they are mainly used to con
 conan search cpp-sort --remote=conan-center
 ```
 
-And then install any version to your local cache as follows (here with version 1.5.1):
+And then install any version to your local cache as follows (here with version 1.9.0):
 
 ```sh
-conan install cpp-sort/1.5.1
+conan install cpp-sort/1.9.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to use the source available in this GitHub repository.

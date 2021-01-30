@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "fixed_size_list.h"
@@ -230,7 +231,7 @@ namespace detail
     auto iter_swap(group_iterator<Iterator> lhs, group_iterator<Iterator> rhs)
         -> void
     {
-        detail::swap_ranges(lhs.base(), lhs.base() + lhs.size(), rhs.base());
+        detail::swap_ranges_inner(lhs.base(), lhs.base() + lhs.size(), rhs.base());
     }
 
     ////////////////////////////////////////////////////////////

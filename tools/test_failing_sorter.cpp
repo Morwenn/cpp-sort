@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -9,14 +9,21 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#define CPPSORT_ENABLE_ASSERTIONS
+//#define CPPSORT_ENABLE_AUDITS
+
+#include <cpp-sort/adapters.h>
 #include <cpp-sort/probes.h>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include "../testsuite/distributions.h"
+#include "../benchmarks/benchmarking-tools/distributions.h"
+#include "../testsuite/testing-tools/algorithm.h"
+#include "../testsuite/testing-tools/wrapper.h"
 
 struct shuffled_string:
-    dist::distribution<shuffled_string>
+    dist::base_distribution<shuffled_string>
 {
     template<typename OutputIterator, typename T=long long int>
     auto operator()(OutputIterator out, long long int size, T start=T(0)) const
@@ -31,7 +38,7 @@ struct shuffled_string:
         T end = start + size;
         for (auto i = start ; i < end ; ++i) {
             auto s = std::to_string(i);
-            vec.push_back(std::string(100 - s.size(), '0') + std::move(s));
+            vec.push_back(std::string(50 - s.size(), '0') + std::move(s));
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
         std::move(std::begin(vec), std::end(vec), out);
@@ -41,40 +48,51 @@ struct shuffled_string:
 template<typename Sorter>
 void test(const char* name)
 {
-    const int size = 491;
+    const int size = 412;
 
     std::vector<std::string> collection;
-    collection.reserve(size);
     auto distribution = shuffled_string{};
-    distribution(std::back_inserter(collection), size, -125);
+    distribution(std::back_inserter(collection), size);
 
     auto copy = collection;
-    std::sort(std::begin(copy), std::end(copy));
+    cppsort::quick_sort(std::begin(copy), std::end(copy));
 
-    std::cout << std::boolalpha << name << '\n';
     auto sorter = Sorter{};
     sorter(collection);
+
+    // Collect basic data
+    auto first_unsorted_it = std::is_sorted_until(std::begin(collection), std::end(collection));
+    bool is_collection_sorted = first_unsorted_it == std::end(collection);
+
+    // Display information
+    std::cout << std::boolalpha << name << std::endl;
     std::cout << "is the collection sorted? ";
-    std::cout << std::is_sorted(std::begin(collection), std::end(collection)) << '\n';
+    std::cout << is_collection_sorted << std::endl;
+    if (not is_collection_sorted) {
+        std::cout << "position of the first unsorted element: "
+                  << std::distance(std::begin(collection), first_unsorted_it)
+                  << std::endl;
+    }
     std::cout << "is it the same as the one sorted with std::sort? ";
-    std::cout << (collection == copy) << '\n';
+    std::cout << (collection == copy) << std::endl;
     std::cout << "were some elements altered? ";
     auto copy2 = collection;
-    std::sort(std::begin(collection), std::end(collection));
-    std::cout << (collection != copy) << '\n';
+    cppsort::quick_sort(std::begin(collection), std::end(collection));
+    std::cout << (collection != copy) << std::endl;
 
+    // Measures of presortedness
     std::cout << '\n'
-        << "dis: " << cppsort::probe::dis(copy2) << '\n'
-        << "enc: " << cppsort::probe::enc(copy2) << '\n'
-        << "exc: " << cppsort::probe::exc(copy2) << '\n'
-        << "ham: " << cppsort::probe::ham(copy2) << '\n'
-        << "inv: " << cppsort::probe::inv(copy2) << '\n'
-        << "max: " << cppsort::probe::max(copy2) << '\n'
-        << "mono: " << cppsort::probe::mono(copy2) << '\n'
-        << "osc: " << cppsort::probe::osc(copy2) << '\n'
-        << "par: " << cppsort::probe::par(copy2) << '\n'
-        << "rem: " << cppsort::probe::rem(copy2) << '\n'
-        << "runs: " << cppsort::probe::runs(copy2) << '\n'
+        << "dis: " << cppsort::probe::dis(copy2) << std::endl
+        << "enc: " << cppsort::probe::enc(copy2) << std::endl
+        << "exc: " << cppsort::probe::exc(copy2) << std::endl
+        << "ham: " << cppsort::probe::ham(copy2) << std::endl
+        << "inv: " << cppsort::probe::inv(copy2) << std::endl
+        << "max: " << cppsort::probe::max(copy2) << std::endl
+        << "mono: " << cppsort::probe::mono(copy2) << std::endl
+        << "osc: " << cppsort::probe::osc(copy2) << std::endl
+        << "par: " << cppsort::probe::par(copy2) << std::endl
+        << "rem: " << cppsort::probe::rem(copy2) << std::endl
+        << "runs: " << cppsort::probe::runs(copy2) << std::endl
         << '\n';
 
     if (size < 40) {
@@ -82,11 +100,11 @@ void test(const char* name)
         for (const auto& elem: copy2) {
             std::cout << elem << ' ';
         }
-        std::cout << "\n\n";
+        std::cout << "\n\n" << std::flush;
     }
 }
 
 int main()
 {
-    test<cppsort::poplar_sorter2>("poplar_sort");
+    test<cppsort::poplar_sorter>("poplar_sort");
 }

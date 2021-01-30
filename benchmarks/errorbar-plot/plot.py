@@ -59,7 +59,7 @@ def main():
     ax.grid(True)
     ax.set_xlabel('Size')
     ax.set_ylabel('Time [s]')
-    ax.set_xscale('log', basex=2)
+    ax.set_xscale('log', base=2)
     ax.set_yscale('log')
 
     pyplot.title("Sorting std::vector<int>")

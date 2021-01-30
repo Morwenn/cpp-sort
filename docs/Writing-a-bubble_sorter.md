@@ -163,7 +163,7 @@ auto bubble_sort(BidirectionalIterator first, BidirectionalIterator last,
 }
 ```
 
-Note that in C++17, it is preferred to use directly [`std::invoke`](http://en.cppreference.com/w/cpp/utility/functional/invoke) to call the comparison function instead of transforming it with `as_function`.
+Note that in C++17, it is preferred to use directly [`std::invoke`](https://en.cppreference.com/w/cpp/utility/functional/invoke) to call the comparison function instead of transforming it with `as_function`.
 
 ## Using `bubble_sorter` with forward iterators
 
@@ -261,7 +261,7 @@ struct bubble_sorter_impl
 
 We can see several improvements compared to the previous version: first of all, we added an optional projection parameter which defauts to [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects). This is a function object that returns a value as is so that the default behaviour of the algorithm is to run *as if* projections didn't exist. It is very likely to be optimized aways by the compiler anyway.
 
-The second modification is one I wish we could do without (yet another thing that concepts would make more expressive): [`is_projection_iterator_v`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_projection-and-is_projection_iterator) is a trait that checks whether a projection function can be used on a dereferenced iterator. It also optionally checks that a given comparison function can be called with the result of two such projections. This trait exists to ensure that `cppsort::sort` won't call the functor when these conditions are not satisfied, which may be crucial when aggregating sorters with [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter).
+The second modification is one I wish we could do without (yet another thing that concepts would make more expressive): [`is_projection_iterator_v`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_projection-and-is_projection_iterator) is a trait that checks whether a projection function can be used on a dereferenced iterator. It also optionally checks that a given comparison function can be called with the result of two such projections. This trait exists to ensure that a sorter's `operator()` won't be called when these conditions are not satisfied, which may be crucial when aggregating sorters with [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter).
 
 Now that you know how to handle projections in your algorithm, here is the interesting part: you generally don't need to manually handle projections. The class template `sorter_facade` generates overloads of `operator()` taking projection functions that bake the projection into the comparison and forward that mix to the sorter implementation. In our implementation of `bubble_sort`, we always use the projection inside the comparison, so handling the projections by hand isn't giving us any optimization opportunity; we might as well implement just the comparison and add the small required SFINAE check:
 
@@ -413,7 +413,7 @@ namespace
 inline constexpr auto&& bubble_sort = bubble_sorter{};
 ```
 
-The utility [`static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const) is a variable template used to avoid ODR problem. Understanding the details is a bit tough; you can read [Eric Niebler's original article](http://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) about this pattern if you want to learn more about it. Basically it is a poor man's substitute to compensate the lack of `inline` variables pre-C++17.
+The utility [`static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const) is a variable template used to avoid ODR problem. Understanding the details is a bit tough; you can read [Eric Niebler's original article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) about this pattern if you want to learn more about it. Basically it is a poor man's substitute to compensate the lack of `inline` variables pre-C++17.
 
 ## Better error messages
 

@@ -10,6 +10,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <testing-tools/wrapper.h>
 
 namespace
 {
@@ -105,7 +106,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
     // of a pair of iterators. We need to make sure that these
     // optimizations work too.
 
-    struct wrapper { int value; };
+    using wrapper = generic_wrapper<int>;
 
     // Collection to "sort"
     std::vector<int> vec;

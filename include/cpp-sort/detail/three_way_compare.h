@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_THREE_WAY_COMPARE_H_
@@ -141,6 +141,35 @@ namespace detail
         }
     };
 
+#ifdef __cpp_lib_ranges
+    template<>
+    struct three_way_compare<std::ranges::less, true>:
+        three_way_compare_base<three_way_compare<std::ranges::less>>
+    {
+        constexpr three_way_compare(std::ranges::less) {}
+
+        using three_way_compare_base<three_way_compare<std::ranges::less>>::operator();
+
+        template<
+            typename CharT,
+            typename Traits1, typename Alloc1,
+            typename Traits2, typename Alloc2
+        >
+        auto operator()(const std::basic_string<CharT, Traits1, Alloc1>& lhs,
+                        const std::basic_string<CharT, Traits2, Alloc2>& rhs) const
+            -> int
+        {
+            return lhs.compare(0, lhs.size(), rhs.data(), rhs.size());
+        }
+
+        constexpr auto base() const noexcept
+            -> std::ranges::less
+        {
+            return {};
+        }
+    };
+#endif
+
     template<>
     struct three_way_compare<std::greater<>, true>:
         three_way_compare_base<three_way_compare<std::greater<>>>
@@ -168,6 +197,36 @@ namespace detail
             return {};
         }
     };
+
+#ifdef __cpp_lib_ranges
+    template<>
+    struct three_way_compare<std::ranges::greater, true>:
+        three_way_compare_base<three_way_compare<std::ranges::greater>>
+    {
+        constexpr three_way_compare(std::ranges::greater) {}
+
+        using three_way_compare_base<three_way_compare<std::ranges::greater>>::operator();
+
+        template<
+            typename CharT,
+            typename Traits1, typename Alloc1,
+            typename Traits2, typename Alloc2
+        >
+        auto operator()(const std::basic_string<CharT, Traits1, Alloc1>& lhs,
+                        const std::basic_string<CharT, Traits2, Alloc2>& rhs) const
+            -> int
+        {
+            int res = lhs.compare(0, lhs.size(), rhs.data(), rhs.size());
+            return (res < 0) ? 1 : -res;
+        }
+
+        constexpr auto base() const noexcept
+            -> std::ranges::greater
+        {
+            return {};
+        }
+    };
+#endif
 }}
 
 #endif // CPPSORT_DETAIL_THREE_WAY_COMPARE_H_

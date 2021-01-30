@@ -11,12 +11,13 @@
 #include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/fixed_sorters.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
+
+using wrapper = generic_wrapper<double>;
 
 TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
            "[schwartz_adapter]" )
 {
-    struct wrapper { double value; };
-
     auto&& low_comparisons_sort = cppsort::schwartz_adapter<
         cppsort::small_array_adapter<
             cppsort::low_comparisons_sorter
@@ -162,8 +163,6 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
 TEST_CASE( "stability of Schwartzian transform adapter with fixed-size sorters",
            "[schwartz_adapter][is_stable]" )
 {
-    struct wrapper { double value; };
-
     using namespace cppsort;
     using sorter = schwartz_adapter<
         small_array_adapter<

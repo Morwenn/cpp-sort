@@ -40,7 +40,7 @@ auto sort(Iterator first, Iterator last, Compare compare, Projection projection)
     -> void;
 ```
 
-These overloads take either an `Iterable` or a pair of `Iterator`, and sort the corresponding collection in-place in ascending order using [`cppsort::default_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#default_sorter) to perform the sort. If provided, the comparison function `compare` and the projection function `projection` are used instead of the default [`std::less<>`](http://en.cppreference.com/w/cpp/utility/functional/less_void) and [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects).
+These overloads take either an `Iterable` or a pair of `Iterator`, and sort the corresponding collection in-place in ascending order using [`cppsort::default_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#default_sorter) to perform the sort. If provided, the comparison function `compare` and the projection function `projection` are used instead of the default [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void) and [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects).
 
 ### Overload calling a user-provided sorter
 
@@ -82,7 +82,7 @@ auto sort(const Sorter& sorter, Iterator first, Iterator last,
     -> decltype(auto);
 ```
 
-These overloads take either an `Iterable` or a pair of `Iterator`, and sort the corresponding collection in-place in ascending order using the given sorter. If provided, the comparison function `compare` and the projection function `projection` are used instead of the default [`std::less<>`](http://en.cppreference.com/w/cpp/utility/functional/less_void) and [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects). The returned value corresponds to the value returned by the sorter's `operator()` when it is given the other parameters.
+These overloads take either an `Iterable` or a pair of `Iterator`, and sort the corresponding collection in-place in ascending order using the given sorter. If provided, the comparison function `compare` and the projection function `projection` are used instead of the default [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void) and [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects). The returned value corresponds to the value returned by the sorter's `operator()` when it is given the other parameters.
 
 Note that there is some heavy SFINAE wizardry happening to ensure that none of the `sort` overloads are ambiguous. This magic has been stripped from the documentation for clarity but may contribute to highly unreadable error messages. However, there is still some ambiguity left: the overload resolution might fail if `sort` is given an object that satisfies both the `Compare` and `Projection` concepts. This issue can we worked around with [`as_comparison` and `as_projection`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_comparison-and-as_projection)
 

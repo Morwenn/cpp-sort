@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -40,7 +40,7 @@
 #include "rdtsc.h"
 
 // Type of data to sort during the benchmark
-using value_t = int;
+using value_t = double;
 // Type of collection to sort
 using collection_t = std::vector<value_t>;
 
@@ -60,18 +60,18 @@ int main()
     >;
 
     std::pair<std::string, distr_f> distributions[] = {
-        { "shuffled",               shuffled()              },
-        { "shuffled_16_values",     shuffled_16_values()    },
-        { "all_equal",              all_equal()             },
-        { "ascending",              ascending()             },
-        { "descending",             descending()            },
-        { "pipe_organ",             pipe_organ()            },
-        { "push_front",             push_front()            },
-        { "push_middle",            push_middle()           },
-        { "ascending_sawtooth",     ascending_sawtooth()    },
-        { "descending_sawtooth",    descending_sawtooth()   },
-        { "alternating",            alternating()           },
-        { "alternating_16_values",  alternating_16_values() }
+        { "shuffled",               dist::shuffled()                },
+        { "shuffled_16_values",     dist::shuffled_16_values()      },
+        { "all_equal",              dist::all_equal()               },
+        { "ascending",              dist::ascending()               },
+        { "descending",             dist::descending()              },
+        { "pipe_organ",             dist::pipe_organ()              },
+        { "push_front",             dist::push_front()              },
+        { "push_middle",            dist::push_middle()             },
+        { "ascending_sawtooth",     dist::ascending_sawtooth()      },
+        { "descending_sawtooth",    dist::descending_sawtooth()     },
+        { "alternating",            dist::alternating()             },
+        { "alternating_16_values",  dist::alternating_16_values()   },
     };
 
     std::pair<std::string, sort_f> sorts[] = {
@@ -80,7 +80,7 @@ int main()
         { "quick_sort",     cppsort::quick_sort     },
         { "spread_sort",    cppsort::spread_sort    },
         { "std_sort",       cppsort::std_sort       },
-        { "verge_sort",     cppsort::verge_sort     }
+        { "verge_sort",     cppsort::verge_sort     },
     };
 
     std::size_t sizes[] = { 1'000'000 };

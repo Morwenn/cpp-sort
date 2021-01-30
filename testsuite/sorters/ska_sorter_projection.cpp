@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -11,6 +11,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/ska_sorter.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "ska_sorter tests with projections",
            "[ska_sorter][projection]" )
@@ -68,11 +69,11 @@ TEST_CASE( "ska_sorter tests with projections",
 
     SECTION( "sort with std::string iterators" )
     {
-        struct wrapper { std::string value; };
+        using wrapper = generic_wrapper<std::string>;
 
         std::vector<wrapper> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {
-            vec.push_back({std::to_string(i)});
+            vec.emplace_back(std::to_string(i));
         }
         std::shuffle(std::begin(vec), std::end(vec), engine);
         cppsort::ska_sort(vec, &wrapper::value);

@@ -24,6 +24,7 @@
 #include "../detail/checkers.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
+#include "../detail/sized_iterator.h"
 
 namespace cppsort
 {
@@ -132,8 +133,25 @@ namespace cppsort
             );
         }
 
+        template<
+            typename ForwardIterator,
+            typename Compare,
+            typename Projection,
+            typename Sorter
+        >
+        auto make_stable_and_sort(sized_iterator<ForwardIterator> first, difference_type_t<ForwardIterator> size,
+                                  Compare&& compare, Projection&& projection, Sorter&& sorter)
+            -> decltype(auto)
+        {
+            // Hack to get the stable bidirectional version of vergesort
+            // to work correctly without duplicating tons of code
+            return make_stable_and_sort(first.base(), size,
+                                        std::move(compare), std::move(projection),
+                                        std::move(sorter));
+        }
+
         ////////////////////////////////////////////////////////////
-        // Adapter
+        // make_stable_impl
 
         template<typename Sorter>
         struct make_stable_impl:
@@ -175,7 +193,8 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return make_stable_and_sort(first, std::distance(first, last),
+                using std::distance; // Hack for sized_iterator
+                return make_stable_and_sort(first, distance(first, last),
                                             std::move(compare), std::move(projection),
                                             this->get());
             }
@@ -186,6 +205,9 @@ namespace cppsort
             using is_always_stable = std::true_type;
         };
     }
+
+    ////////////////////////////////////////////////////////////
+    // make_stable
 
     // Expose the underlying mechanism
     template<typename Sorter>
@@ -199,7 +221,9 @@ namespace cppsort
         {}
     };
 
-    // Actual sorter
+    ////////////////////////////////////////////////////////////
+    // stable_adapter
+
     template<typename Sorter>
     struct stable_adapter:
         utility::adapter_storage<Sorter>,
@@ -240,7 +264,57 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
+        using type = stable_adapter<Sorter>;
     };
+
+    // Accidental nesting can happen, unwrap
+    template<typename Sorter>
+    struct stable_adapter<stable_adapter<Sorter>>:
+        stable_adapter<Sorter>
+    {
+        using type = stable_adapter<Sorter>;
+    };
+
+    ////////////////////////////////////////////////////////////
+    // stable_t
+
+    namespace detail
+    {
+        template<typename Sorter, typename=void>
+        struct stable_t_impl_false
+        {
+            // The sorter is not always stable and does not have
+            // a type member named 'type'
+            using type = stable_adapter<Sorter>;
+        };
+
+        template<typename Sorter>
+        struct stable_t_impl_false<Sorter, detail::void_t<typename stable_adapter<Sorter>::type>>
+        {
+            // The sorter is not always stable but has a type member
+            // called 'type', use that one
+            using type = typename stable_adapter<Sorter>::type;
+        };
+
+        template<typename Sorter, bool>
+        struct stable_t_impl
+        {
+            // The sorter is always stable, alias it directly
+            using type = Sorter;
+        };
+
+        template<typename Sorter>
+        struct stable_t_impl<Sorter, false>
+        {
+            using type = typename stable_t_impl_false<Sorter>::type;
+        };
+    }
+
+    template<typename Sorter>
+    using stable_t = typename detail::stable_t_impl<
+        Sorter,
+        cppsort::is_always_stable_v<Sorter>
+    >::type;
 }
 
 #ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_

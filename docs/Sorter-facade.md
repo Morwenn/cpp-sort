@@ -43,7 +43,7 @@ template<typename Iterator, typename... Args>
 constexpr operator Ret(*)(Iterator, Iterator, Args...)() const;
 ```
 
-Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the ugly `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is an [`std::result_of_t`](http://en.cppreference.com/w/cpp/types/result_of) of the parameters (well, it is what you would expect it to be). The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
+Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the ugly `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is an [`std::result_of_t`](https://en.cppreference.com/w/cpp/types/result_of) of the parameters (well, it is what you would expect it to be). The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
 Since C++17, these function pointer conversion operators are also `constexpr`.
 
@@ -72,7 +72,7 @@ auto operator()(Iterator first, Iterator last,
     -> /* implementation-defined */;
 ```
 
-These overloads will generally forward the parameters to the corresponding `operator()` in the wrapped *sorter implementation*. It does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in the *sorter implementation* and to complete the call with instances of [`std::less<>`](http://en.cppreference.com/w/cpp/utility/functional/less_void) and/or [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
+These overloads will generally forward the parameters to the corresponding `operator()` in the wrapped *sorter implementation*. It does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in the *sorter implementation* and to complete the call with instances of [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void) and/or [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
 
 Provided you have a sorting function with a standard iterator interface, creating the corresponding sorter becomes trivial thanks to `sorter_facade`. For instance, here is a simple sorter wrapping a [`selection_sort`](https://en.wikipedia.org/wiki/Selection_sort):
 
@@ -119,7 +119,7 @@ auto operator()(Iterable&& iterable, Compare compare, Projection projection) con
     -> /* implementation-defined */;
 ```
 
-These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using `utility::begin` and `utility::end` on the iterable to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`](http://en.cppreference.com/w/cpp/utility/functional/less_void) and/or [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
+These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using `utility::begin` and `utility::end` on the iterable to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void) and/or [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
 
 It will always call the most suitable iterable `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking a pair of iterators when it cannot do otherwise.
 
@@ -169,4 +169,12 @@ auto operator()(Iterator first, Iterator last,
     -> /* implementation-defined */;
 ```
 
+When [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity) is available, special overloads are provided with the same behaviour as the `utility::identity` ones.
+
+When [`std::ranges::less`](https://en.cppreference.com/w/cpp/utility/functional/ranges/less) is available, special overloads are provided with a behaviour similar to that of the `std::less<>` ones.
+
 While it does not appear in this documentation, `sorter_facade` actually relies on an extensive amount of SFINAE tricks to ensure that only the `operator()` overloads that are needed and viable are generated. For example, the magic `std::less<>` overloads won't be generated if the wrapped *sorter implementation* already accepts a comparison function.
+
+*Changed in version 1.9.0:* when `std::identity` is available, special overloads are provided.
+
+*Changed in version 1.9.0:* when `std::ranges::less` is available, special overloads are provided.

@@ -12,6 +12,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -25,7 +26,7 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename FallbackSorter>
+        template<typename FallbackSorter, bool Stable>
         struct verge_adapter_impl:
             utility::adapter_storage<FallbackSorter>
         {
@@ -55,27 +56,38 @@ namespace cppsort
                     "verge_adapter requires at least random-access iterators"
                 );
 
-                vergesort(std::move(first), std::move(last), last - first,
-                          std::move(compare), std::move(projection),
-                          this->get());
+                verge::sort<Stable>(std::move(first), std::move(last), last - first,
+                                    std::move(compare), std::move(projection),
+                                    this->get());
             }
 
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
             using iterator_category = std::random_access_iterator_tag;
-            using is_always_stable = std::false_type;
+            using is_always_stable = std::integral_constant<bool, Stable>;
         };
     }
 
     template<typename FallbackSorter>
     struct verge_adapter:
-        sorter_facade<detail::verge_adapter_impl<FallbackSorter>>
+        sorter_facade<detail::verge_adapter_impl<FallbackSorter, false>>
     {
         verge_adapter() = default;
 
         constexpr explicit verge_adapter(FallbackSorter sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter>>(std::move(sorter))
+            sorter_facade<detail::verge_adapter_impl<FallbackSorter, false>>(std::move(sorter))
+        {}
+    };
+
+    template<typename FallbackSorter>
+    struct stable_adapter<verge_adapter<FallbackSorter>>:
+        sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>
+    {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(verge_adapter<FallbackSorter> sorter):
+            sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>(std::move(sorter).get())
         {}
     };
 }

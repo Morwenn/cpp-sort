@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -14,16 +14,14 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
+#include <testing-tools/wrapper.h>
 
-namespace
-{
-    // double segfaults with MinGW-w64 64 bits in Release mode
-    template<typename T=float>
-    struct wrapper
-    {
-        T value;
-    };
-}
+// NOTE: this test used to use wrapper<double>, but it was later
+//       switched to wrapper<float> because the former segfaults
+//       with MinGW-w64 64 bits in Release mode
+template<typename T=float>
+using wrapper = generic_wrapper<T>;
 
 TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapter", "[schwartz_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
@@ -45,10 +43,9 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
                     cppsort::tim_sorter,
                     cppsort::verge_sorter )
 {
-    std::vector<wrapper<>> collection(412);
-    helpers::iota(collection.begin(), collection.end(), -125, &wrapper<>::value);
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection.begin(), collection.end(), engine);
+    std::vector<wrapper<>> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
@@ -65,15 +62,14 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapt
                     cppsort::selection_sorter,
                     cppsort::verge_sorter )
 {
-    std::vector<wrapper<>> collection(412);
-    helpers::iota(collection.begin(), collection.end(), -125, &wrapper<>::value);
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection.begin(), collection.end(), engine);
+    std::list<wrapper<>> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 412, -125);
 
-    std::list<wrapper<>> li(collection.begin(), collection.end());
     cppsort::schwartz_adapter<TestType> sorter;
-    sorter(li, &wrapper<>::value);
-    CHECK( helpers::is_sorted(li.begin(), li.end(), std::less<>{}, &wrapper<>::value) );
+    sorter(collection, &wrapper<>::value);
+    CHECK( helpers::is_sorted(collection.begin(), collection.end(),
+                              std::less<>{}, &wrapper<>::value) );
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "[schwartz_adapter]",
@@ -82,31 +78,31 @@ TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "
                     cppsort::quick_sorter,
                     cppsort::selection_sorter )
 {
-    std::vector<wrapper<>> collection(412);
-    helpers::iota(collection.begin(), collection.end(), -125, &wrapper<>::value);
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection.begin(), collection.end(), engine);
+    std::forward_list<wrapper<>> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::front_inserter(collection), 412, -125);
 
-    std::forward_list<wrapper<>> fli(collection.begin(), collection.end());
     cppsort::schwartz_adapter<TestType> sorter;
-    sorter(fli, &wrapper<>::value);
-    CHECK( helpers::is_sorted(fli.begin(), fli.end(), std::less<>{}, &wrapper<>::value) );
+    sorter(collection, &wrapper<>::value);
+    CHECK( helpers::is_sorted(collection.begin(), collection.end(),
+                              std::less<>{}, &wrapper<>::value) );
 }
 
 TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwartz_adapter]" )
 {
+    auto distribution = dist::shuffled{};
+
     std::vector<wrapper<>> collection(412);
-    helpers::iota(collection.begin(), collection.end(), -125, &wrapper<>::value);
+    distribution(std::back_inserter(collection), 412, -125);
+
     std::vector<wrapper<int>> collection2(412);
-    helpers::iota(collection2.begin(), collection2.end(), -125, &wrapper<int>::value);
+    distribution(std::back_inserter(collection2), 412, -125);
+
     std::vector<wrapper<std::string>> collection3;
     for (int i = -125 ; i < 287 ; ++i) {
-        collection3.push_back({std::to_string(i)});
+        collection3.emplace_back(std::to_string(i));
     }
-
     std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection.begin(), collection.end(), engine);
-    std::shuffle(collection2.begin(), collection2.end(), engine);
     std::shuffle(collection3.begin(), collection3.end(), engine);
 
     SECTION( "ska_sorter" )

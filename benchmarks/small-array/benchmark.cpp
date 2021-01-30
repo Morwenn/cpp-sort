@@ -45,7 +45,7 @@ template<
     typename Sorter,
     typename DistributionFunction
 >
-auto time_it(Sorter sorter, DistributionFunction dist)
+auto time_it(Sorter sorter, DistributionFunction distribution)
     -> double
 {
     // Seed the distribution manually to ensure that all algorithms
@@ -54,13 +54,13 @@ auto time_it(Sorter sorter, DistributionFunction dist)
 
     std::vector<std::uint64_t> cycles;
 
-    // Generate and sort arrays of size N thanks to dist
+    // Generate and sort arrays of size N thanks to distribution
     auto total_start = clock_type::now();
     auto total_end = clock_type::now();
     while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
            cycles.size() < max_runs_per_size) {
         std::array<T, N> arr;
-        dist(arr.begin(), N);
+        distribution(arr.begin(), N);
         std::uint64_t start = rdtsc();
         sorter(arr);
         std::uint64_t end = rdtsc();
@@ -139,12 +139,12 @@ int main()
     std::cout << "SEED: " << seed << '\n';
 
     time_distributions<int, 13u,
-        shuffled,
-        all_equal,
-        ascending,
-        descending,
-        pipe_organ,
-        push_front,
-        push_middle
+        dist::shuffled,
+        dist::all_equal,
+        dist::ascending,
+        dist::descending,
+        dist::pipe_organ,
+        dist::push_front,
+        dist::push_middle
     >();
 }

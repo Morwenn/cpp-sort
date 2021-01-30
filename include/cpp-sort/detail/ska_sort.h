@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -18,13 +18,14 @@
 #include <climits>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <iterator>
 #include <limits>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "attributes.h"
 #include "iterator_traits.h"
 #include "memcpy_cast.h"
@@ -134,7 +135,7 @@ namespace detail
 
 #ifdef __SIZEOF_INT128__
     inline auto to_unsigned_or_bool(__int128_t l)
-        -> unsigned long long
+        -> __uint128_t
     {
         return static_cast<__uint128_t>(l)
              + static_cast<__uint128_t>(__int128_t(1) << (CHAR_BIT * sizeof(__int128_t) - 1));
@@ -163,12 +164,21 @@ namespace detail
         return u ^ (sign_bit | 0x8000000000000000);
     }
 
+#ifdef UINTPTR_MAX
+    template<typename T>
+    auto to_unsigned_or_bool(T* ptr)
+        -> std::uintptr_t
+    {
+        return reinterpret_cast<std::uintptr_t>(ptr);
+    }
+#else
     template<typename T>
     auto to_unsigned_or_bool(T* ptr)
         -> std::size_t
     {
         return reinterpret_cast<std::size_t>(ptr);
     }
+#endif
 
     template<typename RandomAccessIterator, typename Function>
     auto unroll_loop_four_times(RandomAccessIterator begin, std::size_t iteration_count,
@@ -531,10 +541,7 @@ namespace detail
     auto StdSortFallback(RandomAccessIterator begin, RandomAccessIterator end, Projection projection)
         -> void
     {
-        auto&& proj = utility::as_function(projection);
-        pdqsort(std::move(begin), std::move(end), [&](auto&& l, auto&& r) {
-            return proj(l) < proj(r);
-        }, utility::identity{});
+        pdqsort(std::move(begin), std::move(end), std::less<>{}, std::move(projection));
     }
 
     template<std::ptrdiff_t StdSortThreshold, typename RandomAccessIterator, typename Projection>

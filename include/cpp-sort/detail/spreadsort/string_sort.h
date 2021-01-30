@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -64,7 +64,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \post The elements in the range [@c first, @c last) are sorted in ascending order.
 
    \throws std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
+   the right shift, subtraction of right-shifted elements, callables,
    or any operations on iterators throw.
 
    \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.
@@ -111,12 +111,12 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
 
 
    \tparam RandomAccessIter <a href="http://www.cplusplus.com/reference/iterator/RandomAccessIterator/">Random access iterator</a>
-   \tparam Comp Functor type to use for comparison.
+   \tparam Comp callable type to use for comparison.
    \tparam Unsigned_char_type Unsigned character type used for string.
 
    \param[in] first Iterator pointer to first element.
    \param[in] last Iterator pointing to one beyond the end of data.
-   \param[in] comp A binary functor that returns whether the first element passed to it should go before the second in order.
+   \param[in] comp A binary callable that returns whether the first element passed to it should go before the second in order.
    \param[in] unused value with the same type as the result of the [] operator, defining the Unsigned_char_type.  The actual value is unused.
 
    \pre [@c first, @c last) is a valid range.
@@ -129,7 +129,7 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
    \return @c void.
 
    \throws  std::exception Propagates exceptions if any of the element comparisons, the element swaps (or moves),
-   the right shift, subtraction of right-shifted elements, functors,
+   the right shift, subtraction of right-shifted elements, callables,
    or any operations on iterators throw.
 
    \warning Throwing an exception may cause data loss. This will also throw if a small vector resize throws, in which case there will be no data loss.

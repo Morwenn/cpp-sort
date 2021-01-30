@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MERGE_SORT_H_
@@ -14,12 +14,12 @@
 #include <list>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include "../projection_compare.h"
 
 namespace cppsort
 {

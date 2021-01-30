@@ -153,13 +153,13 @@ None of the container-aware algorithms invalidates iterators.
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
 ```
 
-Implements the Ford-Johnson merge-insertion sort. I am no researcher and I couldn't find the algorithm's complexity on the internet, so you will have nice question marks instead. This algorithm isn't meant to actually be used and is mostly interesting from a computer science point of view: for really small collections, it has an optimal worst case for the number of comparisons performed; it has been proven that for some sizes, no algorithm can perform fewer comparisons. That said, the algorithm has a rather big memory overhead and performs many move operations; it is really too slow for any real world use.
+Implements the Ford-Johnson merge-insertion sort. This algorithm isn't meant to actually be used and is mostly interesting from a computer science point of view: for really small collections, it has an optimal worst case for the number of comparisons performed. It has indeed been proved that for some sizes, no algorithm can perform fewer comparisons. That said, the algorithm has a rather big memory overhead and performs many move operations; it is really too slow for any real world use.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | ?           | n log n     | n log n     | n           | No          | Random-access |
 
-*Until version 1.7.0:* it is worth noting that the algorithm uses GNU's [`bitmap_allocator`](https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html) when possible at some places instead of the default allocator. I noticed speed improvements up to 25%, but that still doesn't make the algorithm anywhere near fast.
+*Until version 1.7.0:* the algorithm used GNU's [`bitmap_allocator`](https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html) with `std::list` when possible instead of the default allocator, leading to speed improvements up to 25%.
 
 *Changed in version 1.7.0:* the `std::list` used by the algorithm has been replaced with a custom list implementation whose speed does not depend on the availability of some allocator, and which should be faster than the previous implementation in any case (still not anywhere near fast).
 
@@ -223,7 +223,7 @@ This sorter is a bit faster or a bit slower than `smooth_sorter` depending on th
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 ```
 
-Implements a flavour of [QuickMergeSort](https://arxiv.org/abs/1307.3033).
+Implements a flavour of [QuickMergesort][quick-mergesort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -231,13 +231,17 @@ Implements a flavour of [QuickMergeSort](https://arxiv.org/abs/1307.3033).
 | n           | n log n     | n log n     | log² n      | No          | Bidirectional |
 | n           | n log² n    | n log² n    | log² n      | No          | Forward       |
 
-QuickMergeSort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergeSort used by `quick_merge_sorter` actually uses an equivalent of [`std::nth_element`](https://en.cppreference.com/w/cpp/algorithm/nth_element) to partition the collection in 1/3-2/3 parts in order to maximize the size of the partition (2 thirds of the space) that can be merge-sorted using the other partition as a swap buffer.
+QuickMergesort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergesort used by `quick_merge_sorter` uses a [selection algorithm][selection-algorithm] to split the collection into partitions containing 2/3 and 1/3 of the elements respectively. This allows to use an internal mergesort of the biggest partition (2/3 of the elements) using the other partition (1/3 of the elements) as a swap buffer.
 
-The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The log n memory is due to top-down mergesort stack recursion in the random-access version, while the memory of the forward version use is dominated by the mutually recursive [introselect](https://en.wikipedia.org/wiki/Introselect) algorithm which is used to implement an `nth_element` equivalent for forward iterators.
+The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The space complexity is dominated by the stack recursion in the selection algorithms:
+* log n for the random-access version, which uses Andrei Alexandrescu's [*AdaptiveQuickselect*][adaptive-quickselect].
+* log² n for the forward and bidirectional versions, which use the mutually recursive [introselect][introselect] algorithm.
 
 This sorter can't throw `std::bad_alloc`.
 
 *New in version 1.2.0*
+
+*Changed in version 1.9.0:* the random-access version now runs in O(n log n) instead of accidentally running in O(n²).
 
 ### `quick_sorter`
 
@@ -313,7 +317,7 @@ Implements a [spinsort](https://www.boost.org/doc/libs/1_72_0/libs/sort/doc/html
 #include <cpp-sort/sorters/split_sorter.h>
 ```
 
-Implements an in-place *SplitSort* as descirbed in *Splitsort—an adaptive sorting algorithm* by Levcopoulos and Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
+Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by Levcopoulos and Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -324,6 +328,8 @@ SplitSort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measure
 * While it uses O(n) extra memory to merge some elements, it can run perfectly fine with O(1) extra memory.
 * Benchmarks shows that drop-merge sort is better when few elements aren't in place, but SplitSort has a lower overhead on random data while still performing better than most general-purpose sorting algorithms when the data is already somewhat sorted.
 
+This sorter can't throw `std::bad_alloc`.
+
 *New in version 1.4.0*
 
 ### `std_sorter`
@@ -332,7 +338,7 @@ SplitSort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measure
 #include <cpp-sort/sorters/std_sorter.h>
 ```
 
-Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorithm/sort) to sort a collection. While the complexity guarantees are only partial in the standard, here is what's expected:
+Uses the standard library [`std::sort`](https://en.cppreference.com/w/cpp/algorithm/sort) to sort a collection. While the complexity guarantees are only partial in the standard, here is what's expected:
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -340,14 +346,14 @@ Uses the standard library [`std::sort`](http://en.cppreference.com/w/cpp/algorit
 
 \* *`std::sort` is mandated by the standard to be O(n log n), but the libc++ implementation of the algorithm - despite non-trivial optimizations - [is still O(n²)](https://bugs.llvm.org/show_bug.cgi?id=20837). If you are using another standard library implementation then `std_sorter` should be O(n log n) for randon-access iterators, as expected.*
 
-The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) has an explicit specialization for `std_sorter` which calls [`std::stable_sort`](http://en.cppreference.com/w/cpp/algorithm/stable_sort) instead. Its complexity depends on whether it can allocate additional memory or not. While the complexity guarantees are only partial in the standard, here is what's expected:
+The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) has an explicit specialization for `std_sorter` which calls [`std::stable_sort`](https://en.cppreference.com/w/cpp/algorithm/stable_sort) instead. Its complexity depends on whether it can allocate additional memory or not. While the complexity guarantees are only partial in the standard, here is what's expected:
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n log n     | n log n     | n log n     | n           | Yes         | Random-access |
 | n log² n    | n log² n    | n log² n    | 1           | Yes         | Random-access |
 
-`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could the the best choice to sort an [`std::vector<bool>`](http://en.cppreference.com/w/cpp/container/vector_bool).
+`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could the the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
 
 This sorter can't throw `std::bad_alloc`.
 
@@ -382,13 +388,17 @@ Implements a [vergesort](https://github.com/Morwenn/vergesort) algorithm backed 
 | n           | n log n     | n log n log log n | n           | No          | Bidirectional |
 | n           | n log n     | n log n           | log² n      | No          | Bidirectional |
 
-Vergesort is a [*Runs*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#runs) algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergeSort otherwise).
+Vergesort is a [*Runs*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#runs) algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergesort otherwise).
 
 Vergesort's complexity is bound either by its optimization layer or by the fallback sorter's complexity:
 * When it doesn't find big runs, the complexity is bound by the fallback sorter: depending on the category of iterators you can refer to the tables of either `pdq_sorter` or `quick_merge_sorter`.
 * When it does find big runs, vergesort's complexity is bound by the merging phase of its optimization layer. In such a case, `inplace_merge` is used to merge the runs: it will use additional memory if any is available, in which case vergesort is O(n log n). If there isn't much extra memory available, it may still require O(log n) extra memory (and thus raise an `std::bad_alloc` if there isn't that much memory available) in which case the complexity falls to O(n log n log log n). It should not happen that much, and the additional *log log n* factor is likely irrelevant for most real-world applications.
 
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. This make the specialization stable, and faster than just using `make_stable`.
+
 *Changed in version 1.6.0:* when sorting a collection made of bidirectional iterators, `verge_sorter` falls back to `quick_merge_sorter` instead of `quick_sorter`.
+
+*New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
 
 ## Type-specific sorters
 
@@ -400,7 +410,7 @@ The following sorters are available but will only work for some specific types i
 #include <cpp-sort/sorters/counting_sorter.h>
 ```
 
-`counting_sorter` implements a simple [counting sort](https://en.wikipedia.org/wiki/Counting_sort). This sorter also supports reverse sorting with `std::greater<>`.
+`counting_sorter` implements a simple [counting sort](https://en.wikipedia.org/wiki/Counting_sort). This sorter also supports reverse sorting with `std::greater<>` or `std::ranges::greater`.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -411,6 +421,8 @@ This sorter works with any type satisfying the trait `std::is_integral` (as well
 \* *Since the original integers are discarded and overwritten, whether the algorithm is stable or not does not mean much. Moreover, it can only sort integers, so the potential stability problems shouldn't even be observable.*
 
 *Changed in version 1.6.0:* support for `[un]signed __int128`.
+
+*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
 
 ### `ska_sorter`
 
@@ -451,7 +463,7 @@ It comes into three main flavours (available individually if needed):
 
 * `integer_spread_sorter` works with any type satisfying the trait `std::is_integral`.
 * `float_spread_sorter` works with any type satisfying the trait `std::numeric_limits::is_iec559` whose size is the same as `std::uint32_t` or `std::uin64_t`.
-* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes). This sorter also supports reverse sorting with `std::greater<>`. In C++17 it also works with `std::string_view` and `std::wstring_view` (if `wchar_t` is 2 bytes).
+* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes). This sorter also supports reverse sorting with `std::greater<>` and `std::ranges::greater`. In C++17 it also works with `std::string_view` and `std::wstring_view` (if `wchar_t` is 2 bytes).
 
 These sorters accept projections as long as their simplest form can handle the result of the projection. The three of them are aggregated into one main sorter the following way:
 
@@ -464,3 +476,11 @@ struct spread_sorter:
     >
 {};
 ```
+
+*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
+
+
+  [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [introselect]: https://en.wikipedia.org/wiki/Introselect
+  [quick-mergesort]: https://arxiv.org/abs/1307.3033
+  [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm

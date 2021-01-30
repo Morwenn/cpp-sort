@@ -2,30 +2,27 @@
  * Copyright (c) 2015-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <functional>
 #include <iterator>
 #include <list>
-#include <random>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/distributions.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "merge_sorter tests with projections",
            "[merge_sorter][projection]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(Catch::rngSeed());
-
     // Wrapper to hide the integer
-    struct wrapper { int value; };
+    using wrapper = generic_wrapper<int>;
 
     // Collection to sort
-    std::vector<wrapper> vec(80);
-    helpers::iota(std::begin(vec), std::end(vec), 0, &wrapper::value);
-    std::shuffle(std::begin(vec), std::end(vec), engine);
+    std::vector<wrapper> vec;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(vec), 80);
 
     SECTION( "sort with random-access iterable" )
     {

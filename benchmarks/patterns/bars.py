@@ -1,6 +1,6 @@
 #  -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2020 Morwenn
+# Copyright (c) 2015-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 # Copyright (c) 2015 Orson Peters <orsonpeters@gmail.com>
@@ -50,10 +50,18 @@ def main():
         "ascending_sawtooth": "Ascending sawtooth",
         "descending_sawtooth": "Descending sawtooth",
         "alternating": "Alternating",
-        "alternating_16_values": "Alternating (16 values)"
+        "alternating_16_values": "Alternating (16 values)",
     }
 
-    sort_order = ["heap_sort", "pdq_sort", "quick_sort", "spread_sort", "std_sort", "verge_sort"]
+    # Algorithm results will be displayed in this order
+    algos = [
+        "heap_sort",
+        "pdq_sort",
+        "quick_sort",
+        "spread_sort",
+        "std_sort",
+        "verge_sort",
+    ]
 
     root = pathlib.Path(args.root)
     for file in root.iterdir():
@@ -72,7 +80,7 @@ def main():
         # Choose the colour palette and markers to use
         if args.use_alt_palette:
             # That one has the advantage of being infinite
-            palette = pyplot.cm.rainbow(numpy.linspace(0, 1, len(sort_order)))
+            palette = pyplot.cm.rainbow(numpy.linspace(0, 1, len(algos)))
         else:
             # Colorblind-friendly palette (https://gist.github.com/thriveth/8560036)
             palette = ['#377eb8', '#ff7f00', '#4daf4a',
@@ -92,11 +100,8 @@ def main():
                 "Ascending sawtooth",
                 "Descending sawtooth",
                 "Alternating",
-                "Alternating (16 values)"
+                "Alternating (16 values)",
             )
-
-            algos = tuple(data[size]["Shuffled"].keys())
-            algos = tuple(sorted(algos, key=lambda a: sort_order.index(a)))
 
             groupnames = distributions
             groupsize = len(algos)
@@ -132,7 +137,7 @@ def main():
             ax.autoscale_view()
             pyplot.ylim(pyplot.ylim()[0] + 1, pyplot.ylim()[1] - 1)
 
-            pyplot.title("Sorting $10^{}$ elements".format(round(math.log(size, 10))))
+            pyplot.title("Sorting a std::vector<double> with $10^{}$ elements".format(round(math.log(size, 10))))
             pyplot.legend(loc="best")
 
             figure = pyplot.gcf()

@@ -6,9 +6,9 @@
             cppsort::utility::fixed_buffer<512>
         >;
 
-* *Comparison function*: most of the sorting algorithms in the library are comparison sorts. It means that the algorithm uses a comparison function to know the order of the elements and sort them accordingly; such a comparison function shall take two values and have a return type convertible to `bool`. The available sorting algorithms transform comparison functions on the fly so that some pointers to member functions can also be used as comparison functions, as if called with [`std::invoke`](http://en.cppreference.com/w/cpp/utility/functional/invoke). The default comparison function used by the sorting algorithms is [`std::less<>`](http://en.cppreference.com/w/cpp/utility/functional/less_void). Many sorters can take a comparison function as an additional parameter. For example, using `std::greater<>` instead of the default comparison function would sort a collection in descending order.
+* *Comparison function*: most of the sorting algorithms in the library are comparison sorts. It means that the algorithm uses a comparison function to know the order of the elements and sort them accordingly; such a comparison function shall take two values and have a return type convertible to `bool`. The available sorting algorithms transform comparison functions on the fly so that some pointers to member functions can also be used as comparison functions, as if called with [`std::invoke`](https://en.cppreference.com/w/cpp/utility/functional/invoke). The default comparison function used by the sorting algorithms is [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void). Many sorters can take a comparison function as an additional parameter. For example, using `std::greater<>` instead of the default comparison function would sort a collection in descending order.
 
-        cppsort::sort(collection, std::greater<>{});
+        cppsort::heap_sort(collection, std::greater<>{});
 
     Some algorithms don't accept such an additional parameter. It may be because they implement a non-comparison sort instead, a sorting algorithm that uses other properties of the elements to perform the sort rather than a comparison function (for example a [radix sort](https://en.wikipedia.org/wiki/Radix_sort)).
 
@@ -16,7 +16,7 @@
 
 * *Fixed-size sorter*:  [[fixed-size sorters]] are a special breed of sorters designed to sort a fixed number of values. While they try their best to be full-fledge sorters, they are definitely not full-fledge sorters and probably don't blend as well as one would like into the library. Their main advantage is that they can be more performant than regular sorters in some specific scenarios.
 
-* *Iterator category*: the C++ standard defines [several categories of iterators](http://en.cppreference.com/w/cpp/iterator) such as forward iterators, bidirectional iterators or random-access iterators. The standard library uses [iterator tags](http://en.cppreference.com/w/cpp/iterator/iterator_tags) to document the category of an iterator. These categories are important since algorithms are designed to work with some categories of iterators and not with other categories, and those in this library are not different: in-place sorting needs at least forward iterators. You can use the [`iterator_category`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#iterator_category) sorter trait to get the least constrained iterator category associated with a sorter.
+* *Iterator category*: the C++ standard defines [several categories of iterators](https://en.cppreference.com/w/cpp/iterator) such as forward iterators, bidirectional iterators or random-access iterators. The standard library uses [iterator tags](https://en.cppreference.com/w/cpp/iterator/iterator_tags) to document the category of an iterator. These categories are important since algorithms are designed to work with some categories of iterators and not with other categories, and those in this library are not different: in-place sorting needs at least forward iterators. You can use the [`iterator_category`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#iterator_category) sorter trait to get the least constrained iterator category associated with a sorter.
 
         using category = cppsort::iterator_category<cppsort::merge_sorter>;
 
@@ -26,11 +26,11 @@
 
         auto max_inversion = cppsort::probe::dis(collection);
 
-* *Projection*: some sorters accept a projection as an additional parameter. A projection is a unary function that allows to "view" the values of a collection differently. For example it may allow to sort a collection of values on a specific field. The available sorting algorithms transform projections on the fly so that pointers to member data can also be used as projections. Projections were pioneered by the [Adobe Source Libraries](http://stlab.adobe.com/) and appear in the C++20 [Constrained algorithms](https://en.cppreference.com/w/cpp/algorithm/ranges).
+* *Projection*: some sorters accept a projection as an additional parameter. A projection is a unary function that allows to "view" the values of a collection differently. For example it may allow to sort a collection of values on a specific field. The available sorting algorithms transform projections on the fly so that pointers to member data can also be used as projections. Projections were pioneered by the [Adobe Source Libraries](https://stlab.adobe.com/) and appear in the C++20 [Constrained algorithms](https://en.cppreference.com/w/cpp/algorithm/ranges).
 
         struct wrapper { int value; };
         std::vector<wrapper> collection = { /* ... */ };
-        cppsort::sort(collection, &wrapper::value);
+        cppsort::heap_sort(collection, &wrapper::value);
 
     Every *comparison sorter* is also a *projection sorter*, but there are also projection-only sorters, such as  [`spread_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters).
 

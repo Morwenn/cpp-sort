@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SCHWARTZ_ADAPTER_H_
@@ -18,9 +18,12 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/branchless_traits.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
+#include "../detail/config.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
 #include "../detail/type_traits.h"
@@ -39,7 +42,18 @@ namespace cppsort
                 return (std::forward<T>(value).data);
             }
         };
+    }
 
+    namespace utility
+    {
+        template<typename T>
+        struct is_probably_branchless_projection<cppsort::detail::data_getter, T>:
+            std::true_type
+        {};
+    }
+
+    namespace detail
+    {
         ////////////////////////////////////////////////////////////
         // Algorithm proper
 
@@ -176,6 +190,25 @@ namespace cppsort
                 // utility::identity does nothing, bypass schartz_adapter entirely
                 return this->get()(std::move(first), std::move(last), std::move(compare), projection);
             }
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+            template<typename ForwardIterable, typename Compare>
+            auto operator()(ForwardIterable&& iterable, Compare compare, std::identity projection) const
+                -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
+            {
+                // std::identity does nothing, bypass schartz_adapter entirely
+                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
+            }
+
+            template<typename ForwardIterator, typename Compare>
+            auto operator()(ForwardIterator first, ForwardIterator last,
+                            Compare compare, std::identity projection) const
+                -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
+            {
+                // std::identity does nothing, bypass schartz_adapter entirely
+                return this->get()(std::move(first), std::move(last), std::move(compare), projection);
+            }
+#endif
         };
     }
 

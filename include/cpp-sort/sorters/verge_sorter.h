@@ -12,6 +12,8 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -23,10 +25,11 @@
 namespace cppsort
 {
     ////////////////////////////////////////////////////////////
-    // Sorter
+    // Sorter implementation
 
     namespace detail
     {
+        template<bool Stable>
         struct verge_sorter_impl
         {
             template<
@@ -49,9 +52,9 @@ namespace cppsort
                     "verge_sorter requires at least bidirectional iterators"
                 );
 
-                vergesort(std::begin(iterable), std::end(iterable),
-                          utility::size(iterable),
-                          std::move(compare), std::move(projection));
+                verge::sort<Stable>(std::begin(iterable), std::end(iterable),
+                                    utility::size(iterable),
+                                    std::move(compare), std::move(projection));
             }
 
             template<
@@ -75,21 +78,35 @@ namespace cppsort
                 );
 
                 auto size = std::distance(first, last);
-                vergesort(std::move(first), std::move(last), size,
-                          std::move(compare), std::move(projection));
+                verge::sort<Stable>(std::move(first), std::move(last), size,
+                                    std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
             using iterator_category = std::bidirectional_iterator_tag;
-            using is_always_stable = std::false_type;
+            using is_always_stable = std::integral_constant<bool, Stable>;
         };
     }
 
+    ////////////////////////////////////////////////////////////
+    // Sorters
+
     struct verge_sorter:
-        sorter_facade<detail::verge_sorter_impl>
+        sorter_facade<detail::verge_sorter_impl<false>>
     {};
+
+    template<>
+    struct stable_adapter<verge_sorter>:
+        sorter_facade<detail::verge_sorter_impl<true>>
+    {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(verge_sorter):
+            sorter_facade<detail::verge_sorter_impl<true>>()
+        {}
+    };
 
     ////////////////////////////////////////////////////////////
     // Sort function

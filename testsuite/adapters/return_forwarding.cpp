@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2020 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -10,6 +10,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/sorter_facade.h>
+#include <cpp-sort/utility/functional.h>
 
 namespace
 {

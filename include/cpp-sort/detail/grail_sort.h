@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -131,7 +131,7 @@ namespace grail
             ++M;
         }
         if (M != left_it) {
-            detail::swap_ranges(M, M + (middle - left_it), left_it);
+            detail::swap_ranges_overlap(M, M + (middle - left_it), left_it);
         }
     }
 
@@ -389,7 +389,7 @@ namespace grail
             int fnext = compare(proj(keys[cidx]), midkey_proj) < 0 ? 0 : 1;
             if(fnext == frest) {
                 if (havebuf) {
-                    detail::swap_ranges(prest-lblock, prest-(lblock-lrest), prest);
+                    detail::swap_ranges_overlap(prest-lblock, prest-(lblock-lrest), prest);
                 }
                 prest = pidx;
                 lrest = lblock;
@@ -411,7 +411,7 @@ namespace grail
         if (llast) {
             if (frest) {
                 if (havebuf) {
-                    detail::swap_ranges(prest-lblock, prest-(lblock-lrest), prest);
+                    detail::swap_ranges_overlap(prest-lblock, prest-(lblock-lrest), prest);
                 }
                 prest = pidx;
                 lrest = lblock * nblock2;
@@ -427,7 +427,7 @@ namespace grail
             }
         } else {
             if (havebuf) {
-                detail::swap_ranges(prest, prest+lrest, prest-lblock);
+                detail::swap_ranges_overlap(prest, prest+lrest, prest-lblock);
             }
         }
     }
@@ -570,7 +570,7 @@ namespace grail
                     }
                 }
                 if (p != u - 1) {
-                    detail::swap_ranges(arr1+(u-1)*lblock, arr1+u*lblock, arr1+p*lblock);
+                    detail::swap_ranges_overlap(arr1+(u-1)*lblock, arr1+u*lblock, arr1+p*lblock);
                     iter_swap(keys+(u-1), keys+p);
                     if (midkey == u - 1 || midkey == p) {
                         midkey ^= (u - 1) ^ p;

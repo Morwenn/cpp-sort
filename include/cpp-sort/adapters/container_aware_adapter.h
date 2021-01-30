@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_
@@ -11,17 +11,17 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include "../detail/projection_compare.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
 {
     namespace detail
     {
-        // Hide the generic cppsort::sort
+        // Hide potential out-of-scope sort()
         struct nope_type {};
         template<typename... Args>
         auto sort(Args&&...)
@@ -221,20 +221,18 @@ namespace cppsort
                     detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        detail::projection_compare<std::less<>, Projection>
+                        projection_compare<std::less<>, Projection>
                     >::value,
                     conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
-                                                       detail::make_projection_compare(std::less<>{},
-                                                                                       std::move(projection))))
+                                                       make_projection_compare(std::less<>{}, std::move(projection))))
                     >
                 >
             {
                 return detail::adl_despair{}(this->get(), iterable,
-                                             detail::make_projection_compare(std::less<>{},
-                                                                             std::move(projection)));
+                                             make_projection_compare(std::less<>{}, std::move(projection)));
             }
 
             template<
@@ -250,7 +248,7 @@ namespace cppsort
                     not detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        detail::projection_compare<std::less<>, Projection>
+                        projection_compare<std::less<>, Projection>
                     >::value,
                     conditional_t<
                         Stability,
@@ -295,20 +293,18 @@ namespace cppsort
                     detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        detail::projection_compare<Compare, Projection>
+                        projection_compare<Compare, Projection>
                     >::value,
                     conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
-                                                       detail::make_projection_compare(std::move(compare),
-                                                                                       std::move(projection))))
+                                                       make_projection_compare(std::move(compare), std::move(projection))))
                     >
                 >
             {
                 return detail::adl_despair{}(this->get(), iterable,
-                                             detail::make_projection_compare(std::move(compare),
-                                                                             std::move(projection)));
+                                             make_projection_compare(std::move(compare), std::move(projection)));
             }
 
             template<
@@ -323,7 +319,7 @@ namespace cppsort
                     not detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        detail::projection_compare<Compare, Projection>
+                        projection_compare<Compare, Projection>
                     >::value,
                     conditional_t<
                         Stability,

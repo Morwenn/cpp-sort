@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
+#include "../detail/config.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -32,6 +33,13 @@ namespace utility
             std::is_arithmetic<T>
         {};
 
+#ifdef __cpp_lib_ranges
+        template<typename T>
+        struct is_probably_branchless_comparison_impl<std::ranges::less, T>:
+            std::is_arithmetic<T>
+        {};
+#endif
+
         template<typename T>
         struct is_probably_branchless_comparison_impl<std::less<T>, T>:
             std::is_arithmetic<T>
@@ -41,6 +49,13 @@ namespace utility
         struct is_probably_branchless_comparison_impl<std::greater<>, T>:
             std::is_arithmetic<T>
         {};
+
+#ifdef __cpp_lib_ranges
+        template<typename T>
+        struct is_probably_branchless_comparison_impl<std::ranges::greater, T>:
+            std::is_arithmetic<T>
+        {};
+#endif
 
         template<typename T>
         struct is_probably_branchless_comparison_impl<std::greater<T>, T>:
@@ -83,6 +98,25 @@ namespace utility
         struct is_probably_branchless_projection_impl:
             std::is_member_object_pointer<Projection>
         {};
+
+#if defined(__GLIBCXX__)
+template<typename Class, typename T, typename U>
+struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
+    std::is_member_object_pointer<T Class::*>
+{};
+#elif defined(_LIBCPP_VERSION)
+        template<typename Class, typename T, typename U>
+        struct is_probably_branchless_projection_impl<std::__mem_fn<T Class::*>, U>:
+            std::is_member_object_pointer<T Class::*>
+        {};
+#endif
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+        template<typename T>
+        struct is_probably_branchless_projection_impl<std::identity, T>:
+            std::true_type
+        {};
+#endif
     }
 
     // Strip types from cv and reference qualifications if needed

@@ -1,8 +1,6 @@
-[![Latest Release](https://img.shields.io/badge/release-cpp--sort%2F1.8.1-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.8.1)
-[![Conan Package](https://img.shields.io/badge/conan-1.8.1-blue.svg)](https://conan.io/center/cpp-sort?version=1.8.1)
-[![Build Status](https://travis-ci.org/Morwenn/cpp-sort.svg?branch=master)](https://travis-ci.org/Morwenn/cpp-sort)
-[![License](https://img.shields.io/:license-mit-blue.svg)](https://doge.mit-license.org)
-[![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/master/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
+[![Latest Release](https://img.shields.io/badge/release-1.9.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.9.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.9.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.9.0)
+[![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
 > regardless of application or the computer being used. But in fact, each method has its own
@@ -111,29 +109,33 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 
 # Compiler support & tooling
 
+![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/workflows/Ubuntu%20Builds/badge.svg?branch=develop)
+![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/Windows%20Builds/badge.svg?branch=develop)
+![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
+
 **cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
 or more recent versions of these compilers. So far, the library should work with the
 following compilers:
-* g++5.5 or more recent
-* MinGW-w64 g++5.5 or more recent
-* clang++3.8 or more recent
-* AppleClang shipping with Xcode 9.4 (used to work with older versions but they aren't tested anymore)
-* It is notably tested with both libstdc++ and libc++
+* g++5.5 or more recent. It it know not to work with some older g++5 versions.
+* clang++6 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
+* The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
+* Clang is notably tested with both libstdc++ and libc++.
 
-The compilers listed above are the ones tested specifically, and the library is also tested with
-the most recent versions of those compilers on a regular basis. All the other compiler versions
-in-between are untested, but should also work. Feel free to open an issue if it isn't the case.
+The compilers listed above are the ones used by the CI pipeline, and the library is also tested
+with the most recent versions of those compilers on a regular basis. All the other compiler
+versions in-between are untested, but should also work. Feel free to open an issue if it isn't the
+case.
 
 Last time I tried it did not work with the latest MSVC. Future development on the C++14 branch
 will try to remain compatible with the compiler versions listed above. I might try to make it
-work with it in the future.
+work with MSVC in the future.
 
 The features in the library might differ depending on the C++ version used and on the compiler
 extensions enabled. Those changes [are documented](https://github.com/Morwenn/cpp-sort/wiki/Changelog)
 in the wiki.
 
-The main repository contains additional support for standard tooling such as CMake or Conan;
-you can read more about those [in the wiki](https://github.com/Morwenn/cpp-sort/wiki/Tooling).
+The main repository contains additional support for standard tooling such as CMake or Conan.
+You can read more about those [in the wiki](https://github.com/Morwenn/cpp-sort/wiki/Tooling).
 
 # Thanks
 
@@ -200,6 +202,10 @@ of the algorithm.
 
 * The algorithm used by `indirect_adapter` with forward or bidirectional iterators is a
 slightly modified version of Matthew Bentley's [indiesort](https://github.com/mattreecebentley/plf_indiesort).
+
+* The implementation of the random-access overload of `nth_element` used by some of the algorithms
+comes from Danila Kutenin's [miniselect library](https://github.com/danlark1/miniselect) and uses
+Andrei Alexandrescu's [*AdaptiveQuickselect*](https://arxiv.org/abs/1606.00484) algorithm.
 
 * The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
 Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).

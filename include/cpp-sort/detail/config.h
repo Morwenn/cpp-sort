@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
@@ -27,6 +27,29 @@
 #   endif
 #else
 #   define CPPSORT_CONSTEXPR_AFTER_CXX14
+#endif
+
+////////////////////////////////////////////////////////////
+// Check for C++20 features
+
+// There is no feature-test macro for std::identity that can
+// be used reliably, so we have to fall back to checking
+// compiler and standard versions
+
+#if defined(__GNUC__)
+#   if __GNUC__ > 3 && __cplusplus > 201703L
+#       define CPPSORT_STD_IDENTITY_AVAILABLE 1
+#   else
+#       define CPPSORT_STD_IDENTITY_AVAILABLE 0
+#   endif
+#elif defined(__clang__)
+#   define CPPSORT_STD_IDENTITY_AVAILABLE 0
+#else
+#   if defined(__cpp_lib_ranges)
+#       CPPSORT_STD_IDENTITY_AVAILABLE 1
+#   else
+#       CPPSORT_STD_IDENTITY_AVAILABLE 0
+#   endif
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -74,6 +97,22 @@
 #       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
 #   else
 #       define CPPSORT_ASSERT(...)
+#   endif
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_AUDIT
+
+// Some debug checks might be way too expensive for most
+// scenarios, but still of great help when debugging tough
+// problems, hence this audit feature
+
+#ifndef CPPSORT_AUDIT
+#   ifdef CPPSORT_ENABLE_AUDITS
+#       include <cassert>
+#       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
+#   else
+#       define CPPSORT_AUDIT(...)
 #   endif
 #endif
 

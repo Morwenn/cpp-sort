@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
@@ -17,6 +17,7 @@
 #include "iterator_traits.h"
 #include "nth_element.h"
 #include "quicksort.h"
+#include "sized_iterator.h"
 #include "swap_ranges.h"
 
 namespace cppsort
@@ -53,7 +54,7 @@ namespace detail
 
         for (; first1 != last1; ++result) {
             if (first2 == last2) {
-                detail::swap_ranges(first1, last1, result);
+                detail::swap_ranges_inner(first1, last1, result);
                 return;
             }
 
@@ -76,7 +77,7 @@ namespace detail
                                          Compare compare, Projection projection)
         -> void
     {
-        auto buffer_end = detail::swap_ranges(first, middle, buffer);
+        auto buffer_end = detail::swap_ranges_inner(first, middle, buffer);
         internal_half_inplace_merge(buffer, buffer_end, middle, last, first, size_left,
                                     std::move(compare), std::move(projection));
     }
@@ -127,9 +128,9 @@ namespace detail
                           Compare compare, Projection projection)
         -> void
     {
-        // This flavour of QuickMergeSort splits the collection in [2/3, 1/3]
+        // This flavour of QuickMergesort splits the collection in [2/3, 1/3]
         // partitions where the right partition is used as an internal buffer
-        // to apply mergesort to the left partition, then QuickMergeSort is
+        // to apply mergesort to the left partition, then QuickMergesort is
         // recursively applied to the smaller right partition
 
         while (size > qmsort_limit) {
@@ -148,6 +149,18 @@ namespace detail
             size -= size_left;
         }
         small_sort(first, last, size, std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto quick_merge_sort(sized_iterator<ForwardIterator> first, sized_iterator<ForwardIterator> last,
+                          difference_type_t<ForwardIterator> size,
+                          Compare compare, Projection projection)
+        -> void
+    {
+        // Hack to get the stable bidirectional version of vergesort
+        // to work correctly without duplicating tons of code
+        quick_merge_sort(first.base(), last.base(), size,
+                         std::move(compare), std::move(projection));
     }
 }}
 
