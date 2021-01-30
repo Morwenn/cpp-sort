@@ -26,7 +26,7 @@ class CppSortConan(ConanFile):
     no_copy_source = True
     settings = "os", "compiler", "build_type", "arch"
 
-    def configure(self):
+    def validate(self):
         if self.settings.get_safe("compiler.cppstd"):
             tools.check_min_cppstd(self, 14)
 
