@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020 Morwenn
+# Copyright (c) 2020-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 """
@@ -14,6 +14,7 @@ import argparse
 import fileinput
 import fnmatch
 import os
+import shutil
 import sys
 
 import pygit2
@@ -72,6 +73,8 @@ def main():
     # sure that the .gitignore is valid when modifying said files
     old_dirname = os.path.join(repo_root, 'include', 'cpp-sort')
     new_dirname = os.path.join(repo_root, 'include', REPLACEMENT_LIST['cpp-sort'])
+    if os.path.isdir(new_dirname):
+        shutil.rmtree(new_dirname)
     os.rename(old_dirname, new_dirname)
 
 if __name__ == '__main__':
