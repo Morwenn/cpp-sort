@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FIXED_SIZE_LIST_H_
@@ -46,6 +46,9 @@ namespace detail
         fixed_size_list_node(fixed_size_list_node&&) = delete;
         fixed_size_list_node& operator=(const fixed_size_list_node&) = delete;
         fixed_size_list_node& operator=(fixed_size_list_node&&) = delete;
+
+        // The list takes care of managing the lifetime of value
+        ~fixed_size_list_node() {}
 
         // Inhibit construction of the node with a value
         union { T value; };
