@@ -208,10 +208,9 @@ namespace grail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto smart_merge_without_buffer(RandomAccessIterator first, RandomAccessIterator middle,
-                                    RandomAccessIterator last, int left_over_frag,
-                                    Compare compare, Projection projection)
-        -> std::pair<int, int>
+    auto smart_merge_without_buffer(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
+                                    int left_over_frag, Compare compare, Projection projection)
+        -> std::pair<difference_type_t<RandomAccessIterator>, int>
     {
         auto&& proj = utility::as_function(projection);
 
@@ -273,7 +272,7 @@ namespace grail
                                        RandomAccessIterator last,
                                        int left_over_frag, difference_type_t<RandomAccessIterator> block_len,
                                        Compare compare, Projection projection)
-        -> std::pair<int, int>
+        -> std::pair<difference_type_t<RandomAccessIterator>, int>
     {
         using utility::iter_move;
         auto&& proj = utility::as_function(projection);
@@ -309,11 +308,15 @@ namespace grail
     // nblock2 are regular blocks from stream A. llast is length of last (irregular) block from stream B, that should go before nblock2 blocks.
     // llast=0 requires nblock2=0 (no irregular blocks). llast>0, nblock2=0 is possible.
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto merge_buffers_left_with_extra_buffer(RandomAccessIterator keys, RandomAccessIterator midkey,
-                                              RandomAccessIterator arr, int nblock, int lblock, int nblock2,
-                                              int llast, Compare compare, Projection projection)
+    auto merge_buffers_left_with_extra_buffer(RandomAccessIterator keys, RandomAccessIterator midkey, RandomAccessIterator arr,
+                                              difference_type_t<RandomAccessIterator> nblock,
+                                              difference_type_t<RandomAccessIterator> lblock,
+                                              difference_type_t<RandomAccessIterator> nblock2,
+                                              difference_type_t<RandomAccessIterator> llast,
+                                              Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
         auto&& proj = utility::as_function(projection);
 
         if (nblock == 0) {
@@ -322,10 +325,10 @@ namespace grail
             return;
         }
 
-        int lrest = lblock;
+        auto lrest = lblock;
         int frest = compare(proj(*keys), proj(*midkey)) < 0 ? 0 : 1;
         auto pidx = arr + lblock;
-        for (int cidx = 1 ; cidx < nblock ; (void) ++cidx, pidx += lblock) {
+        for (difference_type cidx = 1 ; cidx < nblock ; (void) ++cidx, pidx += lblock) {
             auto prest = pidx - lrest;
             int fnext = compare(proj(keys[cidx]), proj(*midkey)) < 0 ? 0 : 1;
             if (fnext == frest) {
@@ -363,11 +366,15 @@ namespace grail
     // that should go before nblock2 blocks.
     // llast=0 requires nblock2=0 (no irregular blocks). llast>0, nblock2=0 is possible.
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto merge_buffers_left(RandomAccessIterator keys, RandomAccessIterator midkey,
-                            RandomAccessIterator arr, int nblock, int lblock, bool havebuf,
-                            int nblock2, int llast, Compare compare, Projection projection)
+    auto merge_buffers_left(RandomAccessIterator keys, RandomAccessIterator midkey, RandomAccessIterator arr,
+                            difference_type_t<RandomAccessIterator> nblock,
+                            difference_type_t<RandomAccessIterator> lblock, bool havebuf,
+                            difference_type_t<RandomAccessIterator> nblock2,
+                            difference_type_t<RandomAccessIterator> llast,
+                            Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
         auto&& proj = utility::as_function(projection);
         auto&& midkey_proj = proj(*midkey);
 
@@ -381,10 +388,10 @@ namespace grail
             return;
         }
 
-        int lrest = lblock;
+        auto lrest = lblock;
         int frest = compare(proj(*keys), midkey_proj) < 0 ? 0 : 1;
         auto pidx = arr + lblock;
-        for (int cidx = 1 ; cidx < nblock ; (void) ++cidx, pidx += lblock) {
+        for (difference_type cidx = 1 ; cidx < nblock ; (void) ++cidx, pidx += lblock) {
             auto prest = pidx - lrest;
             int fnext = compare(proj(keys[cidx]), midkey_proj) < 0 ? 0 : 1;
             if(fnext == frest) {
@@ -438,25 +445,27 @@ namespace grail
     template<typename RandomAccessIterator, typename BufferIterator,
              typename Compare, typename Projection>
     auto build_blocks(RandomAccessIterator first, RandomAccessIterator last,
-                      int K, BufferIterator extbuf, int LExtBuf,
+                      difference_type_t<RandomAccessIterator> K,
+                      BufferIterator extbuf, difference_type_t<RandomAccessIterator> LExtBuf,
                       Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
         using utility::iter_move;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
         auto size = last - first;
 
-        int kbuf = std::min(K, LExtBuf);
+        auto kbuf = std::min(K, LExtBuf);
         while (kbuf & (kbuf - 1)) {
             kbuf &= kbuf - 1;  // max power or 2 - just in case
         }
 
-        int h;
+        difference_type h;
         if (kbuf) {
             detail::move(first - kbuf, first, extbuf);
-            for (int m = 1 ; m < size ; m += 2) {
-                int u = 0;
+            for (difference_type m = 1 ; m < size ; m += 2) {
+                difference_type u = 0;
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
@@ -475,7 +484,7 @@ namespace grail
                     merge_left_with_extra_buffer(p0, p0+h, p0+(h+h), p0-h, compare, projection);
                     p0 += 2 * h;
                 }
-                int rest = last - p0;
+                auto rest = last - p0;
                 if (rest > h) {
                     merge_left_with_extra_buffer(p0, p0+h, last, p0-h, compare, projection);
                 } else {
@@ -488,8 +497,8 @@ namespace grail
             }
             detail::move(extbuf, extbuf + kbuf, last);
         } else {
-            for (int m = 1 ; m < size ; m += 2) {
-                int u = 0;
+            for (difference_type m = 1 ; m < size ; m += 2) {
+                difference_type u = 0;
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
@@ -510,7 +519,7 @@ namespace grail
                 merge_left(p0, p0+h, p0+(h+h), p0-h, compare, projection);
                 p0 += 2 * h;
             }
-            int rest = last - p0;
+            auto rest = last - p0;
             if (rest > h) {
                 merge_left(p0, p0+h, last, p0-h, compare, projection);
             } else {
@@ -519,7 +528,7 @@ namespace grail
             first -= h;
             last -= h;
         }
-        int restk = size % (2 * K);
+        auto restk = size % (2 * K);
         auto p = last - restk;
         if (restk <= K) {
             detail::rotate(p, last, last+K);
@@ -536,17 +545,21 @@ namespace grail
     // LL and nkeys are powers of 2. (2*LL/lblock) keys are guarantied
     template<typename RandomAccessIterator, typename BufferIterator,
              typename Compare, typename Projection>
-    auto combine_blocks(RandomAccessIterator keys, RandomAccessIterator arr, int len, int LL,
-                        int lblock, bool havebuf, BufferIterator xbuf, bool usexbuf,
+    auto combine_blocks(RandomAccessIterator keys, RandomAccessIterator arr,
+                        difference_type_t<RandomAccessIterator> len,
+                        difference_type_t<RandomAccessIterator> LL,
+                        difference_type_t<RandomAccessIterator> lblock,
+                        bool havebuf, BufferIterator xbuf, bool usexbuf,
                         Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
         using utility::iter_move;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
-        int M = len / (2 * LL);
-        int lrest = len % (2 * LL);
+        auto M = len / (2 * LL);
+        auto lrest = len % (2 * LL);
         if (lrest <= LL) {
             len -= lrest;
             lrest = 0;
@@ -554,16 +567,16 @@ namespace grail
         if (usexbuf) {
             detail::move(arr - lblock, arr, xbuf);
         }
-        for (int b = 0 ; b <= M ; ++b) {
+        for (difference_type b = 0 ; b <= M ; ++b) {
             if (b == M && lrest == 0) break;
             auto arr1 = arr + b * 2 * LL;
-            int NBlk = (b == M ? lrest : 2 * LL) / lblock;
+            auto NBlk = (b == M ? lrest : 2 * LL) / lblock;
             insertion_sort(keys, keys + (NBlk + (b == M ? 1 : 0)),
                            compare.base(), projection);
-            int midkey = LL / lblock;
-            for (int u = 1 ; u < NBlk ; ++u) {
-                int p = u - 1;
-                for (int v = u ; v < NBlk ; ++v) {
+            auto midkey = LL / lblock;
+            for (difference_type u = 1 ; u < NBlk ; ++u) {
+                auto p = u - 1;
+                for (auto v = u ; v < NBlk ; ++v) {
                     int kc = compare(proj(arr1[p*lblock]), proj(arr1[v*lblock]));
                     if (kc > 0 || (kc == 0 && compare(proj(keys[p]), proj(keys[v])) > 0)) {
                         p = v;
@@ -577,8 +590,8 @@ namespace grail
                     }
                 }
             }
-            int nbl2 = 0;
-            int llast = 0;
+            difference_type nbl2 = 0;
+            difference_type llast = 0;
             if (b == M) {
                 llast = lrest % lblock;
             }
@@ -597,7 +610,7 @@ namespace grail
             }
         }
         if (usexbuf) {
-            for (int p = len ; --p >= 0;) {
+            for (auto p = len ; --p >= 0;) {
                 arr[p] = iter_move(arr + (p - lblock));
             }
             detail::move(xbuf, xbuf + lblock, arr - lblock);
@@ -613,6 +626,7 @@ namespace grail
                         Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
@@ -623,7 +637,7 @@ namespace grail
         }
 
         auto size = last - first;
-        for (int h = 2 ; h < size ; h *= 2) {
+        for (difference_type h = 2 ; h < size ; h *= 2) {
             auto p0 = first;
             auto p1 = last - 2 * h;
             while (p0 <= p1) {
@@ -644,18 +658,20 @@ namespace grail
                      Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<RandomAccessIterator>;
+
         auto size = last - first;
         if (size < 16) {
             insertion_sort(first, last, compare.base(), std::move(projection));
             return;
         }
 
-        int lblock = 1;
+        difference_type lblock = 1;
         while (lblock * lblock < size) {
             lblock *= 2;
         }
-        int nkeys = (size - 1) / lblock + 1;
-        int findkeys = find_keys(first, last, nkeys + lblock, compare, projection);
+        auto nkeys = (size - 1) / lblock + 1;
+        auto findkeys = find_keys(first, last, nkeys + lblock, compare, projection);
         bool havebuf = true;
         if (findkeys < nkeys + lblock) {
             if (findkeys < 4) {
@@ -670,7 +686,7 @@ namespace grail
             lblock = 0;
         }
         auto ptr = first + (lblock + nkeys);
-        int cbuf = havebuf ? lblock : nkeys;
+        auto cbuf = havebuf ? lblock : nkeys;
         if (havebuf) {
             build_blocks(ptr, last, cbuf, extbuf, LExtBuf, compare, projection);
         } else {
@@ -680,14 +696,14 @@ namespace grail
 
         // 2*cbuf are built
         while ((last - ptr) > (cbuf *= 2)) {
-            int lb = lblock;
+            auto lb = lblock;
             bool chavebuf = havebuf;
             if (not havebuf) {
                 if (nkeys > 4 && nkeys / 8 * nkeys >= cbuf) {
                     lb = nkeys / 2;
                     chavebuf = true;
                 } else {
-                    int nk = 1;
+                    difference_type nk = 1;
                     long long s = (long long) cbuf * findkeys / 2;
                     while (nk < nkeys && s != 0) {
                         nk *= 2;
