@@ -518,7 +518,7 @@ namespace detail
                     // 7. sort the second internal buffer if it exists
                     // 8. redistribute the two internal buffers back into the array
 
-                    difference_type block_size = std::sqrt(iterator.length());
+                    difference_type block_size = static_cast<difference_type>(std::sqrt(iterator.length()));
                     difference_type buffer_size = iterator.length() / block_size + 1;
 
                     // as an optimization, we really only need to pull out the internal buffers once for each level of merges
