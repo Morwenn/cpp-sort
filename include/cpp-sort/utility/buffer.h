@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_BUFFER_H_
@@ -53,44 +53,44 @@ namespace utility
                 }
 
                 constexpr auto begin()
-                    -> decltype(_memory.begin())
+                    -> decltype(_memory.data())
                 {
-                    return _memory.begin();
+                    return _memory.data();
                 }
 
                 constexpr auto begin() const
-                    -> decltype(_memory.begin())
+                    -> decltype(_memory.data())
                 {
-                    return _memory.begin();
+                    return _memory.data();
                 }
 
                 constexpr auto cbegin() const
-                    -> decltype(_memory.cbegin())
+                    -> decltype(_memory.data())
                 {
-                    return _memory.cbegin();
+                    return _memory.data();
                 }
 
                 constexpr auto end()
-                    -> decltype(_memory.end())
+                    -> decltype(_memory.data() + _memory.size())
                 {
-                    return _memory.end();
+                    return _memory.data() + _memory.size();
                 }
 
                 constexpr auto end() const
-                    -> decltype(_memory.end())
+                    -> decltype(_memory.data() + _memory.size())
                 {
-                    return _memory.end();
+                    return _memory.data() + _memory.size();
                 }
 
                 constexpr auto cend() const
-                    -> decltype(_memory.cend())
+                    -> decltype(_memory.data() + _memory.size())
                 {
-                    return _memory.cend();
+                    return _memory.data() + _memory.size();
                 }
         };
     };
 
-#if defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 7000
+#if defined(_MSC_VER) || (defined(_LIBCPP_VERSION) && _LIBCPP_VERSION < 7000)
     template<>
     struct fixed_buffer<0>
     {
