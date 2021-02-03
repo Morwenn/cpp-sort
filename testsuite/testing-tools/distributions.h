@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_DISTRIBUTIONS_H_
@@ -22,12 +22,12 @@ namespace dist
     struct distribution
     {
         template<typename OutputIterator>
-        using fptr_t = void(*)(OutputIterator, std::size_t);
+        using fptr_t = void(*)(OutputIterator, long long int);
 
         template<typename OutputIterator>
         operator fptr_t<OutputIterator>() const
         {
-            return [](OutputIterator out, std::size_t size) {
+            return [](OutputIterator out, long long int size) {
                 return Derived{}(out, size);
             };
         }
@@ -59,7 +59,7 @@ namespace dist
         distribution<shuffled_16_values>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             // Pseudo-random number generator
@@ -68,7 +68,7 @@ namespace dist
             std::vector<int> vec;
             vec.reserve(size);
 
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 vec.emplace_back(i % 16);
             }
             std::shuffle(std::begin(vec), std::end(vec), engine);
@@ -80,10 +80,10 @@ namespace dist
         distribution<all_equal>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = 0;
             }
         }
@@ -93,10 +93,10 @@ namespace dist
         distribution<ascending>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = i;
             }
         }
@@ -106,7 +106,7 @@ namespace dist
         distribution<descending>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             while (size--) {
@@ -119,13 +119,13 @@ namespace dist
         distribution<pipe_organ>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            for (std::size_t i = 0 ; i < size / 2 ; ++i) {
+            for (long long int i = 0 ; i < size / 2 ; ++i) {
                 *out++ = i;
             }
-            for (std::size_t i = size / 2 ; i < size ; ++i) {
+            for (long long int i = size / 2 ; i < size ; ++i) {
                 *out++ = size - i;
             }
         }
@@ -135,11 +135,11 @@ namespace dist
         distribution<push_front>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             if (size > 0) {
-                for (std::size_t i = 0 ; i < size - 1 ; ++i) {
+                for (long long int i = 0 ; i < size - 1 ; ++i) {
                     *out++ = i;
                 }
                 *out = 0;
@@ -151,11 +151,11 @@ namespace dist
         distribution<push_middle>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             if (size > 0) {
-                for (std::size_t i = 0 ; i < size ; ++i) {
+                for (long long int i = 0 ; i < size ; ++i) {
                     if (i != size / 2) {
                         *out++ = i;
                     }
@@ -169,11 +169,11 @@ namespace dist
         distribution<ascending_sawtooth>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            std::size_t limit = size / cppsort::detail::log2(size) * 0.9;
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            long long int limit = size / cppsort::detail::log2(size) * 0.9;
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = i % limit;
             }
         }
@@ -183,10 +183,10 @@ namespace dist
         distribution<descending_sawtooth>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            std::size_t limit = size / cppsort::detail::log2(size) * 0.9;
+            long long int limit = size / cppsort::detail::log2(size) * 0.9;
             while (size--) {
                 *out++ = size % limit;
             }
@@ -197,10 +197,10 @@ namespace dist
         distribution<alternating>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = (i % 2) ? i : -i;
             }
         }
@@ -210,10 +210,10 @@ namespace dist
         distribution<alternating_16_values>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = (i % 2) ? i % 16 : -(i % 16);
             }
         }
@@ -223,10 +223,10 @@ namespace dist
         distribution<descending_plateau>
     {
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            std::size_t i = size;
+            long long int i = size;
             while (i > 2 * size / 3) {
                 *out++ = i;
                 --i;
@@ -250,18 +250,18 @@ namespace dist
         // implementations with common pivot selection methods go quadratic
 
         template<typename OutputIterator>
-        auto operator()(OutputIterator out, std::size_t size) const
+        auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            std::size_t j = size / 2;
-            for (std::size_t i = 1 ; i < j + 1 ; ++i) {
+            long long int j = size / 2;
+            for (long long int i = 1 ; i < j + 1 ; ++i) {
                 if (i % 2 != 0) {
                     *out++ = i;
                 } else {
                     *out++ = j + i - 1;
                 }
             }
-            for (std::size_t i = 1 ; i < j + 1 ; ++i) {
+            for (long long int i = 1 ; i < j + 1 ; ++i) {
                 *out++ = 2 * i;
             }
         }
