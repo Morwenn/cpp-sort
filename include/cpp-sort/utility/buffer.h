@@ -252,7 +252,9 @@ namespace utility
             detail::dynamic_buffer_impl<T>
         {
             explicit buffer(std::size_t size):
-                detail::dynamic_buffer_impl<T>(SizePolicy{}(size))
+                detail::dynamic_buffer_impl<T>(
+                    static_cast<std::size_t>(SizePolicy{}(size))
+                )
             {}
         };
     };
