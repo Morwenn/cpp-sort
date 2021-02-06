@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MAX_H_
@@ -79,9 +79,9 @@ namespace probe
 
                 // If *first isn't into one of its sorted positions, computed the closest
                 if (it_pos < pos_min) {
-                    max_dist = std::max(pos_min - it_pos, max_dist);
+                    max_dist = (std::max)(pos_min - it_pos, max_dist);
                 } else if (it_pos >= pos_max) {
-                    max_dist = std::max(it_pos - pos_max + 1, max_dist);
+                    max_dist = (std::max)(it_pos - pos_max + 1, max_dist);
                 }
 
                 ++it_pos;
