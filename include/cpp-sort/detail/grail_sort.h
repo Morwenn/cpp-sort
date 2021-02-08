@@ -623,26 +623,29 @@ namespace grail
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto lazy_stable_sort(RandomAccessIterator first, RandomAccessIterator last,
-                        Compare compare, Projection projection)
+                          Compare compare, Projection projection)
         -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
-        for (auto it = std::next(first) ; it < last ; it += 2) {
-            if (compare(proj(*std::prev(it)), proj(*it)) > 0) {
-                iter_swap(std::prev(it), it);
+        auto size = last - first;
+        auto end_loop = size % 2 == 0 ? last : std::prev(last);
+        for (auto it = first ; it != end_loop ; it += 2) {
+            if (compare(proj(*it), proj(*std::next(it))) > 0) {
+                iter_swap(it, std::next(it));
             }
         }
 
-        auto size = last - first;
         for (difference_type h = 2 ; h < size ; h *= 2) {
             auto p0 = first;
-            auto p1 = last - 2 * h;
-            while (p0 <= p1) {
-                merge_without_buffer(p0, p0 + h, p0 + (h + h), compare, projection);
-                p0 += 2 * h;
+            if (2 * h <= size) {
+                auto p1 = last - 2 * h;
+                while (p0 <= p1) {
+                    merge_without_buffer(p0, p0 + h, p0 + (h + h), compare, projection);
+                    p0 += 2 * h;
+                }
             }
             int rest = last - p0;
             if (rest > h) {
