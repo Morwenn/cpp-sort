@@ -34,7 +34,7 @@
 #include "three_way_compare.h"
 #include "type_traits.h"
 #include "upper_bound.h"
-
+#include <iostream>
 namespace cppsort
 {
 namespace detail
@@ -148,7 +148,7 @@ namespace grail
              p1 = std::prev(middle),
              p2 = std::prev(last);
 
-        while (p1 >= first) {
+        while (p1 > first) {
             if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
                 iter_swap(p0, p1);
                 --p1;
@@ -158,13 +158,28 @@ namespace grail
             }
             --p0;
         }
+        // Same as the previous loop, just avoids decrementing p1,
+        // which can make it end up before the origin, causing
+        // issues with some kinds of iterators
+        if (p1 == first) {
+            while (not (p2 < middle || compare(proj(*p1), proj(*p2)) > 0)) {
+                iter_swap(p0, p2);
+                --p2;
+                --p0;
+            }
+            iter_swap(p0, p1);
+            --p0;
+        }
 
-        if (p2 != p0 && p2 >= middle) {
-            do {
+        if (p2 != p0) {
+            while (p2 > middle) {
                 iter_swap(p0, p2);
                 --p0;
                 --p2;
-            } while (p2 != middle);
+            }
+            if (p2 == middle){
+                iter_swap(p0, p2);
+            }
         }
     }
 
@@ -514,10 +529,12 @@ namespace grail
         }
         for (; h < K ; h *= 2) {
             auto p0 = first;
-            auto p1 = last - 2 * h;
-            while (p0 <= p1) {
-                merge_left(p0, p0+h, p0+(h+h), p0-h, compare, projection);
-                p0 += 2 * h;
+            if (2 * h <= (last - p0)) {
+                auto p1 = last - 2 * h;
+                while (p0 <= p1) {
+                    merge_left(p0, p0+h, p0+(h+h), p0-h, compare, projection);
+                    p0 += 2 * h;
+                }
             }
             auto rest = last - p0;
             if (rest > h) {
