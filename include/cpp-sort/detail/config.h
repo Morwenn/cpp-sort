@@ -17,19 +17,6 @@
 #endif
 
 ////////////////////////////////////////////////////////////
-// Check for C++17 features
-
-#ifdef __cpp_constexpr
-#   if __cpp_constexpr >= 201603
-#       define CPPSORT_CONSTEXPR_AFTER_CXX14 constexpr
-#   else
-#       define CPPSORT_CONSTEXPR_AFTER_CXX14
-#   endif
-#else
-#   define CPPSORT_CONSTEXPR_AFTER_CXX14
-#endif
-
-////////////////////////////////////////////////////////////
 // Check for C++20 features
 
 // There is no feature-test macro for std::identity that can

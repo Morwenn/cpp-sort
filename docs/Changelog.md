@@ -50,10 +50,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     This feature is available when the feature-testing macro `__cpp_nontype_template_parameter_auto` is defined.
 
-* The function pointer conversion operators of `sorter_facade` are now `constexpr` when possible.
-
-   This feature is made available through the check `__cpp_constexpr >= 201603`.
-
 **Correctness improvements:**
 * Some handy C++17 type traits such as `std::is_invocable` are manually reimplemented in C++14 mode while they are used as is in C++17 mode if available. It's likely that the C++17 implementation covers more corner cases and is thus more often correct than the manual C++14 implementation.
 

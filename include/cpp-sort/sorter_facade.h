@@ -22,6 +22,20 @@ namespace cppsort
 {
     namespace detail
     {
+        template<typename Sorter>
+        struct invoker
+        {
+            // This function is used to create function pointers from
+            // stateless sorters
+
+            template<typename Ret, typename... Args>
+            static constexpr auto invoke(Args... args)
+                -> Ret
+            {
+                return Sorter{}(std::forward<Args>(args)...);
+            }
+        };
+
         // Helper class to allow to convert a sorter_facade into a variety
         // of function pointers, but only if the wrapped sorter is empty:
         // conversion to function pointer does not make sense when state
@@ -35,125 +49,69 @@ namespace cppsort
         {
             protected:
 
-                // Function pointer types, a type alias is required
-                // for the function pointer conversion operator syntax
-                // to be valid
+                // A type alias is required for the function pointer
+                // conversion operator syntax to be valid
 
-                template<typename Iterable>
-                using fptr_t = detail::invoke_result_t<Sorter, Iterable&>(*)(Iterable&);
-
-                template<typename Iterable>
-                using fptr_rvalue_t = detail::invoke_result_t<Sorter, Iterable&&>(*)(Iterable&&);
-
-                template<typename Iterable, typename Func>
-                using fptr_func_t = detail::invoke_result_t<Sorter, Iterable&, Func>(*)(Iterable&, Func);
-
-                template<typename Iterable, typename Func>
-                using fptr_rvalue_func_t = detail::invoke_result_t<Sorter, Iterable&&, Func>(*)(Iterable&&, Func);
-
-                template<typename Iterable, typename Func1, typename Func2>
-                using fptr_func2_t
-                    = detail::invoke_result_t<Sorter, Iterable&, Func1, Func2>(*)(Iterable&, Func1, Func2);
-
-                template<typename Iterable, typename Func1, typename Func2>
-                using fptr_rvalue_func2_t
-                    = detail::invoke_result_t<Sorter, Iterable&&, Func1, Func2>(*)(Iterable&&, Func1, Func2);
-
-                template<typename Iterator>
-                using fptr_it_t = detail::invoke_result_t<Sorter, Iterator, Iterator>(*)(Iterator, Iterator);
-
-                template<typename Iterator, typename Func>
-                using fptr_func_it_t
-                    = detail::invoke_result_t<Sorter, Iterator, Iterator, Func>(*)(Iterator, Iterator, Func);
-
-                template<typename Iterator, typename Func1, typename Func2>
-                using fptr_func2_it_t
-                    = detail::invoke_result_t<Sorter, Iterator, Iterator, Func1, Func2>(*)(Iterator, Iterator, Func1, Func2);
+                template<typename Ret, typename... Args>
+                using fptr_t = Ret(*)(Args...);
 
             public:
 
                 ////////////////////////////////////////////////////////////
                 // Conversion to function pointers
 
-                template<typename Iterable>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_t<Iterable>() const
+                template<typename Ret, typename Iterable>
+                constexpr operator fptr_t<Ret, Iterable&>() const
                 {
-                    return [](Iterable& iterable) {
-                        return Sorter{}(iterable);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterable&>;
                 }
 
-                template<typename Iterable>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_rvalue_t<Iterable>() const
+                template<typename Ret, typename Iterable>
+                constexpr operator fptr_t<Ret, Iterable&&>() const
                 {
-                    return [](Iterable&& iterable) {
-                        return Sorter{}(std::move(iterable));
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterable&&>;
                 }
 
-                template<typename Iterable, typename Func>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_func_t<Iterable, Func>() const
+                template<typename Ret, typename Iterable, typename Func>
+                constexpr operator fptr_t<Ret, Iterable&, Func>() const
                 {
-                    return [](Iterable& iterable, Func func) {
-                        return Sorter{}(iterable, func);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterable&, Func>;
                 }
 
-                template<typename Iterable, typename Func>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_rvalue_func_t<Iterable, Func>() const
+                template<typename Ret, typename Iterable, typename Func>
+                constexpr operator fptr_t<Ret, Iterable&&, Func>() const
                 {
-                    return [](Iterable&& iterable, Func func) {
-                        return Sorter{}(std::move(iterable), func);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterable&&, Func>;
                 }
 
-                template<typename Iterable, typename Func1, typename Func2>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_func2_t<Iterable, Func1, Func2>() const
+                template<typename Ret, typename Iterable, typename Func1, typename Func2>
+                constexpr operator fptr_t<Ret, Iterable&, Func1, Func2>() const
                 {
-                    return [](Iterable& iterable, Func1 func1, Func2 func2) {
-                        return Sorter{}(iterable, func1, func2);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterable&, Func1, Func2>;
                 }
 
-                template<typename Iterable, typename Func1, typename Func2>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_rvalue_func2_t<Iterable, Func1, Func2>() const
+                template<typename Ret, typename Iterable, typename Func1, typename Func2>
+                constexpr operator fptr_t<Ret, Iterable&&, Func1, Func2>() const
                 {
-                    return [](Iterable&& iterable, Func1 func1, Func2 func2) {
-                        return Sorter{}(std::move(iterable), func1, func2);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterable&&, Func1, Func2>;
                 }
 
-                template<typename Iterator>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_it_t<Iterator>() const
+                template<typename Ret, typename Iterator>
+                constexpr operator fptr_t<Ret, Iterator, Iterator>() const
                 {
-                    return [](Iterator first, Iterator last) {
-                        return Sorter{}(first, last);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterator, Iterator>;
                 }
 
-                template<typename Iterator, typename Func>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_func_it_t<Iterator, Func>() const
+                template<typename Ret, typename Iterator, typename Func>
+                constexpr operator fptr_t<Ret, Iterator, Iterator, Func>() const
                 {
-                    return [](Iterator first, Iterator last, Func func) {
-                        return Sorter{}(first, last, func);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterator, Iterator, Func>;
                 }
 
-                template<typename Iterator, typename Func1, typename Func2>
-                CPPSORT_CONSTEXPR_AFTER_CXX14
-                operator fptr_func2_it_t<Iterator, Func1, Func2>() const
+                template<typename Ret, typename Iterator, typename Func1, typename Func2>
+                constexpr operator fptr_t<Ret, Iterator, Iterator, Func1, Func2>() const
                 {
-                    return [](Iterator first, Iterator last, Func1 func1, Func2 func2) {
-                        return Sorter{}(first, last, func1, func2);
-                    };
+                    return invoker<Sorter>::template invoke<Ret, Iterator, Iterator, Func1, Func2>;
                 }
         };
 
