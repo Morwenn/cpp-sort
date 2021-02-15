@@ -59,6 +59,7 @@ void test(const char* name)
 
     auto sorter = Sorter{};
     sorter(collection);
+    auto copy2 = collection;
 
     // Collect basic data
     auto first_unsorted_it = std::is_sorted_until(std::begin(collection), std::end(collection));
@@ -72,13 +73,13 @@ void test(const char* name)
         std::cout << "position of the first unsorted element: "
                   << std::distance(std::begin(collection), first_unsorted_it)
                   << std::endl;
+    } else {
+        std::cout << "is it the same as the one sorted with quicksort? ";
+        std::cout << (collection == copy) << std::endl;
+        std::cout << "were some elements altered? ";
+        cppsort::quick_sort(std::begin(collection), std::end(collection));
+        std::cout << (collection != copy) << std::endl;
     }
-    std::cout << "is it the same as the one sorted with std::sort? ";
-    std::cout << (collection == copy) << std::endl;
-    std::cout << "were some elements altered? ";
-    auto copy2 = collection;
-    cppsort::quick_sort(std::begin(collection), std::end(collection));
-    std::cout << (collection != copy) << std::endl;
 
     // Measures of presortedness
     std::cout << '\n'
