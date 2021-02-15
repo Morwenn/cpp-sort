@@ -376,10 +376,17 @@ namespace detail
             current_pend += dist;
         }
 
-        // If there are pend elements left, insert them into
-        // the main chain, the order of insertion does not
-        // matter so forward traversal is ok
+        // If there are pend elements left, insert them into the main
+        // chain, the order of insertion does not matter so forward
+        // traversal is ok
+        //
+        // current_it is guaranteed to be at least first + 2, so this is
+        // safe - incrementing it at the end of the loop might cause the
+        // iterator to go out of bounds, so we decrement it here so that
+        // we can increment it at the beginning of the loop
+        current_it -= 2;
         while (current_pend != pend.end()) {
+            current_it += 2;
             auto insertion_point = detail::upper_bound(
                 chain.begin(), *current_pend, proj(*current_it),
                 [&](auto&& lhs, auto&& rhs) {
@@ -388,7 +395,6 @@ namespace detail
                 utility::identity{}
             );
             chain.insert(insertion_point, current_it);
-            current_it += 2;
             ++current_pend;
         }
 
