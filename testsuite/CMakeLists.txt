@@ -4,7 +4,9 @@
 include(cpp-sort-utils)
 include(DownloadProject)
 
+########################################
 # Test suite options
+
 option(USE_VALGRIND "Whether to run the tests with Valgrind (deprecated, use CPPSORT_USE_VALGRIND)" OFF)
 option(ENABLE_COVERAGE "Whether to produce code coverage (deprecated, use CPPSORT_ENABLE_COVERAGE)" OFF)
 set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize (deprecated, use CPPSORT_SANITIZE)")
@@ -17,7 +19,9 @@ if (CPPSORT_ENABLE_COVERAGE)
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
 endif()
 
-# Find & configure Catch2 for the tests
+########################################
+# Find or download Catch2
+
 message(STATUS "Looking for Catch2 2.6.0+")
 find_package(Catch2 2.6.0 QUIET)
 if (TARGET Catch2::Catch2)
@@ -34,6 +38,108 @@ else()
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 endif()
 include(Catch)
+
+########################################
+# Compilation tests
+
+# These tests ensure that every public-facing header
+# can be included individually without causing any
+# compile-time error
+
+foreach(HEADER_FILE
+    adapters/container_aware_adapter.h
+    adapters/counting_adapter.h
+    adapters/hybrid_adapter.h
+    adapters/indirect_adapter.h
+    adapters/out_of_place_adapter.h
+    adapters/schwartz_adapter.h
+    adapters/self_sort_adapter.h
+    adapters/small_array_adapter.h
+    adapters/stable_adapter.h
+    adapters/verge_adapter.h
+    adapters.h
+    comparators/case_insensitive_less.h
+    comparators/natural_less.h
+    comparators/partial_greater.h
+    comparators/partial_less.h
+    comparators/projection_compare.h
+    comparators/total_greater.h
+    comparators/total_less.h
+    comparators/weak_greater.h
+    comparators/weak_less.h
+    fixed/low_comparisons_sorter.h
+    fixed/low_moves_sorter.h
+    fixed/sorting_network_sorter.h
+    fixed_sorters.h
+    fwd.h
+    probes/dis.h
+    probes/enc.h
+    probes/exc.h
+    probes/ham.h
+    probes/inv.h
+    probes/max.h
+    probes/mono.h
+    probes/osc.h
+    probes/par.h
+    probes/rem.h
+    probes/runs.h
+    probes.h
+    refined.h
+    sort.h
+    sorters/block_sorter.h
+    sorters/counting_sorter.h
+    sorters/default_sorter.h
+    sorters/drop_merge_sorter.h
+    sorters/grail_sorter.h
+    sorters/heap_sorter.h
+    sorters/insertion_sorter.h
+    sorters/merge_insertion_sorter.h
+    sorters/merge_sorter.h
+    sorters/pdq_sorter.h
+    sorters/poplar_sorter.h
+    sorters/quick_merge_sorter.h
+    sorters/quick_sorter.h
+    sorters/selection_sorter.h
+    sorters/ska_sorter.h
+    sorters/smooth_sorter.h
+    sorters/spin_sorter.h
+    sorters/split_sorter.h
+    sorters/spread_sorter/float_spread_sorter.h
+    sorters/spread_sorter/integer_spread_sorter.h
+    sorters/spread_sorter/string_spread_sorter.h
+    sorters/spread_sorter.h
+    sorters/std_sorter.h
+    sorters/tim_sorter.h
+    sorters/verge_sorter.h
+    sorters.h
+    sorter_facade.h
+    sorter_traits.h
+    stable_sort.h
+    utility/adapter_storage.h
+    utility/as_function.h
+    utility/branchless_traits.h
+    utility/buffer.h
+    utility/functional.h
+    utility/iter_move.h
+    utility/make_integer_range.h
+    utility/size.h
+    utility/static_const.h
+    version.h
+)
+    # Create standalone test file
+    string(REPLACE "/" "-" TEST_FILE "${HEADER_FILE}")
+    get_filename_component(TEST_FILE ${TEST_FILE} NAME_WLE)
+    set(TEST_FILE "test-${TEST_FILE}")
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/header-test.cpp.in "${TEST_FILE}.cpp" @ONLY)
+
+    # Compile standalone test file
+    add_executable(${TEST_FILE} "${TEST_FILE}.cpp")
+    target_link_libraries(${TEST_FILE} PRIVATE cpp-sort::cpp-sort)
+    target_compile_definitions(${TEST_FILE} PRIVATE CPPSORT_DISABLE_DEPRECATION_WARNINGS)
+endforeach()
+
+########################################
+# Configure runtime tests
 
 macro(configure_tests target)
     # Make testing tools easily available to tests
@@ -92,6 +198,9 @@ macro(configure_tests target)
         set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
     endif()
 endmacro()
+
+########################################
+# Main tests
 
 add_executable(main-tests
     # General tests
@@ -205,6 +314,9 @@ add_executable(main-tests
 )
 configure_tests(main-tests)
 
+########################################
+# Heap memory exhaustion tests
+
 if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     add_executable(heap-memory-exhaustion-tests
         # These tests are in a separate executable because we replace
@@ -219,13 +331,17 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     configure_tests(heap-memory-exhaustion-tests)
 endif()
 
+########################################
 # Configure coverage
+
 if (CPPSORT_ENABLE_COVERAGE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
 
+########################################
 # Configure Valgrind
+
 if (CPPSORT_USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind REQUIRED)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
@@ -233,6 +349,9 @@ if (CPPSORT_USE_VALGRIND)
         set(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/valgrind-osx.supp)
     endif()
 endif()
+
+########################################
+# Discover tests
 
 include(CTest)
 

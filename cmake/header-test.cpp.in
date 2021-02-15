@@ -1,0 +1,8 @@
+/*
+ * Copyright (c) 2021 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <cpp-sort/@HEADER_FILE@>
+
+int main() {}
