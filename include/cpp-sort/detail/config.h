@@ -24,7 +24,7 @@
 // compiler and standard versions
 
 #if defined(__GNUC__)
-#   if __GNUC__ > 3 && __cplusplus > 201703L
+#   if __GNUC__ > 9 && __cplusplus > 201703L
 #       define CPPSORT_STD_IDENTITY_AVAILABLE 1
 #   else
 #       define CPPSORT_STD_IDENTITY_AVAILABLE 0
