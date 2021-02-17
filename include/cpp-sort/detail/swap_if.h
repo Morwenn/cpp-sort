@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SWAP_IF_H_
@@ -51,7 +51,7 @@ namespace detail
         -> std::enable_if_t<std::is_integral<Integer>::value>
     {
         Integer dx = x;
-        x = std::min(x, y);
+        x = (std::min)(x, y);
         y ^= dx ^ x;
     }
 
@@ -60,8 +60,8 @@ namespace detail
         -> std::enable_if_t<std::is_floating_point<Float>::value>
     {
         Float dx = x;
-        x = std::min(x, y);
-        y = std::max(dx, y);
+        x = (std::min)(x, y);
+        y = (std::max)(dx, y);
     }
 
     template<typename Integer>
@@ -69,7 +69,7 @@ namespace detail
         -> std::enable_if_t<std::is_integral<Integer>::value>
     {
         Integer dx = x;
-        x = std::max(x, y);
+        x = (std::max)(x, y);
         y ^= dx ^ x;
     }
 
@@ -78,8 +78,8 @@ namespace detail
         -> std::enable_if_t<std::is_floating_point<Float>::value>
     {
         Float dx = x;
-        x = std::max(x, y);
-        y = std::min(dx, y);
+        x = (std::max)(x, y);
+        y = (std::min)(dx, y);
     }
 
 #if CPPSORT_STD_IDENTITY_AVAILABLE

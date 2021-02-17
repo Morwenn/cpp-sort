@@ -114,7 +114,7 @@ namespace detail
                 difference_type runLen = countRunAndMakeAscending(cur, hi, compare, projection);
 
                 if (runLen < minRun) {
-                    difference_type const force = std::min(nRemaining, minRun);
+                    difference_type const force = (std::min)(nRemaining, minRun);
                     binarySort(cur, cur + force, cur + runLen, compare, projection);
                     runLen = force;
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -130,14 +130,13 @@ namespace detail
             }
     };
 
-    template<typename BidirectionalIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last,
                                 Compare compare, Projection projection,
                                 difference_type_t<BidirectionalIterator> len1,
                                 difference_type_t<BidirectionalIterator> len2,
-                                RandomAccessIterator buff)
+                                remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>* buff)
         -> void
     {
         using utility::iter_move;

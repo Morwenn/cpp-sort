@@ -1,12 +1,12 @@
 # Copyright (c) 2021 Morwenn
 # SPDX-License-Identifier: MIT
 
-name: Windows Builds
+name: MSVC Builds
 
 on:
   push:
     paths:
-      - '.github/workflows/build-windows.yml'
+      - '.github/workflows/build-msvc.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
@@ -14,7 +14,7 @@ on:
       - 'testsuite/**'
   pull_request:
     paths:
-      - '.github/workflows/build-windows.yml'
+      - '.github/workflows/build-msvc.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'examples/**'
@@ -40,7 +40,7 @@ jobs:
           cmake -H${{github.event.repository.name}} -Bbuild `
                 -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} `
                 -DCMAKE_BUILD_TYPE=${{matrix.build_type}} `
-                -G"MinGW Makefiles" `
+                -G"Visual Studio 16 2019" -A x64 `
                 -DCPPSORT_BUILD_EXAMPLES=ON
 
       - name: Build the test suite

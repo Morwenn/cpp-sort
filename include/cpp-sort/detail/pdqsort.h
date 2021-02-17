@@ -271,7 +271,7 @@ namespace detail
                 }
 
                 // Swap elements and update block sizes and first/last boundaries.
-                int num = std::min(num_l, num_r);
+                int num = (std::min)(num_l, num_r);
                 swap_offsets(first, last, offsets_l + start_l, offsets_r + start_r,
                              num, num_l == num_r);
                 num_l -= num; num_r -= num;
@@ -314,7 +314,7 @@ namespace detail
                 }
             }
 
-            int num = std::min(num_l, num_r);
+            int num = (std::min)(num_l, num_r);
             swap_offsets(first, last, offsets_l + start_l, offsets_r + start_r, num, num_l == num_r);
             num_l -= num; num_r -= num;
             start_l += num; start_r += num;

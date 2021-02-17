@@ -25,6 +25,11 @@ target_include_directories(cpp-sort INTERFACE
 
 target_compile_features(cpp-sort INTERFACE cxx_std_14)
 
+# MSVC won't work without a stricter standard compliance
+if (MSVC)
+    target_compile_options(cpp-sort INTERFACE /permissive-)
+endif()
+
 add_library(cpp-sort::cpp-sort ALIAS cpp-sort)
 
 # Install targets and files

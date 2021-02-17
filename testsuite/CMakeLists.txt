@@ -227,7 +227,7 @@ add_executable(main-tests
     adapters/container_aware_adapter_forward_list.cpp
     adapters/container_aware_adapter_list.cpp
     adapters/counting_adapter.cpp
-    adapters/every_adapter_fptr.cpp
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:adapters/every_adapter_fptr.cpp>
     adapters/every_adapter_internal_compare.cpp
     adapters/every_adapter_non_const_compare.cpp
     adapters/every_adapter_stateful_sorter.cpp
@@ -289,7 +289,7 @@ add_executable(main-tests
     # Sorters tests
     sorters/counting_sorter.cpp
     sorters/default_sorter.cpp
-    sorters/default_sorter_fptr.cpp
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorters/default_sorter_fptr.cpp>
     sorters/default_sorter_projection.cpp
     sorters/merge_insertion_sorter_projection.cpp
     sorters/merge_sorter.cpp

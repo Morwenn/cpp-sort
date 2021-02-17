@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_BRANCHLESS_TRAITS_H_
@@ -99,7 +99,7 @@ namespace utility
             std::is_member_object_pointer<Projection>
         {};
 
-#if defined(__GLIBCXX__)
+#if defined(__GLIBCXX__) || defined(_MSC_VER)
 template<typename Class, typename T, typename U>
 struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
     std::is_member_object_pointer<T Class::*>

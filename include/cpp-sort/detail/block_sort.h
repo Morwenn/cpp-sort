@@ -518,7 +518,7 @@ namespace detail
                     // 7. sort the second internal buffer if it exists
                     // 8. redistribute the two internal buffers back into the array
 
-                    difference_type block_size = std::sqrt(iterator.length());
+                    difference_type block_size = static_cast<difference_type>(std::sqrt(iterator.length()));
                     difference_type buffer_size = iterator.length() / block_size + 1;
 
                     // as an optimization, we really only need to pull out the internal buffers once for each level of merges
@@ -756,7 +756,7 @@ namespace detail
                             // when we leave an A block behind we'll need to merge the previous A block with any B blocks that follow it, so track that information as well
                             Range<RandomAccessIterator> lastA = firstA;
                             Range<RandomAccessIterator> lastB = { first, first };
-                            Range<RandomAccessIterator> blockB = { B.start, B.start + std::min(block_size, B.length()) };
+                            Range<RandomAccessIterator> blockB = { B.start, B.start + (std::min)(block_size, B.length()) };
                             blockA.start += firstA.length();
                             RandomAccessIterator indexA = buffer1.start;
 
@@ -799,7 +799,7 @@ namespace detail
                                         if (cache_size > 0 && lastA.length() <= cache_size) {
                                             half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
                                                                lastA.end, B_split, lastA.start,
-                                                               std::min(lastA.length(), B_split - lastA.end),
+                                                               (std::min)(lastA.length(), B_split - lastA.end),
                                                                compare, projection);
                                         } else if (buffer2.length() > 0) {
                                             MergeInternal(lastA.start, lastA.end, lastA.end, B_split,
@@ -861,7 +861,7 @@ namespace detail
                             if (cache_size > 0 && lastA.length() <= cache_size) {
                                 half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
                                                    lastA.end, B.end, lastA.start,
-                                                   std::min(lastA.length(), B.end - lastA.end),
+                                                   (std::min)(lastA.length(), B.end - lastA.end),
                                                    compare, projection);
                             } else if (buffer2.length() > 0) {
                                 MergeInternal(lastA.start, lastA.end, lastA.end, B.end,
