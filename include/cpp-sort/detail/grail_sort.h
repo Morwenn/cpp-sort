@@ -34,7 +34,7 @@
 #include "three_way_compare.h"
 #include "type_traits.h"
 #include "upper_bound.h"
-#include <iostream>
+
 namespace cppsort
 {
 namespace detail
