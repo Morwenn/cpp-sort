@@ -284,6 +284,7 @@ add_executable(main-tests
     probes/rem.cpp
     probes/runs.cpp
     probes/relations.cpp
+    probes/every_probe_all_equal.cpp
     probes/every_probe_move_compare_projection.cpp
 
     # Sorters tests
