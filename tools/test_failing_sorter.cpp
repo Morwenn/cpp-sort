@@ -48,7 +48,7 @@ struct shuffled_string:
 template<typename Sorter>
 void test(const char* name)
 {
-    const int size = 412;
+    const int size = 5000;
 
     std::vector<std::string> collection;
     auto distribution = shuffled_string{};
@@ -94,6 +94,7 @@ void test(const char* name)
         << "par: " << cppsort::probe::par(copy2) << std::endl
         << "rem: " << cppsort::probe::rem(copy2) << std::endl
         << "runs: " << cppsort::probe::runs(copy2) << std::endl
+        << "sus: " << cppsort::probe::sus(copy2) << std::endl
         << '\n';
 
     if (size < 40) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -20,7 +20,8 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::par),
                     decltype(cppsort::probe::rem),
-                    decltype(cppsort::probe::runs) )
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sus) )
 {
     std::vector<int> collection; collection.reserve(491);
     auto distribution = dist::shuffled{};
@@ -42,7 +43,8 @@ TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[pr
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::par),
                     decltype(cppsort::probe::rem),
-                    decltype(cppsort::probe::runs) )
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sus) )
 {
     std::vector<int> collection; collection.reserve(491);
     auto distribution = dist::shuffled{};

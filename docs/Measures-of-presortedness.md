@@ -180,7 +180,7 @@ Its worst case returns  (*n* - 1) when the last element of *X* is smaller than t
 #include <cpp-sort/probes/rem.h>
 ```
 
-Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to *n* minus the size of the [longest increasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X* (strictly speaking, the longest *non-decreasing* subsequence is used). Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to *n* minus the size of the [longest non-decreasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X* (strictly speaking, the longest *non-decreasing* subsequence is used). Its worst case returns *n* - 1 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -197,3 +197,17 @@ Computes the number of non-decreasing runs in *X* minus one. Its worst case retu
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n           | 1           | Forward       |
+
+### *SUS*
+
+```cpp
+#include <cpp-sort/probes/sus.h>
+```
+
+Computes the the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X*. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+
+*SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by Levcopoulos and Petersson.
+
+| Complexity  | Memory      | Iterators     |
+| ----------- | ----------- | ------------- |
+| n log n     | n           | Forward       |

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -23,6 +23,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // tests check that these relations are respected in
     // the library
 
+    auto enc    = cppsort::probe::enc(sequence);
     auto exc    = cppsort::probe::exc(sequence);
     auto ham    = cppsort::probe::ham(sequence);
     auto inv    = cppsort::probe::inv(sequence);
@@ -31,12 +32,13 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     auto par    = cppsort::probe::par(sequence);
     auto rem    = cppsort::probe::rem(sequence);
     auto runs   = cppsort::probe::runs(sequence);
+    auto sus    = cppsort::probe::sus(sequence);
 
     // Measures of Presortedness and Optimal Sorting Algorithms
     // by Heikki Mannila
     CHECK( exc <= inv );
 
-    // A framework for adaptative sorting
+    // A framework for adaptive sorting
     // by Ola Petersson and Alistair Moffat
     CHECK( runs <= rem + 1 );
 
@@ -50,6 +52,11 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // by Vladimir Estivill-Castro and Derick Wood
     CHECK( par <= inv );
     CHECK( rem <= size * (1 - 1 / (par + 1)) );
+
+    // Sorting Shuffled Monotone Sequences
+    // by Christos Levcopoulos and Ola Petersson
+    CHECK( sus <= runs );
+    CHECK( enc <= sus );
 
     // Intuitive result: a descending run can be seen as several
     // ascending runs

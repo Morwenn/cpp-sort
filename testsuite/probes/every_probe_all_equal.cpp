@@ -23,7 +23,8 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::par),
                     decltype(cppsort::probe::rem),
-                    decltype(cppsort::probe::runs) )
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sus) )
 {
     // Ensure that all measures of presortedness return 0 when
     // given a collection where all elements are equal
