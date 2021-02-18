@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -32,6 +32,7 @@
 #include "boost_common/range.h"
 #include "bitops.h"
 #include "config.h"
+#include "functional.h"
 #include "insertion_sort.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
@@ -47,48 +48,6 @@ namespace detail
     namespace spin_detail
     {
         using boost_common::range;
-
-        ////////////////////////////////////////////////////////////
-        // Equivalent to C++17 std::not_fn
-
-        template<typename Predicate>
-        class not_fn_t
-        {
-            private:
-
-                Predicate predicate;
-
-            public:
-
-                not_fn_t() = delete;
-
-                explicit not_fn_t(Predicate predicate):
-                    predicate(std::move(predicate))
-                {}
-
-                template<typename T1, typename T2>
-                auto operator()(T1&& x, T2&& y)
-                    -> bool
-                {
-                    auto&& pred = utility::as_function(predicate);
-                    return not pred(std::forward<T1>(x), std::forward<T2>(y));
-                }
-
-                template<typename T1, typename T2>
-                auto operator()(T1&& x, T2&& y) const
-                    -> bool
-                {
-                    auto&& pred = utility::as_function(predicate);
-                    return not pred(std::forward<T1>(x), std::forward<T2>(y));
-                }
-        };
-
-        template<typename Predicate>
-        auto not_fn(Predicate&& pred)
-            -> not_fn_t<std::decay_t<Predicate>>
-        {
-            return not_fn_t<std::decay_t<Predicate>>(std::forward<Predicate>(pred));
-        }
 
         template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
         auto sort_range_sort(const range<RandomAccessIterator1>& rng_data, const range<RandomAccessIterator2>& rng_aux,
@@ -206,7 +165,7 @@ namespace detail
                 return false;
             }
 
-            it = detail::is_sorted_until(rng_data.first, rng_data.last, spin_detail::not_fn(compare), projection);
+            it = detail::is_sorted_until(rng_data.first, rng_data.last, detail::not_fn(compare), projection);
             if (std::size_t(rng_data.last - it) >= min_insert_partial_sort) {
                 return false;
             }

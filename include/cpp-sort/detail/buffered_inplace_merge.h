@@ -23,6 +23,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "functional.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
@@ -98,38 +99,6 @@ namespace detail
     // Prepare the buffer prior to the blind merge (only for
     // bidirectional iterator)
 
-    template<typename Predicate>
-    class invert
-    {
-        private:
-
-            Predicate predicate;
-
-        public:
-
-            invert() {}
-
-            explicit invert(Predicate predicate):
-                predicate(std::move(predicate))
-            {}
-
-            template<typename T1, typename T2>
-            auto operator()(T1&& x, T2&& y)
-                -> bool
-            {
-                auto&& pred = utility::as_function(predicate);
-                return pred(std::forward<T2>(y), std::forward<T1>(x));
-            }
-
-            template<typename T1, typename T2>
-            auto operator()(T1&& x, T2&& y) const
-                -> bool
-            {
-                auto&& pred = utility::as_function(predicate);
-                return pred(std::forward<T2>(y), std::forward<T1>(x));
-            }
-    };
-
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last,
@@ -154,7 +123,7 @@ namespace detail
             half_inplace_merge(rv(ptr), rv(buff),
                                rbi(middle), rbi(first),
                                rbi(last), len2,
-                               invert<Compare>(compare), std::move(projection));
+                               invert(compare), std::move(projection));
         }
     }
 }}
