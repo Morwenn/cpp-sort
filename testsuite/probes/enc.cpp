@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -19,13 +19,6 @@ TEST_CASE( "presortedness measure: enc", "[probe][enc]" )
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::enc(tricky, &internal_compare<int>::compare_to) == 2 );
-    }
-
-    SECTION( "lower bound" )
-    {
-        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::enc(li) == 0 );
-        CHECK( cppsort::probe::enc(std::begin(li), std::end(li)) == 0 );
     }
 
     SECTION( "upper bound" )

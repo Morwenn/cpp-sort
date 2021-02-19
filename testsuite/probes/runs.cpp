@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -25,16 +25,6 @@ TEST_CASE( "presortedness measure: runs", "[probe][runs]" )
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::runs(tricky, &internal_compare<int>::compare_to) == 5 );
-    }
-
-    SECTION( "lower bound" )
-    {
-        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::runs(li) == 0 );
-        CHECK( cppsort::probe::runs(std::begin(li), std::end(li)) == 0 );
-
-        std::forward_list<int> li1 = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        CHECK( cppsort::probe::runs(li1) == 0 );
     }
 
     SECTION( "upper bound" )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -27,13 +27,6 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
         CHECK( cppsort::probe::rem(tricky, &internal_compare<int>::compare_to) == 4 );
     }
 
-    SECTION( "lower bound" )
-    {
-        std::forward_list<int> li = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::rem(li) == 0 );
-        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 0 );
-    }
-
     SECTION( "upper bound" )
     {
         // The upper bound should correspond to the size of
@@ -42,16 +35,5 @@ TEST_CASE( "presortedness measure: rem", "[probe][rem]" )
         std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::rem(li) == 10 );
         CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 10 );
-    }
-
-    SECTION( "uniform distribution" )
-    {
-        // Check that we are taking the longest non-decreasing
-        // subsequence into account, and not the longest increasing
-        // subsequence
-
-        std::forward_list<int> li = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-        CHECK( cppsort::probe::rem(li) == 0 );
-        CHECK( cppsort::probe::rem(std::begin(li), std::end(li)) == 0 );
     }
 }

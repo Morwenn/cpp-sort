@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -18,13 +18,6 @@ TEST_CASE( "presortedness measure: par", "[probe][par]" )
 
         std::vector<internal_compare<int>> tricky(vec.begin(), vec.end());
         CHECK( cppsort::probe::par(tricky, &internal_compare<int>::compare_to) == 7 );
-    }
-
-    SECTION( "lower bound" )
-    {
-        const std::vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        CHECK( cppsort::probe::par(vec) == 0 );
-        CHECK( cppsort::probe::par(std::begin(vec), std::end(vec)) == 0 );
     }
 
     SECTION( "upper bound" )
