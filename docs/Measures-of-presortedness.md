@@ -204,7 +204,7 @@ Computes the number of non-decreasing runs in *X* minus one. Its worst case retu
 #include <cpp-sort/probes/sus.h>
 ```
 
-Computes the the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X*. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X*. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by Levcopoulos and Petersson.
 

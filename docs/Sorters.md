@@ -353,7 +353,7 @@ The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-a
 | n log n     | n log n     | n log n     | n           | Yes         | Random-access |
 | n log² n    | n log² n    | n log² n    | 1           | Yes         | Random-access |
 
-`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could the the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
+`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could be the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
 
 This sorter can't throw `std::bad_alloc`.
 

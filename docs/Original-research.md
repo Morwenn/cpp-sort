@@ -8,7 +8,7 @@ One of the main observations which naturally occured as long as I was putting to
 * Algorithms that work on random-access iterators can run in O(n log n) time with O(1) extra memory, and can even be stable with such guarantees (block sort being the best example).
 * Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergesort [can be implemented][https://github.com/Morwenn/quick_merge_sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
 * Stable algorithms that work on bidirectional iterators can run in O(n log n) time with O(n) extra memory (mergesort), or in O(n log² n) time with O(1) extra memory (mergesort with in-place merge).
-* Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the the ones working on bidirectional iterators: mergesort works just as well.
+* Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the ones working on bidirectional iterators: mergesort works just as well.
 * Unstable algorithms that work on forward iterators can run in O(n log² n) time and O(1) space, QuickMergesort being once again the prime example of such an algorithm.
 * Taking advantage of the list data structure allows for sorting algorithms running in O(n log n) time with O(1) extra memory, be it for stable sorting (mergesort) or unstable sorting (melsort), but those techniques can't be generically retrofitted to generically work with bidirectional iterators
 
