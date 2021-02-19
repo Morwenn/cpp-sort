@@ -1,6 +1,6 @@
 Also known as *measures of disorder*, the *measures of presortedness* are algorithms used to tell how much a sequence is already sorted, or how much disorder there is in it. Some adaptive sorting algorithms are known to take advantage of the order already present in a sequence, and happen to be "optimal" with regard to some measures of presortedness.
 
-Measures of presortedness were formally defined by Manilla in *Measures of presortedness and optimal sorting algorithms*. Here is the formal definition as reformulated by La rocca & Cantone in [*NeatSort - A practical adaptive algorithm*](https://arxiv.org/pdf/1407.6183.pdf):
+Measures of presortedness were formally defined by Manilla in *Measures of presortedness and optimal sorting algorithms*. Here is the formal definition as reformulated by La rocca & Cantone in [*NeatSort - A practical adaptive algorithm*][neatsort]:
 
 > Given two sequences *X* and *Y* of distinct elements, a measure of disorder *M* is a function that satisfies the following properties:
 >
@@ -50,7 +50,9 @@ Measures of presortedness are pretty formalized, so the names of the functions i
 #include <cpp-sort/probes/dis.h>
 ```
 
-Computes the maximum distance determined by an inversion. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the maximum distance determined by an inversion.
+
+**Worst case:** *n* - 1 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -66,7 +68,9 @@ Computes the maximum distance determined by an inversion. Its worst case returns
 #include <cpp-sort/probes/enc.h>
 ```
 
-Computes the number of encroaching lists that can be extracted from *X* minus one (see Skiena's *Encroaching lists as a measure of presortedness*). Its worst case returns *n* / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
+Computes the number of encroaching lists that can be extracted from *X* minus one (see Skiena's *Encroaching lists as a measure of presortedness*).
+
+**Worst case:** *n* / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -78,7 +82,9 @@ Computes the number of encroaching lists that can be extracted from *X* minus on
 #include <cpp-sort/probes/exc.h>
 ```
 
-Computes the minimum number of exchanges required to sort *X*, which corresponds to *n* minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let {2, 4, 0, 6, 3, 1, 5} be a sequence, the cycles are {0, 2} and {1, 3, 4, 5, 6} so *Exc*(*X*) = *n* - 2 = 5. There is always at least one cycle in any sequence, so *Exc* has a worst case of *n* - 1 when every element in *X* is one element away from its sorted position.
+Computes the minimum number of exchanges required to sort *X*, which corresponds to *n* minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let {2, 4, 0, 6, 3, 1, 5} be a sequence, the cycles are {0, 2} and {1, 3, 4, 5, 6} so *Exc*(*X*) = *n* - 2 = 5.
+
+**Worst case:** *n* - 1 when every element in *X* is one element away from its sorted position.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -92,7 +98,9 @@ Computes the minimum number of exchanges required to sort *X*, which corresponds
 #include <cpp-sort/probes/ham.h>
 ```
 
-Computes the number of elements in *X* that are not in their sorted position, which corresponds to the [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distance) between *X* and its sorted permutation. Its worst case returns *n* when every element in *X* is one element away from its sorted position.
+Computes the number of elements in *X* that are not in their sorted position, which corresponds to the [Hamming distance][hamming-distance] between *X* and its sorted permutation.
+
+**Worst case:** *n* when every element in *X* is one element away from its sorted position.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -104,7 +112,9 @@ Computes the number of elements in *X* that are not in their sorted position, wh
 #include <cpp-sort/probes/inv.h>
 ```
 
-Computes the number of inversions in *X*, where an inversion corresponds to a pair (a, b) of elements not in order. For example, the sequence {2, 1, 3, 0} has 4 inversions: (2, 1), (2, 0), (1, 0) and (3, 0). Its worst case returns *n* * (*n* - 1) / 2 when *X* is sorted in reverse order.
+Computes the number of inversions in *X*, where an inversion corresponds to a pair (a, b) of elements not in order. For example, the sequence {2, 1, 3, 0} has 4 inversions: (2, 1), (2, 0), (1, 0) and (3, 0).
+
+**Worst case:** returns *n* * (*n* - 1) / 2 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -116,7 +126,9 @@ Computes the number of inversions in *X*, where an inversion corresponds to a pa
 #include <cpp-sort/probes/max.h>
 ```
 
-Computes the maximum distance an element in *X* must travel to find its sorted position. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the maximum distance an element in *X* must travel to find its sorted position.
+
+**Worst case:** *n* - 1 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -130,11 +142,13 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 #include <cpp-sort/probes/mono.h>
 ```
 
-Computes the number of non-increasing and non-decreasing runs in *X* minus one. Its worst case returns *n* / 2 - 1 when *X* is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
+Computes the number of non-increasing and non-decreasing runs in *X* minus one.
 
-The measure of presortedness is slightly different from its original description in *Sort Rase* by Zhang, Meng and Liang:
+The measure of presortedness is slightly different from its original description in [*Sort Race*][sort-race] by Zhang, Meng and Liang:
 * It subtracts 1 from the number of runs, thus returning 0 when *X* is sorted
-* It explicitly handles non-increasing and non-decreasing runs, not only the strictly ascending or descending ones
+* It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones
+
+**Worst case:** *n* / 2 - 1 when *X* is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -148,7 +162,9 @@ The measure of presortedness is slightly different from its original description
 #include <cpp-sort/probes/osc.h>
 ```
 
-Computes the *Oscillation* measure described by Levcopoulos and Petersson in *Adaptive Heapsort*. Its worst case returns  (*n* * (*n* - 2) - 1) / 2 when the values in *X* are strongly oscillating.
+Computes the *Oscillation* measure described by Levcopoulos and Petersson in *Adaptive Heapsort*.
+
+**Worst case:** (*n* * (*n* - 2) - 1) / 2 when the values in *X* are strongly oscillating.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -168,7 +184,7 @@ The following definition is also given to determine whether a sequence is *p*-so
 
 > *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., *n*}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
 
-Its worst case returns  (*n* - 1) when the last element of *X* is smaller than the first one.
+**Worst case:** (*n* - 1) when the last element of *X* is smaller than the first one.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -180,7 +196,9 @@ Its worst case returns  (*n* - 1) when the last element of *X* is smaller than t
 #include <cpp-sort/probes/rem.h>
 ```
 
-Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to *n* minus the size of the [longest non-decreasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X* (strictly speaking, the longest *non-decreasing* subsequence is used). Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to *n* minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of *X*.
+
+**Worst case:** *n* - 1 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -192,7 +210,9 @@ Computes the minimum number of elements that must be removed from *X* to obtain 
 #include <cpp-sort/probes/runs.h>
 ```
 
-Computes the number of non-decreasing runs in *X* minus one. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the number of non-decreasing runs in *X* minus one.
+
+**Worst case:** *n* - 1 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -204,10 +224,20 @@ Computes the number of non-decreasing runs in *X* minus one. Its worst case retu
 #include <cpp-sort/probes/sus.h>
 ```
 
-Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence](https://en.wikipedia.org/wiki/Longest_increasing_subsequence) of *X*. Its worst case returns *n* - 1 when *X* is sorted in reverse order.
+Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of *X*.
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by Levcopoulos and Petersson.
+
+**Worst case:** *n* - 1 when *X* is sorted in reverse order.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+*New in version 1.10.0*
+
+
+  [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
+  [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+  [neatsort]: https://arxiv.org/pdf/1407.6183.pdf
+  [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
