@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
-#include <iterator>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes/inv.h>
@@ -15,7 +14,7 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
     {
         const std::forward_list<int> li = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
         CHECK( cppsort::probe::inv(li) == 19 );
-        CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 19 );
+        CHECK( cppsort::probe::inv(li.begin(), li.end()) == 19 );
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::inv(tricky, &internal_compare<int>::compare_to) == 19 );
@@ -28,6 +27,6 @@ TEST_CASE( "presortedness measure: inv", "[probe][inv]" )
 
         const std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::inv(li) == 55 );
-        CHECK( cppsort::probe::inv(std::begin(li), std::end(li)) == 55 );
+        CHECK( cppsort::probe::inv(li.begin(), li.end()) == 55 );
     }
 }

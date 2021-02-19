@@ -2,6 +2,7 @@
  * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <forward_list>
 #include <iterator>
 #include <vector>
@@ -16,7 +17,7 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
     {
         std::forward_list<int> li = { 12, 28, 17, 59, 13, 10, 39, 21, 31, 30 };
         CHECK( cppsort::probe::max(li) == 6 );
-        CHECK( cppsort::probe::max(std::begin(li), std::end(li)) == 6 );
+        CHECK( cppsort::probe::max(li.begin(), li.end()) == 6 );
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::max(tricky, &internal_compare<int>::compare_to) == 6 );
@@ -29,7 +30,7 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
 
         std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::max(li) == 10 );
-        CHECK( cppsort::probe::max(std::begin(li), std::end(li)) == 10 );
+        CHECK( cppsort::probe::max(li.begin(), li.end()) == 10 );
     }
 
     SECTION( "regressions" )
@@ -39,7 +40,7 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
         auto distribution = dist::ascending_sawtooth{};
         distribution(std::back_inserter(collection), 100);
 
-        std::sort(std::begin(collection), std::end(collection));
+        std::sort(collection.begin(), collection.end());
         CHECK( cppsort::probe::max(collection) == 0 );
     }
 }

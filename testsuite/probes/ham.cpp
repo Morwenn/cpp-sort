@@ -2,6 +2,7 @@
  * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <forward_list>
 #include <iterator>
 #include <vector>
@@ -16,7 +17,7 @@ TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
     {
         std::forward_list<int> li = { 34, 43, 96, 42, 44, 48, 57, 42, 68, 69 };
         CHECK( cppsort::probe::ham(li) == 6 );
-        CHECK( cppsort::probe::ham(std::begin(li), std::end(li)) == 6 );
+        CHECK( cppsort::probe::ham(li.begin(), li.end()) == 6 );
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::ham(tricky, &internal_compare<int>::compare_to) == 6 );
@@ -29,7 +30,7 @@ TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
 
         std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         CHECK( cppsort::probe::ham(li) == 11 );
-        CHECK( cppsort::probe::ham(std::begin(li), std::end(li)) == 11 );
+        CHECK( cppsort::probe::ham(li.begin(), li.end()) == 11 );
     }
 
     SECTION( "regressions" )
@@ -39,7 +40,7 @@ TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
         auto distribution = dist::ascending_sawtooth{};
         distribution(std::back_inserter(collection), 100);
 
-        std::sort(std::begin(collection), std::end(collection));
+        std::sort(collection.begin(), collection.end());
         CHECK( cppsort::probe::ham(collection) == 0 );
     }
 }

@@ -2,6 +2,7 @@
  * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <forward_list>
 #include <iterator>
 #include <vector>
@@ -16,11 +17,11 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
     {
         std::forward_list<int> li = { 74, 59, 62, 23, 86, 69, 18, 52, 77, 68 };
         CHECK( cppsort::probe::exc(li) == 7 );
-        CHECK( cppsort::probe::exc(std::begin(li), std::end(li)) == 7 );
+        CHECK( cppsort::probe::exc(li.begin(), li.end()) == 7 );
 
         std::forward_list<int> li2 = { 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         CHECK( cppsort::probe::exc(li2) == 5 );
-        CHECK( cppsort::probe::exc(std::begin(li2), std::end(li2)) == 5 );
+        CHECK( cppsort::probe::exc(li2.begin(), li2.end()) == 5 );
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::exc(tricky, &internal_compare<int>::compare_to) == 7 );
@@ -33,7 +34,7 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
 
         std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         CHECK( cppsort::probe::exc(li) == 10 );
-        CHECK( cppsort::probe::exc(std::begin(li), std::end(li)) == 10 );
+        CHECK( cppsort::probe::exc(li.begin(), li.end()) == 10 );
     }
 
     SECTION( "regressions" )
@@ -43,7 +44,7 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         auto distribution = dist::ascending_sawtooth{};
         distribution(std::back_inserter(collection), 100);
 
-        std::sort(std::begin(collection), std::end(collection));
+        std::sort(collection.begin(), collection.end());
         CHECK( cppsort::probe::exc(collection) == 0 );
     }
 }

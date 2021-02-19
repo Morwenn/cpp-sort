@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
-#include <iterator>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/probes/mono.h>
@@ -15,7 +14,7 @@ TEST_CASE( "presortedness measure: mono", "[probe][mono]" )
     {
         const std::forward_list<int> li = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
         CHECK( cppsort::probe::mono(li) == 2 );
-        CHECK( cppsort::probe::mono(std::begin(li), std::end(li)) == 2 );
+        CHECK( cppsort::probe::mono(li.begin(), li.end()) == 2 );
 
         std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( cppsort::probe::mono(tricky, &internal_compare<int>::compare_to) == 2 );
@@ -34,7 +33,7 @@ TEST_CASE( "presortedness measure: mono", "[probe][mono]" )
 
         const std::forward_list<int> li = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
         CHECK( cppsort::probe::mono(li) == 5 );
-        CHECK( cppsort::probe::mono(std::begin(li), std::end(li)) == 5 );
+        CHECK( cppsort::probe::mono(li.begin(), li.end()) == 5 );
     }
 
     SECTION( "equal neighbours in the sequence" )
