@@ -204,10 +204,12 @@ Therefore we redefine *Mono*(*X*) as the number of non-increasing and non-decrea
 The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
 - ***Mono* ⊋ *Exc***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Exc*
 - ***Mono* ⊋ *Inv***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Inv*
+- ***Hist* ⊋ *Mono***: we know that *Mono* ⊇ *Runs* and *Hist* ⊋ *Runs*
 
 The following relations have yet to be analyzed:
 - ***Mono* ⊇ *Max***
 - ***Mono* ≡ *SUS***
+- ***Osc* ⊇ *Mono***
 
 
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
