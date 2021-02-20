@@ -1,4 +1,6 @@
-Also known as *measures of disorder*, the *measures of presortedness* are algorithms used to tell how much a sequence is already sorted, or how much disorder there is in it. Some adaptive sorting algorithms are known to take advantage of the order already present in a sequence, and happen to be "optimal" with regard to some measures of presortedness.
+Also known as *measures of disorder*, the *measures of presortedness* are algorithms used to tell how much a sequence is already sorted, or how much disorder there is in it.
+
+Given a measure of presortedness *M*, a comparison sort is said to be *M*-optimal if it takes a number of comparisons that is within a constant factor of the lower bound.
 
 ## Formal definition
 
@@ -13,6 +15,20 @@ Measures of presortedness were formally defined by Manilla in *Measures of preso
 > 5. *M*({*x*}.*X*) ≤ |*X*| + *M*(*X*) for every natural integer *X*
 
 A few measures of presortedness described in the research papers actually return 1 when *X* is already sorted, thus violating the first property above. We implement these measures in a such way that they return 0 instead, generally by subtracting 1 from the result of the described operation.
+
+### Partial ordering of measures of presortedness
+
+La rocca & Cantone also define a partial order on measure of presortedness as follows:
+
+Let *M1* and *M2* be two measures of presortedness.
+- *M1* is algorithmically finer than *M2* if and only if any *M1*-optimal algorithm is also *M2*-optimal.
+- *M1* and *M2* are algorithmically equivalent (denoted *M1*=*M2* in the graph below) if and only if *M1* is algorithmically finer than *M2* and *M2* is algorithmically finer than *M1*.
+
+The graph below shows the partial ordering of several measures of presortedness, *Reg* being the algorithmically finest one.
+
+![Partial ordering of measure of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mep-partial-ordering.png)
+
+Not all of the measures of presortedness in this graph are available in **cpp-sort**, and some of the measures of presortedness available in **cpp-sort** do not appear in this graph.
 
 ## Measures of presortedness in cpp-sort
 

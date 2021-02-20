@@ -56,6 +56,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // Sorting Shuffled Monotone Sequences
     // by Christos Levcopoulos and Ola Petersson
     CHECK( sus <= runs );
+    CHECK( sus <= max );
     CHECK( enc <= sus );
 
     // Intuitive result: a descending run can be seen as several
