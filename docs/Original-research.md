@@ -172,7 +172,7 @@ The mountain sort is a new indirect sorting algorithm designed to perform a mini
     Best        Average     Worst       Memory      Stable
     n log n     n log n     n log n     n           No
 
-However, **cpp-sort** implements it [as a sorter adapter][indirect_adapter] so you can actually choose the sorting algorithm that will be used to sort the iterators, making it possible to use a stable sorting algorithm instead. Note that the memory footprint of the algorithm is negligible when the size of the elements to sort is big since only iterators and booleans are stored. It makes mountain sort the ideal sorting algorithm when the objects to sort are huge and the comparisons are cheap (remember: you may want to sort fridges by price, or mountains by height). You can find a standalone implementation of mountain sort in [the dedicated repository][mountain_sort].
+However, **cpp-sort** implements it [as a sorter adapter][indirect-adapter] so you can actually choose the sorting algorithm that will be used to sort the iterators, making it possible to use a stable sorting algorithm instead. Note that the memory footprint of the algorithm is negligible when the size of the elements to sort is big since only iterators and booleans are stored. It makes mountain sort the ideal sorting algorithm when the objects to sort are huge and the comparisons are cheap (remember: you may want to sort fridges by price, or mountains by height). You can find a standalone implementation of mountain sort in [the dedicated repository][mountain_sort].
 
 ### Improvements to poplar sort & poplar heap
 
@@ -186,16 +186,40 @@ I borrowed some ideas from Edelkamp and Weiß QuickXsort and QuickMergesort algo
 
 Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv] afew years later decribing the same flavour of QuickMergesort with properly computed algorithmic complexities. I have a [standalone implementation][quick-merge-sort] of `quick_merge_sort` in another repository, albeit currently lacking a proper explanation of how it works. It has the time and space complexity mentioned earlier, as opposed to the **cpp-sort** version of the algorithm where I chose to have theoretically worse algorithms from a complexity point of view, but that are nonetheless generally faster in practice.
 
+### Partial ordering of *Mono*
+
+The measure of presortedness *Mono* is described in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang. They describe it as follows:
+
+> Intuitively, if *Mono*(*X*) = *k*, then *X* is the concatenation of *k* monotonic lists (either sorted or reversely sorted).
+
+It counts the number of ascending or descending runs in *X*. Technically this definition in the paper makes it return 1 when the *X* is sorted, which goes against the original definition of a measure of presortedness by Manilla, which starts with the following condition:
+
+> If *X* is sorted, then *M*(*X*) = 0
+
+Therefore we redefine *Mono*(*X*) as the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted.
+- ***Mono* ⊇ *Runs***: this relation is already mentioned in *Sort Race* and rather intuitive: since *Mono* detects both non-increasing and non-decreasing runs, it is as least as good as *Runs* that only detects non-decreasing runs.
+- ***SMS* ⊇ *Mono***: this one seems intuitive too: *SMS* which removes runs of non-adjacent elements should be at least as good as *Mono* which only removes runs of adjacent elements.
+- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to not create no more than one such new list per non-increasing or non-decreasing runs, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* will find maximum disorder. Therefore *Enc* is strictly better than *Mono*.
+
+The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
+- ***Mono* ⊋ *Exc***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Exc*
+- ***Mono* ⊋ *Inv***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Inv*
+
+The following relations have yet to be analyzed:
+- ***Mono* ⊇ *Max***
+- ***Mono* ≡ *SUS***
+
 
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [divide-sort-merge-strategy]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
   [exact-sort]: https://www.geocities.ws/p356spt/
-  [indirect_adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
+  [indirect-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
   [morwenn-gist]: https://gist.github.com/Morwenn
   [mountain_sort]: https://github.com/Morwenn/mountain-sort
   [poplar-heap]: https://github.com/Morwenn/poplar-heap
   [post-order-heap]: https://people.csail.mit.edu/nickh/Publications/PostOrderHeap/FUN04-PostOrderHeap.pdf
   [quick-merge-sort]: https://github.com/Morwenn/quick_merge_sort
   [quick-merge-sort-arxiv]: https://arxiv.org/pdf/1804.10062.pdf
+  [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
   [vergesort]: https://github.com/Morwenn/vergesort

@@ -52,6 +52,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // by Vladimir Estivill-Castro and Derick Wood
     CHECK( par <= inv );
     CHECK( rem <= size * (1 - 1 / (par + 1)) );
+    CHECK( inv <= size * par / 2 );
 
     // Sorting Shuffled Monotone Sequences
     // by Christos Levcopoulos and Ola Petersson

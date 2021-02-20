@@ -22,13 +22,18 @@ La rocca & Cantone also define a partial order on measure of presortedness as fo
 
 Let *M1* and *M2* be two measures of presortedness.
 - *M1* is algorithmically finer than *M2* if and only if any *M1*-optimal algorithm is also *M2*-optimal.
-- *M1* and *M2* are algorithmically equivalent (denoted *M1*=*M2* in the graph below) if and only if *M1* is algorithmically finer than *M2* and *M2* is algorithmically finer than *M1*.
+- *M1* and *M2* are algorithmically equivalent (denoted *M1*≡*M2* in the graph below) if and only if *M1* is algorithmically finer than *M2* and *M2* is algorithmically finer than *M1*.
 
-The graph below shows the partial ordering of several measures of presortedness, *Reg* being the algorithmically finest one.
+The graph below shows the partial ordering of several measures of presortedness:
+- *Reg* is algorithmically finest measure of presortedness.
+- *m₀* is a measure of presortedness that always returns 0.
+- *m₀₁* is a measure of presortedness that returns 0 when *X* is sorted and 1 otherwise.
 
-![Partial ordering of measure of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mep-partial-ordering.png)
+![Partial ordering of measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mep-partial-ordering.png)
 
-Not all of the measures of presortedness in this graph are available in **cpp-sort**, and some of the measures of presortedness available in **cpp-sort** do not appear in this graph.
+This graph is more complete version of the one in *A framework for adaptive sorting* by O. Petersson and A. Moffat. The *Max* ≡ *Dis* equivalence comes from [*NeatSort - A practical adaptive algorithm*][neatsort] by La rocca & Cantone. The relations of *Mono* are empirically derived [original research][original-research].
+
+The measures of presortedness in bold in the graph are available in **cpp-sort**, the others are not.
 
 ## Measures of presortedness in cpp-sort
 
@@ -180,7 +185,7 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 
 Computes the number of non-increasing and non-decreasing runs in *X* minus one.
 
-The measure of presortedness is slightly different from its original description in [*Sort Race*][sort-race] by Zhang, Meng and Liang:
+The measure of presortedness is slightly different from its original description in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang:
 * It subtracts 1 from the number of runs, thus returning 0 when *X* is sorted
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones
 
@@ -276,4 +281,5 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [neatsort]: https://arxiv.org/pdf/1407.6183.pdf
+  [original-research]: https://github.com/Morwenn/cpp-sort/wiki/Original-research#partial-ordering-of-mono
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
