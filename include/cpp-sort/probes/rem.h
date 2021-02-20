@@ -82,6 +82,13 @@ namespace probe
                 auto lnds_size = res.second - res.first;
                 return lnds_size >= 0 ? lnds_size : 0;
             }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
+            }
         };
     }
 

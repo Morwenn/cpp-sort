@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_INV_H_
@@ -88,6 +88,13 @@ namespace probe
             {
                 return inv_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection));
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n * (n - 1) / 2;
             }
         };
     }

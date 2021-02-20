@@ -123,6 +123,13 @@ namespace probe
                 return max_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection));
             }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
+            }
         };
     }
 

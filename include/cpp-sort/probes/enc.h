@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_ENC_H_
@@ -92,6 +92,13 @@ namespace probe
                 }
 
                 return lists.size() ? lists.size() - 1 : 0;
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n / 2 - 1;
             }
         };
     }

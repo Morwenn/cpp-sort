@@ -49,6 +49,13 @@ namespace probe
                 );
                 return res.first > 0 ? res.first - 1 : 0;
             }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
+            }
         };
     }
 

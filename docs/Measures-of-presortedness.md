@@ -1,5 +1,7 @@
 Also known as *measures of disorder*, the *measures of presortedness* are algorithms used to tell how much a sequence is already sorted, or how much disorder there is in it. Some adaptive sorting algorithms are known to take advantage of the order already present in a sequence, and happen to be "optimal" with regard to some measures of presortedness.
 
+## Formal definition
+
 Measures of presortedness were formally defined by Manilla in *Measures of presortedness and optimal sorting algorithms*. Here is the formal definition as reformulated by La rocca & Cantone in [*NeatSort - A practical adaptive algorithm*][neatsort]:
 
 > Given two sequences *X* and *Y* of distinct elements, a measure of disorder *M* is a function that satisfies the following properties:
@@ -12,9 +14,9 @@ Measures of presortedness were formally defined by Manilla in *Measures of preso
 
 A few measures of presortedness described in the research papers actually return 1 when *X* is already sorted, thus violating the first property above. We implement these measures in a such way that they return 0 instead, generally by subtracting 1 from the result of the described operation.
 
----
+## Measures of presortedness in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects; they take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
+In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
 
 ```cpp
 using namespace cppsort;
@@ -36,13 +38,31 @@ auto inv = cppsort::indirect_adapter<decltype(cppsort::probe::inv)>{};
 auto inv = cppsort::indirect_adapter(cppsort::probe::inv);
 ```
 
-Every measure of presortedness lives in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is possible to include all of them at once with the following include:
+All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is possible to include all of them at once with the following include:
 
 ```cpp
 #include <cpp-sort/probes.h>
 ```
 
-Measures of presortedness are pretty formalized, so the names of the functions in the library are short and correspond to the ones used in the litterature. As per this litterature, we will use the symbols *X* to represent the analyzed sequence, and *n* to represent the size of that sequence.
+### `max_for_size`
+
+All measures of presortedness in the library have the following `static` member function:
+
+```cpp
+template<typename Integer>
+static constexpr auto max_for_size(Integer n)
+    -> Integer;
+```
+
+It takes an integer `n` and returns the maximum value that the measure of presortedness might return for a collection of size `n`.
+
+*New in version 1.10.0*
+
+## Available measures of presortedness
+
+Measures of presortedness are pretty formalized, so the names of the functions in the library are short and correspond to the ones used in the literature.
+
+In the following descriptions we use *X* to represent the input sequence, and |*X*| to represent the size of that sequence.
 
 ### *Dis*
 
@@ -52,11 +72,11 @@ Measures of presortedness are pretty formalized, so the names of the functions i
 
 Computes the maximum distance determined by an inversion.
 
-**Worst case:** *n* - 1 when *X* is sorted in reverse order.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n²          | 1           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
 *Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
 
@@ -70,11 +90,11 @@ Computes the maximum distance determined by an inversion.
 
 Computes the number of encroaching lists that can be extracted from *X* minus one (see Skiena's *Encroaching lists as a measure of presortedness*).
 
-**Worst case:** *n* / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
 
 ### *Exc*
 
@@ -82,13 +102,13 @@ Computes the number of encroaching lists that can be extracted from *X* minus on
 #include <cpp-sort/probes/exc.h>
 ```
 
-Computes the minimum number of exchanges required to sort *X*, which corresponds to *n* minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let {2, 4, 0, 6, 3, 1, 5} be a sequence, the cycles are {0, 2} and {1, 3, 4, 5, 6} so *Exc*(*X*) = *n* - 2 = 5.
-
-**Worst case:** *n* - 1 when every element in *X* is one element away from its sorted position.
+Computes the minimum number of exchanges required to sort *X*, which corresponds to |*X*| minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let {2, 4, 0, 6, 3, 1, 5} be a sequence, the cycles are {0, 2} and {1, 3, 4, 5, 6} so *Exc*(*X*) = |*X*| - 2 = 5.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| - 1 when every element in *X* is one element away from its sorted position.
 
 *Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
 
@@ -100,11 +120,11 @@ Computes the minimum number of exchanges required to sort *X*, which corresponds
 
 Computes the number of elements in *X* that are not in their sorted position, which corresponds to the [Hamming distance][hamming-distance] between *X* and its sorted permutation.
 
-**Worst case:** *n* when every element in *X* is one element away from its sorted position.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| when every element in *X* is one element away from its sorted position.
 
 ### *Inv*
 
@@ -114,11 +134,11 @@ Computes the number of elements in *X* that are not in their sorted position, wh
 
 Computes the number of inversions in *X*, where an inversion corresponds to a pair (a, b) of elements not in order. For example, the sequence {2, 1, 3, 0} has 4 inversions: (2, 1), (2, 0), (1, 0) and (3, 0).
 
-**Worst case:** returns *n* * (*n* - 1) / 2 when *X* is sorted in reverse order.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| * (|*X*| - 1) / 2 when *X* is sorted in reverse order.
 
 ### *Max*
 
@@ -128,11 +148,11 @@ Computes the number of inversions in *X*, where an inversion corresponds to a pa
 
 Computes the maximum distance an element in *X* must travel to find its sorted position.
 
-**Worst case:** *n* - 1 when *X* is sorted in reverse order.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
 *Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
 
@@ -148,11 +168,11 @@ The measure of presortedness is slightly different from its original description
 * It subtracts 1 from the number of runs, thus returning 0 when *X* is sorted
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones
 
-**Worst case:** *n* / 2 - 1 when *X* is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n           | 1           | Forward       |
+
+`max_for_size`: (|*X*| + 1) / 2 - 1 when *X* is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
 *New in version 1.1.0*
 
@@ -164,11 +184,11 @@ The measure of presortedness is slightly different from its original description
 
 Computes the *Oscillation* measure described by Levcopoulos and Petersson in *Adaptive Heapsort*.
 
-**Worst case:** (*n* * (*n* - 2) - 1) / 2 when the values in *X* are strongly oscillating.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n²          | 1           | Forward       |
+
+`max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
 
 ### *Par*
 
@@ -182,13 +202,13 @@ Computes the *Par* measure described by Estivill-Castro and Wood in *A New Measu
 
 The following definition is also given to determine whether a sequence is *p*-sorted:
 
-> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., *n*}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
-
-**Worst case:** (*n* - 1) when the last element of *X* is smaller than the first one.
+> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n² log n    | 1           | Random-access |
+
+`max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
 
 ### *Rem*
 
@@ -196,13 +216,13 @@ The following definition is also given to determine whether a sequence is *p*-so
 #include <cpp-sort/probes/rem.h>
 ```
 
-Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to *n* minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of *X*.
-
-**Worst case:** *n* - 1 when *X* is sorted in reverse order.
+Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to |*X*| minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of *X*.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
 ### *Runs*
 
@@ -212,11 +232,11 @@ Computes the minimum number of elements that must be removed from *X* to obtain 
 
 Computes the number of non-decreasing runs in *X* minus one.
 
-**Worst case:** *n* - 1 when *X* is sorted in reverse order.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n           | 1           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
 ### *SUS*
 
@@ -228,11 +248,11 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by Levcopoulos and Petersson.
 
-**Worst case:** *n* - 1 when *X* is sorted in reverse order.
-
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
 *New in version 1.10.0*
 

@@ -9,14 +9,16 @@
 
 TEST_CASE( "presortedness measure: par", "[probe][par]" )
 {
+    using cppsort::probe::par;
+
     SECTION( "simple test" )
     {
         const std::vector<int> vec = { 48, 43, 96, 44, 42, 34, 42, 57, 68, 69 };
-        CHECK( cppsort::probe::par(vec) == 7 );
-        CHECK( cppsort::probe::par(vec.begin(), vec.end()) == 7 );
+        CHECK( par(vec) == 7 );
+        CHECK( par(vec.begin(), vec.end()) == 7 );
 
         std::vector<internal_compare<int>> tricky(vec.begin(), vec.end());
-        CHECK( cppsort::probe::par(tricky, &internal_compare<int>::compare_to) == 7 );
+        CHECK( par(tricky, &internal_compare<int>::compare_to) == 7 );
     }
 
     SECTION( "upper bound" )
@@ -25,7 +27,9 @@ TEST_CASE( "presortedness measure: par", "[probe][par]" )
         // the input sequence minus one
 
         const std::vector<int> vec = { 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
-        CHECK( cppsort::probe::par(vec) == 10 );
-        CHECK( cppsort::probe::par(vec.begin(), vec.end()) == 10 );
+        auto max_n = par.max_for_size(vec.end() - vec.begin());
+        CHECK( max_n == 10 );
+        CHECK( par(vec) == max_n );
+        CHECK( par(vec.begin(), vec.end()) == max_n );
     }
 }

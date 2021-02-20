@@ -70,6 +70,13 @@ namespace probe
                 }
                 return count;
             }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : (n * (n - 2) - 1) / 2;
+            }
         };
     }
 
