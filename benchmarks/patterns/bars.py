@@ -49,6 +49,7 @@ def main():
         "push_middle": "Push middle",
         "ascending_sawtooth": "Ascending sawtooth",
         "descending_sawtooth": "Descending sawtooth",
+        "descending_sawtooth": "Descending sawtooth",
         "alternating": "Alternating",
         "alternating_16_values": "Alternating (16 values)",
     }
@@ -58,7 +59,7 @@ def main():
         "heap_sort",
         "pdq_sort",
         "quick_sort",
-        "spread_sort",
+        "ska_sort",
         "std_sort",
         "verge_sort",
     ]
@@ -96,11 +97,9 @@ def main():
                 "Descending",
                 "Pipe organ",
                 "Push front",
-                "Push middle",
                 "Ascending sawtooth",
                 "Descending sawtooth",
                 "Alternating",
-                "Alternating (16 values)",
             )
 
             groupnames = distributions
