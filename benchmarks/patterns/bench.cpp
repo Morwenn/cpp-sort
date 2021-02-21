@@ -45,7 +45,7 @@ using value_t = double;
 using collection_t = std::vector<value_t>;
 
 // Handy function pointer aliases
-using distr_f = void (*)(std::back_insert_iterator<collection_t>, std::size_t);
+using distr_f = void (*)(std::back_insert_iterator<collection_t>, long long int);
 using sort_f = void (*)(collection_t&);
 
 int main()
