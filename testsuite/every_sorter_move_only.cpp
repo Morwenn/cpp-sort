@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -13,6 +13,7 @@
 #include <testing-tools/move_only.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

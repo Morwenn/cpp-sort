@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,6 +12,7 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indirect_adapter]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

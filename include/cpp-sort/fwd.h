@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FWD_H_
@@ -24,6 +24,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorters
 
+    struct cartesian_tree_sorter;
     template<typename BufferProvider>
     struct block_sorter;
     struct counting_sorter;

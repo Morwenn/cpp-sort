@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -14,6 +14,7 @@
 #include <testing-tools/no_post_iterator.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,

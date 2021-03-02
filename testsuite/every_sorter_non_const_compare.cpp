@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -11,6 +11,7 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

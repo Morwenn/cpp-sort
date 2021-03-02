@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -13,6 +13,7 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distribution", "[distributions]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>

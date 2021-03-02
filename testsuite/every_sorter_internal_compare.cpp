@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2019 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,6 +12,7 @@
 
 TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function comparison",
                     "[sorters][as_function]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -27,6 +27,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
 
     std::list<long long int> li(std::begin(collection), std::end(collection));
     std::forward_list<long long int> fli(std::begin(collection), std::end(collection));
+
+    SECTION( "cartesian_tree_sort" )
+    {
+        cppsort::cartesian_tree_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
 
     SECTION( "block_sort" )
     {

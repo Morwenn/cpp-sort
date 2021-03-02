@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -41,6 +41,7 @@ namespace
 }
 
 TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>

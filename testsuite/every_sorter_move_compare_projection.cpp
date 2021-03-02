@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -13,6 +13,7 @@
 #include <testing-tools/functional_checks.h>
 
 TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -49,6 +50,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
 }
 
 TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>

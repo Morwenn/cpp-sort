@@ -14,6 +14,20 @@ If you want to read more about sorters and/or write your own one, then you shoul
 
 The following sorters are available and will work with any type for which `std::less` works and should accept any well-formed comparison function:
 
+### `cartesian_tree_sorter`
+
+```cpp
+#include <cpp-sort/sorters/cartesian_tree_sorter.h>
+```
+
+Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Heapsort - Adapted for Presorted Files*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Random-access |
+
+*New in version 1.10.0*
+
 ### `block_sorter<>`
 
 ```cpp
@@ -481,6 +495,7 @@ struct spread_sorter:
 
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm

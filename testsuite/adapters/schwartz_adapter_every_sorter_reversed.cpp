@@ -24,6 +24,7 @@ using wrapper = generic_wrapper<T>;
 
 TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse iterators",
                     "[schwartz_adapter][reverse_iterator]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

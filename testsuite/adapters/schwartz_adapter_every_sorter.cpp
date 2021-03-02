@@ -24,6 +24,7 @@ template<typename T=float>
 using wrapper = generic_wrapper<T>;
 
 TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapter", "[schwartz_adapter]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

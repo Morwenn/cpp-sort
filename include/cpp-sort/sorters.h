@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_H_
@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cpp-sort/sorters/cartesian_tree_sorter.h>
 #include <cpp-sort/sorters/block_sorter.h>
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
