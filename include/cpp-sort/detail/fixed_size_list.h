@@ -254,9 +254,15 @@ namespace detail
             ~fixed_size_list()
             {
                 // Destroy the constructed values
-                for (node_type* ptr = sentinel_node_ ; ptr != sentinel_node_ ; ptr = ptr->next) {
-                    ptr->value.~T();
+                if (sentinel_node_->next != sentinel_node_) {
+                    node_type* ptr = sentinel_node_->next;
+                    do {
+                        auto next_ptr = ptr->next;
+                        ptr->value.~T();
+                        ptr = next_ptr;
+                    } while (ptr != sentinel_node_);
                 }
+
                 // Destroy the nodes
                 for (node_type* ptr = buffer_.get() ; ptr != sentinel_node_ ; ++ptr) {
                     ptr->~node_type();
