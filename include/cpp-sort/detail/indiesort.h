@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -122,7 +122,7 @@ namespace detail
         });
 
         if (size < 2) {
-            exit_function.release();
+            exit_function.deactivate();
         }
 
         // Sort the iterators on pointed values

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SCOPE_EXIT_H_
@@ -49,7 +49,13 @@ namespace detail
                 }
             }
 
-            auto release() noexcept
+            auto activate() noexcept
+                -> void
+            {
+                execute_on_destruction = true;
+            }
+
+            auto deactivate() noexcept
                 -> void
             {
                 execute_on_destruction = false;

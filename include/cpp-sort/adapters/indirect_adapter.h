@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
@@ -122,7 +122,7 @@ namespace cppsort
             });
 
             if (size < 2) {
-                exit_function.release();
+                exit_function.deactivate();
             }
 
             return std::forward<Sorter>(sorter)(
