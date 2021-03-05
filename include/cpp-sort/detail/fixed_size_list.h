@@ -161,6 +161,38 @@ namespace detail
                 first_free_ = first;
             }
 
+            ////////////////////////////////////////////////////////////
+            // Danger Zone
+
+            // reset_nodes relinks the first n nodes of the buffer in a
+            // rather brutal way: it relinks everywhere next pointer of
+            // the n first elements of the buffer to the next element in
+            // the buffer.
+            //
+            // The only real use case is when reusing the same node pool
+            // with several lists: once a list is destroyed, if it used
+            // no more than n elements, relink those n elements, which
+            // can greatly improve the cache-friendliness of the next
+            // node allocations.
+            //
+            // Using this function incorrectly *will* fuck everything
+            // and its invariants up.
+
+            auto reset_nodes(std::ptrdiff_t until_n)
+                -> void
+            {
+                auto ptr = buffer_.get();
+                for (std::ptrdiff_t n = 0 ; n < until_n - 1 ; ++n, ++ptr) {
+                    ptr->next = ptr + 1;
+                }
+                if (until_n == capacity_) {
+                    ptr->next = nullptr;
+                } else {
+                    ptr->next = ptr + 1;
+                }
+                first_free_ = buffer_.get();
+            }
+
         private:
 
             ////////////////////////////////////////////////////////////

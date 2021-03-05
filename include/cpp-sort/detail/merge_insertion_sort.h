@@ -22,6 +22,7 @@
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
+#include "scope_exit.h"
 #include "swap_if.h"
 #include "swap_ranges.h"
 #include "type_traits.h"
@@ -254,13 +255,9 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Merge-insertion sort
 
-    template<
-        typename RandomAccessIterator,
-        typename Compare,
-        typename Projection
-    >
-    auto merge_insertion_sort_impl(group_iterator<RandomAccessIterator> first,
-                                   group_iterator<RandomAccessIterator> last,
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto merge_insertion_sort_impl(group_iterator<RandomAccessIterator> first, group_iterator<RandomAccessIterator> last,
+                                   fixed_size_list_node_pool<group_iterator<RandomAccessIterator>>& node_pool,
                                    Compare compare, Projection projection)
         -> void
     {
@@ -306,7 +303,7 @@ namespace detail
         merge_insertion_sort_impl(
             make_group_iterator(first, 2),
             make_group_iterator(end, 2),
-            compare, projection
+            node_pool, compare, projection
         );
 
         ////////////////////////////////////////////////////////////
@@ -314,10 +311,21 @@ namespace detail
 
         using list_t = fixed_size_list<group_iterator<RandomAccessIterator>>;
 
+        // Reusing the node pool allows to halve the number of nodes
+        // allocated by the algorithm, but we need to reset the links
+        // between the nodes so that the future allocations remain
+        // somewhat cache-friendly - it is theoretically more work,
+        // but benchmarks proved that it made a huge difference
+        auto node_pool_reset = make_scope_exit([&node_pool, size, group_size=first.size()] {
+            if (group_size > 1) {
+                node_pool.reset_nodes(size);
+            }
+        });
+        node_pool_reset.deactivate();
+
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
-        fixed_size_list_node_pool<group_iterator<RandomAccessIterator>> node_pool(size);
         list_t chain(node_pool);
         chain.push_back(first);
         chain.push_back(std::next(first));
@@ -416,6 +424,9 @@ namespace detail
             buff_it = uninitialized_move(begin, end, buff_it, d);
         }
         detail::move(cache.get(), cache.get() + full_size, first.base());
+
+        // Everything else worked, it's now safe to reset the node pool
+        node_pool_reset.activate();
     }
 
     template<
@@ -427,9 +438,13 @@ namespace detail
                               Compare compare, Projection projection)
         -> void
     {
+        // Make a node pool big enough to hold all the values
+        fixed_size_list_node_pool<group_iterator<RandomAccessIterator>> node_pool(last - first);
+
         merge_insertion_sort_impl(
             make_group_iterator(std::move(first), 1),
             make_group_iterator(std::move(last), 1),
+            node_pool,
             std::move(compare), std::move(projection)
         );
     }
