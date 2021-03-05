@@ -59,6 +59,124 @@ namespace detail
     };
 
     ////////////////////////////////////////////////////////////
+    // Fixed size node pool
+    //
+    // This is an immovable doubly linked list node pool that can
+    // be constructed with a max capacity (N thereafter): it
+    // allocates a contiguous block of memory for N nodes and never
+    // performs any other allocation through the course of its
+    // lifetime. It is meant to be used from algorithms which know
+    // how many elements will be needed in a list or collection of
+    // lists, and allows to reuse the list nodes: the contiguous
+    // storage and the node reuse are expected to make the code
+    // using it faster than equivalent code using std::list.
+    //
+    // The free nodes are tracked as a singly linked list which
+    // reuses a node's internal pointers: that singly linked list
+    // of free nodes starts at first_free_ and ends when the "next"
+    // field of a node is nullptr.
+    //
+    // This node pool does not check for overflow: when asking for
+    // a new node, an assertion will fire if the pool is out of
+    // free nodes.
+    //
+    // It is worth nothing that the node pool only manages the
+    // lifetime of the nodes themselves, it is the responsibility
+    // of the list to manage the lifetime of the stored values.
+
+    template<typename T>
+    struct fixed_size_list_node_pool
+    {
+        public:
+
+            ////////////////////////////////////////////////////////////
+            // Public types
+
+            using node_type = fixed_size_list_node<T>;
+
+            ////////////////////////////////////////////////////////////
+            // Constructors
+
+            // Make the node pool immovable
+            fixed_size_list_node_pool(const fixed_size_list_node_pool&) = delete;
+            fixed_size_list_node_pool(fixed_size_list_node_pool&&) = delete;
+            fixed_size_list_node_pool& operator=(const fixed_size_list_node_pool&) = delete;
+            fixed_size_list_node_pool& operator=(fixed_size_list_node_pool&&) = delete;
+
+            explicit fixed_size_list_node_pool(std::ptrdiff_t capacity):
+                // Allocate enough space to store N nodes
+                buffer_(static_cast<node_type*>(::operator new(capacity * sizeof(node_type))),
+                       operator_deleter(capacity * sizeof(node_type))),
+                first_free_(buffer_.get()),
+                capacity_(capacity)
+            {
+                // fixed_size_list_node constructors are noexcept, so we don't
+                // need to handle the cleanup of list nodes that would have been
+                // required if exceptions could have been thrown
+
+                auto ptr = buffer_.get();
+                for (std::ptrdiff_t n = 0 ; n < capacity - 1 ; ++n, ++ptr) {
+                    // Each node is initialized with a "next" field pointing to the next
+                    // node in memory: this allows to create a list of free nodes laid
+                    // out contiguously in memory in one pass
+                    ::new (ptr) node_type(ptr + 1);
+                }
+                // Initialize the last node, guard with nullptr
+                ::new (ptr) node_type(nullptr);
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Destructor
+
+            ~fixed_size_list_node_pool()
+            {
+                // Destroy the nodes
+                node_type* ptr = buffer_.get();
+                for (std::ptrdiff_t n = 0 ; n < capacity_ ; ++n, ++ptr) {
+                    ptr->~node_type();
+                }
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Node providing/retrieval
+
+            auto next_free_node()
+                -> node_type*
+            {
+                // Retrieve next free node
+                CPPSORT_ASSERT(first_free_ != nullptr);
+                node_type* new_node = first_free_;
+                first_free_ = first_free_->next;
+                return new_node;
+            }
+
+            auto retrieve_nodes(node_type* first, node_type* last)
+                -> void
+            {
+                // Get back a range of nodes linked together, this function
+                // allows to retrieve any number of nodes in O(1), assuming
+                // that last is accessible repeatedly iterating over next
+                // from first
+                last->next = first_free_;
+                first_free_ = first;
+            }
+
+        private:
+
+            ////////////////////////////////////////////////////////////
+            // Data members
+
+            // Backing storage
+            std::unique_ptr<node_type, operator_deleter> buffer_;
+
+            // First free node of the pool
+            node_type* first_free_;
+
+            // Number of nodes the pool holds
+            std::ptrdiff_t capacity_;
+    };
+
+    ////////////////////////////////////////////////////////////
     // List iterator
     //
     // Iterator wrapping a fixed_size_list_node: it uses the
@@ -167,36 +285,27 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Fixed size list
     //
-    // This is an immovable double linked list data structure that
-    // can be constructed with a max capacity (N thereafter): it
-    // allocates a contiguous block of memory for N nodes and a
-    // sentinel node and never performs any other allocation through
-    // the course of its lifetime. It is meant to be used from
-    // algorithms which know how many elements will be needed in a
-    // list and allow to reuse the list nodes: the contiguous node
-    // storage and the node reuse are expected to make the code
-    // using it faster than the equivalent code using std::list.
+    // This is an immovable doubly linked list data structure that
+    // can be constructed with a reference to a fixed-size node
+    // pool. The list is handles the lifetimes of the node's values,
+    // but the lifetime of the nodes themselves is handled by the
+    // pool.
     //
-    // The list itself is a doubly linked list of immovables nodes
-    // that starts at begin() and ends at the sentinel node end().
-    // It can mostly be used like the standard library std::list.
-    // The sentinel nodes is always the last node of the backing
-    // storage.
+    // The list is implemented with a sentinel node to simplify many
+    // of the operations. This sentinel node is store in the list
+    // itself instead of being allocated from the node pool. Its
+    // next pointer points to the first element of the list, its
+    // prev pointer points to the last. When the list is empty, the
+    // sentinel node points to itself.
     //
-    // Internally the free nodes are tracked in a singly linked list
-    // which reuses the nodes internal pointers: that singly linked
-    // list of free nodes starts at first_free_ and ends at the
-    // sentinel node. It is worth noting that the sentinel node's
-    // prev pointer points at the previous element in the doubly
-    // linked list, not at the previous node in the free nodes list.
-    //
-    // This list implementation does not check for overflow: when
-    // trying to insert too many nodes there is a precondition that
-    // there are still free nodes left in the list.
-    //
-    // This implementation does not provide all the functions to
-    // match std::list, but only the ones actually used by the
-    // library's algorithms, growing as needed
+    // The interface is supposed to be as close as possible from
+    // that of std::list, except in the following areas:
+    // - Construction from a node pool
+    // - No tracking of the size
+    // - Immovable
+    // A lot of the capabilities of std::list are still missing,
+    // they will be added as needed whenever new library components
+    // require them
 
     template<typename T>
     struct fixed_size_list
@@ -226,63 +335,43 @@ namespace detail
             fixed_size_list& operator=(const fixed_size_list&) = delete;
             fixed_size_list& operator=(fixed_size_list&&) = delete;
 
-            explicit fixed_size_list(std::ptrdiff_t capacity):
-                // Allocate enough space to store N nodes plus a
-                // sentinel node (where N = capacity)
-                buffer_(static_cast<node_type*>(::operator new((capacity + 1) * sizeof(node_type))),
-                       operator_deleter((capacity + 1) * sizeof(node_type))),
-                sentinel_node_(buffer_.get() + capacity),
-                first_free_(buffer_.get())
-            {
-                // fixed_size_list_node constructors are noexcept, so we don't
-                // need to handle the cleanup of list nodes that would have been
-                // required if exceptions could have been thrown
-
-                for (auto ptr = buffer_.get() ; ptr != sentinel_node_ ; ++ptr) {
-                    // Each node is initialized with a "next" field pointing to the next
-                    // node in memory: this allows to create a list of free nodes layed
-                    // out contiguously in memory in one pass
-                    ::new (ptr) node_type(ptr + 1);
-                }
-                // Initialize sentinel node
-                ::new (sentinel_node_) node_type(sentinel_node_, sentinel_node_);
-            }
+            explicit constexpr fixed_size_list(fixed_size_list_node_pool<T>& node_pool) noexcept:
+                node_pool_(&node_pool),
+                sentinel_node_(&sentinel_node_, &sentinel_node_)
+            {}
 
             ////////////////////////////////////////////////////////////
             // Destructor
 
             ~fixed_size_list()
             {
-                // Destroy the constructed values
-                if (sentinel_node_->next != sentinel_node_) {
-                    node_type* ptr = sentinel_node_->next;
+                node_type* ptr = sentinel_node_.next;
+                if (ptr != &sentinel_node_) {
+                    // Destroy the node's values
                     do {
                         auto next_ptr = ptr->next;
                         ptr->value.~T();
                         ptr = next_ptr;
-                    } while (ptr != sentinel_node_);
-                }
+                    } while (ptr != &sentinel_node_);
 
-                // Destroy the nodes
-                for (node_type* ptr = buffer_.get() ; ptr != sentinel_node_ ; ++ptr) {
-                    ptr->~node_type();
+                    // Let the pool know that the nodes are free again
+                    node_pool_->retrieve_nodes(sentinel_node_.next, sentinel_node_.prev);
                 }
-                sentinel_node_->~node_type();
             }
 
             ////////////////////////////////////////////////////////////
             // Iterator access
 
-            auto begin() const
+            auto begin()
                 -> iterator
             {
-                return iterator(sentinel_node_->next);
+                return iterator(sentinel_node_.next);
             }
 
-            auto end() const
+            auto end()
                 -> iterator
             {
-                return iterator(sentinel_node_);
+                return iterator(&sentinel_node_);
             }
 
             ////////////////////////////////////////////////////////////
@@ -291,7 +380,7 @@ namespace detail
             auto insert(iterator pos, const T& value)
                 -> iterator
             {
-                node_type* new_node = next_free_node_();
+                node_type* new_node = node_pool_->next_free_node();
                 ::new (&new_node->value) T(value);
                 link_node_before_(new_node, pos.base());
                 return iterator(new_node);
@@ -300,7 +389,7 @@ namespace detail
             auto insert(iterator pos, T&& value)
                 -> iterator
             {
-                node_type* new_node = next_free_node_();
+                node_type* new_node = node_pool_->next_free_node();
                 ::new (&new_node->value) T(std::move(value));
                 link_node_before_(new_node, pos.base());
                 return iterator(new_node);
@@ -323,16 +412,6 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Helper functions
 
-            auto next_free_node_()
-                -> node_type*
-            {
-                // Retrieve next free node
-                CPPSORT_ASSERT(first_free_ != sentinel_node_);
-                node_type* new_node = first_free_;
-                first_free_ = first_free_->next;
-                return new_node;
-            }
-
             auto link_node_before_(node_type* node, node_type* pos)
                 -> void
             {
@@ -346,15 +425,12 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Data members
 
-            // Backing storage
-            std::unique_ptr<node_type, operator_deleter> buffer_;
+            // Node pool
+            fixed_size_list_node_pool<T>* node_pool_;
 
-            // Immovable sentinel node: its prev field points to the last
-            // element of the list, its next field to the first one
-            node_type* const sentinel_node_;
-
-            // First free node of the list
-            node_type* first_free_;
+            // Sentinel node: its prev field points to the last element
+            // of the list, its next field to the first one
+            node_type sentinel_node_;
     };
 }}
 

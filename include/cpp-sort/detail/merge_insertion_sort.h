@@ -317,7 +317,8 @@ namespace detail
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
-        list_t chain(size);
+        fixed_size_list_node_pool<group_iterator<RandomAccessIterator>> node_pool(size);
+        list_t chain(node_pool);
         chain.push_back(first);
         chain.push_back(std::next(first));
 
