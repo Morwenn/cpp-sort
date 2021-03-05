@@ -340,7 +340,7 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Binary insertion into the main chain
 
-        auto current_it = first + 2;
+        auto current_it = first;
         auto current_pend = pend.begin();
 
         for (int k = 0 ; ; ++k) {
@@ -358,9 +358,8 @@ namespace detail
             auto it = current_it + dist * 2;
             auto pe = current_pend + dist;
 
-            do {
+            while (true) {
                 --pe;
-                it -= 2;
 
                 auto insertion_point = detail::upper_bound(
                     chain.begin(), *pe, proj(*it),
@@ -370,7 +369,10 @@ namespace detail
                     utility::identity{}
                 );
                 chain.insert(insertion_point, it);
-            } while (pe != current_pend);
+
+                if (pe == current_pend) break;
+                it -= 2;
+            }
 
             current_it += dist * 2;
             current_pend += dist;
@@ -379,12 +381,6 @@ namespace detail
         // If there are pend elements left, insert them into the main
         // chain, the order of insertion does not matter so forward
         // traversal is ok
-        //
-        // current_it is guaranteed to be at least first + 2, so this is
-        // safe - incrementing it at the end of the loop might cause the
-        // iterator to go out of bounds, so we decrement it here so that
-        // we can increment it at the beginning of the loop
-        current_it -= 2;
         while (current_pend != pend.end()) {
             current_it += 2;
             auto insertion_point = detail::upper_bound(
