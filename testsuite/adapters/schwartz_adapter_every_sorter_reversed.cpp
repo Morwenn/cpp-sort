@@ -31,6 +31,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,

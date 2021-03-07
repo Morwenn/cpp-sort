@@ -23,6 +23,7 @@ TEMPLATE_TEST_CASE( "test sorter with push_front distribution", "[distributions]
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
                     >,
                     cppsort::heap_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
                     cppsort::poplar_sorter,

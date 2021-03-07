@@ -12,6 +12,7 @@
 #include <iterator>
 #include <memory>
 #include <utility>
+#include <cpp-sort/utility/as_function.h>
 #include "config.h"
 #include "memory.h"
 
@@ -317,7 +318,7 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Fixed size list
     //
-    // This is an immovable doubly linked list data structure that
+    // This is a non-copyable doubly linked list data structure that
     // can be constructed with a reference to a fixed-size node
     // pool. The list is handles the lifetimes of the node's values,
     // but the lifetime of the nodes themselves is handled by the
@@ -334,7 +335,8 @@ namespace detail
     // that of std::list, except in the following areas:
     // - Construction from a node pool
     // - No tracking of the size
-    // - Immovable
+    // - No copy semantics
+    // - empty -> is_empty
     // A lot of the capabilities of std::list are still missing,
     // they will be added as needed whenever new library components
     // require them
@@ -361,16 +363,50 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Constructors
 
-            // Make fixed_size_list immovable
+            // Make fixed_size_list non-copyable
             fixed_size_list(const fixed_size_list&) = delete;
-            fixed_size_list(fixed_size_list&&) = delete;
             fixed_size_list& operator=(const fixed_size_list&) = delete;
-            fixed_size_list& operator=(fixed_size_list&&) = delete;
 
             explicit constexpr fixed_size_list(fixed_size_list_node_pool<T>& node_pool) noexcept:
                 node_pool_(&node_pool),
                 sentinel_node_(&sentinel_node_, &sentinel_node_)
             {}
+
+            constexpr fixed_size_list(fixed_size_list&& other) noexcept:
+                node_pool_(other.node_pool_),
+                sentinel_node_(std::exchange(other.sentinel_node_.prev, &other.sentinel_node_),
+                               std::exchange(other.sentinel_node_.next, &other.sentinel_node_))
+            {
+                if (sentinel_node_.prev == &other.sentinel_node_) {
+                    sentinel_node_.prev = &sentinel_node_;
+                } else {
+                    sentinel_node_.prev->next = &sentinel_node_;
+                }
+                if (sentinel_node_.next == &other.sentinel_node_) {
+                    sentinel_node_.next = &sentinel_node_;
+                } else {
+                    sentinel_node_.next->prev = &sentinel_node_;
+                }
+            }
+
+            auto operator=(fixed_size_list&& other) noexcept
+                -> fixed_size_list&
+            {
+                node_pool_ = other.node_pool_;
+                if (other.sentinel_node_.prev != &other.sentinel_node_) {
+                    sentinel_node_.prev = std::exchange(other.sentinel_node_.prev, &other.sentinel_node_);
+                    sentinel_node_.prev->next = &sentinel_node_;
+                } else {
+                    sentinel_node_.prev = &sentinel_node_;
+                }
+                if (other.sentinel_node_.next != &other.sentinel_node_) {
+                    sentinel_node_.next = std::exchange(other.sentinel_node_.next, &other.sentinel_node_);
+                    sentinel_node_.next->prev = &sentinel_node_;
+                } else {
+                    sentinel_node_.next = &sentinel_node_;
+                }
+                return *this;
+            }
 
             ////////////////////////////////////////////////////////////
             // Destructor
@@ -392,7 +428,22 @@ namespace detail
             }
 
             ////////////////////////////////////////////////////////////
-            // Iterator access
+            // Element access
+
+            auto front()
+                -> reference
+            {
+                return sentinel_node_.next->value;
+            }
+
+            auto back()
+                -> reference
+            {
+                return sentinel_node_.prev->value;
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Iterators
 
             auto begin()
                 -> iterator
@@ -407,42 +458,157 @@ namespace detail
             }
 
             ////////////////////////////////////////////////////////////
+            // Capacity
+
+            [[nodiscard]] auto is_empty() const noexcept
+                -> bool
+            {
+                return &sentinel_node_ == sentinel_node_.next;
+            }
+
+            ////////////////////////////////////////////////////////////
             // Modifiers
 
             auto insert(iterator pos, const T& value)
                 -> iterator
             {
-                node_type* new_node = node_pool_->next_free_node();
-                ::new (&new_node->value) T(value);
-                link_node_before_(new_node, pos.base());
-                return iterator(new_node);
+                return iterator(insert_node_(pos.base(), value));
             }
 
             auto insert(iterator pos, T&& value)
                 -> iterator
             {
-                node_type* new_node = node_pool_->next_free_node();
-                ::new (&new_node->value) T(std::move(value));
-                link_node_before_(new_node, pos.base());
-                return iterator(new_node);
+                return iterator(insert_node_(pos.base(), std::move(value)));
             }
 
             auto push_back(const T& value)
                 -> void
             {
-                insert(end(), value);
+                insert_node_(&sentinel_node_, value);
             }
 
             auto push_back(T&& value)
                 -> void
             {
-                insert(end(), std::move(value));
+                insert_node_(&sentinel_node_, std::move(value));
+            }
+
+            auto push_front(const T& value)
+                -> void
+            {
+                insert_node_(sentinel_node_.next, value);
+            }
+
+            auto push_front(T&& value)
+                -> void
+            {
+                insert_node_(sentinel_node_.next, std::move(value));
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Operations
+
+            template<typename Compare, typename Projection>
+            auto merge(fixed_size_list& other, Compare compare, Projection projection)
+                -> void
+            {
+                auto&& comp = utility::as_function(compare);
+                auto&& proj = utility::as_function(projection);
+
+
+                if (is_empty()) {
+                    splice(end(), other);
+                    return;
+                }
+                if (other.is_empty()) {
+                    return;
+                }
+
+                auto other_it = other.begin();
+                auto other_end = other.end();
+                auto this_it = begin();
+                auto this_end = end();
+
+                while (other_it != other_end) {
+                    if (comp(proj(*other_it), proj(*this_it))) {
+                        // The following loop finds a series of nodes to splice
+                        // into the current list, which is faster than splicing
+                        // elements one by one
+                        auto insert_begin = other_it;
+                        do {
+                            ++other_it;
+                        } while (other_it != other_end && comp(proj(*other_it), proj(*this_it)));
+                        fast_splice_(this_it, insert_begin, other_it);
+                    } else {
+                        ++this_it;
+                    }
+
+                    if (this_it == this_end) {
+                        fast_splice_(this_end, other_it, other_end);
+                        // Reset the other list's sentinel node,
+                        // fast_splice_ does no do it
+                        other.sentinel_node_.next = &other.sentinel_node_;
+                        other.sentinel_node_.prev = &other.sentinel_node_;
+                        return;
+                    }
+                }
+
+                // Reset the other list's sentinel node,
+                // fast_splice_ does no do it
+                other.sentinel_node_.next = &other.sentinel_node_;
+                other.sentinel_node_.prev = &other.sentinel_node_;
+                CPPSORT_ASSERT(other.is_empty());
+            }
+
+            auto splice(iterator pos, fixed_size_list& other)
+                -> void
+            {
+                if (other.is_empty()) {
+                    return;
+                }
+                splice(pos, other, other.begin(), other.end());
+            }
+
+            auto splice(iterator pos, fixed_size_list&, iterator first, iterator last)
+                -> void
+            {
+                CPPSORT_ASSERT(first.base() != last.base());
+
+                auto last_1 = last.base()->prev;
+
+                // Relink nodes in the other list
+                first.base()->prev->next = last.base();
+                last.base()->prev = first.base()->prev;
+
+                // Add the range of elements to this list
+                pos.base()->prev->next = first.base();
+                first.base()->prev = pos.base()->prev;
+                pos.base()->prev = last_1;
+                last_1->next = pos.base();
             }
 
         private:
 
             ////////////////////////////////////////////////////////////
             // Helper functions
+
+            auto insert_node_(node_type* pos, const T& value)
+                -> node_type*
+            {
+                node_type* new_node = node_pool_->next_free_node();
+                ::new (&new_node->value) T(value);
+                link_node_before_(new_node, pos);
+                return new_node;
+            }
+
+            auto insert_node_(node_type* pos, T&& value)
+                -> node_type*
+            {
+                node_type* new_node = node_pool_->next_free_node();
+                ::new (&new_node->value) T(std::move(value));
+                link_node_before_(new_node, pos);
+                return new_node;
+            }
 
             auto link_node_before_(node_type* node, node_type* pos)
                 -> void
@@ -452,6 +618,25 @@ namespace detail
                 node->next = pos;
                 node->prev->next = node;
                 node->next->prev = node;
+            }
+
+            auto fast_splice_(iterator pos, iterator first, iterator last)
+                -> void
+            {
+                CPPSORT_ASSERT(first.base() != last.base());
+
+                // This function is like splice(), but it doesn't relink
+                // nodes in the other list: when merging another list into
+                // the current one, we never use the relinked pointers in
+                // the other list, so merge() can just skip relinking them
+                // altogether and just reset the sentinel node at the end
+                // of the operation instead
+
+                // Add the range of elements to this list
+                pos.base()->prev->next = first.base();
+                first.base()->prev = pos.base()->prev;
+                pos.base()->prev = last.base()->prev;
+                last.base()->prev->next = pos.base();
             }
 
             ////////////////////////////////////////////////////////////

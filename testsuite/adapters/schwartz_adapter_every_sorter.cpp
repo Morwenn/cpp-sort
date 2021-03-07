@@ -31,6 +31,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
@@ -57,6 +58,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
 TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapter", "[schwartz_adapter]",
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
@@ -74,6 +76,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapt
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "[schwartz_adapter]",
+                    cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,

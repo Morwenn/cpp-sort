@@ -16,6 +16,7 @@
 #include <cpp-sort/sorters/grail_sorter.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
+#include <cpp-sort/sorters/mel_sorter.h>
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>

@@ -161,6 +161,20 @@ This sorter also has the following dedicated algorithms when used together with 
 
 None of the container-aware algorithms invalidates iterators.
 
+### `mel_sorter`
+
+```cpp
+#include <cpp-sort/sorters/mel_sorter.h>
+```
+
+Implements melsort, a rather slow but highly adaptive algorithm described by S. Skiena in *Encroaching lists as a measure of presortedness*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Forward       |
+
+*New in version 1.10.0*
+
 ### `merge_insertion_sorter`
 
 ```cpp

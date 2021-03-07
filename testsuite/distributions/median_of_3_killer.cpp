@@ -23,6 +23,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with median_of_3_killer distribu
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
                     >,
                     cppsort::heap_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
                     cppsort::poplar_sorter,
