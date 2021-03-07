@@ -43,6 +43,7 @@ namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto melsort(ForwardIterator first, ForwardIterator last,
+                 difference_type_t<ForwardIterator> size,
                  Compare compare, Projection projection)
         -> void
     {
@@ -51,7 +52,6 @@ namespace detail
 
         // Encroaching lists
         using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
-        auto size = std::distance(first, last);
         fixed_size_list_node_pool<rvalue_reference> node_pool(size);
         std::vector<fixed_size_list<rvalue_reference>> lists;
 

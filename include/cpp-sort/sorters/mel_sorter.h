@@ -34,6 +34,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/melsort.h"
@@ -48,12 +49,37 @@ namespace cppsort
         struct mel_sorter_impl
         {
             template<
+                typename ForwardIterable,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_v<Projection, ForwardIterable, Compare>
+                >
+            >
+            auto operator()(ForwardIterable&& iterable,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                static_assert(
+                    std::is_base_of<
+                        std::forward_iterator_tag,
+                        iterator_category_t<decltype(std::begin(iterable))>
+                    >::value,
+                    "mel_sorter requires at least forward iterators"
+                );
+
+                melsort(std::begin(iterable), std::end(iterable),
+                        utility::size(iterable),
+                        std::move(compare), std::move(projection));
+            }
+
+            template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator_v<
-                    Projection, ForwardIterator, Compare
-                >>
+                typename = std::enable_if_t<
+                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                >
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
@@ -67,7 +93,8 @@ namespace cppsort
                     "mel_sorter requires at least forward iterators"
                 );
 
-                melsort(std::move(first), std::move(last),
+                auto dist = std::distance(first, last);
+                melsort(std::move(first), std::move(last), dist,
                         std::move(compare), std::move(projection));
             }
 
