@@ -12,8 +12,8 @@
 
 TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function comparison",
                     "[sorters][as_function]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,

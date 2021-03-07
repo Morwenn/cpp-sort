@@ -13,11 +13,11 @@
 #include <testing-tools/span.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

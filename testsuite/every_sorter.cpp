@@ -15,11 +15,11 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test every random-access sorter with vector", "[sorters]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -59,11 +59,11 @@ TEMPLATE_TEST_CASE( "test every random-access sorter with vector", "[sorters]",
 }
 
 TEMPLATE_TEST_CASE( "test every random-access sorter with deque", "[sorters]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

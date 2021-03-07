@@ -12,7 +12,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -22,6 +21,7 @@ TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]"
                     // that could specifically appear with an ascending distribution,
                     // so here is the dedicated test (see issue #103)
                     cppsort::counting_sorter,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

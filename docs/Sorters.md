@@ -14,20 +14,6 @@ If you want to read more about sorters and/or write your own one, then you shoul
 
 The following sorters are available and will work with any type for which `std::less` works and should accept any well-formed comparison function:
 
-### `cartesian_tree_sorter`
-
-```cpp
-#include <cpp-sort/sorters/cartesian_tree_sorter.h>
-```
-
-Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Heapsort - Adapted for Presorted Files*.
-
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-access |
-
-*New in version 1.10.0*
-
 ### `block_sorter<>`
 
 ```cpp
@@ -50,6 +36,20 @@ struct block_sorter;
 ```
 
 Whether this sorter works with types that are not default-constructible depends on the memory allocation strategy of the buffer provider. The default specialization does not work with such types.
+
+### `cartesian_tree_sorter`
+
+```cpp
+#include <cpp-sort/sorters/cartesian_tree_sorter.h>
+```
+
+Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Heapsort - Adapted for Presorted Files*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Random-access |
+
+*New in version 1.10.0*
 
 ### `default_sorter`
 

@@ -12,8 +12,8 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indirect_adapter]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

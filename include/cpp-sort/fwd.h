@@ -24,9 +24,9 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorters
 
-    struct cartesian_tree_sorter;
     template<typename BufferProvider>
     struct block_sorter;
+    struct cartesian_tree_sorter;
     struct counting_sorter;
     struct default_sorter;
     struct drop_merge_sorter;

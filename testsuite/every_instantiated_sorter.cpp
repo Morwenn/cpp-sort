@@ -28,15 +28,15 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     std::list<long long int> li(std::begin(collection), std::end(collection));
     std::forward_list<long long int> fli(std::begin(collection), std::end(collection));
 
-    SECTION( "cartesian_tree_sort" )
-    {
-        cppsort::cartesian_tree_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
     SECTION( "block_sort" )
     {
         cppsort::block_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "cartesian_tree_sort" )
+    {
+        cppsort::cartesian_tree_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 

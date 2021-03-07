@@ -12,11 +12,11 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test random-access sorters with median_of_3_killer distribution", "[distributions]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

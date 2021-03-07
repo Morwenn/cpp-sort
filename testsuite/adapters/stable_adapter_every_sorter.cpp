@@ -27,8 +27,8 @@ using wrapper = generic_stable_wrapper<int>;
 // are also in ascending order
 
 TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_adapter]",
-                    cppsort::cartesian_tree_sorter,
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
