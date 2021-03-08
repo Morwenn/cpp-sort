@@ -232,6 +232,8 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Constructors
 
+            fixed_size_list_iterator() = default;
+
             constexpr explicit fixed_size_list_iterator(fixed_size_list_node<T>* ptr) noexcept:
                 ptr_(ptr)
             {}
@@ -312,7 +314,7 @@ namespace detail
 
         private:
 
-            fixed_size_list_node<T>* ptr_;
+            fixed_size_list_node<T>* ptr_ = nullptr;
     };
 
     ////////////////////////////////////////////////////////////
@@ -505,6 +507,34 @@ namespace detail
                 insert_node_(sentinel_node_.next, std::move(value));
             }
 
+            auto extract(node_type* node)
+                -> node_type*
+            {
+                CPPSORT_ASSERT(node != &sentinel_node_);
+                CPPSORT_ASSERT(not is_empty());
+                node->prev->next = node->next;
+                node->next->prev = node->prev;
+                return node;
+            }
+
+            auto extract(iterator pos)
+                -> node_type*
+            {
+                return extract(pos.base());
+            }
+
+            auto extract_back()
+                -> node_type*
+            {
+                return extract(sentinel_node_.prev);
+            }
+
+            auto extract_front()
+                -> node_type*
+            {
+                return extract(sentinel_node_.next);
+            }
+
             ////////////////////////////////////////////////////////////
             // Operations
 
@@ -512,12 +542,19 @@ namespace detail
             auto merge(fixed_size_list& other, Compare compare, Projection projection)
                 -> void
             {
+                merge(begin(), end(), other, std::move(compare), std::move(projection));
+            }
+
+            template<typename Compare, typename Projection>
+            auto merge(iterator first, iterator last, fixed_size_list& other,
+                       Compare compare, Projection projection)
+                -> void
+            {
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-
                 if (is_empty()) {
-                    splice(end(), other);
+                    splice(last, other);
                     return;
                 }
                 if (other.is_empty()) {
@@ -526,25 +563,23 @@ namespace detail
 
                 auto other_it = other.begin();
                 auto other_end = other.end();
-                auto this_it = begin();
-                auto this_end = end();
 
                 while (other_it != other_end) {
-                    if (comp(proj(*other_it), proj(*this_it))) {
+                    if (comp(proj(*other_it), proj(*first))) {
                         // The following loop finds a series of nodes to splice
                         // into the current list, which is faster than splicing
                         // elements one by one
                         auto insert_begin = other_it;
                         do {
                             ++other_it;
-                        } while (other_it != other_end && comp(proj(*other_it), proj(*this_it)));
-                        fast_splice_(this_it, insert_begin, other_it);
+                        } while (other_it != other_end && comp(proj(*other_it), proj(*first)));
+                        fast_splice_(first, insert_begin, other_it);
                     } else {
-                        ++this_it;
+                        ++first;
                     }
 
-                    if (this_it == this_end) {
-                        fast_splice_(this_end, other_it, other_end);
+                    if (first == last) {
+                        fast_splice_(last, other_it, other_end);
                         // Reset the other list's sentinel node,
                         // fast_splice_ does no do it
                         other.sentinel_node_.next = &other.sentinel_node_;
@@ -557,7 +592,71 @@ namespace detail
                 // fast_splice_ does no do it
                 other.sentinel_node_.next = &other.sentinel_node_;
                 other.sentinel_node_.prev = &other.sentinel_node_;
-                CPPSORT_ASSERT(other.is_empty());
+            }
+
+            template<typename Compare, typename Projection>
+            auto merge_unsafe(fixed_size_list& other, Compare compare, Projection projection)
+                -> void
+            {
+                merge_unsafe(begin(), end(), other, std::move(compare), std::move(projection));
+            }
+
+            template<typename Compare, typename Projection>
+            auto merge_unsafe(iterator first, iterator last, fixed_size_list& other,
+                              Compare compare, Projection projection)
+                -> void
+            {
+                // WARNING: this variant of merge considers that only the next pointer
+                //          of the nodes in other is correct, as well as the prev
+                //          pointer of node.end() - it doesn't set the prev pointer
+                //          of the merged nodes either
+
+                auto&& comp = utility::as_function(compare);
+                auto&& proj = utility::as_function(projection);
+
+                if (is_empty()) {
+                    splice(last, other);
+                    return;
+                }
+                if (other.is_empty()) {
+                    return;
+                }
+
+                auto other_it = other.begin();
+                auto other_end = other.end();
+
+                while (other_it != other_end) {
+                    if (comp(proj(*other_it), proj(*first))) {
+                        // The following loop finds a series of nodes to splice
+                        // into the current list, which is faster than splicing
+                        // elements one by one
+                        iterator insert_first = other_it;
+                        iterator insert_last;
+                        do {
+                            insert_last = other_it;
+                            ++other_it;
+                        } while (other_it != other_end && comp(proj(*other_it), proj(*first)));
+                        first.base()->prev->next = insert_first.base();
+                        insert_last.base()->next = first.base();
+                    } else {
+                        ++first;
+                    }
+
+                    if (first == last) {
+                        last.base()->prev->next = other_it.base();
+                        other_end.base()->prev->next = last.base();
+                        // Reset the other list's sentinel node,
+                        // fast_splice_ does no do it
+                        other.sentinel_node_.next = &other.sentinel_node_;
+                        other.sentinel_node_.prev = &other.sentinel_node_;
+                        return;
+                    }
+                }
+
+                // Reset the other list's sentinel node,
+                // fast_splice_ does no do it
+                other.sentinel_node_.next = &other.sentinel_node_;
+                other.sentinel_node_.prev = &other.sentinel_node_;
             }
 
             auto splice(iterator pos, fixed_size_list& other)
