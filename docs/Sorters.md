@@ -167,11 +167,21 @@ None of the container-aware algorithms invalidates iterators.
 #include <cpp-sort/sorters/mel_sorter.h>
 ```
 
-Implements melsort, a rather slow but highly adaptive algorithm described by S. Skiena in *Encroaching lists as a measure of presortedness*.
+Implements melsort, a rather slow but *Enc*-adaptive algorithm described by S. Skiena in *Encroaching lists as a measure of presortedness*.
+
+*MEL* stands for *Merge Encroaching Lists*.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | No          | Forward       |
+
+This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`][container-aware-adapter]:
+
+| Container           | Best        | Average     | Worst       | Memory      | Stable      |
+| ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| `std::list`         | n           | n log n     | n log n     | sqrt n      | No          |
+
+None of the container-aware algorithms invalidates iterators.
 
 *New in version 1.10.0*
 
@@ -510,6 +520,7 @@ struct spread_sorter:
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
   [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
+  [container-aware-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm

@@ -120,4 +120,8 @@ namespace cppsort
     }
 }
 
+#ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_
+#include "../detail/container_aware/mel_sort.h"
+#endif
+
 #endif // CPPSORT_SORTERS_MEL_SORTER_H_

@@ -361,6 +361,10 @@ namespace cppsort
 #include "../detail/container_aware/insertion_sort.h"
 #endif
 
+#ifdef CPPSORT_SORTERS_MEL_SORTER_DONE_
+#include "../detail/container_aware/mel_sort.h"
+#endif
+
 #ifdef CPPSORT_SORTERS_MERGE_SORTER_DONE_
 #include "../detail/container_aware/merge_sort.h"
 #endif
