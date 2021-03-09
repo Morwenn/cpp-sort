@@ -54,6 +54,13 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( rem <= size * (1 - 1 / (par + 1)) );
     CHECK( inv <= size * par / 2 );
 
+    // Encroaching lists as a measure of presortedness
+    // by Steven S. Skiena
+    CHECK( enc <= runs );
+    CHECK( (2 * std::sqrt(enc) + 1) <= inv );
+    CHECK( enc <= std::min(rem + 1, size - rem) );
+    CHECK( 2 * enc <= exc );
+
     // Sorting Shuffled Monotone Sequences
     // by Christos Levcopoulos and Ola Petersson
     CHECK( sus <= runs );
