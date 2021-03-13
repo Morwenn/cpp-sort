@@ -160,8 +160,7 @@ namespace detail
     auto cartesian_tree_sort(Iterator first, Iterator last, Compare compare, Projection projection)
         -> void
     {
-        using rvalue_reference = detail::remove_cvref_t<rvalue_reference_t<Iterator>>;
-        using tree_type = cartesian_tree<rvalue_reference>;
+        using tree_type = cartesian_tree<rvalue_type_t<Iterator>>;
         using node_type = typename tree_type::node_type;
 
         if ((last - first) < 2) {

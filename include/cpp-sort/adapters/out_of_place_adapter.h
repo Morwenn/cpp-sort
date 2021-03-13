@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_OUT_OF_PLACE_ADAPTER_H_
@@ -36,20 +36,20 @@ namespace cppsort
             -> decltype(auto)
         {
             using utility::iter_move;
-            using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
+            using rvalue_type = rvalue_type_t<ForwardIterator>;
 
             // Copy the collection into contiguous memory buffer
-            std::unique_ptr<rvalue_reference, operator_deleter> buffer(
-                static_cast<rvalue_reference*>(::operator new(size * sizeof(rvalue_reference))),
-                operator_deleter(size * sizeof(rvalue_reference))
+            std::unique_ptr<rvalue_type, operator_deleter> buffer(
+                static_cast<rvalue_type*>(::operator new(size * sizeof(rvalue_type))),
+                operator_deleter(size * sizeof(rvalue_type))
             );
-            destruct_n<rvalue_reference> d(0);
-            std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
+            destruct_n<rvalue_type> d(0);
+            std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buffer.get(), d);
 
             auto it = first;
             auto ptr = buffer.get();
             for (Size i = 0 ; i < size ; ++i) {
-                ::new(ptr) rvalue_reference(iter_move(it));
+                ::new(ptr) rvalue_type(iter_move(it));
                 ++it;
                 ++ptr;
                 ++d;

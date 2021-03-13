@@ -105,13 +105,13 @@ namespace detail
                                 Compare compare, Projection projection,
                                 difference_type_t<BidirectionalIterator> len1,
                                 difference_type_t<BidirectionalIterator> len2,
-                                remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>* buff)
+                                rvalue_type_t<BidirectionalIterator>* buff)
         -> void
     {
         using utility::iter_move;
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
-        destruct_n<rvalue_reference> d(0);
-        std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buff, d);
+        using rvalue_type = rvalue_type_t<BidirectionalIterator>;
+        destruct_n<rvalue_type> d(0);
+        std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buff, d);
         if (len1 <= len2) {
             auto ptr = uninitialized_move(first, middle, buff, d);
             half_inplace_merge(buff, ptr, middle, last, first, len1,
@@ -119,7 +119,7 @@ namespace detail
         } else {
             auto ptr = uninitialized_move(middle, last, buff, d);
             using rbi = std::reverse_iterator<BidirectionalIterator>;
-            using rv = std::reverse_iterator<rvalue_reference*>;
+            using rv = std::reverse_iterator<rvalue_type*>;
             half_inplace_merge(rv(ptr), rv(buff),
                                rbi(middle), rbi(first),
                                rbi(last), len2,

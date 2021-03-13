@@ -292,17 +292,16 @@ namespace detail
         {
             private:
 
-                using value_t = value_type_t<RandomAccessIterator>;
                 using range_it = range<RandomAccessIterator>;
-                using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
-                using range_buf = range<rvalue_reference*>;
+                using rvalue_type = rvalue_type_t<RandomAccessIterator>;
+                using range_buf = range<rvalue_type*>;
 
                 // When the number of elements to sort is smaller than Sort_min, are sorted
                 // by the insertion sort algorithm
                 static constexpr std::uint32_t Sort_min = 36;
 
                 // Pointer to the auxiliary memory
-                std::unique_ptr<rvalue_reference, operator_deleter> ptr;
+                std::unique_ptr<rvalue_type, operator_deleter> ptr;
 
                 // Number of elements in the auxiliary memory
                 std::size_t nptr;
@@ -339,13 +338,13 @@ namespace detail
                     nptr = (nelem + 1) >> 1;
                     std::size_t nelem_1 = nptr;
                     std::size_t nelem_2 = nelem - nelem_1;
-                    ptr.reset(static_cast<rvalue_reference*>(
-                        ::operator new(nptr * sizeof(rvalue_reference))
+                    ptr.reset(static_cast<rvalue_type*>(
+                        ::operator new(nptr * sizeof(rvalue_type))
                     ));
                     range_buf range_aux(ptr.get(), (ptr.get() + nptr));
 
-                    destruct_n<rvalue_reference> d(0);
-                    std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(ptr.get(), d);
+                    destruct_n<rvalue_type> d(0);
+                    std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(ptr.get(), d);
 
                     //---------------------------------------------------------------------
                     //                  Process

@@ -73,8 +73,7 @@ namespace detail
     class TimSort
     {
         using iterator = RandomAccessIterator;
-        using value_type = value_type_t<iterator>;
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<iterator>>;
+        using rvalue_type = rvalue_type_t<iterator>;
         using difference_type = difference_type_t<iterator>;
 
         static constexpr int min_merge = 32;
@@ -83,7 +82,7 @@ namespace detail
         difference_type minGallop_ = min_gallop;
 
         // Buffer used for merges
-        std::unique_ptr<rvalue_reference, operator_deleter> buffer;
+        std::unique_ptr<rvalue_type, operator_deleter> buffer;
         std::ptrdiff_t buffer_size = 0;
 
         // Silence GCC -Winline warning
@@ -417,9 +416,9 @@ namespace detail
                 // easily avoidable out-of-memory errors and make sized
                 // deallocation work properly
                 buffer.reset(nullptr);
-                buffer.get_deleter() = operator_deleter(new_size * sizeof(rvalue_reference));
-                buffer.reset(static_cast<rvalue_reference*>(
-                    ::operator new(new_size * sizeof(rvalue_reference))
+                buffer.get_deleter() = operator_deleter(new_size * sizeof(rvalue_type));
+                buffer.reset(static_cast<rvalue_type*>(
+                    ::operator new(new_size * sizeof(rvalue_type))
                 ));
                 buffer_size = new_size;
             }
@@ -447,8 +446,8 @@ namespace detail
             }
 
             resize_buffer(len1);
-            destruct_n<rvalue_reference> d(0);
-            std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
+            destruct_n<rvalue_type> d(0);
+            std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buffer.get(), d);
             uninitialized_move(base1, base1 + len1, buffer.get(), d);
 
             auto cursor1 = buffer.get();
@@ -591,8 +590,8 @@ namespace detail
             }
 
             resize_buffer(len2);
-            destruct_n<rvalue_reference> d(0);
-            std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buffer.get(), d);
+            destruct_n<rvalue_type> d(0);
+            std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buffer.get(), d);
             uninitialized_move(base2, base2 + len2, buffer.get(), d);
 
             auto cursor1 = base1 + len1;

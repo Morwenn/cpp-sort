@@ -33,9 +33,9 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         // Encroaching lists
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
-        fixed_size_list_node_pool<rvalue_reference> node_pool(size);
-        std::vector<fixed_size_list<rvalue_reference>> lists;
+        using rvalue_type = rvalue_type_t<ForwardIterator>;
+        fixed_size_list_node_pool<rvalue_type> node_pool(size);
+        std::vector<fixed_size_list<rvalue_type>> lists;
 
         ////////////////////////////////////////////////////////////
         // Create encroaching lists
@@ -109,7 +109,7 @@ namespace detail
         //          This is cursed but saves some operations.
 
         bool bad_distribution = lists.size() > std::sqrt(size);
-        fixed_size_list<rvalue_reference> edges(node_pool);
+        fixed_size_list<rvalue_type> edges(node_pool);
 
         if (bad_distribution) {
             auto insert_node = edges.end().base();

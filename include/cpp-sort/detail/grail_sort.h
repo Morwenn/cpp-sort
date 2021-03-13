@@ -747,11 +747,9 @@ namespace grail
                     Compare compare, Projection projection)
         -> void
     {
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
-
         // Allocate temporary buffer
         auto size = last - first;
-        typename BufferProvider::template buffer<rvalue_reference> buffer(size);
+        typename BufferProvider::template buffer<rvalue_type_t<RandomAccessIterator>> buffer(size);
 
         using compare_t = std::remove_reference_t<decltype(utility::as_function(compare))>;
         common_sort(std::move(first), std::move(last), buffer.begin(), buffer.size(),

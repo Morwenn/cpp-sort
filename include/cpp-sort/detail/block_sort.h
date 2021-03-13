@@ -335,7 +335,7 @@ namespace detail
             -> void
         {
             using utility::iter_swap;
-            using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
+            using rvalue_type = rvalue_type_t<RandomAccessIterator>;
             using difference_type = difference_type_t<RandomAccessIterator>;
 
             difference_type size = last - first;
@@ -409,7 +409,7 @@ namespace detail
             // use a small cache to speed up some of the operations
             // just keep in mind that making it too small ruins the point (nothing will fit into it),
             // and making it too large also ruins the point (so much for "low memory"!)
-            typename BufferProvider::template buffer<rvalue_reference> cache(size);
+            typename BufferProvider::template buffer<rvalue_type> cache(size);
             difference_type cache_size = cache.size();
 
             // may be pointer of something else

@@ -409,15 +409,15 @@ namespace detail
         // Number of sub-iterators
         auto full_size = size * first.size();
 
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
-        std::unique_ptr<rvalue_reference, operator_deleter> cache(
-            static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference))),
-            operator_deleter(full_size * sizeof(rvalue_reference))
+        using rvalue_type = rvalue_type_t<RandomAccessIterator>;
+        std::unique_ptr<rvalue_type, operator_deleter> cache(
+            static_cast<rvalue_type*>(::operator new(full_size * sizeof(rvalue_type))),
+            operator_deleter(full_size * sizeof(rvalue_type))
         );
-        destruct_n<rvalue_reference> d(0);
-        std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(cache.get(), d);
+        destruct_n<rvalue_type> d(0);
+        std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(cache.get(), d);
 
-        rvalue_reference* buff_it = cache.get();
+        rvalue_type* buff_it = cache.get();
         for (auto&& it: chain) {
             auto begin = it.base();
             auto end = begin + it.size();
