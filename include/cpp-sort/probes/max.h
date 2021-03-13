@@ -69,10 +69,9 @@ namespace probe
             for (auto it = first ; it != last ; ++it) {
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
-                    iterators.begin(), iterators.end(), proj(*it), compare,
-                    [&proj](const auto& iterator) {
-                        return proj(*iterator);
-                    });
+                    iterators.begin(), iterators.end(), proj(*it),
+                    compare, cppsort::detail::indirect(projection)
+                );
                 auto pos_min = std::distance(iterators.begin(), rng.first);
                 auto pos_max = std::distance(iterators.begin(), rng.second);
 

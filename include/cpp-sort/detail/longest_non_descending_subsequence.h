@@ -16,6 +16,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
+#include "functional.h"
 #include "iterator_traits.h"
 #include "upper_bound.h"
 
@@ -58,23 +59,15 @@ namespace detail
             size = std::distance(first, last);
         }
 
-        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Top (smaller) elements in patience sorting stacks
         std::vector<ForwardIterator> stack_tops;
 
-        auto deref_compare = [&](const auto& lhs, auto rhs_it) mutable {
-            return comp(lhs, *rhs_it);
-        };
-        auto deref_proj = [&](const auto& value) mutable -> decltype(auto) {
-            return proj(value);
-        };
-
         while (first != last) {
             auto it = detail::upper_bound(
                 stack_tops.begin(), stack_tops.end(),
-                proj(*first), deref_compare, deref_proj);
+                proj(*first), compare, indirect(projection));
 
             if (it == stack_tops.end()) {
                 // The element is bigger than everything else,
