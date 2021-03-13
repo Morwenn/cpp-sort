@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_COUNT_INVERSIONS_H_
@@ -22,32 +22,33 @@ namespace detail
         typename ResultType,
         typename RandomAccessIterator1,
         typename RandomAccessIterator2,
-        typename Compare
+        typename Compare,
+        typename Projection
     >
     auto count_inversions_merge(RandomAccessIterator1 first, RandomAccessIterator1 middle,
                                 RandomAccessIterator1 last, RandomAccessIterator2 cache,
-                                Compare compare)
+                                Compare compare, Projection projection)
         -> ResultType
     {
         using utility::iter_move;
         auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
 
         ResultType inversions = 0;
 
         // Shrink the problem size on the left side
-        while (comp(*first, *middle)) {
+        while (comp(proj(*first), proj(*middle))) {
             ++first;
         }
 
         auto first2 = middle;
         auto result = cache;
-        for (auto first1 = first ; first1 != middle ; ++result)
-        {
+        for (auto first1 = first ; first1 != middle ; ++result) {
             if (first2 == last) {
                 detail::move(first1, middle, result);
                 break;
             }
-            if (comp(*first2, *first1)) {
+            if (comp(proj(*first2), proj(*first1))) {
                 *result = iter_move(first2);
                 ++first2;
                 inversions += middle - first1;
@@ -69,10 +70,11 @@ namespace detail
         typename ResultType,
         typename RandomAccessIterator1,
         typename RandomAccessIterator2,
-        typename Compare
+        typename Compare,
+        typename Projection
     >
     auto count_inversions(RandomAccessIterator1 first, RandomAccessIterator1 last,
-                          RandomAccessIterator2 cache, Compare compare)
+                          RandomAccessIterator2 cache, Compare compare, Projection projection)
         -> ResultType
     {
         auto size = last - first;
@@ -83,11 +85,11 @@ namespace detail
         ResultType inversions = 0;
         auto middle = first + size / 2;
 
-        inversions += count_inversions<ResultType>(first, middle, cache, compare);
-        inversions += count_inversions<ResultType>(middle, last, cache, compare);
+        inversions += count_inversions<ResultType>(first, middle, cache, compare, projection);
+        inversions += count_inversions<ResultType>(middle, last, cache, compare, projection);
         inversions += count_inversions_merge<ResultType>(std::move(first), std::move(middle),
                                                          std::move(last), std::move(cache),
-                                                         std::move(compare));
+                                                         std::move(compare), std::move(projection));
         return inversions;
     }
 }}

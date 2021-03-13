@@ -21,7 +21,7 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/equal_range.h"
-#include "../detail/indirect_compare.h"
+#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
@@ -56,9 +56,8 @@ namespace probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(),
-                cppsort::detail::make_indirect_compare(compare, projection),
-                utility::identity{}
+                iterators.begin(), iterators.end(), compare,
+                cppsort::detail::indirect(projection)
             );
 
             ////////////////////////////////////////////////////////////

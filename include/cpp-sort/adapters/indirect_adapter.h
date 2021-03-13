@@ -17,11 +17,11 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
+#include "../detail/functional.h"
 #include "../detail/indiesort.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
@@ -55,7 +55,6 @@ namespace cppsort
             -> decltype(auto)
         {
             using utility::iter_move;
-            auto&& proj = utility::as_function(projection);
 
             ////////////////////////////////////////////////////////////
             // Indirectly sort the iterators
@@ -75,10 +74,8 @@ namespace cppsort
 #ifndef __cpp_lib_uncaught_exceptions
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(
-                iterators.get(), iterators.get() + size, std::move(compare),
-                [&proj](RandomAccessIterator it) -> decltype(auto) {
-                    return proj(*it);
-                }
+                iterators.get(), iterators.get() + size,
+                std::move(compare), indirect(projection)
             );
 #else
             // Work around the sorters that return void
@@ -126,10 +123,8 @@ namespace cppsort
             }
 
             return std::forward<Sorter>(sorter)(
-                iterators.get(), iterators.get() + size, std::move(compare),
-                [&proj](RandomAccessIterator it) -> decltype(auto) {
-                    return proj(*it);
-                }
+                iterators.get(), iterators.get() + size,
+                std::move(compare), indirect(projection)
             );
 #endif
         }
