@@ -172,7 +172,7 @@ namespace detail
         pq.push_back(tree.root());
 
         auto&& comp = invert(compare);
-        auto proj_value = [proj=utility::as_function(projection)](auto* node) -> auto& {
+        auto proj_value = [proj=utility::as_function(projection)](auto* node) -> decltype(auto) {
             return proj(node->value);
         };
 
