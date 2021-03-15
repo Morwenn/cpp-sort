@@ -28,9 +28,9 @@ TEST_CASE( "presortedness measure: enc", "[probe][enc]" )
         // The upper bound should correspond to half the size
         // of the input sequence minus one
 
-        std::forward_list<int> li = { 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 };
+        std::forward_list<int> li = { 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 };
         auto max_n = enc.max_for_size(cppsort::utility::size(li));
-        CHECK( max_n == 4 );
+        CHECK( max_n == 5 );
         CHECK( enc(li) == max_n );
         CHECK( enc(li.begin(), li.end()) == max_n );
     }
