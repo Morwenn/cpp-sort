@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
-TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters]",
+TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters][projection]",
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
