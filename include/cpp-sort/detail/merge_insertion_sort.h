@@ -15,10 +15,10 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "fixed_size_list.h"
+#include "functional.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
@@ -372,10 +372,7 @@ namespace detail
 
                 auto insertion_point = detail::upper_bound(
                     chain.begin(), *pe, proj(*it),
-                    [&](auto&& lhs, auto&& rhs) {
-                        return comp(lhs, proj(*rhs));
-                    },
-                    utility::identity{}
+                    comp, indirect(proj)
                 );
                 chain.insert(insertion_point, it);
 
@@ -394,10 +391,7 @@ namespace detail
             current_it += 2;
             auto insertion_point = detail::upper_bound(
                 chain.begin(), *current_pend, proj(*current_it),
-                [&](auto&& lhs, auto&& rhs) {
-                    return comp(lhs, proj(*rhs));
-                },
-                utility::identity{}
+                comp, indirect(proj)
             );
             chain.insert(insertion_point, current_it);
             ++current_pend;
