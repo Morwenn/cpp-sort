@@ -21,6 +21,8 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
+#include "../functional.h"
+#include "../lower_bound.h"
 
 namespace cppsort
 {
@@ -30,6 +32,7 @@ namespace cppsort
         auto list_mel_sort(std::list<Args...>& collection, Compare compare, Projection projection)
             -> void
         {
+            // NOTE: see detail/melsort.h for detailed explanations
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -37,6 +40,8 @@ namespace cppsort
 
             // Encroaching lists
             std::vector<std::list<Args...>> lists;
+            lists.emplace_back();
+            lists.back().splice(lists.back().begin(), collection, collection.begin());
 
             ////////////////////////////////////////////////////////////
             // Create encroaching lists
@@ -44,42 +49,24 @@ namespace cppsort
             while (not collection.empty()) {
                 auto&& value = proj(collection.front());
 
-                // Binary search for an encroaching list where
-                // value >= list.second or value <= list.first
-
-                // Whether the found value is smaller than the head
-                // of the found encroaching list or greater than its
-                // tail
-                bool value_is_smaller = false;
-
-                auto size = lists.size();
-                auto enc_it = lists.begin();
-                while (size > 0) {
-                    auto tmp_it = enc_it;
-                    std::advance(tmp_it, size / 2);
-                    if (not comp(value, proj(tmp_it->back()))) {
-                        size /= 2;
-                        value_is_smaller = false;
-                    } else if (not comp(proj(tmp_it->front()), value)) {
-                        size /= 2;
-                        value_is_smaller = true;
-                    } else {
-                        enc_it = ++tmp_it;
-                        size -= size / 2 + 1;
-                    }
-                }
-
-                if (enc_it != lists.end()) {
-                    // Add the new element to the head or tail or the most
-                    // suitable encroaching list if any has been found
-                    if (value_is_smaller) {
-                        enc_it->splice(enc_it->begin(), collection, collection.begin());
-                    } else {
-                        enc_it->splice(enc_it->end(), collection, collection.begin());
-                    }
+                auto& last_list = lists.back();
+                if (not comp(value, proj(last_list.back()))) {
+                    // Element belongs to the tails (bigger elements)
+                    auto insertion_point = detail::lower_bound(
+                        lists.begin(), std::prev(lists.end()), value, invert(compare),
+                        [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
+                    );
+                    insertion_point->splice(insertion_point->end(), collection, collection.begin());
+                } else if (not comp(proj(last_list.front()), value)) {
+                    // Element belongs to the heads (smaller elements)
+                    auto insertion_point = detail::lower_bound(
+                        lists.begin(), std::prev(lists.end()), value, compare,
+                        [&proj](auto& list) -> decltype(auto) { return proj(list.front()); }
+                    );
+                    insertion_point->splice(insertion_point->begin(), collection, collection.begin());
                 } else {
-                    // Create a new encroaching list if the element
-                    // didn't fit in any of the existing ones
+                    // Element does not belong to the existing encroaching lists,
+                    // create a new list for it
                     lists.emplace_back();
                     lists.back().splice(lists.back().begin(), collection, collection.begin());
                 }
@@ -115,6 +102,7 @@ namespace cppsort
         auto flist_mel_sort(std::forward_list<Args...>& collection, Compare compare, Projection projection)
             -> void
         {
+            // NOTE: see detail/melsort.h for detailed explanations
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -122,7 +110,8 @@ namespace cppsort
                 return;
             }
 
-            // A list and its last element
+            // A list and its last element, the latter being required
+            // to implement melsort for forward iterators
             struct flist
             {
                 using iterator = typename std::forward_list<Args...>::iterator;
@@ -138,6 +127,10 @@ namespace cppsort
 
             // Encroaching lists
             std::vector<flist> lists;
+            lists.emplace_back();
+            lists.back().list.splice_after(lists.back().list.before_begin(),
+                                           collection, collection.before_begin());
+            lists.back().last = lists.back().list.begin();
 
             ////////////////////////////////////////////////////////////
             // Create encroaching lists
@@ -145,45 +138,30 @@ namespace cppsort
             while (not collection.empty()) {
                 auto&& value = proj(collection.front());
 
-                // Binary search for an encroaching list where
-                // value >= list.second or value <= list.first
-
-                // Whether the found value is smaller than the head
-                // of the found encroaching list or greater than its
-                // tail
-                bool value_is_smaller = false;
-
-                auto size = lists.size();
-                auto enc_it = lists.begin();
-                while (size > 0) {
-                    auto tmp_it = enc_it;
-                    std::advance(tmp_it, size / 2);
-                    if (not comp(value, proj(*tmp_it->last))) {
-                        size /= 2;
-                        value_is_smaller = false;
-                    } else if (not comp(proj(tmp_it->list.front()), value)) {
-                        size /= 2;
-                        value_is_smaller = true;
-                    } else {
-                        enc_it = ++tmp_it;
-                        size -= size / 2 + 1;
-                    }
-                }
-
-                if (enc_it != lists.end()) {
-                    // Add the new element to the head or tail or the most
-                    // suitable encroaching list if any has been found
-                    if (value_is_smaller) {
-                        enc_it->list.splice_after(enc_it->list.before_begin(), collection, collection.before_begin());
-                    } else {
-                        enc_it->list.splice_after(enc_it->last, collection, collection.before_begin());
-                        enc_it->last = std::next(enc_it->last);
-                    }
+                auto& last_list = lists.back();
+                if (not comp(value, proj(*last_list.last))) {
+                    // Element belongs to the tails (bigger elements)
+                    auto insertion_point = detail::lower_bound(
+                        lists.begin(), std::prev(lists.end()), value, invert(compare),
+                        [&proj](auto& list) -> decltype(auto) { return proj(*list.last); }
+                    );
+                    insertion_point->list.splice_after(insertion_point->last, collection,
+                                                       collection.before_begin());
+                    insertion_point->last = std::next(insertion_point->last);
+                } else if (not comp(proj(last_list.list.front()), value)) {
+                    // Element belongs to the heads (smaller elements)
+                    auto insertion_point = detail::lower_bound(
+                        lists.begin(), std::prev(lists.end()), value, compare,
+                        [&proj](auto& list) -> decltype(auto) { return proj(list.list.front()); }
+                    );
+                    insertion_point->list.splice_after(insertion_point->list.before_begin(),
+                                                       collection, collection.before_begin());
                 } else {
-                    // Create a new encroaching list if the element
-                    // didn't fit in any of the existing ones
+                    // Element does not belong to the existing encroaching lists,
+                    // create a new list for it
                     lists.emplace_back();
-                    lists.back().list.splice_after(lists.back().list.before_begin(), collection, collection.before_begin());
+                    lists.back().list.splice_after(lists.back().list.before_begin(),
+                                                   collection, collection.before_begin());
                     lists.back().last = lists.back().list.begin();
                 }
             }

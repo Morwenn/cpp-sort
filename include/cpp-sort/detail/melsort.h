@@ -14,7 +14,9 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "fixed_size_list.h"
+#include "functional.h"
 #include "iterator_traits.h"
+#include "lower_bound.h"
 #include "merge_move.h"
 #include "move.h"
 #include "type_traits.h"
@@ -29,57 +31,60 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
+        using rvalue_type = rvalue_type_t<ForwardIterator>;
+        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
+        if (first == last || std::next(first) == last) {
+            return;
+        }
+
         // Encroaching lists
-        using rvalue_type = rvalue_type_t<ForwardIterator>;
         fixed_size_list_node_pool<rvalue_type> node_pool(size);
         std::vector<fixed_size_list<rvalue_type>> lists;
+        // Ensure that there is always one list and that the last list
+        // always has at least one element, this simplifies the rest
+        // of the computations
+        lists.emplace_back(node_pool);
+        lists.back().push_back(iter_move(first));
 
         ////////////////////////////////////////////////////////////
         // Create encroaching lists
 
-        for (auto it = first ; it != last ; ++it) {
+        for (auto it = std::next(first) ; it != last ; ++it) {
             auto&& value = proj(*it);
 
-            // Binary search for an encroaching list where
-            // value >= list.second or value <= list.first
+            // The heads of the lists form an ascending collection while the heads
+            // form a descending collection, plus the we have the guarantee that the
+            // last lists contains the biggest of the heads and the smallest of the
+            // tails. Since the biggest of the heads is smaller than the smallest of
+            // the tails, we only need to compare the element to insert to the head
+            // and tail of the last list to know whether we need to add it to the
+            // heads, to the tails, or to its own new list.
+            //
+            // The search is done with lower_bound to ensure that the element will
+            // be added to the oldest suitable list, which is a necessary condition
+            // to keep the guarantees provided by the encroaching lists collection.
 
-            // Whether the found value is smaller than the head
-            // of the found encroaching list or greater than its
-            // tail
-            bool value_is_smaller = false;
-
-            auto size = lists.size();
-            auto enc_it = lists.begin();
-            while (size > 0) {
-                auto tmp_it = enc_it;
-                std::advance(tmp_it, size / 2);
-                if (not comp(value, proj(tmp_it->back()))) {
-                    size /= 2;
-                    value_is_smaller = false;
-                } else if (not comp(proj(tmp_it->front()), value)) {
-                    size /= 2;
-                    value_is_smaller = true;
-                } else {
-                    enc_it = ++tmp_it;
-                    size -= size / 2 + 1;
-                }
-            }
-
-            using utility::iter_move;
-            if (enc_it != lists.end()) {
-                // Add the new element to the head or tail or the most
-                // suitable encroaching list if any has been found
-                if (value_is_smaller) {
-                    enc_it->push_front(iter_move(it));
-                } else {
-                    enc_it->push_back(iter_move(it));
-                }
+            auto& last_list = lists.back();
+            if (not comp(value, proj(last_list.back()))) {
+                // Element belongs to the tails (bigger elements)
+                auto insertion_point = detail::lower_bound(
+                    lists.begin(), std::prev(lists.end()), value, invert(compare),
+                    [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
+                );
+                insertion_point->push_back(iter_move(it));
+            } else if (not comp(proj(last_list.front()), value)) {
+                // Element belongs to the heads (smaller elements)
+                auto insertion_point = detail::lower_bound(
+                    lists.begin(), std::prev(lists.end()), value, compare,
+                    [&proj](auto& list) -> decltype(auto) { return proj(list.front()); }
+                );
+                insertion_point->push_front(iter_move(it));
             } else {
-                // Create a new encroaching list if the element
-                // didn't fit in any of the existing ones
+                // Element does not belong to the existing encroaching lists,
+                // create a new list for it
                 lists.emplace_back(node_pool);
                 lists.back().push_back(iter_move(it));
             }
