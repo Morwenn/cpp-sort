@@ -115,7 +115,7 @@ Computes the number of encroaching lists that can be extracted from *X* minus on
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
+`max_for_size`: (|*X*| + 1) / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
 
 ### *Exc*
 
