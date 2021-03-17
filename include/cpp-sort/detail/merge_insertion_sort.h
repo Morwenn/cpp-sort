@@ -255,9 +255,10 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Merge-insertion sort
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto merge_insertion_sort_impl(group_iterator<RandomAccessIterator> first, group_iterator<RandomAccessIterator> last,
-                                   fixed_size_list_node_pool<group_iterator<RandomAccessIterator>>& node_pool,
+    template<typename RandomAccessIterator, typename NodeType, typename Compare, typename Projection>
+    auto merge_insertion_sort_impl(group_iterator<RandomAccessIterator> first,
+                                   group_iterator<RandomAccessIterator> last,
+                                   fixed_size_list_node_pool<NodeType>& node_pool,
                                    Compare compare, Projection projection)
         -> void
     {
@@ -309,7 +310,7 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Separate main chain and pend elements
 
-        using list_t = fixed_size_list<group_iterator<RandomAccessIterator>>;
+        using list_t = fixed_size_list<list_node<group_iterator<RandomAccessIterator>>>;
 
         // Reusing the node pool allows to halve the number of nodes
         // allocated by the algorithm, but we need to reset the links
@@ -433,7 +434,8 @@ namespace detail
         -> void
     {
         // Make a node pool big enough to hold all the values
-        fixed_size_list_node_pool<group_iterator<RandomAccessIterator>> node_pool(last - first);
+        using node_type = list_node<group_iterator<RandomAccessIterator>>;
+        fixed_size_list_node_pool<node_type> node_pool(last - first);
 
         merge_insertion_sort_impl(
             make_group_iterator(std::move(first), 1),

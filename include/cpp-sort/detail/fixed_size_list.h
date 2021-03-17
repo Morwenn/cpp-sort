@@ -31,32 +31,34 @@ namespace detail
     // constructed or destructed.
 
     template<typename T>
-    struct fixed_size_list_node
+    struct list_node
     {
-        constexpr explicit fixed_size_list_node(fixed_size_list_node* next) noexcept:
+        using value_type = T;
+
+        constexpr explicit list_node(list_node* next) noexcept:
             next(next)
         {}
 
-        constexpr fixed_size_list_node(fixed_size_list_node* prev, fixed_size_list_node* next) noexcept:
+        constexpr list_node(list_node* prev, list_node* next) noexcept:
             prev(prev),
             next(next)
         {}
 
         // Make list nodes immovable
-        fixed_size_list_node(const fixed_size_list_node&) = delete;
-        fixed_size_list_node(fixed_size_list_node&&) = delete;
-        fixed_size_list_node& operator=(const fixed_size_list_node&) = delete;
-        fixed_size_list_node& operator=(fixed_size_list_node&&) = delete;
+        list_node(const list_node&) = delete;
+        list_node(list_node&&) = delete;
+        list_node& operator=(const list_node&) = delete;
+        list_node& operator=(list_node&&) = delete;
 
         // The list takes care of managing the lifetime of value
-        ~fixed_size_list_node() {}
+        ~list_node() {}
 
         // Inhibit construction of the node with a value
         union { T value; };
 
         // Pointers to the previous and next nodes
-        fixed_size_list_node* prev;
-        fixed_size_list_node* next;
+        list_node* prev;
+        list_node* next;
     };
 
     ////////////////////////////////////////////////////////////
@@ -85,7 +87,7 @@ namespace detail
     // lifetime of the nodes themselves, it is the responsibility
     // of the list to manage the lifetime of the stored values.
 
-    template<typename T>
+    template<typename NodeType>
     struct fixed_size_list_node_pool
     {
         public:
@@ -93,7 +95,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Public types
 
-            using node_type = fixed_size_list_node<T>;
+            using node_type = NodeType;
 
             ////////////////////////////////////////////////////////////
             // Constructors
@@ -111,9 +113,9 @@ namespace detail
                 first_free_(buffer_.get()),
                 capacity_(capacity)
             {
-                // fixed_size_list_node constructors are noexcept, so we don't
-                // need to handle the cleanup of list nodes that would have been
-                // required if exceptions could have been thrown
+                // Node constructors are noexcept, so we don't need to handle
+                // the cleanup of list nodes that would have been required if
+                // exceptions could have been thrown
 
                 auto ptr = buffer_.get();
                 for (std::ptrdiff_t n = 0 ; n < capacity - 1 ; ++n, ++ptr) {
@@ -212,10 +214,10 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // List iterator
     //
-    // Iterator wrapping a fixed_size_list_node: it uses the
-    // node's next & prev pointers to advance through the list
+    // Iterator wrapping a list node: it uses the node's
+    // next & prev pointers to advance through the list
 
-    template<typename T>
+    template<typename NodeType>
     struct fixed_size_list_iterator
     {
         public:
@@ -223,18 +225,19 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Public types
 
+            using node_type         = NodeType;
             using iterator_category = std::bidirectional_iterator_tag;
-            using value_type        = T;
+            using value_type        = typename node_type::value_type;
             using difference_type   = std::ptrdiff_t;
-            using pointer           = T*;
-            using reference         = T&;
+            using pointer           = value_type*;
+            using reference         = value_type&;
 
             ////////////////////////////////////////////////////////////
             // Constructors
 
             fixed_size_list_iterator() = default;
 
-            constexpr explicit fixed_size_list_iterator(fixed_size_list_node<T>* ptr) noexcept:
+            constexpr explicit fixed_size_list_iterator(NodeType* ptr) noexcept:
                 ptr_(ptr)
             {}
 
@@ -242,7 +245,7 @@ namespace detail
             // Members access
 
             constexpr auto base() const
-                -> fixed_size_list_node<T>*
+                -> node_type*
             {
                 return ptr_;
             }
@@ -314,7 +317,7 @@ namespace detail
 
         private:
 
-            fixed_size_list_node<T>* ptr_ = nullptr;
+            node_type* ptr_ = nullptr;
     };
 
     ////////////////////////////////////////////////////////////
@@ -322,7 +325,7 @@ namespace detail
     //
     // This is a non-copyable doubly linked list data structure that
     // can be constructed with a reference to a fixed-size node
-    // pool. The list is handles the lifetimes of the node's values,
+    // pool. The list handles the lifetimes of the node's values,
     // but the lifetime of the nodes themselves is handled by the
     // pool.
     //
@@ -336,6 +339,7 @@ namespace detail
     // The interface is supposed to be as close as possible from
     // that of std::list, except in the following areas:
     // - Construction from a node pool
+    // - Templated of the node type
     // - No tracking of the size
     // - No copy semantics
     // - empty -> is_empty
@@ -343,7 +347,7 @@ namespace detail
     // they will be added as needed whenever new library components
     // require them
 
-    template<typename T>
+    template<typename NodeType>
     struct fixed_size_list
     {
         public:
@@ -351,16 +355,16 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Public types
 
-            using value_type = T;
+            using node_type = NodeType;
+            using value_type = typename node_type::value_type;
             using size_type = std::size_t;
             using reference = value_type&;
             using const_reference = const value_type&;
             using pointer = value_type*;
             using const_pointer = const value_type*;
             using difference_type = std::ptrdiff_t;
-            using iterator = fixed_size_list_iterator<T>;
+            using iterator = fixed_size_list_iterator<node_type>;
             // TODO: const_iterator
-            using node_type = fixed_size_list_node<T>;
 
             ////////////////////////////////////////////////////////////
             // Constructors
@@ -369,7 +373,7 @@ namespace detail
             fixed_size_list(const fixed_size_list&) = delete;
             fixed_size_list& operator=(const fixed_size_list&) = delete;
 
-            explicit constexpr fixed_size_list(fixed_size_list_node_pool<T>& node_pool) noexcept:
+            explicit constexpr fixed_size_list(fixed_size_list_node_pool<node_type>& node_pool) noexcept:
                 node_pool_(&node_pool),
                 sentinel_node_(&sentinel_node_, &sentinel_node_)
             {}
@@ -420,7 +424,7 @@ namespace detail
                     // Destroy the node's values
                     do {
                         auto next_ptr = ptr->next;
-                        ptr->value.~T();
+                        ptr->value.~value_type();
                         ptr = next_ptr;
                     } while (ptr != &sentinel_node_);
 
@@ -442,6 +446,12 @@ namespace detail
                 -> reference
             {
                 return sentinel_node_.prev->value;
+            }
+
+            auto node_pool()
+                -> fixed_size_list_node_pool<node_type>&
+            {
+                return *node_pool_;
             }
 
             ////////////////////////////////////////////////////////////
@@ -471,37 +481,37 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Modifiers
 
-            auto insert(iterator pos, const T& value)
+            auto insert(iterator pos, const value_type& value)
                 -> iterator
             {
                 return iterator(insert_node_(pos.base(), value));
             }
 
-            auto insert(iterator pos, T&& value)
+            auto insert(iterator pos, value_type&& value)
                 -> iterator
             {
                 return iterator(insert_node_(pos.base(), std::move(value)));
             }
 
-            auto push_back(const T& value)
+            auto push_back(const value_type& value)
                 -> void
             {
                 insert_node_(&sentinel_node_, value);
             }
 
-            auto push_back(T&& value)
+            auto push_back(value_type&& value)
                 -> void
             {
                 insert_node_(&sentinel_node_, std::move(value));
             }
 
-            auto push_front(const T& value)
+            auto push_front(const value_type& value)
                 -> void
             {
                 insert_node_(sentinel_node_.next, value);
             }
 
-            auto push_front(T&& value)
+            auto push_front(value_type&& value)
                 -> void
             {
                 insert_node_(sentinel_node_.next, std::move(value));
@@ -691,20 +701,20 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Helper functions
 
-            auto insert_node_(node_type* pos, const T& value)
+            auto insert_node_(node_type* pos, const value_type& value)
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
-                ::new (&new_node->value) T(value);
+                ::new (&new_node->value) value_type(value);
                 link_node_before_(new_node, pos);
                 return new_node;
             }
 
-            auto insert_node_(node_type* pos, T&& value)
+            auto insert_node_(node_type* pos, value_type&& value)
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
-                ::new (&new_node->value) T(std::move(value));
+                ::new (&new_node->value) value_type(std::move(value));
                 link_node_before_(new_node, pos);
                 return new_node;
             }
@@ -742,7 +752,7 @@ namespace detail
             // Data members
 
             // Node pool
-            fixed_size_list_node_pool<T>* node_pool_;
+            fixed_size_list_node_pool<node_type>* node_pool_;
 
             // Sentinel node: its prev field points to the last element
             // of the list, its next field to the first one

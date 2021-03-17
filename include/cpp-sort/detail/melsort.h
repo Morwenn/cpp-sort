@@ -31,7 +31,6 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
-        using rvalue_type = rvalue_type_t<ForwardIterator>;
         using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -41,8 +40,9 @@ namespace detail
         }
 
         // Encroaching lists
-        fixed_size_list_node_pool<rvalue_type> node_pool(size);
-        std::vector<fixed_size_list<rvalue_type>> lists;
+        using node_type = list_node<rvalue_type_t<ForwardIterator>>;
+        fixed_size_list_node_pool<node_type> node_pool(size);
+        std::vector<fixed_size_list<node_type>> lists;
         // Ensure that there is always one list and that the last list
         // always has at least one element, this simplifies the rest
         // of the computations
@@ -114,7 +114,7 @@ namespace detail
         //          This is cursed but saves some operations.
 
         bool bad_distribution = lists.size() > std::sqrt(size);
-        fixed_size_list<rvalue_type> edges(node_pool);
+        fixed_size_list<node_type> edges(node_pool);
 
         if (bad_distribution) {
             auto insert_node = edges.end().base();
