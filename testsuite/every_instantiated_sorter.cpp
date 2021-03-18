@@ -72,7 +72,7 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
 
     SECTION( "mel_sorter" )
     {
-        cppsort::heap_sort(collection);
+        cppsort::mel_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
