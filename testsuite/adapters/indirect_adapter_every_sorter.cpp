@@ -28,6 +28,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::ska_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

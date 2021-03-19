@@ -42,6 +42,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

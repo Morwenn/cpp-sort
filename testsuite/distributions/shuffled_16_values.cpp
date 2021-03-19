@@ -30,6 +30,7 @@ TEMPLATE_TEST_CASE( "test sorter with shuffled_16_values distribution", "[distri
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::ska_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

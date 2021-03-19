@@ -62,6 +62,16 @@ namespace detail
     };
 
     ////////////////////////////////////////////////////////////
+    // Function to destroy a node
+
+    template<typename Result, typename NodeType, Result NodeType::* Ptr>
+    auto destroy_node_contents(NodeType* node)
+        -> void
+    {
+        detail::destroy_at(&(node->*Ptr));
+    }
+
+    ////////////////////////////////////////////////////////////
     // Fixed size node pool
     //
     // This is an immovable doubly linked list node pool that can
@@ -356,6 +366,8 @@ namespace detail
             // Public types
 
             using node_type = NodeType;
+            using node_value_destructor_t = void(*)(node_type*);
+
             using value_type = typename node_type::value_type;
             using size_type = std::size_t;
             using reference = value_type&;
@@ -375,13 +387,22 @@ namespace detail
 
             explicit constexpr fixed_size_list(fixed_size_list_node_pool<node_type>& node_pool) noexcept:
                 node_pool_(&node_pool),
-                sentinel_node_(&sentinel_node_, &sentinel_node_)
+                sentinel_node_(&sentinel_node_, &sentinel_node_),
+                node_destructor_(destroy_node_contents<value_type, node_type, &node_type::value>)
+            {}
+
+            constexpr fixed_size_list(fixed_size_list_node_pool<node_type>& node_pool,
+                                      node_value_destructor_t node_destructor) noexcept:
+                node_pool_(&node_pool),
+                sentinel_node_(&sentinel_node_, &sentinel_node_),
+                node_destructor_(node_destructor)
             {}
 
             constexpr fixed_size_list(fixed_size_list&& other) noexcept:
                 node_pool_(other.node_pool_),
                 sentinel_node_(std::exchange(other.sentinel_node_.prev, &other.sentinel_node_),
-                               std::exchange(other.sentinel_node_.next, &other.sentinel_node_))
+                               std::exchange(other.sentinel_node_.next, &other.sentinel_node_)),
+                node_destructor_(other.node_destructor_)
             {
                 if (sentinel_node_.prev == &other.sentinel_node_) {
                     sentinel_node_.prev = &sentinel_node_;
@@ -424,7 +445,7 @@ namespace detail
                     // Destroy the node's values
                     do {
                         auto next_ptr = ptr->next;
-                        ptr->value.~value_type();
+                        node_destructor_(ptr);
                         ptr = next_ptr;
                     } while (ptr != &sentinel_node_);
 
@@ -505,6 +526,13 @@ namespace detail
                 insert_node_(&sentinel_node_, std::move(value));
             }
 
+            template<typename Callable>
+            auto push_back(Callable&& setter)
+                -> void
+            {
+                insert_node_(&sentinel_node_, std::forward<Callable>(setter));
+            }
+
             auto push_front(const value_type& value)
                 -> void
             {
@@ -515,6 +543,13 @@ namespace detail
                 -> void
             {
                 insert_node_(sentinel_node_.next, std::move(value));
+            }
+
+            template<typename Callable>
+            auto push_front(Callable&& setter)
+                -> void
+            {
+                insert_node_(sentinel_node_.next, std::forward<Callable>(setter));
             }
 
             auto extract(node_type* node)
@@ -543,6 +578,12 @@ namespace detail
                 -> node_type*
             {
                 return extract(sentinel_node_.next);
+            }
+
+            auto set_node_destructor(node_value_destructor_t node_destructor)
+                -> void
+            {
+                node_destructor_ = std::move(node_destructor);
             }
 
             ////////////////////////////////////////////////////////////
@@ -719,6 +760,16 @@ namespace detail
                 return new_node;
             }
 
+            template<typename Callable>
+            auto insert_node_(node_type* pos, Callable setter)
+                -> node_type*
+            {
+                node_type* new_node = node_pool_->next_free_node();
+                setter(new_node);
+                link_node_before_(new_node, pos);
+                return new_node;
+            }
+
             auto link_node_before_(node_type* node, node_type* pos)
                 -> void
             {
@@ -757,6 +808,9 @@ namespace detail
             // Sentinel node: its prev field points to the last element
             // of the list, its next field to the first one
             node_type sentinel_node_;
+
+            // Function pointer to a node's value destructor
+            node_value_destructor_t node_destructor_;
     };
 }}
 

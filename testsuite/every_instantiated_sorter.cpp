@@ -130,6 +130,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "slab_sorter" )
+    {
+        cppsort::slab_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "smooth_sorter" )
     {
         cppsort::smooth_sort(collection);

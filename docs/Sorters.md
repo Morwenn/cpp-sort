@@ -322,6 +322,22 @@ This sorter also has the following dedicated algorithms when used together with 
 
 None of the container-aware algorithms invalidates iterators.
 
+### `slab_sort`
+
+```cpp
+#include <cpp-sort/sorters/slab_sorter.h>
+```
+
+Implements a variant of slabsort, a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Sorting Shuffled Monotone Sequences*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Random-access |
+
+This algorithm actually uses a rather big amount of memory but scales better than other O(n log n) algorithms of the library described as "slow" when the collections get bigger.
+
+*New in version 1.10.0*
+
 ### `smooth_sorter`
 
 ```cpp
@@ -356,7 +372,7 @@ Implements a [spinsort](https://www.boost.org/doc/libs/1_72_0/libs/sort/doc/html
 #include <cpp-sort/sorters/split_sorter.h>
 ```
 
-Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by Levcopoulos and Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
+Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |

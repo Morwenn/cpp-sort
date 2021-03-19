@@ -39,6 +39,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

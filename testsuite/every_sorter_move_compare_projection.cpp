@@ -33,6 +33,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

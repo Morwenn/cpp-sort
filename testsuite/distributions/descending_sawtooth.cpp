@@ -31,6 +31,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distrib
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::ska_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

@@ -28,6 +28,7 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,

@@ -30,6 +30,7 @@ TEMPLATE_TEST_CASE( "test sorter with push_middle distribution", "[distributions
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::ska_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,
