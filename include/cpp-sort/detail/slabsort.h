@@ -121,13 +121,8 @@ namespace detail
             [&](auto&& elem) { return comp(proj(elem), pivot1); }
         );
 
-        // Put the pivot in its final position and partition
+        // Put the pivot back in its final position
         iter_swap(middle1, last_1);
-        auto&& pivot2 = proj(*middle1);
-        detail::stable_partition(
-            std::next(middle1), last,
-            [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
-        );
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
