@@ -206,19 +206,6 @@ namespace dist
         }
     };
 
-    struct alternating_16_values:
-        distribution<alternating_16_values>
-    {
-        template<typename OutputIterator>
-        auto operator()(OutputIterator out, long long int size) const
-            -> void
-        {
-            for (long long int i = 0 ; i < size ; ++i) {
-                *out++ = (i % 2) ? i % 16 : -(i % 16);
-            }
-        }
-    };
-
     struct descending_plateau:
         distribution<descending_plateau>
     {

@@ -161,7 +161,6 @@ add_executable(main-tests
     # Distributions tests
     distributions/all_equal.cpp
     distributions/alternating.cpp
-    distributions/alternating_16_values.cpp
     distributions/ascending.cpp
     distributions/ascending_sawtooth.cpp
     distributions/descending.cpp

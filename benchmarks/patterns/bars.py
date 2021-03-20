@@ -51,7 +51,6 @@ def main():
         "descending_sawtooth": "Descending sawtooth",
         "descending_sawtooth": "Descending sawtooth",
         "alternating": "Alternating",
-        "alternating_16_values": "Alternating (16 values)",
     }
 
     # Algorithm results will be displayed in this order

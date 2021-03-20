@@ -305,22 +305,6 @@ namespace dist
         static constexpr const char* output = "reversed_alternating.txt";
     };
 
-    struct alternating_16_values:
-        base_distribution<alternating_16_values>
-    {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
-            -> void
-        {
-            auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
-                *out++ = proj((i % 2) ? i % 16 : -(i % 16));
-            }
-        }
-
-        static constexpr const char* output = "alternating_16_values.txt";
-    };
-
     struct descending_plateau:
         base_distribution<descending_plateau>
     {
