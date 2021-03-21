@@ -116,6 +116,7 @@ add_executable(main-tests
     every_sorter_non_const_compare.cpp
     every_sorter_rvalue_projection.cpp
     every_sorter_span.cpp
+    every_sorter_throwing_moves.cpp
     is_stable.cpp
     rebind_iterator_category.cpp
     sort_array.cpp
