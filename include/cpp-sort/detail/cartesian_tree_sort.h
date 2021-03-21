@@ -109,7 +109,7 @@ namespace detail
                 // Destroy the nodes
                 auto ptr = buffer_.get();
                 for (difference_type idx = 0 ; idx < size_ ; ++idx) {
-                    ptr->~node_type();
+                    detail::destroy_at(ptr);
                     ++ptr;
                 }
             }

@@ -146,7 +146,7 @@ namespace detail
                 // Destroy the nodes
                 node_type* ptr = buffer_.get();
                 for (std::ptrdiff_t n = 0 ; n < capacity_ ; ++n, ++ptr) {
-                    ptr->~node_type();
+                    detail::destroy_at(ptr);
                 }
             }
 

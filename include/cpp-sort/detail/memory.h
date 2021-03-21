@@ -102,7 +102,7 @@ namespace detail
             -> void
         {
             for (std::size_t i = 0 ; i < size ; ++i) {
-                pointer->~T();
+                detail::destroy_at(pointer);
                 ++pointer;
             }
         }
