@@ -29,6 +29,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     auto inv    = cppsort::probe::inv(sequence);
     auto max    = cppsort::probe::max(sequence);
     auto mono   = cppsort::probe::mono(sequence);
+    auto osc    = cppsort::probe::osc(sequence);
     auto par    = cppsort::probe::par(sequence);
     auto rem    = cppsort::probe::rem(sequence);
     auto runs   = cppsort::probe::runs(sequence);
@@ -66,6 +67,12 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( sus <= runs );
     CHECK( sus <= max );
     CHECK( enc <= sus );
+
+    // Heapsort - Adapted for Presorted Files
+    // by Christos Levcopoulos and Ola Petersson
+    CHECK( osc <= 4 * inv );
+    CHECK( osc <= 2 * size * runs + size );
+    CHECK( osc <= size * par );
 
     // Intuitive result: a descending run can be seen as several
     // ascending runs
