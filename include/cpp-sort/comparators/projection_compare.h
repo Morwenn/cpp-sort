@@ -22,10 +22,10 @@ namespace cppsort
         private:
 
             using compare_t = detail::remove_cvref_t<
-                decltype(utility::as_function(std::declval<Compare&>()))
+                decltype(utility::as_function(std::declval<Compare>()))
             >;
             using projection_t = detail::remove_cvref_t<
-                decltype(utility::as_function(std::declval<Projection&>()))
+                decltype(utility::as_function(std::declval<Projection>()))
             >;
             std::tuple<compare_t, projection_t> data;
 
