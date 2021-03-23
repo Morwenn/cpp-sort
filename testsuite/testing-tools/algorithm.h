@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_ALGORITHM_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 
@@ -20,17 +19,23 @@ namespace helpers
         typename Compare = std::less<>,
         typename Projection = cppsort::utility::identity
     >
-    auto is_sorted(Iterator first, Iterator last,
-                   Compare compare={}, Projection projection={})
+    constexpr auto is_sorted(Iterator first, Iterator last,
+                             Compare compare={}, Projection projection={})
         -> bool
     {
         auto&& comp = cppsort::utility::as_function(compare);
         auto&& proj = cppsort::utility::as_function(projection);
 
-        for (auto it = std::next(first) ; it != last ; ++it) {
-            if (comp(proj(*it), proj(*first))) {
+        if (first == last) {
+            return true;
+        }
+
+        auto next = first;
+        while (++next != last) {
+            if (comp(proj(*next), proj(*first))) {
                 return false;
             }
+            ++first;
         }
         return true;
     }
