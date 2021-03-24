@@ -57,20 +57,20 @@ Note that the function pointer conversion syntax above is made up, but it allows
 
 ```cpp
 template<typename Iterator>
-auto operator()(Iterator first, Iterator last) const
+constexpr auto operator()(Iterator first, Iterator last) const
     -> /* implementation-defined */;
 
 template<typename Iterator, typename Compare>
-auto operator()(Iterator first, Iterator last, Compare compare) const
+constexpr auto operator()(Iterator first, Iterator last, Compare compare) const
     -> /* implementation-defined */;
 
 template<typename Iterator, typename Projection>
-auto operator()(Iterator first, Iterator last, Projection projection) const
+constexpr auto operator()(Iterator first, Iterator last, Projection projection) const
     -> /* implementation-defined */;
 
 template<typename Iterator, typename Compare, typename Projection>
-auto operator()(Iterator first, Iterator last,
-                Compare compare, Projection projection) const
+constexpr auto operator()(Iterator first, Iterator last,
+                          Compare compare, Projection projection) const
     -> /* implementation-defined */;
 ```
 
@@ -99,31 +99,37 @@ struct selection_sorter:
 {};
 ```
 
+*Changed in version 1.10.0:* those overloads are now `constexpr`.
+
 ### `operator()` for ranges
 
 `sorter_facade` provides the following overloads of `operator()` to handle ranges:
 
 ```cpp
 template<typename Iterable>
-auto operator()(Iterable&& iterable) const
+constexpr auto operator()(Iterable&& iterable) const
     -> /* implementation-defined */;
 
 template<typename Iterable, typename Compare>
-auto operator()(Iterable&& iterable, Compare compare) const
+constexpr auto operator()(Iterable&& iterable, Compare compare) const
     -> /* implementation-defined */;
 
 template<typename Iterable, typename Projection>
-auto operator()(Iterable&& iterable, Projection projection) const
+constexpr auto operator()(Iterable&& iterable, Projection projection) const
     -> /* implementation-defined */;
 
 template<typename Iterable, typename Compare, typename Projection>
-auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
+constexpr auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
     -> /* implementation-defined */;
 ```
 
 These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using `utility::begin` and `utility::end` on the iterable to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`][std-less-void] and/or [`utility::identity`][utility-identity] when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
 
 It will always call the most suitable iterable `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking a pair of iterators when it cannot do otherwise.
+
+*NOTE:* range overloads are marked as `constexpr` but rely on [`std::begin`][std-begin] and [`std::end`][std-end], which means that they can't actually be used in a `constexpr` context before C++17 (except for arrays).
+
+*Changed in version 1.10.0:* those overloads are now `constexpr`.
 
 ### Projection support for comparison-only sorters
 
@@ -181,8 +187,12 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
 
 *Changed in version 1.9.0:* when `std::ranges::less` is available, special overloads are provided.
 
+*Changed in version 1.10.0:* those overloads are now `constexpr`.
+
 
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
+  [std-begin]: https://en.cppreference.com/w/cpp/iterator/begin
+  [std-end]: https://en.cppreference.com/w/cpp/iterator/end
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less

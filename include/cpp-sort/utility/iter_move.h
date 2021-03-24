@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_ITER_MOVE_H_
@@ -44,7 +44,7 @@ namespace utility
             cppsort::detail::is_detected_v<detail::has_iter_move_t, Iterator>
         >
     >
-    auto iter_swap(Iterator lhs, Iterator rhs)
+    constexpr auto iter_swap(Iterator lhs, Iterator rhs)
         -> void
     {
         auto tmp = iter_move(lhs);
@@ -59,7 +59,7 @@ namespace utility
         >,
         typename = void // dummy parameter for ODR
     >
-    auto iter_swap(Iterator lhs, Iterator rhs)
+    constexpr auto iter_swap(Iterator lhs, Iterator rhs)
         -> void
     {
         // While this overload is not strictly needed, it
@@ -72,7 +72,7 @@ namespace utility
     }
 
     template<typename Iterator>
-    auto iter_move(Iterator it)
+    constexpr auto iter_move(Iterator it)
         noexcept(noexcept(detail::iter_move_t<Iterator>(std::move(*it))))
         -> detail::iter_move_t<Iterator>
     {

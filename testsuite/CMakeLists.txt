@@ -121,6 +121,7 @@ add_executable(main-tests
     rebind_iterator_category.cpp
     sort_array.cpp
     sorter_facade.cpp
+    sorter_facade_constexpr.cpp
     sorter_facade_defaults.cpp
     sorter_facade_iterable.cpp
     stable_sort_array.cpp

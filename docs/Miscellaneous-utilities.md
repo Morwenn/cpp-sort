@@ -32,11 +32,11 @@ The result of `as_projection` also inherits from `projection_base`, which makes 
 
 ```cpp
 template<typename Function>
-auto as_projection(Function&& func)
+constexpr auto as_projection(Function&& func)
     -> /* implementation-defined */;
 
 template<typename Function>
-auto as_comparison(Function&& func)
+constexpr auto as_comparison(Function&& func)
     -> /* implementation-defined */;
 ```
 
@@ -196,13 +196,17 @@ The default implementation of `iter_move` simply move-returns the dereferenced i
 
 ```cpp
 template<typename Iterator>
-auto iter_move(Iterator it)
+constexpr auto iter_move(Iterator it)
     -> decltype(std::move(*it));
 
 template<typename Iterator>
-auto iter_swap(Iterator lhs, Iterator rhs)
+constexpr auto iter_swap(Iterator lhs, Iterator rhs)
     -> void;
 ```
+
+*NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
+
+*Changed in version 1.10.0:* generic `iter_move` and `iter_swap` overloads are now marked as `constexpr`.
 
 ### `make_integer_range`
 
