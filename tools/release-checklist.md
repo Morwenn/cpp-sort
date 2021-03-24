@@ -31,7 +31,6 @@ development phase:
 
 - [ ] Add the Zenodo badge to the release notes.
 - [ ] Close the new version's milestone.
-- [ ] Push the new version to Bincrafters.
 - [ ] Add the new version to Conan Center Index.
 - [ ] Brag about it where relevant.
 - [ ] Merge master into 2.0.0-develop branch.
