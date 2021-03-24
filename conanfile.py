@@ -42,5 +42,9 @@ class CppSortConan(ConanFile):
         for file in ["LICENSE.txt", "NOTICE.txt"]:
             self.copy(file, dst="licenses")
 
+    def package_info(self):
+        if self.settings.compiler == "Visual Studio":
+            self.cpp_info.cxxflags = ["/permissive-"]
+
     def package_id(self):
         self.info.header_only()
