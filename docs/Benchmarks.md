@@ -16,28 +16,28 @@ Most sorting algorithms are designed to work with random-access iterators, so th
 
 ## Unstable sorts
 
-Unstable sorts are the most common sorting algorithms, and unstable sorts on random-access iterators are generally the fastest comparison sorts. If you don't know what algorithm you know, it's probably one of these ones.
+Sorting a random-access collection with an unstable sort is probably one of the most common things to want, and not only are those sorts among the fastest comparison sorts, but type-specific sorters can also be used to sort a variety of types. If you don't know what algorithm you want and don't have specific needs, then you probably want one of these.
 
-![Benchmark speed of unstable sorts with increasing size for std::vector<double>](https://i.imgur.com/6Jfj768.png)
-![Benchmark speed of unstable sorts with increasing size for std::deque<double>](https://i.imgur.com/C9GypoJ.png)
+![Benchmark speed of unstable sorts with increasing size for std::vector<double>](https://i.imgur.com/Q3IEeci.png)
+![Benchmark speed of unstable sorts with increasing size for std::deque<double>](https://i.imgur.com/XjRGUmc.png)
 
 The plots above show a few general tendencies:
 * `selection_sort` is O(n²) and doesn't scale.
-* The three heap sorts are consistently the slowest.
+* `heap_sort`, despite its good complexity guarantees, is consistently the slowest O(n log n) sort there.
 * `ska_sort` is almost always the fastest.
 
-The quicksort derivatives and the hybrid radix sorts are generally the fastest of the lot, yet `drop_merge_sort` seems to offer interesting speedups for `std::deque` despite not being designed to be the fastest on truly shuffled data. Part of the explanation is that it uses `pdq_sort` in a buffer underneath, which might be faster for `std::deque` than truly sorting in-place.
+The quicksort derivatives and the hybrid radix sorts are generally the fastest of the lot, yet `drop_merge_sort` seems to offer interesting speedups for `std::deque` despite not being designed to be the fastest on truly shuffled data. Part of the explanation is that it uses `pdq_sort` in a contiguous memory buffer underneath, which might be faster for `std::deque` than sorting completely in-place.
 
-![Benchmark unstable sorts over different patterns for std::vector<double>](https://i.imgur.com/te098uq.png)
-![Benchmark unstable sorts over different patterns for std::deque<double>](https://i.imgur.com/aRbP7wY.png)
+![Benchmark unstable sorts over different patterns for std::vector<double>](https://i.imgur.com/MlEcGuL.png)
+![Benchmark unstable sorts over different patterns for std::deque<double>](https://i.imgur.com/o7sOfMB.png)
 
 A few random takeways:
 * All the algorithms are more or less adaptive, not always for the same patterns.
 * `ska_sort` beats all the other algorithms on average, and almost systematically beats the other hybrid radix sort, `spread_sort`.
 * `quick_merge_sort` is slow, but it wasn't specifically designed for random-access iterators.
-* libstdc++ `std::sort` doesn't adapt well to some patterns meant to defeat median-of-3 quicksort.
+* libstdc++ `std::sort` doesn't adapt well to patterns meant to defeat median-of-3 quicksort.
 * `verge_sort` adapts well to most patterns (but it was kind of designed to beat this specific benchmark).
-* `pdq_sort` is the best unstable sorting algorithm there which doesn't allocate any heap memory.
+* `pdq_sort` is the best unstable sorting algorithm here that doesn't allocate any heap memory.
 * `drop_merge_sort` and `split_sort` were not designed to beat those patterns yet they are surprisingly good on average.
 
 ## Stable sorts
@@ -57,45 +57,48 @@ These plots highlight a few important things:
 * `block_sort` and `grail_sort` in this benchmark run with O(1) extra memory, which makes them decent stable sorting algorithms for their category.
 * Interestingly `stable_adapter(pdq_sort)` is among the best algorithms, despite the overhead of making `pdq_sort` artificially stable.
 
-## Heap sorts
+## Slow O(n log n) sorts
 
-I decided to include a dedicated category for heap sorts, because I find this class of algorithms interesting. Frankly, it's difficult to beat a plain `heap_sort` in this category, despite it being otherwise noticeably slower than quicksort derivatives or hybrid radix sorts. Heap sorts are not used a lot on their own, but they are often used to ensure the O(n log n) complexity of introsort-like algorithms, so having good heap sorts is generally desirable.
+I decided to include a dedicated category for slow O(n log n) sorts, because I find this class of algorithms interesting. This category contains experimental algorithms, often taken from rather old research papers. `heap_sort` is used as the "fast" algorithm in this category, despite it being consistently the slowest in the previous category.
 
-![Benchmark heap sorts over different patterns for std::vector<double>](https://i.imgur.com/1rY17x4.png)
-![Benchmark heap sorts over different patterns for std::deque<double>](https://i.imgur.com/gWe7j6m.png)
+![Benchmark speed of slow O(n log n) sorts with increasing size for std::vector<double>](https://i.imgur.com/nSX9n1q.png)
+![Benchmark slow O(n log n) sorts over different patterns for std::vector<double>](https://i.imgur.com/z9dR16G.png)
+![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/Viu13nj.png)
 
 The analysis is pretty simple here:
-* `heap_sort` is generally the best solution, but it is less adaptive than the other sorts.
+* Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting. 
 * `poplar_sort` is slower for `std::vector` than for `std::deque`, which makes me suspect a codegen issue somewhere.
 * As a result `smooth_sort` and `poplar_sort` beat each other depending on the type of the collection to sort.
+* Slabsort has an unusual graph: it seems that even for shuffled data it might end up beating `heap_sort` when the collection grows big enough.
 
 # Bidirectional iterables
 
 Sorting algorithms that handle non-random-access iterators are often second class citizens, but **cpp-sort** still provides a few ones. The most interesting part is that we can see how generic sorting algorithms perform compared to algorithms such as [`std::list::sort`][std-list-sort] which are aware of the data structure they are sorting.
 
-![Benchmark speed of sorts with increasing size for std::list<double>](https://i.imgur.com/Z2BDhpz.png)
+![Benchmark speed of sorts with increasing size for std::list<double>](https://i.imgur.com/yNQG8kk.png)
 
 For elements as small as `double`, there are two clear winners here: `drop_merge_sort` and `out_of_place_adapter(pdq_sort)`. Both have in common the fact that they move a part of the collection (or the whole collection) to a contiguous memory buffer and sort it there using `pdq_sort`. The only difference is that `drop_merge_sort` does that "accidentally" while `out_of_place_adapter` was specifically introduced to sort into a contiguous memory buffer and move back for speed.
 
-![Benchmark sorts over different patterns for std::list<double>](https://i.imgur.com/RcmJ8gL.png)
+![Benchmark sorts over different patterns for std::list<double>](https://i.imgur.com/zlHzRLd.png)
 
 `out_of_place_adapter(pdq_sort)` was not included in this benchmark, because it adapts to patterns the same way `pdq_sort` does. Comments can be added for these results:
-* `std::list::sort` would require elements more expensive to move for node relinking to be faster than move-based algorithms.
+* `std::list::sort` would require more expensive to move elements for node relinking to be faster than move-based algorithms.
 * `drop_merge_sort` adapts well to every pattern and shows that out-of-place sorting really is the best thing here.
-* `quick_sort` doesn't scale well with patterns.
-* `quick_merge_sort` does an honorable job for an algorithm that doesn't allocate any extra heap memory.
+* `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.
+* `mel_sort` is bad.
 
 # Forward iterables
 
 Even fewer sorters can handle forward iterators. `out_of_place_adapter(pdq_sort)` was not included in the patterns benchmark, because it adapts to patterns the same way `pdq_sort` does.
 
-![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/Ly4kbaN.png)
-![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/bWZRega.png)
+![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/SMTKhqG.png)
+![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/XLndRbU.png)
 
 The results are roughly the same than with bidirectional iterables:
-* [`std::forward_list::sort`][std-forward-list-sort] doesn't scale well unless moves are expensive.
 * Sorting out-of-place is faster than anything else.
-* If no extra heap memory is available, `quick_merge_sort` is the only O(n log n) algorithm that can be used, and does a fine job despite never being excellent.
+* [`std::forward_list::sort`][std-forward-list-sort] doesn't scale well unless moves are expensive.
+* `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.
+* `mel_sort` is still bad, but becomes a dcent alternative when the input exhibits recognizable patterns.
 
 # Sorting under specific constraints
 
@@ -166,7 +169,7 @@ The spikes in the otherwise smooth sorting networks curve when sorting arrays of
 
 This benchmark for [measures of presortedness][measures-of-presortedness] is small and only intends to show the cost that these tools might incur. It is not meant to be exhaustive in any way.
 
-![Benchmark speed of measures of presortedness for increasing size for std::vector<int>](https://i.imgur.com/5XniqE1.png)
+![Benchmark speed of measures of presortedness for increasing size for std::vector<int>](https://i.imgur.com/5Hxpb37.png)
 
 While the graph reasonably shows the relative cost of the different measures of presortedness, there are a few hidden traps:
 * *Par(X)* seems to beat every other measure, but it is a highly adaptative O(n² log n) algorithm, whose theoretical worst case might be the worst of all measures of presortedness.
