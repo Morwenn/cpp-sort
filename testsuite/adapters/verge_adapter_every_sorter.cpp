@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -13,11 +13,13 @@
 
 TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
                     cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
@@ -25,6 +27,7 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,

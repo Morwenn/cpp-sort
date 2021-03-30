@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_PAR_H_
@@ -50,6 +50,13 @@ namespace probe
                     }
                 }
                 return res;
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
             }
         };
     }

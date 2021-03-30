@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -103,8 +103,7 @@ TEST_CASE( "test correct adapter_storage behavior", "[adapter_storage]" )
         cppsort::selection_sorter original_sorter{};
         auto adapted_sorter = dummy_adapter<cppsort::selection_sorter>(original_sorter);
 
-        void(*my_sort)(std::vector<int>&) = adapted_sorter;
-        my_sort(arr);
+        adapted_sorter(arr);
         CHECK( std::is_sorted(std::begin(arr), std::end(arr)) );
     }
 

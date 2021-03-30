@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -58,8 +58,8 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         using difference_type = difference_type_t<BidirectionalIterator>;
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
-        std::vector<rvalue_reference> dropped;
+        using rvalue_type = rvalue_type_t<BidirectionalIterator>;
+        std::vector<rvalue_type> dropped;
 
         difference_type num_dropped_in_row = 0;
         auto write = begin;
@@ -85,7 +85,7 @@ namespace detail
                 } else {
                     for (difference_type i = 0 ; i < num_dropped_in_row ; ++i) {
                         --read;
-                        if (not std::is_trivially_copyable<rvalue_reference>::value) {
+                        if (not std::is_trivially_copyable<rvalue_type>::value) {
                             // If the value is trivially copyable, then it shouldn't have
                             // been modified by the call to iter_move, and the original
                             // value is still fully where it should be
@@ -100,7 +100,7 @@ namespace detail
                     num_dropped_in_row = 0;
                 }
             } else {
-                if (std::is_trivially_copyable<rvalue_reference>::value) {
+                if (std::is_trivially_copyable<rvalue_type>::value) {
                     // If the type is trivially copyable, the potential self-move
                     // should not trigger any issue
                     *write = iter_move(read);

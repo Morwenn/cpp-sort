@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -101,16 +101,16 @@ namespace detail
                   std::forward_iterator_tag tag)
         -> void
     {
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
+        using rvalue_type = rvalue_type_t<ForwardIterator>;
         using difference_type = difference_type_t<ForwardIterator>;
 
         if (n0 == 0 || n1 == 0) return;
 
         if (n0 <= buff_size) {
-            destruct_n<rvalue_reference> d(0);
+            destruct_n<rvalue_type> d(0);
             std::unique_ptr<
-                rvalue_reference,
-                destruct_n<rvalue_reference>&
+                rvalue_type,
+                destruct_n<rvalue_type>&
             > h2(buffer, d);
             auto buff_ptr = uninitialized_move(f0, f1, buffer, d);
 

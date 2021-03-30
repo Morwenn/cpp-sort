@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_INV_H_
@@ -19,7 +19,7 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/count_inversions.h"
-#include "../detail/indirect_compare.h"
+#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 
 namespace cppsort
@@ -50,8 +50,8 @@ namespace probe
 
             return cppsort::detail::count_inversions<difference_type>(
                 iterators.get(), iterators.get() + size, buffer.get(),
-                cppsort::detail::indirect_compare<Compare, Projection>(std::move(compare),
-                                                                       std::move(projection))
+                std::move(compare),
+                cppsort::detail::indirect(std::move(projection))
             );
         }
 
@@ -88,6 +88,13 @@ namespace probe
             {
                 return inv_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection));
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n * (n - 1) / 2;
             }
         };
     }

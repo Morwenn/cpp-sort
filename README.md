@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-1.9.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.9.0)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.9.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.9.0)
+[![Latest Release](https://img.shields.io/badge/release-1.10.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.10.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.10.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.10.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
@@ -116,8 +116,9 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 **cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
 or more recent versions of these compilers. So far, the library should work with the
 following compilers:
-* g++5.5 or more recent. It it know not to work with some older g++5 versions.
+* g++5.5 or more recent. It is known not to work with some older g++5 versions.
 * clang++6 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
+* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
 * Clang is notably tested with both libstdc++ and libc++.
 
@@ -125,10 +126,6 @@ The compilers listed above are the ones used by the CI pipeline, and the library
 with the most recent versions of those compilers on a regular basis. All the other compiler
 versions in-between are untested, but should also work. Feel free to open an issue if it isn't the
 case.
-
-Last time I tried it did not work with the latest MSVC. Future development on the C++14 branch
-will try to remain compatible with the compiler versions listed above. I might try to make it
-work with MSVC in the future.
 
 The features in the library might differ depending on the C++ version used and on the compiler
 extensions enabled. Those changes [are documented](https://github.com/Morwenn/cpp-sort/wiki/Changelog)

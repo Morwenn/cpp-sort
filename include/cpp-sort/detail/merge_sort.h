@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_SORT_H_
@@ -22,15 +22,12 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename T>
-    using buffer_ptr = temporary_buffer<remove_cvref_t<T>>;
-
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort_impl(ForwardIterator first, difference_type_t<ForwardIterator> size,
-                         buffer_ptr<rvalue_reference_t<ForwardIterator>>&& buffer,
+                         temporary_buffer<rvalue_type_t<ForwardIterator>>&& buffer,
                          Compare compare, Projection projection,
                          std::forward_iterator_tag tag)
-        -> buffer_ptr<rvalue_reference_t<ForwardIterator>>
+        -> temporary_buffer<rvalue_type_t<ForwardIterator>>
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -79,10 +76,10 @@ namespace detail
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto merge_sort_impl(BidirectionalIterator first, BidirectionalIterator last,
                          difference_type_t<BidirectionalIterator> size,
-                         buffer_ptr<rvalue_reference_t<BidirectionalIterator>>&& buffer,
+                         temporary_buffer<rvalue_type_t<BidirectionalIterator>>&& buffer,
                          Compare compare, Projection projection,
                          std::bidirectional_iterator_tag tag)
-        -> buffer_ptr<rvalue_reference_t<BidirectionalIterator>>
+        -> temporary_buffer<rvalue_type_t<BidirectionalIterator>>
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -142,7 +139,7 @@ namespace detail
             return;
         }
 
-        buffer_ptr<rvalue_reference_t<ForwardIterator>> buffer(nullptr);
+        temporary_buffer<rvalue_type_t<ForwardIterator>> buffer(nullptr);
         merge_sort_impl(std::move(first), size, std::move(buffer),
                         std::move(compare), std::move(projection), tag);
     }
@@ -160,7 +157,7 @@ namespace detail
             return;
         }
 
-        buffer_ptr<rvalue_reference_t<BidirectionalIterator>> buffer(nullptr);
+        temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer(nullptr);
         merge_sort_impl(std::move(first), std::move(last), size, std::move(buffer),
                         std::move(compare), std::move(projection), tag);
     }

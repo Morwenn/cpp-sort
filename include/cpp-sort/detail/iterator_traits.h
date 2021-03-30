@@ -38,17 +38,15 @@ namespace detail
     template<typename Iterator>
     using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;
 
-    //
     // Addition used by proxy iterators from P0022
-    //
-
     template<typename Iterator>
     using rvalue_reference_t = utility::rvalue_reference_t<Iterator>;
 
-    //
-    // Handy addition from time to time
-    //
+    // Additional common type to use instead of value_t
+    template<typename Iterator>
+    using rvalue_type_t = remove_cvref_t<utility::rvalue_reference_t<Iterator>>;
 
+    // Handy addition from time to time
     template<typename Iterator, typename Projection>
     using projected_t = remove_cvref_t<invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>>;
 }}

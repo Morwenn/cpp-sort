@@ -8,7 +8,7 @@ from conans import CMake, ConanFile
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.9.0"
+    version = "1.10.0"
     description = "Additional sorting algorithms & related tools"
     topics = "conan", "cpp-sort", "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"
@@ -26,7 +26,7 @@ class CppSortConan(ConanFile):
     no_copy_source = True
     settings = "os", "compiler", "build_type", "arch"
 
-    def configure(self):
+    def validate(self):
         if self.settings.get_safe("compiler.cppstd"):
             tools.check_min_cppstd(self, 14)
 
@@ -41,6 +41,10 @@ class CppSortConan(ConanFile):
         # Copy license files
         for file in ["LICENSE.txt", "NOTICE.txt"]:
             self.copy(file, dst="licenses")
+
+    def package_info(self):
+        if self.settings.compiler == "Visual Studio":
+            self.cpp_info.cxxflags = ["/permissive-"]
 
     def package_id(self):
         self.info.header_only()

@@ -4,7 +4,9 @@
 include(cpp-sort-utils)
 include(DownloadProject)
 
+########################################
 # Test suite options
+
 option(USE_VALGRIND "Whether to run the tests with Valgrind (deprecated, use CPPSORT_USE_VALGRIND)" OFF)
 option(ENABLE_COVERAGE "Whether to produce code coverage (deprecated, use CPPSORT_ENABLE_COVERAGE)" OFF)
 set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize (deprecated, use CPPSORT_SANITIZE)")
@@ -17,7 +19,9 @@ if (CPPSORT_ENABLE_COVERAGE)
     set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
 endif()
 
-# Find & configure Catch2 for the tests
+########################################
+# Find or download Catch2
+
 message(STATUS "Looking for Catch2 2.6.0+")
 find_package(Catch2 2.6.0 QUIET)
 if (TARGET Catch2::Catch2)
@@ -34,6 +38,9 @@ else()
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 endif()
 include(Catch)
+
+########################################
+# Configure runtime tests
 
 macro(configure_tests target)
     # Make testing tools easily available to tests
@@ -93,6 +100,9 @@ macro(configure_tests target)
     endif()
 endmacro()
 
+########################################
+# Main tests
+
 add_executable(main-tests
     # General tests
     main.cpp
@@ -104,11 +114,14 @@ add_executable(main-tests
     every_sorter_move_only.cpp
     every_sorter_no_post_iterator.cpp
     every_sorter_non_const_compare.cpp
+    every_sorter_rvalue_projection.cpp
     every_sorter_span.cpp
+    every_sorter_throwing_moves.cpp
     is_stable.cpp
     rebind_iterator_category.cpp
     sort_array.cpp
     sorter_facade.cpp
+    sorter_facade_constexpr.cpp
     sorter_facade_defaults.cpp
     sorter_facade_iterable.cpp
     stable_sort_array.cpp
@@ -118,7 +131,7 @@ add_executable(main-tests
     adapters/container_aware_adapter_forward_list.cpp
     adapters/container_aware_adapter_list.cpp
     adapters/counting_adapter.cpp
-    adapters/every_adapter_fptr.cpp
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:adapters/every_adapter_fptr.cpp>
     adapters/every_adapter_internal_compare.cpp
     adapters/every_adapter_non_const_compare.cpp
     adapters/every_adapter_stateful_sorter.cpp
@@ -150,7 +163,6 @@ add_executable(main-tests
     # Distributions tests
     distributions/all_equal.cpp
     distributions/alternating.cpp
-    distributions/alternating_16_values.cpp
     distributions/ascending.cpp
     distributions/ascending_sawtooth.cpp
     distributions/descending.cpp
@@ -174,13 +186,15 @@ add_executable(main-tests
     probes/par.cpp
     probes/rem.cpp
     probes/runs.cpp
+    probes/sus.cpp
     probes/relations.cpp
+    probes/every_probe_common.cpp
     probes/every_probe_move_compare_projection.cpp
 
     # Sorters tests
     sorters/counting_sorter.cpp
     sorters/default_sorter.cpp
-    sorters/default_sorter_fptr.cpp
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorters/default_sorter_fptr.cpp>
     sorters/default_sorter_projection.cpp
     sorters/merge_insertion_sorter_projection.cpp
     sorters/merge_sorter.cpp
@@ -205,6 +219,9 @@ add_executable(main-tests
 )
 configure_tests(main-tests)
 
+########################################
+# Heap memory exhaustion tests
+
 if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     add_executable(heap-memory-exhaustion-tests
         # These tests are in a separate executable because we replace
@@ -219,13 +236,17 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     configure_tests(heap-memory-exhaustion-tests)
 endif()
 
+########################################
 # Configure coverage
+
 if (CPPSORT_ENABLE_COVERAGE)
     list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
     coverage_evaluate()
 endif()
 
+########################################
 # Configure Valgrind
+
 if (CPPSORT_USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind REQUIRED)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
@@ -233,6 +254,9 @@ if (CPPSORT_USE_VALGRIND)
         set(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/valgrind-osx.supp)
     endif()
 endif()
+
+########################################
+# Discover tests
 
 include(CTest)
 

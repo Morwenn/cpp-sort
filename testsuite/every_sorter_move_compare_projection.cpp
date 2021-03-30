@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -17,6 +17,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
@@ -24,6 +25,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
                     >,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
@@ -31,6 +33,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,
@@ -48,11 +51,12 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
-TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters]",
+TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters][projection]",
                     cppsort::block_sorter<>,
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
@@ -60,6 +64,7 @@ TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[s
                     >,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,

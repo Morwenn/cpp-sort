@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,6 +23,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "functional.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
@@ -98,52 +99,19 @@ namespace detail
     // Prepare the buffer prior to the blind merge (only for
     // bidirectional iterator)
 
-    template<typename Predicate>
-    class invert
-    {
-        private:
-
-            Predicate predicate;
-
-        public:
-
-            invert() {}
-
-            explicit invert(Predicate predicate):
-                predicate(std::move(predicate))
-            {}
-
-            template<typename T1, typename T2>
-            auto operator()(T1&& x, T2&& y)
-                -> bool
-            {
-                auto&& pred = utility::as_function(predicate);
-                return pred(std::forward<T2>(y), std::forward<T1>(x));
-            }
-
-            template<typename T1, typename T2>
-            auto operator()(T1&& x, T2&& y) const
-                -> bool
-            {
-                auto&& pred = utility::as_function(predicate);
-                return pred(std::forward<T2>(y), std::forward<T1>(x));
-            }
-    };
-
-    template<typename BidirectionalIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last,
                                 Compare compare, Projection projection,
                                 difference_type_t<BidirectionalIterator> len1,
                                 difference_type_t<BidirectionalIterator> len2,
-                                RandomAccessIterator buff)
+                                rvalue_type_t<BidirectionalIterator>* buff)
         -> void
     {
         using utility::iter_move;
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
-        destruct_n<rvalue_reference> d(0);
-        std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(buff, d);
+        using rvalue_type = rvalue_type_t<BidirectionalIterator>;
+        destruct_n<rvalue_type> d(0);
+        std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buff, d);
         if (len1 <= len2) {
             auto ptr = uninitialized_move(first, middle, buff, d);
             half_inplace_merge(buff, ptr, middle, last, first, len1,
@@ -151,11 +119,11 @@ namespace detail
         } else {
             auto ptr = uninitialized_move(middle, last, buff, d);
             using rbi = std::reverse_iterator<BidirectionalIterator>;
-            using rv = std::reverse_iterator<rvalue_reference*>;
+            using rv = std::reverse_iterator<rvalue_type*>;
             half_inplace_merge(rv(ptr), rv(buff),
                                rbi(middle), rbi(first),
                                rbi(last), len2,
-                               invert<Compare>(compare), std::move(projection));
+                               invert(compare), std::move(projection));
         }
     }
 }}

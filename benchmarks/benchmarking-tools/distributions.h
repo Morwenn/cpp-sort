@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -32,15 +32,15 @@ namespace dist
     struct base_distribution
     {
         template<typename OutputIterator>
-        using fptr_t = void(*)(OutputIterator, std::size_t);
+        using fptr_t = void(*)(OutputIterator, long long int);
 
         template<typename OutputIterator, typename Projection>
-        using fptr_proj_t = void(*)(OutputIterator, std::size_t, Projection);
+        using fptr_proj_t = void(*)(OutputIterator, long long int, Projection);
 
         template<typename OutputIterator>
         operator fptr_t<OutputIterator>() const
         {
-            return [](OutputIterator out, std::size_t size)
+            return [](OutputIterator out, long long int size)
             {
                 return Derived{}(out, size);
             };
@@ -49,7 +49,7 @@ namespace dist
         template<typename OutputIterator, typename Projection>
         operator fptr_proj_t<OutputIterator, Projection>() const
         {
-            return [](OutputIterator out, std::size_t size, Projection projection)
+            return [](OutputIterator out, long long int size, Projection projection)
             {
                 return Derived{}(out, size, std::move(projection));
             };
@@ -60,11 +60,11 @@ namespace dist
         base_distribution<shuffled>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             std::vector<int> vec;
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 vec.emplace_back(i);
             }
             std::shuffle(vec.begin(), vec.end(), distributions_prng);
@@ -80,11 +80,11 @@ namespace dist
         base_distribution<shuffled_16_values>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             std::vector<int> vec;
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 vec.emplace_back(i % 16);
             }
             std::shuffle(vec.begin(), vec.end(), distributions_prng);
@@ -100,11 +100,11 @@ namespace dist
         base_distribution<all_equal>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = proj(0);
             }
         }
@@ -116,11 +116,11 @@ namespace dist
         base_distribution<ascending>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = proj(i);
             }
         }
@@ -132,7 +132,7 @@ namespace dist
         base_distribution<descending>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
@@ -148,14 +148,14 @@ namespace dist
         base_distribution<pipe_organ>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (std::size_t i = 0 ; i < size / 2 ; ++i) {
+            for (long long int i = 0 ; i < size / 2 ; ++i) {
                 *out++ = proj(i);
             }
-            for (std::size_t i = size / 2 ; i < size ; ++i) {
+            for (long long int i = size / 2 ; i < size ; ++i) {
                 *out++ = proj(size - i);
             }
         }
@@ -167,12 +167,12 @@ namespace dist
         base_distribution<push_front>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
             if (size > 0) {
-                for (std::size_t i = 0 ; i < size - 1 ; ++i) {
+                for (long long int i = 0 ; i < size - 1 ; ++i) {
                     *out++ = proj(i);
                 }
                 *out = proj(0);
@@ -186,12 +186,12 @@ namespace dist
         base_distribution<push_middle>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
             if (size > 0) {
-                for (std::size_t i = 0 ; i < size ; ++i) {
+                for (long long int i = 0 ; i < size ; ++i) {
                     if (i != size / 2) {
                         *out++ = proj(i);
                     }
@@ -207,12 +207,12 @@ namespace dist
         base_distribution<ascending_sawtooth>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            std::size_t limit = size / cppsort::detail::log2(size) + 50;
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            long long int limit = size / cppsort::detail::log2(size) + 50;
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = proj(i % limit);
             }
         }
@@ -224,12 +224,12 @@ namespace dist
         base_distribution<ascending_sawtooth_bad>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            std::size_t limit = size / cppsort::detail::log2(size) - 50;
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            long long int limit = size / cppsort::detail::log2(size) - 50;
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = proj(i % limit);
             }
         }
@@ -241,11 +241,11 @@ namespace dist
         base_distribution<descending_sawtooth>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            std::size_t limit = size / cppsort::detail::log2(size) + 50;
+            long long int limit = size / cppsort::detail::log2(size) + 50;
             while (size--) {
                 *out++ = proj(size % limit);
             }
@@ -258,11 +258,11 @@ namespace dist
         base_distribution<descending_sawtooth_bad>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            std::size_t limit = size / cppsort::detail::log2(size) - 50;
+            long long int limit = size / cppsort::detail::log2(size) - 50;
             while (size--) {
                 *out++ = proj(size % limit);
             }
@@ -275,11 +275,11 @@ namespace dist
         base_distribution<alternating>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 *out++ = proj((i % 2) ? i : -i);
             }
         }
@@ -287,32 +287,34 @@ namespace dist
         static constexpr const char* output = "alternating.txt";
     };
 
-    struct alternating_16_values:
-        base_distribution<alternating_16_values>
+    struct reversed_alternating:
+        base_distribution<reversed_alternating>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
+            // Especially interesting for a special case of melsort
+
             auto&& proj = cppsort::utility::as_function(projection);
-            for (std::size_t i = 0 ; i < size ; ++i) {
-                *out++ = proj((i % 2) ? i % 16 : -(i % 16));
+            for (long long int i = size ; i > 0 ; --i) {
+                *out++ = proj((i % 2) ? i : -i);
             }
         }
 
-        static constexpr const char* output = "alternating_16_values.txt";
+        static constexpr const char* output = "reversed_alternating.txt";
     };
 
     struct descending_plateau:
         base_distribution<descending_plateau>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
 
-            std::size_t i = size;
+            long long int i = size;
             while (i > 2 * size / 3) {
                 *out++ = proj(i);
                 --i;
@@ -343,7 +345,7 @@ namespace dist
         {}
 
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
@@ -351,9 +353,9 @@ namespace dist
             // Generate a percentage of error
             std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
             // Generate a random value
-            std::uniform_int_distribution<std::size_t> value_dis(0, size - 1);
+            std::uniform_int_distribution<long long int> value_dis(0, size - 1);
 
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            for (long long int i = 0 ; i < size ; ++i) {
                 if (percent_dis(distributions_prng) < factor) {
                     *out++ = value_dis(distributions_prng);
                 } else {
@@ -369,7 +371,7 @@ namespace dist
         base_distribution<vergesort_killer>
     {
         template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, std::size_t size, Projection projection={}) const
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
             // WARNING: not for small collections, mostly because I'm lazy...

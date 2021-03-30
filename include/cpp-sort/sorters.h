@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_H_
@@ -9,12 +9,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/sorters/block_sorter.h>
+#include <cpp-sort/sorters/cartesian_tree_sorter.h>
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/drop_merge_sorter.h>
 #include <cpp-sort/sorters/grail_sorter.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
+#include <cpp-sort/sorters/mel_sorter.h>
 #include <cpp-sort/sorters/merge_insertion_sorter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
@@ -23,6 +25,7 @@
 #include <cpp-sort/sorters/quick_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/sorters/ska_sorter.h>
+#include <cpp-sort/sorters/slab_sorter.h>
 #include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/sorters/spin_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>

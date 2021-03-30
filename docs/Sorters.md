@@ -37,6 +37,20 @@ struct block_sorter;
 
 Whether this sorter works with types that are not default-constructible depends on the memory allocation strategy of the buffer provider. The default specialization does not work with such types.
 
+### `cartesian_tree_sorter`
+
+```cpp
+#include <cpp-sort/sorters/cartesian_tree_sorter.h>
+```
+
+Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Heapsort - Adapted for Presorted Files*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Random-access |
+
+*New in version 1.10.0*
+
 ### `default_sorter`
 
 ```cpp
@@ -146,6 +160,31 @@ This sorter also has the following dedicated algorithms when used together with 
 | `std::forward_list` | n           | n²          | n²          | 1           | Yes         |
 
 None of the container-aware algorithms invalidates iterators.
+
+### `mel_sorter`
+
+```cpp
+#include <cpp-sort/sorters/mel_sorter.h>
+```
+
+Implements melsort, a rather slow but *Enc*-adaptive algorithm described by S. Skiena in *Encroaching lists as a measure of presortedness*.
+
+*MEL* stands for *Merge Encroaching Lists*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Forward       |
+
+This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`][container-aware-adapter]:
+
+| Container           | Best        | Average     | Worst       | Memory      | Stable      |
+| ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| `std::list`         | n           | n log n     | n log n     | sqrt n      | No          |
+| `std::forward_list` | n           | n log n     | n log n     | sqrt n      | No          |
+
+None of the container-aware algorithms invalidates iterators.
+
+*New in version 1.10.0*
 
 ### `merge_insertion_sorter`
 
@@ -283,6 +322,22 @@ This sorter also has the following dedicated algorithms when used together with 
 
 None of the container-aware algorithms invalidates iterators.
 
+### `slab_sort`
+
+```cpp
+#include <cpp-sort/sorters/slab_sorter.h>
+```
+
+Implements a variant of slabsort, a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Sorting Shuffled Monotone Sequences*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | No          | Random-access |
+
+This algorithm actually uses a rather big amount of memory but scales better than other O(n log n) algorithms of the library described as "slow" when the collections get bigger.
+
+*New in version 1.10.0*
+
 ### `smooth_sorter`
 
 ```cpp
@@ -317,7 +372,7 @@ Implements a [spinsort](https://www.boost.org/doc/libs/1_72_0/libs/sort/doc/html
 #include <cpp-sort/sorters/split_sorter.h>
 ```
 
-Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by Levcopoulos and Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
+Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -353,7 +408,7 @@ The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-a
 | n log n     | n log n     | n log n     | n           | Yes         | Random-access |
 | n log² n    | n log² n    | n log² n    | 1           | Yes         | Random-access |
 
-`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could the the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
+`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could be the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
 
 This sorter can't throw `std::bad_alloc`.
 
@@ -481,6 +536,8 @@ struct spread_sorter:
 
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
+  [container-aware-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm

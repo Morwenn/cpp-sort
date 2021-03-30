@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -27,6 +27,18 @@ namespace cppsort
 {
 namespace detail
 {
+    ////////////////////////////////////////////////////////////
+    // C++17 std::destroy_at
+
+    template<typename T>
+    auto destroy_at(T* ptr)
+        -> void
+    {
+        // TODO: implement if needed
+        static_assert(not std::is_array<T>::value, "destroy_at() does no handle arrays");
+        ptr->~T();
+    }
+
     ////////////////////////////////////////////////////////////
     // Deleter for ::operator new(std::size_t)
 
@@ -90,7 +102,7 @@ namespace detail
             -> void
         {
             for (std::size_t i = 0 ; i < size ; ++i) {
-                pointer->~T();
+                detail::destroy_at(pointer);
                 ++pointer;
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -34,6 +34,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
+    SECTION( "cartesian_tree_sort" )
+    {
+        cppsort::cartesian_tree_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
     SECTION( "counting_sort" )
     {
         cppsort::counting_sort(collection);
@@ -61,6 +67,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     SECTION( "insertion_sorter" )
     {
         cppsort::insertion_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "mel_sorter" )
+    {
+        cppsort::mel_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 
@@ -115,6 +127,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     SECTION( "ska_sorter" )
     {
         cppsort::ska_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "slab_sorter" )
+    {
+        cppsort::slab_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 

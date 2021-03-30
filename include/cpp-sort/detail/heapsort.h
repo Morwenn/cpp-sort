@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -95,6 +95,35 @@ namespace detail
             // start from the first parent, there is no need to consider children
             for (difference_type start = (n - 2) / 2; start >= 0; --start) {
                 sift_down<Compare>(first, last, compare, projection, n, first + start);
+            }
+        }
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto push_heap(RandomAccessIterator first, RandomAccessIterator last,
+                   Compare compare, Projection projection,
+                   difference_type_t<RandomAccessIterator> len)
+    {
+        using utility::iter_move;
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        if (len > 1) {
+            len = (len - 2) / 2;
+            auto ptr = first + len;
+            if (comp(proj(*ptr), proj(*--last))) {
+                auto t = iter_move(last);
+                auto&& proj_t = proj(t);
+                do {
+                    *last = iter_move(ptr);
+                    last = ptr;
+                    if (len == 0) {
+                        break;
+                    }
+                    len = (len - 1) / 2;
+                    ptr = first + len;
+                } while (comp(proj(*ptr), proj_t));
+                *last = std::move(t);
             }
         }
     }

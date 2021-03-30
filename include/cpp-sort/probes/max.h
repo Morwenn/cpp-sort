@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MAX_H_
@@ -21,7 +21,7 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/equal_range.h"
-#include "../detail/indirect_compare.h"
+#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
@@ -56,9 +56,8 @@ namespace probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(),
-                cppsort::detail::make_indirect_compare(compare, projection),
-                utility::identity{}
+                iterators.begin(), iterators.end(), compare,
+                cppsort::detail::indirect(projection)
             );
 
             ////////////////////////////////////////////////////////////
@@ -70,18 +69,17 @@ namespace probe
             for (auto it = first ; it != last ; ++it) {
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
-                    iterators.begin(), iterators.end(), proj(*it), compare,
-                    [&proj](const auto& iterator) {
-                        return proj(*iterator);
-                    });
+                    iterators.begin(), iterators.end(), proj(*it),
+                    compare, cppsort::detail::indirect(projection)
+                );
                 auto pos_min = std::distance(iterators.begin(), rng.first);
                 auto pos_max = std::distance(iterators.begin(), rng.second);
 
                 // If *first isn't into one of its sorted positions, computed the closest
                 if (it_pos < pos_min) {
-                    max_dist = std::max(pos_min - it_pos, max_dist);
+                    max_dist = (std::max)(pos_min - it_pos, max_dist);
                 } else if (it_pos >= pos_max) {
-                    max_dist = std::max(it_pos - pos_max + 1, max_dist);
+                    max_dist = (std::max)(it_pos - pos_max + 1, max_dist);
                 }
 
                 ++it_pos;
@@ -122,6 +120,13 @@ namespace probe
             {
                 return max_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection));
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
             }
         };
     }

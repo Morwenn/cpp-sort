@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_OSC_H_
@@ -58,8 +58,8 @@ namespace probe
 
                     while (next != last)
                     {
-                        if (comp(std::min(proj(*current), proj(*next)), value) &&
-                            comp(value, std::max(proj(*current), proj(*next))))
+                        if (comp((std::min)(proj(*current), proj(*next)), value) &&
+                            comp(value, (std::max)(proj(*current), proj(*next))))
                         {
                             ++count;
                         }
@@ -69,6 +69,13 @@ namespace probe
                     }
                 }
                 return count;
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : (n * (n - 2) - 1) / 2;
             }
         };
     }

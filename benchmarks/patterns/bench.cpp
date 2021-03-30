@@ -60,30 +60,28 @@ int main()
     >;
 
     std::pair<std::string, distr_f> distributions[] = {
-        { "shuffled",               dist::shuffled()                },
-        { "shuffled_16_values",     dist::shuffled_16_values()      },
-        { "all_equal",              dist::all_equal()               },
-        { "ascending",              dist::ascending()               },
-        { "descending",             dist::descending()              },
-        { "pipe_organ",             dist::pipe_organ()              },
-        { "push_front",             dist::push_front()              },
-        { "push_middle",            dist::push_middle()             },
-        { "ascending_sawtooth",     dist::ascending_sawtooth()      },
-        { "descending_sawtooth",    dist::descending_sawtooth()     },
-        { "alternating",            dist::alternating()             },
-        { "alternating_16_values",  dist::alternating_16_values()   },
+        { "shuffled",               dist::shuffled()            },
+        { "shuffled_16_values",     dist::shuffled_16_values()  },
+        { "all_equal",              dist::all_equal()           },
+        { "ascending",              dist::ascending()           },
+        { "descending",             dist::descending()          },
+        { "pipe_organ",             dist::pipe_organ()          },
+        { "push_front",             dist::push_front()          },
+        { "ascending_sawtooth",     dist::ascending_sawtooth()  },
+        { "descending_sawtooth",    dist::descending_sawtooth() },
+        { "alternating",            dist::alternating()         },
     };
 
     std::pair<std::string, sort_f> sorts[] = {
-        { "heap_sort",      cppsort::heap_sort      },
-        { "pdq_sort",       cppsort::pdq_sort       },
-        { "quick_sort",     cppsort::quick_sort     },
-        { "spread_sort",    cppsort::spread_sort    },
-        { "std_sort",       cppsort::std_sort       },
-        { "verge_sort",     cppsort::verge_sort     },
+        { "heap_sort",  cppsort::heap_sort  },
+        { "pdq_sort",   cppsort::pdq_sort   },
+        { "quick_sort", cppsort::quick_sort },
+        { "ska_sort",   cppsort::ska_sort   },
+        { "std_sort",   cppsort::std_sort   },
+        { "verge_sort", cppsort::verge_sort },
     };
 
-    std::size_t sizes[] = { 1'000'000 };
+    std::size_t sizes[] = { 10'000'000 };
 
     // Poor seed, yet enough for our benchmarks
     std::uint_fast32_t seed = std::time(nullptr);

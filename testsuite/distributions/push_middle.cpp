@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -16,18 +16,21 @@ TEMPLATE_TEST_CASE( "test sorter with push_middle distribution", "[distributions
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
                     >,
                     cppsort::heap_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
                     cppsort::poplar_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::ska_sorter,
+                    cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,

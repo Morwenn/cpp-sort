@@ -17,19 +17,6 @@
 #endif
 
 ////////////////////////////////////////////////////////////
-// Check for C++17 features
-
-#ifdef __cpp_constexpr
-#   if __cpp_constexpr >= 201603
-#       define CPPSORT_CONSTEXPR_AFTER_CXX14 constexpr
-#   else
-#       define CPPSORT_CONSTEXPR_AFTER_CXX14
-#   endif
-#else
-#   define CPPSORT_CONSTEXPR_AFTER_CXX14
-#endif
-
-////////////////////////////////////////////////////////////
 // Check for C++20 features
 
 // There is no feature-test macro for std::identity that can
@@ -37,7 +24,7 @@
 // compiler and standard versions
 
 #if defined(__GNUC__)
-#   if __GNUC__ > 3 && __cplusplus > 201703L
+#   if __GNUC__ > 9 && __cplusplus > 201703L
 #       define CPPSORT_STD_IDENTITY_AVAILABLE 1
 #   else
 #       define CPPSORT_STD_IDENTITY_AVAILABLE 0
@@ -46,9 +33,9 @@
 #   define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #else
 #   if defined(__cpp_lib_ranges)
-#       CPPSORT_STD_IDENTITY_AVAILABLE 1
+#       define CPPSORT_STD_IDENTITY_AVAILABLE 1
 #   else
-#       CPPSORT_STD_IDENTITY_AVAILABLE 0
+#       define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #   endif
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -17,6 +17,7 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     cppsort::block_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     >,
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -26,6 +27,7 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     >,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
                     cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
@@ -33,6 +35,7 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,

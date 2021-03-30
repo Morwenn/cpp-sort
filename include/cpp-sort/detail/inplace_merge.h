@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_INPLACE_MERGE_H_
@@ -92,7 +92,6 @@ namespace detail
                        std::forward_iterator_tag)
         -> void
     {
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<ForwardIterator>>;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -106,7 +105,7 @@ namespace detail
         auto n0 = std::distance(first, middle);
         auto n1 = std::distance(middle, last);
 
-        auto buffer = temporary_buffer<rvalue_reference>(std::max(n0, n1));
+        auto buffer = temporary_buffer<rvalue_type_t<ForwardIterator>>((std::max)(n0, n1));
         recmerge(std::move(first), n0, std::move(middle), n1,
                  buffer.data(), buffer.size(),
                  std::move(compare), std::move(projection));
@@ -121,8 +120,7 @@ namespace detail
                        std::bidirectional_iterator_tag)
         -> void
     {
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
-        temporary_buffer<rvalue_reference> buffer(std::min(len1, len2));
+        temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer((std::min)(len1, len2));
 
         using category = iterator_category_t<BidirectionalIterator>;
         inplace_merge(std::move(first), std::move(middle), std::move(last),
@@ -137,7 +135,6 @@ namespace detail
                        std::bidirectional_iterator_tag)
         -> void
     {
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<BidirectionalIterator>>;
         using category = iterator_category_t<BidirectionalIterator>;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -152,7 +149,7 @@ namespace detail
         auto len1 = std::distance(first, middle);
         auto len2 = std::distance(middle, last);
 
-        temporary_buffer<rvalue_reference> buffer(std::min(len1, len2));
+        temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer((std::min)(len1, len2));
         inplace_merge(std::move(first), std::move(middle), std::move(last),
                       std::move(compare), std::move(projection),
                       len1, len2, buffer.data(), buffer.size(),

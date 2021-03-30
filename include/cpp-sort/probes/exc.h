@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_EXC_H_
@@ -19,7 +19,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/indirect_compare.h"
+#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
@@ -54,10 +54,9 @@ namespace probe
             }
 
             // Sort the iterators on pointed values
-            pdqsort(
-                iterators.begin(), iterators.end(),
-                cppsort::detail::make_indirect_compare(compare, projection),
-                utility::identity{}
+            cppsort::detail::pdqsort(
+                iterators.begin(), iterators.end(), compare,
+                cppsort::detail::indirect(projection)
             );
 
             ////////////////////////////////////////////////////////////
@@ -141,6 +140,13 @@ namespace probe
             {
                 return exc_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection));
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
             }
         };
     }

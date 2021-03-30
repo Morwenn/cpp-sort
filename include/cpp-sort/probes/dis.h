@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_DIS_H_
@@ -48,7 +48,7 @@ namespace probe
                 difference_type dist = 1; // Distance between it1 and it2
                 for (auto it2 = std::next(it1) ; it2 != last ; ++it2) {
                     if (comp(proj(*it2), value)) {
-                        max_dist = std::max(max_dist, dist);
+                        max_dist = (std::max)(max_dist, dist);
                     }
                     ++dist;
                 }
@@ -92,6 +92,13 @@ namespace probe
             {
                 return dis_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection));
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : n - 1;
             }
         };
     }

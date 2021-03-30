@@ -1,22 +1,77 @@
 /*
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SCOPE_EXIT_H_
 #define CPPSORT_DETAIL_SCOPE_EXIT_H_
-
-#ifdef __cpp_lib_uncaught_exceptions
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <exception>
 #include <type_traits>
+#include <utility>
 
 namespace cppsort
 {
 namespace detail
 {
+    template<typename EF>
+    struct scope_exit
+    {
+        private:
+
+            EF exit_function;
+            bool execute_on_destruction = true;
+
+        public:
+
+            template<typename EFP>
+            explicit scope_exit(EFP&& func)
+                noexcept(std::is_nothrow_constructible<EF, EFP>::value ||
+                         std::is_nothrow_constructible<EF, EFP&>::value):
+                exit_function(std::forward<EFP>(func))
+            {}
+
+            scope_exit(scope_exit&& rhs)
+                noexcept(std::is_nothrow_move_constructible<EF>::value ||
+                         std::is_nothrow_copy_constructible<EF>::value):
+                exit_function(std::forward<EF>(rhs.exit_function))
+            {}
+
+            ~scope_exit()
+                noexcept(noexcept(exit_function()))
+            {
+                if (execute_on_destruction) {
+                    exit_function();
+                }
+            }
+
+            auto activate() noexcept
+                -> void
+            {
+                execute_on_destruction = true;
+            }
+
+            auto deactivate() noexcept
+                -> void
+            {
+                execute_on_destruction = false;
+            }
+
+            scope_exit(const scope_exit&) = delete;
+            scope_exit& operator=(const scope_exit&) = delete;
+            scope_exit& operator=(scope_exit&&) = delete;
+    };
+
+    template<typename EF>
+    auto make_scope_exit(EF&& function)
+        -> scope_exit<EF>
+    {
+        return scope_exit<EF>(std::forward<EF>(function));
+    }
+
+#ifdef __cpp_lib_uncaught_exceptions
     template<typename EF>
     struct scope_success
     {
@@ -49,7 +104,13 @@ namespace detail
                 }
             }
 
-            auto release() noexcept
+            auto activate() noexcept
+                -> void
+            {
+                execute_on_destruction = true;
+            }
+
+            auto deactivate() noexcept
                 -> void
             {
                 execute_on_destruction = false;
@@ -66,8 +127,7 @@ namespace detail
     {
         return scope_success<EF>(std::forward<EF>(function));
     }
-}}
-
 #endif // __cpp_lib_uncaught_exceptions
+}}
 
 #endif // CPPSORT_DETAIL_SCOPE_EXIT_H_

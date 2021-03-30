@@ -50,9 +50,9 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     This feature is available when the feature-testing macro `__cpp_nontype_template_parameter_auto` is defined.
 
-* The function pointer conversion operators of `sorter_facade` are now `constexpr` when possible.
+* [[`sorter_facade`|Sorter facade]] range overloads can now be used in `constexpr` functions.
 
-   This feature is made available through the check `__cpp_constexpr >= 201603`.
+    There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.
 
 **Correctness improvements:**
 * Some handy C++17 type traits such as `std::is_invocable` are manually reimplemented in C++14 mode while they are used as is in C++17 mode if available. It's likely that the C++17 implementation covers more corner cases and is thus more often correct than the manual C++14 implementation.
@@ -68,6 +68,10 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 
 * When available, [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater] benefit from dedicated support wherever [`std::less<>`][std-less-void] and [`std::greater<>`][std-greater-void] are supported, with equivalent semantics.
 
+* [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] begin `constexpr`.
+
+    The feature-test macro `__cpp_lib_constexpr_algorithms` can be used to check whether `std::swap` is `constexpr`.
+
 ## Other features
 
 **cpp-sort** tries to take advantage of more than just standard features when possible by using implementation-specific tweaks to improve the user experience. The following improvements might be available depending on the your standard implementation:
@@ -78,9 +82,9 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 **Performance improvements:**
 * Bit manipulation intrinsics: there are a few places where bit tricks are used to perform a few operations faster. Some of those operations are made faster with bitwise manipulation intrinsics when those are available.
 
-* Assumptions: some algorithms use assumptions in select places to make the compiler generate more efficient code. Whether such assumptions are available depend on the compiler.
+* Assumptions: some algorithms use assumptions in select places to make the compiler generate more efficient code. Whether such assumptions are available depends on the compiler.
 
-* When using libstdc++ or libc++, the return type of [`std::mem_fn`][std-mem-fn] is considered ["probably branchless"][branchless-traits] when it wraps a pointer to data member, which can improve the speed of [`pdq_sorter`][pdq-sorter] and everything that relies on it in some scenarios.
+* When using libstdc++, libc++ or the Microsoft STL, the return type of [`std::mem_fn`][std-mem-fn] is considered ["probably branchless"][branchless-traits] when it wraps a pointer to data member, which can improve the speed of [`pdq_sorter`][pdq-sorter] and everything that relies on it in some scenarios.
 
 
   [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
@@ -97,3 +101,4 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view)
+  [utility-iter-move]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#iter_move-and-iter_swap

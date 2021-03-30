@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_ENC_H_
@@ -18,7 +18,9 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/lower_bound.h"
 
 namespace cppsort
 {
@@ -43,55 +45,54 @@ namespace probe
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                // Head an tail of encroaching lists
+                if (first == last || std::next(first) == last) {
+                    return 0;
+                }
+
+                // Heads an tails of encroaching lists
                 std::vector<std::pair<ForwardIterator, ForwardIterator>> lists;
+                lists.emplace_back(first, first);
+                ++first;
+
+                ////////////////////////////////////////////////////////////
+                // Create encroaching lists
 
                 while (first != last) {
                     auto&& value = proj(*first);
 
-                    // Binary search for an encroaching list where
-                    // value <= list.first or value >= list.second
-
-                    // Whether the found value is smaller than the head
-                    // of the found encroaching list or greater than its
-                    // tail
-                    bool value_is_smaller = true;
-
-                    auto size = lists.size();
-                    auto res_it = lists.begin();
-                    while (size > 0) {
-                        auto it = res_it;
-                        std::advance(it, size / 2);
-                        if (not comp(proj(*it->first), value)) {
-                            size /= 2;
-                            value_is_smaller = true;
-                        } else if (not comp(value, proj(*it->second))) {
-                            size /= 2;
-                            value_is_smaller = false;
-                        } else {
-                            res_it = ++it;
-                            size -= size / 2 + 1;
-                        }
-                    }
-
-                    if (res_it != lists.end()) {
-                        // Change the head or tail of the found encroaching list
-                        // if any has been found
-                        if (value_is_smaller) {
-                            res_it->first = first;
-                        } else {
-                            res_it->second = first;
-                        }
+                    auto& last_list = lists.back();
+                    if (not comp(value, proj(*last_list.second))) {
+                        // Element belongs to the tails (bigger elements)
+                        auto insertion_point = cppsort::detail::lower_bound(
+                            lists.begin(), std::prev(lists.end()), value,
+                            cppsort::detail::invert(compare),
+                            [&proj](auto& list) -> decltype(auto) { return proj(*list.second); }
+                        );
+                        insertion_point->second = first;
+                    } else if (not comp(proj(*last_list.first), value)) {
+                        // Element belongs to the heads (smaller elements)
+                        auto insertion_point = cppsort::detail::lower_bound(
+                            lists.begin(), std::prev(lists.end()), value, compare,
+                            [&proj](auto& list) -> decltype(auto) { return proj(*list.first); }
+                        );
+                        insertion_point->first = first;
                     } else {
-                        // Create a new encroaching list if the element
-                        // didn't fit in any of the existing ones
+                        // Element does not belong to the existing encroaching lists,
+                        // create a new list for it
                         lists.emplace_back(first, first);
                     }
 
                     ++first;
                 }
 
-                return lists.size() ? lists.size() - 1 : 0;
+                return lists.size() - 1;
+            }
+
+            template<typename Integer>
+            static constexpr auto max_for_size(Integer n)
+                -> Integer
+            {
+                return n == 0 ? 0 : (n + 1) / 2 - 1;
             }
         };
     }

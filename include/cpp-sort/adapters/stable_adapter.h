@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_STABLE_ADAPTER_H_
@@ -25,6 +25,7 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/memory.h"
 #include "../detail/sized_iterator.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -41,8 +42,12 @@ namespace cppsort
         {
             private:
 
-                using projection_t = decltype(utility::as_function(std::declval<Projection&>()));
-                using compare_t = decltype(utility::as_function(std::declval<Compare&>()));
+                using projection_t = detail::remove_cvref_t<
+                    decltype(utility::as_function(std::declval<Projection>()))
+                >;
+                using compare_t = detail::remove_cvref_t<
+                    decltype(utility::as_function(std::declval<Compare>()))
+                >;
                 std::tuple<compare_t, projection_t> data;
 
             public:

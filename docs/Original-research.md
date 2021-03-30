@@ -8,7 +8,7 @@ One of the main observations which naturally occured as long as I was putting to
 * Algorithms that work on random-access iterators can run in O(n log n) time with O(1) extra memory, and can even be stable with such guarantees (block sort being the best example).
 * Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergesort [can be implemented][https://github.com/Morwenn/quick_merge_sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
 * Stable algorithms that work on bidirectional iterators can run in O(n log n) time with O(n) extra memory (mergesort), or in O(n log² n) time with O(1) extra memory (mergesort with in-place merge).
-* Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the the ones working on bidirectional iterators: mergesort works just as well.
+* Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the ones working on bidirectional iterators: mergesort works just as well.
 * Unstable algorithms that work on forward iterators can run in O(n log² n) time and O(1) space, QuickMergesort being once again the prime example of such an algorithm.
 * Taking advantage of the list data structure allows for sorting algorithms running in O(n log n) time with O(1) extra memory, be it for stable sorting (mergesort) or unstable sorting (melsort), but those techniques can't be generically retrofitted to generically work with bidirectional iterators
 
@@ -95,9 +95,9 @@ While trying to reimplement size-optimal sorting networks as described by [*Find
 
 ### Sorting network for 29 inputs
 
-The following sorting network for 29 inputs has 165 compare-exchange-units, which is one less that the most size-optimal 29-input sorting networks that I could find in the litterature. Here is how I generated it: first it sorts the first 16 inputs and the last 13 inputs independently. Then it merges the two sorted subarrays using a size 32 Batcher odd-even merge network (the version that does not need the inputs to be interleaved), where all compare-exchange units working on indexes greater than 28 have been dropped. Dropping comparators in such a way is ok: consider that the values at the indexes [29, 32) are greater than every other value in the array to sort, and it will become intuitive that dropping them generates a correct merging network of a smaller size.
+The following sorting network for 29 inputs has 165 compare-exchange-units, which is one less that the most size-optimal 29-input sorting networks that I could find in the literature. Here is how I generated it: first it sorts the first 16 inputs and the last 13 inputs independently. Then it merges the two sorted subarrays using a size 32 Batcher odd-even merge network (the version that does not need the inputs to be interleaved), where all compare-exchange units working on indexes greater than 28 have been dropped. Dropping comparators in such a way is ok: consider that the values at the indexes [29, 32) are greater than every other value in the array to sort, and it will become intuitive that dropping them generates a correct merging network of a smaller size.
 
-That said, even though I have been unable to find a 29-input sorting network with as few compare-exchange units as 165 in the litterature, I can't claim that I found the technique used to generate it: the unclassified 1971 paper [*A Generalization of the Divide-Sort-Merge Strategy for Sorting Networks*][divide-sort-merge-strategy] by David C. Van Voorhis already describes the as follows:
+That said, even though I have been unable to find a 29-input sorting network with as few compare-exchange units as 165 in the literature, I can't claim that I found the technique used to generate it: the unclassified 1971 paper [*A Generalization of the Divide-Sort-Merge Strategy for Sorting Networks*][divide-sort-merge-strategy] by David C. Van Voorhis already describes the as follows:
 
 > The improved 26-,27-,28-, and 34-sorters all use two initial sort units, one of them the particularly efficient 16-sorter designed by M. W. Green, followed by Batcher's [2,2] merge network.
 
@@ -172,7 +172,7 @@ The mountain sort is a new indirect sorting algorithm designed to perform a mini
     Best        Average     Worst       Memory      Stable
     n log n     n log n     n log n     n           No
 
-However, **cpp-sort** implements it [as a sorter adapter][indirect_adapter] so you can actually choose the sorting algorithm that will be used to sort the iterators, making it possible to use a stable sorting algorithm instead. Note that the memory footprint of the algorithm is negligible when the size of the elements to sort is big since only iterators and booleans are stored. It makes mountain sort the ideal sorting algorithm when the objects to sort are huge and the comparisons are cheap (remember: you may want to sort fridges by price, or mountains by height). You can find a standalone implementation of mountain sort in [the dedicated repository][mountain_sort].
+However, **cpp-sort** implements it [as a sorter adapter][indirect-adapter] so you can actually choose the sorting algorithm that will be used to sort the iterators, making it possible to use a stable sorting algorithm instead. Note that the memory footprint of the algorithm is negligible when the size of the elements to sort is big since only iterators and booleans are stored. It makes mountain sort the ideal sorting algorithm when the objects to sort are huge and the comparisons are cheap (remember: you may want to sort fridges by price, or mountains by height). You can find a standalone implementation of mountain sort in [the dedicated repository][mountain_sort].
 
 ### Improvements to poplar sort & poplar heap
 
@@ -186,16 +186,42 @@ I borrowed some ideas from Edelkamp and Weiß QuickXsort and QuickMergesort algo
 
 Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv] afew years later decribing the same flavour of QuickMergesort with properly computed algorithmic complexities. I have a [standalone implementation][quick-merge-sort] of `quick_merge_sort` in another repository, albeit currently lacking a proper explanation of how it works. It has the time and space complexity mentioned earlier, as opposed to the **cpp-sort** version of the algorithm where I chose to have theoretically worse algorithms from a complexity point of view, but that are nonetheless generally faster in practice.
 
+### Partial ordering of *Mono*
+
+The measure of presortedness *Mono* is described in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang. They describe it as follows:
+
+> Intuitively, if *Mono*(*X*) = *k*, then *X* is the concatenation of *k* monotonic lists (either sorted or reversely sorted).
+
+It counts the number of ascending or descending runs in *X*. Technically this definition in the paper makes it return 1 when the *X* is sorted, which goes against the original definition of a measure of presortedness by Manilla, which starts with the following condition:
+
+> If *X* is sorted, then *M*(*X*) = 0
+
+Therefore we redefine *Mono*(*X*) as the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted.
+- ***Mono* ⊇ *Runs***: this relation is already mentioned in *Sort Race* and rather intuitive: since *Mono* detects both non-increasing and non-decreasing runs, it is as least as good as *Runs* that only detects non-decreasing runs.
+- ***SMS* ⊇ *Mono***: this one seems intuitive too: *SMS* which removes runs of non-adjacent elements should be at least as good as *Mono* which only removes runs of adjacent elements.
+- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to not create no more than one such new list per non-increasing or non-decreasing runs, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* will find maximum disorder. Therefore *Enc* is strictly better than *Mono*.
+
+The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
+- ***Mono* ⊋ *Exc***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Exc*
+- ***Mono* ⊋ *Inv***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Inv*
+- ***Hist* ⊋ *Mono***: we know that *Mono* ⊇ *Runs* and *Hist* ⊋ *Runs*
+
+The following relations have yet to be analyzed:
+- ***Mono* ⊇ *Max***
+- ***Mono* ≡ *SUS***
+- ***Osc* ⊇ *Mono***
+
 
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [divide-sort-merge-strategy]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
   [exact-sort]: https://www.geocities.ws/p356spt/
-  [indirect_adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
+  [indirect-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
   [morwenn-gist]: https://gist.github.com/Morwenn
   [mountain_sort]: https://github.com/Morwenn/mountain-sort
   [poplar-heap]: https://github.com/Morwenn/poplar-heap
   [post-order-heap]: https://people.csail.mit.edu/nickh/Publications/PostOrderHeap/FUN04-PostOrderHeap.pdf
   [quick-merge-sort]: https://github.com/Morwenn/quick_merge_sort
   [quick-merge-sort-arxiv]: https://arxiv.org/pdf/1804.10062.pdf
+  [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
   [vergesort]: https://github.com/Morwenn/vergesort

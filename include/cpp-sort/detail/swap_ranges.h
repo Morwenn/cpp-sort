@@ -16,8 +16,6 @@
 #include "move.h"
 #include "type_traits.h"
 
-#include <iostream>
-
 namespace cppsort
 {
 namespace detail

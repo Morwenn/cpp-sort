@@ -6,7 +6,7 @@ The following utilities are available in the directory `cpp-sort/utility` and li
 #include <cpp-sort/utility/adapter_storage.h>
 ```
 
-`adapter_storage` is a wrapper type meant to be used to store a *sorter* in the internals of *sorter adapter* which adapts a single *sorter*. One of its goal is to remain an empty type when possible in order to play nice with the parts of the libraries that allow to cast empty sorters to function pointers. It provides three different operations:
+`adapter_storage` is a wrapper type meant to be used to store a *sorter* in the internals of [[*sorter adapter*|Sorter adapters]] which adapts a single [[*sorter*|Sorters]]. One of its goal is to remain an empty type when possible in order to play nice with the parts of the libraries that allow to cast empty sorters to function pointers. It provides three different operations:
 * *Construction:* it is constructed with a copy of the wrapped sorter which it stores in its internals. If `Sorter` is empty and default-constructible, then `adapter_storage<Sorter>` is also empty and default-constructible.
 * *Sorter access:* a `get()` member function returns a reference to the wrapped sorter with `const` and reference qualifications matching those of the `adapter_storage` instance. If `Sorter` is empty and default-constructible, then `get()` returns a default-constructed instance of `Sorter` instead.
 * *Invocation:* it has a `const`-qualified `operator()` which forwards its parameter to the corresponding operator in the wrapped `Sorter` (or in a default-constructed instance of `Sorter`) and returns its result.
@@ -26,17 +26,17 @@ The usual way to use it when implementing a *sorter adapter* is to make said ada
 #include <cpp-sort/utility/functional.h>
 ```
 
-When given a *Callable* that satisfies both the comparison and projection concepts, every sorter in **cpp-sort** considers that it is a comparison function (unless it is a projection-only sorter, in which case the function is considered to be a projection). To make such ambiguous callables usable as projections, the utility function `as_projection` is provided, which wraps a function and exposes only its unary overload. A similar `as_comparison` function is also provided in case one needs to explicitly expose the binary overload of a function.
+When given a [*Callable*][callable] that satisfies both the comparison and projection concepts, every sorter in **cpp-sort** considers that it is a comparison function (unless it is a projection-only sorter, in which case the function is considered to be a projection). To make such ambiguous callables usable as projections, the utility function `as_projection` is provided, which wraps a function and exposes only its unary overload. A similar `as_comparison` function is also provided in case one needs to explicitly expose the binary overload of a function.
 
 The result of `as_projection` also inherits from `projection_base`, which makes it usable to [[compose projections|Chainable projections]] with `operator|`.
 
 ```cpp
 template<typename Function>
-auto as_projection(Function&& func)
+constexpr auto as_projection(Function&& func)
     -> /* implementation-defined */;
 
 template<typename Function>
-auto as_comparison(Function&& func)
+constexpr auto as_comparison(Function&& func)
     -> /* implementation-defined */;
 ```
 
@@ -50,9 +50,9 @@ auto as_comparison(Function&& func)
 #include <cpp-sort/utility/as_function.h>
 ```
 
-`as_function` is an utility function borrowed from Eric Niebler's [Ranges v3](https://github.com/ericniebler/range-v3) library. This function takes a parameter and does what it can to return an object callable with the usual function call syntax. It is notably useful to transform a pointer to member data into a function taking an instance of the class and returning the member.
+`as_function` is an utility function borrowed from Eric Niebler's [Range-v3][range-v3] library. This function takes a parameter and does what it can to return an object callable with the usual function call syntax. It is notably useful to transform a pointer to member data into a function taking an instance of the class and returning the member.
 
-To be more specific, `as_function` returns the passed object as is if it is already callable with the usual function call syntax, and uses [`std::mem_fn`](https://en.cppreference.com/w/cpp/utility/functional/mem_fn) to wrap the passed object otherwise. It is worth noting that when the original object is returned, its potential to be called in a `constexpr` context remains the same, which makes `as_function` superior to `std::invoke` in this regard (prior to C++20).
+To be more specific, `as_function` returns the passed object as is if it is already callable with the usual function call syntax, and uses [`std::mem_fn`][std-mem-fn] to wrap the passed object otherwise. It is worth noting that when the original object is returned, its potential to be called in a `constexpr` context remains the same, which makes `as_function` superior to [`std::invoke`][std-invoke] in this regard (prior to C++20).
 
 ```cpp
 struct wrapper { int foo; };
@@ -67,7 +67,7 @@ auto&& func = utility::as_function(&wrapper::foo);
 #include <cpp-sort/utility/branchless_traits.h>
 ```
 
-Some of the library's algorithms ([`pdq_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter) and everything that relies on it, which means many things since it's the most common fallback for other algorithms) may use a different logic depending on whether the use comparison and projection functions are branchful and branchless. Unfortunately, it isn't something that can be deterministically determined; in order to provide the information, the following traits are available (they always inherit from either `std::true_type` or `std::false_type`):
+Some of the library's algorithms ([`pdq_sorter`][pdq-sorter] and everything that relies on it, which means many things since it's the most common fallback for other algorithms) may use a different logic depending on whether the use comparison and projection functions are branchful and branchless. Unfortunately, it isn't something that can be deterministically determined; in order to provide the information, the following traits are available (they always inherit from either `std::true_type` or `std::false_type`):
 
 ```cpp
 template<typename Compare, typename T>
@@ -79,8 +79,8 @@ constexpr bool is_probably_branchless_comparison_v
 ```
 
 This trait tells whether the comparison function `Compare` is likely to generate branchless code when comparing two instances of `T`. By default it considers that the following comparison functions are likely to be branchless:
-* `std::less<>`, `std::ranges::less` and `std::less<T>` for any `T` which satisfies [`std::is_arithmetic`](https://en.cppreference.com/w/cpp/types/is_arithmetic)
-* `std::greater<>`, `std::ranges::greater` and `std::greater<T>` for any `T` which satisfies [`std::is_arithmetic`](https://en.cppreference.com/w/cpp/types/is_arithmetic)
+* [`std::less<>`][std-less-void], [`std::ranges::less`][std-ranges-less] and [`std::less<T>`][std-less] for any `T` satisfying [`std::is_arithmetic`][std-is-arithmetic]
+* [`std::greater<>`][std-greater-void], [`std::ranges::greater`][std-ranges-greater] and [`std::greater<T>`][std-greater] for any `T` satisfying [`std::is_arithmetic`][std-is-arithmetic]
 
 ```cpp
 template<typename Projection, typename T>
@@ -93,14 +93,14 @@ constexpr bool is_probably_branchless_projection_v
 
 This trait tells whether the projection function `Projection` is likely to generate branchless code when called with an instance of `T`. By default it considers that the following projection functions are likely to be branchless:
 * `cppsort::utility::identity` for any type
-* `std::identity` for any type (when available)
-* Any type that satisfies [`std::is_member_function_pointer`](https://en.cppreference.com/w/cpp/types/is_member_function_pointer) provided it is called with an instance of the appropriate class
+* [`std::identity`][std-identity] for any type (when available)
+* Any type that satisfies [`std::is_member_function_pointer`][std-is-member-function-pointer] provided it is called with an instance of the appropriate class
 
 These traits can be specialized for user-defined types. If one of the traits is specialized to consider that a user-defined type is likely to be branchless with a comparison/projection function, cv-qualified and reference-qualified versions of the same user-defined type will also be considered to produce branchless code when compared/projected with the same function.
 
-*Changed in version 1.9.0:* conditional support for [`std::ranges::less`](https://en.cppreference.com/w/cpp/utility/functional/ranges/less) and [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
+*Changed in version 1.9.0:* conditional support for [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater].
 
-*Changed in version 1.9.0:* conditional support for [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity).
+*Changed in version 1.9.0:* conditional support for [`std::identity`][std-identity].
 
 ### Buffer providers
 
@@ -115,14 +115,14 @@ template<std::size_t N>
 struct fixed_buffer;
 ```
 
-This buffer provider allocates `N` elements on the stack. It uses [`std::array`](https://en.cppreference.com/w/cpp/container/array) behind the scenes, so it also allows buffers of size 0. The runtime size passed to the buffer at construction is discarded.
+This buffer provider allocates `N` elements on the stack. It uses [`std::array`][std-array] behind the scenes, so it also allows buffers of size 0. The runtime size passed to the buffer at construction is discarded.
 
 ```cpp
 template<typename SizePolicy>
 struct dynamic_buffer;
 ```
 
-This buffer provider allocates on the heap a number of elements depending on a given *size policy* (a class whose `operator()` takes the size of the collection and returns another size). You can use the function objects from `utility/functional.h` as basic size policies. The buffer construction may throw an instance of `std::bad_alloc` if it fails to allocate the required memory.
+This buffer provider allocates on the heap a number of elements depending on a given *size policy* (a class whose `operator()` takes the size of the collection and returns another size). You can use the function objects from `utility/functional.h` as basic size policies. The buffer construction may throw an instance of [`std::bad_alloc`][std-bad-alloc] if it fails to allocate the required memory.
 
 ### Miscellaneous function objects
 
@@ -148,7 +148,7 @@ struct identity:
 };
 ```
 
-It is equivalent to the C++20 [`std::identity`](https://en.cppreference.com/w/cpp/utility/functional/identity). Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
+It is equivalent to the C++20 [`std::identity`][std-identity]. Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
 
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:
 * `half`: returns the passed value divided by 2.
@@ -174,7 +174,7 @@ struct function_constant
 };
 ```
 
-This utility is modeled after [`std::integral_constant`](https://en.cppreference.com/w/cpp/types/integral_constant), but is different in that it takes its parameter as `template<auto>`, and `operator()` calls the wrapped value instead of returning it. The goal is to store function pointers and pointer to members "for free": they are only "stored" as a template parameter, which allows `function_constant` to be an empty class. This has two main advantages: `function_constant` can benefit from *Empty Base Class Optimization* since it weights virtually nothing, and it won't need to be pushed on the stack when passed to a function, while the wrapped pointer would have been if passed unwrapped. Unless you are micro-optimizing some specific piece of code, you shouldn't need this class.
+This utility is modeled after [`std::integral_constant`][std-integral-constant], but is different in that it takes its parameter as `template<auto>`, and `operator()` calls the wrapped value instead of returning it. The goal is to store function pointers and pointer to members "for free": they are only "stored" as a template parameter, which allows `function_constant` to be an empty class. This has two main advantages: `function_constant` can benefit from [*Empty Base Optimization*][ebo] since it weights virtually nothing, and it won't need to be pushed on the stack when passed to a function, while the wrapped pointer would have been if passed unwrapped. Unless you are micro-optimizing some specific piece of code, you shouldn't need this class.
 
 `is_probably_branchless_comparison` and `is_probably_branchless_projection` will correspond to `std::true_type` if the wrapped `Function` also gives `std::true_type`. Moreover, you can even specialize these traits for specific `function_constant` instanciations if you need even more performance.
 
@@ -190,19 +190,23 @@ This utility is modeled after [`std::integral_constant`](https://en.cppreference
 #include <cpp-sort/utility/iter_move.h>
 ```
 
-The functions `iter_move` and `iter_swap` are equivalent to the same functions as proposed by [P0022](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0022r1.html): utility functions intended to be used with ADL to handle proxy iterators among other things. An algorithm can use them instead of `std::move` and possibly ADL-found `swap` to handle tricky classes such as `std::vector<bool>`.
+The functions `iter_move` and `iter_swap` are equivalent to the same functions as proposed by [P0022][p0022]: utility functions intended to be used with ADL to handle proxy iterators among other things. An algorithm can use them instead of `std::move` and possibly ADL-found `swap` to handle tricky classes such as `std::vector<bool>`.
 
 The default implementation of `iter_move` simply move-returns the dereferenced iterator. `iter_swap` is a bit more tricky: if the iterators to be swapped have a custom `iter_move`, then `iter_swap` will use it, otherwise it will call an ADL-found `swap` or `std::swap` on the dereferenced iterators.
 
 ```cpp
 template<typename Iterator>
-auto iter_move(Iterator it)
+constexpr auto iter_move(Iterator it)
     -> decltype(std::move(*it));
 
 template<typename Iterator>
-auto iter_swap(Iterator lhs, Iterator rhs)
+constexpr auto iter_swap(Iterator lhs, Iterator rhs)
     -> void;
 ```
+
+*NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
+
+*Changed in version 1.10.0:* generic `iter_move` and `iter_swap` overloads are now marked as `constexpr`.
 
 ### `make_integer_range`
 
@@ -212,7 +216,7 @@ auto iter_swap(Iterator lhs, Iterator rhs)
 
 ***WARNING:** `make_integer_range` and `make_index_range` are deprecated in version 1.8.0 and removed in version 2.0.0.*
 
-The class template `make_integer_range` can be used wherever an [`std::integer_sequence`](https://en.cppreference.com/w/cpp/utility/integer_sequence) can be used. An `integer_range` takes a type template parameter that shall be an integer type, then three integer template parameters which correspond to the beginning of the range, the end of the range and the « step ».
+The class template `make_integer_range` can be used wherever an [`std::integer_sequence`][std-integer-sequence] can be used. An `integer_range` takes a type template parameter that shall be an integer type, then three integer template parameters which correspond to the beginning of the range, the end of the range and the « step ».
 
 ```cpp
 template<
@@ -241,7 +245,7 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/size.h>
 ```
 
-`size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`](https://en.cppreference.com/w/cpp/iterator/size) but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
+`size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
 
 ### `static_const`
 
@@ -249,7 +253,9 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/static_const.h>
 ```
 
-`static_const` is a tiny utility used to instantiate function objects (for example sorters) and expose a single global instance to users of the library while avoiding ODR problems. It is taken straight from [Ranges v3](https://github.com/ericniebler/range-v3). The general pattern to instantiate function objects is as follows:
+***WARNING:** `utility::static_const` is removed in version 2.0.0, use [`inline` variables][inline-variables] instead.*
+
+`static_const` is a tiny utility used to instantiate function objects (for example sorters) and expose a single global instance to users of the library while avoiding ODR problems. It is taken straight from [Range-v3][range-v3]. The general pattern to instantiate function objects is as follows:
 
 ```cpp
 namespace
@@ -259,6 +265,29 @@ namespace
 }
 ```
 
-You can read more about this instantiation pattern in [an article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) by Eric Niebler.
+You can read more about this instantiation pattern in [this article][eric-niebler-static-const] by Eric Niebler.
 
-*Warning: this header does not exist anymore in the C++17 branch; use [`inline` variables](https://en.cppreference.com/w/cpp/language/inline) instead.*
+
+  [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
+  [ebo]: https://en.cppreference.com/w/cpp/language/ebo
+  [eric-niebler-static-const]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
+  [inline-variables]: https://en.cppreference.com/w/cpp/language/inline
+  [p0022]: https://wg21.link/P0022
+  [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
+  [range-v3]: https://github.com/ericniebler/range-v3
+  [std-array]: https://en.cppreference.com/w/cpp/container/array
+  [std-bad-alloc]: https://en.cppreference.com/w/cpp/memory/new/bad_alloc
+  [std-greater]: https://en.cppreference.com/w/cpp/utility/functional/greater
+  [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
+  [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
+  [std-integer-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
+  [std-integral-constant]: https://en.cppreference.com/w/cpp/types/integral_constant
+  [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
+  [std-is-arithmetic]: https://en.cppreference.com/w/cpp/types/is_arithmetic
+  [std-is-member-function-pointer]: https://en.cppreference.com/w/cpp/types/is_member_function_pointer
+  [std-less]: https://en.cppreference.com/w/cpp/utility/functional/less
+  [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
+  [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
+  [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
+  [std-size]: https://en.cppreference.com/w/cpp/iterator/size

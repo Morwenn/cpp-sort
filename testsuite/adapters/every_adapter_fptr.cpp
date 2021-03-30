@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -34,8 +34,8 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::container_aware_adapter<
             cppsort::selection_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
-        void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -49,7 +49,7 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::counting_adapter<
             cppsort::selection_sorter
         >;
-        std::size_t(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr std::size_t(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
         std::size_t res = sort_it(collection, std::greater<>{});
         CHECK( res == 2080 );
@@ -62,7 +62,7 @@ TEST_CASE( "function pointer test for every adapter",
             cppsort::merge_sorter,
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -73,7 +73,7 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::indirect_adapter<
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -84,9 +84,9 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::out_of_place_adapter<
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
-        void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
-        void(*sort_it3)(std::forward_list<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it3)(std::forward_list<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -103,7 +103,7 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::schwartz_adapter<
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -114,7 +114,7 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::schwartz_adapter<
             cppsort::small_array_adapter<cppsort::low_comparisons_sorter>
         >;
-        void(*sort_it)(std::array<short int, 6>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::array<short int, 6>&, std::greater<>) = sorter{};
 
         std::array<short int, 6> arr = {{ 4, 3, 2, 5, 6, 1 }};
         sort_it(arr, std::greater<>{});
@@ -126,8 +126,8 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::self_sort_adapter<
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
-        void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -141,8 +141,8 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::stable_adapter<
             cppsort::self_sort_adapter<cppsort::poplar_sorter>
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
-        void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -158,9 +158,9 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter2 = small_array_adapter<low_moves_sorter>;
         using sorter1 = small_array_adapter<low_comparisons_sorter>;
         using sorter3 = small_array_adapter<sorting_network_sorter>;
-        void(*sort_it1)(std::array<short int, 6>&, std::greater<>) = sorter2{};
-        void(*sort_it2)(std::array<short int, 6>&, std::greater<>) = sorter1{};
-        void(*sort_it3)(std::array<short int, 6>&, std::greater<>) = sorter3{};
+        constexpr void(*sort_it1)(std::array<short int, 6>&, std::greater<>) = sorter2{};
+        constexpr void(*sort_it2)(std::array<short int, 6>&, std::greater<>) = sorter1{};
+        constexpr void(*sort_it3)(std::array<short int, 6>&, std::greater<>) = sorter3{};
 
         std::array<short int, 6> arr = {{ 4, 3, 2, 5, 6, 1 }};
 
@@ -182,7 +182,7 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::stable_adapter<
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
@@ -193,7 +193,7 @@ TEST_CASE( "function pointer test for every adapter",
         using sorter = cppsort::verge_adapter<
             cppsort::poplar_sorter
         >;
-        void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
+        constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
         sort_it(collection, std::greater<>{});
         CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );

@@ -15,13 +15,14 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "fixed_size_list.h"
+#include "functional.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
+#include "scope_exit.h"
 #include "swap_if.h"
 #include "swap_ranges.h"
 #include "type_traits.h"
@@ -254,13 +255,10 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Merge-insertion sort
 
-    template<
-        typename RandomAccessIterator,
-        typename Compare,
-        typename Projection
-    >
+    template<typename RandomAccessIterator, typename NodeType, typename Compare, typename Projection>
     auto merge_insertion_sort_impl(group_iterator<RandomAccessIterator> first,
                                    group_iterator<RandomAccessIterator> last,
+                                   fixed_size_list_node_pool<NodeType>& node_pool,
                                    Compare compare, Projection projection)
         -> void
     {
@@ -306,18 +304,30 @@ namespace detail
         merge_insertion_sort_impl(
             make_group_iterator(first, 2),
             make_group_iterator(end, 2),
-            compare, projection
+            node_pool, compare, projection
         );
 
         ////////////////////////////////////////////////////////////
         // Separate main chain and pend elements
 
-        using list_t = fixed_size_list<group_iterator<RandomAccessIterator>>;
+        using list_t = fixed_size_list<list_node<group_iterator<RandomAccessIterator>>>;
+
+        // Reusing the node pool allows to halve the number of nodes
+        // allocated by the algorithm, but we need to reset the links
+        // between the nodes so that the future allocations remain
+        // somewhat cache-friendly - it is theoretically more work,
+        // but benchmarks proved that it made a huge difference
+        auto node_pool_reset = make_scope_exit([&node_pool, size, group_size=first.size()] {
+            if (group_size > 1) {
+                node_pool.reset_nodes(size);
+            }
+        });
+        node_pool_reset.deactivate();
 
         // The first pend element is always part of the main chain,
         // so we can safely initialize the list with the first two
         // elements of the sequence
-        list_t chain(size);
+        list_t chain(node_pool);
         chain.push_back(first);
         chain.push_back(std::next(first));
 
@@ -340,7 +350,7 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Binary insertion into the main chain
 
-        auto current_it = first + 2;
+        auto current_it = first;
         auto current_pend = pend.begin();
 
         for (int k = 0 ; ; ++k) {
@@ -358,37 +368,33 @@ namespace detail
             auto it = current_it + dist * 2;
             auto pe = current_pend + dist;
 
-            do {
+            while (true) {
                 --pe;
-                it -= 2;
 
                 auto insertion_point = detail::upper_bound(
                     chain.begin(), *pe, proj(*it),
-                    [&](auto&& lhs, auto&& rhs) {
-                        return comp(lhs, proj(*rhs));
-                    },
-                    utility::identity{}
+                    comp, indirect(proj)
                 );
                 chain.insert(insertion_point, it);
-            } while (pe != current_pend);
+
+                if (pe == current_pend) break;
+                it -= 2;
+            }
 
             current_it += dist * 2;
             current_pend += dist;
         }
 
-        // If there are pend elements left, insert them into
-        // the main chain, the order of insertion does not
-        // matter so forward traversal is ok
+        // If there are pend elements left, insert them into the main
+        // chain, the order of insertion does not matter so forward
+        // traversal is ok
         while (current_pend != pend.end()) {
+            current_it += 2;
             auto insertion_point = detail::upper_bound(
                 chain.begin(), *current_pend, proj(*current_it),
-                [&](auto&& lhs, auto&& rhs) {
-                    return comp(lhs, proj(*rhs));
-                },
-                utility::identity{}
+                comp, indirect(proj)
             );
             chain.insert(insertion_point, current_it);
-            current_it += 2;
             ++current_pend;
         }
 
@@ -398,21 +404,24 @@ namespace detail
         // Number of sub-iterators
         auto full_size = size * first.size();
 
-        using rvalue_reference = remove_cvref_t<rvalue_reference_t<RandomAccessIterator>>;
-        std::unique_ptr<rvalue_reference, operator_deleter> cache(
-            static_cast<rvalue_reference*>(::operator new(full_size * sizeof(rvalue_reference))),
-            operator_deleter(full_size * sizeof(rvalue_reference))
+        using rvalue_type = rvalue_type_t<RandomAccessIterator>;
+        std::unique_ptr<rvalue_type, operator_deleter> cache(
+            static_cast<rvalue_type*>(::operator new(full_size * sizeof(rvalue_type))),
+            operator_deleter(full_size * sizeof(rvalue_type))
         );
-        destruct_n<rvalue_reference> d(0);
-        std::unique_ptr<rvalue_reference, destruct_n<rvalue_reference>&> h2(cache.get(), d);
+        destruct_n<rvalue_type> d(0);
+        std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(cache.get(), d);
 
-        rvalue_reference* buff_it = cache.get();
+        rvalue_type* buff_it = cache.get();
         for (auto&& it: chain) {
             auto begin = it.base();
             auto end = begin + it.size();
             buff_it = uninitialized_move(begin, end, buff_it, d);
         }
         detail::move(cache.get(), cache.get() + full_size, first.base());
+
+        // Everything else worked, it's now safe to reset the node pool
+        node_pool_reset.activate();
     }
 
     template<
@@ -424,9 +433,14 @@ namespace detail
                               Compare compare, Projection projection)
         -> void
     {
+        // Make a node pool big enough to hold all the values
+        using node_type = list_node<group_iterator<RandomAccessIterator>>;
+        fixed_size_list_node_pool<node_type> node_pool(last - first);
+
         merge_insertion_sort_impl(
             make_group_iterator(std::move(first), 1),
             make_group_iterator(std::move(last), 1),
+            node_pool,
             std::move(compare), std::move(projection)
         );
     }

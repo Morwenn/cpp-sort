@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.9.0 LANGUAGES CXX)
+project(cpp-sort VERSION 1.10.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -24,6 +24,11 @@ target_include_directories(cpp-sort INTERFACE
 )
 
 target_compile_features(cpp-sort INTERFACE cxx_std_14)
+
+# MSVC won't work without a stricter standard compliance
+if (MSVC)
+    target_compile_options(cpp-sort INTERFACE /permissive-)
+endif()
 
 add_library(cpp-sort::cpp-sort ALIAS cpp-sort)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FWD_H_
@@ -26,6 +26,7 @@ namespace cppsort
 
     template<typename BufferProvider>
     struct block_sorter;
+    struct cartesian_tree_sorter;
     struct counting_sorter;
     struct default_sorter;
     struct drop_merge_sorter;
@@ -35,6 +36,7 @@ namespace cppsort
     struct heap_sorter;
     struct insertion_sorter;
     struct integer_spread_sorter;
+    struct mel_sorter;
     struct merge_insertion_sorter;
     struct merge_sorter;
     struct pdq_sorter;
@@ -43,6 +45,7 @@ namespace cppsort
     struct quick_sorter;
     struct selection_sorter;
     struct ska_sorter;
+    struct slab_sorter;
     struct smooth_sorter;
     struct spin_sorter;
     struct split_sorter;
