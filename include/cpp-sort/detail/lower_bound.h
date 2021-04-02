@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOWER_BOUND_H_
@@ -28,8 +28,7 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         while (size > 0) {
-            ForwardIterator it = first;
-            std::advance(it, half(size));
+            auto it = std::next(first, half(size));;
             if (comp(proj(*it), value)) {
                 first = ++it;
                 size -= half(size) + 1;
@@ -49,6 +48,33 @@ namespace detail
         return lower_bound_n(first, std::distance(first, last),
                              std::forward<T>(value),
                              std::move(compare), std::move(projection));
+    }
+
+    template<typename ForwardIterator, typename T,
+        typename Compare, typename Projection>
+    auto lower_monobound_n(ForwardIterator first, difference_type_t<ForwardIterator> size,
+                           T&& value, Compare compare, Projection projection)
+        -> ForwardIterator
+    {
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        if (size == 0) {
+            return first;
+        }
+
+        while (size > 1) {
+            auto it = std::next(first, half(size));
+            if (comp(proj(*it), value)) {
+                first = it;
+            }
+            size -= half(size);
+        }
+
+        if (comp(proj(*first), value)) {
+            ++first;
+        }
+        return first;
     }
 }}
 
