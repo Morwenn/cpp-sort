@@ -117,8 +117,8 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 or more recent versions of these compilers. So far, the library should work with the
 following compilers:
 * g++5.5 or more recent. It is known not to work with some older g++5 versions.
-* clang++6 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
-* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
+* clang++9 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
+* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are still unavailable.
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
 * Clang is notably tested with both libstdc++ and libc++.
 

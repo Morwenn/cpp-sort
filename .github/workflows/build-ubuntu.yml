@@ -30,7 +30,7 @@ jobs:
       matrix:
         cxx:
           - g++-5
-          - clang++-6.0
+          - clang++-9
         config:
           # Release build
           - build_type: Release
