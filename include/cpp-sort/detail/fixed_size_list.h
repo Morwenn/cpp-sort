@@ -493,7 +493,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Capacity
 
-            [[nodiscard]] auto is_empty() const noexcept
+            auto is_empty() const noexcept
                 -> bool
             {
                 return &sentinel_node_ == sentinel_node_.next;
