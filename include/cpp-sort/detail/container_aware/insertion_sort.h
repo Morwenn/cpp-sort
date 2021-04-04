@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
@@ -38,21 +38,21 @@ namespace cppsort
             auto last = collection.end();
             if (it == last) return;
 
+            // Size of the list where a value is insrted
+            typename std::list<Args...>::difference_type size = 1;
+
             ++it;
-            while (it != last)
-            {
-                auto insertion_point = upper_bound(collection.begin(), it, proj(*it),
-                                                   compare, projection);
-                if (insertion_point == it)
-                {
+            while (it != last) {
+                auto insertion_point = upper_bound_n(collection.begin(), size, proj(*it),
+                                                     compare, projection);
+                if (insertion_point == it) {
                     ++it;
-                }
-                else
-                {
+                } else {
                     auto next = std::next(it);
                     collection.splice(insertion_point, collection, it);
                     it = next;
                 }
+                ++size;
             }
         }
 
