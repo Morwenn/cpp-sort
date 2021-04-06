@@ -17,6 +17,7 @@
 #include "fixed_size_list.h"
 #include "functional.h"
 #include "iterator_traits.h"
+#include "lower_bound.h"
 #include "melsort.h"
 #include "memory.h"
 #include "stable_partition.h"
@@ -32,23 +33,20 @@ namespace detail
     // to move the values inside the list at some point.
 
     template<typename Iterator>
-    struct slabsort_list_node
+    struct slabsort_list_node:
+        list_node_base
     {
         using value_type = rvalue_type_t<Iterator>;
 
-        constexpr explicit slabsort_list_node(slabsort_list_node* next) noexcept:
-            next(next)
+        using list_node_base::list_node_base;
+
+        explicit slabsort_list_node(list_node_base* next) noexcept:
+            list_node_base(next)
         {}
 
-        constexpr slabsort_list_node(slabsort_list_node* prev, slabsort_list_node* next) noexcept:
-            prev(prev),
-            next(next)
+        slabsort_list_node(list_node_base* prev, list_node_base* next) noexcept:
+            list_node_base(prev, next)
         {}
-
-        slabsort_list_node(const slabsort_list_node&) = delete;
-        slabsort_list_node(slabsort_list_node&&) = delete;
-        slabsort_list_node& operator=(const slabsort_list_node&) = delete;
-        slabsort_list_node& operator=(slabsort_list_node&&) = delete;
 
         ~slabsort_list_node() {}
 
@@ -56,9 +54,6 @@ namespace detail
             value_type value;
             Iterator it;
         };
-
-        slabsort_list_node* prev;
-        slabsort_list_node* next;
     };
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>

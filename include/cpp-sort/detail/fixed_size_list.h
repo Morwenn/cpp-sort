@@ -21,6 +21,37 @@ namespace cppsort
 namespace detail
 {
     ////////////////////////////////////////////////////////////
+    // List node base
+    //
+    // A list node base only provides the prev and next fields
+    // required for iteration - it makes it possible to iterate
+    // without requiring to know what a node actually holds, and
+    // to only downcast when useful. The main use case is to use
+    // a simple list_node_base as a sentinel node to save space.
+
+    struct list_node_base
+    {
+        explicit list_node_base(list_node_base* next) noexcept:
+            next(next)
+        {}
+
+        list_node_base(list_node_base* prev, list_node_base* next) noexcept:
+            prev(prev),
+            next(next)
+        {}
+
+        // Make list nodes immovable
+        list_node_base(const list_node_base&) = delete;
+        list_node_base(list_node_base&&) = delete;
+        list_node_base& operator=(const list_node_base&) = delete;
+        list_node_base& operator=(list_node_base&&) = delete;
+
+        // Pointers to the previous and next nodes
+        list_node_base* prev;
+        list_node_base* next;
+    };
+
+    ////////////////////////////////////////////////////////////
     // List node
     //
     // A list node is an immovable structure which contains a
@@ -31,34 +62,26 @@ namespace detail
     // constructed or destructed.
 
     template<typename T>
-    struct list_node
+    struct list_node:
+        list_node_base
     {
         using value_type = T;
 
-        constexpr explicit list_node(list_node* next) noexcept:
-            next(next)
+        using list_node_base::list_node_base;
+
+        explicit list_node(list_node_base* next) noexcept:
+            list_node_base(next)
         {}
 
-        constexpr list_node(list_node* prev, list_node* next) noexcept:
-            prev(prev),
-            next(next)
+        list_node(list_node_base* prev, list_node_base* next) noexcept:
+            list_node_base(prev, next)
         {}
-
-        // Make list nodes immovable
-        list_node(const list_node&) = delete;
-        list_node(list_node&&) = delete;
-        list_node& operator=(const list_node&) = delete;
-        list_node& operator=(list_node&&) = delete;
 
         // The list takes care of managing the lifetime of value
         ~list_node() {}
 
         // Inhibit construction of the node with a value
         union { T value; };
-
-        // Pointers to the previous and next nodes
-        list_node* prev;
-        list_node* next;
     };
 
     ////////////////////////////////////////////////////////////
@@ -158,12 +181,12 @@ namespace detail
             {
                 // Retrieve next free node
                 CPPSORT_ASSERT(first_free_ != nullptr);
-                node_type* new_node = first_free_;
+                auto new_node = first_free_;
                 first_free_ = first_free_->next;
-                return new_node;
+                return static_cast<node_type*>(new_node);
             }
 
-            auto retrieve_nodes(node_type* first, node_type* last)
+            auto retrieve_nodes(list_node_base* first, list_node_base* last)
                 -> void
             {
                 // Get back a range of nodes linked together, this function
@@ -215,7 +238,7 @@ namespace detail
             std::unique_ptr<node_type, operator_deleter> buffer_;
 
             // First free node of the pool
-            node_type* first_free_;
+            list_node_base* first_free_;
 
             // Number of nodes the pool holds
             std::ptrdiff_t capacity_;
@@ -247,6 +270,10 @@ namespace detail
 
             fixed_size_list_iterator() = default;
 
+            constexpr explicit fixed_size_list_iterator(list_node_base* ptr) noexcept:
+                ptr_(ptr)
+            {}
+
             constexpr explicit fixed_size_list_iterator(NodeType* ptr) noexcept:
                 ptr_(ptr)
             {}
@@ -257,7 +284,7 @@ namespace detail
             constexpr auto base() const
                 -> node_type*
             {
-                return ptr_;
+                return static_cast<node_type*>(ptr_);
             }
 
             ////////////////////////////////////////////////////////////
@@ -266,7 +293,7 @@ namespace detail
             auto operator*() const
                 -> reference
             {
-                return ptr_->value;
+                return static_cast<node_type*>(ptr_)->value;
             }
 
             auto operator->() const
@@ -327,7 +354,7 @@ namespace detail
 
         private:
 
-            node_type* ptr_ = nullptr;
+            list_node_base* ptr_ = nullptr;
     };
 
     ////////////////////////////////////////////////////////////
@@ -440,12 +467,12 @@ namespace detail
 
             ~fixed_size_list()
             {
-                node_type* ptr = sentinel_node_.next;
+                auto ptr = sentinel_node_.next;
                 if (ptr != &sentinel_node_) {
                     // Destroy the node's values
                     do {
                         auto next_ptr = ptr->next;
-                        node_destructor_(ptr);
+                        node_destructor_(static_cast<node_type*>(ptr));
                         ptr = next_ptr;
                     } while (ptr != &sentinel_node_);
 
@@ -460,13 +487,13 @@ namespace detail
             auto front()
                 -> reference
             {
-                return sentinel_node_.next->value;
+                return static_cast<node_type*>(sentinel_node_.next)->value;
             }
 
             auto back()
                 -> reference
             {
-                return sentinel_node_.prev->value;
+                return static_cast<node_type*>(sentinel_node_.prev)->value;
             }
 
             auto node_pool()
@@ -552,14 +579,14 @@ namespace detail
                 insert_node_(sentinel_node_.next, std::forward<Callable>(setter));
             }
 
-            auto extract(node_type* node)
+            auto extract(list_node_base* node)
                 -> node_type*
             {
                 CPPSORT_ASSERT(node != &sentinel_node_);
                 CPPSORT_ASSERT(not is_empty());
                 node->prev->next = node->next;
                 node->next->prev = node->prev;
-                return node;
+                return static_cast<node_type*>(node);
             }
 
             auto extract(iterator pos)
@@ -742,7 +769,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Helper functions
 
-            auto insert_node_(node_type* pos, const value_type& value)
+            auto insert_node_(list_node_base* pos, const value_type& value)
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
@@ -751,7 +778,7 @@ namespace detail
                 return new_node;
             }
 
-            auto insert_node_(node_type* pos, value_type&& value)
+            auto insert_node_(list_node_base* pos, value_type&& value)
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
@@ -761,7 +788,7 @@ namespace detail
             }
 
             template<typename Callable>
-            auto insert_node_(node_type* pos, Callable setter)
+            auto insert_node_(list_node_base* pos, Callable setter)
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
@@ -770,7 +797,7 @@ namespace detail
                 return new_node;
             }
 
-            auto link_node_before_(node_type* node, node_type* pos)
+            auto link_node_before_(list_node_base* node, list_node_base* pos)
                 -> void
             {
                 // Relink pointers to a new node
@@ -807,7 +834,7 @@ namespace detail
 
             // Sentinel node: its prev field points to the last element
             // of the list, its next field to the first one
-            node_type sentinel_node_;
+            list_node_base sentinel_node_;
 
             // Function pointer to a node's value destructor
             node_value_destructor_t node_destructor_;

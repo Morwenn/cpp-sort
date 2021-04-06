@@ -49,7 +49,7 @@ namespace detail
         fixed_size_list<NodeType> edges(lists.front().node_pool());
 
         if (extract_edges) {
-            auto insert_node = edges.end().base();
+            list_node_base* insert_node = edges.end().base();
             // Add minimums of encroaching lists
             for (auto& list : lists) {
                 insert_node->next = list.extract_front();
