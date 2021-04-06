@@ -13,9 +13,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include "config.h"
 #include "iterator_traits.h"
-#include "lower_bound.h"
 #include "memory.h"
 #include "recmerge_bidirectional.h"
 #include "recmerge_forward.h"
