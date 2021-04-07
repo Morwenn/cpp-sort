@@ -34,10 +34,7 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Stable comparison function
 
-        template<
-            typename Compare,
-            typename Projection = utility::identity
-        >
+        template<typename Compare, typename Projection>
         class stable_compare
         {
             private:
@@ -52,34 +49,20 @@ namespace cppsort
 
             public:
 
-                stable_compare(Compare compare, Projection projection={}):
+                stable_compare(Compare compare, Projection projection):
                     data(utility::as_function(compare), utility::as_function(projection))
                 {}
-
-                auto compare() const
-                    -> compare_t
-                {
-                    return std::get<0>(data);
-                }
-
-                auto projection() const
-                    -> projection_t
-                {
-                    return std::get<1>(data);
-                }
 
                 template<typename T, typename U>
                 auto operator()(T&& lhs, U&& rhs)
                     -> bool
                 {
-                    if (std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs).get()),
-                                          std::get<1>(data)(std::forward<U>(rhs).get())))
-                    {
+                    if (std::get<0>(data)(std::get<1>(data)(lhs.get()),
+                                          std::get<1>(data)(rhs.get()))) {
                         return true;
                     }
-                    if (std::get<0>(data)(std::get<1>(data)(std::forward<U>(rhs).get()),
-                                          std::get<1>(data)(std::forward<T>(lhs).get())))
-                    {
+                    if (std::get<0>(data)(std::get<1>(data)(rhs.get()),
+                                          std::get<1>(data)(lhs.get()))) {
                         return false;
                     }
                     return lhs.data < rhs.data;
@@ -134,7 +117,10 @@ namespace cppsort
             return std::forward<Sorter>(sorter)(
                 make_associate_iterator(iterators.get()),
                 make_associate_iterator(iterators.get() + size),
-                make_stable_compare(std::move(compare), std::move(projection))
+                make_stable_compare(
+                    std::forward<Compare>(compare),
+                    std::forward<Projection>(projection)
+                )
             );
         }
 
@@ -150,9 +136,12 @@ namespace cppsort
         {
             // Hack to get the stable bidirectional version of vergesort
             // to work correctly without duplicating tons of code
-            return make_stable_and_sort(first.base(), size,
-                                        std::move(compare), std::move(projection),
-                                        std::move(sorter));
+            return make_stable_and_sort(
+                first.base(), size,
+                std::forward<Compare>(compare),
+                std::forward<Projection>(projection),
+                std::forward<Sorter>(sorter)
+            );
         }
 
         ////////////////////////////////////////////////////////////
