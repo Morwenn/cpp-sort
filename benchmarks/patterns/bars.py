@@ -119,7 +119,7 @@ def main():
             groupnames = ['\n'.join(wrap(l, 11)) for l in groupnames]
             pyplot.yticks([barwidth * groupsize/2 + groupwidth*n for n in range(len(groupnames))],
                           groupnames, horizontalalignment='center')
-            pyplot.xlabel("Cycles per element")
+            pyplot.xlabel("Cycles per element (lower is better)")
 
             # Turn off ticks for y-axis.
             pyplot.tick_params(axis="y",

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2020 Morwenn
+# Copyright (c) 2015-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 import sys
@@ -36,5 +36,5 @@ if __name__ == '__main__':
     plt.legend(values, names, loc='upper left')
     plt.title('Sorting std::array<int>')
     plt.xlabel('Number of elements to sort')
-    plt.ylabel('Cycles')
+    plt.ylabel('Cycles (lower is better)')
     plt.show()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020 Morwenn
+# Copyright (c) 2020-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
@@ -58,7 +58,7 @@ def main():
 
     ax.grid(True)
     ax.set_xlabel('Size')
-    ax.set_ylabel('Time [s]')
+    ax.set_ylabel('Time [s] (lower is better)')
     ax.set_xscale('log', base=2)
     ax.set_yscale('log')
 
