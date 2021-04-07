@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <ctime>
 #include <random>
+#include <string>
 #include <utility>
 #include <vector>
 #include <cpp-sort/detail/bitops.h>
@@ -397,5 +398,15 @@ namespace dist
         }
 
         static constexpr const char* output = "vergesort_killer.txt";
+    };
+
+    struct as_long_string
+    {
+        auto operator()(long long int value)
+            -> std::string
+        {
+            auto str = std::to_string(value);
+            return std::string(50 - str.size(), '0') + std::move(str);
+        }
     };
 }
