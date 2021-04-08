@@ -41,15 +41,45 @@ A double liner gnome sort (same as double linear insertion sort, but putting the
 
 ### Half-cleaner network tricks
 
-A half-cleaner network is a comparison network of depth 1 in which input line i is compared with line `i + n/2` for `i = 1, 2, ..., n/2`. For the sake of simplicity, we only consider networks whose size is even. This kind of network is mostly mentioned when describing a particular step in bitonic sorting networks. I played a bit with half-cleaners to try to create new merging networks. The results are of course not as good as the existing sorting networks, but interesting nonetheless.
+A half-cleaner network is a comparison network of depth 1 in which input every line `i` is compared with line `i + n/2` for `i = 1, 2, ..., n/2`. For the sake of simplicity, we only consider networks whose size is even. This kind of network is mostly mentioned when describing a particular step in bitonic sorting networks. I played a bit with half-cleaners to try to create new merging networks. The results are of course not as good as the existing sorting networks, but interesting nonetheless.
 
-When given two sorted inputs of size `n/2`, a half-cleaner seems to have the following property: the first element of the output will be the smallest of the network and the last element of the output will be the greatest of the network. Moreover, both halves of the output are sorted. That means that it is possible to create what I would call a *shrinking merge* network that half-cleans the input of size `n`, then half-cleans the output of size `n-2`, then half-cleans the output of size `n-4`, etc... While easy to implement, it is a merging network slower than the most well-known ones and is of depth `n/2`, which is rather bad...
+When given two sorted inputs of size `n/2`, a half-cleaner seems to have the following property: the first element of the output will be the smallest of the network and the last element of the output will be the greatest of the network. Moreover, both halves of the output are sorted. That means that it is possible to create what I would call a *shrinking merge* network that half-cleans the input of size `n`, then half-cleans the output of size `n-2`, then half-cleans the output of size `n-4`, etc... While easy to implement, it gives a merging network with `(n/4)*(n/4+1)` compare-exchanges and a depth of `n/2`, which is rather bad...
 
 Anyway, the nice property of this half-cleaning is that it can be performed on networks of any size (as long as the size is even). It means that it is for example possible to half-clean an input of size 12 (elements 1 and 12 will be in their final position, elements [2-6] and [7-11] are sorted), then to sort the elements 2 and 11, and to perform an odd-even merge on the elements [3-10]. Once again, it does not produce better results than an odd-even merge, but it's easy to implement for any size of arrays and is sometimes as good as an odd-even merge.
 
 ### Sorting networks for 23 and 24 inputs
 
-While trying to reimplement size-optimal sorting networks as described by [*Finding Better Sorting Networks*][better-sorting-networks], I ended up implementing a sorting network for 24 inputs whose size was equivalent to that of the one described in the paper (123 compare-exchange units). However, it seems that this sorting network does not use an odd-even merge network but another merge network, obtained by the method described in the previous section. From this network, it was also trivial to generate the corresponding network for 23 inputs, whose size also corresponds to the best-known one for that many inputs (118). The depth of both networks is 18, which is probably one more than the depth of the sorting networks using the odd-even merge (if I'm not mistaken, the depth of the odd-even merge is one less). Here are the two networks and the corresponding 0-based sequences of indices:
+The following 24 inputs network uses the technique described in the previous section:
+* Sort the first two halves with the best 12-sorter known so far
+* Use half-cleaner to initiate a partial merge of the two arrays
+* Compare-exchange elements 2-12, 3-13, 10-20 and 11-21
+* Perform an odd-even merge on elements 4-19
+* Compare-exchange elements 1-2, 3-4, 19-20 and 21-22
+
+The resulting network has 123 compare-exchanges and a depth of 18. The 12-12 merging network has 45 compare-exchanges, which is equivalent to a 12-12 odd-even merge.
+
+![Sorting network 24](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-24.png)
+
+    [[0, 1],[2, 3],[4, 5],[6, 7],[8, 9],[10, 11],[12, 13],[14, 15],[16, 17],[18, 19],[20, 21],[22, 23]]
+    [[1, 3],[5, 7],[9, 11],[0, 2],[4, 6],[8, 10],[13, 15],[17, 19],[21, 23],[12, 14],[16, 18],[20, 22]]
+    [[1, 2],[5, 6],[9, 10],[13, 14],[17, 18],[21, 22]]
+    [[1, 5],[6, 10],[13, 17],[18, 22]]
+    [[5, 9],[2, 6],[17, 21],[14, 18]]
+    [[1, 5],[6, 10],[0, 4],[7, 11],[13, 17],[18, 22],[12, 16],[19, 23]]
+    [[3, 7],[4, 8],[15, 19],[16, 20]]
+    [[0, 4],[7, 11],[12, 16],[19, 23]]
+    [[1, 4],[7, 10],[3, 8],[13, 16],[19, 22],[15, 20]]
+    [[2, 3],[8, 9],[14, 15],[20, 21]]
+    [[2, 4],[7, 9],[3, 5],[6, 8],[14, 16],[19, 21],[15, 17],[18, 20]]
+    [[3, 4],[5, 6],[7, 8],[15, 16],[17, 18],[19, 20]]
+    [[0, 12],[1, 13],[2, 14],[3, 15],[4, 16],[5, 17],[6, 18],[7, 19],[8, 20],[9, 21],[10, 22],[11, 23]]
+    [[2, 12],[3, 13],[10, 20],[11, 21]]
+    [[4, 12],[5, 13],[6, 14],[7, 15],[8, 16],[9, 17],[10, 18],[11, 19]]
+    [[8, 12],[9, 13],[10, 14],[11, 15]]
+    [[6, 8],[10, 12],[14, 16],[7, 9],[11, 13],[15, 17]]
+    [[1, 2],[3, 4],[5, 6],[7, 8],[9, 10],[11, 12],[13, 14],[15, 16],[17, 18],[19, 20],[21, 22]]
+
+Removing the first or the last line of the network yields the following 23-sorter with 118 compare-exchanges and a depth of 18.
 
 ![Sorting network 23](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-23.png)
 
@@ -72,26 +102,9 @@ While trying to reimplement size-optimal sorting networks as described by [*Find
     [[6, 8],[10, 12],[14, 16],[7, 9],[11, 13],[15, 17]]
     [[1, 2],[3, 4],[5, 6],[7, 8],[9, 10],[11, 12],[13, 14],[15, 16],[17, 18],[19, 20],[21, 22]]
 
-![Sorting network 24](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-24.png)
+When I originally released them, those networks were the smallest 23-sorters and 24-sorters (though other networks witht the same number of comparators existed). Nowadays there are way better networks for 23 and 24 inputs.
 
-    [[0, 1],[2, 3],[4, 5],[6, 7],[8, 9],[10, 11],[12, 13],[14, 15],[16, 17],[18, 19],[20, 21],[22, 23]]
-    [[1, 3],[5, 7],[9, 11],[0, 2],[4, 6],[8, 10],[13, 15],[17, 19],[21, 23],[12, 14],[16, 18],[20, 22]]
-    [[1, 2],[5, 6],[9, 10],[13, 14],[17, 18],[21, 22]]
-    [[1, 5],[6, 10],[13, 17],[18, 22]]
-    [[5, 9],[2, 6],[17, 21],[14, 18]]
-    [[1, 5],[6, 10],[0, 4],[7, 11],[13, 17],[18, 22],[12, 16],[19, 23]]
-    [[3, 7],[4, 8],[15, 19],[16, 20]]
-    [[0, 4],[7, 11],[12, 16],[19, 23]]
-    [[1, 4],[7, 10],[3, 8],[13, 16],[19, 22],[15, 20]]
-    [[2, 3],[8, 9],[14, 15],[20, 21]]
-    [[2, 4],[7, 9],[3, 5],[6, 8],[14, 16],[19, 21],[15, 17],[18, 20]]
-    [[3, 4],[5, 6],[7, 8],[15, 16],[17, 18],[19, 20]]
-    [[0, 12],[1, 13],[2, 14],[3, 15],[4, 16],[5, 17],[6, 18],[7, 19],[8, 20],[9, 21],[10, 22],[11, 23]]
-    [[2, 12],[3, 13],[10, 20],[11, 21]]
-    [[4, 12],[5, 13],[6, 14],[7, 15],[8, 16],[9, 17],[10, 18],[11, 19]]
-    [[8, 12],[9, 13],[10, 14],[11, 15]]
-    [[6, 8],[10, 12],[14, 16],[7, 9],[11, 13],[15, 17]]
-    [[1, 2],[3, 4],[5, 6],[7, 8],[9, 10],[11, 12],[13, 14],[15, 16],[17, 18],[19, 20],[21, 22]]
+I tried to apply the same technique to create a 40-sorter, but the resulting 20-20 merging network has 93 compare-exchanges while the 20-20 odd-even merge network has 89. This merging technique probably becomes gradually worse compared to odd-even merge.
 
 ### Sorting network for 29 inputs
 
