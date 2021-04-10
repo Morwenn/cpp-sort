@@ -38,6 +38,7 @@
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
+#include "swap_ranges.h"
 #include "type_traits.h"
 #include "upper_bound.h"
 
@@ -73,7 +74,7 @@ namespace detail
         {
             using utility::iter_move;
 
-            CPPSORT_ASSERT(std::size_t(last - mid) <= rng_aux.size());
+            CPPSORT_ASSERT(last - mid <= rng_aux.size());
             if (mid == last || first == mid) {
                 return;
             }
@@ -86,15 +87,10 @@ namespace detail
             // the data are inserted in rng_aux
             //-----------------------------------------------------------------------
             std::vector<RandomAccessIterator1> viter;
-            auto beta = rng_aux.first;
             auto data = rng_aux.first;
+            detail::move(mid, last, data);
 
-            for (auto alpha = mid ; alpha != last ; ++alpha) {
-                *beta = iter_move(alpha);
-                ++beta;
-            }
-
-            std::size_t ndata = last - mid;
+            auto ndata = last - mid;
 
             RandomAccessIterator1 linf = first, lsup = mid;
             for (std::uint32_t i = 0 ; i < ndata ; ++i) {
@@ -102,9 +98,9 @@ namespace detail
                 viter.push_back(it1);
                 linf = it1;
             }
+            viter.push_back(mid);
 
             // moving the elements
-            viter.push_back(mid);
             for (std::uint32_t i = viter.size() - 1; i != 0; --i) {
                 RandomAccessIterator1 src = viter[i], limit = viter[i - 1];
                 RandomAccessIterator1 dest = src + i;
@@ -123,7 +119,7 @@ namespace detail
         // @param range_input : range with the elements to sort
         // @param range_buffer : range with the elements sorted
         // @param comp : object for to compare two elements
-        // @param level : when is 1, sort with the insertionsort algorithm
+        // @param level : when is 1, sort with the insertion sort algorithm
         //                if not make a recursive call splitting the ranges
         //
         // @comments : if the number of levels is odd, the data are in the first
@@ -136,16 +132,15 @@ namespace detail
                                Compare compare, Projection projection)
             -> bool
         {
-            // the maximun number of elements not ordered, for to be inserted in the
-            // sorted part
-            //const ptrdiff_t  min_insert_partial_sort = 32 ;
-            const std::size_t ndata = rng_data.size();
+            auto ndata = rng_data.size();
             if (ndata < 32) {
                 insertion_sort(rng_data.first, rng_data.last, compare, projection);
                 return true;
             }
-            const std::size_t min_insert_partial_sort = ((ndata >> 3) < 33) ? 32 : (ndata >> 3);
-            if (ndata < 2) return true; // TODO: redundant?
+
+            // Maximum number of elements not ordered, for to be inserted in the
+            // sorted part
+            auto min_insert_partial_sort = (ndata / 8 < 33) ? 32 : ndata / 8;
 
             // check if sorted
             auto it = detail::is_sorted_until(rng_data.first, rng_data.last, compare, projection);
@@ -154,7 +149,7 @@ namespace detail
             }
 
             // insert the elements between it1 and last
-            if (std::size_t(rng_data.last - it) < min_insert_partial_sort) {
+            if (rng_data.last - it < min_insert_partial_sort) {
                 sort_range_sort(range<RandomAccessIterator1>(it, rng_data.last), rng_aux, compare, projection);
                 insert_partial_sort(rng_data.first, it, rng_data.last, compare, projection, rng_aux);
                 return true;
@@ -166,19 +161,14 @@ namespace detail
             }
 
             it = detail::is_sorted_until(rng_data.first, rng_data.last, detail::not_fn(compare), projection);
-            if (std::size_t(rng_data.last - it) >= min_insert_partial_sort) {
+            if (rng_data.last - it >= min_insert_partial_sort) {
                 return false;
             }
 
             // reverse the elements between first and it1
-            std::size_t nreverse = it - rng_data.first;
-            auto beta = std::prev(it);
-            auto mid = rng_data.first + (nreverse >> 1);
-            for (auto alpha = rng_data.first ; alpha != mid ; ++alpha) {
-                using utility::iter_swap;
-                iter_swap(alpha, beta);
-                --beta;
-            }
+            auto nreverse = it - rng_data.first;
+            auto mid = rng_data.first + nreverse / 2;
+            detail::swap_ranges_overlap(rng_data.first, mid, std::make_reverse_iterator(it));
 
             // insert the elements between it1 and last
             if (it != rng_data.last) {
@@ -226,7 +216,7 @@ namespace detail
             }
 
             //------------------- normal process -----------------------------------
-            std::size_t nelem1 = (range1.size() + 1) >> 1;
+            auto nelem1 = (range1.size() + 1) / 2;
             range_it1 range_input1(range1.first, range1.first + nelem1),
                                    range_input2(range1.first + nelem1, range1.last);
 
@@ -300,12 +290,6 @@ namespace detail
                 // by the insertion sort algorithm
                 static constexpr std::uint32_t Sort_min = 36;
 
-                // Pointer to the auxiliary memory
-                std::unique_ptr<rvalue_type, operator_deleter> ptr;
-
-                // Number of elements in the auxiliary memory
-                std::size_t nptr;
-
             public:
 
                 //-------------------------------------------------------------------------
@@ -319,37 +303,38 @@ namespace detail
                 // @param projection : projection object
                 //------------------------------------------------------------------------
                 spinsort(RandomAccessIterator first, RandomAccessIterator last,
-                         Compare compare, Projection projection):
-                    ptr(nullptr),
-                    nptr(0)
+                         Compare compare, Projection projection)
                 {
                     using utility::iter_move;
 
                     range<RandomAccessIterator> range_input(first, last);
                     CPPSORT_ASSERT(range_input.valid());
 
-                    std::size_t nelem = range_input.size();
-                    if (nelem <= (Sort_min << 1)) {
+                    auto size = range_input.size();
+                    if (size <= Sort_min * 2) {
                         insertion_sort(range_input.first, range_input.last,
                                        std::move(compare), std::move(projection));
                         return;
                     }
 
-                    nptr = (nelem + 1) >> 1;
-                    std::size_t nelem_1 = nptr;
-                    std::size_t nelem_2 = nelem - nelem_1;
-                    ptr.reset(static_cast<rvalue_type*>(
-                        ::operator new(nptr * sizeof(rvalue_type))
-                    ));
-                    range_buf range_aux(ptr.get(), (ptr.get() + nptr));
+                    auto nelem_1 = (size + 1) / 2;
+                    auto nelem_2 = size - nelem_1;
+
+                    // Buffer used by the merge operations
+                    auto buffer_size = nelem_1;
+                    std::unique_ptr<rvalue_type, operator_deleter> buffer(
+                        static_cast<rvalue_type*>(::operator new(buffer_size * sizeof(rvalue_type))),
+                        operator_deleter(buffer_size * sizeof(rvalue_type))
+                    );
+                    range_buf range_aux(buffer.get(), (buffer.get() + buffer_size));
 
                     destruct_n<rvalue_type> d(0);
-                    std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(ptr.get(), d);
+                    std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buffer.get(), d);
 
                     //---------------------------------------------------------------------
                     //                  Process
                     //---------------------------------------------------------------------
-                    std::uint32_t nlevel = detail::log2(((nelem + Sort_min - 1) / Sort_min) - 1);
+                    std::uint32_t nlevel = detail::log2(((size + Sort_min - 1) / Sort_min) - 1);
                     CPPSORT_ASSERT(nlevel != 0);
 
                     if ((nlevel & 1) == 1) {
