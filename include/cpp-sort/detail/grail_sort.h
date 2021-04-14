@@ -27,7 +27,6 @@
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
-#include "merge_move.h"
 #include "move.h"
 #include "rotate.h"
 #include "swap_ranges.h"
