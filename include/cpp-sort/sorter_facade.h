@@ -25,14 +25,36 @@ namespace cppsort
         template<typename Sorter>
         struct invoker
         {
-            // This function is used to create function pointers from
-            // stateless sorters
+            // These functions are used to create function pointers
+            // from stateless sorters: the first overload allows to
+            // create function pointers with a result similar to that
+            // of the sorter, the second one allows to cast away the
+            // result to void
 
-            template<typename Ret, typename... Args>
+            template<
+                typename Ret,
+                typename... Args
+            >
             static constexpr auto invoke(Args... args)
-                -> Ret
+                -> std::enable_if_t<
+                    not std::is_void<Ret>::value,
+                    Ret
+                >
             {
                 return Sorter{}(std::forward<Args>(args)...);
+            }
+
+            template<
+                typename Ret,
+                typename... Args
+            >
+            static constexpr auto invoke(Args... args)
+                -> std::enable_if_t<
+                    std::is_void<Ret>::value,
+                    void
+                >
+            {
+                Sorter{}(std::forward<Args>(args)...);
             }
         };
 

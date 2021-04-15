@@ -123,6 +123,7 @@ add_executable(main-tests
     sorter_facade.cpp
     sorter_facade_constexpr.cpp
     sorter_facade_defaults.cpp
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorter_facade_fptr.cpp>
     sorter_facade_iterable.cpp
     stable_sort_array.cpp
 

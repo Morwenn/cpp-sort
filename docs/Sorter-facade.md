@@ -43,6 +43,8 @@ template<typename Iterator, typename... Args>
 constexpr operator Ret(*)(Iterator, Iterator, Args...)() const;
 ```
 
+The return type `Ret` can either match that of the sorter, or be `void`, in which case the return value is discarded.
+
 Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is the [`std::result_of_t`][std-result-of] of the sorter called with the parameters. The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
 ***WARNING:** conversion to function pointers does not work with MSVC (issue #185).*
@@ -50,6 +52,8 @@ Note that the function pointer conversion syntax above is made up, but it allows
 *Changed in version 1.5.0:* these conversion operators exists if and only if the wrapped *sorter implementation* is empty and default-constructible.
 
 *Changed in version 1.10.0:* the conversion operators are always `constexpr` (it used to be a C++17 feature).
+
+*Changed in version 1.11.0:* the return type of the function pointer type can be `void` regardless of the type(s) returned by the sorter.
 
 ### `operator()` for pairs of iterators
 
