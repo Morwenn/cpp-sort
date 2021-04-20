@@ -631,7 +631,7 @@ namespace detail
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                if (is_empty()) {
+                if (first == last) {
                     splice(last, other);
                     return;
                 }
@@ -642,7 +642,7 @@ namespace detail
                 auto other_it = other.begin();
                 auto other_end = other.end();
 
-                while (other_it != other_end) {
+                do {
                     if (comp(proj(*other_it), proj(*first))) {
                         // The following loop finds a series of nodes to splice
                         // into the current list, which is faster than splicing
@@ -664,7 +664,7 @@ namespace detail
                         other.sentinel_node_.prev = &other.sentinel_node_;
                         return;
                     }
-                }
+                } while (other_it != other_end);
 
                 // Reset the other list's sentinel node,
                 // fast_splice_ does no do it
