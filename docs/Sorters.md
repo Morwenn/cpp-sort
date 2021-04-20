@@ -179,8 +179,8 @@ This sorter also has the following dedicated algorithms when used together with 
 
 | Container           | Best        | Average     | Worst       | Memory      | Stable      |
 | ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| `std::list`         | n           | n log n     | n log n     | sqrt n      | No          |
-| `std::forward_list` | n           | n log n     | n log n     | sqrt n      | No          |
+| `std::list`         | n           | n log n     | n log n     | n           | No          |
+| `std::forward_list` | n           | n log n     | n log n     | n           | No          |
 
 None of the container-aware algorithms invalidates iterators.
 
