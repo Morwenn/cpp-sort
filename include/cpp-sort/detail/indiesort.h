@@ -29,12 +29,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <memory>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "../detail/immovable_vector.h"
 #include "iterator_traits.h"
-#include "memory.h"
 #include "scope_exit.h"
 
 namespace cppsort
@@ -66,29 +65,19 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         using item_index_tuple = pointer_index_tuple<ForwardIterator, difference_type>;
-        std::unique_ptr<item_index_tuple, operator_deleter> storage(
-            static_cast<item_index_tuple*>(::operator new(size * sizeof(item_index_tuple))),
-            operator_deleter(size * sizeof(item_index_tuple))
-        );
-        destruct_n<item_index_tuple> d(0);
-        std::unique_ptr<item_index_tuple, destruct_n<item_index_tuple>&> h2(storage.get(), d);
+        immovable_vector<item_index_tuple> storage(size);
 
-        auto sort_array = storage.get();
-        item_index_tuple* tuple_pointer = storage.get();
-
-        // Construct pointers to all elements in the sequence:
+        // Construct pointers to all elements in the sequence
         difference_type index = 0;
         for (auto current_element = first; current_element != last; ++current_element) {
-            ::new(tuple_pointer) item_index_tuple(current_element, index);
-            ++tuple_pointer;
+            storage.emplace_back(current_element, index);
             ++index;
-            ++d;
         }
 
 #ifndef __cpp_lib_uncaught_exceptions
         // Sort the iterators on pointed values
         std::forward<Sorter>(sorter)(
-            sort_array, sort_array + size, std::move(compare),
+            storage.begin(), storage.end(), std::move(compare),
             [&proj](auto& elem) -> decltype(auto) {
                 return proj(*(elem.original_location));
             }
@@ -100,7 +89,7 @@ namespace detail
 
             // Sort the actual elements via the tuple array:
             index = 0;
-            for (auto current_tuple = sort_array; current_tuple != tuple_pointer; ++current_tuple, ++index) {
+            for (auto current_tuple = storage.begin(); current_tuple != storage.end(); ++current_tuple, ++index) {
                 if (current_tuple->original_index != index) {
                     auto end_value = iter_move(current_tuple->original_location);
 
@@ -108,13 +97,13 @@ namespace detail
                     difference_type source_index = current_tuple->original_index;
 
                     do {
-                        *(sort_array[destination_index].original_location) = iter_move(sort_array[source_index].original_location);
+                        *(storage[destination_index].original_location) = iter_move(storage[source_index].original_location);
 
                         destination_index = source_index;
-                        source_index = sort_array[destination_index].original_index;
-                        sort_array[destination_index].original_index = destination_index;
+                        source_index = storage[destination_index].original_index;
+                        storage[destination_index].original_index = destination_index;
                     } while (source_index != index);
-                    *(sort_array[destination_index].original_location) = std::move(end_value);
+                    *(storage[destination_index].original_location) = std::move(end_value);
                 }
             }
 
@@ -127,7 +116,7 @@ namespace detail
 
         // Sort the iterators on pointed values
         return std::forward<Sorter>(sorter)(
-            sort_array, sort_array + size, std::move(compare),
+            storage.begin(), storage.end(), std::move(compare),
             [&proj](auto& elem) -> decltype(auto) {
                 return proj(*(elem.original_location));
             }

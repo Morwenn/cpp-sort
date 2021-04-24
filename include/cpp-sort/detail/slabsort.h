@@ -9,17 +9,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <memory>
 #include <utility>
 #include <vector>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include "bitops.h"
 #include "fixed_size_list.h"
 #include "functional.h"
+#include "immovable_vector.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "melsort.h"
-#include "memory.h"
 #include "stable_partition.h"
 #include "nth_element.h"
 
@@ -58,7 +57,7 @@ namespace detail
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto slabsort_get_median(RandomAccessIterator first, RandomAccessIterator last,
-                             RandomAccessIterator* iterators_buffer,
+                             immovable_vector<RandomAccessIterator>& iterators_buffer,
                              Compare compare, Projection projection)
         -> RandomAccessIterator
     {
@@ -68,30 +67,25 @@ namespace detail
         ////////////////////////////////////////////////////////////
         // Bind index to iterator
 
-        destruct_n<RandomAccessIterator> d(0);
-        std::unique_ptr<RandomAccessIterator, destruct_n<RandomAccessIterator>&> h2(iterators_buffer, d);
-
         // Associate iterators to their position
-        auto ptr = iterators_buffer;
-        for (difference_type count = 0 ; count != size ; ++count) {
-            ::new(ptr) RandomAccessIterator(first);
-            ++d;
+        iterators_buffer.clear();
+        for (difference_type count = 0; count != size; ++count) {
+            iterators_buffer.emplace_back(first);
             ++first;
-            ++ptr;
         }
 
         ////////////////////////////////////////////////////////////
         // Run nth_element stably and indirectly
 
         return *nth_element(
-            iterators_buffer, iterators_buffer + size, size / 2, size,
+            iterators_buffer.begin(), iterators_buffer.end(), size / 2, size,
             std::move(compare), indirect(std::move(projection))
         );
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto slabsort_partition(RandomAccessIterator first, RandomAccessIterator last,
-                            RandomAccessIterator* iterators_buffer,
+                            immovable_vector<RandomAccessIterator>& iterators_buffer,
                             Compare compare, Projection projection)
         -> void
     {
@@ -220,7 +214,7 @@ namespace detail
                        difference_type_t<RandomAccessIterator> size,
                        difference_type_t<RandomAccessIterator> original_p,
                        difference_type_t<RandomAccessIterator> current_p,
-                       RandomAccessIterator* iterators_buffer,
+                       immovable_vector<RandomAccessIterator>& iterators_buffer,
                        fixed_size_list_node_pool<slabsort_list_node<RandomAccessIterator>>& node_pool,
                        Compare compare, Projection projection)
         -> void
@@ -277,15 +271,12 @@ namespace detail
         }
 
         // Allocate a buffer that will be used for median finding
-        std::unique_ptr<RandomAccessIterator, operator_deleter> iterators_buffer(
-            static_cast<RandomAccessIterator*>(::operator new(size * sizeof(RandomAccessIterator))),
-            operator_deleter(size * sizeof(RandomAccessIterator))
-        );
+        immovable_vector<RandomAccessIterator> iterators_buffer(size);
 
         difference_type_t<RandomAccessIterator> original_p = 2;
         return slabsort_impl(
             first, last, size, original_p, original_p,
-            iterators_buffer.get(), node_pool,
+            iterators_buffer, node_pool,
             std::move(compare), std::move(projection)
         );
     }

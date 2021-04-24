@@ -10,8 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <iterator>
-#include <memory>
-#include <new>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -19,8 +18,8 @@
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
+#include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/memory.h"
 #include "../detail/scope_exit.h"
 #include "../detail/type_traits.h"
 
@@ -32,43 +31,31 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter, typename ForwardIterator, typename Size, typename... Args>
-        auto sort_out_of_place(ForwardIterator first, Size size, const Sorter& sorter, Args&&... args)
+        auto sort_out_of_place(ForwardIterator first, ForwardIterator last,
+                               Size size, const Sorter& sorter, Args&&... args)
             -> decltype(auto)
         {
             using utility::iter_move;
             using rvalue_type = rvalue_type_t<ForwardIterator>;
 
             // Copy the collection into contiguous memory buffer
-            std::unique_ptr<rvalue_type, operator_deleter> buffer(
-                static_cast<rvalue_type*>(::operator new(size * sizeof(rvalue_type))),
-                operator_deleter(size * sizeof(rvalue_type))
-            );
-            destruct_n<rvalue_type> d(0);
-            std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buffer.get(), d);
-
-            auto it = first;
-            auto ptr = buffer.get();
-            for (Size i = 0 ; i < size ; ++i) {
-                ::new(ptr) rvalue_type(iter_move(it));
-                ++it;
-                ++ptr;
-                ++d;
-            }
+            immovable_vector<rvalue_type> buffer(size);
+            buffer.insert_back(first, last);
 
 #ifdef __cpp_lib_uncaught_exceptions
             // Work around the sorters that return void
             auto exit_function = make_scope_success([&] {
                 // Copy the sorted elements back in the original collection
-                std::move(buffer.get(), buffer.get() + size, first);
+                std::move(buffer.begin(), buffer.end(), first);
             });
 
             // Sort the elements in the memory buffer
-            return sorter(buffer.get(), buffer.get() + size, std::forward<Args>(args)...);
+            return sorter(buffer.begin(), buffer.end(), std::forward<Args>(args)...);
 #else
             // Sort the elements in the memory buffer
-            sorter(buffer.get(), buffer.get() + size, std::forward<Args>(args)...);
+            sorter(buffer.begin(), buffer.end(), std::forward<Args>(args)...);
             // Copy the sorted elements back in the original collection
-            std::move(buffer.get(), buffer.get() + size, first);
+            std::move(buffer.begin(), buffer.end(), first);
 #endif
         }
     }
@@ -99,7 +86,7 @@ namespace cppsort
             -> decltype(auto)
         {
             auto size = std::distance(first, last);
-            return detail::sort_out_of_place(first, size, this->get(), std::forward<Args>(args)...);
+            return detail::sort_out_of_place(first, last, size, this->get(), std::forward<Args>(args)...);
         }
 
         template<typename Iterable, typename... Args>
@@ -108,7 +95,8 @@ namespace cppsort
         {
             // Might be an optimization for forward/bidirectional iterables
             auto size = utility::size(iterable);
-            return detail::sort_out_of_place(std::begin(iterable), size, this->get(), std::forward<Args>(args)...);
+            return detail::sort_out_of_place(std::begin(iterable), std::end(iterable), size,
+                                             this->get(), std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////

@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <cstdint>
 #include <iterator>
-#include <new>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -19,8 +18,8 @@
 #include "config.h"
 #include "fixed_size_list.h"
 #include "functional.h"
+#include "immovable_vector.h"
 #include "iterator_traits.h"
-#include "memory.h"
 #include "move.h"
 #include "scope_exit.h"
 #include "swap_if.h"
@@ -404,21 +403,13 @@ namespace detail
         // Number of sub-iterators
         auto full_size = size * first.size();
 
-        using rvalue_type = rvalue_type_t<RandomAccessIterator>;
-        std::unique_ptr<rvalue_type, operator_deleter> cache(
-            static_cast<rvalue_type*>(::operator new(full_size * sizeof(rvalue_type))),
-            operator_deleter(full_size * sizeof(rvalue_type))
-        );
-        destruct_n<rvalue_type> d(0);
-        std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(cache.get(), d);
-
-        rvalue_type* buff_it = cache.get();
+        immovable_vector<rvalue_type_t<RandomAccessIterator>> cache(full_size);
         for (auto&& it: chain) {
             auto begin = it.base();
             auto end = begin + it.size();
-            buff_it = uninitialized_move(begin, end, buff_it, d);
+            cache.insert_back(begin, end);
         }
-        detail::move(cache.get(), cache.get() + full_size, first.base());
+        detail::move(cache.begin(), cache.end(), first.base());
 
         // Everything else worked, it's now safe to reset the node pool
         node_pool_reset.activate();

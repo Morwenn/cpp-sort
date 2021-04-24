@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <memory>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -22,9 +21,9 @@
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
 #include "../detail/functional.h"
+#include "../detail/immovable_vector.h"
 #include "../detail/indiesort.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/memory.h"
 #include "../detail/scope_exit.h"
 #include "../detail/type_traits.h"
 
@@ -59,22 +58,15 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Indirectly sort the iterators
 
-            std::unique_ptr<RandomAccessIterator, operator_deleter> iterators(
-                static_cast<RandomAccessIterator*>(::operator new(size * sizeof(RandomAccessIterator))),
-                operator_deleter(size * sizeof(RandomAccessIterator))
-            );
-            destruct_n<RandomAccessIterator> d(0);
-            std::unique_ptr<RandomAccessIterator, destruct_n<RandomAccessIterator>&> h2(iterators.get(), d);
-
-            auto ptr = iterators.get();
-            for (auto it = first; it != last; ++it, (void) ++ptr, ++d) {
-                ::new(ptr) RandomAccessIterator(it);
+            immovable_vector<RandomAccessIterator> iterators(size);
+            for (auto it = first; it != last; ++it) {
+                iterators.emplace_back(it);
             }
 
 #ifndef __cpp_lib_uncaught_exceptions
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(
-                iterators.get(), iterators.get() + size,
+                iterators.begin(), iterators.end(),
                 std::move(compare), indirect(projection)
             );
 #else
@@ -93,7 +85,7 @@ namespace cppsort
                     // Find the element to put in current's place
                     auto current = start;
                     auto next_pos = current - first;
-                    auto next = iterators.get()[next_pos];
+                    auto next = iterators[next_pos];
                     sorted[next_pos] = true;
 
                     // Process the current cycle
@@ -103,7 +95,7 @@ namespace cppsort
                             *current = iter_move(next);
                             current = next;
                             auto next_pos = next - first;
-                            next = iterators.get()[next_pos];
+                            next = iterators[next_pos];
                             sorted[next_pos] = true;
                         }
                         *current = std::move(tmp);
@@ -123,7 +115,7 @@ namespace cppsort
             }
 
             return std::forward<Sorter>(sorter)(
-                iterators.get(), iterators.get() + size,
+                iterators.begin(), iterators.end(),
                 std::move(compare), indirect(projection)
             );
 #endif
