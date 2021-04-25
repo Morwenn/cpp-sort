@@ -13,6 +13,7 @@
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "memory.h"
 
 namespace cppsort
 {
@@ -26,7 +27,7 @@ namespace detail
     // a given number of elements during construction, and it can
     // not be moved. While its original goal was to provide an
     // std::vector-like class for immovable types, it is also
-    // through the library as a light contigusou collection when
+    // through the library as a light contiguous collection when
     // the number of elements to allocate is already known at
     // construction time.
 
@@ -58,9 +59,7 @@ namespace detail
             ~immovable_vector()
             {
                 // Destroy the constructed elements
-                for (auto ptr = memory_; ptr != end_; ++ptr) {
-                    ptr->~T();
-                }
+                detail::destroy(memory_, end_);
 
                 // Free the allocated memory
 #ifdef __cpp_sized_deallocation
@@ -116,9 +115,7 @@ namespace detail
                 -> void
             {
                 // Destroy the constructed elements
-                for (auto ptr = memory_; ptr != end_; ++ptr) {
-                    ptr->~T();
-                }
+                detail::destroy(memory_, end_);
 
                 // Ensure the new size is zero
                 end_ = memory_;
@@ -146,9 +143,7 @@ namespace detail
                     }
                 } catch (...) {
                     // Cleanup
-                    for (auto ptr = end_; ptr != writer; ++ptr) {
-                        ptr->~T();
-                    }
+                    detail::destroy(end_, writer);
                     throw;
                 }
                 end_ = writer;
