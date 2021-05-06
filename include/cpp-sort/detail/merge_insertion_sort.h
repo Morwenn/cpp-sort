@@ -221,18 +221,20 @@ namespace detail
                 return (lhs.base() - rhs.base()) / lhs.size();
             }
 
+            ////////////////////////////////////////////////////////////
+            // iter_swap
+
+            friend auto iter_swap(group_iterator lhs, group_iterator rhs)
+                -> void
+            {
+                detail::swap_ranges_inner(lhs.base(), lhs.base() + lhs.size(), rhs.base());
+            }
+
         private:
 
             Iterator _it;
             difference_type _size;
     };
-
-    template<typename Iterator>
-    auto iter_swap(group_iterator<Iterator> lhs, group_iterator<Iterator> rhs)
-        -> void
-    {
-        detail::swap_ranges_inner(lhs.base(), lhs.base() + lhs.size(), rhs.base());
-    }
 
     ////////////////////////////////////////////////////////////
     // Construction function

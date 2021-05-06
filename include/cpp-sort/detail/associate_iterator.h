@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_
@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -41,6 +40,10 @@ namespace detail
     template<typename Iterator, typename Data>
     struct association
     {
+        // Public types
+        using iterator_type = Iterator;
+        using data_type = Data;
+
         // Public members
         Iterator it;
         Data data;
@@ -68,7 +71,7 @@ namespace detail
             return *this;
         }
 
-        auto operator=(associated_value<remove_cvref_t<decltype(*it)>, Data>&& other)
+        auto operator=(associated_value<value_type_t<Iterator>, Data>&& other)
             -> association&
         {
             *it = std::move(other.value);
@@ -155,7 +158,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Public types
 
-            using iterator_category = iterator_category_t<Iterator>;
+            using iterator_category = std::random_access_iterator_tag;
             using iterator_type     = Iterator;
             using value_type        = value_type_t<Iterator>;
             using difference_type   = difference_type_t<Iterator>;
@@ -326,31 +329,32 @@ namespace detail
                 return lhs.base() - rhs.base();
             }
 
+            ////////////////////////////////////////////////////////////
+            // iter_move/iter_swap
+
+            friend auto iter_swap(associate_iterator lhs, associate_iterator rhs)
+                -> void
+            {
+                using utility::iter_swap;
+                iter_swap(lhs.base(), rhs.base());
+            }
+
+            friend auto iter_move(associate_iterator it)
+                -> associated_value<
+                    value_type_t<typename value_type_t<Iterator>::iterator_type>,
+                    typename value_type_t<Iterator>::data_type
+                >
+            {
+                return {
+                    std::move(*(it->it)),
+                    std::move(it->data)
+                };
+            }
+
         private:
 
             Iterator _it;
     };
-
-    template<typename Iterator>
-    auto iter_swap(associate_iterator<Iterator> lhs, associate_iterator<Iterator> rhs)
-        -> void
-    {
-        using utility::iter_swap;
-        iter_swap(lhs.base(), rhs.base());
-    }
-
-    template<typename Iterator>
-    auto iter_move(associate_iterator<Iterator> it)
-        -> associated_value<
-            remove_cvref_t<decltype(*(it->it))>,
-            remove_cvref_t<decltype(it->data)>
-        >
-    {
-        return {
-            std::move(*(it->it)),
-            std::move(it->data)
-        };
-    }
 
     ////////////////////////////////////////////////////////////
     // Construction function
