@@ -54,7 +54,7 @@ namespace detail
         -> void
     {
         for (; n > 0; --n) {
-            destroy_at(std::addressof(*first));
+            detail::destroy_at(std::addressof(*first));
             ++first;
         }
     }
