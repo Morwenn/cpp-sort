@@ -114,15 +114,13 @@ namespace cppsort
             // to implement melsort for forward iterators
             struct flist
             {
-                using iterator = typename std::forward_list<Args...>::iterator;
-
                 flist():
                     list(),
                     last(list.begin())
                 {}
 
                 std::forward_list<Args...> list;
-                iterator last;
+                typename std::forward_list<Args...>::iterator last;
             };
 
             // Encroaching lists
