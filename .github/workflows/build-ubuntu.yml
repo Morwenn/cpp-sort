@@ -47,7 +47,7 @@ jobs:
 
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}
-        run: sudo apt install -y valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
