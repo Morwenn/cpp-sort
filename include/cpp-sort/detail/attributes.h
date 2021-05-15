@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ATTRIBUTES_H_
@@ -33,6 +33,18 @@
 #   endif
 #else
 #   define CPPSORT_ATTRIBUTE_FALLTHROUGH (void)0
+#endif
+
+// CPPSORT_ATTRIBUTE_NODISCARD
+
+#if __has_cpp_attribute(nodiscard) && !(defined(__clang__) && __cplusplus < 201703L)
+#   define CPPSORT_ATTRIBUTE_NODISCARD [[nodiscard]]
+#elif defined(__clang__)
+#   define CPPSORT_ATTRIBUTE_NODISCARD [[clang::warn_unused_result]]
+#elif defined(__GNUC__)
+#   define CPPSORT_ATTRIBUTE_NODISCARD [[gnu::warn_unused_result]]
+#else
+#   define CPPSORT_ATTRIBUTE_NODISCARD
 #endif
 
 #endif // CPPSORT_DETAIL_ATTRIBUTES_H_
