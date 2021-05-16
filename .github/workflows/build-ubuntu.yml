@@ -30,7 +30,7 @@ jobs:
       matrix:
         cxx:
           - g++-5
-          - clang++-9
+          - clang++-6.0
         config:
           # Release build
           - build_type: Release
@@ -44,6 +44,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install Clang
+        if: ${{matrix.cxx == 'clang++-6.0'}}
+        run: sudo apt-get install -y clang-6.0 lld-6.0
 
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}
