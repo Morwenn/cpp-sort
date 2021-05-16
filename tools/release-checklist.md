@@ -10,6 +10,7 @@ development phase:
 
 ### Before the release
 
+- [ ] Check that there aren't warnings left in the latest CI logs.
 - [ ] Check that all issues linked to the milestone are closed.
 - [ ] Check `NOTICE.txt` and `README.md` conformance for stolen code.
 - [ ] Make sure that tests pass and examples build.
