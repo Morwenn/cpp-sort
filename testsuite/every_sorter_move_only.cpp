@@ -13,7 +13,6 @@
 #include <testing-tools/move_only.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
-                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -34,7 +33,8 @@ TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     // General test to make sure that every sorter compiles fine with
     // move-only types, additionally checking that no read-after-move

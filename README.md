@@ -189,11 +189,11 @@ when there isn't enough memory available to perform an out-of-place merge.
 directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)
 of the algorithm.
 
-* The algorithm used by `block_sorter` has been adapted from BonzaiThePenguin's
+* The algorithm used by `wiki_sorter` has been adapted from BonzaiThePenguin's
 [WikiSort](https://github.com/BonzaiThePenguin/WikiSort).
 
 * The algorithm used by `grail_sorter` has been adapted from Mrrl's
-[GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
+[GrailSort](https://github.com/Mrrl/GrailSort).
 
 * The algorithm used by `indirect_adapter` with forward or bidirectional iterators is a
 slightly modified version of Matthew Bentley's [indiesort](https://github.com/mattreecebentley/plf_indiesort).

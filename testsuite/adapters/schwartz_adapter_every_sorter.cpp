@@ -24,7 +24,6 @@ template<typename T=float>
 using wrapper = generic_wrapper<T>;
 
 TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapter", "[schwartz_adapter]",
-                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -44,7 +43,8 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
                     cppsort::spin_sorter,
                     cppsort::split_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     std::vector<wrapper<>> collection;
     auto distribution = dist::shuffled{};

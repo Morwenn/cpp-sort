@@ -33,5 +33,6 @@
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>
 #include <cpp-sort/sorters/verge_sorter.h>
+#include <cpp-sort/sorters/wiki_sorter.h>
 
 #endif // CPPSORT_SORTERS_H_

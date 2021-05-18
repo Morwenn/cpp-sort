@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -65,7 +65,6 @@ int main()
     using namespace std::literals;
 
     std::pair<std::string, sort_f<std::vector, int, compare_t>> sorts[] = {
-        { "block_sort",             cppsort::block_sort             },
         { "grail_sort",             cppsort::grail_sort             },
         { "heap_sort",              cppsort::heap_sort              },
         { "insertion_sort",         cppsort::insertion_sort         },
@@ -78,7 +77,8 @@ int main()
         { "smooth_sort",            cppsort::smooth_sort            },
         { "std_sort",               cppsort::std_sort               },
         { "tim_sort",               cppsort::tim_sort               },
-        { "verge_sort",             cppsort::verge_sort             }
+        { "verge_sort",             cppsort::verge_sort             },
+        { "wiki_sort",              cppsort::wiki_sort              },
     };
 
     for (auto& sort_item: sorts) {

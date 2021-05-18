@@ -14,7 +14,6 @@
 #include <testing-tools/no_post_iterator.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
-                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,
@@ -37,7 +36,8 @@ TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     std::vector<int> collection;
     auto distribution = dist::shuffled{};

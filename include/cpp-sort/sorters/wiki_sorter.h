@@ -2,8 +2,8 @@
  * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#ifndef CPPSORT_SORTERS_BLOCK_SORTER_H_
-#define CPPSORT_SORTERS_BLOCK_SORTER_H_
+#ifndef CPPSORT_SORTERS_WIKI_SORTER_H_
+#define CPPSORT_SORTERS_WIKI_SORTER_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -17,7 +17,6 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/attributes.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/wiki_sort.h"
 
@@ -29,7 +28,7 @@ namespace cppsort
     namespace detail
     {
         template<typename BufferProvider>
-        struct block_sorter_impl
+        struct wiki_sorter_impl
         {
             template<
                 typename RandomAccessIterator,
@@ -48,7 +47,7 @@ namespace cppsort
                         std::random_access_iterator_tag,
                         iterator_category_t<RandomAccessIterator>
                     >::value,
-                    "block_sorter requires at least random-access iterators"
+                    "wiki_sorter requires at least random-access iterators"
                 );
 
                 wiki_sort<BufferProvider>(std::move(first), std::move(last),
@@ -66,8 +65,8 @@ namespace cppsort
     template<
         typename BufferProvider = utility::fixed_buffer<512>
     >
-    struct block_sorter:
-        sorter_facade<detail::block_sorter_impl<BufferProvider>>
+    struct wiki_sorter:
+        sorter_facade<detail::wiki_sorter_impl<BufferProvider>>
     {};
 
     ////////////////////////////////////////////////////////////
@@ -75,10 +74,9 @@ namespace cppsort
 
     namespace
     {
-        CPPSORT_DEPRECATED("block_sort() is deprecated and will be removed in version 2.0.0, use wiki_sort() instead")
-        constexpr auto&& block_sort
-            = utility::static_const<block_sorter<>>::value;
+        constexpr auto&& wiki_sort
+            = utility::static_const<wiki_sorter<>>::value;
     }
 }
 
-#endif // CPPSORT_SORTERS_BLOCK_SORTER_H_
+#endif // CPPSORT_SORTERS_WIKI_SORTER_H_

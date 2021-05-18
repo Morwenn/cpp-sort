@@ -12,10 +12,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     // While counting_sort shouldn't be affected by patterns, its
                     // underlying minmax_element_and_is_sorted function had a bug
                     // that could specifically appear with an ascending distribution,
@@ -42,7 +38,11 @@ TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]"
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     std::vector<int> collection;
     collection.reserve(10'000);

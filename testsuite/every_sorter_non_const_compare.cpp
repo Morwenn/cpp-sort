@@ -11,7 +11,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
-                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -32,7 +31,8 @@ TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     // LWG3031 allows algorithms taking a predicate to work correctly when
     // said predicate takes non-const references on either side as long as

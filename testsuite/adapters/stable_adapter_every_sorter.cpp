@@ -27,7 +27,6 @@ using wrapper = generic_stable_wrapper<int>;
 // are also in ascending order
 
 TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_adapter]",
-                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -48,7 +47,8 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     cppsort::stable_t<TestType> sorter;
     std::vector<wrapper> collection(412);

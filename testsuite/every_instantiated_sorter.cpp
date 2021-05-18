@@ -28,12 +28,6 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     std::list<long long int> li(std::begin(collection), std::end(collection));
     std::forward_list<long long int> fli(std::begin(collection), std::end(collection));
 
-    SECTION( "block_sort" )
-    {
-        cppsort::block_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-    }
-
     SECTION( "cartesian_tree_sort" )
     {
         cppsort::cartesian_tree_sort(collection);
@@ -175,6 +169,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     SECTION( "verge_sorter" )
     {
         cppsort::verge_sort(collection);
+        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    }
+
+    SECTION( "wiki_sort" )
+    {
+        cppsort::wiki_sort(collection);
         CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
     }
 }

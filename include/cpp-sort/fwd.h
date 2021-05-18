@@ -54,6 +54,8 @@ namespace cppsort
     struct string_spread_sorter;
     struct tim_sorter;
     struct verge_sorter;
+    template<typename BufferProvider>
+    struct wiki_sorter;
 
     ////////////////////////////////////////////////////////////
     // Fixed-size sorters

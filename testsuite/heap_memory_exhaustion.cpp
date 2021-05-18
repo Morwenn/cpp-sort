@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -20,7 +20,6 @@
 //
 
 TEMPLATE_TEST_CASE( "test heap exhaustion for random-access sorters", "[sorters][heap_exhaustion]",
-                    cppsort::block_sorter<>,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -32,7 +31,8 @@ TEMPLATE_TEST_CASE( "test heap exhaustion for random-access sorters", "[sorters]
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::split_sorter,
-                    cppsort::std_sorter )
+                    cppsort::std_sorter,
+                    cppsort::wiki_sorter<> )
 {
     std::vector<int> collection; collection.reserve(491);
     auto distribution = dist::shuffled{};

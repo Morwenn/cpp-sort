@@ -2,7 +2,7 @@
 
 * *Buffered sorter*: some sorting algorithms optionally use a buffer where they store elements to improve the performance of the sort. Some of them, such as block sort, will manage to sort the collection regardless of the actual size of the buffer, which will only have on influence on the performance of the sort. A buffered sorter is a sorter that takes a *buffer provider* template parameter that tells how the temporary buffer should be allocated, and uses this provider to create the buffer. A *buffer provider* is a class that has a nested `buffer` class which implements a set of basic operations (construction with a size, `begin`, `end` and `size`). Implementing a buffer provider is a bit tricky, but using them should be easy enough:
 
-        using sorter = cppsort::block_sorter<
+        using sorter = cppsort::grail_sorter<
             cppsort::utility::fixed_buffer<512>
         >;
 

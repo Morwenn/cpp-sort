@@ -20,22 +20,7 @@ The following sorters are available and will work with any type for which `std::
 #include <cpp-sort/sorters/block_sorter.h>
 ```
 
-Implements a [block sort](https://en.wikipedia.org/wiki/Block_sort).
-
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | 1           | Yes         | Random-access |
-
-`block_sorter` is a *buffered sorter* whose default specialization allocates a fixed buffer of 512 elements to achieve O(1) auxiliary memory. This memory complexity may change depending of the *buffer provider* passed to it.
-
-```cpp
-template<
-    typename BufferProvider = utility::fixed_buffer<512>
->
-struct block_sorter;
-```
-
-Whether this sorter works with types that are not default-constructible depends on the memory allocation strategy of the buffer provider. The default specialization does not work with such types.
+***WARNING:** `block_sorter` is deprecated in version 1.11.0 and removed in version 2.0.0, use [`wiki_sorter`][wiki-sorter] instead.*
 
 ### `cartesian_tree_sorter`
 
@@ -455,6 +440,31 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
 
 *New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
 
+### `wiki_sorter<>`
+
+```cpp
+#include <cpp-sort/sorters/wiki_sorter.h>
+```
+
+Implements [WikiSort][wiki-sort], a kind of [block sort][block-sort].
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | 1           | Yes         | Random-access |
+
+`wiki_sorter` is a *buffered sorter* whose default specialization allocates a fixed buffer of 512 elements to achieve O(1) auxiliary memory. This memory complexity may change depending of the *buffer provider* passed to it.
+
+```cpp
+template<
+    typename BufferProvider = utility::fixed_buffer<512>
+>
+struct wiki_sorter;
+```
+
+Whether this sorter works with types that are not default-constructible depends on the memory allocation strategy of the *buffer provider*. The default specialization does not work with such types.
+
+*New in version 1.11.0*
+
 ## Type-specific sorters
 
 The following sorters are available but will only work for some specific types instead of using a user-provided comparison function. Some of them also accept projections as long as the result of the projection can be handled by the sorter.
@@ -536,8 +546,11 @@ struct spread_sorter:
 
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [block-sort]: https://en.wikipedia.org/wiki/Block_sort
   [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
   [container-aware-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm
+  [wiki-sort]: https://github.com/BonzaiThePenguin/WikiSort
+  [wiki-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#wiki_sorter
