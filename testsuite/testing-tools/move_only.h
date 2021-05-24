@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_MOVE_ONLY_H_
@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <stdexcept>
+#include <unordered_set>
 #include <utility>
 
 ////////////////////////////////////////////////////////////
@@ -33,6 +34,10 @@ inline namespace i_need_a_namespace_for_proper_adl
     template<typename T>
     struct move_only
     {
+        // Keep track of the constructed instances() of move_only<T>
+        static std::unordered_set<move_only*> instances;
+
+
         // Not default-constructible
         move_only() = delete;
 
@@ -44,7 +49,9 @@ inline namespace i_need_a_namespace_for_proper_adl
         move_only(const T& value):
             can_read(true),
             value(value)
-        {}
+        {
+            instances.insert(this);
+        }
 
         // Move operators
 
@@ -52,14 +59,33 @@ inline namespace i_need_a_namespace_for_proper_adl
             can_read(true),
             value(std::move(other.value))
         {
+            if (instances.find(&other) == instances.end()) {
+                throw std::logic_error("read from a ghost move_only instance");
+            }
             if (not std::exchange(other.can_read, false)) {
                 throw std::logic_error("illegal read from a moved-from value");
             }
+            instances.insert(this);
+        }
+
+        ~move_only()
+        {
+            instances.erase(this);
         }
 
         auto operator=(move_only&& other)
             -> move_only&
         {
+            // Ensure that the current instance and the other instance were
+            // correctly constructed and not merely willed into existence
+            // from uninitialized memory
+            if (instances.find(this) == instances.end()) {
+                throw std::logic_error("write to a ghost move_only instance");
+            }
+            if (instances.find(&other) == instances.end()) {
+                throw std::logic_error("read from a ghost move_only instance");
+            }
+
             // Self-move should be ok if the object is already in a moved-from
             // state because it incurs no data loss, but should otherwise be
             // frowned upon
@@ -88,6 +114,9 @@ inline namespace i_need_a_namespace_for_proper_adl
     };
 
     template<typename T>
+    std::unordered_set<move_only<T>*> move_only<T>::instances;
+
+    template<typename T>
     auto operator<(const move_only<T>& lhs, const move_only<T>& rhs)
         -> bool
     {
@@ -103,6 +132,16 @@ inline namespace i_need_a_namespace_for_proper_adl
         // responsibility of class authors to make sure that self-swap
         // does the right thing, and not the responsibility of algorithm
         // authors to prevent them from happening
+
+        // Ensure that the current instance and the other instance were
+        // correctly constructed and not merely willed into existence
+        // from uninitialized memory
+        if (move_only<T>::instances.find(&lhs) == move_only<T>::instances.end()) {
+            throw std::logic_error("write to a ghost move_only instance");
+        }
+        if (move_only<T>::instances.find(&rhs) == move_only<T>::instances.end()) {
+            throw std::logic_error("write a ghost move_only instance");
+        }
 
         // Both operands need to be readable
         if (not (lhs.can_read || rhs.can_read)) {
