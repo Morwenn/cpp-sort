@@ -36,6 +36,9 @@ def main():
     parser.add_argument('--alternative-palette', dest='use_alt_palette',
                         action='store_true', default=False,
                         help="Use another color palette")
+    parser.add_argument('--errorbars', dest='display_errorbars',
+                        action='store_true', default=False,
+                        help="Display errorbars")
     args = parser.parse_args()
 
     distribution_names = {
@@ -73,8 +76,8 @@ def main():
             size = int(size)
             distribution = distribution_names[distribution]
             results = [int(result) for result in results]
-            if not size in data: data[size] = {}
-            if not distribution in data[size]: data[size][distribution] = {}
+            data.setdefault(size, {})
+            data[size].setdefault(distribution, {})
             data[size][distribution][algo] = results
 
         # Choose the colour palette and markers to use
@@ -112,8 +115,9 @@ def main():
             for i, algo in enumerate(algos):
                 heights = [numpy.median(data[size][distribution][algo]) for distribution in distributions]
                 errors = [numpy.std(data[size][distribution][algo]) for distribution in distributions]
+                kwargs = {"xerr": errors} if args.display_errorbars else {}
                 pyplot.barh([barwidth * i + groupwidth * n for n in range(len(distributions))],
-                            heights, 0.6, color=next(colors), label=algo)
+                            heights, 0.6, color=next(colors), label=algo, **kwargs)
 
             # Set axes limits and labels.
             groupnames = ['\n'.join(wrap(l, 11)) for l in groupnames]
