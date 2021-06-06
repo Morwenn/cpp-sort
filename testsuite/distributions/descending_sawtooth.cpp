@@ -51,6 +51,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distrib
 }
 
 TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_sawtooth distribution", "[distributions]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,

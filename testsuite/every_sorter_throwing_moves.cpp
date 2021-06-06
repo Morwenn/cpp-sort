@@ -145,6 +145,7 @@ TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[
 }
 
 TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[sorters][throwing_moves]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
@@ -178,6 +179,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[
 }
 
 TEMPLATE_TEST_CASE( "forward sorters against throwing move operations", "[sorters][throwing_moves]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,

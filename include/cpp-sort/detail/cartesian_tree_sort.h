@@ -64,9 +64,11 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Constructor
 
-            template<typename Iterator, typename Compare, typename Projection>
-            explicit cartesian_tree(Iterator first, Iterator last, Compare compare, Projection projection):
-                buffer_(last - first),
+            template<typename ForwardIterator, typename Compare, typename Projection>
+            explicit cartesian_tree(ForwardIterator first, ForwardIterator last,
+                                    difference_type_t<ForwardIterator> size,
+                                    Compare compare, Projection projection):
+                buffer_(size),
                 root_(buffer_.begin()) // Original root is first element
             {
                 using utility::iter_move;
@@ -134,18 +136,20 @@ namespace detail
             node_type* root_;
     };
 
-    template<typename Iterator, typename Compare, typename Projection>
-    auto cartesian_tree_sort(Iterator first, Iterator last, Compare compare, Projection projection)
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto cartesian_tree_sort(ForwardIterator first, ForwardIterator last,
+                             difference_type_t<ForwardIterator> size,
+                             Compare compare, Projection projection)
         -> void
     {
-        using tree_type = cartesian_tree<rvalue_type_t<Iterator>>;
+        using tree_type = cartesian_tree<rvalue_type_t<ForwardIterator>>;
         using node_type = typename tree_type::node_type;
 
-        if ((last - first) < 2) {
+        if (size < 2) {
             return;
         }
 
-        tree_type tree(first, last, compare, projection);
+        tree_type tree(first, last, size, compare, projection);
         std::vector<node_type*> pq; // Priority queue
         pq.push_back(tree.root());
 

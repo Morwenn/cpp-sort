@@ -32,9 +32,11 @@ Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highl
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-access |
+| n           | n log n     | n log n     | n           | No          | Forward       |
 
 *New in version 1.10.0*
+
+*Changed in version 1.11.0:* `cartesian_tree_sorter` now works with forward iterators. It used to only work with random-access iterators.
 
 ### `default_sorter`
 

@@ -50,6 +50,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with median_of_3_killer distribu
 }
 
 TEMPLATE_TEST_CASE( "test bidirectional sorters with median_of_3_killer distribution", "[distributions]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,

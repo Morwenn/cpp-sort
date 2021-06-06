@@ -74,6 +74,7 @@ TEMPLATE_TEST_CASE( "test every random-access sorter", "[sorters]",
 }
 
 TEMPLATE_TEST_CASE( "test every bidirectional sorter", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
@@ -97,6 +98,7 @@ TEMPLATE_TEST_CASE( "test every bidirectional sorter", "[sorters]",
 }
 
 TEMPLATE_TEST_CASE( "test every forward sorter", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,

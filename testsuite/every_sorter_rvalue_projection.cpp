@@ -65,6 +65,7 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
 }
 
 TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue", "[sorters][projection]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
@@ -87,6 +88,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue
 }
 
 TEMPLATE_TEST_CASE( "forward sorters with a projection returning an rvalue", "[sorters][projection]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
