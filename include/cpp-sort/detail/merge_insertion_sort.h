@@ -12,7 +12,6 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "attributes.h"
@@ -351,19 +350,18 @@ namespace detail
         chain.push_back(std::next(first));
 
         // Upper bounds for the insertion of pend elements
-        std::vector<typename list_t::iterator> pend;
-        pend.reserve((size + 1) / 2 - 1);
+        immovable_vector<typename list_t::iterator> pend((size + 1) / 2 - 1);
 
         for (auto it = first + 2 ; it != end ; it += 2) {
             auto tmp = chain.insert(chain.end(), std::next(it));
-            pend.push_back(tmp);
+            pend.emplace_back(tmp);
         }
 
         // Add the last element to pend if it exists; when it
         // exists, it always has to be inserted in the full chain,
         // so giving it chain.end() as end insertion point is ok
         if (has_stray) {
-            pend.push_back(chain.end());
+            pend.emplace_back(chain.end());
         }
 
         ////////////////////////////////////////////////////////////
