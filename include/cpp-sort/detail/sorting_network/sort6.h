@@ -37,6 +37,19 @@ namespace detail
             iter_swap_if(first + 1u, first + 3u, compare, projection);
             iter_swap_if(first + 2u, first + 3u, compare, projection);
         }
+
+        template<typename DifferenceType=std::ptrdiff_t>
+        static constexpr auto index_pairs()
+            -> std::array<utility::index_pair<DifferenceType>, 12>
+        {
+            return {{
+                {0, 5}, {1, 3}, {2, 4},
+                {1, 2}, {3, 4},
+                {0, 3}, {2, 5},
+                {0, 1}, {2, 3}, {4, 5},
+                {1, 2}, {3, 4},
+            }};
+        }
     };
 }}
 

@@ -45,7 +45,7 @@ namespace cppsort
     {
         using iterator_category = std::random_access_iterator_tag;
 
-        // Some of the algorithms are stable, some other are not,
+        // Some of the algorithms are stable, others are not,
         // the stability *could* be documented depending on which
         // fixed-size algorithms are used, but it would be lots of
         // work...
@@ -62,8 +62,10 @@ namespace cppsort
 }
 
 // Common includes for specializations
+#include <array>
 #include <functional>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/sorting_networks.h>
 #include "../detail/swap_if.h"
 
 // Specializations of sorting_network_sorter for some values of N

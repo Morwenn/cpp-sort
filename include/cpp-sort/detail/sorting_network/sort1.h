@@ -24,6 +24,13 @@ namespace detail
                         Compare={}, Projection={}) const
             -> void
         {}
+
+        template<typename DifferenceType=std::ptrdiff_t>
+        static constexpr auto index_pairs()
+            -> std::array<utility::index_pair<DifferenceType>, 0>
+        {
+            return {};
+        }
     };
 }}
 

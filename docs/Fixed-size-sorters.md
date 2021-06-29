@@ -88,7 +88,7 @@ Note that this fixed-sized sorter is *not* move-optimal: it tries to perform a f
 #include <cpp-sort/fixed/sorting_network_sorter.h>
 ```
 
-This sorter provides [sorting network](https://en.wikipedia.org/wiki/Sorting_network) algorithms to sort collections of size 0 thru 32. While using a generic algorithm for the task such as a Batcher's odd-even mergesort may be too slow to be usable, the resulting unrolled sorting networks may be fast enough and even tend to be faster than everything else when it comes to sorting small arrays of integers without requiring additional memory.
+This sorter provides size-optimal [sorting networks][sorting-network] for 0 thru 32 inputs. While using a generic algorithm for the task such as a Batcher's odd-even mergesort may be too slow to be usable, the resulting unrolled sorting networks may be fast enough and even tend to be faster than everything else when it comes to sorting small arrays of integers without requiring additional memory.
 
 ```cpp
 template<std::size_t N>
@@ -107,8 +107,23 @@ One of the main advantages of sorting networks is the fixed number of CEUs requi
 
 *Note:* don't be fooled by the name; none of the algorithms in this fixed-size sorter explicitly perform any operation in parallel. Everything is sequential. The algorithms are but long sequences of compare-exchange units.
 
+All specializations of `sorting_network_sorter` provide a `index_pairs() static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used in the CEUs of the network and can be passed manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated of the index/difference type, which must be constructible from `int`.
+
+```cpp
+template<typename DifferenceType=std::ptrdiff_t>
+static constexpr auto index_pairs()
+    -> std::array<utility::index_pair<DifferenceType>, /* Number of CEUs in the network */>;
+```
+
 *Changed in version 1.2.0:* sorting 21 inputs requires 100 CEUs instead of 101.
 
 *Changed in version 1.3.0:* sorting 23, 24, 25 and 26 inputs respectively require 115, 120, 132 and 139 CEUs instead of 116, 121, 133 and 140.
 
 *Changed in version 1.8.0:* sorting 18 inputs requires 77 CEUs instead of 78.
+
+*Changed in version 1.10.0:* added `sorting_network_sorter<N>::index_pairs<DifferenceType>`
+
+
+  [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
+  [std-array]:
+  [utility-sorting-networks]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#Sorting-network-tools

@@ -7,6 +7,7 @@
 #include <numeric>
 #include <vector>
 #include <catch2/catch.hpp>
+#include <cpp-sort/fixed/sorting_network_sorter.h>
 #include <cpp-sort/utility/sorting_networks.h>
 #include <testing-tools/distributions.h>
 
@@ -23,6 +24,28 @@ TEST_CASE( "sorting with index pairs", "[utility][sorting_networks]" )
         {0, 1}, {2, 3}, {4, 5}, {6, 7},
         {1, 2}, {3, 4}, {5, 6},
     }};
+
+    std::vector<int> vec;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(vec), 8);
+
+    SECTION( "sort_index_pairs" )
+    {
+        sort_index_pairs(vec.begin(), pairs);
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
+    }
+
+    SECTION( "sort_index_pairs_force_unroll" )
+    {
+        sort_index_pairs_force_unroll(vec.begin(), pairs);
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
+    }
+}
+
+TEST_CASE( "sorting with index pairs from sorting_network_sorter",
+           "[utility][sorting_networks]" )
+{
+    constexpr auto pairs = cppsort::sorting_network_sorter<8>::index_pairs<int>();
 
     std::vector<int> vec;
     auto distribution = dist::shuffled{};
