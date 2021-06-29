@@ -1,17 +1,9 @@
 /*
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT0_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT0_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <functional>
-#include <type_traits>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
 
 namespace cppsort
 {

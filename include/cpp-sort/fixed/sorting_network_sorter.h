@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_SORTING_NETWORK_SORTER_H_
@@ -60,6 +60,11 @@ namespace cppsort
         using is_always_stable = std::false_type;
     };
 }
+
+// Common includes for specializations
+#include <functional>
+#include <cpp-sort/utility/functional.h>
+#include "../detail/swap_if.h"
 
 // Specializations of sorting_network_sorter for some values of N
 #include "../detail/sorting_network/sort0.h"
