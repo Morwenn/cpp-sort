@@ -82,6 +82,28 @@ struct low_moves_sorter;
 
 Note that this fixed-sized sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter) instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
 
+### `merge_exchange_network_sorter`
+
+```cpp
+#include <cpp-sort/fixed/merge_exchange_network_sorter.h>
+```
+
+This fixed-size sorter implements *merge-exchange sort* a variation of Batcher's [odd-even mergesort][odd-even-mergesort] described by Knuth in *[The Art of Computer Programming][taocp] vol.3 - Sorting and Searching*. Unlike the algorithm described in the Wikipedia article, this produces two interleaved [sorting networks][sorting-network] and merges them.
+
+![Merge-exchange sorting network for 8 inputs](https://raw.githubusercontent.com/Morwenn/cpp-sort/master/docs/images/merge-exchange-network-8.png)
+
+```cpp
+template<std::size_t N>
+struct merge_exchange_network_sorter;
+```
+
+All specializations of `merge_exchange_network_sorter` provide a `index_pairs() static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be passed manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated of the index/difference type, which must be constructible from `int`.
+
+```cpp
+template<typename DifferenceType=std::ptrdiff_t>
+[[nodiscard]] static constexpr auto index_pairs()
+    -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
+
 ### `sorting_network_sorter`
 
 ```cpp
@@ -124,6 +146,8 @@ static constexpr auto index_pairs()
 *Changed in version 1.10.0:* added `sorting_network_sorter<N>::index_pairs<DifferenceType>`
 
 
+  [odd-even-mergesort]: https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
+  [taocp]: https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming
   [utility-sorting-networks]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#Sorting-network-tools

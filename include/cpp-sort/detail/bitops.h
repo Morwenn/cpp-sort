@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BITOPS_H_
@@ -57,6 +57,20 @@ namespace detail
         Integer log = 0;
         while (n >>= 1) {
             ++log;
+        }
+        return log;
+    }
+
+    // Returns ceil(log2(n)), assumes n > 0
+    template<typename Integer>
+    constexpr auto ceil_log2(Integer n)
+        -> Integer
+    {
+        Integer log = 0;
+        --n;
+        while (n > 0) {
+            ++log;
+            n >>= 1;
         }
         return log;
     }
