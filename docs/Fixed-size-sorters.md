@@ -1,8 +1,8 @@
 Fixed-size sorters, sometimes called *fixed sorters* for simplicity are a special kind of sorters designed to sort a fixed number of values. Their `operator()` also takes either an iterable or a pair of iterators as well as an optional comparison and projection functions. Most of the time the end iterator is unused, but future versions of the library may start to use it to optionally perform bound-checking.
 
-Fixed-sized sorters are not actual sorters *per se* but class templates that take an `std::size_t` template parameter. Every valid specialization of a fixed-size sorter for a given size yields a "valid" sorter. Several fixed-size sorters have specializations for some sizes only and will trigger a compile-time error when one tries to instantiate a specialization which is not part of the fixed-size sorter's domain (the domain corresponds to the set of valid specializations). Information about fixed-size sorters can be obtained via [`fixed_sorter_traits`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits). One can also make sure that a given fixed-size sorter is automatically used to sort small fixed-size arrays thanks to [`small_array_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#small_array_adapter).
+Fixed-size sorters are not actual sorters *per se* but class templates that take an `std::size_t` template parameter. Every valid specialization of a fixed-size sorter for a given size yields a "valid" sorter. Several fixed-size sorters have specializations for some sizes only and will trigger a compile-time error when one tries to instantiate a specialization which is not part of the fixed-size sorter's domain (the domain corresponds to the set of valid specializations). Information about fixed-size sorters can be obtained via [`fixed_sorter_traits`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits). One can also make sure that a given fixed-size sorter is automatically used to sort small fixed-size arrays thanks to [`small_array_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#small_array_adapter).
 
-It is possible to include all the fixed-sized sorters at once with the following directive:
+It is possible to include all the fixed-size sorters at once with the following directive:
 
 ```cpp
 #include <cpp-sort/fixed_sorters.h>
@@ -80,7 +80,7 @@ template<std::size_t N>
 struct low_moves_sorter;
 ```
 
-Note that this fixed-sized sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter) instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
+Note that this fixed-size sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter) instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
 
 ### `merge_exchange_network_sorter`
 
@@ -90,7 +90,7 @@ Note that this fixed-sized sorter is *not* move-optimal: it tries to perform a f
 
 This fixed-size sorter implements *merge-exchange sort* a variation of Batcher's [*odd-even mergesort*][odd-even-mergesort] described by Knuth in *[The Art of Computer Programming][taocp] vol.3 - Sorting and Searching*. Unlike the algorithm described in the Wikipedia article, this produces two interleaved [sorting networks][sorting-network] and merges them.
 
-![Merge-exchange sorting network for 8 inputs](https://raw.githubusercontent.com/Morwenn/cpp-sort/master/docs/images/merge-exchange-network-8.png)
+![Merge-exchange sorting network for 8 inputs](https://github.com/Morwenn/cpp-sort/wiki/images/merge-exchange-network-8.png)
 
 ```cpp
 template<std::size_t N>
@@ -112,7 +112,7 @@ template<typename DifferenceType=std::ptrdiff_t>
 
 This fixed-size sorter implements Batcher's [*odd-even mergesort*][odd-even-mergesort], which can be implemented as a family of sorting networks recursively sorting both halves of the input and merging them.
 
-![Odd-even mergesort network for 8 inputs](https://raw.githubusercontent.com/Morwenn/cpp-sort/master/docs/images/odd-even-merge-network-8.png)
+![Odd-even mergesort network for 8 inputs](https://github.com/Morwenn/cpp-sort/wiki/images/odd-even-merge-network-8.png)
 
 ```cpp
 template<std::size_t N>
