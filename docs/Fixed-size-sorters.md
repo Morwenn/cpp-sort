@@ -88,7 +88,7 @@ Note that this fixed-sized sorter is *not* move-optimal: it tries to perform a f
 #include <cpp-sort/fixed/merge_exchange_network_sorter.h>
 ```
 
-This fixed-size sorter implements *merge-exchange sort* a variation of Batcher's [odd-even mergesort][odd-even-mergesort] described by Knuth in *[The Art of Computer Programming][taocp] vol.3 - Sorting and Searching*. Unlike the algorithm described in the Wikipedia article, this produces two interleaved [sorting networks][sorting-network] and merges them.
+This fixed-size sorter implements *merge-exchange sort* a variation of Batcher's [*odd-even mergesort*][odd-even-mergesort] described by Knuth in *[The Art of Computer Programming][taocp] vol.3 - Sorting and Searching*. Unlike the algorithm described in the Wikipedia article, this produces two interleaved [sorting networks][sorting-network] and merges them.
 
 ![Merge-exchange sorting network for 8 inputs](https://raw.githubusercontent.com/Morwenn/cpp-sort/master/docs/images/merge-exchange-network-8.png)
 
@@ -98,6 +98,28 @@ struct merge_exchange_network_sorter;
 ```
 
 All specializations of `merge_exchange_network_sorter` provide a `index_pairs() static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be passed manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated of the index/difference type, which must be constructible from `int`.
+
+```cpp
+template<typename DifferenceType=std::ptrdiff_t>
+[[nodiscard]] static constexpr auto index_pairs()
+    -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
+
+### `merge_exchange_network_sorter`
+
+```cpp
+#include <cpp-sort/fixed/odd_even_merge_network_sorter.h>
+```
+
+This fixed-size sorter implements Batcher's [*odd-even mergesort*][odd-even-mergesort], which can be implemented as a family of sorting networks recursively sorting both halves of the input and merging them.
+
+![Odd-even mergesort network for 8 inputs](https://raw.githubusercontent.com/Morwenn/cpp-sort/master/docs/images/odd-even-merge-network-8.png)
+
+```cpp
+template<std::size_t N>
+struct odd_even_merge_network_sorter;
+```
+
+All specializations of `odd_even_merge_network_sorter` provide a `index_pairs() static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be passed manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated of the index/difference type, which must be constructible from `int`.
 
 ```cpp
 template<typename DifferenceType=std::ptrdiff_t>

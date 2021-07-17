@@ -67,6 +67,8 @@ namespace cppsort
     template<std::size_t N>
     struct merge_exchange_network_sorter;
     template<std::size_t N>
+    struct odd_even_merge_network_sorter;
+    template<std::size_t N>
     struct sorting_network_sorter;
 
     ////////////////////////////////////////////////////////////

@@ -90,6 +90,18 @@ namespace detail
     {
         return value / 2;
     }
+
+    // Returns whether an integer has a single bit set, generally
+    // used to check whether an integer is a power of 2,
+    // assumes n >= 0
+
+    template<typename Integer>
+    constexpr auto has_single_bit(Integer n) noexcept
+        -> bool
+    {
+        auto x = static_cast<std::make_unsigned_t<Integer>>(n);
+        return x != 0 && (x & (x - 1)) == 0;
+    }
 }}
 
 #endif // CPPSORT_DETAIL_BITOPS_H_
