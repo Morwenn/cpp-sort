@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_SORTING_NETWORK_SORTER_H_
@@ -45,7 +45,7 @@ namespace cppsort
     {
         using iterator_category = std::random_access_iterator_tag;
 
-        // Some of the algorithms are stable, some other are not,
+        // Some of the algorithms are stable, others are not,
         // the stability *could* be documented depending on which
         // fixed-size algorithms are used, but it would be lots of
         // work...
@@ -60,6 +60,13 @@ namespace cppsort
         using is_always_stable = std::false_type;
     };
 }
+
+// Common includes for specializations
+#include <array>
+#include <functional>
+#include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/sorting_networks.h>
+#include "../detail/swap_if.h"
 
 // Specializations of sorting_network_sorter for some values of N
 #include "../detail/sorting_network/sort0.h"

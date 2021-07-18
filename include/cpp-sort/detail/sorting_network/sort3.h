@@ -1,18 +1,9 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT3_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT3_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <functional>
-#include <type_traits>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
-#include "../swap_if.h"
 
 namespace cppsort
 {
@@ -36,6 +27,17 @@ namespace detail
             iter_swap_if(first + 1u, first + 2u, compare, projection);
             iter_swap_if(first, first + 2u, compare, projection);
             iter_swap_if(first, first + 1u, compare, projection);
+        }
+
+        template<typename DifferenceType=std::ptrdiff_t>
+        static constexpr auto index_pairs()
+            -> std::array<utility::index_pair<DifferenceType>, 3>
+        {
+            return {{
+                {0, 2},
+                {0, 1},
+                {1, 2},
+            }};
         }
     };
 }}
