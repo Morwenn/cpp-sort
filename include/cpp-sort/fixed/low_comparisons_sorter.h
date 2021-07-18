@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_LOW_COMPARISONS_SORTER_H_
@@ -14,6 +14,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include "../detail/empty_sorter.h"
 
 namespace cppsort
 {
@@ -30,6 +31,16 @@ namespace cppsort
                 "low_comparisons_sorter has no specialization for this size of N"
             );
         };
+
+        template<>
+        struct low_comparisons_sorter_impl<0u>:
+            cppsort::detail::empty_sorter_impl
+        {};
+
+        template<>
+        struct low_comparisons_sorter_impl<1u>:
+            cppsort::detail::empty_sorter_impl
+        {};
     }
 
     template<std::size_t N>
@@ -62,8 +73,6 @@ namespace cppsort
 }
 
 // Specializations of low_comparisons_sorter for some values of N
-#include "../detail/low_comparisons/sort0.h"
-#include "../detail/low_comparisons/sort1.h"
 #include "../detail/low_comparisons/sort2.h"
 #include "../detail/low_comparisons/sort3.h"
 #include "../detail/low_comparisons/sort4.h"

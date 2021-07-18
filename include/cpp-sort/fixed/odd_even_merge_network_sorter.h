@@ -19,6 +19,7 @@
 #include <cpp-sort/utility/sorting_networks.h>
 #include "../detail/attributes.h"
 #include "../detail/bitops.h"
+#include "../detail/empty_sorter.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/make_array.h"
 
@@ -102,52 +103,14 @@ namespace cppsort
         };
 
         template<>
-        struct odd_even_merge_network_sorter_impl<0u>
-        {
-            template<
-                typename RandomAccessIterator,
-                typename Compare = std::less<>,
-                typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator_v<
-                    Projection, RandomAccessIterator, Compare
-                >>
-            >
-            auto operator()(RandomAccessIterator, RandomAccessIterator,
-                            Compare={}, Projection={}) const
-                -> void
-            {}
-
-            template<typename DifferenceType=std::ptrdiff_t>
-            static constexpr auto index_pairs()
-                -> std::array<utility::index_pair<DifferenceType>, 0>
-            {
-                return {};
-            }
-        };
+        struct odd_even_merge_network_sorter_impl<0u>:
+            cppsort::detail::empty_network_sorter_impl
+        {};
 
         template<>
-        struct odd_even_merge_network_sorter_impl<1u>
-        {
-            template<
-                typename RandomAccessIterator,
-                typename Compare = std::less<>,
-                typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator_v<
-                    Projection, RandomAccessIterator, Compare
-                >>
-            >
-            auto operator()(RandomAccessIterator, RandomAccessIterator,
-                            Compare={}, Projection={}) const
-                -> void
-            {}
-
-            template<typename DifferenceType=std::ptrdiff_t>
-            static constexpr auto index_pairs()
-                -> std::array<utility::index_pair<DifferenceType>, 0>
-            {
-                return {};
-            }
-        };
+        struct odd_even_merge_network_sorter_impl<1u>:
+            cppsort::detail::empty_network_sorter_impl
+        {};
     }
 
     template<std::size_t N>

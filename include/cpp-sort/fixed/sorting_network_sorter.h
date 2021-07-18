@@ -14,6 +14,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include "../detail/empty_sorter.h"
 
 namespace cppsort
 {
@@ -30,6 +31,16 @@ namespace cppsort
                 "sorting_network_sorter has no specialization for this size of N"
             );
         };
+
+        template<>
+        struct sorting_network_sorter_impl<0u>:
+            cppsort::detail::empty_network_sorter_impl
+        {};
+
+        template<>
+        struct sorting_network_sorter_impl<1u>:
+            cppsort::detail::empty_network_sorter_impl
+        {};
     }
 
     template<std::size_t N>
@@ -69,8 +80,6 @@ namespace cppsort
 #include "../detail/swap_if.h"
 
 // Specializations of sorting_network_sorter for some values of N
-#include "../detail/sorting_network/sort0.h"
-#include "../detail/sorting_network/sort1.h"
 #include "../detail/sorting_network/sort2.h"
 #include "../detail/sorting_network/sort3.h"
 #include "../detail/sorting_network/sort4.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_LOW_MOVES_SORTER_H_
@@ -18,6 +18,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "../detail/empty_sorter.h"
 #include "../detail/minmax_element.h"
 
 namespace cppsort
@@ -77,6 +78,16 @@ namespace cppsort
                                          std::move(compare), std::move(projection));
             }
         };
+
+        template<>
+        struct low_moves_sorter_impl<0u>:
+            cppsort::detail::empty_sorter_impl
+        {};
+
+        template<>
+        struct low_moves_sorter_impl<1u>:
+            cppsort::detail::empty_sorter_impl
+        {};
     }
 
     template<std::size_t N>
@@ -108,8 +119,6 @@ namespace cppsort
 }
 
 // Specializations of low_moves_sorter for some values of N
-#include "../detail/low_moves/sort0.h"
-#include "../detail/low_moves/sort1.h"
 #include "../detail/low_moves/sort2.h"
 #include "../detail/low_moves/sort3.h"
 #include "../detail/low_moves/sort4.h"
