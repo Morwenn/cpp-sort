@@ -31,7 +31,7 @@ namespace utility
     };
 
     ////////////////////////////////////////////////////////////
-    // sort_index_pairs
+    // swap_index_pairs
     //
     // Let the compiler decide whether to unroll or not
     // depending on the number of elements to handle
@@ -43,7 +43,7 @@ namespace utility
         typename Compare = std::less<>,
         typename Projection = utility::identity
     >
-    auto sort_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
+    auto swap_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
                           Compare compare={}, Projection projection={})
         -> void
     {
@@ -54,7 +54,7 @@ namespace utility
     }
 
     ////////////////////////////////////////////////////////////
-    // sort_index_pairs_force_unroll
+    // swap_index_pairs_force_unroll
     //
     // This is a best effort function to try to force the
     // compiler to generate unrolled code, but the result is
@@ -63,7 +63,7 @@ namespace utility
     namespace detail
     {
         template<std::size_t CurrentPairIndex>
-        struct index_pair_sorter_force_unroll
+        struct index_pair_swapper_force_unroll
         {
             template<
                 typename RandomAccessIterator,
@@ -81,7 +81,7 @@ namespace utility
                 cppsort::detail::iter_swap_if(first + index_pairs[CurrentPairIndex].first,
                                               first + index_pairs[CurrentPairIndex].second,
                                               compare, projection);
-                index_pair_sorter_force_unroll<CurrentPairIndex + 1>::do_it(first, index_pairs,
+                index_pair_swapper_force_unroll<CurrentPairIndex + 1>::do_it(first, index_pairs,
                                                                             std::move(compare), std::move(projection));
             }
 
@@ -110,16 +110,16 @@ namespace utility
         typename Compare = std::less<>,
         typename Projection = utility::identity
     >
-    auto sort_index_pairs_force_unroll(RandomAccessIterator first,
+    auto swap_index_pairs_force_unroll(RandomAccessIterator first,
                                        const std::array<index_pair<IndexType>, N>& index_pairs,
                                        Compare compare={}, Projection projection={})
         -> void
     {
-        detail::index_pair_sorter_force_unroll<0>::do_it(first, index_pairs, std::move(compare), std::move(projection));
+        detail::index_pair_swapper_force_unroll<0>::do_it(first, index_pairs, std::move(compare), std::move(projection));
     }
 
     template<typename RandomAccessIterator, typename IndexType, typename Compare, typename Projection>
-    auto sort_index_pairs_force_unroll(RandomAccessIterator, const std::array<index_pair<IndexType>, 0>&,
+    auto swap_index_pairs_force_unroll(RandomAccessIterator, const std::array<index_pair<IndexType>, 0>&,
                                        Compare, Projection)
         -> void
     {}

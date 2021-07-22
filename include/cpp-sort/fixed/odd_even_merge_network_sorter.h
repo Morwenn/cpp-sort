@@ -98,7 +98,7 @@ namespace cppsort
             {
                 using difference_type = difference_type_t<RandomAccessIterator>;
                 auto pairs = index_pairs<difference_type>();
-                utility::sort_index_pairs(first, pairs, std::move(compare), std::move(projection));
+                utility::swap_index_pairs(first, pairs, std::move(compare), std::move(projection));
             }
         };
 

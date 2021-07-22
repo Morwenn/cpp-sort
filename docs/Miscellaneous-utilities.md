@@ -267,7 +267,7 @@ struct index_pair
 
 This pretty rough template acts as the base vocabulary type for comparator networks. *Fixed-size sorters* that happen to be sorting networks should provide an `index_pairs()` static methods returning a sequence of `index_pair` sufficient to sort a collection of a given size.
 
-The following functions accept a sequence of `index_pair` and use it to sort a given random-access collection (represented by an iterator to its first element):
+The following functions accept a sequence of `index_pair` and swap the elements of a given random-access collection (represented by an iterator to its first element) according to the index pairs:
 
 ```cpp
 template<
@@ -277,7 +277,7 @@ template<
     typename Compare = std::less<>,
     typename Projection = utility::identity
 >
-auto sort_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
+auto swap_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
                       Compare compare={}, Projection projection={})
     -> void;
 
@@ -288,13 +288,13 @@ template<
     typename Compare = std::less<>,
     typename Projection = utility::identity
 >
-auto sort_index_pairs_force_unroll(RandomAccessIterator first,
+auto swap_index_pairs_force_unroll(RandomAccessIterator first,
                                    const std::array<index_pair<IndexType>, N>& index_pairs,
                                    Compare compare={}, Projection projection={})
     -> void;
 ```
 
-`sort_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `sort_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
+`swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
 
 *New in version 1.11.0*
 
