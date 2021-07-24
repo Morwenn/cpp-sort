@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020 Morwenn
+# Copyright (c) 2020-2021 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
@@ -59,5 +59,5 @@ if __name__ == '__main__':
     pyplot.legend(loc='best')
     pyplot.title('Sorting std::vector<int> with $10^6$ elements')
     pyplot.xlabel('Percentage of inversions')
-    pyplot.ylabel('Cycles')
+    pyplot.ylabel('Cycles (lower is better)')
     pyplot.show()

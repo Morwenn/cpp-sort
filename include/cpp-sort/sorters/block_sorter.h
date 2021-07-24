@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_BLOCK_SORTER_H_
@@ -17,8 +17,9 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/block_sort.h"
+#include "../detail/attributes.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/wiki_sort.h"
 
 namespace cppsort
 {
@@ -50,8 +51,8 @@ namespace cppsort
                     "block_sorter requires at least random-access iterators"
                 );
 
-                block_sort<BufferProvider>(std::move(first), std::move(last),
-                                           std::move(compare), std::move(projection));
+                wiki_sort<BufferProvider>(std::move(first), std::move(last),
+                                          std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////
@@ -74,6 +75,7 @@ namespace cppsort
 
     namespace
     {
+        CPPSORT_DEPRECATED("block_sort() is deprecated and will be removed in version 2.0.0, use wiki_sort() instead")
         constexpr auto&& block_sort
             = utility::static_const<block_sorter<>>::value;
     }

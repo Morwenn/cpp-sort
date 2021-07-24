@@ -25,7 +25,7 @@ namespace
 
         stateful_sorter_impl() = default;
 
-        constexpr stateful_sorter_impl(int a):
+        explicit constexpr stateful_sorter_impl(int a):
             dummy(a)
         {}
 

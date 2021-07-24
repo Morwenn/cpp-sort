@@ -19,6 +19,7 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <limits>
+#include <memory>
 #include <new>
 #include <type_traits>
 #include "type_traits.h"
@@ -28,7 +29,7 @@ namespace cppsort
 namespace detail
 {
     ////////////////////////////////////////////////////////////
-    // C++17 std::destroy_at
+    // C++17 std::destroy and friends
 
     template<typename T>
     auto destroy_at(T* ptr)
@@ -37,6 +38,25 @@ namespace detail
         // TODO: implement if needed
         static_assert(not std::is_array<T>::value, "destroy_at() does no handle arrays");
         ptr->~T();
+    }
+
+    template<typename ForwardIterator>
+    auto destroy(ForwardIterator first, ForwardIterator last)
+        -> void
+    {
+        for (; first != last; ++first) {
+            detail::destroy_at(std::addressof(*first));
+        }
+    }
+
+    template<typename ForwardIterator, typename Size>
+    auto destroy_n(ForwardIterator first, Size n)
+        -> void
+    {
+        for (; n > 0; --n) {
+            detail::destroy_at(std::addressof(*first));
+            ++first;
+        }
     }
 
     ////////////////////////////////////////////////////////////
@@ -101,10 +121,7 @@ namespace detail
         constexpr auto operator()(T* pointer) noexcept
             -> void
         {
-            for (std::size_t i = 0 ; i < size ; ++i) {
-                detail::destroy_at(pointer);
-                ++pointer;
-            }
+            detail::destroy_n(pointer, size);
         }
 
         // Number of allocated objects to destroy
@@ -130,7 +147,7 @@ namespace detail
      * This functions tries to allocate enough storage for at least
      * \a count objects. Failing that it will try to allocate storage
      * for fewer objects and will give up if it can't allocate more
-     * than \a min_size objects.
+     * than \a min_count objects.
      */
     template<typename T>
     auto get_temporary_buffer(std::ptrdiff_t count, std::ptrdiff_t min_count) noexcept

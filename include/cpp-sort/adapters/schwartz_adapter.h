@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <memory>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
@@ -24,8 +23,8 @@
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
 #include "../detail/config.h"
+#include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/memory.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -77,27 +76,17 @@ namespace cppsort
             using value_t = association<ForwardIterator, proj_t>;
             using difference_type = difference_type_t<ForwardIterator>;
 
-            // Collection of projected elements
-            std::unique_ptr<value_t, operator_deleter> projected(
-                static_cast<value_t*>(::operator new(size * sizeof(value_t))),
-                operator_deleter(size * sizeof(value_t))
-            );
-            destruct_n<value_t> d(0);
-            std::unique_ptr<value_t, destruct_n<value_t>&> h2(projected.get(), d);
-
             // Associate iterator to projected element
-            auto ptr = projected.get();
-            for (difference_type count = 0 ; count != size ; ++count) {
-                ::new(ptr) value_t(first, proj(*first));
-                ++d;
+            immovable_vector<value_t> projected(size);
+            for (difference_type count = 0; count != size; ++count) {
+                projected.emplace_back(first, proj(*first));
                 ++first;
-                ++ptr;
             }
 
             // Indirectly sort the original sequence
             return std::forward<Sorter>(sorter)(
-                make_associate_iterator(projected.get()),
-                make_associate_iterator(projected.get() + size),
+                make_associate_iterator(projected.begin()),
+                make_associate_iterator(projected.end()),
                 std::move(compare),
                 data_getter{}
             );

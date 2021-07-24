@@ -41,10 +41,6 @@ namespace
 }
 
 TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -69,7 +65,11 @@ TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     // This test primarily exists to detect self-move issues in the library:
     // long std::string instances actually self-destruct on self-move and can

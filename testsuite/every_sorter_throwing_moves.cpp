@@ -77,10 +77,6 @@ namespace
 }
 
 TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[sorters][throwing_moves]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -103,7 +99,11 @@ TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     auto distribution = dist::shuffled{};
     // Initialize counters
@@ -145,6 +145,7 @@ TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[
 }
 
 TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[sorters][throwing_moves]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
@@ -178,6 +179,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[
 }
 
 TEMPLATE_TEST_CASE( "forward sorters against throwing move operations", "[sorters][throwing_moves]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,

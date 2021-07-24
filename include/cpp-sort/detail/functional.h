@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/branchless_traits.h>
 
 namespace cppsort
 {
@@ -141,6 +142,16 @@ namespace detail
     {
         return indirect_t<std::decay_t<Projection>>(std::forward<Projection>(proj));
     }
+}}
+
+namespace cppsort
+{
+namespace utility
+{
+    template<typename Predicate, typename T>
+    struct is_probably_branchless_comparison<cppsort::detail::invert_t<Predicate>, T>:
+        is_probably_branchless_comparison<Predicate, T>
+    {};
 }}
 
 #endif // CPPSORT_DETAIL_FUNCTIONAL_H_

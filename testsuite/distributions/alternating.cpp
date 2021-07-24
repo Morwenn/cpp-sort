@@ -12,10 +12,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test sorter with alternating distribution", "[distributions]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -37,7 +33,11 @@ TEMPLATE_TEST_CASE( "test sorter with alternating distribution", "[distributions
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     std::vector<int> collection;
     collection.reserve(10'000);

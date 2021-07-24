@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_TYPE_TRAITS_H_
@@ -291,6 +291,29 @@ namespace detail
     template<typename T>
     using is_unsigned = std::is_unsigned<T>;
 #endif
+
+    ////////////////////////////////////////////////////////////
+    // is_in_pack: check whether a given std::size_t value
+    // appears in a std::size_t... parameter pack
+
+    template<std::size_t... Values>
+    constexpr auto is_in_pack_impl(std::size_t value) noexcept
+        -> bool
+    {
+        std::size_t arr[] = { Values... };
+        for (std::size_t val: arr) {
+            if (val == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template<std::size_t Value, std::size_t... Values>
+    constexpr bool is_in_pack = is_in_pack_impl<Values...>(Value);
+
+    template<std::size_t Value>
+    constexpr bool is_in_pack<Value> = false;
 }}
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_

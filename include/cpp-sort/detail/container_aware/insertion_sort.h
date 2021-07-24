@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
@@ -19,6 +19,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include "../bitops.h"
 #include "../std_list_traits.h"
 #include "../type_traits.h"
 #include "../upper_bound.h"
@@ -38,21 +39,21 @@ namespace cppsort
             auto last = collection.end();
             if (it == last) return;
 
+            // Size of the list where a value is inserted
+            typename std::list<Args...>::difference_type size = 1;
+
             ++it;
-            while (it != last)
-            {
-                auto insertion_point = upper_bound(collection.begin(), it, proj(*it),
-                                                   compare, projection);
-                if (insertion_point == it)
-                {
+            while (it != last) {
+                auto insertion_point = upper_bound_n(collection.begin(), size, proj(*it),
+                                                     compare, projection);
+                if (insertion_point == it) {
                     ++it;
-                }
-                else
-                {
+                } else {
                     auto next = std::next(it);
                     collection.splice(insertion_point, collection, it);
                     it = next;
                 }
+                ++size;
             }
         }
 
@@ -66,30 +67,34 @@ namespace cppsort
 
             auto it = collection.before_begin();
             auto last = collection.end();
-            if (std::next(it) == last) return;
+            if (++it == last) return;
 
-            ++it;
-            while (std::next(it) != last)
-            {
-                // Linear search in list
+            // Size of the list where a value is inserted
+            typename std::forward_list<Args...>::difference_type size = 1;
+
+            while (std::next(it) != last) {
+                // Binary search to find where to insert the value, we can't
+                // use upper_bound because of the specificities of forward_list
                 auto&& value = proj(*std::next(it));
                 auto insertion_point = collection.before_begin();
-                while (std::next(insertion_point) != last)
-                {
-                    if (not comp(proj(*std::next(insertion_point)), value)) break;
-                    ++insertion_point;
+                for (auto search_size = size ; search_size > 0 ;) {
+                    auto search_it = std::next(insertion_point, half(search_size));
+                    if (not comp(value, proj(*std::next(search_it)))) {
+                        insertion_point = ++search_it;
+                        search_size -= half(search_size) + 1;
+                    } else {
+                        search_size = half(search_size);
+                    }
                 }
 
-                if (insertion_point == it)
-                {
+                if (insertion_point == it) {
                     ++it;
-                }
-                else
-                {
-                    auto next = std::next(it);
+                } else {
+                    // We splice the elements after it to some position before it,
+                    // so this effectively advances the iterator towards last
                     collection.splice_after(insertion_point, collection, it);
-                    it = next;
                 }
+                ++size;
             }
         }
     }

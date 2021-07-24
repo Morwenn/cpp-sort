@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
-#include <memory>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -17,8 +16,8 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/heapsort.h"
 #include "../detail/functional.h"
+#include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/memory.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -65,52 +64,35 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Constructor
 
-            template<typename Iterator, typename Compare, typename Projection>
-            explicit cartesian_tree(Iterator first, Iterator last, Compare compare, Projection projection):
-                // Allocate enough space to store N nodes
-                size_(last - first),
-                buffer_(static_cast<node_type*>(::operator new(size_ * sizeof(node_type))),
-                        operator_deleter(size_ * sizeof(node_type))),
-                root_(buffer_.get()) // Original root is first element
+            template<typename ForwardIterator, typename Compare, typename Projection>
+            explicit cartesian_tree(ForwardIterator first, ForwardIterator last,
+                                    difference_type_t<ForwardIterator> size,
+                                    Compare compare, Projection projection):
+                buffer_(size),
+                root_(buffer_.begin()) // Original root is first element
             {
                 using utility::iter_move;
                 auto&& proj = utility::as_function(projection);
 
-                // Pointer to the next memory where to allocate a node
-                node_type* current_node = buffer_.get();
                 // Pointer to the last node that was inserted
-                node_type* prev_node = current_node;
+                node_type* prev_node = buffer_.begin();
                 // Create the first node
-                ::new(current_node) node_type(iter_move(first), nullptr, nullptr);
+                buffer_.emplace_back(iter_move(first), nullptr, nullptr);
 
                 // Advance to the next element
                 ++first;
-                ++current_node;
 
-                for (; first != last ; ++first, ++current_node) {
+                for (; first != last ; ++first) {
                     auto&& proj_value = proj(*first);
                     node_type* new_parent = _find_insertion_parent(prev_node, proj_value, compare, projection);
                     if (new_parent == nullptr) {
-                        ::new(current_node) node_type(iter_move(first), nullptr, root_);
-                        root_ = current_node;
+                        buffer_.emplace_back(iter_move(first), nullptr, root_);
+                        root_ = &buffer_.back();
                     } else {
-                        ::new(current_node) node_type(iter_move(first), new_parent, new_parent->right_child);
-                        new_parent->right_child = current_node;
+                        buffer_.emplace_back(iter_move(first), new_parent, new_parent->right_child);
+                        new_parent->right_child = &buffer_.back();
                     }
-                    prev_node = current_node;
-                }
-            }
-
-            ////////////////////////////////////////////////////////////
-            // Destructor
-
-            ~cartesian_tree()
-            {
-                // Destroy the nodes
-                auto ptr = buffer_.get();
-                for (difference_type idx = 0 ; idx < size_ ; ++idx) {
-                    detail::destroy_at(ptr);
-                    ++ptr;
+                    prev_node = &buffer_.back();
                 }
             }
 
@@ -148,26 +130,26 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Data members
 
-            // Number of nodes in the tree
-            difference_type size_;
             // Backing storage
-            std::unique_ptr<node_type, operator_deleter> buffer_;
+            immovable_vector<node_type> buffer_;
             // Root of the Cartesian tree
             node_type* root_;
     };
 
-    template<typename Iterator, typename Compare, typename Projection>
-    auto cartesian_tree_sort(Iterator first, Iterator last, Compare compare, Projection projection)
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto cartesian_tree_sort(ForwardIterator first, ForwardIterator last,
+                             difference_type_t<ForwardIterator> size,
+                             Compare compare, Projection projection)
         -> void
     {
-        using tree_type = cartesian_tree<rvalue_type_t<Iterator>>;
+        using tree_type = cartesian_tree<rvalue_type_t<ForwardIterator>>;
         using node_type = typename tree_type::node_type;
 
-        if ((last - first) < 2) {
+        if (size < 2) {
             return;
         }
 
-        tree_type tree(first, last, compare, projection);
+        tree_type tree(first, last, size, compare, projection);
         std::vector<node_type*> pq; // Priority queue
         pq.push_back(tree.root());
 

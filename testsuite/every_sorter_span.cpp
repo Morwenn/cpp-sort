@@ -13,10 +13,6 @@
 #include <testing-tools/span.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::default_sorter,
@@ -43,7 +39,11 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     // General test to make sure that every sorter compiles fine
     // and is able to sort a temporary span referencing a vector

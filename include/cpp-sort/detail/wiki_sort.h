@@ -7,8 +7,8 @@
  * WikiSort: a public domain implementation of "Block Sort"
  * https://github.com/BonzaiThePenguin/WikiSort
  */
-#ifndef CPPSORT_DETAIL_BLOCK_SORT_H_
-#define CPPSORT_DETAIL_BLOCK_SORT_H_
+#ifndef CPPSORT_DETAIL_WIKI_SORT_H_
+#define CPPSORT_DETAIL_WIKI_SORT_H_
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -923,8 +923,8 @@ namespace detail
 
     template<typename BufferProvider, typename RandomAccessIterator,
              typename Compare, typename Projection>
-    auto block_sort(RandomAccessIterator first, RandomAccessIterator last,
-                    Compare compare, Projection projection)
+    auto wiki_sort(RandomAccessIterator first, RandomAccessIterator last,
+                   Compare compare, Projection projection)
         -> void
     {
         Wiki::sort<BufferProvider>(std::move(first), std::move(last),
@@ -932,4 +932,4 @@ namespace detail
     }
 }}
 
-#endif // CPPSORT_DETAIL_BLOCK_SORT_H_
+#endif // CPPSORT_DETAIL_WIKI_SORT_H_

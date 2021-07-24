@@ -247,6 +247,57 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 
 `size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
 
+### Sorting network tools
+
+```cpp
+#include <cpp-sort/utility/sorting_network.h>
+```
+
+Some of the library's *fixed-size sorters* implement [sorting networks][sorting-network]. It is a subdomain of sorting that has seen extensive research and there is no way all of the interesting bits could be provided as mere sorters; therefore the following tools are provided specifically to experiment with sorting networks, and with comparator networks more generally.
+
+All comparator networks execute a fixed sequence of compare-exchanges, operations that compare two elements and exchange them if they are out-of-order. The following `index_pair` class template represents a pair of indices meant to contain the indices used to perform a compare-exchange operation:
+
+```cpp
+template<typename IndexType>
+struct index_pair
+{
+    IndexType first, second;
+};
+```
+
+This pretty rough template acts as the base vocabulary type for comparator networks. *Fixed-size sorters* that happen to be sorting networks should provide an `index_pairs()` static methods returning a sequence of `index_pair` sufficient to sort a collection of a given size.
+
+The following functions accept a sequence of `index_pair` and swap the elements of a given random-access collection (represented by an iterator to its first element) according to the index pairs:
+
+```cpp
+template<
+    typename RandomAccessIterator,
+    typename IndexType,
+    std::size_t N,
+    typename Compare = std::less<>,
+    typename Projection = utility::identity
+>
+auto swap_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
+                      Compare compare={}, Projection projection={})
+    -> void;
+
+template<
+    typename RandomAccessIterator,
+    typename IndexType,
+    std::size_t N,
+    typename Compare = std::less<>,
+    typename Projection = utility::identity
+>
+auto swap_index_pairs_force_unroll(RandomAccessIterator first,
+                                   const std::array<index_pair<IndexType>, N>& index_pairs,
+                                   Compare compare={}, Projection projection={})
+    -> void;
+```
+
+`swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
+
+*New in version 1.11.0*
+
 ### `static_const`
 
 ```cpp
@@ -275,6 +326,7 @@ You can read more about this instantiation pattern in [this article][eric-nieble
   [p0022]: https://wg21.link/P0022
   [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3
+  [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
   [std-bad-alloc]: https://en.cppreference.com/w/cpp/memory/new/bad_alloc
   [std-greater]: https://en.cppreference.com/w/cpp/utility/functional/greater

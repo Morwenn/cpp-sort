@@ -1,18 +1,9 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT23_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT23_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <functional>
-#include <type_traits>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
-#include "../swap_if.h"
 
 namespace cppsort
 {
@@ -148,6 +139,27 @@ namespace detail
             iter_swap_if(first + 13u, first + 14u, compare, projection);
             iter_swap_if(first + 15u, first + 16u, compare, projection);
             iter_swap_if(first + 17u, first + 18u, compare, projection);
+        }
+
+        template<typename DifferenceType=std::ptrdiff_t>
+        static constexpr auto index_pairs()
+            -> std::array<utility::index_pair<DifferenceType>, 115>
+        {
+            return {{
+                {0, 20}, {1, 12}, {2, 16}, {4, 6}, {5, 10}, {7, 21}, {8, 14}, {9, 15}, {11, 22}, {13, 18}, {17, 19},
+                {0, 3}, {1, 11}, {2, 7}, {4, 17}, {5, 13}, {6, 19}, {8, 9}, {10, 18}, {12, 22}, {14, 15}, {16, 21},
+                {0, 1}, {2, 4}, {3, 12}, {5, 8}, {6, 9}, {7, 10}, {11, 20}, {13, 16}, {14, 17}, {15, 18}, {19, 21},
+                {2, 5}, {4, 8}, {6, 11}, {7, 14}, {9, 16}, {12, 17}, {15, 19}, {18, 21},
+                {1, 8}, {3, 14}, {4, 7}, {9, 20}, {10, 12}, {11, 13}, {15, 22}, {16, 19},
+                {0, 7}, {1, 5}, {3, 4}, {6, 11}, {8, 15}, {9, 14}, {10, 13}, {12, 17}, {18, 22}, {19, 20},
+                {0, 2}, {1, 6}, {4, 7}, {5, 9}, {8, 10}, {13, 15}, {14, 18}, {16, 19}, {17, 22}, {20, 21},
+                {2, 3}, {4, 5}, {6, 8}, {7, 9}, {10, 11}, {12, 13}, {14, 16}, {15, 17}, {18, 19}, {21, 22},
+                {1, 2}, {3, 6}, {4, 10}, {7, 8}, {9, 11}, {12, 14}, {13, 19}, {15, 16}, {17, 20},
+                {2, 3}, {5, 10}, {6, 7}, {8, 9}, {13, 18}, {14, 15}, {16, 17}, {20, 21},
+                {3, 4}, {5, 7}, {10, 12}, {11, 13}, {16, 18}, {19, 20},
+                {4, 6}, {8, 10}, {9, 12}, {11, 14}, {13, 15}, {17, 19},
+                {5, 6}, {7, 8}, {9, 10}, {11, 12}, {13, 14}, {15, 16}, {17, 18},
+            }};
         }
     };
 }}

@@ -45,9 +45,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install Clang
+        if: ${{matrix.cxx == 'clang++-6.0'}}
+        run: sudo apt-get install -y clang-6.0 lld-6.0
+
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}
-        run: sudo apt install -y valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}

@@ -10,17 +10,16 @@
 ////////////////////////////////////////////////////////////
 #include <cstdint>
 #include <iterator>
-#include <new>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "attributes.h"
 #include "config.h"
 #include "fixed_size_list.h"
 #include "functional.h"
+#include "immovable_vector.h"
 #include "iterator_traits.h"
-#include "memory.h"
 #include "move.h"
 #include "scope_exit.h"
 #include "swap_if.h"
@@ -63,12 +62,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto base() const
                 -> iterator_type
             {
                 return _it;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto size() const
                 -> difference_type
             {
@@ -78,13 +79,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator*() const
                 -> reference
             {
                 return _it[_size - 1];
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator->() const
                 -> pointer
             {
@@ -141,12 +143,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Elements access operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator[](difference_type pos)
                 -> decltype(base()[pos * size() + size() - 1])
             {
                 return base()[pos * size() + size() - 1];
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos * size() + size() - 1])
             {
@@ -156,12 +160,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Comparison operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator==(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() == rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator!=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
@@ -171,24 +177,28 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Relational operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator<(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() < rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator<=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() <= rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator>(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() > rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator>=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
@@ -198,28 +208,41 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Arithmetic operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator+(group_iterator it, difference_type size)
                 -> group_iterator
             {
                 return it += size;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator+(difference_type size, group_iterator it)
                 -> group_iterator
             {
                 return it += size;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator-(group_iterator it, difference_type size)
                 -> group_iterator
             {
                 return it -= size;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator-(const group_iterator& lhs, const group_iterator& rhs)
                 -> difference_type
             {
                 return (lhs.base() - rhs.base()) / lhs.size();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // iter_swap
+
+            friend auto iter_swap(group_iterator lhs, group_iterator rhs)
+                -> void
+            {
+                detail::swap_ranges_inner(lhs.base(), lhs.base() + lhs.size(), rhs.base());
             }
 
         private:
@@ -228,17 +251,11 @@ namespace detail
             difference_type _size;
     };
 
-    template<typename Iterator>
-    auto iter_swap(group_iterator<Iterator> lhs, group_iterator<Iterator> rhs)
-        -> void
-    {
-        detail::swap_ranges_inner(lhs.base(), lhs.base() + lhs.size(), rhs.base());
-    }
-
     ////////////////////////////////////////////////////////////
     // Construction function
 
     template<typename Iterator>
+    CPPSORT_ATTRIBUTE_NODISCARD
     auto make_group_iterator(Iterator it, difference_type_t<group_iterator<Iterator>> size)
         -> group_iterator<Iterator>
     {
@@ -246,6 +263,7 @@ namespace detail
     }
 
     template<typename Iterator>
+    CPPSORT_ATTRIBUTE_NODISCARD
     auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
         -> group_iterator<Iterator>
     {
@@ -332,19 +350,18 @@ namespace detail
         chain.push_back(std::next(first));
 
         // Upper bounds for the insertion of pend elements
-        std::vector<typename list_t::iterator> pend;
-        pend.reserve((size + 1) / 2 - 1);
+        immovable_vector<typename list_t::iterator> pend((size + 1) / 2 - 1);
 
         for (auto it = first + 2 ; it != end ; it += 2) {
             auto tmp = chain.insert(chain.end(), std::next(it));
-            pend.push_back(tmp);
+            pend.emplace_back(tmp);
         }
 
         // Add the last element to pend if it exists; when it
         // exists, it always has to be inserted in the full chain,
         // so giving it chain.end() as end insertion point is ok
         if (has_stray) {
-            pend.push_back(chain.end());
+            pend.emplace_back(chain.end());
         }
 
         ////////////////////////////////////////////////////////////
@@ -404,21 +421,13 @@ namespace detail
         // Number of sub-iterators
         auto full_size = size * first.size();
 
-        using rvalue_type = rvalue_type_t<RandomAccessIterator>;
-        std::unique_ptr<rvalue_type, operator_deleter> cache(
-            static_cast<rvalue_type*>(::operator new(full_size * sizeof(rvalue_type))),
-            operator_deleter(full_size * sizeof(rvalue_type))
-        );
-        destruct_n<rvalue_type> d(0);
-        std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(cache.get(), d);
-
-        rvalue_type* buff_it = cache.get();
+        immovable_vector<rvalue_type_t<RandomAccessIterator>> cache(full_size);
         for (auto&& it: chain) {
             auto begin = it.base();
             auto end = begin + it.size();
-            buff_it = uninitialized_move(begin, end, buff_it, d);
+            cache.insert_back(begin, end);
         }
-        detail::move(cache.get(), cache.get() + full_size, first.base());
+        detail::move(cache.begin(), cache.end(), first.base());
 
         // Everything else worked, it's now safe to reset the node pool
         node_pool_reset.activate();

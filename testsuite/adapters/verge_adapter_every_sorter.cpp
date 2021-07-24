@@ -12,7 +12,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
-                    cppsort::block_sorter<cppsort::utility::fixed_buffer<0>>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -34,7 +33,8 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
-                    cppsort::tim_sorter )
+                    cppsort::tim_sorter,
+                    cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     std::vector<double> collection; collection.reserve(412);
     auto distribution = dist::shuffled{};

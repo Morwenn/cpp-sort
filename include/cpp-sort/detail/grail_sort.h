@@ -27,7 +27,6 @@
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
-#include "merge_move.h"
 #include "move.h"
 #include "rotate.h"
 #include "swap_ranges.h"
@@ -503,9 +502,7 @@ namespace grail
                 if (rest > h) {
                     merge_left_with_extra_buffer(p0, p0+h, last, p0-h, compare, projection);
                 } else {
-                    for (; p0 < last ; ++p0) {
-                        p0[-h] = iter_move(p0);
-                    }
+                    detail::move(p0, last, p0 - h);
                 }
                 first -= h;
                 last -= h;
@@ -686,7 +683,7 @@ namespace grail
             return;
         }
 
-        difference_type lblock = 1;
+        difference_type lblock = 4;
         while (lblock * lblock < size) {
             lblock *= 2;
         }

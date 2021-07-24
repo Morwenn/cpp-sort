@@ -9,11 +9,11 @@ The library's repository does contain files specific to other tools, but most of
 **cpp-sort** can be installed via CMake, in which case it exports a `cpp-sort::cpp-sort` target and all the files required for a basic integration. Once it has been installed on the system, the following lines should be enough to use it as a dependency:
 
 ```cmake
-find_package(cpp-sort REQUIRED)
+find_package(cpp-sort REQUIRED CONFIG)
 target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 ```
 
-Alternatively if you don't want to install **cpp-sort** directly, it can still be used directly as a subdirectory:
+If you don't want to install **cpp-sort** directly, it can still be used directly as a subdirectory:
 
 ```cmake
 add_subdirectory(third_party/cpp-sort)
@@ -51,10 +51,10 @@ The same options exist without the `CPPSORT_` prefix exist, but are deprecated. 
 conan search cpp-sort --remote=conan-center
 ```
 
-And then install any version to your local cache as follows (here with version 1.9.0):
+And then install any version to your local cache as follows (here with version 1.11.0):
 
 ```sh
-conan install cpp-sort/1.10.0
+conan install cpp-sort/1.11.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to build your own package with the `conanfile.py` available in this repository.

@@ -12,7 +12,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indirect_adapter]",
-                    cppsort::block_sorter<>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -36,7 +35,8 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
                     cppsort::std_sorter,
                     cppsort::stable_adapter<cppsort::std_sorter>,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<> )
 {
     std::vector<double> collection; collection.reserve(412);
     auto distribution = dist::shuffled{};
@@ -48,6 +48,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
 }
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indirect_adapter]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
@@ -68,6 +69,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indire
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with with indirect_adapter", "[indirect_adapter]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter, // Check extended support

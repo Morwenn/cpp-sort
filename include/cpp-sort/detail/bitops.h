@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BITOPS_H_
@@ -61,6 +61,20 @@ namespace detail
         return log;
     }
 
+    // Returns ceil(log2(n)), assumes n > 0
+    template<typename Integer>
+    constexpr auto ceil_log2(Integer n)
+        -> Integer
+    {
+        Integer log = 0;
+        --n;
+        while (n > 0) {
+            ++log;
+            n >>= 1;
+        }
+        return log;
+    }
+
     // Halves a positive number, using unsigned division if possible
 
     template<typename Integer>
@@ -75,6 +89,18 @@ namespace detail
         -> std::enable_if_t<not std::is_integral<T>::value, T>
     {
         return value / 2;
+    }
+
+    // Returns whether an integer has a single bit set, generally
+    // used to check whether an integer is a power of 2,
+    // assumes n >= 0
+
+    template<typename Integer>
+    constexpr auto has_single_bit(Integer n) noexcept
+        -> bool
+    {
+        auto x = static_cast<std::make_unsigned_t<Integer>>(n);
+        return x != 0 && (x & (x - 1)) == 0;
     }
 }}
 

@@ -14,7 +14,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue", "[sorters][projection]",
-                    cppsort::block_sorter<>,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -35,7 +34,8 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<> )
 {
     // This test is meant to check that sorters can correctly handle
     // projections that return an rvalue, we use std::negate<int> as
@@ -65,6 +65,7 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
 }
 
 TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue", "[sorters][projection]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
@@ -87,6 +88,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue
 }
 
 TEMPLATE_TEST_CASE( "forward sorters with a projection returning an rvalue", "[sorters][projection]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,

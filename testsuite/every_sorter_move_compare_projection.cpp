@@ -13,10 +13,6 @@
 #include <testing-tools/functional_checks.h>
 
 TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[sorters]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -39,7 +35,11 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     std::vector<int> collection;
     collection.reserve(491);
@@ -52,10 +52,6 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
 }
 
 TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters][projection]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -79,7 +75,11 @@ TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[s
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     std::vector<int> collection;
     collection.reserve(491);

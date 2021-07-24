@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -40,10 +40,10 @@ namespace boost_common
     /// @brief this represent a range between two iterators
     /// @remarks
     //----------------------------------------------------------------------------
-    template<typename Iter_t>
+    template<typename RandomAccessIterator>
     struct range
     {
-        Iter_t first, last;
+        RandomAccessIterator first, last;
 
         //------------------------------------------------------------------------
         //  function : range
@@ -57,7 +57,7 @@ namespace boost_common
         /// @param frs : iterator to the first element
         /// @param lst : iterator to the last element
         //-----------------------------------------------------------------------
-        range(const Iter_t& frs, const Iter_t& lst):
+        range(const RandomAccessIterator& frs, const RandomAccessIterator& lst):
             first(frs),
             last(lst)
         {}
@@ -101,7 +101,7 @@ namespace boost_common
         /// @return size
         //-----------------------------------------------------------------------
         auto size() const
-            -> std::size_t
+            -> difference_type_t<RandomAccessIterator>
         {
             return last - first;
         }
@@ -112,7 +112,7 @@ namespace boost_common
         /// @return iterator
         //-----------------------------------------------------------------------
         auto front() const
-            -> Iter_t
+            -> RandomAccessIterator
         {
             return first;
         }
@@ -123,7 +123,7 @@ namespace boost_common
         /// @return iterator
         //-------------------------------------------------------------------------
         auto back() const
-            -> Iter_t
+            -> RandomAccessIterator
         {
             return std::prev(last);
         }

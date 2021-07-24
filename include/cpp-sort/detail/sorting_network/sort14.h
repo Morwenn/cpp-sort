@@ -1,18 +1,9 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT14_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT14_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <functional>
-#include <type_traits>
-#include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
-#include "../swap_if.h"
 
 namespace cppsort
 {
@@ -84,6 +75,24 @@ namespace detail
             iter_swap_if(first + 11u, first + 12u, compare, projection);
             iter_swap_if(first + 6u, first + 7u, compare, projection);
             iter_swap_if(first + 8u, first + 9u, compare, projection);
+        }
+
+        template<typename DifferenceType=std::ptrdiff_t>
+        static constexpr auto index_pairs()
+            -> std::array<utility::index_pair<DifferenceType>, 51>
+        {
+            return {{
+                {0, 6}, {1, 11}, {2, 12}, {3, 10}, {4, 5}, {7, 13}, {8, 9},
+                {1, 2}, {3, 7}, {4, 8}, {5, 9}, {6, 10}, {11, 12},
+                {0, 4}, {1, 3}, {5, 6}, {7, 8}, {9, 13}, {10, 12},
+                {0, 1}, {2, 9}, {3, 7}, {4, 11}, {6, 10}, {12, 13},
+                {2, 5}, {4, 7}, {6, 9}, {8, 11},
+                {1, 2}, {3, 4}, {6, 7}, {9, 10}, {11, 12},
+                {1, 3}, {2, 4}, {5, 6}, {7, 8}, {9, 11}, {10, 12},
+                {2, 3}, {4, 7}, {6, 9}, {10, 11},
+                {4, 5}, {6, 7}, {8, 9},
+                {3, 4}, {5, 6}, {7, 8}, {9, 10},
+            }};
         }
     };
 }}

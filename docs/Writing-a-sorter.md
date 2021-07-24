@@ -420,21 +420,21 @@ There are no specific rules to differentiate the way *stateful* and *stateless s
 
 ## Buffered sorters
 
-Some sorting algorithms can take advantage of buffers of any size to improve their performance, generally to perform merge operations. However, depending on many parameters not known to a sorter's implementer, the best method used to get a buffer of reasonable size might not always be the same. To avoid this problem (and to avoid the duplication of similar algorithms), **cpp-sort** provides some tools to specify the way a buffer is allocated. Let's take a simple example: [SqrtSort](https://github.com/Mrrl/SqrtSort) is apparently a [GrailSort](https://github.com/Mrrl/GrailSort) whose exchange buffer has a size roughly equal to the square root of the size of the collection to sort. While these algorithms are presented as separate algorithms, one can simply pass a *buffer provider* template parameter to a `grail_sorter` and use it to define define `sqrt_sorter`:
+Some sorting algorithms can take advantage of buffers of any size to improve their performance, generally to perform merge operations. However, depending on many parameters not known to a sorter's implementer, the best method used to get a buffer of reasonable size might not always be the same. To avoid this problem (and to avoid the duplication of similar algorithms), **cpp-sort** provides some tools to specify the way a buffer is allocated. Let's take a simple example: [SqrtSort](https://github.com/Mrrl/SqrtSort) is apparently a [GrailSort](https://github.com/Mrrl/GrailSort) whose exchange buffer has a size roughly equal to the square root of the size of the collection to sort. While these algorithms are presented as separate algorithms, one can simply pass a *buffer provider* template parameter to a [`grail_sorter`][grail-sorter] and use it to define define `sqrt_sorter`:
 
 ```cpp
 using sqrt_sorter = grail_sorter<dynamic_buffer<sqrt>>;
 ```
 
-In this example, `dynamic_buffer` is one of the [*buffer providers*](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#buffer-providers) that come with the library. A *buffer provider* is a class that describes how the buffer should be allocated; it has a nested class template `buffer<T>` that actually contains the allocated memory. While `sqrt_sorter` is a regular sorter, `grail_sorter` is a *buffered sorter*.
+In this example, `dynamic_buffer` is one of the [*buffer providers*](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#buffer-providers) that come with the library. A *buffer provider* is a class that describes how the buffer should be allocated; it has a nested class template `buffer<T>` that actually contains the allocated memory. While `sqrt_sorter` is a regular sorter, [`grail_sorter`][grail-sorter] is a *buffered sorter*.
 
-The library's `dynamic_buffer` takes what is called a *size policy*: this is a class with an overloaded `operator()` taking an instance of `std::size_t` and returning an instance of a type convertible to `std::size_t`. The library provides [some function objects](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) that can be used as size policies. It also provides  a `fixed_buffer` which takes an `std::size_t` template parameter corresponding to the number of elements to allocate on the stack for the buffer. For example, [`block_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#block_sorter) uses a fixed-size buffer of 512 elements unless told otherwise:
+The library's `dynamic_buffer` takes what is called a *size policy*: this is a class with an overloaded `operator()` taking an instance of `std::size_t` and returning an instance of a type convertible to `std::size_t`. The library provides [some function objects](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) that can be used as size policies. It also provides  a `fixed_buffer` which takes an `std::size_t` template parameter corresponding to the number of elements to allocate on the stack for the buffer. For example, [`wiki_sorter`][wiki-sorter] uses a fixed-size buffer of 512 elements unless told otherwise:
 
 ```cpp
 template<
     typename BufferProvider = utility::fixed_buffer<512>
 >
-struct block_sorter;
+struct wiki_sorter;
 ```
 
 **Rule 7.1:** a *buffer provider* is a class that has a nested class template named `buffer`. The nested class template shall be explicitly constructible from an instance of `std::size_t` and shall at least implement the methods `begin`, `end`, `data` and `size`, with semantics similar to those of the random-access containers in the standard library.
@@ -552,3 +552,7 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
 **Rule 8.2:** any valid specialization of a *fixed-size sorter* for a given size is a *sorter*, and shall therefore obey all the rules defined for sorters provided the collection to sort has the correct size. It can also be a *comparison sorter* and/or a *projection sorter*, in which case it shall obey the specific rules for these kinds of sorters too.
 
 **Rule 8.3:** a *fixed-size sorter* shall specialize the class `cppsort::fixed_sorter_traits` if it needs to provide information about its domain, its iterator category or its stability. See the exact meaning of these types and how to define them in the dedicated part of the documentation.
+
+
+  [grail-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#grail_sorter
+  [wiki-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#wiki_sorter

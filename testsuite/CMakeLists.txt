@@ -31,7 +31,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v2.13.4
+                     GIT_TAG v2.13.6
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
@@ -123,6 +123,7 @@ add_executable(main-tests
     sorter_facade.cpp
     sorter_facade_constexpr.cpp
     sorter_facade_defaults.cpp
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorter_facade_fptr.cpp>
     sorter_facade_iterable.cpp
     stable_sort_array.cpp
 
@@ -216,6 +217,7 @@ add_executable(main-tests
     utility/buffer.cpp
     utility/chainable_projections.cpp
     utility/iter_swap.cpp
+    utility/sorting_networks.cpp
 )
 configure_tests(main-tests)
 

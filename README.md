@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-1.10.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.10.0)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.10.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.10.0)
+[![Latest Release](https://img.shields.io/badge/release-1.11.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.11.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.11.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.11.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
@@ -113,12 +113,10 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 ![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/Windows%20Builds/badge.svg?branch=develop)
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
-**cpp-sort** currently requires C++14 support, and only works with g++5 and clang++3.8
-or more recent versions of these compilers. So far, the library should work with the
-following compilers:
+**cpp-sort** requires C++14 support, and should work with the following compilers:
 * g++5.5 or more recent. It is known not to work with some older g++5 versions.
-* clang++6 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
-* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
+* clang++6.0 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
+* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are still unavailable.
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
 * Clang is notably tested with both libstdc++ and libc++.
 
@@ -191,11 +189,11 @@ when there isn't enough memory available to perform an out-of-place merge.
 directly adapted from [Keith Schwarz's implementation](http://www.keithschwarz.com/interesting/code/?dir=smoothsort)
 of the algorithm.
 
-* The algorithm used by `block_sorter` has been adapted from BonzaiThePenguin's
+* The algorithm used by `wiki_sorter` has been adapted from BonzaiThePenguin's
 [WikiSort](https://github.com/BonzaiThePenguin/WikiSort).
 
 * The algorithm used by `grail_sorter` has been adapted from Mrrl's
-[GrailSort](https://github.com/Mrrl/GrailSort), hence the name.
+[GrailSort](https://github.com/Mrrl/GrailSort).
 
 * The algorithm used by `indirect_adapter` with forward or bidirectional iterators is a
 slightly modified version of Matthew Bentley's [indiesort](https://github.com/mattreecebentley/plf_indiesort).

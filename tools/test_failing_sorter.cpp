@@ -22,37 +22,14 @@
 #include "../testsuite/testing-tools/algorithm.h"
 #include "../testsuite/testing-tools/wrapper.h"
 
-struct shuffled_string:
-    dist::base_distribution<shuffled_string>
-{
-    template<typename OutputIterator, typename T=long long int>
-    auto operator()(OutputIterator out, long long int size, T start=T(0)) const
-        -> void
-    {
-        // Pseudo-random number generator
-        thread_local std::mt19937 engine(15321);
-
-        std::vector<std::string> vec;
-        vec.reserve(size);
-
-        T end = start + size;
-        for (auto i = start ; i < end ; ++i) {
-            auto s = std::to_string(i);
-            vec.push_back(std::string(50 - s.size(), '0') + std::move(s));
-        }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
-        std::move(std::begin(vec), std::end(vec), out);
-    }
-};
-
 template<typename Sorter>
 void test(const char* name)
 {
     const int size = 5000;
 
     std::vector<std::string> collection;
-    auto distribution = shuffled_string{};
-    distribution(std::back_inserter(collection), size);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), size, dist::as_long_string{});
 
     auto copy = collection;
     cppsort::quick_sort(std::begin(copy), std::end(copy));

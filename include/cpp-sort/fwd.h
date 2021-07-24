@@ -54,6 +54,8 @@ namespace cppsort
     struct string_spread_sorter;
     struct tim_sorter;
     struct verge_sorter;
+    template<typename BufferProvider>
+    struct wiki_sorter;
 
     ////////////////////////////////////////////////////////////
     // Fixed-size sorters
@@ -62,6 +64,10 @@ namespace cppsort
     struct low_comparisons_sorter;
     template<std::size_t N>
     struct low_moves_sorter;
+    template<std::size_t N>
+    struct merge_exchange_network_sorter;
+    template<std::size_t N>
+    struct odd_even_merge_network_sorter;
     template<std::size_t N>
     struct sorting_network_sorter;
 

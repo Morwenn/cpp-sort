@@ -13,7 +13,6 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -22,6 +21,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/equal_range.h"
 #include "../detail/functional.h"
+#include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
@@ -48,10 +48,9 @@ namespace probe
             // Indirectly sort the iterators
 
             // Copy the iterators in a vector
-            std::vector<ForwardIterator> iterators;
-            iterators.reserve(size);
-            for (ForwardIterator it = first ; it != last ; ++it) {
-                iterators.push_back(it);
+            cppsort::detail::immovable_vector<ForwardIterator> iterators(size);
+            for (auto it = first; it != last; ++it) {
+                iterators.emplace_back(it);
             }
 
             // Sort the iterators on pointed values

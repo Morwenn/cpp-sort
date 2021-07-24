@@ -81,7 +81,7 @@ int main()
         { "verge_sort", cppsort::verge_sort },
     };
 
-    std::size_t sizes[] = { 10'000'000 };
+    std::size_t sizes[] = { 1'000'000 };
 
     // Poor seed, yet enough for our benchmarks
     std::uint_fast32_t seed = std::time(nullptr);
@@ -98,7 +98,7 @@ int main()
 
                 auto total_start = clock_type::now();
                 auto total_end = clock_type::now();
-                while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < 5s) {
+                while (total_end - total_start < 5s) {
                     collection_t collection;
                     distribution.second(std::back_inserter(collection), size);
                     std::uint64_t start = rdtsc();
@@ -109,12 +109,15 @@ int main()
                     total_end = clock_type::now();
                 }
 
-                std::sort(std::begin(cycles), std::end(cycles));
-
-                std::cerr << size << ", " << distribution.first << ", " << sort.first
-                          << ", " << cycles[cycles.size() / 2] << '\n';
-                std::cout << size << ", " << distribution.first << ", " << sort.first
-                          << ", " << cycles[cycles.size() / 2] << '\n';
+                for (std::ostream* stream: {&std::cout, &std::cerr}) {
+                    (*stream) << size << ", " << distribution.first << ", " << sort.first << ", ";
+                    auto it = cycles.begin();
+                    (*stream) << *it;
+                    while (++it != cycles.end()) {
+                        (*stream) << ", " << *it;
+                    }
+                    (*stream) << std::endl;
+                }
             }
         }
     }

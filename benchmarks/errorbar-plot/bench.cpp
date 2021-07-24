@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -92,8 +92,7 @@ int main(int argc, char** argv)
 
             auto total_start = clock_type::now();
             auto total_end = clock_type::now();
-            while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
-                   times.size() < max_runs_per_size) {
+            while (total_end - total_start < max_run_time && times.size() < max_runs_per_size) {
                 collection_t collection;
                 distribution(std::back_inserter(collection), size);
                 auto start = clock_type::now();

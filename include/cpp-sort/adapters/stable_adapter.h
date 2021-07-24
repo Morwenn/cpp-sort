@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <memory>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -22,8 +21,8 @@
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
+#include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/memory.h"
 #include "../detail/sized_iterator.h"
 #include "../detail/type_traits.h"
 
@@ -34,10 +33,7 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Stable comparison function
 
-        template<
-            typename Compare,
-            typename Projection = utility::identity
-        >
+        template<typename Compare, typename Projection>
         class stable_compare
         {
             private:
@@ -52,34 +48,20 @@ namespace cppsort
 
             public:
 
-                stable_compare(Compare compare, Projection projection={}):
+                stable_compare(Compare compare, Projection projection):
                     data(utility::as_function(compare), utility::as_function(projection))
                 {}
-
-                auto compare() const
-                    -> compare_t
-                {
-                    return std::get<0>(data);
-                }
-
-                auto projection() const
-                    -> projection_t
-                {
-                    return std::get<1>(data);
-                }
 
                 template<typename T, typename U>
                 auto operator()(T&& lhs, U&& rhs)
                     -> bool
                 {
-                    if (std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs).get()),
-                                          std::get<1>(data)(std::forward<U>(rhs).get())))
-                    {
+                    if (std::get<0>(data)(std::get<1>(data)(lhs.get()),
+                                          std::get<1>(data)(rhs.get()))) {
                         return true;
                     }
-                    if (std::get<0>(data)(std::get<1>(data)(std::forward<U>(rhs).get()),
-                                          std::get<1>(data)(std::forward<T>(lhs).get())))
-                    {
+                    if (std::get<0>(data)(std::get<1>(data)(rhs.get()),
+                                          std::get<1>(data)(lhs.get()))) {
                         return false;
                     }
                     return lhs.data < rhs.data;
@@ -112,29 +94,23 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Bind index to iterator
 
-            std::unique_ptr<value_t, operator_deleter> iterators(
-                static_cast<value_t*>(::operator new(size * sizeof(value_t))),
-                operator_deleter(size * sizeof(value_t))
-            );
-            destruct_n<value_t> d(0);
-            std::unique_ptr<value_t, destruct_n<value_t>&> h2(iterators.get(), d);
-
             // Associate iterators to their position
-            auto ptr = iterators.get();
-            for (difference_type count = 0 ; count != size ; ++count) {
-                ::new(ptr) value_t(first, count);
-                ++d;
+            immovable_vector<value_t> iterators(size);
+            for (difference_type count = 0; count != size; ++count) {
+                iterators.emplace_back(first, count);
                 ++first;
-                ++ptr;
             }
 
             ////////////////////////////////////////////////////////////
             // Sort but takes the index into account to ensure stability
 
             return std::forward<Sorter>(sorter)(
-                make_associate_iterator(iterators.get()),
-                make_associate_iterator(iterators.get() + size),
-                make_stable_compare(std::move(compare), std::move(projection))
+                make_associate_iterator(iterators.begin()),
+                make_associate_iterator(iterators.end()),
+                make_stable_compare(
+                    std::forward<Compare>(compare),
+                    std::forward<Projection>(projection)
+                )
             );
         }
 
@@ -150,9 +126,12 @@ namespace cppsort
         {
             // Hack to get the stable bidirectional version of vergesort
             // to work correctly without duplicating tons of code
-            return make_stable_and_sort(first.base(), size,
-                                        std::move(compare), std::move(projection),
-                                        std::move(sorter));
+            return make_stable_and_sort(
+                first.base(), size,
+                std::forward<Compare>(compare),
+                std::forward<Projection>(projection),
+                std::forward<Sorter>(sorter)
+            );
         }
 
         ////////////////////////////////////////////////////////////

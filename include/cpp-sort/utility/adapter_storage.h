@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_ADAPTER_STORAGE_H_
@@ -36,17 +36,23 @@ namespace utility
     struct adapter_storage<Sorter, true>
     {
         adapter_storage() = default;
-        explicit constexpr adapter_storage(Sorter) noexcept {}
+        explicit constexpr adapter_storage(const Sorter&) noexcept {}
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args) const
+#ifdef __cpp_lib_is_invocable
+            noexcept(std::is_nothrow_default_constructible_v<Sorter> &&
+                     std::is_nothrow_invocable_v<Sorter, Args...>)
+#else
             noexcept(noexcept(Sorter{}(std::forward<Args>(args)...)))
+#endif
             -> decltype(Sorter{}(std::forward<Args>(args)...))
         {
             return Sorter{}(std::forward<Args>(args)...);
         }
 
         constexpr auto get() const
+            noexcept(std::is_nothrow_default_constructible<Sorter>::value)
             -> Sorter
         {
             return Sorter{};
@@ -66,13 +72,17 @@ namespace utility
         {}
 
         explicit constexpr adapter_storage(Sorter&& sorter)
-            noexcept(std::is_nothrow_copy_constructible<Sorter>::value):
+            noexcept(std::is_nothrow_move_constructible<Sorter>::value):
             sorter(std::move(sorter))
         {}
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args) const
+#ifdef __cpp_lib_is_invocable
+            noexcept(std::is_nothrow_invocable_v<Sorter, Args...>)
+#else
             noexcept(noexcept(sorter(std::forward<Args>(args)...)))
+#endif
             -> decltype(sorter(std::forward<Args>(args)...))
         {
             return sorter(std::forward<Args>(args)...);
@@ -80,31 +90,35 @@ namespace utility
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args)
+#ifdef __cpp_lib_is_invocable
+            noexcept(std::is_nothrow_invocable_v<Sorter, Args...>)
+#else
             noexcept(noexcept(sorter(std::forward<Args>(args)...)))
+#endif
             -> decltype(sorter(std::forward<Args>(args)...))
         {
             return sorter(std::forward<Args>(args)...);
         }
 
-        constexpr auto get() &
+        constexpr auto get() & noexcept
             -> Sorter&
         {
             return static_cast<Sorter&>(sorter);
         }
 
-        constexpr auto get() const&
+        constexpr auto get() const& noexcept
             -> const Sorter&
         {
             return static_cast<const Sorter&>(sorter);
         }
 
-        constexpr auto get() &&
+        constexpr auto get() && noexcept
             -> Sorter&&
         {
             return static_cast<Sorter&&>(sorter);
         }
 
-        constexpr auto get() const&&
+        constexpr auto get() const&& noexcept
             -> const Sorter&&
         {
             return static_cast<const Sorter&&>(sorter);

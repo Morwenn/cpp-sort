@@ -25,7 +25,7 @@ namespace
     {
         dummy_adapter_impl() = default;
 
-        constexpr dummy_adapter_impl(Sorter&& sorter):
+        explicit constexpr dummy_adapter_impl(Sorter&& sorter):
             cppsort::utility::adapter_storage<Sorter>(std::move(sorter))
         {}
 
@@ -50,7 +50,7 @@ namespace
     {
         dummy_adapter() = default;
 
-        constexpr dummy_adapter(Sorter sorter):
+        explicit constexpr dummy_adapter(Sorter sorter):
             cppsort::sorter_facade<dummy_adapter_impl<Sorter>>(std::move(sorter))
         {}
     };

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_
@@ -11,8 +11,8 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
+#include "attributes.h"
 #include "iterator_traits.h"
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -41,6 +41,10 @@ namespace detail
     template<typename Iterator, typename Data>
     struct association
     {
+        // Public types
+        using iterator_type = Iterator;
+        using data_type = Data;
+
         // Public members
         Iterator it;
         Data data;
@@ -68,7 +72,7 @@ namespace detail
             return *this;
         }
 
-        auto operator=(associated_value<remove_cvref_t<decltype(*it)>, Data>&& other)
+        auto operator=(associated_value<value_type_t<Iterator>, Data>&& other)
             -> association&
         {
             *it = std::move(other.value);
@@ -76,12 +80,14 @@ namespace detail
             return *this;
         }
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto get()
             -> decltype(*it)
         {
             return *it;
         }
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto get() const
             -> decltype(*it)
         {
@@ -128,12 +134,14 @@ namespace detail
             return *this;
         }
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto get()
             -> Value&
         {
             return value;
         }
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto get() const
             -> const Value&
         {
@@ -155,7 +163,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Public types
 
-            using iterator_category = iterator_category_t<Iterator>;
+            using iterator_category = std::random_access_iterator_tag;
             using iterator_type     = Iterator;
             using value_type        = value_type_t<Iterator>;
             using difference_type   = difference_type_t<Iterator>;
@@ -174,6 +182,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto base() const
                 -> iterator_type
             {
@@ -183,12 +192,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator*() const
                 -> decltype(*base())
             {
                 return *base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator->() const
                 -> pointer
             {
@@ -245,12 +256,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Elements access operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator[](difference_type pos)
                 -> decltype(base()[pos])
             {
                 return base()[pos];
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
             {
@@ -260,12 +273,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Comparison operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator==(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() == rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator!=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
@@ -275,24 +290,28 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Relational operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator<(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() < rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator<=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() <= rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator>(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() > rhs.base();
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator>=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
@@ -302,28 +321,55 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Arithmetic operators
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator+(associate_iterator it, difference_type size)
                 -> associate_iterator
             {
                 return it += size;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator+(difference_type size, associate_iterator it)
                 -> associate_iterator
             {
                 return it += size;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator-(associate_iterator it, difference_type size)
                 -> associate_iterator
             {
                 return it -= size;
             }
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator-(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> difference_type
             {
                 return lhs.base() - rhs.base();
+            }
+
+            ////////////////////////////////////////////////////////////
+            // iter_move/iter_swap
+
+            friend auto iter_swap(associate_iterator lhs, associate_iterator rhs)
+                -> void
+            {
+                using utility::iter_swap;
+                iter_swap(lhs.base(), rhs.base());
+            }
+
+            CPPSORT_ATTRIBUTE_NODISCARD
+            friend auto iter_move(associate_iterator it)
+                -> associated_value<
+                    value_type_t<typename value_type_t<Iterator>::iterator_type>,
+                    typename value_type_t<Iterator>::data_type
+                >
+            {
+                return {
+                    std::move(*(it->it)),
+                    std::move(it->data)
+                };
             }
 
         private:
@@ -331,31 +377,11 @@ namespace detail
             Iterator _it;
     };
 
-    template<typename Iterator>
-    auto iter_swap(associate_iterator<Iterator> lhs, associate_iterator<Iterator> rhs)
-        -> void
-    {
-        using utility::iter_swap;
-        iter_swap(lhs.base(), rhs.base());
-    }
-
-    template<typename Iterator>
-    auto iter_move(associate_iterator<Iterator> it)
-        -> associated_value<
-            remove_cvref_t<decltype(*(it->it))>,
-            remove_cvref_t<decltype(it->data)>
-        >
-    {
-        return {
-            std::move(*(it->it)),
-            std::move(it->data)
-        };
-    }
-
     ////////////////////////////////////////////////////////////
     // Construction function
 
     template<typename Iterator>
+    CPPSORT_ATTRIBUTE_NODISCARD
     auto make_associate_iterator(Iterator it)
         -> associate_iterator<Iterator>
     {

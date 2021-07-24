@@ -5,10 +5,12 @@
 
 from conans import CMake, ConanFile
 
+required_conan_version = ">=1.33.0"
+
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.10.0"
+    version = "1.11.0"
     description = "Additional sorting algorithms & related tools"
     topics = "conan", "cpp-sort", "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"
@@ -43,6 +45,8 @@ class CppSortConan(ConanFile):
             self.copy(file, dst="licenses")
 
     def package_info(self):
+        self.cpp_info.names["cmake_find_package"] = "cpp-sort"
+        self.cpp_info.names["cmake_find_package_multi"] = "cpp-sort"
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.cxxflags = ["/permissive-"]
 

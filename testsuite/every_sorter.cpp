@@ -15,10 +15,6 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test every random-access sorter", "[sorters]",
-                    cppsort::block_sorter<>,
-                    cppsort::block_sorter<
-                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
-                    >,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,
@@ -43,7 +39,11 @@ TEMPLATE_TEST_CASE( "test every random-access sorter", "[sorters]",
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter )
+                    cppsort::verge_sorter,
+                    cppsort::wiki_sorter<>,
+                    cppsort::wiki_sorter<
+                        cppsort::utility::dynamic_buffer<cppsort::utility::half>
+                    > )
 {
     // General test to make sure that every sorter compiles fine
     // and is able to sort a vector of numbers. spread_sorter is
@@ -74,6 +74,7 @@ TEMPLATE_TEST_CASE( "test every random-access sorter", "[sorters]",
 }
 
 TEMPLATE_TEST_CASE( "test every bidirectional sorter", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
@@ -97,6 +98,7 @@ TEMPLATE_TEST_CASE( "test every bidirectional sorter", "[sorters]",
 }
 
 TEMPLATE_TEST_CASE( "test every forward sorter", "[sorters]",
+                    cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
