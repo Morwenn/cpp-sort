@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-1.10.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.10.0)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.10.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.10.0)
+[![Latest Release](https://img.shields.io/badge/release-1.11.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.11.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.11.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.11.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
