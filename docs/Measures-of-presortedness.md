@@ -29,7 +29,7 @@ The graph below shows the partial ordering of several measures of presortedness:
 - *m₀* is a measure of presortedness that always returns 0.
 - *m₀₁* is a measure of presortedness that returns 0 when *X* is sorted and 1 otherwise.
 
-![Partial ordering of measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mep-partial-ordering.png)
+![Partial ordering of measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mops-partial-ordering.png)
 
 This graph is more complete version of the one in *A framework for adaptive sorting* by O. Petersson and A. Moffat. The *Max* ≡ *Dis* equivalence comes from [*NeatSort - A practical adaptive algorithm*][neatsort] by La rocca & Cantone. The relations of *Mono* are empirically derived [original research][original-research].
 
