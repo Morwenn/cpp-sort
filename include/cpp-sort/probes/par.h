@@ -14,7 +14,6 @@
 #include <new>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -92,19 +91,18 @@ namespace probe
             }
             std::reverse(c.begin(), c.end());
 
-            // Algorithm DM
-            std::vector<difference_type> d = {};
+            // Algorithm DM, without extra storage
+            difference_type res = 0;
             difference_type i = size;
             for (auto j = i ; j > 0 ; --j) {
                 while (j <= i && i >= 1 && not comp(proj(*b[j - 1]), proj(*c[i - 1]))
                        && (j == 1 || not comp(proj(*c[i - 1]), proj(*b[j - 2])))) {
-                    d.push_back(i - j);
+                    res = std::max(res, i - j);
                     --i;
                 }
             }
 
-            // Compute radius = max(dm)
-            return *std::max_element(d.begin(), d.end());
+            return res;
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
