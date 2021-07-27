@@ -8,13 +8,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
 #include <functional>
+#include <iterator>
+#include <new>
 #include <type_traits>
+#include <utility>
+#include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/is_p_sorted.h"
+#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -22,6 +28,81 @@ namespace probe
 {
     namespace detail
     {
+        template<typename RandomAccessIterator, typename Compare, typename Projection>
+        auto legacy_par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
+                                   cppsort::detail::difference_type_t<RandomAccessIterator> size,
+                                   Compare compare, Projection projection)
+            -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
+        {
+            auto res = 0;
+            while (size > 0) {
+                auto p = res;
+                p += size / 2;
+                if (cppsort::detail::is_p_sorted(first, last, p, compare, projection)) {
+                    size /= 2;
+                } else {
+                    res = ++p;
+                    size -= size / 2 + 1;
+                }
+            }
+            return res;
+        }
+
+        template<typename RandomAccessIterator, typename Compare, typename Projection>
+        auto par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
+                            cppsort::detail::difference_type_t<RandomAccessIterator> size,
+                            Compare compare, Projection projection)
+            -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
+        {
+            using difference_type = ::cppsort::detail::difference_type_t<RandomAccessIterator>;
+            auto&& comp = utility::as_function(compare);
+            auto&& proj = utility::as_function(projection);
+
+            // Algorithm described in *Roughly Sorting: Sequential and Parallel Approach*
+            // by T. Altman and Y. Igarashi
+
+            if (size < 2) {
+                return 0;
+            }
+
+            // Algorithm LR
+            std::vector<RandomAccessIterator> b = { first };
+            for (auto it = std::next(first) ; it != last ; ++it) {
+                if (comp(proj(*b.back()), proj(*it))) {
+                    b.push_back(it);
+                } else {
+                    b.push_back(b.back());
+                }
+            }
+
+            // Algorithm RL
+            std::vector<RandomAccessIterator> c = { std::prev(last) };
+            auto rfirst = std::make_reverse_iterator(last);
+            auto rlast = std::make_reverse_iterator(first);
+            for (auto it = std::next(rfirst) ; it != rlast ; ++it) {
+                if (comp(proj(*it), proj(*c.back()))) {
+                    c.push_back(std::prev(it.base()));
+                } else {
+                    c.push_back(c.back());
+                }
+            }
+            std::reverse(c.begin(), c.end());
+
+            // Algorithm DM
+            std::vector<difference_type> d = {};
+            difference_type i = c.size();
+            for (auto j = i ; j > 0 ; --j) {
+                while (j <= i && i >= 1 && not comp(proj(*b[j - 1]), proj(*c[i - 1]))
+                       && (j == 1 || not comp(proj(*c[i - 1]), proj(*b[j - 2])))) {
+                    d.push_back(i - j);
+                    --i;
+                }
+            }
+
+            // Compute radius = max(dm)
+            return *std::max_element(d.begin(), d.end());
+        }
+
         struct par_impl
         {
             template<
@@ -36,20 +117,19 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> cppsort::detail::difference_type_t<RandomAccessIterator>
             {
-                auto size = last - first;
-
-                auto res = 0;
-                while (size > 0) {
-                    auto p = res;
-                    p += size / 2;
-                    if (cppsort::detail::is_p_sorted(first, last, p, compare, projection)) {
-                        size /= 2;
-                    } else {
-                        res = ++p;
-                        size -= size / 2 + 1;
-                    }
+                try {
+                    return par_probe_algo(first, last, last - first,
+                                          compare, projection);
                 }
-                return res;
+                catch (std::bad_alloc&) {
+                    // Old O(n^2 log n) algorithm, kept to avoid a breaking
+                    // when no extra memory is available, might be removed
+                    // in the future
+                    return legacy_par_probe_algo(
+                        first, last, last - first,
+                        std::move(compare), std::move(projection)
+                    );
+                }
             }
 
             template<typename Integer>

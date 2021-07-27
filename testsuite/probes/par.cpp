@@ -21,6 +21,20 @@ TEST_CASE( "presortedness measure: par", "[probe][par]" )
         CHECK( par(tricky, &internal_compare<int>::compare_to) == 7 );
     }
 
+    SECTION( "roughly sorting test" )
+    {
+        // Example from *Roughly Sorting: Sequential and Parallel Approach*
+        // by T. Altman and Y. Igarashi
+
+        const std::vector<int> vec = {
+            2, 3, 5, 1, 4, 2, 6,
+            8, 7, 9, 8, 11, 6, 13,
+            12, 16, 15, 17, 18,
+            20, 18, 19, 21, 19
+        };
+        CHECK( par(vec) == 5 );
+    }
+
     SECTION( "upper bound" )
     {
         // The upper bound should correspond to the size of
