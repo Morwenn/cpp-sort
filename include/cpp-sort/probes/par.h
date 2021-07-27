@@ -20,6 +20,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/immovable_vector.h"
 #include "../detail/is_p_sorted.h"
 #include "../detail/iterator_traits.h"
 
@@ -67,31 +68,33 @@ namespace probe
             }
 
             // Algorithm LR
-            std::vector<RandomAccessIterator> b = { first };
+            cppsort::detail::immovable_vector<RandomAccessIterator> b(size);
+            b.emplace_back(first);
             for (auto it = std::next(first) ; it != last ; ++it) {
                 if (comp(proj(*b.back()), proj(*it))) {
-                    b.push_back(it);
+                    b.emplace_back(it);
                 } else {
-                    b.push_back(b.back());
+                    b.emplace_back(b.back());
                 }
             }
 
             // Algorithm RL
-            std::vector<RandomAccessIterator> c = { std::prev(last) };
+            cppsort::detail::immovable_vector<RandomAccessIterator> c(size);
+            c.emplace_back(std::prev(last));
             auto rfirst = std::make_reverse_iterator(last);
             auto rlast = std::make_reverse_iterator(first);
             for (auto it = std::next(rfirst) ; it != rlast ; ++it) {
                 if (comp(proj(*it), proj(*c.back()))) {
-                    c.push_back(std::prev(it.base()));
+                    c.emplace_back(std::prev(it.base()));
                 } else {
-                    c.push_back(c.back());
+                    c.emplace_back(c.back());
                 }
             }
             std::reverse(c.begin(), c.end());
 
             // Algorithm DM
             std::vector<difference_type> d = {};
-            difference_type i = c.size();
+            difference_type i = size;
             for (auto j = i ; j > 0 ; --j) {
                 while (j <= i && i >= 1 && not comp(proj(*b[j - 1]), proj(*c[i - 1]))
                        && (j == 1 || not comp(proj(*c[i - 1]), proj(*b[j - 2])))) {
