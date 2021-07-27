@@ -18,6 +18,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/is_p_sorted.h"
 #include "../detail/iterator_traits.h"
@@ -49,7 +50,7 @@ namespace probe
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
+        auto new_par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
                             cppsort::detail::difference_type_t<RandomAccessIterator> size,
                             Compare compare, Projection projection)
             -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
@@ -103,33 +104,76 @@ namespace probe
             return *std::max_element(d.begin(), d.end());
         }
 
+        template<typename RandomAccessIterator, typename Compare, typename Projection>
+        auto par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
+                            cppsort::detail::difference_type_t<RandomAccessIterator> size,
+                            Compare compare, Projection projection,
+                            std::random_access_iterator_tag)
+            -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
+        {
+            try {
+                return new_par_probe_algo(first, last, size, compare, projection);
+            } catch (std::bad_alloc&) {
+                // Old O(n^2 log n) algorithm, kept to avoid a breaking
+                // when no extra memory is available, might be removed
+                // in the future
+                return legacy_par_probe_algo(
+                    first, last, last - first,
+                    std::move(compare), std::move(projection)
+                );
+            }
+        }
+
+        template<typename BidirectionalIterator, typename Compare, typename Projection>
+        auto par_probe_algo(BidirectionalIterator first, BidirectionalIterator last,
+                            cppsort::detail::difference_type_t<BidirectionalIterator> size,
+                            Compare compare, Projection projection,
+                            std::bidirectional_iterator_tag)
+            -> ::cppsort::detail::difference_type_t<BidirectionalIterator>
+        {
+            // The O(n^2 log n) fallback requires random-access iterators
+            return new_par_probe_algo(first, last, size, compare, projection);
+        }
+
         struct par_impl
         {
             template<
-                typename RandomAccessIterator,
+                typename BidirectionalIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    is_projection_v<Projection, BidirectionalIterable, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(BidirectionalIterable&& iterable,
                             Compare compare={}, Projection projection={}) const
-                -> cppsort::detail::difference_type_t<RandomAccessIterator>
+                -> decltype(auto)
             {
-                try {
-                    return par_probe_algo(first, last, last - first,
-                                          compare, projection);
-                }
-                catch (std::bad_alloc&) {
-                    // Old O(n^2 log n) algorithm, kept to avoid a breaking
-                    // when no extra memory is available, might be removed
-                    // in the future
-                    return legacy_par_probe_algo(
-                        first, last, last - first,
-                        std::move(compare), std::move(projection)
-                    );
-                }
+                using category = cppsort::detail::iterator_category_t<
+                    cppsort::detail::remove_cvref_t<decltype(std::begin(iterable))>
+                >;
+                return par_probe_algo(std::begin(iterable), std::end(iterable),
+                                      utility::size(iterable),
+                                      std::move(compare), std::move(projection),
+                                      category{});
+            }
+
+            template<
+                typename BidirectionalIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = std::enable_if_t<
+                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
+                >
+            >
+            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> decltype(auto)
+            {
+                using category = cppsort::detail::iterator_category_t<BidirectionalIterator>;
+                return par_probe_algo(first, last, std::distance(first, last),
+                                      std::move(compare), std::move(projection),
+                                      category{});
             }
 
             template<typename Integer>

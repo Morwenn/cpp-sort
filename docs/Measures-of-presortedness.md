@@ -227,7 +227,7 @@ The following definition is also given to determine whether a sequence is *p*-so
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
-| n           | n           | Random-access |
+| n           | n           | Bidirectional |
 | n² log n    | 1           | Random-access |
 
 `max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
