@@ -232,6 +232,8 @@ The following definition is also given to determine whether a sequence is *p*-so
 
 `max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
 
+***WARNING: the O(n² log n) fallback will be removed in cpp-sort 2.0.0, which means that this algorithm won't be able to run without extra memory anymore.***
+
 ### *Rem*
 
 ```cpp
