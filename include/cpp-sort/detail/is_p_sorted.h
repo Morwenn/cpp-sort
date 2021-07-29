@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_IS_P_SORTED_H_
@@ -24,13 +24,15 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        for (auto it1 = first + p ; it1 != last ; ++it1) {
-            auto&& value = proj(*it1);
-            for (auto it2 = first ; it2 != it1 - p ; ++it2) {
-                if (comp(value, proj(*it2))) {
-                    return false;
-                }
+        auto max_it = first;
+        for (auto it1 = first + p + 1 ; it1 != last ; ++it1) {
+            if (comp(proj(*max_it), proj(*first))) {
+                max_it = first;
             }
+            if (comp(proj(*it1), proj(*max_it))) {
+                return false;
+            }
+            ++first;
         }
         return true;
     }
