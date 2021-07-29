@@ -115,6 +115,23 @@ namespace dist
         }
     };
 
+    struct ascending_duplicates:
+        distribution<ascending_duplicates>
+    {
+        // Ascending (sorted) distribution with series of 10
+        // times the same integer value, used to test specific
+        // algorithms against inputs with duplicate values
+
+        template<typename OutputIterator>
+        auto operator()(OutputIterator out, long long int size) const
+            -> void
+        {
+            for (long long int i = 0 ; i < size ; ++i) {
+                *out++ = i / 10;
+            }
+        }
+    };
+
     struct pipe_organ:
         distribution<pipe_organ>
     {
