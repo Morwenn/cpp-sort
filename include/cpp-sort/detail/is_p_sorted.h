@@ -15,17 +15,18 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto is_p_sorted(RandomAccessIterator first, RandomAccessIterator last,
-                     difference_type_t<RandomAccessIterator> p,
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto is_p_sorted(ForwardIterator first, ForwardIterator last, ForwardIterator pth,
                      Compare compare, Projection projection)
         -> bool
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
+        // pth is the iterator such as pth - first == p
+
         auto max_it = first;
-        for (auto it1 = first + p + 1 ; it1 != last ; ++it1) {
+        for (auto it1 = std::next(pth); it1 != last; ++it1) {
             if (comp(proj(*max_it), proj(*first))) {
                 max_it = first;
             }

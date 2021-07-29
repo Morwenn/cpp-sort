@@ -228,15 +228,15 @@ The following definition is also given to determine whether a sequence is *p*-so
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n           | n           | Bidirectional |
-| n log n     | 1           | Random-access |
+| n log n     | 1           | Forward       |
 
-When enough memory is available, `probe::par` runs in O(n), otherwise it falls back to an O(n log n) algorithm that does not require extra memory (the fallback only works with random-access iterator).
+When enough memory is available, `probe::par` runs in O(n), otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If a forward iterator is passed, the O(n log n) algorithm is always used.
 
 `max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
 
-*Changed in version 1.12.0:* `probe::par` now runs in O(n) time and O(n) space, and falls back to a O(n log n) time O(1) algorithm when there isn't enough heap memory available.
+*Changed in version 1.12.0:* `probe::par` now runs in O(n) time and O(n) space, and falls back to a O(n log n) time O(1) space algorithm when there isn't enough heap memory available.
 
-*Changed in version 1.12.0:* `probe::par` now works with bidirectional iterators (except for the fallback).
+*Changed in version 1.12.0:* `probe::par` now works with forward iterators.
 
 ### *Rem*
 

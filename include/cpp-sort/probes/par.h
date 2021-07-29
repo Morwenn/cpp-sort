@@ -35,27 +35,33 @@ namespace probe
                                    Compare compare, Projection projection)
             -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
         {
+            // Simple algorithm in O(n log n) time and O(1) space
+
             auto res = 0;
+            auto res_it = first;
             while (size > 0) {
                 auto p = res;
+                auto pth = res_it;
                 p += size / 2;
-                if (cppsort::detail::is_p_sorted(first, last, p, compare, projection)) {
+                std::advance(pth, size / 2);
+                if (cppsort::detail::is_p_sorted(first, last, pth, compare, projection)) {
                     size /= 2;
                 } else {
                     res = ++p;
+                    res_it = ++pth;
                     size -= size / 2 + 1;
                 }
             }
             return res;
         }
 
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto new_par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
-                            cppsort::detail::difference_type_t<RandomAccessIterator> size,
+        template<typename BidirectionalIterator, typename Compare, typename Projection>
+        auto new_par_probe_algo(BidirectionalIterator first, BidirectionalIterator last,
+                            cppsort::detail::difference_type_t<BidirectionalIterator> size,
                             Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
+            -> ::cppsort::detail::difference_type_t<BidirectionalIterator>
         {
-            using difference_type = ::cppsort::detail::difference_type_t<RandomAccessIterator>;
+            using difference_type = ::cppsort::detail::difference_type_t<BidirectionalIterator>;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -67,7 +73,7 @@ namespace probe
             }
 
             // Algorithm LR
-            cppsort::detail::immovable_vector<RandomAccessIterator> b(size);
+            cppsort::detail::immovable_vector<BidirectionalIterator> b(size);
             b.emplace_back(first);
             for (auto it = std::next(first) ; it != last ; ++it) {
                 if (comp(proj(*b.back()), proj(*it))) {
@@ -78,7 +84,7 @@ namespace probe
             }
 
             // Algorithm RL
-            cppsort::detail::immovable_vector<RandomAccessIterator> c(size);
+            cppsort::detail::immovable_vector<BidirectionalIterator> c(size);
             c.emplace_back(std::prev(last));
             auto rfirst = std::make_reverse_iterator(last);
             auto rlast = std::make_reverse_iterator(first);
@@ -105,26 +111,6 @@ namespace probe
             return res;
         }
 
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto par_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
-                            cppsort::detail::difference_type_t<RandomAccessIterator> size,
-                            Compare compare, Projection projection,
-                            std::random_access_iterator_tag)
-            -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
-        {
-            try {
-                return new_par_probe_algo(first, last, size, compare, projection);
-            } catch (std::bad_alloc&) {
-                // Old O(n^2 log n) algorithm, kept to avoid a breaking
-                // when no extra memory is available, might be removed
-                // in the future
-                return legacy_par_probe_algo(
-                    first, last, last - first,
-                    std::move(compare), std::move(projection)
-                );
-            }
-        }
-
         template<typename BidirectionalIterator, typename Compare, typename Projection>
         auto par_probe_algo(BidirectionalIterator first, BidirectionalIterator last,
                             cppsort::detail::difference_type_t<BidirectionalIterator> size,
@@ -132,22 +118,37 @@ namespace probe
                             std::bidirectional_iterator_tag)
             -> ::cppsort::detail::difference_type_t<BidirectionalIterator>
         {
-            // The O(n^2 log n) fallback requires random-access iterators
-            return new_par_probe_algo(first, last, size, compare, projection);
+            try {
+                return new_par_probe_algo(first, last, size, compare, projection);
+            } catch (std::bad_alloc&) {
+                return legacy_par_probe_algo(
+                    first, last, size,
+                    std::move(compare), std::move(projection)
+                );
+            }
+        }
+
+        template<typename ForwardIterator, typename Compare, typename Projection>
+        auto par_probe_algo(ForwardIterator first, ForwardIterator last,
+                            cppsort::detail::difference_type_t<ForwardIterator> size,
+                            Compare compare, Projection projection,
+                            std::forward_iterator_tag)
+            -> ::cppsort::detail::difference_type_t<ForwardIterator>
+        {
+            return legacy_par_probe_algo(first, last, size, compare, projection);
         }
 
         struct par_impl
         {
             template<
-                typename BidirectionalIterable,
+                typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_v<Projection, BidirectionalIterable, Compare>
+                    is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
-            auto operator()(BidirectionalIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(ForwardIterable&& iterable, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
                 using category = cppsort::detail::iterator_category_t<
@@ -160,18 +161,18 @@ namespace probe
             }
 
             template<
-                typename BidirectionalIterator,
+                typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = std::enable_if_t<
-                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
+                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
+            auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                using category = cppsort::detail::iterator_category_t<BidirectionalIterator>;
+                using category = cppsort::detail::iterator_category_t<ForwardIterator>;
                 return par_probe_algo(first, last, std::distance(first, last),
                                       std::move(compare), std::move(projection),
                                       category{});
