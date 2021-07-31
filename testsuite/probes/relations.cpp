@@ -55,6 +55,10 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( rem <= size * (1 - 1 / (dis + 1)) );
     CHECK( inv <= size * dis / 2 );
 
+    // Practical Adaptive Sorting
+    // by Vladimir Estivill-Castro and Derick Wood
+    CHECK( rem <= 2 * exc );
+
     // Encroaching lists as a measure of presortedness
     // by Steven S. Skiena
     CHECK( enc <= runs );
