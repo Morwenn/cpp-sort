@@ -95,13 +95,16 @@ Computes the maximum distance determined by an inversion.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
-| n²          | 1           | Forward       |
+| n           | n           | Bidirectional |
+| n log n     | 1           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+When enough memory is available, `probe::dis` runs in O(n), otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
-*Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
+`max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
 
 *Changed in version 1.8.0:* `probe::dis` is now O(n²) instead of accidentally being O(n³) when passed forward or bidirectional iterators.
+
+*Changed in version 1.12.0:* `probe::dis` is now O(n log n) instead of O(n²). When sorting bidirectional iterators, if enough heap memory is available, it runs in O(n) time and O(n) space.
 
 ### *Enc*
 
@@ -217,26 +220,7 @@ Computes the *Oscillation* measure described by Levcopoulos and Petersson in *Ad
 #include <cpp-sort/probes/par.h>
 ```
 
-Computes the *Par* measure described by Estivill-Castro and Wood in *A New Measure of Presortedness* as follows:
-
-> *Par(X)* = min { *p* | *X* is *p*-sorted }
-
-The following definition is also given to determine whether a sequence is *p*-sorted:
-
-> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
-
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n           | n           | Bidirectional |
-| n log n     | 1           | Forward       |
-
-When enough memory is available, `probe::par` runs in O(n), otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If a forward iterator is passed, the O(n log n) algorithm is always used.
-
-`max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
-
-*Changed in version 1.12.0:* `probe::par` now runs in O(n) time and O(n) space, and falls back to a O(n log n) time O(1) space algorithm when there isn't enough heap memory available.
-
-*Changed in version 1.12.0:* `probe::par` now works with forward iterators.
+***WARNING:** `probe::par` is deprecated since version 1.12.0 and removed in version 2.0.0, use [`probe::dis`][probe-dis] instead.*
 
 ### *Rem*
 
@@ -289,4 +273,5 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [neatsort]: https://arxiv.org/pdf/1407.6183.pdf
   [original-research]: https://github.com/Morwenn/cpp-sort/wiki/Original-research#partial-ordering-of-mono
+  [probe-dis]: https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#dis
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf

@@ -68,7 +68,6 @@ void test(const char* name)
         << "max: " << cppsort::probe::max(copy2) << std::endl
         << "mono: " << cppsort::probe::mono(copy2) << std::endl
         << "osc: " << cppsort::probe::osc(copy2) << std::endl
-        << "par: " << cppsort::probe::par(copy2) << std::endl
         << "rem: " << cppsort::probe::rem(copy2) << std::endl
         << "runs: " << cppsort::probe::runs(copy2) << std::endl
         << "sus: " << cppsort::probe::sus(copy2) << std::endl

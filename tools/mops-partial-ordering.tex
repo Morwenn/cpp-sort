@@ -1,7 +1,7 @@
 % Copyright (c) 2021 Morwenn
 % SPDX-License-Identifier: MIT
 
-\documentclass{minimal}
+\documentclass{standalone}
 \usepackage{bm, pgf, tikz}
 \usetikzlibrary{arrows, automata, backgrounds, positioning}
 
@@ -37,7 +37,7 @@
         \node[state] (inv) [below of=osc] {$\bm{Inv}~$$\equiv$$~DS$};
         \node[state] (sus) [below of=enc] {$\bm{SUS}$};
         \node[state] (exc) [below of=rem] {$\bm{Exc}~$$\equiv$$~\bm{Ham}$};
-        \node[state] (max) [below of=inv] {$\bm{Max}~$$\equiv$$~\bm{Dis}~$$\equiv$$~\bm{Par}$};
+        \node[state] (max) [below of=inv] {$\bm{Max}~$$\equiv$$~\bm{Dis}~$};
         \node[state] (runs) [below of=sus] {$\bm{Runs}$};
         \node[state] (m01) [below of=max] {$m_{01}$};
         \node[state] (m0) [below of=m01] {$m_{0}$};
