@@ -65,46 +65,45 @@ namespace probe
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            // Algorithm described in *Roughly Sorting: Sequential and Parallel Approach*
-            // by T. Altman and Y. Igarashi
+            // Space-optimized version of the algorithm described in *Roughly Sorting:
+            // Sequential and Parallel Approach* by T. Altman and Y. Igarashi
 
             if (size < 2) {
                 return 0;
             }
 
-            // Algorithm LR
-            cppsort::detail::immovable_vector<BidirectionalIterator> b(size);
-            b.emplace_back(first);
+            // Algorithm LR: cumulative max from left to right
+            cppsort::detail::immovable_vector<BidirectionalIterator> lr_cummax(size);
+            lr_cummax.emplace_back(first);
             for (auto it = std::next(first) ; it != last ; ++it) {
-                if (comp(proj(*b.back()), proj(*it))) {
-                    b.emplace_back(it);
+                if (comp(proj(*lr_cummax.back()), proj(*it))) {
+                    lr_cummax.emplace_back(it);
                 } else {
-                    b.emplace_back(b.back());
+                    lr_cummax.emplace_back(lr_cummax.back());
                 }
             }
 
-            // Algorithm RL
-            cppsort::detail::immovable_vector<BidirectionalIterator> c(size);
-            c.emplace_back(std::prev(last));
-            auto rfirst = std::make_reverse_iterator(last);
-            auto rlast = std::make_reverse_iterator(first);
-            for (auto it = std::next(rfirst) ; it != rlast ; ++it) {
-                if (comp(proj(*it), proj(*c.back()))) {
-                    c.emplace_back(std::prev(it.base()));
-                } else {
-                    c.emplace_back(c.back());
-                }
-            }
-            std::reverse(c.begin(), c.end());
-
-            // Algorithm DM, without extra storage
+            // Merged algorithms without extra storage:
+            // - RL: cumulative min from right to left
+            // - DM: max distance of an inversion
             difference_type res = 0;
             difference_type i = size;
+            auto rl_it = std::prev(last); // Iterator to the current RL element
+            auto rl_min_it = rl_it; // Iterator to the current minimum of RL
             for (auto j = i ; j > 0 ; --j) {
-                while (j <= i && i >= 1 && not comp(proj(*b[j - 1]), proj(*c[i - 1]))
-                       && (j == 1 || not comp(proj(*c[i - 1]), proj(*b[j - 2])))) {
+                while (j <= i && not comp(proj(*lr_cummax[j - 1]), proj(*rl_min_it))
+                       && (j == 1 || not comp(proj(*rl_min_it), proj(*lr_cummax[j - 2])))) {
+                    // Compute the next value of DM
                     res = std::max(res, i - j);
+                    // Compute the next value of RL
                     --i;
+                    if (i == 0) {
+                        return res;
+                    }
+                    --rl_it;
+                    if (comp(proj(*rl_it), proj(*rl_min_it))) {
+                        rl_min_it = rl_it;
+                    }
                 }
             }
 
