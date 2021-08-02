@@ -96,8 +96,7 @@ namespace probe
                     // Compute the next value of DM
                     res = std::max(res, i - j);
                     // Compute the next value of RL
-                    --i;
-                    if (i == 0) {
+                    if (--i <= res) {
                         return res;
                     }
                     --rl_it;
