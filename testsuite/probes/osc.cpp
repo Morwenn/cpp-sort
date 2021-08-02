@@ -8,6 +8,7 @@
 #include <cpp-sort/probes/osc.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
+#include <testing-tools/wrapper.h>
 
 TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
 {
@@ -37,5 +38,15 @@ TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
         CHECK( max_n == 71 );
         CHECK( osc(li) == max_n );
         CHECK( osc(li.begin(), li.end()) == max_n );
+    }
+
+    SECTION( "regressions" )
+    {
+        using wrapper = generic_wrapper<generic_wrapper<int>>;
+        std::vector<wrapper> vec = { {{6}}, {{3}}, {{9}}, {{8}}, {{4}}, {{7}}, {{1}}, {{11}} };
+        auto comp = [](generic_wrapper<int> const& lhs, generic_wrapper<int> const& rhs) {
+            return lhs.value < rhs.value;
+        };
+        CHECK( osc(vec, comp, &wrapper::value) == 17 );
     }
 }

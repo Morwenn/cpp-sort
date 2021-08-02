@@ -58,8 +58,8 @@ namespace probe
 
                     while (next != last)
                     {
-                        if (comp((std::min)(proj(*current), proj(*next)), value) &&
-                            comp(value, (std::max)(proj(*current), proj(*next))))
+                        if (comp((std::min)(proj(*current), proj(*next), comp), value) &&
+                            comp(value, (std::max)(proj(*current), proj(*next), comp)))
                         {
                             ++count;
                         }
