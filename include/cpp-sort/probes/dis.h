@@ -22,6 +22,7 @@
 #include "../detail/immovable_vector.h"
 #include "../detail/is_p_sorted.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -29,11 +30,11 @@ namespace probe
 {
     namespace detail
     {
-        template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto inplace_dis_probe_algo(RandomAccessIterator first, RandomAccessIterator last,
-                                    cppsort::detail::difference_type_t<RandomAccessIterator> size,
+        template<typename ForwardIterator, typename Compare, typename Projection>
+        auto inplace_dis_probe_algo(ForwardIterator first, ForwardIterator last,
+                                    cppsort::detail::difference_type_t<ForwardIterator> size,
                                     Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<RandomAccessIterator>
+            -> ::cppsort::detail::difference_type_t<ForwardIterator>
         {
             // Simple algorithm in O(n log n) time and O(1) space
 
