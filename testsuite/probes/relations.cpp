@@ -23,6 +23,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // tests check that these relations are respected in
     // the library
 
+    auto block  = cppsort::probe::block(sequence);
     auto dis    = cppsort::probe::dis(sequence);
     auto enc    = cppsort::probe::enc(sequence);
     auto exc    = cppsort::probe::exc(sequence);
@@ -77,6 +78,10 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( osc <= 4 * inv );
     CHECK( osc <= 2 * size * runs + size );
     CHECK( osc <= size * dis );
+
+    // Sublinear Merging and Natural Mergesort
+    // by Svante Carlsson, Christos Levcopoulos and Ola Petersson
+    CHECK( block <= 3 * rem );
 
     // Computing and ranking measures of presortedness
     // by Jingsen Chen

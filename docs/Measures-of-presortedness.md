@@ -85,6 +85,26 @@ Measures of presortedness are pretty formalized, so the names of the functions i
 
 In the following descriptions we use *X* to represent the input sequence, and |*X*| to represent the size of that sequence.
 
+### *Block*
+
+```cpp
+#include <cpp-sort/probes/block.h>
+```
+
+Computes the number of elements in a sequence that aren't followed by the same element in the sorted sequence.
+
+Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
+* It doesn't add 1 to the general result, thus returning 0 when *X* is sorted - therefore respecting the Mannila definition of a MOP.
+* It explicitly handles elements that compare equivalent, while the original formal definition makes it difficult.
+
+| Complexity  | Memory      | Iterators     |
+| ----------- | ----------- | ------------- |
+| n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+
+*New in version 1.12.0*
+
 ### *Dis*
 
 ```cpp

@@ -176,6 +176,7 @@ add_executable(main-tests
     distributions/shuffled_16_values.cpp
 
     # Probes tests
+    probes/block.cpp
     probes/dis.cpp
     probes/enc.cpp
     probes/exc.cpp

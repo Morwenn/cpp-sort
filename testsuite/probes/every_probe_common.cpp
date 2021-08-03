@@ -13,6 +13,7 @@
 //
 
 TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
+                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),
@@ -35,6 +36,7 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
 }
 
 TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
+                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),

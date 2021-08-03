@@ -10,6 +10,7 @@
 #include <testing-tools/functional_checks.h>
 
 TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[probe]",
+                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),
@@ -32,6 +33,7 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
 }
 
 TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[probe]",
+                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),
