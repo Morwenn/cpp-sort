@@ -78,6 +78,10 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( osc <= 2 * size * runs + size );
     CHECK( osc <= size * dis );
 
+    // Computing and ranking measures of presortedness
+    // by Jingsen Chen
+    CHECK( enc <= dis + 1 );
+
     // Intuitive result: a descending run can be seen as several
     // ascending runs
     CHECK( mono <= runs );
