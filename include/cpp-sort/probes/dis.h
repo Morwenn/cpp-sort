@@ -143,7 +143,7 @@ namespace probe
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = cppsort::detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -163,7 +163,7 @@ namespace probe
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = cppsort::detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

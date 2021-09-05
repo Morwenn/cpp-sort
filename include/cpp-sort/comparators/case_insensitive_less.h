@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_CASE_INSENSITIVE_LESS_H_
@@ -102,7 +102,7 @@ namespace cppsort
 
                 template<
                     typename T,
-                    typename = std::enable_if_t<can_be_refined_for<T>>
+                    typename = detail::enable_if_t<can_be_refined_for<T>>
                 >
                 auto refine() const
                     -> adl_barrier::refined_case_insensitive_less_locale_fn<T>
@@ -125,7 +125,7 @@ namespace cppsort
 
             template<
                 typename T,
-                typename = std::enable_if_t<can_be_refined_for<T>>
+                typename = detail::enable_if_t<can_be_refined_for<T>>
             >
             auto refine() const
                 -> adl_barrier::refined_case_insensitive_less_fn<T>
@@ -184,7 +184,7 @@ namespace cppsort
 
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> std::enable_if_t<
+                        -> detail::enable_if_t<
                             not is_invocable_r_v<nope_type, caller, U, U, std::locale>,
                             decltype(case_insensitive_less(lhs, rhs, loc))
                         >
@@ -194,7 +194,7 @@ namespace cppsort
 
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> std::enable_if_t<
+                        -> detail::enable_if_t<
                             is_invocable_r_v<nope_type, caller, U, U, std::locale>,
                             bool
                         >
@@ -224,7 +224,7 @@ namespace cppsort
 
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> std::enable_if_t<
+                        -> detail::enable_if_t<
                             negation<is_invocable_r<nope_type, caller, U, U>>::value,
                             decltype(case_insensitive_less(lhs, rhs))
                         >
@@ -234,7 +234,7 @@ namespace cppsort
 
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> std::enable_if_t<
+                        -> detail::enable_if_t<
                             conjunction<
                                 is_invocable_r<nope_type, caller, U, U>,
                                 negation<is_invocable_r<nope_type, caller, U, U, std::locale>>
@@ -247,7 +247,7 @@ namespace cppsort
 
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> std::enable_if_t<
+                        -> detail::enable_if_t<
                             conjunction<
                                 is_invocable_r<nope_type, caller, U, U>,
                                 is_invocable_r<nope_type, caller, U, U, std::locale>

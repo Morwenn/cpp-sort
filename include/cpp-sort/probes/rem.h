@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/longest_non_descending_subsequence.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -31,7 +32,7 @@ namespace probe
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = cppsort::detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare> && (
                         cppsort::detail::is_detected_v<
                             cppsort::utility::detail::has_size_method_t,
@@ -65,7 +66,7 @@ namespace probe
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = cppsort::detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

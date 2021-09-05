@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MOVE_H_
@@ -56,7 +56,7 @@ namespace detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> std::enable_if_t<
+        -> detail::enable_if_t<
             not is_invocable_v<hide_adl::dummy_callable, InputIterator>,
             OutputIterator
         >
@@ -66,7 +66,7 @@ namespace detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> std::enable_if_t<
+        -> detail::enable_if_t<
             is_invocable_v<hide_adl::dummy_callable, InputIterator>,
             OutputIterator
         >
@@ -83,7 +83,7 @@ namespace detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> std::enable_if_t<
+        -> detail::enable_if_t<
             not is_invocable_v<hide_adl::dummy_callable, InputIterator>,
             OutputIterator
         >
@@ -93,7 +93,7 @@ namespace detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> std::enable_if_t<
+        -> detail::enable_if_t<
             is_invocable_v<hide_adl::dummy_callable, InputIterator>,
             OutputIterator
         >

@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/slabsort.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -32,7 +33,7 @@ namespace cppsort
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
                 >
             >

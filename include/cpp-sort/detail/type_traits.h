@@ -16,7 +16,7 @@ namespace cppsort
 namespace detail
 {
     ////////////////////////////////////////////////////////////
-    // Alternative to std::conditional from C++11
+    // Alternative to std::conditional_t from C++11
 
     template<bool>
     struct conditional
@@ -34,6 +34,22 @@ namespace detail
 
     template<bool B, typename T, typename U>
     using conditional_t = typename conditional<B>::template type<T, U>;
+
+    ////////////////////////////////////////////////////////////
+    // Alternative to std::enable_if_t from C++11
+
+    template<bool>
+    struct enable_if_impl {};
+
+    template<>
+    struct enable_if_impl<true>
+    {
+        template<typename T>
+        using type = T;
+    };
+
+    template<bool B, typename T=void>
+    using enable_if_t = typename enable_if_impl<B>::template type<T>;
 
     ////////////////////////////////////////////////////////////
     // std::void_t from C++17

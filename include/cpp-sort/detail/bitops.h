@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -79,14 +80,14 @@ namespace detail
 
     template<typename Integer>
     constexpr auto half(Integer value)
-        -> std::enable_if_t<std::is_integral<Integer>::value, Integer>
+        -> detail::enable_if_t<std::is_integral<Integer>::value, Integer>
     {
         return static_cast<Integer>(static_cast<std::make_unsigned_t<Integer>>(value) / 2);
     }
 
     template<typename T>
     constexpr auto half(T value)
-        -> std::enable_if_t<not std::is_integral<T>::value, T>
+        -> detail::enable_if_t<not std::is_integral<T>::value, T>
     {
         return value / 2;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SKA_SORTER_H_
@@ -32,13 +32,13 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, RandomAccessIterator>
                 >
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> std::enable_if_t<detail::is_ska_sortable_v<
+                -> detail::enable_if_t<detail::is_ska_sortable_v<
                     projected_t<RandomAccessIterator, Projection>
                 >>
             {

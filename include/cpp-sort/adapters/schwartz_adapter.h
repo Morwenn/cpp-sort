@@ -111,7 +111,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -127,7 +127,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
@@ -142,7 +142,7 @@ namespace cppsort
 
             template<typename ForwardIterable, typename Compare=std::less<>>
             auto operator()(ForwardIterable&& iterable, Compare compare={}) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     not is_projection_v<Compare, ForwardIterable>,
                     decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare)))
                 >
@@ -154,7 +154,7 @@ namespace cppsort
             template<typename ForwardIterator, typename Compare=std::less<>>
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     not is_projection_iterator_v<Compare, ForwardIterator>,
                     decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
                 >

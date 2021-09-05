@@ -152,7 +152,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -169,7 +169,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
@@ -225,7 +225,7 @@ namespace cppsort
 
         template<
             typename... Args,
-            typename = std::enable_if_t<is_stable_v<Sorter(Args...)>>
+            typename = detail::enable_if_t<is_stable_v<Sorter(Args...)>>
         >
         auto operator()(Args&&... args) const
             -> decltype(this->get()(std::forward<Args>(args)...))
@@ -235,7 +235,7 @@ namespace cppsort
 
         template<
             typename... Args,
-            typename = std::enable_if_t<not is_stable_v<Sorter(Args...)>>,
+            typename = detail::enable_if_t<not is_stable_v<Sorter(Args...)>>,
             typename = void
         >
         auto operator()(Args&&... args) const

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_
@@ -115,7 +115,7 @@ namespace cppsort
 
             template<typename... Args>
             static auto _detail_stability(choice<Ind>, Args&&... args)
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     is_invocable_v<Sorter, Args...>,
                     is_stable<Sorter(Args...)>
                 >;
@@ -394,7 +394,7 @@ namespace cppsort
 
             template<typename Sorter>
             static constexpr auto get_flat_tuple(Sorter&& value)
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     not detail::is_hybrid_adapter<Sorter>::value,
                     std::tuple<std::remove_reference_t<Sorter>&&>
                 >
@@ -404,7 +404,7 @@ namespace cppsort
 
             template<typename Sorter>
             static constexpr auto get_flat_tuple(Sorter&& value)
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     detail::is_hybrid_adapter<Sorter>::value,
                     decltype(get_sorters_from_impl(std::move(value)))
                 >

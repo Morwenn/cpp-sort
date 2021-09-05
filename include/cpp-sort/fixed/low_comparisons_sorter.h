@@ -72,6 +72,16 @@ namespace cppsort
     };
 }
 
+// Common includes for specializations
+#include <functional>
+#include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
+#include "../detail/front_insert.h"
+#include "../detail/swap_if.h"
+#include "../detail/type_traits.h"
+
 // Specializations of low_comparisons_sorter for some values of N
 #include "../detail/low_comparisons/sort2.h"
 #include "../detail/low_comparisons/sort3.h"

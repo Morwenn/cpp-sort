@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_MOVES_SORT3_H_
@@ -16,6 +16,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "../rotate_left.h"
 #include "../rotate_right.h"
+#include "../type_traits.h"
 
 namespace cppsort
 {
@@ -28,7 +29,7 @@ namespace detail
             typename RandomAccessIterator,
             typename Compare = std::less<>,
             typename Projection = utility::identity,
-            typename = std::enable_if_t<is_projection_iterator_v<
+            typename = detail::enable_if_t<is_projection_iterator_v<
                 Projection, RandomAccessIterator, Compare
             >>
         >

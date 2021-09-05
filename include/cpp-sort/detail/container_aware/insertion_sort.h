@@ -122,7 +122,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
@@ -131,7 +131,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::list<Args...>& iterable, Projection projection) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
@@ -142,7 +142,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
@@ -165,7 +165,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
@@ -174,7 +174,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
@@ -185,7 +185,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >
@@ -201,7 +201,7 @@ namespace cppsort
 
         template<
             typename First, typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 not detail::is_std_list<detail::remove_cvref_t<First>>::value &&
                 not detail::is_std_forward_list<detail::remove_cvref_t<First>>::value
             >

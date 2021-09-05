@@ -40,7 +40,7 @@ namespace utility
 
     template<
         typename Iterator,
-        typename = std::enable_if_t<
+        typename = cppsort::detail::enable_if_t<
             cppsort::detail::is_detected_v<detail::has_iter_move_t, Iterator>
         >
     >
@@ -54,7 +54,7 @@ namespace utility
 
     template<
         typename Iterator,
-        typename = std::enable_if_t<
+        typename = cppsort::detail::enable_if_t<
             not cppsort::detail::is_detected_v<detail::has_iter_move_t, Iterator>
         >,
         typename = void // dummy parameter for ODR

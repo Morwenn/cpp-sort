@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_TOTAL_LESS_H_
@@ -14,6 +14,7 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -24,7 +25,7 @@ namespace cppsort
 
         template<typename T>
         constexpr auto total_less(T lhs, T rhs) noexcept
-            -> std::enable_if_t<std::is_integral<T>::value, bool>
+            -> detail::enable_if_t<std::is_integral<T>::value, bool>
         {
             return lhs < rhs;
         }
@@ -34,7 +35,7 @@ namespace cppsort
 
         template<typename T>
         auto total_less(T lhs, T rhs)
-            -> std::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
         {
             if (std::isfinite(lhs) && std::isfinite(rhs)) {
                 if (lhs == 0 && rhs == 0) {

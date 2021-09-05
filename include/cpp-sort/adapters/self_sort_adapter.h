@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_
@@ -81,7 +81,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 detail::has_sort_method<Iterable, Args...>,
                 decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
             >
@@ -91,7 +91,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 not detail::has_sort_method<Iterable, Args...> &&
                 detail::has_stable_sort_method<Iterable, Args...>,
                 decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
@@ -102,7 +102,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 not detail::has_sort_method<Iterable, Args...> &&
                 not detail::has_stable_sort_method<Iterable, Args...>,
                 decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))

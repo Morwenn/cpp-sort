@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_SELECTION_SORT_H_
@@ -20,6 +20,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../min_element.h"
+#include "../type_traits.h"
 
 namespace cppsort
 {
@@ -100,7 +101,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
@@ -109,7 +110,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::list<Args...>& iterable, Projection projection) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
@@ -120,7 +121,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
@@ -143,7 +144,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
@@ -152,7 +153,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
@@ -163,7 +164,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >

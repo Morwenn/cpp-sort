@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -27,6 +27,7 @@ Phil Endecott and Frank Gennari
 #include <type_traits>
 #include <vector>
 #include "constants.h"
+#include "../../type_traits.h"
 
 namespace cppsort
 {
@@ -38,7 +39,7 @@ namespace detail
 {
     //Well, we're not using Boost in the end
     template<bool Condition, typename T=void>
-    using disable_if_t = std::enable_if_t<not Condition, T>;
+    using disable_if_t = cppsort::detail::enable_if_t<not Condition, T>;
 
     //This only works on unsigned data types
     template<typename T>
