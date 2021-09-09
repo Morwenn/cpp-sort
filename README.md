@@ -110,7 +110,7 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 # Compiler support & tooling
 
 ![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/workflows/Ubuntu%20Builds/badge.svg?branch=develop)
-![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/Windows%20Builds/badge.svg?branch=develop)
+![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/MSVC%20Builds/badge.svg?branch=develop)
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
 **cpp-sort** requires C++14 support, and should work with the following compilers:
