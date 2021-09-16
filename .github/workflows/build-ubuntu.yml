@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
 
     strategy:
       fail-fast: false
@@ -44,6 +44,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install GCC
+        if: ${{matrix.cxx == 'g++-5'}}
+        run: sudo apt-get install -y g++-5
 
       - name: Install Clang
         if: ${{matrix.cxx == 'clang++-6.0'}}
