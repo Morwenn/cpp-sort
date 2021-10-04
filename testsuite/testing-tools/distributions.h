@@ -9,15 +9,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
-#include <iterator>
 #include <random>
 #include <vector>
-#include <catch2/catch.hpp>
 #include <cpp-sort/detail/bitops.h>
 
 namespace dist
 {
+    // Pseudo-random number generator, used by some distributions
+    // Definition in main.cpp
+    extern thread_local std::mt19937_64 distributions_prng;
+
     template<typename Derived>
     struct distribution
     {
@@ -40,9 +41,6 @@ namespace dist
         auto operator()(OutputIterator out, long long int size, T start=T(0)) const
             -> void
         {
-            // Pseudo-random number generator
-            thread_local std::mt19937 engine(Catch::rngSeed());
-
             std::vector<T> vec;
             vec.reserve(size);
 
@@ -50,8 +48,8 @@ namespace dist
             for (auto i = start ; i < end ; ++i) {
                 vec.emplace_back(i);
             }
-            std::shuffle(std::begin(vec), std::end(vec), engine);
-            std::move(std::begin(vec), std::end(vec), out);
+            std::shuffle(vec.begin(), vec.end(), distributions_prng);
+            std::move(vec.begin(), vec.end(), out);
         }
     };
 
@@ -62,17 +60,14 @@ namespace dist
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            // Pseudo-random number generator
-            thread_local std::mt19937 engine(Catch::rngSeed());
-
             std::vector<int> vec;
             vec.reserve(size);
 
             for (long long int i = 0 ; i < size ; ++i) {
                 vec.emplace_back(i % 16);
             }
-            std::shuffle(std::begin(vec), std::end(vec), engine);
-            std::move(std::begin(vec), std::end(vec), out);
+            std::shuffle(vec.begin(), vec.end(), distributions_prng);
+            std::move(vec.begin(), vec.end(), out);
         }
     };
 
