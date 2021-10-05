@@ -50,7 +50,7 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     This feature is available when the feature-testing macro `__cpp_nontype_template_parameter_auto` is defined.
 
-* [[`sorter_facade`|Sorter facade]] range overloads can now be used in `constexpr` functions.
+* [`sorter_facade`][sorter-facade] range overloads can now be used in `constexpr` functions.
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.
 
@@ -94,11 +94,12 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [feature-test-macros]: https://wg21.link/SD6
   [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
   [ska-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#ska_sorter
+  [sorter-facade]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
-  [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view)
+  [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view
   [utility-iter-move]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#iter_move-and-iter_swap
