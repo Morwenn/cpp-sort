@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -28,6 +28,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 
 namespace cppsort
 {
@@ -37,12 +38,12 @@ namespace detail
       /* A constant containing the number of Leonardo numbers that can fit into
        * 64 bits.
        */
-      static constexpr std::size_t kNumLeonardoNumbers = 92;
+      CPPSORT_INLINE_VARIABLE constexpr std::size_t kNumLeonardoNumbers = 92;
 
       /* A list of all the Leonardo numbers below 2^64, precomputed for
        * efficiency.
        */
-      static constexpr std::uint_fast64_t kLeonardoNumbers[kNumLeonardoNumbers] = {
+      CPPSORT_INLINE_VARIABLE constexpr std::uint_fast64_t kLeonardoNumbers[kNumLeonardoNumbers] = {
         1u, 1u, 3u, 5u, 9u, 15u, 25u, 41u, 67u, 109u, 177u, 287u, 465u, 753u,
         1219u, 1973u, 3193u, 5167u, 8361u, 13529u, 21891u, 35421u, 57313u,
         92735u, 150049u, 242785u, 392835u, 635621u, 1028457u, 1664079u,
