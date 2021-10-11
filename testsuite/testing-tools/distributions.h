@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <cassert>
 #include <random>
 #include <vector>
 #include <cpp-sort/detail/bitops.h>
@@ -18,6 +19,8 @@ namespace dist
     // Pseudo-random number generator, used by some distributions
     // Definition in main.cpp
     extern thread_local std::mt19937_64 distributions_prng;
+
+    extern thread_local std::uniform_int_distribution<long long int> randint;
 
     template<typename Derived>
     struct distribution
@@ -37,19 +40,29 @@ namespace dist
     struct shuffled:
         distribution<shuffled>
     {
-        template<typename OutputIterator, typename T=long long int>
-        auto operator()(OutputIterator out, long long int size, T start=T(0)) const
+        template<typename T=long long int, typename OutputIterator>
+        auto operator()(OutputIterator out, long long int size, long long int start=0ll) const
             -> void
         {
-            std::vector<T> vec;
-            vec.reserve(size);
+            assert(size >= 4);
+            using param_t = typename std::uniform_int_distribution<long long int>::param_type;
 
-            T end = start + size;
-            for (auto i = start ; i < end ; ++i) {
-                vec.emplace_back(i);
+            // Generate a shuffle of all the integers in the range [start, start + size)
+            // with a linear congruential generator
+            // https://stackoverflow.com/a/44821946/1364752
+
+            auto m = cppsort::detail::hyperceil(static_cast<unsigned long long>(size));
+            auto a = randint(distributions_prng, param_t(1, (m >> 2) - 1)) * 4 + 1;
+            auto c = randint(distributions_prng, param_t(3, m)) | 1;
+
+            auto x = 1ll;
+            for (auto i = 0ll; i < size; ++i) {
+                do {
+                    x = (x * a + c) % m;
+                } while (x >= size);
+                out = static_cast<T>(x + start);
+                ++out;
             }
-            std::shuffle(vec.begin(), vec.end(), distributions_prng);
-            std::move(vec.begin(), vec.end(), out);
         }
     };
 

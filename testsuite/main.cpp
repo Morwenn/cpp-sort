@@ -7,3 +7,4 @@
 #include <testing-tools/distributions.h>
 
 thread_local std::mt19937_64 dist::distributions_prng(Catch::rngSeed());
+thread_local std::uniform_int_distribution<long long int> dist::randint;

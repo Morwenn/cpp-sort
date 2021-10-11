@@ -29,6 +29,19 @@ namespace detail
         return n & ~(n >> 1);
     }
 
+    // Returns 2^ceil(log2(n)), assumes n > 0
+    template<typename Unsigned>
+    constexpr auto hyperceil(Unsigned n)
+        -> Unsigned
+    {
+        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
+        --n;
+        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
+            n |= (n >> i);
+        }
+        return ++n;
+    }
+
     // Returns floor(log2(n)), assumes n > 0
 
 #if defined(__GNUC__) || defined(__clang__)
