@@ -4,7 +4,8 @@
  */
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <cpp-sort/detail/random.h>
 #include <testing-tools/distributions.h>
 
 thread_local std::mt19937_64 dist::distributions_prng(Catch::rngSeed());
-thread_local std::uniform_int_distribution<long long int> dist::randint;
+thread_local cppsort::detail::rand_bit_generator<std::mt19937_64> dist::gen(dist::distributions_prng);

@@ -13,14 +13,15 @@
 #include <random>
 #include <vector>
 #include <cpp-sort/detail/bitops.h>
+#include <cpp-sort/detail/random.h>
 
 namespace dist
 {
     // Pseudo-random number generator, used by some distributions
     // Definition in main.cpp
     extern thread_local std::mt19937_64 distributions_prng;
-
-    extern thread_local std::uniform_int_distribution<long long int> randint;
+    // Class allowing to fetch random bits one by one
+    extern thread_local cppsort::detail::rand_bit_generator<std::mt19937_64> gen;
 
     template<typename Derived>
     struct distribution
@@ -45,15 +46,14 @@ namespace dist
             -> void
         {
             assert(size >= 4);
-            using param_t = typename std::uniform_int_distribution<long long int>::param_type;
 
             // Generate a shuffle of all the integers in the range [start, start + size)
             // with a linear congruential generator
             // https://stackoverflow.com/a/44821946/1364752
 
-            auto m = cppsort::detail::hyperceil(static_cast<unsigned long long>(size));
-            auto a = randint(distributions_prng, param_t(1, (m >> 2) - 1)) * 4 + 1;
-            auto c = randint(distributions_prng, param_t(3, m)) | 1;
+            long long int m = cppsort::detail::hyperceil<unsigned long long int>(size);
+            auto a = cppsort::detail::randint(1ll, (m >> 2) - 1, dist::gen) * 4 + 1;
+            auto c = cppsort::detail::randint(3ll, m, dist::gen) | 1;
 
             auto x = 1ll;
             for (auto i = 0ll; i < size; ++i) {
