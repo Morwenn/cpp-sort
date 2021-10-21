@@ -8,19 +8,14 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <cassert>
 #include <random>
-#include <vector>
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/detail/random.h>
 
 namespace dist
 {
-    // Pseudo-random number generator, used by some distributions
-    // Definition in main.cpp
-    extern thread_local std::mt19937_64 distributions_prng;
-    // Class allowing to fetch random bits one by one
+    // Utility allowing to fetch random bits from a URBG one by one,
+    // defined in main.cpp
     extern thread_local cppsort::detail::rand_bit_generator<std::mt19937_64> gen;
 
     template<typename Derived>
@@ -45,42 +40,24 @@ namespace dist
         auto operator()(OutputIterator out, long long int size, long long int start=0ll) const
             -> void
         {
-            assert(size >= 4);
-
-            // Generate a shuffle of all the integers in the range [start, start + size)
-            // with a linear congruential generator
-            // https://stackoverflow.com/a/44821946/1364752
-
-            long long int m = cppsort::detail::hyperceil<unsigned long long int>(size);
-            auto a = cppsort::detail::randint(1ll, (m >> 2) - 1, dist::gen) * 4 + 1;
-            auto c = cppsort::detail::randint(3ll, m, dist::gen) | 1;
-
-            auto x = 1ll;
-            for (auto i = 0ll; i < size; ++i) {
-                do {
-                    x = (x * a + c) % m;
-                } while (x >= size);
-                out = static_cast<T>(x + start);
-                ++out;
-            }
+            cppsort::detail::fill_with_shuffle<T>(out, size, start, gen);
         }
     };
 
     struct shuffled_16_values:
         distribution<shuffled_16_values>
     {
-        template<typename OutputIterator>
+        static constexpr auto mod_16(long long int value)
+            -> long long int
+        {
+            return value % 16;
+        }
+
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            std::vector<int> vec;
-            vec.reserve(size);
-
-            for (long long int i = 0 ; i < size ; ++i) {
-                vec.emplace_back(i % 16);
-            }
-            std::shuffle(vec.begin(), vec.end(), distributions_prng);
-            std::move(vec.begin(), vec.end(), out);
+            cppsort::detail::fill_with_shuffle<T>(out, size, 0, gen, &mod_16);
         }
     };
 

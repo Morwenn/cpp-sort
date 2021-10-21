@@ -8,7 +8,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cassert>
 #include <random>
+#include <utility>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
+#include "bitops.h"
 
 namespace cppsort
 {
@@ -26,8 +31,8 @@ namespace detail
         public:
             using result_type = typename URBG::result_type;
 
-            explicit rand_bit_generator(URBG& engine):
-                engine_ptr(&engine),
+            explicit rand_bit_generator(URBG&& engine):
+                engine(std::move(engine)),
                 word(0),
                 pos(0)
             {}
@@ -36,7 +41,7 @@ namespace detail
                 -> result_type
             {
                 if (pos == 0) {
-                    word = (*engine_ptr)();
+                    word = engine();
                     pos = URBG::word_size;
                 }
                 --pos;
@@ -44,8 +49,8 @@ namespace detail
             }
 
         private:
-            URBG* engine_ptr;
-            typename URBG::result_type word;
+            URBG engine;
+            result_type word;
             int pos;
     };
 
@@ -80,6 +85,44 @@ namespace detail
                     c -= n;
                 }
             }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////
+    // fill_with_shuffle
+    //
+    // Takes an output iterator and fills the corresponding
+    // range with a shuffle of all the integers in the range
+    // [start, start + size]
+
+    template<
+        typename T=long long int,
+        typename OutputIterator,
+        typename URBG,
+        typename Projection = utility::identity
+    >
+    auto fill_with_shuffle(OutputIterator out, long long int size, long long int start,
+                           URBG& engine, Projection projection={})
+        -> void
+    {
+        assert(size >= 4);
+        auto&& proj = utility::as_function(projection);
+
+        // Generate a shuffle of all the integers in the range [start, start + size)
+        // with a linear congruential generator
+        // https://stackoverflow.com/a/44821946/1364752
+
+        long long int m = hyperceil<unsigned long long int>(size);
+        auto a = randint(1ll, (m >> 2) - 1, engine) * 4 + 1;
+        auto c = randint(3ll, m, engine) | 1;
+
+        auto x = 1ll;
+        for (auto i = 0ll; i < size; ++i) {
+            do {
+                x = (x * a + c) % m;
+            } while (x >= size);
+            *out = static_cast<T>(proj(x + start));
+            ++out;
         }
     }
 }}
