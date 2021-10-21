@@ -1,7 +1,7 @@
 # This file is part of CMake-codecov.
 #
 # Copyright (c)
-#   2015-2017 RWTH Aachen University, Federal Republic of Germany
+#   2015-2020 RWTH Aachen University, Federal Republic of Germany
 #
 # See the LICENSE file in the package base directory for details
 #
@@ -19,7 +19,7 @@ set(CMAKE_REQUIRED_QUIET ${codecov_FIND_QUIETLY})
 
 get_property(ENABLED_LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
 foreach (LANG ${ENABLED_LANGUAGES})
-	# Gcov evaluation is dependend on the used compiler. Check gcov support for
+	# Gcov evaluation is dependent on the used compiler. Check gcov support for
 	# each compiler that is used. If gcov binary was already found for this
 	# compiler, do not try to find it again.
 	if (NOT GCOV_${CMAKE_${LANG}_COMPILER_ID}_BIN)
@@ -35,7 +35,7 @@ foreach (LANG ${ENABLED_LANGUAGES})
 			find_program(GCOV_BIN NAMES gcov-${GCC_VERSION} gcov
 				HINTS ${COMPILER_PATH})
 
-		elseif ("${CMAKE_${LANG}_COMPILER_ID}" STREQUAL "Clang")
+		elseif ("${CMAKE_${LANG}_COMPILER_ID}" MATCHES "^(Apple)?Clang$")
 			# Some distributions like Debian ship llvm-cov with the compiler
 			# version appended as llvm-cov-x.y. To find this binary we'll build
 			# the suggested binary name with the compiler version.
@@ -105,7 +105,8 @@ endif (NOT TARGET gcov)
 # Gcov on any source file of <TNAME> once and store the gcov file in the same
 # directory.
 function (add_gcov_target TNAME)
-	set(TDIR ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${TNAME}.dir)
+	get_target_property(TBIN_DIR ${TNAME} BINARY_DIR)
+	set(TDIR ${TBIN_DIR}/CMakeFiles/${TNAME}.dir)
 
 	# We don't have to check, if the target has support for coverage, thus this
 	# will be checked by add_coverage_target in Findcoverage.cmake. Instead we
@@ -135,14 +136,18 @@ function (add_gcov_target TNAME)
 
 
 	set(BUFFER "")
+	set(NULL_DEVICE "/dev/null")
+	if(WIN32)
+		set(NULL_DEVICE "NUL")
+	endif()
 	foreach(FILE ${SOURCES})
 		get_filename_component(FILE_PATH "${TDIR}/${FILE}" PATH)
 
 		# call gcov
 		add_custom_command(OUTPUT ${TDIR}/${FILE}.gcov
-			COMMAND ${GCOV_ENV} ${GCOV_BIN} ${TDIR}/${FILE}.gcno > /dev/null
+			COMMAND ${GCOV_ENV} ${GCOV_BIN} -p ${TDIR}/${FILE}.gcno > ${NULL_DEVICE}
 			DEPENDS ${TNAME} ${TDIR}/${FILE}.gcno
-			WORKING_DIRECTORY ${FILE_PATH}
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
 
 		list(APPEND BUFFER ${TDIR}/${FILE}.gcov)

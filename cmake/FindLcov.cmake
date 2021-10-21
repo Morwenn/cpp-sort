@@ -1,7 +1,7 @@
 # This file is part of CMake-codecov.
 #
 # Copyright (c)
-#   2015-2017 RWTH Aachen University, Federal Republic of Germany
+#   2015-2020 RWTH Aachen University, Federal Republic of Germany
 #
 # See the LICENSE file in the package base directory for details
 #
@@ -53,7 +53,7 @@ include(FindPackageHandleStandardArgs)
 find_program(LCOV_BIN lcov)
 find_program(GENINFO_BIN geninfo)
 find_program(GENHTML_BIN genhtml)
-find_package_handle_standard_args(lcov
+find_package_handle_standard_args(Lcov
 	REQUIRED_VARS LCOV_BIN GENINFO_BIN GENHTML_BIN
 )
 
@@ -159,7 +159,9 @@ function (lcov_capture_initial_tgt TNAME)
 	set(GCOV_ENV "${GCOV_${TCOMPILER}_ENV}")
 
 
-	set(TDIR ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${TNAME}.dir)
+	get_target_property(TBIN_DIR ${TNAME} BINARY_DIR)
+	set(TDIR ${TBIN_DIR}/CMakeFiles/${TNAME}.dir)
+
 	set(GENINFO_FILES "")
 	foreach(FILE ${SOURCES})
 		# generate empty coverage files
@@ -249,8 +251,9 @@ function (lcov_capture_tgt TNAME)
 	set(GCOV_BIN "${GCOV_${TCOMPILER}_BIN}")
 	set(GCOV_ENV "${GCOV_${TCOMPILER}_ENV}")
 
+	get_target_property(TBIN_DIR ${TNAME} BINARY_DIR)
+	set(TDIR ${TBIN_DIR}/CMakeFiles/${TNAME}.dir)
 
-	set(TDIR ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${TNAME}.dir)
 	set(GENINFO_FILES "")
 	foreach(FILE ${SOURCES})
 		# Generate coverage files. If no .gcda file was generated during
@@ -258,14 +261,20 @@ function (lcov_capture_tgt TNAME)
 		set(OUTFILE "${TDIR}/${FILE}.info")
 		list(APPEND GENINFO_FILES ${OUTFILE})
 
+		# Create an empty .gcda file, so the target capture file can have a dependency on it.
+		# The capture file will only use this .gcda if it has a non-zero size (test -s).
+		add_custom_command(OUTPUT "${TDIR}/${FILE}.gcda"
+			COMMAND "${CMAKE_COMMAND}" -E touch "${TDIR}/${FILE}.gcda"
+		)
+
 		add_custom_command(OUTPUT ${OUTFILE}
-			COMMAND test -f "${TDIR}/${FILE}.gcda"
+			COMMAND test -s "${TDIR}/${FILE}.gcda"
 				&& ${GCOV_ENV} ${GENINFO_BIN} --quiet --base-directory
 					${PROJECT_SOURCE_DIR} --gcov-tool ${GCOV_BIN}
 					--output-filename ${OUTFILE} ${GENINFO_EXTERN_FLAG}
 					${TDIR}/${FILE}.gcda
 				|| cp ${OUTFILE}.init ${OUTFILE}
-			DEPENDS ${TNAME} ${TNAME}-capture-init
+			DEPENDS ${TNAME} ${TNAME}-capture-init "${TDIR}/${FILE}.gcda"
 			COMMENT "Capturing coverage data for ${FILE}"
 		)
 	endforeach()
