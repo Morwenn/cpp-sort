@@ -14,11 +14,6 @@ option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" ${USE_VALGR
 option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" ${ENABLE_COVERAGE})
 set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 
-# Apparently ENABLE_COVERAGE is needed either way
-if (CPPSORT_ENABLE_COVERAGE)
-    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
-endif()
-
 ########################################
 # Find or download Catch2
 
@@ -38,6 +33,15 @@ else()
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 endif()
 include(Catch)
+
+########################################
+# Configure coverage
+
+if (CPPSORT_ENABLE_COVERAGE)
+    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
+    find_package(codecov)
+    list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
+endif()
 
 ########################################
 # Configure runtime tests
@@ -91,12 +95,7 @@ macro(configure_tests target)
     endif()
 
     if (CPPSORT_ENABLE_COVERAGE)
-        find_package(codecov)
         add_coverage(${target})
-
-        # Set flags specific to coverage builds
-        target_compile_options(${target} PRIVATE --coverage)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
     endif()
 endmacro()
 
@@ -236,14 +235,6 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         probes/every_probe_heap_memory_exhaustion.cpp
     )
     configure_tests(heap-memory-exhaustion-tests)
-endif()
-
-########################################
-# Configure coverage
-
-if (CPPSORT_ENABLE_COVERAGE)
-    list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
-    coverage_evaluate()
 endif()
 
 ########################################
