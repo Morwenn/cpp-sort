@@ -17,9 +17,6 @@ on:
       - 'include/**'
       - 'testsuite/**'
 
-env:
-  BUILD_TYPE: Debug
-
 jobs:
   upload-coverage:
     runs-on: ubuntu-latest
@@ -33,19 +30,19 @@ jobs:
         working-directory: ${{runner.workspace}}
         run: >
           cmake -H${{github.event.repository.name}} -Bbuild
-          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
-          -DCPPSORT_ENABLE_COVERAGE=true
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCPPSORT_ENABLE_COVERAGE=ON
           -G"Unix Makefiles"
 
       - name: Build with coverage
         shell: bash
         working-directory: ${{runner.workspace}}/build
-        run: cmake --build . --config $BUILD_TYPE -j 2
+        run: cmake --build . --config Debug -j 2
 
       - name: Run the test suite
         shell: bash
         working-directory: ${{runner.workspace}}/build
-        run: ctest -C Release --output-on-failure
+        run: ctest -C Debug --output-on-failure
 
       - name: Create coverage info
         shell: bash
