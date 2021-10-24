@@ -47,10 +47,10 @@ jobs:
       - name: Create coverage info
         shell: bash
         working-directory: ${{runner.workspace}}/build
-        run: make gcov
+        run: cmake --build . --target gcov
 
       - name: Upload coverage info
         uses: codecov/codecov-action@v2
         with:
-          directory: ${{runner.workspace}}/build
+          directory: ${{runner.workspace}}/build/testsuite
           fail_ci_if_error: true

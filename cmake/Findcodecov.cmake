@@ -74,6 +74,11 @@ set(CMAKE_REQUIRED_QUIET ${codecov_FIND_QUIETLY})
 
 get_property(ENABLED_LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
 foreach (LANG ${ENABLED_LANGUAGES})
+	if (NOT ${LANG} MATCHES "^(C|CXX|Fortran)$")
+		message(STATUS "Skipping coverage for unsupported language: ${LANG}")
+		continue()
+	endif ()
+
 	# Coverage flags are not dependent on language, but the used compiler. So
 	# instead of searching flags foreach language, search flags foreach compiler
 	# used.
