@@ -11,9 +11,9 @@ on:
       - 2.0.0-develop
     paths:
       - '.github/workflows/code-coverage.yml'
+      - '.github/.codecov.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
-      - 'codecov.yml'
       - 'include/**'
       - 'testsuite/**'
 
