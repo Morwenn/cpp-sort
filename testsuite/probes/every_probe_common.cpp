@@ -58,3 +58,37 @@ TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
     auto presortedness = mop(collection);
     CHECK( presortedness == 0 );
 }
+
+TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
+                    decltype(cppsort::probe::block),
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::ham),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::osc),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sus) )
+{
+    // Ensure that all measures of presortedness return 0 when
+    // given a collection with 0 or 1 element
+
+    std::decay_t<TestType> mop;
+
+    SECTION( "empty collection" )
+    {
+        std::vector<int> collection;
+        auto presortedness = mop(collection);
+        CHECK( presortedness == 0 );
+    }
+
+    SECTION( "one-element collection" )
+    {
+        std::vector<int> collection = { 42 };
+        auto presortedness = mop(collection);
+        CHECK( presortedness == 0 );
+    }
+}
