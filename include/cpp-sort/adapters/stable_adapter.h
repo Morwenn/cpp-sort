@@ -219,7 +219,11 @@ namespace cppsort
     {
         stable_adapter() = default;
 
-        constexpr explicit stable_adapter(Sorter sorter):
+        constexpr explicit stable_adapter(const Sorter& sorter):
+            utility::adapter_storage<Sorter>(sorter)
+        {}
+
+        constexpr explicit stable_adapter(Sorter&& sorter):
             utility::adapter_storage<Sorter>(std::move(sorter))
         {}
 
@@ -256,6 +260,16 @@ namespace cppsort
     struct stable_adapter<stable_adapter<Sorter>>:
         stable_adapter<Sorter>
     {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(const stable_adapter<Sorter>& sorter):
+            stable_adapter<Sorter>(sorter)
+        {}
+
+        constexpr explicit stable_adapter(stable_adapter<Sorter>&& sorter):
+            stable_adapter<Sorter>(std::move(sorter))
+        {}
+
         using type = stable_adapter<Sorter>;
     };
 
