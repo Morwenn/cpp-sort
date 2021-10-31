@@ -37,7 +37,7 @@ namespace cppsort
             stable_adapter()
         {}
 
-        using type = merge_sorter;
+        using type = stable_adapter<default_sorter>;
     };
 
     ////////////////////////////////////////////////////////////
