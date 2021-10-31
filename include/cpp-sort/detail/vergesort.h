@@ -531,10 +531,10 @@ namespace verge
     {
         // Adapt the fallback sorter depending on whether a stable
         // or an unstable sort is wanted
-        verge::sort<true>(iterator_category_t<BidirectionalIterator>{},
-                          std::move(first), std::move(last), size,
-                          std::move(compare), std::move(projection),
-                          get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
+        verge::sort<Stable>(iterator_category_t<BidirectionalIterator>{},
+                            std::move(first), std::move(last), size,
+                            std::move(compare), std::move(projection),
+                            get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
     }
 
     constexpr auto default_sorter_for_impl(std::bidirectional_iterator_tag)
