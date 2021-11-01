@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -505,9 +505,9 @@ namespace verge
 
     template<typename Sorter>
     auto get_maybe_stable(std::true_type, Sorter&& sorter)
-        -> cppsort::stable_adapter<Sorter>
+        -> cppsort::stable_t<Sorter>
     {
-        return cppsort::stable_adapter<Sorter>(std::move(sorter));
+        return cppsort::stable_t<Sorter>(std::move(sorter));
     }
 
     template<typename Sorter>
