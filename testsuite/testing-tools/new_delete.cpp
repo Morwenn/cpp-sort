@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -7,14 +7,28 @@
 #include <new>
 #include <testing-tools/memory_exhaustion.h>
 
-//
-// Replace the global new and delete for the purpose of testing
-// algorithms that have fallbacks when they can't allocate
-// extra memory
-//
+////////////////////////////////////////////////////////////
+// Variable to control whether memory exhaustion should fail
 
-// This variable controls whether memory exhaustion should fail
-thread_local bool heap_memory_exhaustion_should_fail = false;
+static thread_local bool heap_memory_exhaustion_should_fail = false;
+
+////////////////////////////////////////////////////////////
+// scoped_memory_exhaustion (scope guard)
+
+scoped_memory_exhaustion::scoped_memory_exhaustion() noexcept
+{
+    heap_memory_exhaustion_should_fail = true;
+}
+
+scoped_memory_exhaustion::~scoped_memory_exhaustion()
+{
+    heap_memory_exhaustion_should_fail = false;
+}
+
+////////////////////////////////////////////////////////////
+// Replace the global new and delete functions for the
+// purpose of testing that some algorithms still work when
+// heap memory allocations fail
 
 auto operator new(std::size_t size)
     -> void*
