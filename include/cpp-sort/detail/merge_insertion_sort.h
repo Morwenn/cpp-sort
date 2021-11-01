@@ -212,21 +212,24 @@ namespace detail
             friend auto operator+(group_iterator it, difference_type size)
                 -> group_iterator
             {
-                return it += size;
+                it += size;
+                return it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator+(difference_type size, group_iterator it)
                 -> group_iterator
             {
-                return it += size;
+                it += size;
+                return it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator-(group_iterator it, difference_type size)
                 -> group_iterator
             {
-                return it -= size;
+                it -= size;
+                return it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
