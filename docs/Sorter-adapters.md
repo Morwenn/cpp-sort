@@ -229,7 +229,7 @@ This adapter takes a sorter and alters its behavior (if needed) to produce a sta
 
 If the *adapted sorter* already implements a stable sorting algorithm when called with a specific set of parameters (if [`is_stable`][is-stable] is `std::true_type` for the parameters), then the *resulting sorter* will call the *adapted sorter* directly.
 
-`stable_adapter` and its specializations might expose a `type` member type which aliases the *adapter sorter* or some intermediate sorter which is always stable, or the *resulting sorter* otherwise. Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting.
+`stable_adapter` and its specializations might expose a `type` member type which aliases the *adapted sorter* or some intermediate sorter which is always stable, or the *resulting sorter* otherwise. Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting. This `::type` must be constructible from an instance of the *adapted sorter* type.
 
 The *resulting sorter* is always stable.
 
