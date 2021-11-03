@@ -36,8 +36,6 @@ namespace cppsort
         constexpr explicit stable_adapter(const default_sorter&) noexcept:
             stable_adapter()
         {}
-
-        using type = stable_adapter<default_sorter>;
     };
 
     ////////////////////////////////////////////////////////////

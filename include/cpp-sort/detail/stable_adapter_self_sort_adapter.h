@@ -115,7 +115,6 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
-        using type = stable_adapter<self_sort_adapter<Sorter>>;
     };
 }
 
