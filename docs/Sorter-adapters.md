@@ -225,51 +225,56 @@ using sorter = cppsort::hybrid_adapter<
 #include <cpp-sort/adapters/stable_adapter.h>
 ```
 
-This adapter takes a sorter and alters its behavior (if needed) to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and, whenever two elements compare equivalent, the algorithm compares the starting positions of the elements to ensure that their relative starting positions are preserved. Compared to a raw sorter, it requires O(n) additional space to store the starting positions.
+Those *sorter adapters* are similar in that they all take any *sorter* and produce a *resulting sorter* that is guaranteed to implement a stable sort. From lower level to higher level:
+* `make_stable`: artifically make a sorter stable
+* `stable_adapter`: main customization point
+* `stable_t`: higher-level interface
 
-If the *adapted sorter* already implements a stable sorting algorithm when called with a specific set of parameters (if [`is_stable`][is-stable] is `std::true_type` for the parameters), then the *resulting sorter* will call the *adapted sorter* directly.
-
-`stable_adapter` and its specializations might expose a `type` member type which aliases the *adapted sorter* or some intermediate sorter which is always stable, or the *resulting sorter* otherwise. Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting. This `::type` must be constructible from an instance of the *adapted sorter* type.
-
-The *resulting sorter* is always stable.
-
-`stable_adapter` returns the result of the *adapted sorter* if any.
-
-```cpp
-template<typename Sorter>
-struct stable_adapter;
-```
-
-One can provide a dedicated stable algorithm by explicitly specializing `stable_adapter` to bypass the automatic transformation and allow optimizations, which can be useful when a pair of stable and unstable sorting algorithms are closely related. For example, while [`std_sorter`][std-sorter] calls [`std::sort`][std-sort], the explicit specialization `stable_adapter<std_sorter>` calls [`std::stable_sort`][std-stable-sort] instead. In **cpp-sort**, `stable_adapter` has specializations for the following components:
-
-* [`default_sorter`][default-sorter]
-* [`std_sorter`][std-sorter]
-* [`verge_sorter`][verge-sorter]
-* [`hybrid_adapter`][hybrid-adapter]
-* [`self_sort_adapter`][self-sort-adapter]
-* [`verge_adapter`][verge-adapter]
-
-If such a user specialization is provided, it shall alias `is_always_stable` to `std::true_type` and provide a `type` member type which follows the rules mentioned earlier.
-
-While `stable_adapter` is the "high-level" adapter to use whenever one wants a stable sorting algorithm, the header also provides `make_stable`, which directly exposes the raw mechanism used to transform an unstable sorter into a stable one without applying any of the short-circuits described above:
+The *resulting sorter* is always stable and returns the result of the *adapted sorter* if any.
 
 ```cpp
 template<typename Sorter>
 struct make_stable;
 ```
 
-Contrary to `stable_adapter`, `make_stable` isn't meant to be specialized by end users. In C++17, `make_stable` like most of the other adapters can take advantage of deduction guides.
+`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements compare equivalent, it compares the starting positions of the elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
 
-The header also provides the `stable_t` type alias, which either alias the passed sorter if it is always stable, or `stable_adapter<Sorter>` otherwise.
+```cpp
+template<typename Sorter>
+struct stable_adapter;
+```
+
+`stable_adapter` is the main customization point of those stable sorting facilities, and as such can be specialized to provide stable versions of your own unstable sorters or adapters. **cpp-sort** itself provides `stable_adapter` specializations for the following components:
+
+* [`default_sorter`][default-sorter]
+* [`std_sorter`][std-sorter] (calls [`std::stable_sort`][std-stable-sort] instead of [`std::sort`][std-sort])
+* [`verge_sorter`][verge-sorter]
+* [`hybrid_adapter`][hybrid-adapter]
+* [`self_sort_adapter`][self-sort-adapter]
+* `stable_adapter` itself (automatic unnesting)
+* [`verge_adapter`][verge-adapter]
+
+Specializations of `stable_adapter` must provide an `is_always_stable` member type aliasing [`std::true_type`][std-true-type]. Additionally, they might expose a `type` member type aliasing either the *adapted sorter* or some intermediate sorter which is guaranteed to always be stable (it can also alias the `stable_adapter` specialization itself, but it is generally useless). Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting. When present, this `::type` must be constructible from an instance of the *adapted sorter*.
+
+The main `stable_adapter` template uses [`is_stable`][is-stable] when called to check whether the *adapted sorter* produces a stable sorter when called with a given set of parameters. If the call is already stable then th *adapted sorter* is used directly otherwise `make_stable` is used to artificially turn it into a stable sort.
 
 ```cpp
 template<typename Sorter>
 using stable_t = /* implementation-defined */;
 ```
 
-*New in version 1.9.0:* `stable_t`
+`stable_t` is the recommended way to obtain a stable sorter from any sorter. Its goal is to alias the "most nested" type that can be used as stable version of the *adapted* sorter. As such it aliases:
+* The *adapted sorter* if it is guarnateed to always be stable.
+* `stable_adapter<Sorter>::type` otherwise, if such a member type exists.
+* `stable_adapter<Sorter>` otherwise.
 
-It is roughly equivalent to `stable_adapter<Sorter>::type`, except that it doesn't instantiate `stable_adapter<Sorter>` when it doesn't need to. It can be used to reduce the template nesting and improve error messages in some places, and as such is often a better alternative to a raw `stable_adapter`.
+This little dance sometimes allows to reduce the nesting of function calls and to get better error messages in some places. As such `stable_t` is generally a better alternative to `stable_adapter` from a consumer point of view.
+
+The following graph sums up the relations between the different features of the library linked to stable sorting. The dashed lines represent the aliasing logic of `stable_t`.
+
+![Relations between the stable sorting features](https://github.com/Morwenn/cpp-sort/wiki/images/stable-adapters.png)
+
+*New in version 1.9.0:* `stable_t` and `stable_adapter<Sorter>::type`
 
 ### `verge_adapter`
 
@@ -308,6 +313,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [std-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#std_sorter
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
+  [std-true-type]: https://en.cppreference.com/w/cpp/types/integral_constant
   [verge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#verge_adapter
   [verge-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#verge_sorter
   [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/master/fallbacks.md
