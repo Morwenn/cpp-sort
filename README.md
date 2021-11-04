@@ -47,7 +47,6 @@ Here is a more complete example of what can be done with the library:
 #include <cassert>
 #include <forward_list>
 #include <functional>
-#include <iterator>
 #include <vector>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/sorters.h>
@@ -71,9 +70,9 @@ int main()
     sorter(vec, std::greater<>{}, &wrapper::value);
 
     assert(std::equal(
-        std::begin(li), std::end(li),
-        std::begin(vec), std::end(vec),
-        [](auto& lhs, auto& rhs) { return lhs.value == rhs.value; }
+        li.begin(), li.end(),
+        vec.begin(), vec.end(),
+        [](const auto& lhs, const auto& rhs) { return lhs.value == rhs.value; }
     ));
 }
 ```
