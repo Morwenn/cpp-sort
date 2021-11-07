@@ -278,32 +278,52 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter, typename=void>
-        struct stable_t_impl_false
+        struct stable_t_impl_type_or
         {
-            // The sorter is not always stable and does not have
-            // a type member named 'type'
-            using type = stable_adapter<Sorter>;
+            using type = Sorter;
         };
 
         template<typename Sorter>
-        struct stable_t_impl_false<Sorter, detail::void_t<typename stable_adapter<Sorter>::type>>
+        struct stable_t_impl_type_or<Sorter, detail::void_t<typename Sorter::type>>
         {
-            // The sorter is not always stable but has a type member
-            // called 'type', use that one
-            using type = typename stable_adapter<Sorter>::type;
+            using type = typename Sorter::type;
         };
 
-        template<typename Sorter, bool>
+        template<typename Sorter, bool IsStableAdapter>
+        struct stable_t_impl_true
+        {
+            // The sorter is a stable_adapter specialization, use its ::type
+            // member if it exists, otherwise use the specialization directly
+            using type = typename stable_t_impl_type_or<Sorter>::type;
+        };
+
+        template<typename Sorter>
+        struct stable_t_impl_true<Sorter, false>
+        {
+            // The sorter is always stable but not a specialization of
+            // stable_adapter, alias it directly
+            using type = Sorter;
+        };
+
+        template<typename Sorter, bool IsStable>
         struct stable_t_impl
         {
-            // The sorter is always stable, alias it directly
-            using type = Sorter;
+            // The sorter is always stable, check whether it is already a
+            // stable_adapter specialization
+            using type = typename stable_t_impl_true<
+                Sorter,
+                is_specialization_of_v<Sorter, stable_adapter>
+            >::type;
         };
 
         template<typename Sorter>
         struct stable_t_impl<Sorter, false>
         {
-            using type = typename stable_t_impl_false<Sorter>::type;
+            // The sorter is not always stable, wrap it in stable_adapter or
+            // in something close enough
+            using type = typename stable_t_impl_type_or<
+                stable_adapter<Sorter>
+            >::type;
         };
     }
 

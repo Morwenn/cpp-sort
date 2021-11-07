@@ -258,21 +258,22 @@ Specializations of `stable_adapter` must provide an `is_always_stable` member ty
 
 The main `stable_adapter` template uses [`is_stable`][is-stable] when called to check whether the *adapted sorter* produces a stable sorter when called with a given set of parameters. If the call is already stable then th *adapted sorter* is used directly otherwise `make_stable` is used to artificially turn it into a stable sort.
 
+![Visual explanation of what stable_adapter does](https://github.com/Morwenn/cpp-sort/wiki/images/stable_adapter.png)
+
 ```cpp
 template<typename Sorter>
 using stable_t = /* implementation-defined */;
 ```
 
-`stable_t` is the recommended way to obtain a stable sorter from any sorter. Its goal is to alias the "most nested" type that can be used as stable version of the *adapted* sorter. As such it aliases:
-* The *adapted sorter* if it is guarnateed to always be stable.
+`stable_t` is the recommended way to obtain a stable sorter from any sorter. Its goal is to alias the "most nested" type that can be used as stable version of the *adapted sorter*. As such it aliases (let `Sorter` be the *adapted sorter*):
+* `Sorter::type` if `Sorter` is a `stable_adapter` specialization and such a member type exists.
+* `Sorter` otherwise, if it is guaranteed [to always be stable][is-always-stable].
 * `stable_adapter<Sorter>::type` otherwise, if such a member type exists.
 * `stable_adapter<Sorter>` otherwise.
 
 This little dance sometimes allows to reduce the nesting of function calls and to get better error messages in some places. As such `stable_t` is generally a better alternative to `stable_adapter` from a consumer point of view.
 
-The following graph sums up the relations between the different features of the library linked to stable sorting. The dashed lines represent the aliasing logic of `stable_t`.
-
-![Relations between the stable sorting features](https://github.com/Morwenn/cpp-sort/wiki/images/stable-adapters.png)
+![Visual explanation of what stable_t aliases](https://github.com/Morwenn/cpp-sort/wiki/images/stable_t.png)
 
 *New in version 1.9.0:* `stable_t` and `stable_adapter<Sorter>::type`
 
@@ -302,6 +303,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [fixed-size-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters
   [fixed-sorter-traits]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits
   [hybrid-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter
+  [is-always-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_always_stable
   [is-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_stable
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
   [low-moves-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters#low_moves_sorter

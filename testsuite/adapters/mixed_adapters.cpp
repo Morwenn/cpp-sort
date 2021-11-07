@@ -203,3 +203,12 @@ TEST_CASE( "stability of counting_adapter over self_sort_adapter",
         CHECK( cppsort::is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)>::value );
     }
 }
+
+TEST_CASE( "stable_adapter over stable_adapter", "[stable_adapter]" )
+{
+    // Wrap/nest stable_adapter several times
+    using sorter = cppsort::stable_adapter<cppsort::selection_sorter>;
+    using nested1 = cppsort::stable_adapter<sorter>;
+
+    CHECK(( std::is_same<cppsort::stable_t<nested1>, sorter>::value ));
+}

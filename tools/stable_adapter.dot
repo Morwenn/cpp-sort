@@ -1,0 +1,22 @@
+// Copyright (c) 2021 Morwenn
+// SPDX-License-Identifier: MIT
+
+digraph G {
+
+  // Nodes
+  node [fontname="consolas"];
+  sorter[label="Sorter"]
+  stable_adapter[label="stable_adapter<Sorter>"]
+  make_stable[label="make_stable<Sorter>"]
+  use_specialization[label="Use specialization"]
+  node [shape="diamond"]
+  is_stable_v[label="is_stable<Sorter(...)>"]
+  specialized[label="Specialized for Sorter?"]
+
+  // Flow
+  stable_adapter -> specialized
+  specialized -> use_specialization[label="true",fontname="consolas",fontsize="10"]
+  specialized -> is_stable_v[label="false",fontname="consolas",fontsize="10"]
+  is_stable_v -> sorter[label="true",fontname="consolas",fontsize="10"]
+  is_stable_v -> make_stable[label="false",fontname="consolas",fontsize="10"]
+}
