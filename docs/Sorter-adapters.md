@@ -254,7 +254,7 @@ struct stable_adapter;
 * `stable_adapter` itself (automatic unnesting)
 * [`verge_adapter`][verge-adapter]
 
-Specializations of `stable_adapter` must provide an `is_always_stable` member type aliasing [`std::true_type`][std-true-type]. Additionally, they might expose a `type` member type aliasing either the *adapted sorter* or some intermediate sorter which is guaranteed to always be stable (it can also alias the `stable_adapter` specialization itself, but it is generally useless). Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting. When present, this `::type` must be constructible from an instance of the *adapted sorter*.
+Specializations of `stable_adapter` must provide an `is_always_stable` member type aliasing [`std::true_type`][std-true-type]. Additionally, they might expose a `type` member type aliasing either the *adapted sorter* or some intermediate sorter which is guaranteed to always be stable (it can also alias the `stable_adapter` specialization itself, but it is generally useless). Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting. When present, this `::type` must be constructible from an instance of the *adapted sorter* (note however that `stable_adapter<T>::type` does not have to be constructible from an instance of `stable_adapter<T>`!).
 
 The main `stable_adapter` template uses [`is_stable`][is-stable] when called to check whether the *adapted sorter* produces a stable sorter when called with a given set of parameters. If the call is already stable then th *adapted sorter* is used directly otherwise `make_stable` is used to artificially turn it into a stable sort.
 
@@ -271,7 +271,7 @@ using stable_t = /* implementation-defined */;
 * `stable_adapter<Sorter>::type` otherwise, if such a member type exists.
 * `stable_adapter<Sorter>` otherwise.
 
-This little dance sometimes allows to reduce the nesting of function calls and to get better error messages in some places. As such `stable_t` is generally a better alternative to `stable_adapter` from a consumer point of view.
+This little dance sometimes allows to reduce the nesting of function calls and to get better error messages in some places (it notably unwraps nested top-level `stable_adapter`). As such `stable_t` is generally a better alternative to `stable_adapter` from a consumer point of view.
 
 ![Visual explanation of what stable_t aliases](https://github.com/Morwenn/cpp-sort/wiki/images/stable_t.png)
 
