@@ -254,24 +254,6 @@ namespace cppsort
         using is_always_stable = std::true_type;
     };
 
-    // Accidental nesting can happen, unwrap
-    template<typename Sorter>
-    struct stable_adapter<stable_adapter<Sorter>>:
-        stable_adapter<Sorter>
-    {
-        stable_adapter() = default;
-
-        constexpr explicit stable_adapter(const stable_adapter<Sorter>& sorter):
-            stable_adapter<Sorter>(sorter)
-        {}
-
-        constexpr explicit stable_adapter(stable_adapter<Sorter>&& sorter):
-            stable_adapter<Sorter>(std::move(sorter))
-        {}
-
-        using type = stable_adapter<Sorter>;
-    };
-
     ////////////////////////////////////////////////////////////
     // stable_t
 
@@ -332,6 +314,28 @@ namespace cppsort
         Sorter,
         cppsort::is_always_stable_v<Sorter>
     >::type;
+
+    ////////////////////////////////////////////////////////////
+    // stable_adapter<stable_adapter<T>>
+
+    // Accidental nesting can happen, in which case we try to
+    // unwrap as many levels as possible
+    template<typename Sorter>
+    struct stable_adapter<stable_adapter<Sorter>>:
+        stable_adapter<Sorter>
+    {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(const stable_adapter<Sorter>& sorter):
+            stable_adapter<Sorter>(sorter)
+        {}
+
+        constexpr explicit stable_adapter(stable_adapter<Sorter>&& sorter):
+            stable_adapter<Sorter>(std::move(sorter))
+        {}
+
+        using type = typename detail::stable_t_impl_type_or<stable_adapter<Sorter>>::type;
+    };
 }
 
 #ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_
