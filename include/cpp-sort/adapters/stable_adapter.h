@@ -252,6 +252,11 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
+        using type = detail::conditional_t<
+            cppsort::is_always_stable_v<Sorter>,
+            Sorter,
+            stable_adapter<Sorter>
+        >;
     };
 
     ////////////////////////////////////////////////////////////

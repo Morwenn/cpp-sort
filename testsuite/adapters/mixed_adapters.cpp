@@ -206,13 +206,31 @@ TEST_CASE( "stability of counting_adapter over self_sort_adapter",
 
 TEST_CASE( "stable_adapter over stable_adapter", "[stable_adapter]" )
 {
-    // Wrap/nest stable_adapter several times
-    using sorter = cppsort::stable_adapter<cppsort::selection_sorter>;
-    using nested1 = cppsort::stable_adapter<sorter>;
-    using nested2 = cppsort::stable_adapter<nested1>;
-    using nested3 = cppsort::stable_adapter<nested2>;
+    // Wrap/nest stable_adapter several times and check that
+    // stable_t always returns the most nested stable sorter
 
-    CHECK(( std::is_same<cppsort::stable_t<nested1>, sorter>::value ));
-    CHECK(( std::is_same<cppsort::stable_t<nested2>, sorter>::value ));
-    CHECK(( std::is_same<cppsort::stable_t<nested3>, sorter>::value ));
+    SECTION( "over unstable sorter" )
+    {
+        using sorter = cppsort::stable_adapter<cppsort::selection_sorter>;
+        using nested1 = cppsort::stable_adapter<sorter>;
+        using nested2 = cppsort::stable_adapter<nested1>;
+        using nested3 = cppsort::stable_adapter<nested2>;
+
+        CHECK(( std::is_same<cppsort::stable_t<nested1>, sorter>::value ));
+        CHECK(( std::is_same<cppsort::stable_t<nested2>, sorter>::value ));
+        CHECK(( std::is_same<cppsort::stable_t<nested3>, sorter>::value ));
+    }
+
+    SECTION( "over stable sorter" )
+    {
+        // Wrap/nest stable_adapter several times
+        using sorter = cppsort::insertion_sorter;
+        using nested1 = cppsort::stable_adapter<sorter>;
+        using nested2 = cppsort::stable_adapter<nested1>;
+        using nested3 = cppsort::stable_adapter<nested2>;
+
+        CHECK(( std::is_same<cppsort::stable_t<nested1>, sorter>::value ));
+        CHECK(( std::is_same<cppsort::stable_t<nested2>, sorter>::value ));
+        CHECK(( std::is_same<cppsort::stable_t<nested3>, sorter>::value ));
+    }
 }
