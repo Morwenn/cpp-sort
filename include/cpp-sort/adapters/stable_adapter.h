@@ -23,6 +23,7 @@
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/raw_checkers.h"
 #include "../detail/sized_iterator.h"
 #include "../detail/type_traits.h"
 
@@ -257,6 +258,15 @@ namespace cppsort
             Sorter,
             stable_adapter<Sorter>
         >;
+    };
+
+    template<typename Sorter>
+    struct sorter_traits<stable_adapter<Sorter>>:
+        detail::raw_check_iterator_category<stable_adapter<Sorter>>
+    {
+        // Ensure that all user-defined specializations of stable_adapter
+        // are considered always by default by sorter_traits
+        using is_always_stable = std::true_type;
     };
 
     ////////////////////////////////////////////////////////////
