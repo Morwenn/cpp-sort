@@ -309,7 +309,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [low-moves-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters#low_moves_sorter
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
-  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter
+  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter-make_stable-and-stable_t
   [self-sort-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter
   [std-index-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
