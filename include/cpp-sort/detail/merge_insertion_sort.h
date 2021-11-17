@@ -435,9 +435,14 @@ namespace detail
                               Compare compare, Projection projection)
         -> void
     {
+        auto size = last - first;
+        if (size < 2) {
+            return;
+        }
+
         // Make a node pool big enough to hold all the values
         using node_type = list_node<group_iterator<RandomAccessIterator>>;
-        fixed_size_list_node_pool<node_type> node_pool(last - first);
+        fixed_size_list_node_pool<node_type> node_pool(size);
 
         merge_insertion_sort_impl(
             make_group_iterator(std::move(first), 1),

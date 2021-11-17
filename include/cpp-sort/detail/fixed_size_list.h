@@ -147,6 +147,8 @@ namespace detail
                 first_free_(buffer_.get()),
                 capacity_(capacity)
             {
+                CPPSORT_ASSERT(capacity > 0);
+
                 // Node constructors are noexcept, so we don't need to handle
                 // the cleanup of list nodes that would have been required if
                 // exceptions could have been thrown

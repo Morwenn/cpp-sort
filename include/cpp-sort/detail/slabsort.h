@@ -256,8 +256,12 @@ namespace detail
                   Compare compare, Projection projection)
         -> void
     {
-        // Node pool used by all try_melsort invocations
         auto size = last - first;
+        if (size < 2) {
+            return;
+        }
+
+        // Node pool used by all try_melsort invocations
         using node_type = slabsort_list_node<RandomAccessIterator>;
         fixed_size_list_node_pool<node_type> node_pool(size);
 
