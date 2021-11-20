@@ -44,8 +44,10 @@ jobs:
 
       - name: Run the test suite
         shell: bash
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
         working-directory: ${{runner.workspace}}/build
-        run: ctest -C Debug --output-on-failure
+        run: ctest -C Debug --no-tests=error
 
       - name: Capture coverage info
         shell: bash
