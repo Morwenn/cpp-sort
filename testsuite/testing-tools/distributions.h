@@ -9,14 +9,21 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <random>
+#include <catch2/catch.hpp>
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/detail/random.h>
 
 namespace dist
 {
-    // Utility allowing to fetch random bits from a URBG one by one,
-    // defined in main.cpp
-    extern thread_local cppsort::detail::rand_bit_generator<std::mt19937_64> gen;
+    inline auto gen()
+        -> cppsort::detail::rand_bit_generator<std::mt19937_64>&
+    {
+        // Utility allowing to fetch random bits from a URBG one by one
+        thread_local cppsort::detail::rand_bit_generator<std::mt19937_64> res{
+            std::mt19937_64(Catch::rngSeed())
+        };
+        return res;
+    }
 
     template<typename Derived>
     struct distribution
@@ -40,7 +47,7 @@ namespace dist
         auto operator()(OutputIterator out, long long int size, long long int start=0ll) const
             -> void
         {
-            cppsort::detail::fill_with_shuffle<T>(out, size, start, gen);
+            cppsort::detail::fill_with_shuffle<T>(out, size, start, gen());
         }
     };
 
@@ -57,7 +64,7 @@ namespace dist
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            cppsort::detail::fill_with_shuffle<T>(out, size, 0, gen, &mod_16);
+            cppsort::detail::fill_with_shuffle<T>(out, size, 0, gen(), &mod_16);
         }
     };
 
