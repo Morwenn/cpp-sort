@@ -29,7 +29,7 @@ namespace detail
                      Compare compare, Projection projection)
         -> ForwardIterator
     {
-        return introselect(first, last, nth_pos, size, detail::log2(size),
+        return introselect(first, last, nth_pos, size,
                            std::move(compare), std::move(projection));
     }
 

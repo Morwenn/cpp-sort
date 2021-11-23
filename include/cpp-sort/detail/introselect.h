@@ -146,7 +146,7 @@ namespace detail
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto introselect(ForwardIterator first, ForwardIterator last,
                      difference_type_t<ForwardIterator> nth_pos,
-                     difference_type_t<ForwardIterator> size, int bad_allowed,
+                     difference_type_t<ForwardIterator> size,
                      Compare compare, Projection projection)
         -> ForwardIterator;
 
@@ -197,7 +197,7 @@ namespace detail
         size = rounded_size == size ? size / 5 : size / 5 + 1;
 
         // Mutual recursion with introselect
-        return introselect(first, last, size / 2, size, detail::log2(size),
+        return introselect(first, last, size / 2, size,
                            std::move(compare), std::move(projection));
     }
 
@@ -260,12 +260,12 @@ namespace detail
     }
 
     ////////////////////////////////////////////////////////////
-    // Forward nth_element based on introselect
+    // Introselect
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto introselect(ForwardIterator first, ForwardIterator last,
                      difference_type_t<ForwardIterator> nth_pos,
-                     difference_type_t<ForwardIterator> size, int bad_allowed,
+                     difference_type_t<ForwardIterator> size,
                      Compare compare, Projection projection)
         -> ForwardIterator
     {
@@ -273,6 +273,7 @@ namespace detail
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
+        int bad_allowed = detail::log2(size);
 
         while (size > 32) {
             // Choose pivot as either median of 9 or median of medians
