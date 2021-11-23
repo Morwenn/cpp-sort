@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_INTROSELECT_H_
@@ -274,52 +274,52 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (size <= 32) {
-            small_sort(first, last, size, std::move(compare), std::move(projection));
-            return std::next(first, nth_pos);
+        while (size > 32) {
+            // Choose pivot as either median of 9 or median of medians
+            auto temp = pick_pivot(first, last, size, bad_allowed, compare, projection);
+            auto median_it = temp.first;
+            auto last_1 = temp.second;
+
+            // Put the pivot at position std::prev(last) and partition
+            iter_swap(median_it, last_1);
+            auto&& pivot1 = proj(*last_1);
+            auto middle1 = detail::partition(
+                first, last_1,
+                [&](auto&& elem) { return comp(proj(elem), pivot1); }
+            );
+
+            // Put the pivot in its final position and partition
+            iter_swap(middle1, last_1);
+            auto&& pivot2 = proj(*middle1);
+            auto middle2 = detail::partition(
+                std::next(middle1), last,
+                [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
+            );
+
+            // Recursive call: heuristic trick here: in real world cases,
+            // the middle partition is more likely to be smaller than the
+            // right one, so computing its size should generally be cheaper
+            auto size_left = std::distance(first, middle1);
+            auto size_middle = std::distance(middle1, middle2);
+            auto size_right = size - size_left - size_middle;
+
+            // We're done if the nth element is in the middle partition
+            if (nth_pos < size_left) {
+                last = middle1;
+                size = size_left;
+            } else if (nth_pos > size_left + size_middle) {
+                first = middle2;
+                nth_pos -= size_left + size_middle;
+                size = size_right;
+            } else {
+                // Return an iterator to the nth element
+                return std::next(middle1, nth_pos - size_left);
+            }
+            --bad_allowed;
         }
-
-        // Choose pivot as either median of 9 or median of medians
-        auto temp = pick_pivot(first, last, size, bad_allowed, compare, projection);
-        auto median_it = temp.first;
-        auto last_1 = temp.second;
-
-        // Put the pivot at position std::prev(last) and partition
-        iter_swap(median_it, last_1);
-        auto&& pivot1 = proj(*last_1);
-        auto middle1 = detail::partition(
-            first, last_1,
-            [&](auto&& elem) { return comp(proj(elem), pivot1); }
-        );
-
-        // Put the pivot in its final position and partition
-        iter_swap(middle1, last_1);
-        auto&& pivot2 = proj(*middle1);
-        auto middle2 = detail::partition(
-            std::next(middle1), last,
-            [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
-        );
-
-        // Recursive call: heuristic trick here: in real world cases,
-        // the middle partition is more likely to be smaller than the
-        // right one, so computing its size should generally be cheaper
-        auto size_left = std::distance(first, middle1);
-        auto size_middle = std::distance(middle1, middle2);
-        auto size_right = size - size_left - size_middle;
-
-        // TODO: unroll tail recursion
-        // We're done if the nth element is in the middle partition
-        if (nth_pos < size_left) {
-            return introselect(first, middle1, nth_pos,
-                               size_left, --bad_allowed,
-                               std::move(compare), std::move(projection));
-        } else if (nth_pos > size_left + size_middle) {
-            return introselect(middle2, last, nth_pos - size_left - size_middle,
-                               size_right, --bad_allowed,
-                               std::move(compare), std::move(projection));
-        }
-        // Return an iterator to the nth element
-        return std::next(middle1, nth_pos - size_left);
+        // Fallback when the collection is small enough
+        small_sort(first, last, size, std::move(compare), std::move(projection));
+        return std::next(first, nth_pos);
     }
 }}
 
