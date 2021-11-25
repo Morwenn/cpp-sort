@@ -152,14 +152,14 @@ TEST_CASE( "is_ska_sortable", "[ska_sorter]" )
     SECTION( "pairs and tuples" )
     {
         // std::pair
-        CHECK(( is_ska_sortable<std::pair<int, int>> ));
-        CHECK(( is_ska_sortable<std::pair<int, std::deque<bool>>> ));
-        CHECK(( is_ska_sortable<std::pair<std::vector<std::pair<int, long>>, std::deque<bool>>> ));
-        CHECK_FALSE(( is_ska_sortable<std::pair<std::vector<std::pair<int, long double>>, std::deque<bool>>> ));
+        CHECK( is_ska_sortable<std::pair<int, int>> );
+        CHECK( is_ska_sortable<std::pair<int, std::deque<bool>>> );
+        CHECK( is_ska_sortable<std::pair<std::vector<std::pair<int, long>>, std::deque<bool>>> );
+        CHECK_FALSE( is_ska_sortable<std::pair<std::vector<std::pair<int, long double>>, std::deque<bool>>> );
 
         // std::tuple
-        CHECK(( is_ska_sortable<std::tuple<int>> ));
-        CHECK(( is_ska_sortable<std::tuple<long int, int, std::string, std::vector<unsigned long long>>> ));
-        CHECK_FALSE(( is_ska_sortable<std::tuple<std::string, std::vector<unsigned long long>, std::deque<long double>>> ));
+        CHECK( is_ska_sortable<std::tuple<int>> );
+        CHECK( is_ska_sortable<std::tuple<long int, int, std::string, std::vector<unsigned long long>>> );
+        CHECK_FALSE( is_ska_sortable<std::tuple<std::string, std::vector<unsigned long long>, std::deque<long double>>> );
     }
 }
