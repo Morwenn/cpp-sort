@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
 {
     std::vector<wrapper<>> collection;
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
@@ -62,7 +62,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
     auto distribution = dist::shuffled{};
 
     std::vector<wrapper<>> collection;
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     std::vector<wrapper<int>> collection2;
     distribution(std::back_inserter(collection2), 412, -125);

@@ -57,7 +57,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with float iterable" )
     {
         std::vector<float> vec;
-        distribution(std::back_inserter(vec), 100'000);
+        distribution.call<float>(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -65,7 +65,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with double iterators" )
     {
         std::vector<double> vec;
-        distribution(std::back_inserter(vec), 100'000);
+        distribution.call<double>(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }

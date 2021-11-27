@@ -23,7 +23,7 @@ TEST_CASE( "container_aware_adapter and std::list",
 
     std::vector<double> vec; vec.reserve(187);
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(vec), 187, -24.0);
+    distribution.call<double>(std::back_inserter(vec), 187, -24);
 
     SECTION( "insertion_sorter" )
     {

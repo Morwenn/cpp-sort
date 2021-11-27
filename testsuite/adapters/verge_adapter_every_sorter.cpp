@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
 {
     std::vector<double> collection; collection.reserve(412);
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 412, -125.0);
+    distribution.call<double>(std::back_inserter(collection), 412, -125);
 
     cppsort::verge_adapter<TestType> sorter;
     sorter(collection);

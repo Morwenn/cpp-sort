@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE( "test type-specific sorters with no_post_iterator further",
     auto distribution = dist::shuffled{};
 
     std::vector<float> collection_float;
-    distribution(std::back_inserter(collection_float), 310, -56);
+    distribution.call<float>(std::back_inserter(collection_float), 310, -56);
 
     // Iterators with no post-increment and no post-decrement
     auto first_float = make_no_post_iterator(collection_float.begin());
@@ -71,7 +71,7 @@ TEMPLATE_TEST_CASE( "test type-specific sorters with no_post_iterator further",
     CHECK( std::is_sorted(collection_float.begin(), collection_float.end()) );
 
     std::vector<double> collection_double;
-    distribution(std::back_inserter(collection_double), 310, -56);
+    distribution.call<double>(std::back_inserter(collection_double), 310, -56);
 
     // Iterators with no post-increment and no post-decrement
     auto first_double = make_no_post_iterator(collection_double.begin());
