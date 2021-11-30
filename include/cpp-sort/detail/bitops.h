@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
+#include "../detail/config.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -115,6 +116,16 @@ namespace detail
     {
         auto x = static_cast<std::make_unsigned_t<Integer>>(n);
         return x != 0 && (x & (x - 1)) == 0;
+    }
+
+    // Left bit rotation
+    template<typename Unsigned>
+    constexpr auto rotl(Unsigned x, int s)
+        -> Unsigned
+    {
+        CPPSORT_ASSERT(s > 0);
+        constexpr auto n = std::numeric_limits<Unsigned>::digits;
+        return (x << s) | (x >> (n - s));
     }
 }}
 

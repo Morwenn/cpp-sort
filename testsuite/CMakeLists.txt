@@ -103,8 +103,11 @@ endmacro()
 # Main tests
 
 add_executable(main-tests
-    # General tests
+    # Tooling
     main.cpp
+    testing-tools/random.cpp
+
+    # General tests
     every_instantiated_sorter.cpp
     every_sorter.cpp
     every_sorter_internal_compare.cpp
@@ -232,6 +235,7 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         # which isn't something we want for the main tests
         main.cpp
         testing-tools/new_delete.cpp
+        testing-tools/random.cpp
         heap_memory_exhaustion.cpp
         probes/every_probe_heap_memory_exhaustion.cpp
     )

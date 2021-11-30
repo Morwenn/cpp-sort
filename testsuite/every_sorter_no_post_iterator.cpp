@@ -4,7 +4,6 @@
  */
 #include <algorithm>
 #include <iterator>
-#include <random>
 #include <string>
 #include <vector>
 #include <catch2/catch.hpp>
@@ -12,6 +11,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/no_post_iterator.h>
+#include <testing-tools/random.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::cartesian_tree_sorter,
@@ -84,8 +84,7 @@ TEMPLATE_TEST_CASE( "test type-specific sorters with no_post_iterator further",
     for (long i = 56 ; i < 366 ; ++i) {
         collection_str.emplace_back(std::to_string(i));
     }
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection_str.begin(), collection_str.end(), engine);
+    std::shuffle(collection_str.begin(), collection_str.end(), random::engine());
 
     // Iterators with no post-increment and no post-decrement
     auto first_str = make_no_post_iterator(collection_str.begin());

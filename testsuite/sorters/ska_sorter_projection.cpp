@@ -5,27 +5,24 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
-#include <random>
 #include <utility>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/ska_sorter.h>
 #include <testing-tools/algorithm.h>
+#include <testing-tools/random.h>
 #include <testing-tools/wrapper.h>
 
 TEST_CASE( "ska_sorter tests with projections",
            "[ska_sorter][projection]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(Catch::rngSeed());
-
     SECTION( "sort with int iterable" )
     {
         std::vector<std::pair<int, float>> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), random::engine());
         cppsort::ska_sort(vec, &std::pair<int, float>::first);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, float>::second) );
@@ -37,7 +34,7 @@ TEST_CASE( "ska_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), random::engine());
         cppsort::ska_sort(vec, &std::pair<unsigned, float>::first);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<unsigned, float>::second) );
@@ -49,7 +46,7 @@ TEST_CASE( "ska_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), random::engine());
         cppsort::ska_sort(vec, &std::pair<int, float>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, float>::first) );
@@ -61,7 +58,7 @@ TEST_CASE( "ska_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, double(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), random::engine());
         cppsort::ska_sort(vec, &std::pair<int, double>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, double>::first) );
@@ -75,7 +72,7 @@ TEST_CASE( "ska_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(std::to_string(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), engine);
+        std::shuffle(std::begin(vec), std::end(vec), random::engine());
         cppsort::ska_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &wrapper::value) );
