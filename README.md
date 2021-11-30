@@ -218,6 +218,11 @@ discussion](https://stackoverflow.com/q/2786899/1364752) on StackOverflow and ar
 backed by the article [*Applying Sorting Networks to Synthesize Optimized Sorting
 Libraries*](https://arxiv.org/abs/1505.01962).
 
+* The test suite reimplements random number algorithms originally found in the following places:
+  - [xoshiro256\*\*](https://prng.di.unimi.it/)
+  - [*Optimal Discrete Uniform Generation from Coin Flips, and Applications*](https://arxiv.org/abs/1304.1916)
+  - [*All numbers in a given range but random order*](https://stackoverflow.com/a/44821946/1364752)
+
 * The LaTeX scripts used to draw the sorting networks are modified versions of
 kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),
 slightly adapted to be 0-based and draw the network from top to bottom.
