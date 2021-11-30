@@ -109,7 +109,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
     for (int i = -125 ; i < 287 ; ++i) {
         collection3.emplace_back(std::to_string(i));
     }
-    std::shuffle(collection3.begin(), collection3.end(), random::engine());
+    std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
 
     SECTION( "ska_sorter" )
     {
@@ -144,7 +144,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::less<>{}, &wrapper<std::string>::value) );
 
-        std::shuffle(collection3.begin(), collection3.end(), random::engine());
+        std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
         sorter(collection3, std::greater<>{}, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::greater<>{}, &wrapper<std::string>::value) );

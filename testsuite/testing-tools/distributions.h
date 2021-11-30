@@ -50,7 +50,7 @@ namespace dist
         auto operator()(OutputIterator out, long long int size, long long int start=0ll) const
             -> void
         {
-            random::fill_with_shuffle<T>(out, size, start, random::bit_gen());
+            hasard::fill_with_shuffle<T>(out, size, start, hasard::bit_gen());
         }
     };
 
@@ -67,7 +67,7 @@ namespace dist
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            random::fill_with_shuffle<T>(out, size, 0, random::bit_gen(), &mod_16);
+            hasard::fill_with_shuffle<T>(out, size, 0, hasard::bit_gen(), &mod_16);
         }
     };
 

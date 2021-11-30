@@ -71,27 +71,27 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 2> collection;
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
@@ -102,22 +102,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 3> collection;
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
@@ -128,27 +128,27 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 4> collection;
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
@@ -159,22 +159,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 5> collection;
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
@@ -185,22 +185,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 6> collection;
         helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), random::engine());
+        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
                                   std::less<>{}, &wrapper::value) );
@@ -211,17 +211,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 31> collection;
         helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
@@ -232,22 +232,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::array<wrapper, 32> collection;
         helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(collection.begin(), collection.end(), random::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );

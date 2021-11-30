@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE( "test type-specific sorters with no_post_iterator further",
     for (long i = 56 ; i < 366 ; ++i) {
         collection_str.emplace_back(std::to_string(i));
     }
-    std::shuffle(collection_str.begin(), collection_str.end(), random::engine());
+    std::shuffle(collection_str.begin(), collection_str.end(), hasard::engine());
 
     // Iterators with no post-increment and no post-decrement
     auto first_str = make_no_post_iterator(collection_str.begin());

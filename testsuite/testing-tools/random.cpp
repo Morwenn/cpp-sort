@@ -5,7 +5,7 @@
 #include <catch2/catch.hpp>
 #include "random.h"
 
-namespace random
+namespace hasard
 {
     auto engine()
         -> xoshiro256ss&

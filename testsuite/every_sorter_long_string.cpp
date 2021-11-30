@@ -31,7 +31,7 @@ namespace
                 auto s = std::to_string(i);
                 vec.push_back(std::string(100 - s.size(), '0') + std::move(s));
             }
-            std::shuffle(std::begin(vec), std::end(vec), random::engine());
+            std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
             std::move(std::begin(vec), std::end(vec), out);
         }
     };

@@ -22,7 +22,7 @@ TEST_CASE( "spread_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), random::engine());
+        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
         cppsort::spread_sort(vec, &std::pair<int, float>::first);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, float>::second) );
@@ -34,7 +34,7 @@ TEST_CASE( "spread_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), random::engine());
+        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
         cppsort::spread_sort(vec, &std::pair<unsigned, float>::first);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<unsigned, float>::second) );
@@ -46,7 +46,7 @@ TEST_CASE( "spread_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), random::engine());
+        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
         cppsort::spread_sort(vec, &std::pair<int, float>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, float>::first) );
@@ -58,7 +58,7 @@ TEST_CASE( "spread_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, double(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), random::engine());
+        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
         cppsort::spread_sort(vec, &std::pair<int, double>::second);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &std::pair<int, double>::first) );
@@ -72,7 +72,7 @@ TEST_CASE( "spread_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(std::to_string(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), random::engine());
+        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
         cppsort::spread_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::less<>{}, &wrapper::value) );
@@ -86,7 +86,7 @@ TEST_CASE( "spread_sorter tests with projections",
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(std::to_string(i));
         }
-        std::shuffle(std::begin(vec), std::end(vec), random::engine());
+        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
         cppsort::spread_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(std::begin(vec), std::end(vec),
                                   std::greater<>{}, &wrapper::value) );

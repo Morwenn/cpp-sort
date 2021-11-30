@@ -15,7 +15,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 
-namespace random
+namespace hasard // Blame POSIX for picking the good name
 {
     ////////////////////////////////////////////////////////////
     // xoshiro256**
