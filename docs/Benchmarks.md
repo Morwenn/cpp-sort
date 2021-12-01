@@ -1,6 +1,6 @@
 *Note: this page only benchmarls sorting algorithms under specific conditions. It can be used as a quick guide but if you really need a fast algorithm for a specific use case, you better run your own benchmarks.*
 
-*Last meaningful update: 1.9.0 release.*
+*Last meaningful update: 1.9.0 release, 1.12.0 for measures of presortedness.*
 
 Benchmarking is hard and I might not be doing it right. Moreover, benchmarking sorting algorithms highlights that the time needed to sort a collection of elements depends on several things: the type to sort, the size of the collection, the cost of comparing two values, the cost of moving an element, the patterns formed by the distribution of the values in the collection to sort, the type of the collection itself, etc. The aim of this page is to help you choose a sorting algorithm depending on your needs. You can find two main kinds of benchmarks: the ones that compare algorithms against shuffled collections of different sizes, and the ones that compare algorithms against different data patterns for a given collection size.
 
@@ -169,11 +169,12 @@ The spikes in the otherwise smooth sorting networks curve when sorting arrays of
 
 This benchmark for [measures of presortedness][measures-of-presortedness] is small and only intends to show the cost that these tools might incur. It is not meant to be exhaustive in any way.
 
-![Benchmark speed of measures of presortedness for increasing size for std::vector<int>](https://i.imgur.com/5Hxpb37.png)
+![Benchmark speed of measures of presortedness for increasing size for std::vector<int>](https://i.imgur.com/pjc7zJF.png)
 
-While the graph reasonably shows the relative cost of the different measures of presortedness, there are a few hidden traps:
-* *Par(X)* seems to beat every other measure, but it is a highly adaptative O(n² log n) algorithm, whose theoretical worst case might be the worst of all measures of presortedness.
-* *Dis(X)* looks like a O(n) algorithm in this graph, but it is actually a O(n²) algorithm with extremely efficient short-circuits in most cases. Its worst case would put it closer from *Osc(X)*.
+It makes rather easy to see the different groups of complexities:
+* *Run(X)* and *Mono(X)* are obvious O(n) algorithms.
+* *Dis(X)* is a more involved O(n) algorithm.
+* All of the other measures of presortedness run in O(n log n) time.
 
 
   [measures-of-presortedness]: https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness
