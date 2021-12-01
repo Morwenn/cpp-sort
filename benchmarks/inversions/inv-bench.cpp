@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cassert>
@@ -14,10 +14,10 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
-#include "distributions.h"
-#include "filesystem.h"
-#include "rdtsc.h"
-#include "statistics.h"
+#include "../benchmarking-tools/distributions.h"
+#include "../benchmarking-tools/filesystem.h"
+#include "../benchmarking-tools/rdtsc.h"
+#include "../benchmarking-tools/statistics.h"
 
 using namespace std::chrono_literals;
 
