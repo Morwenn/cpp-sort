@@ -422,8 +422,7 @@ namespace detail
         }
 
 
-        template<typename RandomAccessIterator, typename Compare, typename Projection,
-                 bool Branchless>
+        template<typename RandomAccessIterator, typename Compare, typename Projection>
         auto pdqsort_loop(RandomAccessIterator begin, RandomAccessIterator end,
                           Compare compare, Projection projection,
                           int bad_allowed, bool leftmost=true)
@@ -431,6 +430,13 @@ namespace detail
         {
             using utility::iter_swap;
             using difference_type = difference_type_t<RandomAccessIterator>;
+            using value_type = value_type_t<RandomAccessIterator>;
+            using projected_type = projected_t<RandomAccessIterator, Projection>;
+
+            constexpr bool is_branchless =
+                utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
+                utility::is_probably_branchless_projection_v<Projection, value_type>;
+
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -471,7 +477,7 @@ namespace detail
                 }
 
                 // Partition and get results.
-                std::pair<RandomAccessIterator, bool> part_result = Branchless  ?
+                std::pair<RandomAccessIterator, bool> part_result = is_branchless ?
                     partition_right_branchless(begin, end, compare, projection) :
                     partition_right(begin, end, compare, projection);
                 RandomAccessIterator pivot_pos = part_result.first;
@@ -526,8 +532,7 @@ namespace detail
 
                 // Sort the left partition first using recursion and do tail recursion elimination for
                 // the right-hand partition.
-                pdqsort_loop<RandomAccessIterator, Compare, Projection, Branchless>(
-                    begin, pivot_pos, compare, projection, bad_allowed, leftmost);
+                pdqsort_loop(begin, pivot_pos, compare, projection, bad_allowed, leftmost);
                 begin = pivot_pos + 1;
                 leftmost = false;
             }
@@ -539,19 +544,12 @@ namespace detail
                  Compare compare, Projection projection)
         -> void
     {
-        using value_type = value_type_t<RandomAccessIterator>;
-        using projected_type = projected_t<RandomAccessIterator, Projection>;
-        constexpr bool is_branchless =
-            utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
-            utility::is_probably_branchless_projection_v<Projection, value_type>;
-
         auto size = end - begin;
         if (size < 2) return;
 
-        pdqsort_detail::pdqsort_loop<RandomAccessIterator, Compare, Projection, is_branchless>(
-            std::move(begin), std::move(end),
-            std::move(compare), std::move(projection),
-            detail::log2(size));
+        pdqsort_detail::pdqsort_loop(std::move(begin), std::move(end),
+                                     std::move(compare), std::move(projection),
+                                     detail::log2(size));
     }
 }}
 

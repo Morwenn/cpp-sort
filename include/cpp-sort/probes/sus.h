@@ -19,6 +19,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/functional.h"
 #include "../detail/longest_non_descending_subsequence.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -32,7 +33,7 @@ namespace probe
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = cppsort::detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

@@ -14,11 +14,6 @@ option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" ${USE_VALGR
 option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" ${ENABLE_COVERAGE})
 set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 
-# Apparently ENABLE_COVERAGE is needed either way
-if (CPPSORT_ENABLE_COVERAGE)
-    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
-endif()
-
 ########################################
 # Find or download Catch2
 
@@ -31,13 +26,22 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v2.13.6
+                     GIT_TAG v2.13.7
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
 endif()
 include(Catch)
+
+########################################
+# Configure coverage
+
+if (CPPSORT_ENABLE_COVERAGE)
+    set(ENABLE_COVERAGE ON CACHE BOOL "Enable coverage build." FORCE)
+    find_package(codecov)
+    list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
+endif()
 
 ########################################
 # Configure runtime tests
@@ -91,12 +95,7 @@ macro(configure_tests target)
     endif()
 
     if (CPPSORT_ENABLE_COVERAGE)
-        find_package(codecov)
         add_coverage(${target})
-
-        # Set flags specific to coverage builds
-        target_compile_options(${target} PRIVATE --coverage)
-        set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " --coverage")
     endif()
 endmacro()
 
@@ -104,8 +103,11 @@ endmacro()
 # Main tests
 
 add_executable(main-tests
-    # General tests
+    # Tooling
     main.cpp
+    testing-tools/random.cpp
+
+    # General tests
     every_instantiated_sorter.cpp
     every_sorter.cpp
     every_sorter_internal_compare.cpp
@@ -115,6 +117,7 @@ add_executable(main-tests
     every_sorter_no_post_iterator.cpp
     every_sorter_non_const_compare.cpp
     every_sorter_rvalue_projection.cpp
+    every_sorter_small_collections.cpp
     every_sorter_span.cpp
     every_sorter_throwing_moves.cpp
     is_stable.cpp
@@ -176,6 +179,7 @@ add_executable(main-tests
     distributions/shuffled_16_values.cpp
 
     # Probes tests
+    probes/block.cpp
     probes/dis.cpp
     probes/enc.cpp
     probes/exc.cpp
@@ -184,7 +188,6 @@ add_executable(main-tests
     probes/max.cpp
     probes/mono.cpp
     probes/osc.cpp
-    probes/par.cpp
     probes/rem.cpp
     probes/runs.cpp
     probes/sus.cpp
@@ -232,18 +235,11 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         # which isn't something we want for the main tests
         main.cpp
         testing-tools/new_delete.cpp
+        testing-tools/random.cpp
         heap_memory_exhaustion.cpp
         probes/every_probe_heap_memory_exhaustion.cpp
     )
     configure_tests(heap-memory-exhaustion-tests)
-endif()
-
-########################################
-# Configure coverage
-
-if (CPPSORT_ENABLE_COVERAGE)
-    list(APPEND LCOV_REMOVE_PATTERNS "'/usr/*'")
-    coverage_evaluate()
 endif()
 
 ########################################
@@ -252,9 +248,6 @@ endif()
 if (CPPSORT_USE_VALGRIND)
     find_program(MEMORYCHECK_COMMAND valgrind REQUIRED)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --track-origins=yes --error-exitcode=1 --show-reachable=no")
-    if (APPLE)
-        set(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/valgrind-osx.supp)
-    endif()
 endif()
 
 ########################################

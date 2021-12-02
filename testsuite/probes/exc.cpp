@@ -2,7 +2,6 @@
  * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <iterator>
 #include <vector>
@@ -46,10 +45,9 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
     {
         std::vector<int> collection;
         collection.reserve(100);
-        auto distribution = dist::ascending_sawtooth{};
+        auto distribution = dist::ascending_duplicates{};
         distribution(std::back_inserter(collection), 100);
 
-        std::sort(collection.begin(), collection.end());
         CHECK( exc(collection) == 0 );
     }
 }

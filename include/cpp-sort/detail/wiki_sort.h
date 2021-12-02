@@ -327,15 +327,15 @@ namespace detail
             }
         };
 
-        // bottom-up merge sort combined with an in-place merge algorithm for O(1) memory use
-        template<typename BufferProvider, typename RandomAccessIterator,
+        // bottom-up merge sort combined with an in-place merge algorithm for O(1) memory use,
+        template<typename RandomAccessIterator, typename CacheIterator,
                  typename Compare, typename Projection>
         auto sort(RandomAccessIterator first, RandomAccessIterator last,
+                  CacheIterator cache_begin, difference_type_t<CacheIterator> cache_size,
                   Compare compare, Projection projection)
             -> void
         {
             using utility::iter_swap;
-            using rvalue_type = rvalue_type_t<RandomAccessIterator>;
             using difference_type = difference_type_t<RandomAccessIterator>;
 
             difference_type size = last - first;
@@ -406,16 +406,7 @@ namespace detail
                 }
             }
 
-            // use a small cache to speed up some of the operations
-            // just keep in mind that making it too small ruins the point (nothing will fit into it),
-            // and making it too large also ruins the point (so much for "low memory"!)
-            typename BufferProvider::template buffer<rvalue_type> cache(size);
-            difference_type cache_size = cache.size();
-
-            // may be pointer of something else
-            using cache_iterator = decltype(cache.begin());
-
-            // then merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
+            // merge sort the higher levels, which can be 8-15, 16-31, 32-63, 64-127, etc.
             while (true) {
                 // if every A and B block will fit into the cache, use a special branch specifically for merging with the cache
                 // (we use < rather than <= since the block size might be one more than iterator.length())
@@ -434,11 +425,11 @@ namespace detail
 
                             if (comp(proj(*std::prev(B1.end)), proj(*A1.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
-                                detail::move(A1.start, A1.end, cache.begin() + B1.length());
-                                detail::move(B1.start, B1.end, cache.begin());
+                                detail::move(A1.start, A1.end, cache_begin + B1.length());
+                                detail::move(B1.start, B1.end, cache_begin);
                             } else if (comp(proj(*B1.start), proj(*std::prev(A1.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
-                                merge_move(A1.start, A1.end, B1.start, B1.end, cache.begin(),
+                                merge_move(A1.start, A1.end, B1.start, B1.end, cache_begin,
                                            compare, projection, projection);
                             } else {
                                 // if A1, B1, A2, and B2 are all in order, skip doing anything else
@@ -446,30 +437,30 @@ namespace detail
                                     not comp(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
 
                                 // move A1 and B1 into the cache in the same order
-                                detail::move(A1.start, B1.end, cache.begin());
+                                detail::move(A1.start, B1.end, cache_begin);
                             }
                             A1 = { A1.start, B1.end };
 
                             // merge A2 and B2 into the cache
                             if (comp(proj(*std::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
-                                detail::move(A2.start, A2.end, cache.begin() + (A1.length() + B2.length()));
-                                detail::move(B2.start, B2.end, cache.begin() + A1.length());
+                                detail::move(A2.start, A2.end, cache_begin + (A1.length() + B2.length()));
+                                detail::move(B2.start, B2.end, cache_begin + A1.length());
                             } else if (comp(proj(*B2.start), proj(*std::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
-                                merge_move(A2.start, A2.end, B2.start, B2.end, cache.begin() + A1.length(),
+                                merge_move(A2.start, A2.end, B2.start, B2.end, cache_begin + A1.length(),
                                            compare, projection, projection);
                             } else {
                                 // move A2 and B2 into the cache in the same order
-                                detail::move(A2.start, B2.end, cache.begin() + A1.length());
+                                detail::move(A2.start, B2.end, cache_begin + A1.length());
                             }
                             A2 = { A2.start, B2.end };
 
                             // merge A1 and A2 from the cache into the array
-                            Range<cache_iterator> A3 = { cache.begin(), cache.begin() + A1.length() };
-                            Range<cache_iterator> B3 = {
-                                cache.begin() + A1.length(),
-                                cache.begin() + (A1.length() + A2.length())
+                            Range<CacheIterator> A3 = { cache_begin, cache_begin + A1.length() };
+                            Range<CacheIterator> B3 = {
+                                cache_begin + A1.length(),
+                                cache_begin + (A1.length() + A2.length())
                             };
 
                             if (comp(proj(*std::prev(B3.end)), proj(*A3.start))) {
@@ -502,7 +493,7 @@ namespace detail
                             } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we need to merge them
                                 buffered_inplace_merge(A.start, A.end, B.end, compare, projection,
-                                                       A.length(), B.length(), cache.begin());
+                                                       A.length(), B.length(), cache_begin);
                             }
                         }
                     }
@@ -763,7 +754,7 @@ namespace detail
                             // if the first unevenly sized A block fits into the cache, move it there for when we go to Merge it
                             // otherwise, if the second buffer is available, block swap the contents into that
                             if (cache_size >  0 && lastA.length() <= cache_size) {
-                                detail::move(lastA.start, lastA.end, cache.begin());
+                                detail::move(lastA.start, lastA.end, cache_begin);
                             } else if (buffer2.length() > 0) {
                                 detail::swap_ranges_overlap(lastA.start, lastA.end, buffer2.start);
                             }
@@ -797,7 +788,7 @@ namespace detail
                                         // internal buffer exists we'll use it, otherwise we'll use a strictly
                                         // in-place merge algorithm
                                         if (cache_size > 0 && lastA.length() <= cache_size) {
-                                            half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
+                                            half_inplace_merge(cache_begin, cache_begin + lastA.length(),
                                                                lastA.end, B_split, lastA.start,
                                                                (std::min)(lastA.length(), B_split - lastA.end),
                                                                compare, projection);
@@ -812,7 +803,7 @@ namespace detail
                                             // move the previous A block into the cache or buffer2, since
                                             // that's where we need it to be when we go to merge it anyway
                                             if (block_size <= cache_size) {
-                                                detail::move(blockA.start, blockA.start + block_size, cache.begin());
+                                                detail::move(blockA.start, blockA.start + block_size, cache_begin);
                                                 detail::move(B_split, B_split + B_remaining, blockA.start + (block_size - B_remaining));
                                             } else {
                                                 detail::swap_ranges_overlap(blockA.start, blockA.start + block_size, buffer2.start);
@@ -859,7 +850,7 @@ namespace detail
 
                             // merge the last A block with the remaining B values
                             if (cache_size > 0 && lastA.length() <= cache_size) {
-                                half_inplace_merge(cache.begin(), cache.begin() + lastA.length(),
+                                half_inplace_merge(cache_begin, cache_begin + lastA.length(),
                                                    lastA.end, B.end, lastA.start,
                                                    (std::min)(lastA.length(), B.end - lastA.end),
                                                    compare, projection);
@@ -927,8 +918,15 @@ namespace detail
                    Compare compare, Projection projection)
         -> void
     {
-        Wiki::sort<BufferProvider>(std::move(first), std::move(last),
-                                   std::move(compare), std::move(projection));
+        // use a small cache to speed up some of the operations
+        // just keep in mind that making it too small ruins the point (nothing will fit into it),
+        // and making it too large also ruins the point (so much for "low memory"!)
+        using rvalue_type = rvalue_type_t<RandomAccessIterator>;
+        typename BufferProvider::template buffer<rvalue_type> cache(last - first);
+
+        Wiki::sort(std::move(first), std::move(last),
+                   cache.begin(), cache.size(),
+                   std::move(compare), std::move(projection));
     }
 }}
 

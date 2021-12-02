@@ -1,21 +1,18 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <iterator>
-#include <random>
 #include <string>
 #include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/random.h>
 
 TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
 {
-    // Pseudo-random number engine
-    std::mt19937_64 engine(Catch::rngSeed());
-
     auto distribution = dist::shuffled{};
 
     SECTION( "sort with int iterable" )
@@ -37,7 +34,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
     SECTION( "sort with float iterable" )
     {
         std::vector<float> vec;
-        distribution(std::back_inserter(vec), 100'000);
+        distribution.call<float>(std::back_inserter(vec), 100'000);
         cppsort::spread_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -45,7 +42,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
     SECTION( "sort with double iterators" )
     {
         std::vector<double> vec;
-        distribution(std::back_inserter(vec), 100'000);
+        distribution.call<double>(std::back_inserter(vec), 100'000);
         cppsort::spread_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -57,11 +54,11 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
             vec.push_back(std::to_string(i));
         }
 
-        std::shuffle(vec.begin(), vec.end(), engine);
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
-        std::shuffle(vec.begin(), vec.end(), engine);
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -73,11 +70,11 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
             vec.push_back(std::to_string(i));
         }
 
-        std::shuffle(vec.begin(), vec.end(), engine);
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec, std::greater<>{});
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
 
-        std::shuffle(vec.begin(), vec.end(), engine);
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec.begin(), vec.end(), std::greater<>{});
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }

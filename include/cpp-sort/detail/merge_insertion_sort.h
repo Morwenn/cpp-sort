@@ -8,14 +8,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstdint>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "attributes.h"
-#include "config.h"
 #include "fixed_size_list.h"
 #include "functional.h"
 #include "immovable_vector.h"
@@ -24,7 +21,6 @@
 #include "scope_exit.h"
 #include "swap_if.h"
 #include "swap_ranges.h"
-#include "type_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -212,21 +208,24 @@ namespace detail
             friend auto operator+(group_iterator it, difference_type size)
                 -> group_iterator
             {
-                return it += size;
+                it += size;
+                return it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator+(difference_type size, group_iterator it)
                 -> group_iterator
             {
-                return it += size;
+                it += size;
+                return it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
             friend auto operator-(group_iterator it, difference_type size)
                 -> group_iterator
             {
-                return it -= size;
+                it -= size;
+                return it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
@@ -280,24 +279,6 @@ namespace detail
                                    Compare compare, Projection projection)
         -> void
     {
-        // Cache all the differences between a Jacobsthal number and its
-        // predecessor that fit in 64 bits, starting with the difference
-        // between the Jacobsthal numbers 4 and 3 (the previous ones are
-        // unneeded)
-        constexpr std::uint_fast64_t jacobsthal_diff[] = {
-            2u, 2u, 6u, 10u, 22u, 42u, 86u, 170u, 342u, 682u, 1366u,
-            2730u, 5462u, 10922u, 21846u, 43690u, 87382u, 174762u, 349526u, 699050u,
-            1398102u, 2796202u, 5592406u, 11184810u, 22369622u, 44739242u, 89478486u,
-            178956970u, 357913942u, 715827882u, 1431655766u, 2863311530u, 5726623062u,
-            11453246122u, 22906492246u, 45812984490u, 91625968982u, 183251937962u,
-            366503875926u, 733007751850u, 1466015503702u, 2932031007402u, 5864062014806u,
-            11728124029610u, 23456248059222u, 46912496118442u, 93824992236886u, 187649984473770u,
-            375299968947542u, 750599937895082u, 1501199875790165u, 3002399751580331u,
-            6004799503160661u, 12009599006321322u, 24019198012642644u, 48038396025285288u,
-            96076792050570576u, 192153584101141152u, 384307168202282304u, 768614336404564608u,
-            1537228672809129216u, 3074457345618258432u, 6148914691236516864u
-        };
-
         auto size = last - first;
         if (size < 2) return;
 
@@ -370,17 +351,29 @@ namespace detail
         auto current_it = first;
         auto current_pend = pend.begin();
 
-        for (int k = 0 ; ; ++k) {
-            // Should be safe: in this code, std::distance should always return
-            // a positive number, so there is no risk of comparing funny values
-            using size_type = std::common_type_t<
-                std::uint_fast64_t,
-                typename list_t::difference_type
-            >;
-
-            // Find next index
-            auto dist = jacobsthal_diff[k];
-            if (dist > static_cast<size_type>(pend.end() - current_pend)) break;
+        // At each cycle, we need to find the optimal pend element where to
+        // start the insertion cycle again in a way that minimizes the number
+        // of comparisons performed. The indices of the optimal sequence of
+        // pend elements happens to follow a sequence known as Jacobsthal
+        // numbers: https://oeis.org/A001045
+        //
+        // Due to the element-per-element nature of the algorithm we are using,
+        // we don't need to know the position of a pend element, but its
+        // relative position to the previous one, in other words we don't need
+        // J(n+1), but J(n+1) - J(n). Thanks to the following equivalence it
+        // can be computed fairly cheaply:
+        // J(n+1) = 2^n - J(n)
+        // J(n+2) - J(n+1) = 2^(n+1) - J(n+1) - J(n+1)
+        //                 = 2^(n+1) - 2J(n+1)
+        //                 = 2(2^n - J(n+1))
+        //                 = 2(2^n - (2^n - J(n)))
+        //                 = 2(2^n - 2^n + Jn)
+        //                 = 2J(n)
+        // By keeping track of powers of two and J(n), J(n+1) - J(n) can thus
+        // be computed with two shifts and a subtraction.
+        for (typename list_t::difference_type pow2 = 1, jn = 0, dist = 2;
+             dist <= pend.end() - current_pend;
+             pow2 *= 2, jn = pow2 - jn, dist = 2 * jn) {
 
             auto it = current_it + dist * 2;
             auto pe = current_pend + dist;
@@ -442,9 +435,14 @@ namespace detail
                               Compare compare, Projection projection)
         -> void
     {
+        auto size = last - first;
+        if (size < 2) {
+            return;
+        }
+
         // Make a node pool big enough to hold all the values
         using node_type = list_node<group_iterator<RandomAccessIterator>>;
-        fixed_size_list_node_pool<node_type> node_pool(last - first);
+        fixed_size_list_node_pool<node_type> node_pool(size);
 
         merge_insertion_sort_impl(
             make_group_iterator(std::move(first), 1),

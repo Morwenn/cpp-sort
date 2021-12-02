@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORT_H_
@@ -13,6 +13,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/default_sorter.h>
 #include "detail/config.h"
+#include "detail/type_traits.h"
 
 namespace cppsort
 {
@@ -30,7 +31,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter_v<Iterable, Compare>>
+        typename = detail::enable_if_t<not is_sorter_v<Iterable, Compare>>
     >
     CPPSORT_DEPRECATED("cppsort::sort() is deprecated and will be removed in version 2.0.0")
     auto sort(Iterable&& iterable, Compare compare)
@@ -43,7 +44,7 @@ namespace cppsort
         typename Iterable,
         typename Compare,
         typename Projection,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             not is_comparison_sorter_v<Iterable, Compare, Projection> &&
             not is_projection_sorter_v<Iterable, Compare, Projection> &&
             not is_sorter_iterator_v<Iterable, Compare> &&
@@ -69,7 +70,7 @@ namespace cppsort
     template<
         typename Iterator,
         typename Func,
-        typename = std::enable_if_t<not is_sorter_iterator_v<Iterator, Func>>
+        typename = detail::enable_if_t<not is_sorter_iterator_v<Iterator, Func>>
     >
     CPPSORT_DEPRECATED("cppsort::sort() is deprecated and will be removed in version 2.0.0")
     auto sort(Iterator first, Iterator last, Func func)
@@ -82,7 +83,7 @@ namespace cppsort
         typename Iterator,
         typename Compare,
         typename Projection,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             not is_comparison_sorter_iterator_v<Iterator, Compare, Projection> &&
             not is_projection_sorter_iterator_v<Iterator, Compare, Projection>
         >
@@ -101,7 +102,7 @@ namespace cppsort
     template<
         typename Sorter,
         typename Iterable,
-        typename = std::enable_if_t<is_sorter_v<Sorter, Iterable>>
+        typename = detail::enable_if_t<is_sorter_v<Sorter, Iterable>>
     >
     CPPSORT_DEPRECATED("cppsort::sort() is deprecated and will be removed in version 2.0.0")
     auto sort(const Sorter& sorter, Iterable&& iterable)
@@ -114,7 +115,7 @@ namespace cppsort
         typename Sorter,
         typename Iterable,
         typename Func,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             is_comparison_sorter_v<Sorter, Iterable, Func> ||
             is_projection_sorter_v<Sorter, Iterable, Func>
         >
@@ -144,7 +145,7 @@ namespace cppsort
     template<
         typename Sorter,
         typename Iterator,
-        typename = std::enable_if_t<is_sorter_iterator_v<Sorter, Iterator>>
+        typename = detail::enable_if_t<is_sorter_iterator_v<Sorter, Iterator>>
     >
     CPPSORT_DEPRECATED("cppsort::sort() is deprecated and will be removed in version 2.0.0")
     auto sort(const Sorter& sorter, Iterator first, Iterator last)
@@ -157,7 +158,7 @@ namespace cppsort
         typename Sorter,
         typename Iterator,
         typename Func,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             is_comparison_sorter_iterator_v<Sorter, Iterator, Func> ||
             is_projection_sorter_iterator_v<Sorter, Iterator, Func>
         >

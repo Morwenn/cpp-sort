@@ -1,0 +1,29 @@
+// Copyright (c) 2021 Morwenn
+// SPDX-License-Identifier: MIT
+
+digraph G {
+
+  // Nodes
+  node [fontname="consolas"];
+  sorter[label="Sorter"]
+  sorter_type[label="Sorter::type"]
+  stable_t[label="stable_t<Sorter>"]
+  stable_adapter[label="stable_adapter<Sorter>"]
+  stable_adapter_type[label="stable_adapter<Sorter>::type"]
+  node [shape="diamond"]
+  is_always_stable[label="is_always_stable_v<Sorter>"]
+  stable_adapter_type_exists[label="stable_adapter<Sorter>::type exists?"]
+  sorter_type_exists[label="Sorter::type exists?"]
+  is_specialization[label="is_specialization_of<Sorter, stable_adapter>"]
+
+  // Flow
+  stable_t -> is_always_stable
+  is_always_stable -> is_specialization[label="true",fontname="consolas",fontsize="10"]
+  is_specialization -> sorter[label="false",fontname="consolas",fontsize="10"]
+  is_specialization -> sorter_type_exists[label="true",fontname="consolas",fontsize="10"]
+  is_always_stable -> stable_adapter_type_exists[label="false",fontname="consolas",fontsize="10"]
+  stable_adapter_type_exists -> stable_adapter_type[label="true",fontname="consolas",fontsize="10"]
+  stable_adapter_type_exists -> stable_adapter[label="false",fontname="consolas",fontsize="10"]
+  sorter_type_exists -> sorter_type[label="true",fontname="consolas",fontsize="10"]
+  sorter_type_exists -> sorter[label="false",fontname="consolas",fontsize="10"]
+}

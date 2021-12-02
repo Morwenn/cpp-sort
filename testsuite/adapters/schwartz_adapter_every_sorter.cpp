@@ -6,7 +6,6 @@
 #include <forward_list>
 #include <functional>
 #include <list>
-#include <random>
 #include <string>
 #include <vector>
 #include <catch2/catch.hpp>
@@ -15,6 +14,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/random.h>
 #include <testing-tools/wrapper.h>
 
 // NOTE: this test used to use wrapper<double>, but it was later
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
 {
     std::vector<wrapper<>> collection;
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapt
 {
     std::list<wrapper<>> collection;
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "
 {
     std::forward_list<wrapper<>> collection;
     auto distribution = dist::shuffled{};
-    distribution(std::front_inserter(collection), 412, -125);
+    distribution.call<float>(std::front_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
@@ -100,7 +100,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
     auto distribution = dist::shuffled{};
 
     std::vector<wrapper<>> collection(412);
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     std::vector<wrapper<int>> collection2(412);
     distribution(std::back_inserter(collection2), 412, -125);
@@ -109,8 +109,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
     for (int i = -125 ; i < 287 ; ++i) {
         collection3.emplace_back(std::to_string(i));
     }
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection3.begin(), collection3.end(), engine);
+    std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
 
     SECTION( "ska_sorter" )
     {
@@ -145,7 +144,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::less<>{}, &wrapper<std::string>::value) );
 
-        std::shuffle(collection3.begin(), collection3.end(), engine);
+        std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
         sorter(collection3, std::greater<>{}, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::greater<>{}, &wrapper<std::string>::value) );

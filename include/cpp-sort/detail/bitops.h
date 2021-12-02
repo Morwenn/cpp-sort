@@ -11,6 +11,8 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
+#include "../detail/config.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -26,6 +28,19 @@ namespace detail
             n |= (n >> i);
         }
         return n & ~(n >> 1);
+    }
+
+    // Returns 2^ceil(log2(n)), assumes n > 0
+    template<typename Unsigned>
+    constexpr auto hyperceil(Unsigned n)
+        -> Unsigned
+    {
+        constexpr auto bound = std::numeric_limits<Unsigned>::digits / 2;
+        --n;
+        for (std::size_t i = 1 ; i <= bound ; i <<= 1) {
+            n |= (n >> i);
+        }
+        return ++n;
     }
 
     // Returns floor(log2(n)), assumes n > 0
@@ -79,14 +94,14 @@ namespace detail
 
     template<typename Integer>
     constexpr auto half(Integer value)
-        -> std::enable_if_t<std::is_integral<Integer>::value, Integer>
+        -> detail::enable_if_t<std::is_integral<Integer>::value, Integer>
     {
         return static_cast<Integer>(static_cast<std::make_unsigned_t<Integer>>(value) / 2);
     }
 
     template<typename T>
     constexpr auto half(T value)
-        -> std::enable_if_t<not std::is_integral<T>::value, T>
+        -> detail::enable_if_t<not std::is_integral<T>::value, T>
     {
         return value / 2;
     }
@@ -101,6 +116,16 @@ namespace detail
     {
         auto x = static_cast<std::make_unsigned_t<Integer>>(n);
         return x != 0 && (x & (x - 1)) == 0;
+    }
+
+    // Left bit rotation
+    template<typename Unsigned>
+    constexpr auto rotl(Unsigned x, int s)
+        -> Unsigned
+    {
+        CPPSORT_ASSERT(s > 0);
+        constexpr auto n = std::numeric_limits<Unsigned>::digits;
+        return (x << s) | (x >> (n - s));
     }
 }}
 

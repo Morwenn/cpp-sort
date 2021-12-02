@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
 
     strategy:
       fail-fast: false
@@ -44,6 +44,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install GCC
+        if: ${{matrix.cxx == 'g++-5'}}
+        run: sudo apt-get install -y g++-5
 
       - name: Install Clang
         if: ${{matrix.cxx == 'clang++-6.0'}}
@@ -83,6 +87,9 @@ jobs:
         env:
           CTEST_OUTPUT_ON_FAILURE: 1
         working-directory: ${{runner.workspace}}/build
-        run: |
-          ctest -T memcheck -C ${{matrix.config.build_type}} -j 2
-          find ./Testing/Temporary -name "MemoryChecker.*.log" -size +1300c | xargs cat;
+        run: ctest -T memcheck -C ${{matrix.config.build_type}} --no-tests=error -j 2
+
+      - name: Show Valgrind logs
+        if: ${{failure() && matrix.config.valgrind == 'ON'}}
+        working-directory: ${{runner.workspace}}/build
+        run: find ./Testing/Temporary -name "MemoryChecker.*.log" -size +1300c | xargs cat

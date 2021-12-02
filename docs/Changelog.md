@@ -50,7 +50,7 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     This feature is available when the feature-testing macro `__cpp_nontype_template_parameter_auto` is defined.
 
-* [[`sorter_facade`|Sorter facade]] range overloads can now be used in `constexpr` functions.
+* [`sorter_facade`][sorter-facade] range overloads can now be used in `constexpr` functions.
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.
 
@@ -58,6 +58,11 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 * Some handy C++17 type traits such as `std::is_invocable` are manually reimplemented in C++14 mode while they are used as is in C++17 mode if available. It's likely that the C++17 implementation covers more corner cases and is thus more often correct than the manual C++14 implementation.
 
     The C++17 traits are used as is when the feature-test macro `__cpp_lib_is_invocable` is defined.
+
+**Size improvements:**
+* When used in different translation units, [`smooth_sorter`][smooth-sorter] might produce fewer duplicates and consume less binary size in C++17.
+
+    This optimization is available when the feature-testing macro `__cpp_inline_variables` is available.
 
 ## C++20 features
 
@@ -94,11 +99,12 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [feature-test-macros]: https://wg21.link/SD6
   [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
   [ska-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#ska_sorter
+  [sorter-facade]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
-  [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view)
+  [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view
   [utility-iter-move]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#iter_move-and-iter_swap

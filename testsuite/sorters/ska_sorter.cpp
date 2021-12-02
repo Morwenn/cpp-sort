@@ -7,7 +7,6 @@
 #include <deque>
 #include <iterator>
 #include <limits>
-#include <random>
 #include <string>
 #include <tuple>
 #include <utility>
@@ -15,6 +14,7 @@
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters/ska_sorter.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/random.h>
 
 TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
 {
@@ -57,7 +57,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with float iterable" )
     {
         std::vector<float> vec;
-        distribution(std::back_inserter(vec), 100'000);
+        distribution.call<float>(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -65,7 +65,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with double iterators" )
     {
         std::vector<double> vec;
-        distribution(std::back_inserter(vec), 100'000);
+        distribution.call<double>(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -77,14 +77,11 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
             vec.push_back(std::to_string(i));
         }
 
-        // Pseudo-random number engine
-        std::mt19937_64 engine(Catch::rngSeed());
-
-        std::shuffle(vec.begin(), vec.end(), engine);
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
-        std::shuffle(vec.begin(), vec.end(), engine);
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
@@ -152,14 +149,14 @@ TEST_CASE( "is_ska_sortable", "[ska_sorter]" )
     SECTION( "pairs and tuples" )
     {
         // std::pair
-        CHECK(( is_ska_sortable<std::pair<int, int>> ));
-        CHECK(( is_ska_sortable<std::pair<int, std::deque<bool>>> ));
-        CHECK(( is_ska_sortable<std::pair<std::vector<std::pair<int, long>>, std::deque<bool>>> ));
-        CHECK_FALSE(( is_ska_sortable<std::pair<std::vector<std::pair<int, long double>>, std::deque<bool>>> ));
+        CHECK( is_ska_sortable<std::pair<int, int>> );
+        CHECK( is_ska_sortable<std::pair<int, std::deque<bool>>> );
+        CHECK( is_ska_sortable<std::pair<std::vector<std::pair<int, long>>, std::deque<bool>>> );
+        CHECK_FALSE( is_ska_sortable<std::pair<std::vector<std::pair<int, long double>>, std::deque<bool>>> );
 
         // std::tuple
-        CHECK(( is_ska_sortable<std::tuple<int>> ));
-        CHECK(( is_ska_sortable<std::tuple<long int, int, std::string, std::vector<unsigned long long>>> ));
-        CHECK_FALSE(( is_ska_sortable<std::tuple<std::string, std::vector<unsigned long long>, std::deque<long double>>> ));
+        CHECK( is_ska_sortable<std::tuple<int>> );
+        CHECK( is_ska_sortable<std::tuple<long int, int, std::string, std::vector<unsigned long long>>> );
+        CHECK_FALSE( is_ska_sortable<std::tuple<std::string, std::vector<unsigned long long>, std::deque<long double>>> );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_REFINED_H_
@@ -35,7 +35,7 @@ namespace cppsort
     template<
         typename T,
         typename Function,
-        typename = std::enable_if_t<detail::has_refine_method<Function, T>>
+        typename = detail::enable_if_t<detail::has_refine_method<Function, T>>
     >
     auto refined(Function func)
         noexcept(noexcept(func.template refine<T>()))
@@ -47,7 +47,7 @@ namespace cppsort
     template<
         typename T,
         typename Function,
-        typename = std::enable_if_t<not detail::has_refine_method<Function, T>>
+        typename = detail::enable_if_t<not detail::has_refine_method<Function, T>>
     >
     constexpr auto refined(Function&& func) noexcept
         -> Function&&

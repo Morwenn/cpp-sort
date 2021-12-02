@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_STABLE_SORT_H_
@@ -32,7 +32,7 @@ namespace cppsort
     template<
         typename Iterable,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter_v<Iterable, Compare>>
+        typename = detail::enable_if_t<not is_sorter_v<Iterable, Compare>>
     >
     CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterable&& iterable, Compare compare)
@@ -45,7 +45,7 @@ namespace cppsort
         typename Iterable,
         typename Compare,
         typename Projection,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             not is_comparison_sorter_v<Iterable, Compare, Projection> &&
             not is_projection_sorter_v<Iterable, Compare, Projection>
         >
@@ -69,7 +69,7 @@ namespace cppsort
     template<
         typename Iterator,
         typename Compare,
-        typename = std::enable_if_t<not is_sorter_iterator_v<Compare, Iterator>>
+        typename = detail::enable_if_t<not is_sorter_iterator_v<Compare, Iterator>>
     >
     CPPSORT_DEPRECATED("cppsort::stable_sort() is deprecated and will be removed in version 2.0.0")
     auto stable_sort(Iterator first, Iterator last, Compare compare)
@@ -82,7 +82,7 @@ namespace cppsort
         typename Iterator,
         typename Compare,
         typename Projection,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             not is_comparison_sorter_iterator_v<Compare, Iterator, Projection> &&
             not is_projection_sorter_iterator_v<Compare, Iterator, Projection>
         >
@@ -101,7 +101,7 @@ namespace cppsort
     template<
         typename Sorter,
         typename Iterable,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             is_sorter_v<Sorter, Iterable>
         >
     >
@@ -116,7 +116,7 @@ namespace cppsort
         typename Sorter,
         typename Iterable,
         typename Func,
-        typename = std::enable_if_t<detail::disjunction<
+        typename = detail::enable_if_t<detail::disjunction<
             is_comparison_sorter<Sorter, Iterable, Func>,
             is_projection_sorter<Sorter, Iterable, Func>
         >::value>
@@ -146,7 +146,7 @@ namespace cppsort
     template<
         typename Sorter,
         typename Iterator,
-        typename = std::enable_if_t<is_sorter_iterator_v<
+        typename = detail::enable_if_t<is_sorter_iterator_v<
             stable_t<Sorter>, Iterator
         >>
     >
@@ -161,7 +161,7 @@ namespace cppsort
         typename Sorter,
         typename Iterator,
         typename Func,
-        typename = std::enable_if_t<
+        typename = detail::enable_if_t<
             is_comparison_sorter_iterator_v<stable_t<Sorter>, Iterator, Func> ||
             is_projection_sorter_iterator_v<stable_t<Sorter>, Iterator, Func>
         >

@@ -51,4 +51,4 @@ jobs:
         env:
           CTEST_OUTPUT_ON_FAILURE: 1
         working-directory: ${{runner.workspace}}/build
-        run: ctest -C ${{matrix.build_type}}
+        run: ctest -C ${{matrix.build_type}} --no-tests=error

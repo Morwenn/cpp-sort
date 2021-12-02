@@ -23,6 +23,8 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // tests check that these relations are respected in
     // the library
 
+    auto block  = cppsort::probe::block(sequence);
+    auto dis    = cppsort::probe::dis(sequence);
     auto enc    = cppsort::probe::enc(sequence);
     auto exc    = cppsort::probe::exc(sequence);
     auto ham    = cppsort::probe::ham(sequence);
@@ -30,7 +32,6 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     auto max    = cppsort::probe::max(sequence);
     auto mono   = cppsort::probe::mono(sequence);
     auto osc    = cppsort::probe::osc(sequence);
-    auto par    = cppsort::probe::par(sequence);
     auto rem    = cppsort::probe::rem(sequence);
     auto runs   = cppsort::probe::runs(sequence);
     auto sus    = cppsort::probe::sus(sequence);
@@ -46,14 +47,18 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( exc + 1 <= ham );
     CHECK( ham <= 2 * exc );
 
-    CHECK( max <= par );
-    CHECK( par <= 2 * max );
+    CHECK( max <= dis );
+    CHECK( dis <= 2 * max );
 
     // A New Measure of Presortedness
     // by Vladimir Estivill-Castro and Derick Wood
-    CHECK( par <= inv );
-    CHECK( rem <= size * (1 - 1 / (par + 1)) );
-    CHECK( inv <= size * par / 2 );
+    CHECK( dis <= inv );
+    CHECK( rem <= size * (1 - 1 / (dis + 1)) );
+    CHECK( inv <= size * dis / 2 );
+
+    // Practical Adaptive Sorting
+    // by Vladimir Estivill-Castro and Derick Wood
+    CHECK( rem <= 2 * exc );
 
     // Encroaching lists as a measure of presortedness
     // by Steven S. Skiena
@@ -72,7 +77,15 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // by Christos Levcopoulos and Ola Petersson
     CHECK( osc <= 4 * inv );
     CHECK( osc <= 2 * size * runs + size );
-    CHECK( osc <= size * par );
+    CHECK( osc <= size * dis );
+
+    // Sublinear Merging and Natural Mergesort
+    // by Svante Carlsson, Christos Levcopoulos and Ola Petersson
+    CHECK( block <= 3 * rem );
+
+    // Computing and ranking measures of presortedness
+    // by Jingsen Chen
+    CHECK( enc <= dis + 1 );
 
     // Intuitive result: a descending run can be seen as several
     // ascending runs

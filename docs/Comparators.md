@@ -132,7 +132,7 @@ The two-parameter version of the customization point calls the three-parameter o
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate
-  [branchless-traits]https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
+  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [case-sensitivity]: https://en.wikipedia.org/wiki/Case_sensitivity
   [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler%20-%20Lawrence%20Crowl%20-%20CppCon%202015

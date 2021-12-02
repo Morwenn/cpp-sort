@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_DROP_MERGE_SORTER_H_
@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/drop_merge_sort.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -32,7 +33,7 @@ namespace cppsort
                 typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >

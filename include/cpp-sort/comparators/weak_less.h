@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_WEAK_LESS_H_
@@ -15,6 +15,7 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -25,7 +26,7 @@ namespace cppsort
 
         template<typename T>
         auto weak_less(T lhs, T rhs)
-            -> std::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
         {
             if (std::isfinite(lhs) && std::isfinite(rhs)) {
                 return lhs < rhs;

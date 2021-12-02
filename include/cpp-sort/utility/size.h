@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SIZE_H_
@@ -26,7 +26,7 @@ namespace utility
 
     template<
         typename Iterable,
-        typename = std::enable_if_t<
+        typename = cppsort::detail::enable_if_t<
             cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
         >
     >
@@ -38,7 +38,7 @@ namespace utility
 
     template<
         typename Iterable,
-        typename = std::enable_if_t<
+        typename = cppsort::detail::enable_if_t<
             not cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
         >
     >

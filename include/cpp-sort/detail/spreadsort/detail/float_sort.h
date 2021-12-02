@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -37,6 +37,7 @@ Phil Endecott and Frank Gennari
 #include "../../iterator_traits.h"
 #include "../../memcpy_cast.h"
 #include "../../pdqsort.h"
+#include "../../type_traits.h"
 
 namespace cppsort
 {
@@ -363,7 +364,7 @@ namespace detail
     //Checking whether the value type is a float, and trying a 32-bit integer
     template<typename RandomAccessIter, typename Projection>
     auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-        -> std::enable_if_t<
+        -> cppsort::detail::enable_if_t<
             sizeof(std::uint32_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
             std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559,
             void
@@ -378,7 +379,7 @@ namespace detail
     //Checking whether the value type is a double, and using a 64-bit integer
     template<typename RandomAccessIter, typename Projection>
     auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-        -> std::enable_if_t<
+        -> cppsort::detail::enable_if_t<
             sizeof(std::uint64_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
             std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559,
             void

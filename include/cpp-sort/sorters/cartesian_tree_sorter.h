@@ -19,6 +19,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/cartesian_tree_sort.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -33,7 +34,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -58,7 +59,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

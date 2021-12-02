@@ -19,7 +19,7 @@
 // These tests shouldn't be part of the main test suite executable
 //
 
-TEMPLATE_TEST_CASE( "test heap exhaustion for random-access sorters", "[sorters][heap_exhaustion]",
+TEMPLATE_TEST_CASE( "heap exhaustion for random-access sorters", "[sorters][heap_exhaustion]",
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -46,7 +46,7 @@ TEMPLATE_TEST_CASE( "test heap exhaustion for random-access sorters", "[sorters]
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
 
-TEMPLATE_TEST_CASE( "test heap exhaustion for bidirectional sorters", "[sorters][heap_exhaustion]",
+TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional sorters", "[sorters][heap_exhaustion]",
                     cppsort::insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE( "test heap exhaustion for bidirectional sorters", "[sorters]
     CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
 }
 
-TEMPLATE_TEST_CASE( "test heap exhaustion for forward sorters", "[sorters][heap_exhaustion]",
+TEMPLATE_TEST_CASE( "heap exhaustion for forward sorters", "[sorters][heap_exhaustion]",
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,

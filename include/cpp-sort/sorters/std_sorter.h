@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_STD_SORTER_H_
@@ -19,6 +19,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -32,7 +33,7 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename = std::enable_if_t<not is_projection_iterator_v<
+                typename = detail::enable_if_t<not is_projection_iterator_v<
                     Compare, RandomAccessIterator
                 >>
             >
@@ -74,7 +75,7 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename = std::enable_if_t<not is_projection_iterator_v<
+                typename = detail::enable_if_t<not is_projection_iterator_v<
                     Compare, RandomAccessIterator
                 >>
             >
@@ -111,8 +112,6 @@ namespace cppsort
         constexpr explicit stable_adapter(std_sorter) noexcept:
             sorter_facade<detail::std_stable_sorter_impl>()
         {}
-
-        using type = stable_adapter<std_sorter>;
     };
 
     ////////////////////////////////////////////////////////////

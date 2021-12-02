@@ -31,13 +31,13 @@ TEST_CASE( "sorting with index pairs", "[utility][sorting_networks]" )
 
     SECTION( "swap_index_pairs" )
     {
-        swap_index_pairs(vec.begin(), pairs);
+        cppsort::utility::swap_index_pairs(vec.begin(), pairs);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "swap_index_pairs_force_unroll" )
     {
-        swap_index_pairs_force_unroll(vec.begin(), pairs);
+        cppsort::utility::swap_index_pairs_force_unroll(vec.begin(), pairs);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }
@@ -53,13 +53,13 @@ TEST_CASE( "sorting with index pairs from sorting_network_sorter",
 
     SECTION( "swap_index_pairs" )
     {
-        swap_index_pairs(vec.begin(), pairs);
+        cppsort::utility::swap_index_pairs(vec.begin(), pairs);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "swap_index_pairs_force_unroll" )
     {
-        swap_index_pairs_force_unroll(vec.begin(), pairs);
+        cppsort::utility::swap_index_pairs_force_unroll(vec.begin(), pairs);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -505,9 +505,9 @@ namespace verge
 
     template<typename Sorter>
     auto get_maybe_stable(std::true_type, Sorter&& sorter)
-        -> cppsort::stable_adapter<Sorter>
+        -> cppsort::stable_t<Sorter>
     {
-        return cppsort::stable_adapter<Sorter>(std::move(sorter));
+        return cppsort::stable_t<Sorter>(std::move(sorter));
     }
 
     template<typename Sorter>
@@ -531,10 +531,10 @@ namespace verge
     {
         // Adapt the fallback sorter depending on whether a stable
         // or an unstable sort is wanted
-        verge::sort<true>(iterator_category_t<BidirectionalIterator>{},
-                          std::move(first), std::move(last), size,
-                          std::move(compare), std::move(projection),
-                          get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
+        verge::sort<Stable>(iterator_category_t<BidirectionalIterator>{},
+                            std::move(first), std::move(last), size,
+                            std::move(compare), std::move(projection),
+                            get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
     }
 
     constexpr auto default_sorter_for_impl(std::bidirectional_iterator_tag)

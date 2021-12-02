@@ -1,5 +1,5 @@
-[![Latest Release](https://img.shields.io/badge/release-1.11.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.11.0)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.11.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.11.0)
+[![Latest Release](https://img.shields.io/badge/release-1.12.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.12.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.12.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.12.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
@@ -47,7 +47,6 @@ Here is a more complete example of what can be done with the library:
 #include <cassert>
 #include <forward_list>
 #include <functional>
-#include <iterator>
 #include <vector>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/sorters.h>
@@ -71,9 +70,9 @@ int main()
     sorter(vec, std::greater<>{}, &wrapper::value);
 
     assert(std::equal(
-        std::begin(li), std::end(li),
-        std::begin(vec), std::end(vec),
-        [](auto& lhs, auto& rhs) { return lhs.value == rhs.value; }
+        li.begin(), li.end(),
+        vec.begin(), vec.end(),
+        [](const auto& lhs, const auto& rhs) { return lhs.value == rhs.value; }
     ));
 }
 ```
@@ -110,7 +109,7 @@ wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
 # Compiler support & tooling
 
 ![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/workflows/Ubuntu%20Builds/badge.svg?branch=develop)
-![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/Windows%20Builds/badge.svg?branch=develop)
+![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/MSVC%20Builds/badge.svg?branch=develop)
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
 **cpp-sort** requires C++14 support, and should work with the following compilers:
@@ -218,6 +217,11 @@ networks up to 32 inputs on his website.
 discussion](https://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
 backed by the article [*Applying Sorting Networks to Synthesize Optimized Sorting
 Libraries*](https://arxiv.org/abs/1505.01962).
+
+* The test suite reimplements random number algorithms originally found in the following places:
+  - [xoshiro256\*\*](https://prng.di.unimi.it/)
+  - [*Optimal Discrete Uniform Generation from Coin Flips, and Applications*](https://arxiv.org/abs/1304.1916)
+  - [*All numbers in a given range but random order*](https://stackoverflow.com/a/44821946/1364752)
 
 * The LaTeX scripts used to draw the sorting networks are modified versions of
 kaayy's [`sortingnetwork.tex`](https://github.com/kaayy/kaayy-s-code-sinppets),

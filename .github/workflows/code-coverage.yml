@@ -11,14 +11,11 @@ on:
       - 2.0.0-develop
     paths:
       - '.github/workflows/code-coverage.yml'
+      - '.github/.codecov.yml'
       - 'CMakeLists.txt'
       - 'cmake/**'
-      - 'codecov.yml'
       - 'include/**'
       - 'testsuite/**'
-
-env:
-  BUILD_TYPE: Debug
 
 jobs:
   upload-coverage:
@@ -28,32 +25,38 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v2
 
+      - name: Install LCOV
+        run: sudo apt-get install -y lcov
+
       - name: Configure CMake
         shell: bash
         working-directory: ${{runner.workspace}}
         run: >
           cmake -H${{github.event.repository.name}} -Bbuild
-          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
-          -DCPPSORT_ENABLE_COVERAGE=true
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCPPSORT_ENABLE_COVERAGE=ON
           -G"Unix Makefiles"
 
       - name: Build with coverage
         shell: bash
         working-directory: ${{runner.workspace}}/build
-        run: cmake --build . --config $BUILD_TYPE -j 2
+        run: cmake --build . --config Debug -j 2
 
       - name: Run the test suite
         shell: bash
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
         working-directory: ${{runner.workspace}}/build
-        run: ctest -C Release --output-on-failure
+        run: ctest -C Debug --no-tests=error
 
-      - name: Create coverage info
+      - name: Capture coverage info
         shell: bash
         working-directory: ${{runner.workspace}}/build
-        run: make gcov
+        run: cmake --build . --target lcov-capture
 
       - name: Upload coverage info
-        uses: codecov/codecov-action@v1.2.1
+        uses: codecov/codecov-action@v2
         with:
-          directory: ${{runner.workspace}}/build
-          functionalities: gcov
+          directory: ${{runner.workspace}}/build/lcov/data
+          files: '*.info'
+          fail_ci_if_error: true

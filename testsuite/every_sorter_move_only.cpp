@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
     std::vector<move_only<double>> collection;
     collection.reserve(491);
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 491, -125);
+    distribution.call<double>(std::back_inserter(collection), 491, -125);
 
     TestType sorter;
     sorter(collection);

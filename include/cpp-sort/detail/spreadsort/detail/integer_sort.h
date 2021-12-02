@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -33,6 +33,7 @@ Phil Endecott and Frank Gennari
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
+#include "../../type_traits.h"
 
 namespace cppsort
 {
@@ -202,7 +203,7 @@ namespace spreadsort
     template<typename RandomAccessIter, typename Div_type, typename Projection>
     auto integer_sort(RandomAccessIter first, RandomAccessIter last,
                       Div_type, Projection projection)
-        -> std::enable_if_t<
+        -> cppsort::detail::enable_if_t<
             sizeof(Div_type) <= sizeof(std::size_t),
             void
         >
@@ -218,7 +219,7 @@ namespace spreadsort
     template<typename RandomAccessIter, typename Div_type, typename Projection>
     auto integer_sort(RandomAccessIter first, RandomAccessIter last,
                       Div_type, Projection projection)
-        -> std::enable_if_t<
+        -> cppsort::detail::enable_if_t<
             (sizeof(Div_type) > sizeof(std::size_t)) &&
             sizeof(Div_type) <= sizeof(std::uintmax_t),
             void

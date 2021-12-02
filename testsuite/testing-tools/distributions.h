@@ -8,13 +8,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <cstddef>
-#include <iterator>
-#include <random>
-#include <vector>
-#include <catch2/catch.hpp>
 #include <cpp-sort/detail/bitops.h>
+#include "random.h"
 
 namespace dist
 {
@@ -31,60 +26,60 @@ namespace dist
                 return Derived{}(out, size);
             };
         }
+
+        // Make it easier to specify explicit template parameters
+        template<typename T=long long int, typename OutputIterator>
+        auto call(OutputIterator out, long long int size) const
+            -> decltype(auto)
+        {
+            return static_cast<const Derived&>(*this).template operator()<T>(out, size);
+        }
+
+        template<typename T=long long int, typename OutputIterator>
+        auto call(OutputIterator out, long long int size, long long int start) const
+            -> decltype(auto)
+        {
+            return static_cast<const Derived&>(*this).template operator()<T>(out, size, start);
+        }
     };
 
     struct shuffled:
         distribution<shuffled>
     {
-        template<typename OutputIterator, typename T=long long int>
-        auto operator()(OutputIterator out, long long int size, T start=T(0)) const
+        template<typename T=long long int, typename OutputIterator>
+        auto operator()(OutputIterator out, long long int size, long long int start=0ll) const
             -> void
         {
-            // Pseudo-random number generator
-            thread_local std::mt19937 engine(Catch::rngSeed());
-
-            std::vector<T> vec;
-            vec.reserve(size);
-
-            T end = start + size;
-            for (auto i = start ; i < end ; ++i) {
-                vec.emplace_back(i);
-            }
-            std::shuffle(std::begin(vec), std::end(vec), engine);
-            std::move(std::begin(vec), std::end(vec), out);
+            hasard::fill_with_shuffle<T>(out, size, start, hasard::bit_gen());
         }
     };
 
     struct shuffled_16_values:
         distribution<shuffled_16_values>
     {
-        template<typename OutputIterator>
+        static constexpr auto mod_16(long long int value)
+            -> long long int
+        {
+            return value % 16;
+        }
+
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            // Pseudo-random number generator
-            thread_local std::mt19937 engine(Catch::rngSeed());
-
-            std::vector<int> vec;
-            vec.reserve(size);
-
-            for (long long int i = 0 ; i < size ; ++i) {
-                vec.emplace_back(i % 16);
-            }
-            std::shuffle(std::begin(vec), std::end(vec), engine);
-            std::move(std::begin(vec), std::end(vec), out);
+            hasard::fill_with_shuffle<T>(out, size, 0, hasard::bit_gen(), &mod_16);
         }
     };
 
     struct all_equal:
         distribution<all_equal>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             for (long long int i = 0 ; i < size ; ++i) {
-                *out++ = 0;
+                *out++ = static_cast<T>(0);
             }
         }
     };
@@ -92,12 +87,12 @@ namespace dist
     struct ascending:
         distribution<ascending>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             for (long long int i = 0 ; i < size ; ++i) {
-                *out++ = i;
+                *out++ = static_cast<T>(i);
             }
         }
     };
@@ -105,12 +100,29 @@ namespace dist
     struct descending:
         distribution<descending>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             while (size--) {
-                *out++ = size;
+                *out++ = static_cast<T>(size);
+            }
+        }
+    };
+
+    struct ascending_duplicates:
+        distribution<ascending_duplicates>
+    {
+        // Ascending (sorted) distribution with series of 10
+        // times the same integer value, used to test specific
+        // algorithms against inputs with duplicate values
+
+        template<typename T=long long int, typename OutputIterator>
+        auto operator()(OutputIterator out, long long int size) const
+            -> void
+        {
+            for (long long int i = 0 ; i < size ; ++i) {
+                *out++ = static_cast<T>(i / 10);
             }
         }
     };
@@ -118,15 +130,15 @@ namespace dist
     struct pipe_organ:
         distribution<pipe_organ>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             for (long long int i = 0 ; i < size / 2 ; ++i) {
-                *out++ = i;
+                *out++ = static_cast<T>(i);
             }
             for (long long int i = size / 2 ; i < size ; ++i) {
-                *out++ = size - i;
+                *out++ = static_cast<T>(size - i);
             }
         }
     };
@@ -134,15 +146,15 @@ namespace dist
     struct push_front:
         distribution<push_front>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             if (size > 0) {
                 for (long long int i = 0 ; i < size - 1 ; ++i) {
-                    *out++ = i;
+                    *out++ = static_cast<T>(i);
                 }
-                *out = 0;
+                *out = static_cast<T>(0);
             }
         }
     };
@@ -150,17 +162,17 @@ namespace dist
     struct push_middle:
         distribution<push_middle>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             if (size > 0) {
                 for (long long int i = 0 ; i < size ; ++i) {
                     if (i != size / 2) {
-                        *out++ = i;
+                        *out++ = static_cast<T>(i);
                     }
                 }
-                *out = size / 2;
+                *out = static_cast<T>(size / 2);
             }
         }
     };
@@ -168,13 +180,13 @@ namespace dist
     struct ascending_sawtooth:
         distribution<ascending_sawtooth>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            long long int limit = size / cppsort::detail::log2(size) * 0.9;
+            auto limit = static_cast<long long int>(size / cppsort::detail::log2(size) * 0.9);
             for (long long int i = 0 ; i < size ; ++i) {
-                *out++ = i % limit;
+                *out++ = static_cast<T>(i % limit);
             }
         }
     };
@@ -182,13 +194,13 @@ namespace dist
     struct descending_sawtooth:
         distribution<descending_sawtooth>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
-            long long int limit = size / cppsort::detail::log2(size) * 0.9;
+            auto limit = static_cast<long long int>(size / cppsort::detail::log2(size) * 0.9);
             while (size--) {
-                *out++ = size % limit;
+                *out++ = static_cast<T>(size % limit);
             }
         }
     };
@@ -196,12 +208,12 @@ namespace dist
     struct alternating:
         distribution<alternating>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             for (long long int i = 0 ; i < size ; ++i) {
-                *out++ = (i % 2) ? i : -i;
+                *out++ = static_cast<T>((i % 2) ? i : -i);
             }
         }
     };
@@ -209,21 +221,21 @@ namespace dist
     struct descending_plateau:
         distribution<descending_plateau>
     {
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             long long int i = size;
             while (i > 2 * size / 3) {
-                *out++ = i;
+                *out++ = static_cast<T>(i);
                 --i;
             }
             while (i > size / 3) {
-                *out++ = size / 2;
+                *out++ = static_cast<T>(size / 2);
                 --i;
             }
             while (i > 0) {
-                *out++ = i;
+                *out++ = static_cast<T>(i);
                 --i;
             }
         }
@@ -236,20 +248,20 @@ namespace dist
         // by M. D. McIlroy, and is supposed to trick several quicksort
         // implementations with common pivot selection methods go quadratic
 
-        template<typename OutputIterator>
+        template<typename T=long long int, typename OutputIterator>
         auto operator()(OutputIterator out, long long int size) const
             -> void
         {
             long long int j = size / 2;
             for (long long int i = 1 ; i < j + 1 ; ++i) {
                 if (i % 2 != 0) {
-                    *out++ = i;
+                    *out++ = static_cast<T>(i);
                 } else {
-                    *out++ = j + i - 1;
+                    *out++ = static_cast<T>(j + i - 1);
                 }
             }
             for (long long int i = 1 ; i < j + 1 ; ++i) {
-                *out++ = 2 * i;
+                *out++ = static_cast<T>(2 * i);
             }
         }
     };

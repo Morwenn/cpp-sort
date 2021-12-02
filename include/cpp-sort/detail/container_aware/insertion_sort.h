@@ -20,7 +20,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../bitops.h"
-#include "../std_list_traits.h"
 #include "../type_traits.h"
 #include "../upper_bound.h"
 
@@ -122,7 +121,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
@@ -131,7 +130,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::list<Args...>& iterable, Projection projection) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
@@ -142,7 +141,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
@@ -165,7 +164,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
@@ -174,7 +173,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
-            -> std::enable_if_t<
+            -> detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
@@ -185,7 +184,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = std::enable_if_t<
+            typename = detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >
@@ -201,9 +200,9 @@ namespace cppsort
 
         template<
             typename First, typename... Args,
-            typename = std::enable_if_t<
-                not detail::is_std_list<detail::remove_cvref_t<First>>::value &&
-                not detail::is_std_forward_list<detail::remove_cvref_t<First>>::value
+            typename = detail::enable_if_t<
+                not detail::is_specialization_of_v<detail::remove_cvref_t<First>, std::list> &&
+                not detail::is_specialization_of_v<detail::remove_cvref_t<First>, std::forward_list>
             >
         >
         auto operator()(First&& first, Args&&... args) const

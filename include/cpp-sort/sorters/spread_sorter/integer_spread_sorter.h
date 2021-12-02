@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPREAD_SORTER_INTEGER_SPREAD_SORTER_H_
@@ -19,6 +19,7 @@
 #include <cpp-sort/utility/static_const.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/integer_sort.h"
+#include "../../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -35,7 +36,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     std::is_integral<projected_t<RandomAccessIterator, Projection>>::value && (
                         sizeof(projected_t<RandomAccessIterator, Projection>) <= sizeof(std::size_t) ||
                         sizeof(projected_t<RandomAccessIterator, Projection>) <= sizeof(std::uintmax_t)

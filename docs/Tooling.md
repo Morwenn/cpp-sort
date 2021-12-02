@@ -51,10 +51,10 @@ The same options exist without the `CPPSORT_` prefix exist, but are deprecated. 
 conan search cpp-sort --remote=conan-center
 ```
 
-And then install any version to your local cache as follows (here with version 1.11.0):
+And then install any version to your local cache as follows (here with version 1.12.0):
 
 ```sh
-conan install cpp-sort/1.11.0
+conan install cpp-sort/1.12.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to build your own package with the `conanfile.py` available in this repository.

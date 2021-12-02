@@ -10,6 +10,7 @@
 #include <testing-tools/functional_checks.h>
 
 TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[probe]",
+                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),
@@ -18,7 +19,6 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
                     decltype(cppsort::probe::max),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
-                    decltype(cppsort::probe::par),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::sus) )
@@ -33,6 +33,7 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
 }
 
 TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[probe]",
+                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),
@@ -41,7 +42,6 @@ TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[pr
                     decltype(cppsort::probe::max),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
-                    decltype(cppsort::probe::par),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::sus) )

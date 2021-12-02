@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2020 Morwenn
+ * Copyright (c) 2017-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/vergesort.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -40,7 +41,7 @@ namespace cppsort
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
                 >
             >

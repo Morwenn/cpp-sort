@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -33,6 +33,7 @@ Phil Endecott and Frank Gennari
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
+#include "../../type_traits.h"
 
 namespace cppsort
 {
@@ -380,7 +381,7 @@ namespace spreadsort
              typename Unsigned_char_type>
     auto string_sort(RandomAccessIter first, RandomAccessIter last,
                      Projection projection, Unsigned_char_type)
-        -> std::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
+        -> cppsort::detail::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
     {
       std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;
@@ -393,7 +394,7 @@ namespace spreadsort
              typename Unsigned_char_type>
     auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
                              Projection projection, Unsigned_char_type)
-        -> std::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
+        -> cppsort::detail::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
     {
       std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
       std::vector<RandomAccessIter> bin_cache;

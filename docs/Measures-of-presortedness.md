@@ -4,7 +4,7 @@ Given a measure of presortedness *M*, a comparison sort is said to be *M*-optima
 
 ## Formal definition
 
-Measures of presortedness were formally defined by Manilla in *Measures of presortedness and optimal sorting algorithms*. Here is the formal definition as reformulated by La rocca & Cantone in [*NeatSort - A practical adaptive algorithm*][neatsort]:
+Measures of presortedness were formally defined by H. Mannila in *Measures of presortedness and optimal sorting algorithms*. Here is the formal definition as reformulated by M. La Rocca & D. Cantone in [*NeatSort - A practical adaptive algorithm*][neatsort]:
 
 > Given two sequences *X* and *Y* of distinct elements, a measure of disorder *M* is a function that satisfies the following properties:
 >
@@ -18,7 +18,7 @@ A few measures of presortedness described in the research papers actually return
 
 ### Partial ordering of measures of presortedness
 
-La rocca & Cantone also define a partial order on measure of presortedness as follows:
+La Rocca & Cantone also define a partial order on measures of presortedness as follows:
 
 Let *M1* and *M2* be two measures of presortedness.
 - *M1* is algorithmically finer than *M2* if and only if any *M1*-optimal algorithm is also *M2*-optimal.
@@ -31,7 +31,7 @@ The graph below shows the partial ordering of several measures of presortedness:
 
 ![Partial ordering of measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mops-partial-ordering.png)
 
-This graph is more complete version of the one in *A framework for adaptive sorting* by O. Petersson and A. Moffat. The *Max* ≡ *Dis* equivalence comes from [*NeatSort - A practical adaptive algorithm*][neatsort] by La rocca & Cantone. The relations of *Mono* are empirically derived [original research][original-research].
+This graph is a modified version of the one in *A framework for adaptive sorting* by O. Petersson and A. Moffat. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Max*, *Osc* and *SUS*).
 
 The measures of presortedness in bold in the graph are available in **cpp-sort**, the others are not.
 
@@ -85,6 +85,26 @@ Measures of presortedness are pretty formalized, so the names of the functions i
 
 In the following descriptions we use *X* to represent the input sequence, and |*X*| to represent the size of that sequence.
 
+### *Block*
+
+```cpp
+#include <cpp-sort/probes/block.h>
+```
+
+Computes the number of elements in a sequence that aren't followed by the same element in the sorted sequence.
+
+Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
+* It doesn't add 1 to the general result, thus returning 0 when *X* is sorted - therefore respecting the Mannila definition of a MOP.
+* It explicitly handles elements that compare equivalent, while the original formal definition makes it difficult.
+
+| Complexity  | Memory      | Iterators     |
+| ----------- | ----------- | ------------- |
+| n log n     | n           | Forward       |
+
+`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+
+*New in version 1.12.0*
+
 ### *Dis*
 
 ```cpp
@@ -95,13 +115,16 @@ Computes the maximum distance determined by an inversion.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
-| n²          | 1           | Forward       |
+| n           | n           | Bidirectional |
+| n log n     | 1           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+When enough memory is available, `probe::dis` runs in O(n), otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
-*Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
+`max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
 
 *Changed in version 1.8.0:* `probe::dis` is now O(n²) instead of accidentally being O(n³) when passed forward or bidirectional iterators.
+
+*Changed in version 1.12.0:* `probe::dis` is now O(n log n) instead of O(n²). When sorting bidirectional iterators, if enough heap memory is available, it runs in O(n) time and O(n) space.
 
 ### *Enc*
 
@@ -109,7 +132,7 @@ Computes the maximum distance determined by an inversion.
 #include <cpp-sort/probes/enc.h>
 ```
 
-Computes the number of encroaching lists that can be extracted from *X* minus one (see Skiena's *Encroaching lists as a measure of presortedness*).
+Computes the number of encroaching lists that can be extracted from *X* minus one (see *Encroaching lists as a measure of presortedness* by S. Skiena).
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -183,11 +206,11 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 #include <cpp-sort/probes/mono.h>
 ```
 
-Computes the number of non-increasing and non-decreasing runs in *X* minus one.
+Computes the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted
 
 The measure of presortedness is slightly different from its original description in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang:
-* It subtracts 1 from the number of runs, thus returning 0 when *X* is sorted
-* It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones
+* It subtracts 1 from the number of runs, thus returning 0 when *X* is sorted.
+* It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -203,13 +226,20 @@ The measure of presortedness is slightly different from its original description
 #include <cpp-sort/probes/osc.h>
 ```
 
-Computes the *Oscillation* measure described by Levcopoulos and Petersson in *Adaptive Heapsort*.
+Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson in *Adaptive Heapsort*.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
+| n log n     | n           | Forward       |
 | n²          | 1           | Forward       |
 
+When there isn't enough extra memory available, `probe::osc` falls back to an in-place O(n²) algorithm.
+
 `max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
+
+***WARNING:** the O(n²) fallback of `probe::osc` is deprecated since version 1.12.0 and removed in version 2.0.0.*
+
+*Changed in version 1.12.0:* `probe::osc` is now O(n log n) instead of O(n²) but now also requires O(n) memory. The O(n²) is kept for backward compatibility but will be removed in the future.
 
 ### *Par*
 
@@ -217,19 +247,7 @@ Computes the *Oscillation* measure described by Levcopoulos and Petersson in *Ad
 #include <cpp-sort/probes/par.h>
 ```
 
-Computes the *Par* measure described by Estivill-Castro and Wood in *A New Measure of Presortedness* as follows:
-
-> *Par(X)* = min { *p* | *X* is *p*-sorted }
-
-The following definition is also given to determine whether a sequence is *p*-sorted:
-
-> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
-
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n² log n    | 1           | Random-access |
-
-`max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
+***WARNING:** `probe::par` is deprecated since version 1.12.0 and removed in version 2.0.0, use [`probe::dis`][probe-dis] instead.*
 
 ### *Rem*
 
@@ -267,7 +285,7 @@ Computes the number of non-decreasing runs in *X* minus one.
 
 Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of *X*.
 
-*SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by Levcopoulos and Petersson.
+*SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -277,9 +295,34 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 
 *New in version 1.10.0*
 
+## Other measures of presortedness
+
+Some additional measures of presortedness how been described in the literature but do not appear in the partial ordering graph. This section describes some of them but is not an exhaustive list.
+
+### *Par*
+
+*Par* was described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
+
+> *Par(X)* = min { *p* | *X* is *p*-sorted }
+
+The following definition is also given to determine whether a sequence is *p*-sorted:
+
+> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
+
+*Right invariant metrics and measures of presortedness* by V. Estivill-Castro, H. Mannila and D. Wood mentions that:
+
+> In fact, *Par*(*X*) = *Dis*(*X*), for all *X*.
+
+In their subsequent papers, those authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
+
+### *Radius*
+
+T. Altman and Y. Igarashi mention the concept of *k*-sortedness and the measure *Radius*(*X*) in *Roughly Sorting: Sequential and Parallel Approach*. However *k*-sortedness is the same as *p*-sortedness, and *Radius* is just another name for *Par* (and thus for *Dis*).
+
 
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [neatsort]: https://arxiv.org/pdf/1407.6183.pdf
   [original-research]: https://github.com/Morwenn/cpp-sort/wiki/Original-research#partial-ordering-of-mono
+  [probe-dis]: https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#dis
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf

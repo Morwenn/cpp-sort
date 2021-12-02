@@ -17,9 +17,9 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
-#include "distributions.h"
-#include "filesystem.h"
-#include "statistics.h"
+#include "../benchmarking-tools/distributions.h"
+#include "../benchmarking-tools/filesystem.h"
+#include "../benchmarking-tools/statistics.h"
 
 using namespace std::chrono_literals;
 

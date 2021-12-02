@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_GRAIL_SORTER_H_
@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/grail_sort.h"
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -33,7 +34,7 @@ namespace cppsort
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<is_projection_iterator_v<
+                typename = detail::enable_if_t<is_projection_iterator_v<
                     Projection, RandomAccessIterator, Compare
                 >>
             >

@@ -23,6 +23,7 @@
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
+#include "../detail/raw_checkers.h"
 #include "../detail/sized_iterator.h"
 #include "../detail/type_traits.h"
 
@@ -152,7 +153,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -169,7 +170,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
@@ -219,13 +220,17 @@ namespace cppsort
     {
         stable_adapter() = default;
 
-        constexpr explicit stable_adapter(Sorter sorter):
+        constexpr explicit stable_adapter(const Sorter& sorter):
+            utility::adapter_storage<Sorter>(sorter)
+        {}
+
+        constexpr explicit stable_adapter(Sorter&& sorter):
             utility::adapter_storage<Sorter>(std::move(sorter))
         {}
 
         template<
             typename... Args,
-            typename = std::enable_if_t<is_stable_v<Sorter(Args...)>>
+            typename = detail::enable_if_t<is_stable_v<Sorter(Args...)>>
         >
         auto operator()(Args&&... args) const
             -> decltype(this->get()(std::forward<Args>(args)...))
@@ -235,7 +240,7 @@ namespace cppsort
 
         template<
             typename... Args,
-            typename = std::enable_if_t<not is_stable_v<Sorter(Args...)>>,
+            typename = detail::enable_if_t<not is_stable_v<Sorter(Args...)>>,
             typename = void
         >
         auto operator()(Args&&... args) const
@@ -248,15 +253,20 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
-        using type = stable_adapter<Sorter>;
+        using type = detail::conditional_t<
+            cppsort::is_always_stable_v<Sorter>,
+            Sorter,
+            stable_adapter<Sorter>
+        >;
     };
 
-    // Accidental nesting can happen, unwrap
     template<typename Sorter>
-    struct stable_adapter<stable_adapter<Sorter>>:
-        stable_adapter<Sorter>
+    struct sorter_traits<stable_adapter<Sorter>>:
+        detail::raw_check_iterator_category<stable_adapter<Sorter>>
     {
-        using type = stable_adapter<Sorter>;
+        // Ensure that all user-defined specializations of stable_adapter
+        // are considered always by default by sorter_traits
+        using is_always_stable = std::true_type;
     };
 
     ////////////////////////////////////////////////////////////
@@ -265,32 +275,52 @@ namespace cppsort
     namespace detail
     {
         template<typename Sorter, typename=void>
-        struct stable_t_impl_false
+        struct stable_t_impl_type_or
         {
-            // The sorter is not always stable and does not have
-            // a type member named 'type'
-            using type = stable_adapter<Sorter>;
+            using type = Sorter;
         };
 
         template<typename Sorter>
-        struct stable_t_impl_false<Sorter, detail::void_t<typename stable_adapter<Sorter>::type>>
+        struct stable_t_impl_type_or<Sorter, detail::void_t<typename Sorter::type>>
         {
-            // The sorter is not always stable but has a type member
-            // called 'type', use that one
-            using type = typename stable_adapter<Sorter>::type;
+            using type = typename Sorter::type;
         };
 
-        template<typename Sorter, bool>
+        template<typename Sorter, bool IsStableAdapter>
+        struct stable_t_impl_true
+        {
+            // The sorter is a stable_adapter specialization, use its ::type
+            // member if it exists, otherwise use the specialization directly
+            using type = typename stable_t_impl_type_or<Sorter>::type;
+        };
+
+        template<typename Sorter>
+        struct stable_t_impl_true<Sorter, false>
+        {
+            // The sorter is always stable but not a specialization of
+            // stable_adapter, alias it directly
+            using type = Sorter;
+        };
+
+        template<typename Sorter, bool IsStable>
         struct stable_t_impl
         {
-            // The sorter is always stable, alias it directly
-            using type = Sorter;
+            // The sorter is always stable, check whether it is already a
+            // stable_adapter specialization
+            using type = typename stable_t_impl_true<
+                Sorter,
+                is_specialization_of_v<Sorter, stable_adapter>
+            >::type;
         };
 
         template<typename Sorter>
         struct stable_t_impl<Sorter, false>
         {
-            using type = typename stable_t_impl_false<Sorter>::type;
+            // The sorter is not always stable, wrap it in stable_adapter or
+            // in something close enough
+            using type = typename stable_t_impl_type_or<
+                stable_adapter<Sorter>
+            >::type;
         };
     }
 
@@ -299,6 +329,28 @@ namespace cppsort
         Sorter,
         cppsort::is_always_stable_v<Sorter>
     >::type;
+
+    ////////////////////////////////////////////////////////////
+    // stable_adapter<stable_adapter<T>>
+
+    // Accidental nesting can happen, in which case we try to
+    // unwrap as many levels as possible
+    template<typename Sorter>
+    struct stable_adapter<stable_adapter<Sorter>>:
+        stable_adapter<Sorter>
+    {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(const stable_adapter<Sorter>& sorter):
+            stable_adapter<Sorter>(sorter)
+        {}
+
+        constexpr explicit stable_adapter(stable_adapter<Sorter>&& sorter):
+            stable_adapter<Sorter>(std::move(sorter))
+        {}
+
+        using type = typename detail::stable_t_impl_type_or<stable_adapter<Sorter>>::type;
+    };
 }
 
 #ifdef CPPSORT_ADAPTERS_HYBRID_ADAPTER_DONE_

@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
-#include <random>
 #include <string>
 #include <vector>
 #include <catch2/catch.hpp>
@@ -14,6 +13,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/random.h>
 #include <testing-tools/wrapper.h>
 
 // NOTE: this test used to use wrapper<double>, but it was later
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
 {
     std::vector<wrapper<>> collection;
     auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
@@ -62,7 +62,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
     auto distribution = dist::shuffled{};
 
     std::vector<wrapper<>> collection;
-    distribution(std::back_inserter(collection), 412, -125);
+    distribution.call<float>(std::back_inserter(collection), 412, -125);
 
     std::vector<wrapper<int>> collection2;
     distribution(std::back_inserter(collection2), 412, -125);
@@ -71,8 +71,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
     for (int i = -125 ; i < 287 ; ++i) {
         collection3.emplace_back(std::to_string(i));
     }
-    std::mt19937 engine(Catch::rngSeed());
-    std::shuffle(collection3.begin(), collection3.end(), engine);
+    std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
 
     SECTION( "ska_sorter" )
     {
@@ -107,7 +106,7 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
                                   std::greater<>{}, &wrapper<std::string>::value) );
 
-        std::shuffle(collection3.begin(), collection3.end(), engine);
+        std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
         sorter(collection3.rbegin(), collection3.rend(),
                std::greater<>{}, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),

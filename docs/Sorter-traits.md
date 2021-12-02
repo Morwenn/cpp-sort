@@ -106,7 +106,7 @@ constexpr bool is_comparison_projection_sorter_iterator_v
 
 ### `sorter_traits`
 
-The class template `sorter_traits<Sorter>` contains information about *sorters* and *[[sorter adapters|Sorter adapters]]* such as the kind of iterators accepted by a sorter and whether it implements or not a stable sorting algorithm.
+The class template `sorter_traits<Sorter>` contains information about *[[sorters|Sorters]]* and *[[sorter adapters|Sorter adapters]]* such as the kind of iterators accepted by a sorter and whether it is guaranteed to always sort stably.
 
 ```cpp
 template<typename Sorter>
@@ -114,11 +114,12 @@ struct sorter_traits;
 ```
 
 This class template peeks into `Sorter` to extract the following types:
-
 * `using iterator_category = typename Sorter::iterator_category;`
 * `using is_always_stable = typename Sorter::is_always_stable;`
 
-This class is a bit different than the trait classes in the standard library: if one of the types above doesn't exist in the passed sorter, it won't exist in `sorter_traits` either. That means that the traits are not tightly coupled: if a sorter doesn't define `is_always_stable` but defines `iterator_category`, it can still be used in [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter); instantiating the corresponding `sorter_traits` won't cause a compile-time error because of the missing `is_always_stable`.
+Its behaviour is however a bit different from that of the trait classes in the standard library: if one of the types above doesn't exist in the passed sorter, it won't exist in the corresponding `sorter_traits` specialization either. That means that the traits are not tightly coupled: for example if a sorter doesn't define `is_always_stable` but defines `iterator_category`, it can still be used in [`hybrid_adapter`][hybrid-adapter]; instantiating the corresponding `sorter_traits` won't cause a compile-time error because of the missing `is_always_stable`.
+
+`sorter_traits` can be specialized for user-defined *sorters* or *sorter adapters*, and those specialization are sometimes the only place where the information exists. As such, `sorter_traits` is the preferred way to query information about a sorter - it's all the more important as **cpp-sort** itself sometimes fully relies on a `sorter_traits` specialization to provide some information. The in-class traits should be seen as convenient short-hands, but `sorter_traits` as the main source of truth - it is considered an error if both exist and differ.
 
 ### `iterator_category`
 
@@ -127,9 +128,9 @@ template<typename Sorter>
 using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 ```
 
-Some tools need to know which category of iterators a sorting algorithm can work with. Therefore, a well-defined sorter shall provide one of the standard library [iterator tags](https://en.cppreference.com/w/cpp/iterator/iterator_tags) in order to document that.
+Some tools need to know which category of iterators a sorting algorithm can work with. A sorter that intends to work with those tools must document its iterator category by aliasing one of the standard library [iterator tags][iterator-tags].
 
-When a sorter is adapted so that it may be used with several categories of iterators, the resulting sorter's iterator category will correspond to the most permissive among the original sorters. For example, if an [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter) merges sorting algorithms with `std::forward_iterator_tag` and `std::random_access_iterator_tag`, the resulting sorter's category will be `std::forward_iterator_tag` since it is guaranteed to work with any iterable type which has *at least* forward iterators.
+The iterator category of the *resulting sorter* of a [[*sorter adapter*|Sorter adapters]] doesn't always match that of the *adapted sorter*: for example [`heap_sorter`][heap-sorter] only accepts random-access iterators, but it accepts forward iterators when wrapped into [`out_of_place_adapter`][out-of-place-adapter].
 
 ### `is_always_stable`
 
@@ -142,9 +143,9 @@ constexpr bool is_always_stable_v
     = is_always_stable<Sorter>::value;
 ```
 
-This type trait is always either [`std::true_type`](https://en.cppreference.com/w/cpp/types/integral_constant) or `std::false_type` and tells whether a sorting algorithm is always [stable](https://en.wikipedia.org/wiki/Sorting_algorithm#Stability) or not. This information may be useful in some contexts, most notably to make sure that [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) can use a stable sorter directly instead of artificially making it stable.
+This type trait is always either [`std::true_type` or `std::false_type`][integral-constant] and tells whether a sorter is always [stable][stability] or not. This information may be useful in some contexts, and is most notably by [`stable_t`][stable-adapter] to avoid unnecessarily nesting templates when possible.
 
-When a sorter adapter is used, the *resulting sorter* is stable if and only if its stability can be guaranteed and unstable otherwise, even when the *adapted sorter* may be stable (for example, [`self_sort_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter)'s `is_always_stable` is aliased to `std::false_type` since it is impossible to guarantee the stability of every `sort` method).
+When a sorter adapter is used, the *resulting sorter* is considered always stable if and only if its stability can be guaranteed, and considered unstable otherwise, even when the *adapted sorter* may be stable (for example, [`self_sort_adapter`][self-sort-adapter]`::is_always_stable` is aliased to `std::false_type` since it is impossible to guarantee the stability of every collection's `sort` method).
 
 ### `is_stable`
 
@@ -161,16 +162,16 @@ template<typename Arg>
 constexpr bool is_stable_v = is_stable<Arg>::value;
 ```
 
-This trait is a more flexible version of `is_always_stable`: it tells whether a given sorter will use a stable sorting algorithm when called with a specific set of parameters. I can be used as follows:
+This trait is a more flexible version of [`is_always_stable`][is-always-stable]: it tells whether a given sorter uses a stable sorting algorithm when called with a specific set of parameters. It can be used as follows:
 
 ```cpp
-using sorter = self_sort_adapter<verge_sorter>;
+using sorter = self_sort_adapter<heap_sorter>;
 static_assert(is_stable<sorter(std::list<int>&)>, "");
 ```
 
-[`self_sort_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter) is a sorter adapter that checks whether a container can sort itself and, if so, uses the container's sorting method instead of the adapted sorter. As a matter of fact, `std::list::sort` implements a stable sorting algorithm (and there is a tweak in **cpp-sort** to take that information into account), so `is_stable<sorter(std::list<int>&)>` will inherit from `std::true_type`. However, `is_stable<sorter(std::vector<int>&)>` or `is_stable<sorter(std::list<int>::iterator, std::list<int>::iterator)>` will inherit from `std::false_type` instead.
+[`self_sort_adapter`][self-sort-adapter] is a [[*sorter adapter*|Sorter adapters]] that checks whether a container can sort itself and, if so, uses the container's sorting method instead of the *adapted sorter*. As a matter of fact, [`std::list::sort`][std-list-sort] implements a stable sorting algorithm and **cpp-sort** specializes `is_stable` to take that information into account, so `is_stable_v<sorter(std::list<int>&)>` is `true` despite `is_always_stable_v<sorter>` being `false`. However, `is_stable_v<sorter(std::vector<int>&)>` and `is_stable_v<sorter(std::list<int>::iterator, std::list<int>::iterator)>` remain `false`.
 
-The default version of `is_stable` will use `sorter_traits<Sorter>::is_always_stable` to infer the stability of a sorter, but most sorter adapters have dedicated specializations. These specializations allow [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) to sometimes avoid `make_stable` and to instead use the *adapted sorter* directly when it knows that calling it with specific parameters already yields a stable sort.
+The default version of `is_stable` uses `sorter_traits<Sorter>::is_always_stable` to infer the stability of a sorter, but most sorter adapters have dedicated specializations. These specializations notably allow [`stable_adapter`][stable-adapter] to sometimes avoid using `make_stable` and to instead use the *adapted sorter* directly when it knows that calling it with specific parameters already yields a stable sort.
 
 ### `rebind_iterator_category`
 
@@ -179,7 +180,7 @@ template<typename Sorter, typename Category>
 struct rebind_iterator_category;
 ```
 
-This class allows to get a sorter similar to the one passed but with a stricter iterator category. For example, it can generate a sorter whose iterator category is `std::bidirectional_iterator_tag` from another sorter whose iterator category is `std::forward_iterator_tag`. It is mostly useful to make several sorters with the same iterator category work for different iterator categories in an [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter). Let's say we have two sorters, `foo_sorter` and `bar_sorter`; both have the iterator category `std::forward_iterator_tag`, but `foo_sorter` is the best to sort forward iterators while `bar_sorter` benefits from some optimizations for bidirectional and random-access iterators. It is possible to use the best of both with the following sorter:
+This class allows to get a sorter similar to the one passed but with a stricter [iterator category][iterator-tags]. For example, it can generate a sorter whose iterator category is `std::bidirectional_iterator_tag` from another sorter whose iterator category is `std::forward_iterator_tag`. It is mostly useful to make several sorters with the same iterator category work for different iterator categories in [`hybrid_adapter`][hybrid-adapter]. Let's say we have two sorters, `foo_sorter` and `bar_sorter`; both have the iterator category `std::forward_iterator_tag`, but `foo_sorter` is the best to sort forward iterators while `bar_sorter` benefits from some optimizations for bidirectional and random-access iterators. It is possible to use the best of both with the following sorter:
 
 ```cpp
 using sorter = cppsort::hybrid_adapter<
@@ -191,7 +192,7 @@ using sorter = cppsort::hybrid_adapter<
 >;
 ```
 
-The sorter above will pick `foo_sorter` for forward iterators, but will pick `bar_sorter` for bidirectional and random-access iterators. A compile-time error will occur if one tries to rebind to an iterator category that is not derived from the sorter's original iterator category.
+The sorter above will pick `foo_sorter` for forward iterators, but `bar_sorter` for bidirectional and random-access iterators. A compile-time error occurs when one tries to rebind a sorter to a less strict iterator category than its own.
 
 ### `fixed_sorter_traits`
 
@@ -208,6 +209,19 @@ struct fixed_sorter_traits;
 
 This class template can be specialized for any fixed-size sorter and exposes the following properties:
 
-* `domain`: a specialization of [`std::index_sequence`](https://en.cppreference.com/w/cpp/utility/integer_sequence) containing all the sizes for which a specialization of the fixed-size sorter exists. If this trait isn't specified, it is assumed that the fixed-size sorter can be specialized for any value of `N`.
+* `domain`: a specialization of [`std::index_sequence`][std-integer-sequence] containing all the sizes for which a specialization of the fixed-size sorter exists. If this trait isn't specified, it is assumed that the fixed-size sorter can be specialized for any value of `N`.
 * `iterator_category`: the category of iterators every specialization of the fixed-size sorter is guaranteed to work with. Individual specializations may work with less strict iterator categories.
-* `is_always_stable`: an alias for [`std::true_type`](https://en.cppreference.com/w/cpp/types/integral_constant) if every specialization of the fixed-size sorter is guaranteed to always be stable, and `std::false_type` otherwise.
+* `is_always_stable`: an alias for [`std::true_type`][std-integral-constant] if every specialization of the fixed-size sorter is guaranteed to always be stable, and `std::false_type` otherwise.
+
+
+  [heap-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
+  [hybrid-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter
+  [is-always-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_always_stable
+  [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
+  [out-of-place-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#out_of_place_adapter
+  [self-sort-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter
+  [stability]: https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter-make_stable-and-stable_t
+  [std-integer-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
+  [std-integral-constant]: https://en.cppreference.com/w/cpp/types/integral_constant
+  [std-list-sort]: https://en.cppreference.com/w/cpp/container/list/sort

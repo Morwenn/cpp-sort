@@ -6,7 +6,7 @@ You can find some experiments and interesting pieces of code [in my Gist][morwen
 
 One of the main observations which naturally occured as long as I was putting together this library was about the best complexity tradeoffs between time and memory depending on the iterator categories of the different sorting algorithms (only taking comparison sorts into account):
 * Algorithms that work on random-access iterators can run in O(n log n) time with O(1) extra memory, and can even be stable with such guarantees (block sort being the best example).
-* Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergesort [can be implemented][https://github.com/Morwenn/quick_merge_sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
+* Unstable algorithms that work on bidirectional iterators can run in O(n log n) time with O(1) extra memory: QuickMergesort [can be implemented][quick-merge-sort] with a bottom-up mergesort and a raw median-of-medians algorithms (instead of the introselect mutual recursion).
 * Stable algorithms that work on bidirectional iterators can run in O(n log n) time with O(n) extra memory (mergesort), or in O(n log² n) time with O(1) extra memory (mergesort with in-place merge).
 * Stable algorithms that work on forward iterators can get down to the same time and memory complexities than the ones working on bidirectional iterators: mergesort works just as well.
 * Unstable algorithms that work on forward iterators can run in O(n log² n) time and O(1) space, QuickMergesort being once again the prime example of such an algorithm.
@@ -205,14 +205,14 @@ The measure of presortedness *Mono* is described in [*Sort Race*][sort-race] by 
 
 > Intuitively, if *Mono*(*X*) = *k*, then *X* is the concatenation of *k* monotonic lists (either sorted or reversely sorted).
 
-It counts the number of ascending or descending runs in *X*. Technically this definition in the paper makes it return 1 when the *X* is sorted, which goes against the original definition of a measure of presortedness by Manilla, which starts with the following condition:
+It computes the number of ascending or descending runs in *X*. Technically the definition in the paper makes it return 1 when the *X* is sorted, which goes against the original definition of a measure of presortedness by Mannila, which starts with the following condition:
 
 > If *X* is sorted, then *M*(*X*) = 0
 
 Therefore we redefine *Mono*(*X*) as the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted.
 - ***Mono* ⊇ *Runs***: this relation is already mentioned in *Sort Race* and rather intuitive: since *Mono* detects both non-increasing and non-decreasing runs, it is as least as good as *Runs* that only detects non-decreasing runs.
 - ***SMS* ⊇ *Mono***: this one seems intuitive too: *SMS* which removes runs of non-adjacent elements should be at least as good as *Mono* which only removes runs of adjacent elements.
-- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to not create no more than one such new list per non-increasing or non-decreasing runs, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* will find maximum disorder. Therefore *Enc* is strictly better than *Mono*.
+- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in *X*, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* will find maximum disorder. Therefore *Enc*(*X*) should always be at most as big as *Mono*(*X*).
 
 The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
 - ***Mono* ⊋ *Exc***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Exc*

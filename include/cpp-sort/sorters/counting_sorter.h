@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_COUNTING_SORTER_H_
@@ -29,7 +29,7 @@ namespace cppsort
         {
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     detail::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
@@ -46,7 +46,7 @@ namespace cppsort
 
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     detail::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {
@@ -64,7 +64,7 @@ namespace cppsort
 #ifdef __cpp_lib_ranges
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     detail::is_integral<value_type_t<ForwardIterator>>::value
                 >
             {

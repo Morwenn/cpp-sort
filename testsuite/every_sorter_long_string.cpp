@@ -4,7 +4,6 @@
  */
 #include <algorithm>
 #include <iterator>
-#include <random>
 #include <string>
 #include <utility>
 #include <vector>
@@ -13,6 +12,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/random.h>
 
 namespace
 {
@@ -23,9 +23,6 @@ namespace
         auto operator()(OutputIterator out, long long int size, T start=T(0)) const
             -> void
         {
-            // Pseudo-random number generator
-            thread_local std::mt19937 engine(Catch::rngSeed());
-
             std::vector<std::string> vec;
             vec.reserve(size);
 
@@ -34,7 +31,7 @@ namespace
                 auto s = std::to_string(i);
                 vec.push_back(std::string(100 - s.size(), '0') + std::move(s));
             }
-            std::shuffle(std::begin(vec), std::end(vec), engine);
+            std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
             std::move(std::begin(vec), std::end(vec), out);
         }
     };

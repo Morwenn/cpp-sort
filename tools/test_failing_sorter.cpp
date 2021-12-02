@@ -60,6 +60,7 @@ void test(const char* name)
 
     // Measures of presortedness
     std::cout << '\n'
+        << "block: " << cppsort::probe::block(copy2) << std::endl
         << "dis: " << cppsort::probe::dis(copy2) << std::endl
         << "enc: " << cppsort::probe::enc(copy2) << std::endl
         << "exc: " << cppsort::probe::exc(copy2) << std::endl
@@ -68,7 +69,6 @@ void test(const char* name)
         << "max: " << cppsort::probe::max(copy2) << std::endl
         << "mono: " << cppsort::probe::mono(copy2) << std::endl
         << "osc: " << cppsort::probe::osc(copy2) << std::endl
-        << "par: " << cppsort::probe::par(copy2) << std::endl
         << "rem: " << cppsort::probe::rem(copy2) << std::endl
         << "runs: " << cppsort::probe::runs(copy2) << std::endl
         << "sus: " << cppsort::probe::sus(copy2) << std::endl

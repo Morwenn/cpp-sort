@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_DEFAULT_SORTER_H_
@@ -31,7 +31,11 @@ namespace cppsort
     struct stable_adapter<default_sorter>:
         merge_sorter
     {
-        using type = merge_sorter;
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(const default_sorter&) noexcept:
+            stable_adapter()
+        {}
     };
 
     ////////////////////////////////////////////////////////////

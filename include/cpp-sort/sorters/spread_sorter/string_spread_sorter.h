@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPREAD_SORTER_STRING_SPREAD_SORTER_H_
@@ -20,6 +20,7 @@
 #include "../../detail/config.h"
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/string_sort.h"
+#include "../../detail/type_traits.h"
 
 #if __cplusplus > 201402L && __has_include(<string_view>)
 #   include <string_view>
@@ -43,7 +44,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
 #if __cplusplus > 201402L && __has_include(<string_view>)
                     || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
@@ -69,7 +70,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> std::enable_if_t<(
+                -> detail::enable_if_t<(
                         std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
 #if __cplusplus > 201402L && __has_include(<string_view>)
                         || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
@@ -99,7 +100,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
 #if __cplusplus > 201402L && __has_include(<string_view>)
                     || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
@@ -126,7 +127,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
-                -> std::enable_if_t<(
+                -> detail::enable_if_t<(
                         std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
 #if __cplusplus > 201402L && __has_include(<string_view>)
                         || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
@@ -155,7 +156,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::ranges::greater compare, Projection projection={}) const
-                -> std::enable_if_t<
+                -> detail::enable_if_t<
                     std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
                     || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
                 >
@@ -180,7 +181,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::ranges::greater compare, Projection projection={}) const
-                -> std::enable_if_t<(
+                -> detail::enable_if_t<(
                         std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
                         || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)

@@ -16,7 +16,7 @@ namespace cppsort
 namespace detail
 {
     ////////////////////////////////////////////////////////////
-    // Alternative to std::conditional from C++11
+    // Alternative to std::conditional_t from C++11
 
     template<bool>
     struct conditional
@@ -34,6 +34,22 @@ namespace detail
 
     template<bool B, typename T, typename U>
     using conditional_t = typename conditional<B>::template type<T, U>;
+
+    ////////////////////////////////////////////////////////////
+    // Alternative to std::enable_if_t from C++11
+
+    template<bool>
+    struct enable_if_impl {};
+
+    template<>
+    struct enable_if_impl<true>
+    {
+        template<typename T>
+        using type = T;
+    };
+
+    template<bool B, typename T=void>
+    using enable_if_t = typename enable_if_impl<B>::template type<T>;
 
     ////////////////////////////////////////////////////////////
     // std::void_t from C++17
@@ -291,6 +307,27 @@ namespace detail
     template<typename T>
     using is_unsigned = std::is_unsigned<T>;
 #endif
+
+    ////////////////////////////////////////////////////////////
+    // is_specialization_of: check that a given type is a
+    // specialization of a given class template, with the caveat
+    // that the class template can only have type template
+    // parameters
+    //
+    // See https://wg21.link/P2098R0
+
+    template<typename T, template<typename...> class Template>
+    struct is_specialization_of:
+        std::false_type
+    {};
+
+    template<template<typename...> class Template, typename... Args>
+    struct is_specialization_of<Template<Args...>, Template>:
+        std::true_type
+    {};
+
+    template<typename T, template<typename...> class Template>
+    constexpr bool is_specialization_of_v = is_specialization_of<T, Template>::value;
 
     ////////////////////////////////////////////////////////////
     // is_in_pack: check whether a given std::size_t value

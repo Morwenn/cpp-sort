@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PARTIAL_LESS_H_
@@ -13,6 +13,7 @@
 #include <cpp-sort/comparators/weak_less.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -23,7 +24,7 @@ namespace cppsort
 
         template<typename T>
         auto partial_less(T lhs, T rhs) noexcept
-            -> std::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
         {
             return lhs < rhs;
         }

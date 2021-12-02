@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_VERGE_SORTER_H_
@@ -20,6 +20,7 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
+#include "../detail/type_traits.h"
 #include "../detail/vergesort.h"
 
 namespace cppsort
@@ -36,7 +37,7 @@ namespace cppsort
                 typename BidirectionalIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_v<Projection, BidirectionalIterable, Compare>
                 >
             >
@@ -61,7 +62,7 @@ namespace cppsort
                 typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
-                typename = std::enable_if_t<
+                typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >

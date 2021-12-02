@@ -36,8 +36,8 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
-#include "distributions.h"
-#include "rdtsc.h"
+#include "../benchmarking-tools/distributions.h"
+#include "../benchmarking-tools/rdtsc.h"
 
 // Type of data to sort during the benchmark
 using value_t = double;
