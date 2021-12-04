@@ -55,19 +55,19 @@ namespace detail
         };
     };
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto slabsort_get_median(RandomAccessIterator first, RandomAccessIterator last,
-                             immovable_vector<RandomAccessIterator>& iterators_buffer,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto slabsort_get_median(BidirectionalIterator first,
+                             difference_type_t<BidirectionalIterator> size,
+                             immovable_vector<BidirectionalIterator>& iterators_buffer,
                              Compare compare, Projection projection)
-        -> RandomAccessIterator
+        -> BidirectionalIterator
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
-        auto size = last - first;
+        using difference_type = difference_type_t<BidirectionalIterator>;
 
         ////////////////////////////////////////////////////////////
-        // Bind index to iterator
+        // Indirectly partition the iterators
 
-        // Associate iterators to their position
+        // Copy the iterators in a vector
         iterators_buffer.clear();
         for (difference_type count = 0; count != size; ++count) {
             iterators_buffer.emplace_back(first);
@@ -83,9 +83,10 @@ namespace detail
         );
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto slabsort_partition(RandomAccessIterator first, RandomAccessIterator last,
-                            immovable_vector<RandomAccessIterator>& iterators_buffer,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto slabsort_partition(BidirectionalIterator first, BidirectionalIterator last,
+                            difference_type_t<BidirectionalIterator> size,
+                            immovable_vector<BidirectionalIterator>& iterators_buffer,
                             Compare compare, Projection projection)
         -> void
     {
@@ -99,7 +100,7 @@ namespace detail
         //       difference should not have any noticeable impact on the
         //       adaptivity to presortedness
 
-        auto pivot = slabsort_get_median(first, last, iterators_buffer, compare, projection);
+        auto pivot = slabsort_get_median(first, size, iterators_buffer, compare, projection);
         auto last_1 = std::prev(last);
 
         // Put the pivot at position std::prev(last) and partition
@@ -114,15 +115,15 @@ namespace detail
         iter_swap(middle1, last_1);
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto try_melsort(RandomAccessIterator first, RandomAccessIterator last,
-                     difference_type_t<RandomAccessIterator> p,
-                     fixed_size_list_node_pool<slabsort_list_node<RandomAccessIterator>>& node_pool,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto try_melsort(BidirectionalIterator first, BidirectionalIterator last,
+                     difference_type_t<BidirectionalIterator> p,
+                     fixed_size_list_node_pool<slabsort_list_node<BidirectionalIterator>>& node_pool,
                      Compare compare, Projection projection)
         -> bool
     {
-        using rvalue_type = rvalue_type_t<RandomAccessIterator>;
-        using node_type = slabsort_list_node<RandomAccessIterator>;
+        using rvalue_type = rvalue_type_t<BidirectionalIterator>;
+        using node_type = slabsort_list_node<BidirectionalIterator>;
         using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -133,9 +134,9 @@ namespace detail
 
         // Encroaching lists
         std::vector<fixed_size_list<node_type>> lists;
-        lists.emplace_back(node_pool, destroy_node_contents<RandomAccessIterator, node_type, &node_type::it>);
+        lists.emplace_back(node_pool, destroy_node_contents<BidirectionalIterator, node_type, &node_type::it>);
         lists.back().push_back([&first](node_type* node) {
-            ::new (&node->it) RandomAccessIterator(first);
+            ::new (&node->it) BidirectionalIterator(first);
         });
 
         ////////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ namespace detail
                     }
                 );
                 insertion_point->push_back([&it](node_type* node) {
-                    ::new (&node->it) RandomAccessIterator(it);
+                    ::new (&node->it) BidirectionalIterator(it);
                 });
             } else if (not comp(proj(*last_list.begin().base()->it), value)) {
                 // Element belongs to the heads (smaller elements)
@@ -165,21 +166,21 @@ namespace detail
                     }
                 );
                 insertion_point->push_front([&it](node_type* node) {
-                    ::new (&node->it) RandomAccessIterator(it);
+                    ::new (&node->it) BidirectionalIterator(it);
                 });
             } else {
                 // Element does not belong to the existing encroaching lists,
                 // create a new list for it
-                lists.emplace_back(node_pool, destroy_node_contents<RandomAccessIterator, node_type, &node_type::it>);
+                lists.emplace_back(node_pool, destroy_node_contents<BidirectionalIterator, node_type, &node_type::it>);
                 lists.back().push_back([&it](node_type* node) {
-                    ::new (&node->it) RandomAccessIterator(it);
+                    ::new (&node->it) BidirectionalIterator(it);
                 });
             }
 
             // Too many encroaching lists have been created (Enc > p),
             // give up, the elements of the collection remain in their
             // order of creation
-            using difference_type = difference_type_t<RandomAccessIterator>;
+            using difference_type = difference_type_t<BidirectionalIterator>;
             if (difference_type(lists.size()) >= p) {
                 return false;
             }
@@ -209,13 +210,13 @@ namespace detail
         return true;
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto slabsort_impl(RandomAccessIterator first, RandomAccessIterator last,
-                       difference_type_t<RandomAccessIterator> size,
-                       difference_type_t<RandomAccessIterator> original_p,
-                       difference_type_t<RandomAccessIterator> current_p,
-                       immovable_vector<RandomAccessIterator>& iterators_buffer,
-                       fixed_size_list_node_pool<slabsort_list_node<RandomAccessIterator>>& node_pool,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto slabsort_impl(BidirectionalIterator first, BidirectionalIterator last,
+                       difference_type_t<BidirectionalIterator> size,
+                       difference_type_t<BidirectionalIterator> original_p,
+                       difference_type_t<BidirectionalIterator> current_p,
+                       immovable_vector<BidirectionalIterator>& iterators_buffer,
+                       fixed_size_list_node_pool<slabsort_list_node<BidirectionalIterator>>& node_pool,
                        Compare compare, Projection projection)
         -> void
     {
@@ -223,10 +224,10 @@ namespace detail
             return;
         }
 
-        slabsort_partition(first, last, iterators_buffer, compare, projection);
-        auto left_size = (last - first) / 2;
+        slabsort_partition(first, last, size, iterators_buffer, compare, projection);
+        auto left_size = size / 2;
         auto right_size = size - left_size;
-        auto middle = first + left_size;
+        auto middle = std::next(first, left_size);
         if (current_p > 2) {
             // Partition further until the partitions are small enough
             slabsort_impl(first, middle, left_size, original_p, current_p / 2,
@@ -251,18 +252,18 @@ namespace detail
         }
     }
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto slabsort(RandomAccessIterator first, RandomAccessIterator last,
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto slabsort(BidirectionalIterator first, BidirectionalIterator last,
                   Compare compare, Projection projection)
         -> void
     {
-        auto size = last - first;
+        auto size = std::distance(first, last);
         if (size < 2) {
             return;
         }
 
         // Node pool used by all try_melsort invocations
-        using node_type = slabsort_list_node<RandomAccessIterator>;
+        using node_type = slabsort_list_node<BidirectionalIterator>;
         fixed_size_list_node_pool<node_type> node_pool(size);
 
         // Take advantage of existing presortedness once before the partitioning
@@ -275,9 +276,9 @@ namespace detail
         }
 
         // Allocate a buffer that will be used for median finding
-        immovable_vector<RandomAccessIterator> iterators_buffer(size);
+        immovable_vector<BidirectionalIterator> iterators_buffer(size);
 
-        difference_type_t<RandomAccessIterator> original_p = 2;
+        difference_type_t<BidirectionalIterator> original_p = 2;
         return slabsort_impl(
             first, last, size, original_p, original_p,
             iterators_buffer, node_pool,

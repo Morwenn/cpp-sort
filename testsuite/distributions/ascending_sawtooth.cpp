@@ -56,6 +56,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with ascending_sawtooth distribu
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
+                    cppsort::slab_sorter,
                     cppsort::verge_sorter )
 {
     std::list<int> collection;

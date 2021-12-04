@@ -153,6 +153,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::verge_sorter )
 {
     auto distribution = dist::shuffled{};
@@ -161,20 +162,17 @@ TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[
     correctly_destructed = 0;
     moves_count = 0;
 
-    SECTION( "with std::list" )
-    {
-        try {
-            std::list<throw_on_move> collection;
-            distribution(std::back_inserter(collection), 250);
+    try {
+        std::list<throw_on_move> collection;
+        distribution(std::back_inserter(collection), 250);
 
-            TestType sorter;
-            sorter(collection);
+        TestType sorter;
+        sorter(collection);
 
-            INFO( "the sorter did not throw" );
-        } catch (const throw_on_move_error&) {
-            INFO( "the sorter did throw" );
-            CHECK( correctly_constructed == correctly_destructed );
-        }
+        INFO( "the sorter did not throw" );
+    } catch (const throw_on_move_error&) {
+        INFO( "the sorter did throw" );
+        CHECK( correctly_constructed == correctly_destructed );
     }
 }
 
@@ -192,19 +190,16 @@ TEMPLATE_TEST_CASE( "forward sorters against throwing move operations", "[sorter
     correctly_destructed = 0;
     moves_count = 0;
 
-    SECTION( "with std::forward_list" )
-    {
-        try {
-            std::forward_list<throw_on_move> collection;
-            distribution(std::front_inserter(collection), 250);
+    try {
+        std::forward_list<throw_on_move> collection;
+        distribution(std::front_inserter(collection), 250);
 
-            TestType sorter;
-            sorter(collection);
+        TestType sorter;
+        sorter(collection);
 
-            INFO( "the sorter did not throw" );
-        } catch (const throw_on_move_error&) {
-            INFO( "the sorter did throw" );
-            CHECK( correctly_constructed == correctly_destructed );
-        }
+        INFO( "the sorter did not throw" );
+    } catch (const throw_on_move_error&) {
+        INFO( "the sorter did throw" );
+        CHECK( correctly_constructed == correctly_destructed );
     }
 }

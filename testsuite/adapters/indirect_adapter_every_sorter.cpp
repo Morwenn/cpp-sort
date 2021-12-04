@@ -57,6 +57,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indire
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::verge_sorter )
 {
     std::list<double> collection;

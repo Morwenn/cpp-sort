@@ -319,7 +319,7 @@ Implements a variant of slabsort, a rather slow but highly adaptive algorithm de
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-access |
+| n           | n log n     | n log n     | n           | No          | Bidirectional |
 
 This algorithm actually uses a rather big amount of memory but scales better than other O(n log n) algorithms of the library described as "slow" when the collections get bigger.
 

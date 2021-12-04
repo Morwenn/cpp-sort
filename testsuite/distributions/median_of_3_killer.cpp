@@ -55,6 +55,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with median_of_3_killer distribu
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
+                    cppsort::slab_sorter,
                     cppsort::verge_sorter )
 {
     std::list<int> collection;
