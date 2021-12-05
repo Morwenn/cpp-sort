@@ -136,7 +136,9 @@ namespace detail
     }
 
     template<typename BidirectionalIterator, typename Predicate>
-    auto stable_partition(BidirectionalIterator first, BidirectionalIterator last, Predicate predicate)
+    auto stable_partition(BidirectionalIterator first, BidirectionalIterator last,
+                          difference_type_t<BidirectionalIterator> size,
+                          Predicate predicate)
         -> BidirectionalIterator
     {
         using difference_type = difference_type_t<BidirectionalIterator>;
@@ -153,11 +155,13 @@ namespace detail
             if (not pred(*first)) {
                 break;
             }
+            --size;
             ++first;
         }
         // first points to first false, everything prior to first is already set.
         // Either prove [first, last) is all false and return first, or point last to last true
         do {
+            --size;
             if (first == --last) {
                 return first;
             }
@@ -166,7 +170,7 @@ namespace detail
         // *first is known to be false
         // *last is known to be true
         // len >= 2
-        auto len = std::distance(first, last) + 1;
+        auto len = size + 1;
         temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer(nullptr);
         if (len >= alloc_limit) {
             buffer.try_grow(len);

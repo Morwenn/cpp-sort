@@ -107,7 +107,7 @@ namespace detail
         iter_swap(pivot, last_1);
         auto&& pivot1 = proj(*last_1);
         auto middle1 = detail::stable_partition(
-            first, last_1,
+            first, last_1, size,
             [&](auto&& elem) { return comp(proj(elem), pivot1); }
         );
 
