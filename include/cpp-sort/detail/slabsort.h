@@ -254,10 +254,10 @@ namespace detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto slabsort(BidirectionalIterator first, BidirectionalIterator last,
+                  difference_type_t<BidirectionalIterator> size,
                   Compare compare, Projection projection)
         -> void
     {
-        auto size = std::distance(first, last);
         if (size < 2) {
             return;
         }
