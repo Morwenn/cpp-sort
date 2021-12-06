@@ -309,7 +309,7 @@ This sorter also has the following dedicated algorithms when used together with 
 
 None of the container-aware algorithms invalidates iterators.
 
-### `slab_sort`
+### `slab_sorter`
 
 ```cpp
 #include <cpp-sort/sorters/slab_sorter.h>
@@ -324,6 +324,8 @@ Implements a variant of slabsort, a rather slow but highly adaptive algorithm de
 This algorithm actually uses a rather big amount of memory but scales better than other O(n log n) algorithms of the library described as "slow" when the collections get bigger.
 
 *New in version 1.10.0*
+
+*Changed in version 1.13.0:* `slab_sorter` now works with bidirectional iterators.
 
 ### `smooth_sorter`
 
