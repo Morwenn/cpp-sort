@@ -78,13 +78,13 @@ namespace cppsort
 
                 reverse_counting_sort(std::move(first), std::move(last));
             }
+#endif
 
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
             using iterator_category = std::forward_iterator_tag;
             using is_always_stable = std::false_type;
-#endif
         };
     }
 
