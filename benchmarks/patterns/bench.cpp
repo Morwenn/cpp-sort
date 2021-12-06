@@ -31,10 +31,12 @@
 #include <ctime>
 #include <iostream>
 #include <iterator>
+#include <list>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort-old/sorters.h>
 #include <cpp-sort/sorters.h>
 #include "../benchmarking-tools/distributions.h"
 #include "../benchmarking-tools/rdtsc.h"
@@ -42,7 +44,7 @@
 // Type of data to sort during the benchmark
 using value_t = double;
 // Type of collection to sort
-using collection_t = std::vector<value_t>;
+using collection_t = std::list<value_t>;
 
 // Handy function pointer aliases
 using distr_f = void (*)(std::back_insert_iterator<collection_t>, long long int);
@@ -73,12 +75,8 @@ int main()
     };
 
     std::pair<std::string, sort_f> sorts[] = {
-        { "heap_sort",  cppsort::heap_sort  },
-        { "pdq_sort",   cppsort::pdq_sort   },
-        { "quick_sort", cppsort::quick_sort },
-        { "ska_sort",   cppsort::ska_sort   },
-        { "std_sort",   cppsort::std_sort   },
-        { "verge_sort", cppsort::verge_sort },
+        { "drop_merge_sort (1.12.0)",  cppsort_old::drop_merge_sort  },
+        { "drop_merge_sort (1.13.0)",  cppsort::drop_merge_sort  },
     };
 
     std::size_t sizes[] = { 1'000'000 };

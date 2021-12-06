@@ -58,12 +58,8 @@ def main():
 
     # Algorithm results will be displayed in this order
     algos = [
-        "heap_sort",
-        "pdq_sort",
-        "quick_sort",
-        "ska_sort",
-        "std_sort",
-        "verge_sort",
+        "drop_merge_sort (1.12.0)",
+        "drop_merge_sort (1.13.0)",
     ]
 
     root = pathlib.Path(args.root)

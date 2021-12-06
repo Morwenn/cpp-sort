@@ -47,7 +47,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::bidirectional_iterator_tag,
+                        iterator_category,
                         iterator_category_t<decltype(std::begin(iterable))>
                     >::value,
                     "verge_sorter requires at least bidirectional iterators"
@@ -72,7 +72,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::bidirectional_iterator_tag,
+                        iterator_category,
                         iterator_category_t<BidirectionalIterator>
                     >::value,
                     "verge_sorter requires at least bidirectional iterators"

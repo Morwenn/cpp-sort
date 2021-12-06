@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -57,7 +57,7 @@ namespace detail
         {
             static_assert(
                 std::is_base_of<
-                    std::forward_iterator_tag,
+                    iterator_category,
                     typename std::iterator_traits<ForwardIterator>::iterator_category
                 >::value,
                 "bubble_sorter requires at least forward iterators"
@@ -80,7 +80,7 @@ namespace detail
         {
             static_assert(
                 std::is_base_of<
-                    std::forward_iterator_tag,
+                    iterator_category,
                     typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
                 >::value,
                 "bubble_sorter requires at least forward iterators"
