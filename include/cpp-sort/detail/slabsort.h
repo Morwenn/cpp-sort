@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "fixed_size_list.h"
 #include "functional.h"
@@ -90,6 +91,7 @@ namespace detail
                             Compare compare, Projection projection)
         -> void
     {
+        using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
