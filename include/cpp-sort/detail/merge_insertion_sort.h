@@ -79,7 +79,7 @@ namespace detail
             auto operator*() const
                 -> reference
             {
-                return _it[_size - 1];
+                return *std::next(_it, _size - 1);
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
@@ -110,7 +110,7 @@ namespace detail
             auto operator--()
                 -> group_iterator&
             {
-                _it -= _size;
+                std::advance(_it, -_size);
                 return *this;
             }
 
@@ -125,7 +125,7 @@ namespace detail
             auto operator+=(difference_type increment)
                 -> group_iterator&
             {
-                std::advance(_it, _size * increment);
+                _it += _size * increment;
                 return *this;
             }
 
@@ -140,17 +140,10 @@ namespace detail
             // Elements access operators
 
             CPPSORT_ATTRIBUTE_NODISCARD
-            auto operator[](difference_type pos)
-                -> decltype(base()[pos * size() + size() - 1])
-            {
-                return base()[pos * size() + size() - 1];
-            }
-
-            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator[](difference_type pos) const
-                -> decltype(base()[pos * size() + size() - 1])
+                -> decltype(base()[pos])
             {
-                return base()[pos * size() + size() - 1];
+                return _it[pos * _size + _size - 1];
             }
 
             ////////////////////////////////////////////////////////////
@@ -241,7 +234,7 @@ namespace detail
             friend auto iter_swap(group_iterator lhs, group_iterator rhs)
                 -> void
             {
-                detail::swap_ranges_inner(lhs.base(), lhs.base() + lhs.size(), rhs.base());
+                detail::swap_ranges_inner(lhs.base(), std::next(lhs.base(), lhs.size()), rhs.base());
             }
 
         private:
@@ -255,7 +248,7 @@ namespace detail
 
     template<typename Iterator>
     CPPSORT_ATTRIBUTE_NODISCARD
-    auto make_group_iterator(Iterator it, difference_type_t<group_iterator<Iterator>> size)
+    auto make_group_iterator(Iterator it, difference_type_t<Iterator> size)
         -> group_iterator<Iterator>
     {
         return { it, size };
@@ -263,10 +256,11 @@ namespace detail
 
     template<typename Iterator>
     CPPSORT_ATTRIBUTE_NODISCARD
-    auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<group_iterator<Iterator>> size)
+    auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<Iterator> size)
         -> group_iterator<Iterator>
     {
-        return { it.base(), size * it.size() };
+        size *= it.size();
+        return { it.base(), size };
     }
 
     ////////////////////////////////////////////////////////////
