@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_NO_POST_ITERATOR_H_
@@ -55,6 +55,7 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Members access
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto base() const
             -> iterator_type
         {
@@ -64,12 +65,14 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Element access
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto operator*() const
             -> decltype(*base())
         {
-            return *base();
+            return *_it;
         }
 
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto operator->() const
             -> pointer
         {
@@ -110,118 +113,109 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Elements access operators
 
-        auto operator[](difference_type pos)
-            -> decltype(base()[pos])
-        {
-            return base()[pos];
-        }
-
+        CPPSORT_ATTRIBUTE_NODISCARD
         auto operator[](difference_type pos) const
             -> decltype(base()[pos])
         {
-            return base()[pos];
+            return _it[pos];
+        }
+
+        ////////////////////////////////////////////////////////////
+        // Comparison operators
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator==(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> bool
+        {
+            return lhs.base() == rhs.base();
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator!=(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> bool
+        {
+            return lhs.base() != rhs.base();
+        }
+
+        ////////////////////////////////////////////////////////////
+        // Relational operators
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator<(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> bool
+        {
+            return lhs.base() < rhs.base();
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator<=(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> bool
+        {
+            return lhs.base() <= rhs.base();
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator>(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> bool
+        {
+            return lhs.base() > rhs.base();
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator>=(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> bool
+        {
+            return lhs.base() >= rhs.base();
+        }
+
+        ////////////////////////////////////////////////////////////
+        // Arithmetic operators
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator+(no_post_iterator it, difference_type size)
+            -> no_post_iterator
+        {
+            it += size;
+            return it;
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator+(difference_type size, no_post_iterator it)
+            -> no_post_iterator
+        {
+            it += size;
+            return it;
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator-(no_post_iterator it, difference_type size)
+            -> no_post_iterator
+        {
+            it -= size;
+            return it;
+        }
+
+        CPPSORT_ATTRIBUTE_NODISCARD
+        friend auto operator-(const no_post_iterator& lhs, const no_post_iterator& rhs)
+            -> difference_type
+        {
+            return lhs.base() - rhs.base();
+        }
+
+        ////////////////////////////////////////////////////////////
+        // iter_swap
+
+        friend auto iter_swap(no_post_iterator lhs, no_post_iterator rhs)
+            -> void
+        {
+            using cppsort::utility::iter_swap;
+            iter_swap(lhs.base(), rhs.base());
         }
 
     private:
 
         Iterator _it;
 };
-
-template<typename Iterator>
-auto iter_swap(no_post_iterator<Iterator> lhs, no_post_iterator<Iterator> rhs)
-    -> void
-{
-    using cppsort::utility::iter_swap;
-    iter_swap(lhs.base(), rhs.base());
-}
-
-////////////////////////////////////////////////////////////
-// Comparison operators
-
-template<typename Iterator1, typename Iterator2>
-auto operator==(const no_post_iterator<Iterator1>& lhs,
-                const no_post_iterator<Iterator2>& rhs)
-    -> bool
-{
-    return lhs.base() == rhs.base();
-}
-
-template<typename Iterator1, typename Iterator2>
-auto operator!=(const no_post_iterator<Iterator1>& lhs,
-                const no_post_iterator<Iterator2>& rhs)
-    -> bool
-{
-    return lhs.base() != rhs.base();
-}
-
-////////////////////////////////////////////////////////////
-// Relational operators
-
-template<typename Iterator1, typename Iterator2>
-auto operator<(const no_post_iterator<Iterator1>& lhs,
-               const no_post_iterator<Iterator2>& rhs)
-    -> bool
-{
-    return lhs.base() < rhs.base();
-}
-
-template<typename Iterator1, typename Iterator2>
-auto operator<=(const no_post_iterator<Iterator1>& lhs,
-                const no_post_iterator<Iterator2>& rhs)
-    -> bool
-{
-    return lhs.base() <= rhs.base();
-}
-
-template<typename Iterator1, typename Iterator2>
-auto operator>(const no_post_iterator<Iterator1>& lhs,
-               const no_post_iterator<Iterator2>& rhs)
-    -> bool
-{
-    return lhs.base() > rhs.base();
-}
-
-template<typename Iterator1, typename Iterator2>
-auto operator>=(const no_post_iterator<Iterator1>& lhs,
-                const no_post_iterator<Iterator2>& rhs)
-    -> bool
-{
-    return lhs.base() >= rhs.base();
-}
-
-////////////////////////////////////////////////////////////
-// Arithmetic operators
-
-template<typename Iterator>
-auto operator+(no_post_iterator<Iterator> it,
-               cppsort::detail::difference_type_t<no_post_iterator<Iterator>> size)
-    -> no_post_iterator<Iterator>
-{
-    return it += size;
-}
-
-template<typename Iterator>
-auto operator+(cppsort::detail::difference_type_t<no_post_iterator<Iterator>> size,
-               no_post_iterator<Iterator> it)
-    -> no_post_iterator<Iterator>
-{
-    return it += size;
-}
-
-template<typename Iterator>
-auto operator-(no_post_iterator<Iterator> it,
-               cppsort::detail::difference_type_t<no_post_iterator<Iterator>> size)
-    -> no_post_iterator<Iterator>
-{
-    return it -= size;
-}
-
-template<typename Iterator>
-auto operator-(const no_post_iterator<Iterator>& lhs, const no_post_iterator<Iterator>& rhs)
-    -> cppsort::detail::difference_type_t<no_post_iterator<Iterator>>
-{
-    return lhs.base() - rhs.base();
-}
 
 ////////////////////////////////////////////////////////////
 // Construction function
