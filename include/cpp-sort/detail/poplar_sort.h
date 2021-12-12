@@ -104,8 +104,7 @@ namespace detail
                      Compare compare, Projection projection)
         -> void
     {
-        using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
-        poplar_size_t size = last - first;
+        auto size = as_unsigned(last - first);
         if (size < 16) {
             // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
