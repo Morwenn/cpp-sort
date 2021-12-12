@@ -24,7 +24,6 @@
 #include <new>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
@@ -32,6 +31,7 @@
 #include "bitops.h"
 #include "config.h"
 #include "functional.h"
+#include "immovable_vector.h"
 #include "insertion_sort.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
@@ -86,23 +86,23 @@ namespace detail
             // sorted part
             // the data are inserted in rng_aux
             //-----------------------------------------------------------------------
-            std::vector<RandomAccessIterator1> viter;
             auto data = rng_aux.first;
             detail::move(mid, last, data);
 
             auto ndata = last - mid;
+            immovable_vector<RandomAccessIterator1> viter(ndata + 1);
 
             auto linf = first;
             auto lsup = mid;
             for (difference_type i = 0; i < ndata; ++i) {
                 auto it1 = detail::upper_bound(linf, lsup, proj(*(data + i)), compare, projection);
-                viter.push_back(it1);
+                viter.emplace_back(it1);
                 linf = it1;
             }
-            viter.push_back(mid);
+            viter.emplace_back(mid);
 
             // moving the elements
-            for (auto i = viter.size() - 1; i != 0; --i) {
+            for (auto i = ndata; i != 0; --i) {
                 auto src = viter[i];
                 auto limit = viter[i - 1];
                 auto dest = src + i;
