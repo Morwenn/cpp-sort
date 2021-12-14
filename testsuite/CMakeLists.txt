@@ -120,6 +120,7 @@ add_executable(main-tests
     every_sorter_small_collections.cpp
     every_sorter_span.cpp
     every_sorter_throwing_moves.cpp
+    every_sorter_tricky_difference_type.cpp
     is_stable.cpp
     rebind_iterator_category.cpp
     sort_array.cpp
@@ -139,6 +140,7 @@ add_executable(main-tests
     adapters/every_adapter_internal_compare.cpp
     adapters/every_adapter_non_const_compare.cpp
     adapters/every_adapter_stateful_sorter.cpp
+    adapters/every_adapter_tricky_difference_type.cpp
     adapters/hybrid_adapter_is_stable.cpp
     adapters/hybrid_adapter_many_sorters.cpp
     adapters/hybrid_adapter_nested.cpp
