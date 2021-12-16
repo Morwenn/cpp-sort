@@ -325,7 +325,7 @@ This algorithm actually uses a rather big amount of memory but scales better tha
 
 *New in version 1.10.0*
 
-*Changed in version 1.13.0:* `slab_sorter` now works with bidirectional iterators.
+*Changed in version 1.12.1:* `slab_sorter` now works with bidirectional iterators.
 
 ### `smooth_sorter`
 
