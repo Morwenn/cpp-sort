@@ -46,7 +46,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::random_access_iterator_tag,
+                        iterator_category,
                         iterator_category_t<RandomAccessIterator>
                     >::value,
                     "block_sorter requires at least random-access iterators"

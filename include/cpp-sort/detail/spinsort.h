@@ -20,12 +20,10 @@
 #define CPPSORT_DETAIL_SPINSORT_H_
 
 #include <cstddef>
-#include <cstdint>
 #include <memory>
 #include <new>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
@@ -33,6 +31,7 @@
 #include "bitops.h"
 #include "config.h"
 #include "functional.h"
+#include "immovable_vector.h"
 #include "insertion_sort.h"
 #include "is_sorted_until.h"
 #include "iterator_traits.h"
@@ -72,6 +71,7 @@ namespace detail
                                  const range<RandomAccessIterator2>& rng_aux)
             -> void
         {
+            using difference_type = difference_type_t<RandomAccessIterator1>;
             using utility::iter_move;
 
             CPPSORT_ASSERT(last - mid <= rng_aux.size());
@@ -86,24 +86,26 @@ namespace detail
             // sorted part
             // the data are inserted in rng_aux
             //-----------------------------------------------------------------------
-            std::vector<RandomAccessIterator1> viter;
             auto data = rng_aux.first;
             detail::move(mid, last, data);
 
             auto ndata = last - mid;
+            immovable_vector<RandomAccessIterator1> viter(ndata + 1);
 
-            RandomAccessIterator1 linf = first, lsup = mid;
-            for (std::uint32_t i = 0 ; i < ndata ; ++i) {
+            auto linf = first;
+            auto lsup = mid;
+            for (difference_type i = 0; i < ndata; ++i) {
                 auto it1 = detail::upper_bound(linf, lsup, proj(*(data + i)), compare, projection);
-                viter.push_back(it1);
+                viter.emplace_back(it1);
                 linf = it1;
             }
-            viter.push_back(mid);
+            viter.emplace_back(mid);
 
             // moving the elements
-            for (std::uint32_t i = viter.size() - 1; i != 0; --i) {
-                RandomAccessIterator1 src = viter[i], limit = viter[i - 1];
-                RandomAccessIterator1 dest = src + i;
+            for (auto i = ndata; i != 0; --i) {
+                auto src = viter[i];
+                auto limit = viter[i - 1];
+                auto dest = src + i;
                 while (src != limit) {
                     *(--dest) = iter_move(--src);
                 }
@@ -196,7 +198,8 @@ namespace detail
         //-----------------------------------------------------------------------------
         template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
         auto range_sort(const range<RandomAccessIterator1>& range1, const range<RandomAccessIterator2>& range2,
-                        Compare compare, Projection projection, std::uint32_t level)
+                        Compare compare, Projection projection,
+                        std::make_unsigned_t<difference_type_t<RandomAccessIterator1>> level)
             -> void
         {
             using range_it1 = range<RandomAccessIterator1>;
@@ -249,17 +252,20 @@ namespace detail
                              Compare compare, Projection projection)
             -> void
         {
+            using difference_type = difference_type_t<RandomAccessIterator1>;
+
             // minimal number of element before to jump to insertionsort
-            static const std::uint32_t sort_min = 32;
+            constexpr difference_type sort_min = 32;
             if (rng_data.size() <= sort_min) {
                 insertion_sort(rng_data.first, rng_data.last, compare, projection);
                 return;
             }
 
-            CPPSORT_ASSERT(rng_aux.size () >= rng_data.size());
+            CPPSORT_ASSERT(rng_aux.size() >= rng_data.size());
             range<RandomAccessIterator2> rng_buffer(rng_aux.first, rng_aux.first + rng_data.size());
-            CPPSORT_ASSERT(((rng_data.size() + sort_min - 1) / sort_min) - 1 > 0);
-            std::uint32_t nlevel = detail::log2(((rng_data.size() + sort_min - 1) / sort_min) - 1) + 1;
+            auto nlevel_1 = ((rng_data.size() + sort_min - 1) / sort_min) - 1;
+            CPPSORT_ASSERT(nlevel_1 > 0);
+            auto nlevel = as_unsigned(detail::log2(nlevel_1) + 1);
 
             if ((nlevel & 1) == 0) {
                 range_sort(rng_buffer, rng_data, compare, projection, nlevel);
@@ -284,11 +290,12 @@ namespace detail
 
                 using range_it = range<RandomAccessIterator>;
                 using rvalue_type = rvalue_type_t<RandomAccessIterator>;
+                using difference_type = difference_type_t<RandomAccessIterator>;
                 using range_buf = range<rvalue_type*>;
 
                 // When the number of elements to sort is smaller than Sort_min, are sorted
                 // by the insertion sort algorithm
-                static constexpr std::uint32_t Sort_min = 36;
+                static constexpr difference_type Sort_min = 36;
 
             public:
 
@@ -334,7 +341,7 @@ namespace detail
                     //---------------------------------------------------------------------
                     //                  Process
                     //---------------------------------------------------------------------
-                    std::uint32_t nlevel = detail::log2(((size + Sort_min - 1) / Sort_min) - 1);
+                    auto nlevel = as_unsigned(detail::log2(((size + Sort_min - 1) / Sort_min) - 1));
                     CPPSORT_ASSERT(nlevel != 0);
 
                     if ((nlevel & 1) == 1) {

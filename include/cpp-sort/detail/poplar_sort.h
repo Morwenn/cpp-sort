@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
@@ -104,8 +104,7 @@ namespace detail
                      Compare compare, Projection projection)
         -> void
     {
-        using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
-        poplar_size_t size = last - first;
+        auto size = as_unsigned(last - first);
         if (size < 16) {
             // A sorted collection is a valid poplar heap;
             // when the heap is small, using insertion sort
@@ -176,7 +175,7 @@ namespace detail
                     if (poplars.back().size == 1) return;
                     auto& back = poplars.back();
                     auto old_end = back.end;
-                    auto new_size = (back.size - 1) / 2;
+                    poplar_size_t new_size = (back.size - 1) / 2;
                     auto middle = back.begin + new_size;
                     back.end = middle;
                     back.size = new_size;
@@ -185,7 +184,7 @@ namespace detail
             } else {
                 auto& back = poplars.back();
                 auto old_end = back.end;
-                auto new_size = (back.size - 1) / 2;
+                poplar_size_t new_size = (back.size - 1) / 2;
                 auto middle = back.begin + new_size;
                 back.end = middle;
                 back.size = new_size;

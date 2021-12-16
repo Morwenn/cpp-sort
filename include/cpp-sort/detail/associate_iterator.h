@@ -196,7 +196,7 @@ namespace detail
             auto operator*() const
                 -> decltype(*base())
             {
-                return *base();
+                return *_it;
             }
 
             CPPSORT_ATTRIBUTE_NODISCARD
@@ -257,17 +257,10 @@ namespace detail
             // Elements access operators
 
             CPPSORT_ATTRIBUTE_NODISCARD
-            auto operator[](difference_type pos)
-                -> decltype(base()[pos])
-            {
-                return base()[pos];
-            }
-
-            CPPSORT_ATTRIBUTE_NODISCARD
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
             {
-                return base()[pos];
+                return _it[pos];
             }
 
             ////////////////////////////////////////////////////////////

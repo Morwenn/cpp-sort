@@ -35,7 +35,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::forward_iterator_tag,
+                        iterator_category,
                         iterator_category_t<ForwardIterator>
                     >::value,
                     "counting_sorter requires at least forward iterators"
@@ -52,7 +52,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::forward_iterator_tag,
+                        iterator_category,
                         iterator_category_t<ForwardIterator>
                     >::value,
                     "counting_sorter requires at least forward iterators"
@@ -70,7 +70,7 @@ namespace cppsort
             {
                 static_assert(
                     std::is_base_of<
-                        std::forward_iterator_tag,
+                        iterator_category,
                         iterator_category_t<ForwardIterator>
                     >::value,
                     "counting_sorter requires at least forward iterators"
@@ -78,13 +78,13 @@ namespace cppsort
 
                 reverse_counting_sort(std::move(first), std::move(last));
             }
+#endif
 
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
             using iterator_category = std::forward_iterator_tag;
             using is_always_stable = std::false_type;
-#endif
         };
     }
 

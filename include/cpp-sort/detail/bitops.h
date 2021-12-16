@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
+#include "../detail/attributes.h"
 #include "../detail/config.h"
 #include "../detail/type_traits.h"
 
@@ -18,6 +19,15 @@ namespace cppsort
 {
 namespace detail
 {
+    // Cast signed value to unsigned one
+    template<typename Integer>
+    CPPSORT_ATTRIBUTE_NODISCARD
+    constexpr auto as_unsigned(Integer value)
+        -> std::make_unsigned_t<Integer>
+    {
+        return static_cast<std::make_unsigned_t<Integer>>(value);
+    }
+
     // Returns 2^floor(log2(n)), assumes n > 0
     template<typename Unsigned>
     constexpr auto hyperfloor(Unsigned n)
@@ -96,7 +106,7 @@ namespace detail
     constexpr auto half(Integer value)
         -> detail::enable_if_t<std::is_integral<Integer>::value, Integer>
     {
-        return static_cast<Integer>(static_cast<std::make_unsigned_t<Integer>>(value) / 2);
+        return static_cast<Integer>(as_unsigned(value) / 2);
     }
 
     template<typename T>
@@ -114,7 +124,8 @@ namespace detail
     constexpr auto has_single_bit(Integer n) noexcept
         -> bool
     {
-        auto x = static_cast<std::make_unsigned_t<Integer>>(n);
+        CPPSORT_ASSERT(n >= 0);
+        auto x = as_unsigned(n);
         return x != 0 && (x & (x - 1)) == 0;
     }
 

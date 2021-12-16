@@ -45,7 +45,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Construction
 
-            immovable_vector(std::ptrdiff_t n):
+            explicit immovable_vector(std::ptrdiff_t n):
                 capacity_(n),
                 memory_(
                     static_cast<T*>(::operator new(n * sizeof(T)))

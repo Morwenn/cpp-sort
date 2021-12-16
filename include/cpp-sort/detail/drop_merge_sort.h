@@ -51,8 +51,9 @@ namespace detail
     {
         using utility::iter_move;
 
-        auto size = std::distance(begin, end);
-        if (size < 2) return;
+        if (begin == end || std::next(begin) == end) {
+            return;
+        }
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);

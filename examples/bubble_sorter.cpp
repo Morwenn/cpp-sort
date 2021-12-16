@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -15,12 +15,8 @@
 
 namespace detail
 {
-    template<
-        typename ForwardIterator,
-        typename StrictWeakOrdering
-    >
-    auto bubble_sort(ForwardIterator first, std::size_t size,
-                     StrictWeakOrdering compare)
+    template<typename ForwardIterator, typename Compare>
+    auto bubble_sort(ForwardIterator first, std::size_t size, Compare compare)
         -> void
     {
         if (size < 2) return;
@@ -28,9 +24,9 @@ namespace detail
         auto&& comp = cppsort::utility::as_function(compare);
 
         while (--size) {
-            ForwardIterator current = first;
-            ForwardIterator next = std::next(current);
-            for (std::size_t i = 0 ; i < size ; ++i) {
+            auto current = first;
+            auto next = std::next(current);
+            for (std::size_t i = 0; i < size; ++i) {
                 if (comp(*next, *current)) {
                     using cppsort::utility::iter_swap;
                     iter_swap(current, next);
@@ -46,18 +42,17 @@ namespace detail
         // Pair of iterators overload
         template<
             typename ForwardIterator,
-            typename StrictWeakOrdering = std::less<>,
+            typename Compare = std::less<>,
             typename = std::enable_if_t<not cppsort::is_projection_iterator_v<
-                StrictWeakOrdering, ForwardIterator
+                Compare, ForwardIterator
             >>
         >
-        auto operator()(ForwardIterator first, ForwardIterator last,
-                        StrictWeakOrdering compare={}) const
+        auto operator()(ForwardIterator first, ForwardIterator last, Compare compare={}) const
             -> void
         {
             static_assert(
                 std::is_base_of<
-                    std::forward_iterator_tag,
+                    iterator_category,
                     typename std::iterator_traits<ForwardIterator>::iterator_category
                 >::value,
                 "bubble_sorter requires at least forward iterators"
@@ -70,17 +65,17 @@ namespace detail
         // Iterable overload
         template<
             typename ForwardIterable,
-            typename StrictWeakOrdering = std::less<>,
+            typename Compare = std::less<>,
             typename = std::enable_if_t<not cppsort::is_projection_v<
-                StrictWeakOrdering, ForwardIterable
+                Compare, ForwardIterable
             >>
         >
-        auto operator()(ForwardIterable&& iterable, StrictWeakOrdering compare={}) const
+        auto operator()(ForwardIterable&& iterable, Compare compare={}) const
             -> void
         {
             static_assert(
                 std::is_base_of<
-                    std::forward_iterator_tag,
+                    iterator_category,
                     typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
                 >::value,
                 "bubble_sorter requires at least forward iterators"
@@ -118,7 +113,7 @@ int main()
 
     // Fill the collection in sorted order
     std::array<int, 8> collection;
-    std::iota(std::begin(collection), std::end(collection), 0);
+    std::iota(collection.begin(), collection.end(), 0);
 
     // Projection to sort in descending order
     auto projection = [](int n) { return -n; };
@@ -130,6 +125,6 @@ int main()
         // Bubble sort the collection
         bubble_sort(to_sort, projection);
         // Check that it is sorted in descending order
-        assert(std::is_sorted(std::begin(to_sort), std::end(to_sort), std::greater<>{}));
-    } while (std::next_permutation(std::begin(collection), std::end(collection)));
+        assert(std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<>{}));
+    } while (std::next_permutation(collection.begin(), collection.end()));
 }

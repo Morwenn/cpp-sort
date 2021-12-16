@@ -62,6 +62,7 @@ namespace detail
                    Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<ForwardIterator>;
         using utility::iter_swap;
 
         // If the collection is small enough, fall back to
@@ -81,7 +82,7 @@ namespace detail
         // Put the pivot at position std::prev(last) and partition
         iter_swap(median_it, last_1);
         auto&& pivot1 = proj(*last_1);
-        ForwardIterator middle1 = detail::partition(
+        auto middle1 = detail::partition(
             first, last_1,
             [&](auto&& elem) { return comp(proj(elem), pivot1); }
         );
@@ -89,7 +90,7 @@ namespace detail
         // Put the pivot in its final position and partition
         iter_swap(middle1, last_1);
         auto&& pivot2 = proj(*middle1);
-        ForwardIterator middle2 = detail::partition(
+        auto middle2 = detail::partition(
             std::next(middle1), last,
             [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
         );
@@ -99,7 +100,7 @@ namespace detail
         // right one, so computing its size should generally be cheaper
         auto size_left = std::distance(first, middle1);
         auto size_middle = std::distance(middle1, middle2);
-        auto size_right = size - size_left - size_middle;
+        difference_type size_right = size - size_left - size_middle;
 
         // Recurse in the smallest partition first to limit the call
         // stack overhead

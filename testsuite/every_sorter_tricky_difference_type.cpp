@@ -1,37 +1,40 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
-#include <list>
-#include <vector>
 #include <catch2/catch.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/test_vector.h>
 
-TEMPLATE_TEST_CASE( "test random-access sorters with ascending_sawtooth distribution", "[distributions]",
+TEMPLATE_TEST_CASE( "test every sorter with an int8_t difference_type", "[sorters]",
                     cppsort::cartesian_tree_sorter,
+                    cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
                     >,
                     cppsort::heap_sorter,
+                    cppsort::insertion_sorter,
                     cppsort::mel_sorter,
+                    cppsort::merge_insertion_sorter,
                     cppsort::merge_sorter,
                     cppsort::pdq_sorter,
                     cppsort::poplar_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
+                    cppsort::selection_sorter,
                     cppsort::ska_sorter,
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,
-                    cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter,
@@ -40,30 +43,14 @@ TEMPLATE_TEST_CASE( "test random-access sorters with ascending_sawtooth distribu
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
                     > )
 {
-    std::vector<int> collection;
-    collection.reserve(10'000);
-    auto distribution = dist::ascending_sawtooth{};
-    distribution(std::back_inserter(collection), 10'000);
+    // Test that sorters work as expected when the iterator to sort has
+    // a small difference_type, despite potential promotions to int
+
+    test_vector<int, std::int8_t> collection(127);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 127);
 
     TestType sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
-}
-
-TEMPLATE_TEST_CASE( "test bidirectional sorters with ascending_sawtooth distribution", "[distributions]",
-                    cppsort::cartesian_tree_sorter,
-                    cppsort::drop_merge_sorter,
-                    cppsort::merge_sorter,
-                    cppsort::quick_merge_sorter,
-                    cppsort::quick_sorter,
-                    cppsort::slab_sorter,
-                    cppsort::verge_sorter )
-{
-    std::list<int> collection;
-    auto distribution = dist::ascending_sawtooth{};
-    distribution(std::back_inserter(collection), 1000);
-
-    TestType sorter;
-    sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

@@ -83,18 +83,16 @@ TEMPLATE_TEST_CASE( "test every bidirectional sorter", "[sorters]",
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::slab_sorter,
                     cppsort::verge_sorter )
 {
-    SECTION( "with std::list" )
-    {
-        std::list<int> collection;
-        auto distribution = dist::shuffled{};
-        distribution(std::back_inserter(collection), 491, -125);
+    std::list<int> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 491, -125);
 
-        TestType sorter;
-        sorter(collection);
-        CHECK( std::is_sorted(collection.begin(), collection.end()) );
-    }
+    TestType sorter;
+    sorter(collection);
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "test every forward sorter", "[sorters]",
@@ -106,14 +104,11 @@ TEMPLATE_TEST_CASE( "test every forward sorter", "[sorters]",
                     cppsort::quick_sorter,
                     cppsort::selection_sorter )
 {
-    SECTION( "wwith std::forward_list" )
-    {
-        std::forward_list<int> collection;
-        auto distribution = dist::shuffled{};
-        distribution(std::front_inserter(collection), 491, -125);
+    std::forward_list<int> collection;
+    auto distribution = dist::shuffled{};
+    distribution(std::front_inserter(collection), 491, -125);
 
-        TestType sorter;
-        sorter(collection);
-        CHECK( std::is_sorted(collection.begin(), collection.end()) );
-    }
+    TestType sorter;
+    sorter(collection);
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
