@@ -1,4 +1,4 @@
-Welcome to the **cpp-sort 1.12.0** documentation!
+Welcome to the **cpp-sort 1.12.1** documentation!
 
 You probably read the introduction in the README, so I won't repeat it here. This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library and even some detailed tutorials if you ever want to write your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
 
