@@ -24,6 +24,7 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sms),
                     decltype(cppsort::probe::sus) )
 {
     // Ensure that all measures of presortedness return 0 when
@@ -47,6 +48,7 @@ TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sms),
                     decltype(cppsort::probe::sus) )
 {
     // Ensure that all measures of presortedness return 0 when
@@ -71,6 +73,7 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sms),
                     decltype(cppsort::probe::sus) )
 {
     // Ensure that all measures of presortedness return 0 when

@@ -109,6 +109,27 @@ namespace detail
             }
 
             ////////////////////////////////////////////////////////////
+            // Capacity
+
+            auto is_empty() const noexcept
+                -> bool
+            {
+                return memory_ != end_;
+            }
+
+            auto size() const noexcept
+                -> std::ptrdiff_t
+            {
+                return end_ - memory_;
+            }
+
+            auto capacity() const noexcept
+                -> std::ptrdiff_t
+            {
+                return capacity_;
+            }
+
+            ////////////////////////////////////////////////////////////
             // Modifiers
 
             auto clear() noexcept
@@ -147,6 +168,32 @@ namespace detail
                     throw;
                 }
                 end_ = writer;
+            }
+
+            auto resize(std::ptrdiff_t count)
+                -> void
+            {
+                CPPSORT_ASSERT(count >= 0);
+                CPPSORT_ASSERT(count <= capacity_);
+
+                if (count < size()) {
+                    auto new_end = memory_ + count;
+                    detail::destroy(new_end, end_);
+                    end_ = new_end;
+                } else if (count > size()) {
+                    auto writer = end_;
+                    try {
+                        while (writer != end_) {
+                            ::new(writer) T();
+                            ++writer;
+                        }
+                    } catch (...) {
+                        // Cleanup
+                        detail::destroy(end_, writer);
+                        throw;
+                    }
+                    end_ = writer;
+                }
             }
 
         private:

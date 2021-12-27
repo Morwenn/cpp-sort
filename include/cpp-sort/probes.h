@@ -20,6 +20,7 @@
 #include <cpp-sort/probes/par.h>
 #include <cpp-sort/probes/rem.h>
 #include <cpp-sort/probes/runs.h>
+#include <cpp-sort/probes/sms.h>
 #include <cpp-sort/probes/sus.h>
 
 #endif // CPPSORT_PROBES_H_
