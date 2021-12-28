@@ -13,13 +13,13 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
 #include "../detail/type_traits.h"
@@ -95,7 +95,7 @@ namespace probe
                     if (not comp(value, proj(*last_list.second))) {
                         // Element belongs to the tails (bigger elements)
                         auto insertion_point = enc_lower_bound(
-                            lists, value, cppsort::detail::invert(compare), proj,
+                            lists, value, cppsort::flip(compare), proj,
                             &std::pair<ForwardIterator, ForwardIterator>::second
                         );
                         insertion_point->second = first;

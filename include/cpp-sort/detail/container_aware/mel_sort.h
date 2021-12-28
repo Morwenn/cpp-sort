@@ -15,13 +15,13 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include "../functional.h"
 #include "../lower_bound.h"
 #include "../type_traits.h"
 
@@ -54,7 +54,7 @@ namespace cppsort
                 if (not comp(value, proj(last_list.back()))) {
                     // Element belongs to the tails (bigger elements)
                     auto insertion_point = detail::lower_bound(
-                        lists.begin(), std::prev(lists.end()), value, invert(compare),
+                        lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
                         [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
                     );
                     insertion_point->splice(insertion_point->end(), collection, collection.begin());
@@ -141,7 +141,7 @@ namespace cppsort
                 if (not comp(value, proj(*last_list.last))) {
                     // Element belongs to the tails (bigger elements)
                     auto insertion_point = detail::lower_bound(
-                        lists.begin(), std::prev(lists.end()), value, invert(compare),
+                        lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
                         [&proj](auto& list) -> decltype(auto) { return proj(*list.last); }
                     );
                     insertion_point->list.splice_after(insertion_point->last, collection,

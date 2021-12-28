@@ -24,13 +24,13 @@
 #include <new>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/comparators/not_fn.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
 #include "boost_common/range.h"
 #include "bitops.h"
 #include "config.h"
-#include "functional.h"
 #include "immovable_vector.h"
 #include "insertion_sort.h"
 #include "is_sorted_until.h"
@@ -162,7 +162,7 @@ namespace detail
                 return false;
             }
 
-            it = detail::is_sorted_until(rng_data.first, rng_data.last, detail::not_fn(compare), projection);
+            it = detail::is_sorted_until(rng_data.first, rng_data.last, cppsort::not_fn(compare), projection);
             if (rng_data.last - it >= min_insert_partial_sort) {
                 return false;
             }
