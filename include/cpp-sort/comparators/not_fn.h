@@ -17,43 +17,67 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // C++17 std::not_fn
 
-    template<typename Predicate>
-    class not_fn_t
+    template<typename F>
+    struct not_fn_t
     {
         private:
 
-            Predicate predicate;
+            F func;
 
         public:
 
-            not_fn_t() = delete;
+            ////////////////////////////////////////////////////////////
+            // Construction
 
-            explicit not_fn_t(Predicate predicate):
-                predicate(std::move(predicate))
+            explicit constexpr not_fn_t(const F& func):
+                func(func)
             {}
 
-            template<typename T1, typename T2>
-            auto operator()(T1&& x, T2&& y)
-                -> bool
+            explicit constexpr not_fn_t(F&& func):
+                func(std::move(func))
+            {}
+
+            ////////////////////////////////////////////////////////////
+            // Call
+
+            template<typename... Args>
+            constexpr auto operator()(Args&&... args) &
+                noexcept(noexcept(not utility::as_function(func)(std::forward<Args>(args)...)))
+                -> decltype(not utility::as_function(func)(std::forward<Args>(args)...))
             {
-                auto&& pred = utility::as_function(predicate);
-                return not pred(std::forward<T1>(x), std::forward<T2>(y));
+                return not utility::as_function(func)(std::forward<Args>(args)...);
             }
 
-            template<typename T1, typename T2>
-            auto operator()(T1&& x, T2&& y) const
-                -> bool
+            template<typename... Args>
+            constexpr auto operator()(Args&&... args) const&
+                noexcept(noexcept(not utility::as_function(func)(std::forward<Args>(args)...)))
+                -> decltype(not utility::as_function(func)(std::forward<Args>(args)...))
             {
-                auto&& pred = utility::as_function(predicate);
-                return not pred(std::forward<T1>(x), std::forward<T2>(y));
+                return not utility::as_function(func)(std::forward<Args>(args)...);
+            }
+
+            template<typename... Args>
+            constexpr auto operator()(Args&&... args) &&
+                noexcept(noexcept(not utility::as_function(std::move(func))(std::forward<Args>(args)...)))
+                -> decltype(not utility::as_function(std::move(func))(std::forward<Args>(args)...))
+            {
+                return not utility::as_function(std::move(func))(std::forward<Args>(args)...);
+            }
+
+            template<typename... Args>
+            constexpr auto operator()(Args&&... args) const&&
+                noexcept(noexcept(not utility::as_function(std::move(func))(std::forward<Args>(args)...)))
+                -> decltype(not utility::as_function(std::move(func))(std::forward<Args>(args)...))
+            {
+                return not utility::as_function(std::move(func))(std::forward<Args>(args)...);
             }
     };
 
-    template<typename Predicate>
-    auto not_fn(Predicate&& pred)
-        -> not_fn_t<std::decay_t<Predicate>>
+    template<typename F>
+    constexpr auto not_fn(F&& func)
+        -> not_fn_t<std::decay_t<F>>
     {
-        return not_fn_t<std::decay_t<Predicate>>(std::forward<Predicate>(pred));
+        return not_fn_t<std::decay_t<F>>(std::forward<F>(func));
     }
 }
 

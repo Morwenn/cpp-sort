@@ -46,7 +46,7 @@ namespace utility
             }
 
             template<typename T>
-            constexpr auto operator()(T && t) const
+            constexpr auto operator()(T&& t) const
                 noexcept(std::is_nothrow_constructible<T, T>::value)
                 -> cppsort::detail::enable_if_t<
                     not std::is_member_pointer<cppsort::detail::remove_cvref_t<T>>::value,
