@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -116,7 +116,7 @@ namespace
 }
 
 TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed comparison/projection",
-           "[sorter_facade][compare][projection][as_projection]" )
+           "[sorter_facade][comparison][projection][as_projection]" )
 {
     // Test the intersection between mixed comparison/projection functions,
     // as_projection, as_comparison and some additional sorter_facade

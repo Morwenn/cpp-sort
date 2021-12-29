@@ -99,7 +99,7 @@ namespace
 }
 
 TEST_CASE( "sorter_facade with sorters overloaded for iterables",
-           "[sorter_facade][compare][projection]" )
+           "[sorter_facade][comparison][projection]" )
 {
     // Some sorters can optimize the computations a bit by adding
     // overloaded operator() that take a full iteratable instead

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -65,7 +65,7 @@ namespace
 }
 
 TEST_CASE( "sorter_facade miscellaneous checks",
-           "[sorter_facade][compare][projection]" )
+           "[sorter_facade][comparison][projection]" )
 {
     // Some checks to make sure that sorter_facade always
     // forwards the value correctly in the most common cases

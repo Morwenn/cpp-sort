@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <array>
@@ -33,7 +33,7 @@ namespace sub
     }
 }
 
-TEST_CASE( "case-insensitive string comparison with case_insensitive_less" )
+TEST_CASE( "case-insensitive string comparison with case_insensitive_less", "[comparison]" )
 {
     std::array<std::string, 9> array = {
         "awry",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <array>
@@ -8,7 +8,7 @@
 #include <cpp-sort/comparators/natural_less.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 
-TEST_CASE( "string natural sort with natural_less" )
+TEST_CASE( "string natural sort with natural_less", "[comparison]" )
 {
     std::array<std::string, 7> array = {
         "Yay",

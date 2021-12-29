@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -61,7 +61,7 @@ namespace
 }
 
 TEST_CASE( "hybrid_adapter over partial comparison sorter",
-           "[hybrid_adapter][compare]" )
+           "[hybrid_adapter][comparison]" )
 {
     // Check that hybrid_adapter works as expected even
     // with partial comparison sorters

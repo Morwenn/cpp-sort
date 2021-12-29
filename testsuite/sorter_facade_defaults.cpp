@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -83,7 +83,7 @@ namespace
 }
 
 TEST_CASE( "std::less<> forwarding to sorters",
-           "[sorter_facade][compare]" )
+           "[sorter_facade][comparison]" )
 {
     // Check that sorter_facade only creates the overloads for
     // std::less when the original sorter does not support

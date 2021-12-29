@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cmath>
@@ -8,7 +8,7 @@
 #include <cpp-sort/comparators/total_less.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 
-TEST_CASE( "IEEE 754 totalOrder implementation" )
+TEST_CASE( "IEEE 754 totalOrder implementation", "[comparison]" )
 {
     static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
     static constexpr double inf = std::numeric_limits<double>::infinity();

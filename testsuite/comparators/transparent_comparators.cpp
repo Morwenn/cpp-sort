@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2021 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -96,7 +96,7 @@ namespace
     }
 }
 
-TEST_CASE( "Check that comparators work as transparent comparators" )
+TEST_CASE( "Check that comparators work as transparent comparators", "[comparison]" )
 {
     using namespace std::string_literals;
 
