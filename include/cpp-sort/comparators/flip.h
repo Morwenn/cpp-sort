@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_FLIP_H_
@@ -15,12 +15,11 @@
 
 namespace cppsort
 {
+    template<typename F>
+    struct not_fn_t;
+
     ////////////////////////////////////////////////////////////
-    // flip
-    //
-    // Name taken from Haskell flip function from the Prelude
-    // module: it takes a binary Callable and returns another
-    // Callable with its arguments flipped.
+    // flip_t
 
     template<typename F>
     struct flip_t
@@ -76,13 +75,89 @@ namespace cppsort
             {
                 return utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x));
             }
+
+            ////////////////////////////////////////////////////////////
+            // Accessor
+
+            constexpr auto base() const
+                -> F
+            {
+                return func;
+            }
     };
 
-    template<typename F>
-    auto flip(F&& func)
-        -> flip_t<std::decay_t<F>>
+    ////////////////////////////////////////////////////////////
+    // Helper for flip_t construction
+
+    namespace detail
     {
-        return flip_t<std::decay_t<F>>(std::forward<F>(func));
+        template<typename F>
+        struct flip_impl
+        {
+            using type = flip_t<F>;
+
+            static constexpr auto construct(const F& func)
+                -> type
+            {
+                return type(func);
+            }
+
+            static constexpr auto construct(F&& func)
+                -> type
+            {
+                return type(std::move(func));
+            }
+        };
+
+        template<typename F>
+        struct flip_impl<flip_t<F>>
+        {
+            using type = F;
+
+            static constexpr auto construct(const flip_t<F>& func)
+                -> type
+            {
+                return func.base();
+            }
+
+            static constexpr auto construct(flip_t<F>&& func)
+                -> type
+            {
+                return std::move(func).base();
+            }
+        };
+
+        template<typename F>
+        struct flip_impl<not_fn_t<flip_t<F>>>
+        {
+            using type = not_fn_t<F>;
+
+            static constexpr auto construct(const not_fn_t<flip_t<F>>& func)
+                -> type
+            {
+                return type(func.base().base());
+            }
+
+            static constexpr auto construct(not_fn_t<flip_t<F>>&& func)
+                -> type
+            {
+                return type(std::move(func).base().base());
+            }
+        };
+    }
+
+    ////////////////////////////////////////////////////////////
+    // flip
+    //
+    // Name taken from Haskell flip function from the Prelude
+    // module: it takes a binary Callable and returns another
+    // Callable with its arguments flipped.
+
+    template<typename F>
+    constexpr auto flip(F&& func)
+        -> typename detail::flip_impl<std::decay_t<F>>::type
+    {
+        return detail::flip_impl<std::decay_t<F>>::construct(std::forward<F>(func));
     }
 
     ////////////////////////////////////////////////////////////
