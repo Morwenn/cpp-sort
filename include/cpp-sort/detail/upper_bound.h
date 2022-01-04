@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_UPPER_BOUND_H_
@@ -10,9 +10,10 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
-#include <cpp-sort/utility/as_function.h>
-#include "bitops.h"
+#include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/comparators/not_fn.h>
 #include "iterator_traits.h"
+#include "lower_bound.h"
 
 namespace cppsort
 {
@@ -24,20 +25,12 @@ namespace detail
                        T&& value, Compare compare, Projection projection)
         -> ForwardIterator
     {
-        auto&& comp = utility::as_function(compare);
-        auto&& proj = utility::as_function(projection);
-
-        while (size > 0) {
-            ForwardIterator it = first;
-            std::advance(it, half(size));
-            if (not comp(value, proj(*it))) {
-                first = ++it;
-                size -= half(size) + 1;
-            } else {
-                size = half(size);
-            }
-        }
-        return first;
+        return lower_bound_n(
+            first, size,
+            std::forward<T>(value),
+            cppsort::not_fn(cppsort::flip(std::move(compare))),
+            std::move(projection)
+        );
     }
 
     template<typename ForwardIterator, typename T,
@@ -46,9 +39,12 @@ namespace detail
                      Compare compare, Projection projection)
         -> ForwardIterator
     {
-        return upper_bound_n(first, std::distance(first, last),
-                             std::forward<T>(value),
-                             std::move(compare), std::move(projection));
+        return lower_bound_n(
+            first, std::distance(first, last),
+            std::forward<T>(value),
+            cppsort::not_fn(cppsort::flip(std::move(compare))),
+            std::move(projection)
+        );
     }
 }}
 
