@@ -1,28 +1,8 @@
-While comparators are not inherent to sorting *per se*, most sorting algorithms (at least in this library) are *comparison sorts*, hence providing some common useful comparators along with the sorters can be useful. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
+The comparators described below can be used as needed with [[*sorters*|Sorters]] and [[*sorter adapters*|Sorter adapters]] that accept comparisons. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
 
 Every non-refined comparator described below is also a [transparent comparator][transparent-comparator]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
 
 *Changed in version 1.5.0:* every non-refined comparator is now a [transparent comparator][transparent-comparator].
-
-### `projection_compare`
-
-```cpp
-#include <cpp-sort/comparators/projection_compare.h>
-```
-
-The class template `projection_compare` can be used to embed a comparison and a projection in a single comparison object, allowing to provide projection support to algorithms that only support comparisons, such as standard library algorithms prior to C++20. Both the passed comparison and projection functions can be [*Callable*][callable].
-
-It is accompanied by a `make_projection_compare` function template to avoid having to pass the template parameters by hand.
-
-**Example:**
-
-```cpp
-// Sort a family from older to younger member
-std::vector<Person> family = { /* ... */ };
-std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::greater<>{}, &Person::age));
-```
-
-*New in version 1.9.0*
 
 ### Total order comparators
 

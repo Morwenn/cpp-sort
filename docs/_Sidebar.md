@@ -10,6 +10,7 @@
     * [[Measures of presortedness]]
 * [[Comparators and projections]]
     * [[Comparators]]
+    * [[Comparator adapters]]
     * [[Chainable projections]]
     * [[Refined functions]]
 * [[Miscellaneous utilities]]

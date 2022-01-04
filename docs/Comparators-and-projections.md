@@ -1,4 +1,4 @@
-Most sorting algorithms in **cpp-sort** accept comparison and/or projection parameters. The library therefore considers these kinds of functions to be first-class citizens too and provides dedicated comparators, projections and tools to combine them and to solve common related problems.
+Most sorting algorithms in **cpp-sort** accept comparison and/or projection parameters. The library therefore considers these kinds of functions to be first-class citizens too and provides dedicated [[comparators|Comparators]], [[comparator adapters|Comparator adapters]] projections and tools to combine them and to solve common problems in the domain.
 
 All the functions and classes in **cpp-sort** that take comparison or projection functions as parameters expect [*Callable*][callable] parameters, which correspond to anything that can be used as the first parameter of [`std::invoke`][std-invoke]. This allows to pass entities such as pointers to members or pointer to member functions to the sorting algorithms; it should work out-of-the-box without any wrapping needed on the user side.
 
