@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2021 Morwenn
+# Copyright (c) 2015-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -17,8 +17,8 @@ set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options t
 ########################################
 # Find or download Catch2
 
-message(STATUS "Looking for Catch2 2.6.0+")
-find_package(Catch2 2.6.0 QUIET)
+message(STATUS "Looking for Catch2 3.0.0+")
+find_package(Catch2 3.0.0 QUIET)
 if (TARGET Catch2::Catch2)
     get_target_property(Catch2_INCLUDE_DIRECTORY Catch2::Catch2 INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "Catch2 found: ${Catch2_INCLUDE_DIRECTORY}")
@@ -26,11 +26,11 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v2.13.7
+                     GIT_TAG v3.0.0-preview4
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
-    list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/contrib)
+    list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
 endif()
 include(Catch)
 
@@ -52,14 +52,13 @@ macro(configure_tests target)
     target_include_directories(${target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
     target_link_libraries(${target} PRIVATE
-        Catch2::Catch2
+        Catch2::Catch2WithMain
         cpp-sort::cpp-sort
     )
 
     target_compile_definitions(${target} PRIVATE
         # Somewhat speed up Catch2 compile times
         CATCH_CONFIG_FAST_COMPILE
-        CATCH_CONFIG_DISABLE_MATCHERS
         # Enable assertions for more thorough tests
         CPPSORT_ENABLE_ASSERTIONS
         # We test deprecated code but we don't want it to warn
@@ -104,7 +103,6 @@ endmacro()
 
 add_executable(main-tests
     # Tooling
-    main.cpp
     testing-tools/random.cpp
 
     # General tests
@@ -236,7 +234,6 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         # the global [de]allocation functions in order to test the
         # algorithms that have a fallback when heap exhaustion occurs,
         # which isn't something we want for the main tests
-        main.cpp
         testing-tools/new_delete.cpp
         testing-tools/random.cpp
         heap_memory_exhaustion.cpp

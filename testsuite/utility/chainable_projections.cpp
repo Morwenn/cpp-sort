@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <functional>
 #include <iterator>
 #include <vector>
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorters/spin_sorter.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/algorithm.h>

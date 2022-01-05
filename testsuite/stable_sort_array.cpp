@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2018 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/stable_sort.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/utility/functional.h>

@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include "catch_rng_seed.h"
 #include "random.h"
 
 namespace hasard

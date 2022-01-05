@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <array>
 #include <iterator>
 #include <numeric>
 #include <vector>
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/fixed/sorting_network_sorter.h>
 #include <cpp-sort/utility/sorting_networks.h>
 #include <testing-tools/distributions.h>

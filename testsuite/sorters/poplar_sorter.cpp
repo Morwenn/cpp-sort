@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2017-2018 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <iterator>
 #include <vector>
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <testing-tools/distributions.h>
 

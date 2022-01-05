@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <array>
 #include <string>
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/comparators/natural_less.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
 #include <string>
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/comparators/partial_less.h>
 #include <cpp-sort/comparators/total_less.h>
 #include <cpp-sort/comparators/weak_less.h>
