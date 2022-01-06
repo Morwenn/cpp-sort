@@ -90,20 +90,20 @@ TEST_CASE( "small_array_adapter stability",
 
     SECTION( "is_always_stable" )
     {
-        CHECK( not cppsort::is_always_stable<sorter1>::value );
-        CHECK( cppsort::is_always_stable<sorter2>::value );
+        STATIC_CHECK( not cppsort::is_always_stable<sorter1>::value );
+        STATIC_CHECK( cppsort::is_always_stable<sorter2>::value );
     }
 
     SECTION( "is_stable" )
     {
-        CHECK( not cppsort::is_stable<sorter1(decltype(array))>::value );
-        CHECK( not cppsort::is_stable<sorter1(decltype(big_array))>::value );
-        CHECK( not cppsort::is_stable<sorter1(decltype(array), std::less<>)>::value );
-        CHECK( not cppsort::is_stable<sorter1(decltype(big_array), std::less<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter1(decltype(array))>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter1(decltype(big_array))>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter1(decltype(array), std::less<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter1(decltype(big_array), std::less<>)>::value );
 
-        CHECK( cppsort::is_stable<sorter2(decltype(array))>::value );
-        CHECK( cppsort::is_stable<sorter2(decltype(array), std::less<>)>::value );
-        CHECK( cppsort::is_stable<sorter2(decltype(array), std::negate<>)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter2(decltype(array))>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter2(decltype(array), std::less<>)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter2(decltype(array), std::negate<>)>::value );
     }
 
     SECTION( "is_stable with schwartz_adapter" )
@@ -111,13 +111,13 @@ TEST_CASE( "small_array_adapter stability",
         using sorter3 = cppsort::schwartz_adapter<sorter1>;
         using sorter4 = cppsort::schwartz_adapter<sorter2>;
 
-        CHECK( not cppsort::is_stable<sorter3(decltype(array))>::value );
-        CHECK( not cppsort::is_stable<sorter3(decltype(big_array))>::value );
-        CHECK( not cppsort::is_stable<sorter3(decltype(array), std::less<>)>::value );
-        CHECK( not cppsort::is_stable<sorter3(decltype(big_array), std::less<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter3(decltype(array))>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter3(decltype(big_array))>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter3(decltype(array), std::less<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter3(decltype(big_array), std::less<>)>::value );
 
-        CHECK( cppsort::is_stable<sorter4(decltype(array))>::value );
-        CHECK( cppsort::is_stable<sorter4(decltype(array), std::less<>)>::value );
-        CHECK( cppsort::is_stable<sorter4(decltype(array), std::negate<>)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter4(decltype(array))>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter4(decltype(array), std::less<>)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter4(decltype(array), std::negate<>)>::value );
     }
 }

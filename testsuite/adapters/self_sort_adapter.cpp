@@ -184,26 +184,28 @@ TEST_CASE( "stability of self_sort_adapter",
 
     SECTION( "is_always_stable" )
     {
-        CHECK( not cppsort::is_always_stable<dumb_unstable_sorter>::value );
-        CHECK( not cppsort::is_always_stable<adapted_unstable_sorter>::value );
+        STATIC_CHECK( not cppsort::is_always_stable<dumb_unstable_sorter>::value );
+        STATIC_CHECK( not cppsort::is_always_stable<adapted_unstable_sorter>::value );
 
-        CHECK( cppsort::is_always_stable<dumb_stable_sorter>::value );
-        CHECK( not cppsort::is_always_stable<adapted_stable_sorter>::value );
+        STATIC_CHECK( cppsort::is_always_stable<dumb_stable_sorter>::value );
+        STATIC_CHECK( not cppsort::is_always_stable<adapted_stable_sorter>::value );
     }
 
     SECTION( "is_stable" )
     {
-        CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_none&)>::value );
-        CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_sort&)>::value );
-        CHECK( cppsort::is_stable<adapted_unstable_sorter(container_stable_sort&)>::value );
-        CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_both&)>::value );
-        CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_both::iterator, container_both::iterator)>::value );
+        STATIC_CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_none&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_sort&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_unstable_sorter(container_stable_sort&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_both&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<adapted_unstable_sorter(container_both::iterator,
+                                                                     container_both::iterator)>::value );
 
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_none&)>::value );
-        CHECK( not cppsort::is_stable<adapted_stable_sorter(container_sort&)>::value );
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_stable_sort&)>::value );
-        CHECK( not cppsort::is_stable<adapted_stable_sorter(container_both&)>::value );
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_both::iterator, container_both::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_none&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<adapted_stable_sorter(container_sort&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_stable_sort&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<adapted_stable_sorter(container_both&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_both::iterator,
+                                                               container_both::iterator)>::value );
     }
 }
 
@@ -220,23 +222,25 @@ TEST_CASE( "stability of stable_adapter<self_sort_adapter>",
 
     SECTION( "is_always_stable" )
     {
-        CHECK( cppsort::is_always_stable<adapted_unstable_sorter>::value );
-        CHECK( cppsort::is_always_stable<adapted_stable_sorter>::value );
+        STATIC_CHECK( cppsort::is_always_stable<adapted_unstable_sorter>::value );
+        STATIC_CHECK( cppsort::is_always_stable<adapted_stable_sorter>::value );
     }
 
     SECTION( "is_stable" )
     {
-        CHECK( cppsort::is_stable<adapted_unstable_sorter(container_none&)>::value );
-        CHECK( cppsort::is_stable<adapted_unstable_sorter(container_sort&)>::value );
-        CHECK( cppsort::is_stable<adapted_unstable_sorter(container_stable_sort&)>::value );
-        CHECK( cppsort::is_stable<adapted_unstable_sorter(container_both&)>::value );
-        CHECK( cppsort::is_stable<adapted_unstable_sorter(container_both::iterator, container_both::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_unstable_sorter(container_none&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_unstable_sorter(container_sort&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_unstable_sorter(container_stable_sort&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_unstable_sorter(container_both&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_unstable_sorter(container_both::iterator,
+                                                                 container_both::iterator)>::value );
 
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_none&)>::value );
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_sort&)>::value );
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_stable_sort&)>::value );
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_both&)>::value );
-        CHECK( cppsort::is_stable<adapted_stable_sorter(container_both::iterator, container_both::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_none&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_sort&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_stable_sort&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_both&)>::value );
+        STATIC_CHECK( cppsort::is_stable<adapted_stable_sorter(container_both::iterator,
+                                                               container_both::iterator)>::value );
     }
 }
 

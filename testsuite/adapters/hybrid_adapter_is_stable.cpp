@@ -31,17 +31,17 @@ TEST_CASE( "hybrid_adapter stability checks",
             cppsort::pdq_sorter
         >;
 
-        CHECK( not cppsort::is_stable<sorter(std::vector<int>&)>::value );
-        CHECK( not cppsort::is_stable<sorter(std::vector<int>::iterator,
-                                             std::vector<int>::iterator)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::vector<int>&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::vector<int>::iterator,
+                                                    std::vector<int>::iterator)>::value );
 
-        CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::list<int>::iterator,
-                                         std::list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::list<int>::iterator,
+                                                std::list<int>::iterator)>::value );
 
-        CHECK( not cppsort::is_stable<sorter(std::forward_list<int>&)>::value );
-        CHECK( not cppsort::is_stable<sorter(std::forward_list<int>::iterator,
-                                             std::forward_list<int>::iterator)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::forward_list<int>&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::forward_list<int>::iterator,
+                                                    std::forward_list<int>::iterator)>::value );
     }
 
     SECTION( "nested hybrid_adapter" )
@@ -57,17 +57,17 @@ TEST_CASE( "hybrid_adapter stability checks",
             cppsort::pdq_sorter
         >;
 
-        CHECK( not cppsort::is_stable<sorter(std::vector<int>&)>::value );
-        CHECK( not cppsort::is_stable<sorter(std::vector<int>::iterator,
-                                             std::vector<int>::iterator)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::vector<int>&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::vector<int>::iterator,
+                                                    std::vector<int>::iterator)>::value );
 
-        CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::list<int>::iterator,
-                                         std::list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::list<int>::iterator,
+                                                std::list<int>::iterator)>::value );
 
-        CHECK( not cppsort::is_stable<sorter(std::forward_list<int>&)>::value );
-        CHECK( not cppsort::is_stable<sorter(std::forward_list<int>::iterator,
-                                             std::forward_list<int>::iterator)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::forward_list<int>&)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::forward_list<int>::iterator,
+                                                    std::forward_list<int>::iterator)>::value );
     }
 
     SECTION( "with small_array_adapter" )
@@ -80,27 +80,27 @@ TEST_CASE( "hybrid_adapter stability checks",
             cppsort::merge_sorter
         >;
 
-        CHECK( cppsort::is_stable<sorter(std::vector<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::vector<int>::iterator,
-                                         std::vector<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::vector<int>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::vector<int>::iterator,
+                                                std::vector<int>::iterator)>::value );
 
-        CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::list<int>::iterator,
-                                         std::list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::list<int>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::list<int>::iterator,
+                                                std::list<int>::iterator)>::value );
 
-        CHECK( cppsort::is_stable<sorter(std::forward_list<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::forward_list<int>::iterator,
-                                         std::forward_list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::forward_list<int>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::forward_list<int>::iterator,
+                                                std::forward_list<int>::iterator)>::value );
 
-        CHECK( not cppsort::is_stable<sorter(std::array<int, 5>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::array<int, 5>::iterator,
-                                         std::array<int, 5>::iterator)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(std::array<int, 5>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::array<int, 5>::iterator,
+                                                std::array<int, 5>::iterator)>::value );
 
-        CHECK( cppsort::is_stable<sorter(std::array<int, 16>&)>::value );
-        CHECK( cppsort::is_stable<sorter(std::array<int, 16>::iterator,
-                                         std::array<int, 16>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::array<int, 16>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(std::array<int, 16>::iterator,
+                                                std::array<int, 16>::iterator)>::value );
 
-        CHECK( not cppsort::is_stable<sorter(int(&)[8])>::value );
-        CHECK( cppsort::is_stable<sorter(int(&)[20])>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter(int(&)[8])>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter(int(&)[20])>::value );
     }
 }

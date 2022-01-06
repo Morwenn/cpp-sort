@@ -79,5 +79,5 @@ TEST_CASE( "test basic constexpr support", "[sorter_facade][constexpr]" )
     // Check that sorter_facade can be useful in a constexpr constext
     // if the sorter implementation is constexpr-friendly itself
     constexpr bool is_sorted = test_sorter();
-    CHECK( is_sorted );
+    STATIC_CHECK( is_sorted );
 }

@@ -101,62 +101,62 @@ TEST_CASE( "is_ska_sortable", "[ska_sorter]" )
 
     SECTION( "built-in integral types" )
     {
-        CHECK( is_ska_sortable<bool> );
-        CHECK( is_ska_sortable<char> );
-        CHECK( is_ska_sortable<unsigned char> );
-        CHECK( is_ska_sortable<signed char> );
-        CHECK( is_ska_sortable<wchar_t> );
-        CHECK( is_ska_sortable<char16_t> );
-        CHECK( is_ska_sortable<char32_t> );
-        CHECK( is_ska_sortable<unsigned short> );
-        CHECK( is_ska_sortable<signed short> );
-        CHECK( is_ska_sortable<unsigned int> );
-        CHECK( is_ska_sortable<signed int> );
-        CHECK( is_ska_sortable<unsigned long> );
-        CHECK( is_ska_sortable<signed long> );
-        CHECK( is_ska_sortable<unsigned long long> );
-        CHECK( is_ska_sortable<signed long long> );
+        STATIC_CHECK( is_ska_sortable<bool> );
+        STATIC_CHECK( is_ska_sortable<char> );
+        STATIC_CHECK( is_ska_sortable<unsigned char> );
+        STATIC_CHECK( is_ska_sortable<signed char> );
+        STATIC_CHECK( is_ska_sortable<wchar_t> );
+        STATIC_CHECK( is_ska_sortable<char16_t> );
+        STATIC_CHECK( is_ska_sortable<char32_t> );
+        STATIC_CHECK( is_ska_sortable<unsigned short> );
+        STATIC_CHECK( is_ska_sortable<signed short> );
+        STATIC_CHECK( is_ska_sortable<unsigned int> );
+        STATIC_CHECK( is_ska_sortable<signed int> );
+        STATIC_CHECK( is_ska_sortable<unsigned long> );
+        STATIC_CHECK( is_ska_sortable<signed long> );
+        STATIC_CHECK( is_ska_sortable<unsigned long long> );
+        STATIC_CHECK( is_ska_sortable<signed long long> );
     }
 
     SECTION( "built-in floating point types" )
     {
-        CHECK(( is_ska_sortable<float> ||
-                sizeof(float) != sizeof(std::uint32_t) ||
-                not std::numeric_limits<float>::is_iec559 ));
+        STATIC_CHECK(( is_ska_sortable<float> ||
+                       sizeof(float) != sizeof(std::uint32_t) ||
+                       not std::numeric_limits<float>::is_iec559 ));
 
-        CHECK(( is_ska_sortable<double> ||
-                sizeof(double) != sizeof(std::uint64_t) ||
-                not std::numeric_limits<double>::is_iec559 ));
+        STATIC_CHECK(( is_ska_sortable<double> ||
+                       sizeof(double) != sizeof(std::uint64_t) ||
+                       not std::numeric_limits<double>::is_iec559 ));
 
-        CHECK_FALSE( is_ska_sortable<long double> );
+        STATIC_CHECK_FALSE( is_ska_sortable<long double> );
     }
 
     SECTION( "standard collections" )
     {
         // Srings
-        CHECK( is_ska_sortable<std::string> );
-        CHECK( is_ska_sortable<std::wstring> );
-        CHECK( is_ska_sortable<std::basic_string<char16_t>> );
+        STATIC_CHECK( is_ska_sortable<std::string> );
+        STATIC_CHECK( is_ska_sortable<std::wstring> );
+        STATIC_CHECK( is_ska_sortable<std::basic_string<char16_t>> );
 
         // Other collections
-        CHECK( is_ska_sortable<std::vector<int>> );
-        CHECK( is_ska_sortable<std::vector<std::string>> );
-        CHECK( is_ska_sortable<std::vector<std::vector<std::string>>> );
-        CHECK( is_ska_sortable<std::deque<std::vector<long long>>> );
-        CHECK_FALSE( is_ska_sortable<std::deque<long double>> );
+        STATIC_CHECK( is_ska_sortable<std::vector<int>> );
+        STATIC_CHECK( is_ska_sortable<std::vector<std::string>> );
+        STATIC_CHECK( is_ska_sortable<std::vector<std::vector<std::string>>> );
+        STATIC_CHECK( is_ska_sortable<std::deque<std::vector<long long>>> );
+        STATIC_CHECK_FALSE( is_ska_sortable<std::deque<long double>> );
     }
 
     SECTION( "pairs and tuples" )
     {
         // std::pair
-        CHECK( is_ska_sortable<std::pair<int, int>> );
-        CHECK( is_ska_sortable<std::pair<int, std::deque<bool>>> );
-        CHECK( is_ska_sortable<std::pair<std::vector<std::pair<int, long>>, std::deque<bool>>> );
-        CHECK_FALSE( is_ska_sortable<std::pair<std::vector<std::pair<int, long double>>, std::deque<bool>>> );
+        STATIC_CHECK( is_ska_sortable<std::pair<int, int>> );
+        STATIC_CHECK( is_ska_sortable<std::pair<int, std::deque<bool>>> );
+        STATIC_CHECK( is_ska_sortable<std::pair<std::vector<std::pair<int, long>>, std::deque<bool>>> );
+        STATIC_CHECK_FALSE( is_ska_sortable<std::pair<std::vector<std::pair<int, long double>>, std::deque<bool>>> );
 
         // std::tuple
-        CHECK( is_ska_sortable<std::tuple<int>> );
-        CHECK( is_ska_sortable<std::tuple<long int, int, std::string, std::vector<unsigned long long>>> );
-        CHECK_FALSE( is_ska_sortable<std::tuple<std::string, std::vector<unsigned long long>, std::deque<long double>>> );
+        STATIC_CHECK( is_ska_sortable<std::tuple<int>> );
+        STATIC_CHECK( is_ska_sortable<std::tuple<long int, int, std::string, std::vector<unsigned long long>>> );
+        STATIC_CHECK_FALSE( is_ska_sortable<std::tuple<std::string, std::vector<unsigned long long>, std::deque<long double>>> );
     }
 }

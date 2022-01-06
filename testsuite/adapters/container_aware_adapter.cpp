@@ -47,26 +47,27 @@ TEST_CASE( "basic tests with container_aware_adapter",
     SECTION( "with comparison" )
     {
         CHECK( sorter(collection, std::greater<>{}) );
-        CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>)>::value );
     }
 
     SECTION( "with projection" )
     {
         CHECK( sorter(collection, std::negate<>{}) );
-        CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::negate<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::negate<>)>::value );
     }
 
     SECTION( "with automagic comparison-projection" )
     {
         CHECK( sorter(collection, std::greater<>{}, std::negate<>{}) );
-        CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>, std::negate<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&,
+                                                      std::greater<>, std::negate<>)>::value );
     }
 
     SECTION( "more about stability" )
     {
-        CHECK( cppsort::is_stable<sorter_t(std::list<int>&)>::value );
-        CHECK( cppsort::is_stable<sorter_t(std::list<int>::iterator, std::list<int>::iterator)>::value );
-        CHECK( cppsort::is_stable<sorter_t(foobar::cool_list<int>::iterator,
-                                           foobar::cool_list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter_t(std::list<int>&)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter_t(std::list<int>::iterator, std::list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable<sorter_t(foobar::cool_list<int>::iterator,
+                                                  foobar::cool_list<int>::iterator)>::value );
     }
 }

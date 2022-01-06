@@ -68,8 +68,10 @@ TEST_CASE( "iterator category rebinder",
             std::random_access_iterator_tag
         >;
 
-        CHECK( (std::is_same<cppsort::iterator_category<sorter1>, std::bidirectional_iterator_tag>::value) );
-        CHECK( (std::is_same<cppsort::iterator_category<sorter2>, std::random_access_iterator_tag>::value) );
+        STATIC_CHECK( std::is_same<cppsort::iterator_category<sorter1>,
+                                   std::bidirectional_iterator_tag>::value );
+        STATIC_CHECK( std::is_same<cppsort::iterator_category<sorter2>,
+                                   std::random_access_iterator_tag>::value );
     }
 
     SECTION( "with hybrid_adapter" )
