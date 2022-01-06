@@ -13,6 +13,7 @@ set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanit
 option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" ${USE_VALGRIND})
 option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" ${ENABLE_COVERAGE})
 set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options to pass to -fsanitize")
+option(CPPSORT_STATIC_TESTS "Whether to turn some tests into static assertions" OFF)
 
 ########################################
 # Find or download Catch2
@@ -63,6 +64,8 @@ macro(configure_tests target)
         CPPSORT_ENABLE_ASSERTIONS
         # We test deprecated code but we don't want it to warn
         CPPSORT_DISABLE_DEPRECATION_WARNINGS
+        # Conditionally turn some tests into static assertions
+        $<$<NOT:$<BOOL:${CPPSORT_STATIC_TESTS}>>:CATCH_CONFIG_RUNTIME_STATIC_REQUIRE>
     )
 
     # More warnings and settings

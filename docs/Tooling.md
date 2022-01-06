@@ -24,18 +24,21 @@ target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 
 ### Building cpp-sort
 
-The project's CMake files do offer some options, but they are mainly used to configure the test suite and the examples:
+The project's CMake files offers some options, though they are mainly used to configure the test suite and examples:
 * `CPPSORT_BUILD_TESTING`: whether to build the test suite, defaults to `ON`.
 * `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`. 
 * `CPPSORT_ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
 * `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
-* `CPPSORT_SANITIZE`: values to pass to the `-fsanitize` falgs of compilers that supports them, default to empty.
+* `CPPSORT_SANITIZE`: values to pass to the `-fsanitize` flags of compilers that supports them, default to empty.
+* `CPPSORT_STATIC_TESTS`: when `ON`, some tests are executed at compile time instead of runtime, defaults to `OFF`.
 
-The same options exist without the `CPPSORT_` prefix exist, but are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default the values of the equivalent unprefixed options.
+Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
 
 *New in version 1.6.0:* added the option `BUILD_EXAMPLES`.
 
 *New in version 1.9.0:* options with the `CPPSORT_` prefix.
+
+*New in version 1.13.0:* added the option `CPPSORT_STATIC_TESTS`.
 
 ***WARNING:** options without a `CPPSORT_` prefixed are deprecated in version 1.9.0 and removed in version 2.0.0.*
 
