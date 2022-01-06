@@ -258,7 +258,7 @@ endif()
 
 include(CTest)
 
-string(RANDOM LENGTH 5 ALPHABET 0123456789 RNG_SEED)
+string(RANDOM LENGTH 6 ALPHABET 123456789 RNG_SEED)
 catch_discover_tests(main-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
 if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
     catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
