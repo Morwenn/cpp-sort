@@ -39,9 +39,11 @@ The same options exist without the `CPPSORT_` prefix exist, but are deprecated. 
 
 ***WARNING:** options without a `CPPSORT_` prefixed are deprecated in version 1.9.0 and removed in version 2.0.0.*
 
-[Catch2][catch2] 2.6.0 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest Catch2 release will be downloaded.
+[Catch2][catch2] 3.0.0-preview4 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
 
 *Changed in version 1.7.0:* if a suitable Catch2 version is found on the system, it will be used.
+
+*Changed in version 1.13.0 (BREAKING):* cpp-sort now requires Catch2 version 3.0.0-preview4 instead of 2.6.0.
 
 ## Conan
 
