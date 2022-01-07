@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PROJECTION_COMPARE_H_
@@ -12,6 +12,8 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
+#include <cpp-sort/utility/functional.h>
+#include "../detail/config.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -60,11 +62,73 @@ namespace cppsort
             using is_transparent = void;
     };
 
-    template<typename Compare, typename Projection>
-    auto make_projection_compare(Compare compare, Projection projection)
-        -> projection_compare<Compare, Projection>
+    ////////////////////////////////////////////////////////////
+    // Helper for projection_compare construction
+
+    namespace detail
     {
-        return { std::move(compare), std::move(projection) };
+        template<typename Compare, typename Projection>
+        struct proj_comp_impl
+        {
+            using type = projection_compare<Compare, Projection>;
+
+            template<typename C, typename P>
+            static constexpr auto construct(C&& comp, P&& proj)
+                -> type
+            {
+                return type(std::forward<C>(comp), std::forward<P>(proj));
+            }
+        };
+
+        template<typename Compare>
+        struct proj_comp_impl<Compare, utility::identity>
+        {
+            using type = Compare;
+
+            static constexpr auto construct(const Compare& comp, const utility::identity&)
+                -> type
+            {
+                return comp;
+            }
+
+            static constexpr auto construct(Compare&& comp, const utility::identity&)
+                -> type
+            {
+                return comp;
+            }
+        };
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+        template<typename Compare>
+        struct proj_comp_impl<Compare, std::identity>
+        {
+            using type = Compare;
+
+            static constexpr auto construct(const Compare& comp, const utility::identity&)
+                -> type
+            {
+                return comp;
+            }
+
+            static constexpr auto construct(Compare&& comp, const utility::identity&)
+                -> type
+            {
+                return comp;
+            }
+        };
+#endif
+    }
+
+    ////////////////////////////////////////////////////////////
+    // make_projection_compare
+
+    template<typename Compare, typename Projection>
+    constexpr auto make_projection_compare(Compare&& compare, Projection&& projection)
+        -> typename detail::proj_comp_impl<std::decay_t<Compare>, std::decay_t<Projection>>::type
+    {
+        return detail::proj_comp_impl<std::decay_t<Compare>, std::decay_t<Projection>>::construct(
+            std::forward<Compare>(compare), std::forward<Projection>(projection)
+        );
     }
 
     namespace utility
