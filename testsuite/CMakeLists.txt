@@ -108,20 +108,7 @@ add_executable(main-tests
     # Tooling
     testing-tools/random.cpp
 
-    # General tests
-    every_instantiated_sorter.cpp
-    every_sorter.cpp
-    every_sorter_internal_compare.cpp
-    every_sorter_long_string.cpp
-    every_sorter_move_compare_projection.cpp
-    every_sorter_move_only.cpp
-    every_sorter_no_post_iterator.cpp
-    every_sorter_non_const_compare.cpp
-    every_sorter_rvalue_projection.cpp
-    every_sorter_small_collections.cpp
-    every_sorter_span.cpp
-    every_sorter_throwing_moves.cpp
-    every_sorter_tricky_difference_type.cpp
+    # General utilities tests
     is_stable.cpp
     rebind_iterator_category.cpp
     sort_array.cpp
@@ -204,6 +191,19 @@ add_executable(main-tests
     sorters/default_sorter.cpp
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorters/default_sorter_fptr.cpp>
     sorters/default_sorter_projection.cpp
+    sorters/every_instantiated_sorter.cpp
+    sorters/every_sorter.cpp
+    sorters/every_sorter_internal_compare.cpp
+    sorters/every_sorter_long_string.cpp
+    sorters/every_sorter_move_compare_projection.cpp
+    sorters/every_sorter_move_only.cpp
+    sorters/every_sorter_no_post_iterator.cpp
+    sorters/every_sorter_non_const_compare.cpp
+    sorters/every_sorter_rvalue_projection.cpp
+    sorters/every_sorter_small_collections.cpp
+    sorters/every_sorter_span.cpp
+    sorters/every_sorter_throwing_moves.cpp
+    sorters/every_sorter_tricky_difference_type.cpp
     sorters/merge_insertion_sorter_projection.cpp
     sorters/merge_sorter.cpp
     sorters/merge_sorter_projection.cpp
@@ -239,8 +239,8 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         # which isn't something we want for the main tests
         testing-tools/new_delete.cpp
         testing-tools/random.cpp
-        heap_memory_exhaustion.cpp
         probes/every_probe_heap_memory_exhaustion.cpp
+        sorters/every_sorter_heap_memory_exhaustion.cpp
     )
     configure_tests(heap-memory-exhaustion-tests)
 endif()
