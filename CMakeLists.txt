@@ -86,7 +86,7 @@ export(
 if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     if (CPPSORT_BUILD_TESTING)
         enable_testing()
-        add_subdirectory(testsuite)
+        add_subdirectory(tests)
     endif()
 
     if (CPPSORT_BUILD_EXAMPLES)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -19,8 +19,8 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include "../benchmarks/benchmarking-tools/distributions.h"
-#include "../testsuite/testing-tools/algorithm.h"
-#include "../testsuite/testing-tools/wrapper.h"
+#include "../tests/testing-tools/algorithm.h"
+#include "../tests/testing-tools/wrapper.h"
 
 template<typename Sorter>
 void test(const char* name)
