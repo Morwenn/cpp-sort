@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
-#include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorter_facade.h>
@@ -101,27 +100,27 @@ TEST_CASE( "std::less<> forwarding to sorters",
     SECTION( "with std::less<>" )
     {
         CHECK( comparison_sorter{}(vec, std::less<>{}) );
-        CHECK( comparison_sorter{}(std::begin(vec), std::end(vec), std::less<>{}) );
+        CHECK( comparison_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
 
         CHECK( non_comparison_sorter{}(vec, std::less<>{}) );
-        CHECK( non_comparison_sorter{}(std::begin(vec), std::end(vec), std::less<>{}) );
+        CHECK( non_comparison_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
 
         CHECK( not non_comparison_iterable_sorter{}(vec, std::less<>{}) );
-        CHECK( non_comparison_iterable_sorter{}(std::begin(vec), std::end(vec), std::less<>{}) );
+        CHECK( non_comparison_iterable_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
     }
 
     SECTION( "with utility::identity" )
     {
         CHECK( comparison_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( comparison_sorter{}(std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
+        CHECK( comparison_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
         CHECK( non_comparison_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( non_comparison_sorter{}(std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
+        CHECK( non_comparison_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
         CHECK( not non_comparison_iterable_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( non_comparison_iterable_sorter{}(std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
+        CHECK( non_comparison_iterable_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
         CHECK( comparison_projection_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
+        CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
     }
 }

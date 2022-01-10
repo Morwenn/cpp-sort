@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
-#include <iterator>
 #include <type_traits>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
@@ -79,42 +78,41 @@ TEST_CASE( "sorter_facade miscellaneous checks",
     SECTION( "with comparison only" )
     {
         CHECK( comparison_sorter{}(vec, std::less<>{}) );
-        CHECK( comparison_sorter{}(std::begin(vec), std::end(vec), std::less<>{}) );
+        CHECK( comparison_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
 
         CHECK( comparison_sorter{}(vec, std::greater<>{}) );
-        CHECK( comparison_sorter{}(std::begin(vec), std::end(vec), std::greater<>{}) );
+        CHECK( comparison_sorter{}(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "with projection only" )
     {
         CHECK( projection_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( projection_sorter{}(std::begin(vec), std::end(vec), cppsort::utility::identity{}) );
+        CHECK( projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
         CHECK( projection_sorter{}(vec_wrap, &wrapper::value) );
-        CHECK( projection_sorter{}(std::begin(vec_wrap), std::end(vec_wrap), &wrapper::value) );
+        CHECK( projection_sorter{}(vec_wrap.begin(), vec_wrap.end(), &wrapper::value) );
     }
 
     SECTION( "with both comparison and projection" )
     {
         CHECK( comparison_projection_sorter{}(vec, std::less<>{}) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec), std::end(vec), std::less<>{}) );
+        CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
 
         CHECK( comparison_projection_sorter{}(vec, std::greater<>{}) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec), std::end(vec), std::greater<>{}) );
+        CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), std::greater<>{}) );
 
         CHECK( comparison_projection_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec), std::end(vec),
-                                              cppsort::utility::identity{}) );
+        CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
         CHECK( comparison_projection_sorter{}(vec_wrap, &wrapper::value) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec_wrap), std::end(vec_wrap), &wrapper::value) );
+        CHECK( comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(), &wrapper::value) );
 
         CHECK( comparison_projection_sorter{}(vec, std::greater<>{}, cppsort::utility::identity{}) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec), std::end(vec),
+        CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(),
                                               std::greater<>{}, cppsort::utility::identity{}) );
 
         CHECK( comparison_projection_sorter{}(vec_wrap, std::greater<>{}, &wrapper::value) );
-        CHECK( comparison_projection_sorter{}(std::begin(vec_wrap), std::end(vec_wrap),
+        CHECK( comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(),
                                               std::greater<>{}, &wrapper::value) );
     }
 }

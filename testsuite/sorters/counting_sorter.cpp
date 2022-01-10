@@ -23,15 +23,15 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
         cppsort::counting_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with unsigned int iterators" )
     {
         std::list<unsigned> li;
         distribution(std::back_inserter(li), size, 0u);
-        cppsort::counting_sort(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        cppsort::counting_sort(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "reverse sort with long long iterable" )
@@ -39,15 +39,15 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
         std::vector<long long> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, 1568);
         cppsort::counting_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "reverse sort with unsigned long long iterators" )
     {
         std::forward_list<unsigned long long> li;
         distribution(std::front_inserter(li), size, 0ULL);
-        cppsort::counting_sort(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        cppsort::counting_sort(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
 #ifdef __SIZEOF_INT128__
@@ -55,8 +55,8 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
     {
         std::list<__uint128_t> li;;
         distribution(std::back_inserter(li), size, __uint128_t(0));
-        cppsort::counting_sort(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        cppsort::counting_sort(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 #endif
 
@@ -69,6 +69,6 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
 
         std::vector<int> vec = { -47, -46, -45, -44, -43, -42, -41, -39, -40, -38 };
         cppsort::counting_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

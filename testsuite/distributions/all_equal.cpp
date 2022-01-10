@@ -46,5 +46,5 @@ TEMPLATE_TEST_CASE( "test random-access sorters with all_equal distribution", "[
 
     TestType sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

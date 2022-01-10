@@ -105,7 +105,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
         > sorter;
 
         sorter(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
@@ -118,7 +118,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
         > sorter;
 
         sorter(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
@@ -131,7 +131,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
         > sorter;
 
         sorter(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
@@ -144,7 +144,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
         > sorter;
 
         sorter(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 }

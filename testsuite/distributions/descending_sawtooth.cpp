@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distrib
 
     TestType sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_sawtooth distribution", "[distributions]",
@@ -65,5 +65,5 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_sawtooth distrib
 
     TestType sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

@@ -41,5 +41,5 @@ TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function compari
 
     using sorter = TestType;
     sorter{}(collection, &internal_compare<int>::compare_to);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

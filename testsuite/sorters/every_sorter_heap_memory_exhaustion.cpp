@@ -43,7 +43,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for random-access sorters", "[sorters][heap
         scoped_memory_exhaustion _;
         sorter{}(collection);
     }
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional sorters", "[sorters][heap_exhaustion]",
@@ -62,7 +62,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional sorters", "[sorters][heap
         scoped_memory_exhaustion _;
         sorter{}(collection);
     }
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "heap exhaustion for forward sorters", "[sorters][heap_exhaustion]",
@@ -80,5 +80,5 @@ TEMPLATE_TEST_CASE( "heap exhaustion for forward sorters", "[sorters][heap_exhau
         scoped_memory_exhaustion _;
         sorter{}(collection);
     }
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

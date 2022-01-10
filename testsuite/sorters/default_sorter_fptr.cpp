@@ -28,7 +28,7 @@ TEST_CASE( "default sorter function pointer tests",
         constexpr void(*sorter)(std::vector<int>&) = cppsort::default_sorter();
 
         sorter(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
@@ -36,7 +36,7 @@ TEST_CASE( "default sorter function pointer tests",
         constexpr void(*sorter)(std::vector<int>&, std::greater<>) = cppsort::default_sorter();
 
         sorter(vec, std::greater<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with random-access iterable and projection" )
@@ -44,7 +44,7 @@ TEST_CASE( "default sorter function pointer tests",
         constexpr void(*sorter)(std::vector<int>&, decltype(projection)) = cppsort::default_sorter();
 
         sorter(vec, projection);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with random-access iterable, compare and projection" )
@@ -55,7 +55,7 @@ TEST_CASE( "default sorter function pointer tests",
             = cppsort::default_sorter();
 
         sorter(vec, std::greater<>{}, projection);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with random-access iterators" )
@@ -64,8 +64,8 @@ TEST_CASE( "default sorter function pointer tests",
                                 std::vector<int>::iterator)
             = cppsort::default_sorter();
 
-        sorter(std::begin(vec), std::end(vec));
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        sorter(vec.begin(), vec.end());
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
@@ -75,8 +75,8 @@ TEST_CASE( "default sorter function pointer tests",
                                 std::greater<>)
             = cppsort::default_sorter();
 
-        sorter(std::begin(vec), std::end(vec), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+        sorter(vec.begin(), vec.end(), std::greater<>{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with random-access iterators and projection" )
@@ -86,8 +86,8 @@ TEST_CASE( "default sorter function pointer tests",
                                 decltype(projection))
             = cppsort::default_sorter();
 
-        sorter(std::begin(vec), std::end(vec), projection);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+        sorter(vec.begin(), vec.end(), projection);
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with random-access iterators, compare and projection" )
@@ -98,8 +98,8 @@ TEST_CASE( "default sorter function pointer tests",
                                 decltype(projection))
             = cppsort::default_sorter();
 
-        sorter(std::begin(vec), std::end(vec), std::greater<>{}, projection);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        sorter(vec.begin(), vec.end(), std::greater<>{}, projection);
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with bidirectional iterators" )
@@ -108,9 +108,9 @@ TEST_CASE( "default sorter function pointer tests",
                                 std::list<int>::iterator)
             = cppsort::default_sorter();
 
-        std::list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        std::list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with bidirectional iterators and compare" )
@@ -120,9 +120,9 @@ TEST_CASE( "default sorter function pointer tests",
                                 std::greater<>)
             = cppsort::default_sorter();
 
-        std::list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        std::list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end(), std::greater<>{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with bidirectional iterators and projection" )
@@ -132,9 +132,9 @@ TEST_CASE( "default sorter function pointer tests",
                                 decltype(projection))
             = cppsort::default_sorter();
 
-        std::list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li), projection);
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        std::list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end(), projection);
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with bidirectional iterators, compare and projection" )
@@ -145,9 +145,9 @@ TEST_CASE( "default sorter function pointer tests",
                       decltype(projection))
             = cppsort::default_sorter();
 
-        std::list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li), std::greater<>{}, projection);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        std::list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end(), std::greater<>{}, projection);
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with forward iterators" )
@@ -156,9 +156,9 @@ TEST_CASE( "default sorter function pointer tests",
                                 std::forward_list<int>::iterator)
             = cppsort::default_sorter();
 
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        std::forward_list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with forward iterators and compare" )
@@ -168,9 +168,9 @@ TEST_CASE( "default sorter function pointer tests",
                                 std::greater<>)
             = cppsort::default_sorter();
 
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        std::forward_list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end(), std::greater<>{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with forward iterators and projection" )
@@ -180,9 +180,9 @@ TEST_CASE( "default sorter function pointer tests",
                                 decltype(projection))
             = cppsort::default_sorter();
 
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li), projection);
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        std::forward_list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end(), projection);
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with forward iterators and projection" )
@@ -193,26 +193,26 @@ TEST_CASE( "default sorter function pointer tests",
                                 decltype(projection))
             = cppsort::default_sorter();
 
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
-        sorter(std::begin(li), std::end(li), std::greater<>{}, projection);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        std::forward_list<int> li(vec.begin(), vec.end());
+        sorter(li.begin(), li.end(), std::greater<>{}, projection);
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with self-sortable iterable" )
     {
         constexpr void(*sorter)(std::list<int>&) = cppsort::default_sorter();
 
-        std::list<int> li(std::begin(vec), std::end(vec));
+        std::list<int> li(vec.begin(), vec.end());
         sorter(li);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with self-sortable iterable and compare" )
     {
         constexpr void(*sorter)(std::forward_list<int>&, std::greater<>) = cppsort::default_sorter();
 
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
+        std::forward_list<int> li(vec.begin(), vec.end());
         sorter(li, std::greater<>{});
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 }

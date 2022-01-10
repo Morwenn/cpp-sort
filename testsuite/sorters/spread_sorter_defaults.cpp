@@ -22,42 +22,42 @@ TEST_CASE( "spread_sorter generate overloads",
     SECTION( "default operator() with std::less<>" )
     {
         std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0);
+        std::iota(vec.begin(), vec.end(), 0);
 
-        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec, std::less<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::less<>{}) );
 
-        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
-        cppsort::spread_sort(std::begin(vec), std::end(vec), std::less<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::less<>{}) );
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
+        cppsort::spread_sort(vec.begin(), vec.end(), std::less<>{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::less<>{}) );
     }
 
     SECTION( "default operator() with utility::identity" )
     {
         std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0);
+        std::iota(vec.begin(), vec.end(), 0);
 
-        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec, cppsort::utility::identity{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
-        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
-        cppsort::spread_sort(std::begin(vec), std::end(vec), cppsort::utility::identity{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
+        cppsort::spread_sort(vec.begin(), vec.end(), cppsort::utility::identity{});
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "default operator() with both" )
     {
         std::vector<int> vec(100'000);
-        std::iota(std::begin(vec), std::end(vec), 0);
+        std::iota(vec.begin(), vec.end(), 0);
 
-        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::spread_sort(vec, std::less<>{}, cppsort::utility::identity{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
-        std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
-        cppsort::spread_sort(std::begin(vec), std::end(vec), std::less<>{}, cppsort::utility::identity{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        std::shuffle(vec.begin(), vec.end(), hasard::engine());
+        cppsort::spread_sort(vec.begin(), vec.end(), std::less<>{}, cppsort::utility::identity{});
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

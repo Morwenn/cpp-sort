@@ -31,8 +31,8 @@ namespace
                 auto s = std::to_string(i);
                 vec.push_back(std::string(100 - s.size(), '0') + std::move(s));
             }
-            std::shuffle(std::begin(vec), std::end(vec), hasard::engine());
-            std::move(std::begin(vec), std::end(vec), out);
+            std::shuffle(vec.begin(), vec.end(), hasard::engine());
+            std::move(vec.begin(), vec.end(), out);
         }
     };
 }
@@ -83,10 +83,10 @@ TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
     distribution(std::back_inserter(collection), 491, -125);
 
     auto copy = collection;
-    std::sort(std::begin(copy), std::end(copy));
+    std::sort(copy.begin(), copy.end());
 
     TestType sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
     CHECK( bool(collection == copy) );
 }

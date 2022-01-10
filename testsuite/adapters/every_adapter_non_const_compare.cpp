@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
@@ -48,7 +49,7 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         // Sort and check it's sorted
         std::size_t res = sorter{}(vec, non_const_compare);
         CHECK( res == 2080 );
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "hybrid_adapter" )
@@ -59,7 +60,7 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "indirect_adapter" )
@@ -69,7 +70,7 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "out_of_place_adapter" )
@@ -79,10 +80,10 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         sorter{}(li, non_const_compare);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "schwartz_adapter" )
@@ -92,7 +93,7 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare, fake_identity{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "self_sort_adapter" )
@@ -102,10 +103,10 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         sorter{}(li, non_const_compare);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "stable_adapter<self_sort_adapter>" )
@@ -115,10 +116,10 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         sorter{}(li, non_const_compare);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "small_array_adapter" )
@@ -129,15 +130,15 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
 
         auto to_sort = arr;
         small_array_adapter<low_comparisons_sorter>{}(to_sort, non_const_compare);
-        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end()) );
 
         to_sort = arr;
         small_array_adapter<low_moves_sorter>{}(to_sort, non_const_compare);
-        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end()) );
 
         to_sort = arr;
         small_array_adapter<sorting_network_sorter>{}(to_sort, non_const_compare);
-        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end()) );
     }
 
     SECTION( "stable_adapter" )
@@ -147,7 +148,7 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "verge_adapter" )
@@ -157,6 +158,6 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         >;
 
         sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

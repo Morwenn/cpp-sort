@@ -30,33 +30,33 @@ TEST_CASE( "basic tests with indirect_adapter",
     SECTION( "with comparison" )
     {
         sorter(collection, std::greater<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
 
         collection = vec;
-        sorter(std::begin(collection), std::end(collection), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+        sorter(collection.begin(), collection.end(), std::greater<>{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
     }
 
     SECTION( "with projection" )
     {
         sorter(collection, std::negate<>{});
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, std::negate<>{}) );
 
         collection = vec;
-        sorter(std::begin(collection), std::end(collection), std::negate<>{});
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        sorter(collection.begin(), collection.end(), std::negate<>{});
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, std::negate<>{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
         sorter(collection, std::greater<>{}, std::negate<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         collection = vec;
-        sorter(std::begin(collection), std::end(collection), std::greater<>{}, std::negate<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        sorter(collection.begin(), collection.end(), std::greater<>{}, std::negate<>{});
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }
 
@@ -74,19 +74,19 @@ TEST_CASE( "indirect_adapter with temporary span",
     SECTION( "with comparison" )
     {
         sorter(make_span(collection), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
     }
 
     SECTION( "with projection" )
     {
         sorter(make_span(collection), std::negate<>{});
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, std::negate<>{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
         sorter(make_span(collection), std::greater<>{}, std::negate<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }

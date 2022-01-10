@@ -104,7 +104,7 @@ TEST_CASE( "test correct adapter_storage behavior", "[adapter_storage]" )
         auto adapted_sorter = dummy_adapter<cppsort::selection_sorter>(original_sorter);
 
         adapted_sorter(arr);
-        CHECK( std::is_sorted(std::begin(arr), std::end(arr)) );
+        CHECK( std::is_sorted(arr.begin(), arr.end()) );
     }
 
     SECTION( "with an immutable non-empty sorter" )
@@ -113,6 +113,6 @@ TEST_CASE( "test correct adapter_storage behavior", "[adapter_storage]" )
         auto adapted_sorter = dummy_adapter<non_empty_sorter>(original_sorter);
 
         adapted_sorter(arr);
-        CHECK( std::is_sorted(std::begin(arr), std::end(arr)) );
+        CHECK( std::is_sorted(arr.begin(), arr.end()) );
     }
 }

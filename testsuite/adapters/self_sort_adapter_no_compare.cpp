@@ -83,12 +83,12 @@ TEST_CASE( "self-sortable object without comparison",
         std::vector<int> tmp; tmp.reserve(size);
         auto distribution = dist::shuffled{};
         distribution(std::back_inserter(tmp), size, 0);
-        std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
+        std::copy(tmp.begin(), tmp.end(), collection.begin());
 
         // Sort and check it's sorted
         auto res = sorter(collection);
         CHECK( res == sorter_type::self_sortable );
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "with a comparator" )
@@ -104,11 +104,11 @@ TEST_CASE( "self-sortable object without comparison",
         std::vector<int> tmp; tmp.reserve(size);
         auto distribution = dist::shuffled{};
         distribution(std::back_inserter(tmp), size, 0);
-        std::copy(std::begin(tmp), std::end(tmp), std::begin(collection));
+        std::copy(tmp.begin(), tmp.end(), collection.begin());
 
         // Sort and check it's sorted
         auto res = sorter(collection, std::less<>{});
         CHECK( res == sorter_type::dummy_sorter );
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }

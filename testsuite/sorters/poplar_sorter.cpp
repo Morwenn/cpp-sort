@@ -25,6 +25,6 @@ TEST_CASE( "poplar_sorter tests", "[poplar_sorter]" )
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
         cppsort::poplar_sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

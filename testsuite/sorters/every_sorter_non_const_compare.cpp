@@ -45,5 +45,5 @@ TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
 
     TestType sorter;
     sorter(collection, [](int& lhs, int& rhs) { return lhs < rhs; });
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

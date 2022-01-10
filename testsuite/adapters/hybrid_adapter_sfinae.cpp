@@ -100,13 +100,13 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
 
     SECTION( "with iterators" )
     {
-        sorter_type res1 = sorter(std::begin(vec1), std::end(vec1));
+        sorter_type res1 = sorter(vec1.begin(), vec1.end());
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = sorter(std::begin(vec2), std::end(vec2));
+        sorter_type res2 = sorter(vec2.begin(), vec2.end());
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = sorter(std::begin(vec3), std::end(vec3));
+        sorter_type res3 = sorter(vec3.begin(), vec3.end());
         CHECK( res3 == sorter_type::generic );
     }
 
@@ -157,13 +157,13 @@ TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
 
     SECTION( "with iterators" )
     {
-        sorter_type res1 = sorter(std::begin(vec1), std::end(vec1));
+        sorter_type res1 = sorter(vec1.begin(), vec1.end());
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = sorter(std::begin(vec2), std::end(vec2));
+        sorter_type res2 = sorter(vec2.begin(), vec2.end());
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = sorter(std::begin(vec3), std::end(vec3));
+        sorter_type res3 = sorter(vec3.begin(), vec3.end());
         CHECK( res3 == sorter_type::generic );
     }
 

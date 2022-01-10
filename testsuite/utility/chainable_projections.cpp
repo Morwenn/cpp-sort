@@ -87,7 +87,7 @@ TEST_CASE( "Pipe a projection_base several times",
     CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
     cppsort::spin_sort(vec2, projection2 | projection1 | projection2);
-    CHECK( std::is_sorted(std::begin(vec2), std::end(vec2), std::greater<>{}) );
+    CHECK( std::is_sorted(vec2.begin(), vec2.end(), std::greater<>{}) );
 }
 
 TEST_CASE( "Pipe a projection with as_projection",

@@ -69,140 +69,140 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
     SECTION( "size 2" )
     {
         std::array<wrapper, 2> collection;
-        helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
+        helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "size 3" )
     {
         std::array<wrapper, 3> collection;
-        helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
+        helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "size 4" )
     {
         std::array<wrapper, 4> collection;
-        helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
+        helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "size 5" )
     {
         std::array<wrapper, 5> collection;
-        helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
+        helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 
     SECTION( "size 6" )
     {
         std::array<wrapper, 6> collection;
-        helpers::iota(std::begin(collection), std::end(collection), -10.0, &wrapper::value);
+        helpers::iota(collection.begin(), collection.end(), -10.0, &wrapper::value);
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
 
-        std::shuffle(std::begin(collection), std::end(collection), hasard::engine());
+        std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
-        CHECK( helpers::is_sorted(std::begin(collection), std::end(collection),
+        CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 

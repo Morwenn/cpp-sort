@@ -44,7 +44,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
 
     cppsort::indirect_adapter<TestType> sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indirect_adapter]",
@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indire
 
     cppsort::indirect_adapter<TestType> sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with with indirect_adapter", "[indirect_adapter]",
@@ -84,5 +84,5 @@ TEMPLATE_TEST_CASE( "every forward sorter with with indirect_adapter", "[indirec
 
     cppsort::indirect_adapter<TestType> sorter;
     sorter(collection);
-    CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

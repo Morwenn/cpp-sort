@@ -33,7 +33,7 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         // Sort and check it's sorted
         std::size_t res = sorter{}(collection, &internal_compare<int>::compare_to);
         CHECK( res == 2080 );
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "hybrid_adapter" )
@@ -44,7 +44,7 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "indirect_adapter" )
@@ -54,7 +54,7 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "out_of_place_adapter" )
@@ -64,13 +64,13 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         std::list<internal_compare<int>> li;
         distribution(std::back_inserter(li), 65, 0);
 
         sorter{}(li, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "schwartz_adapter" )
@@ -80,7 +80,7 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to, std::negate<>{});
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
     }
 
     SECTION( "self_sort_adapter" )
@@ -90,13 +90,13 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         std::list<internal_compare<int>> li;
         distribution(std::back_inserter(li), 65, 0);
 
         sorter{}(li, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "stable_adapter<self_sort_adapter>" )
@@ -106,13 +106,13 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         std::list<internal_compare<int>> li;
         distribution(std::back_inserter(li), 65, 0);
 
         sorter{}(li, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "small_array_adapter" )
@@ -123,15 +123,15 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
 
         auto to_sort = arr;
         small_array_adapter<low_comparisons_sorter>{}(to_sort, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end()) );
 
         to_sort = arr;
         small_array_adapter<low_moves_sorter>{}(to_sort, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end()) );
 
         to_sort = arr;
         small_array_adapter<sorting_network_sorter>{}(to_sort, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(to_sort), std::end(to_sort)) );
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end()) );
     }
 
     SECTION( "stable_adapter" )
@@ -141,7 +141,7 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "verge_adapter" )
@@ -151,6 +151,6 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
         >;
 
         sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }

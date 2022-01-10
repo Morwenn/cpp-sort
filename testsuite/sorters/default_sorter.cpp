@@ -23,66 +23,66 @@ TEST_CASE( "default sorter tests", "[default_sorter]" )
     SECTION( "sort with random-access iterable" )
     {
         cppsort::sort(vec);
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
         cppsort::sort(vec, std::greater<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        cppsort::sort(std::begin(vec), std::end(vec));
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec)) );
+        cppsort::sort(vec.begin(), vec.end());
+        CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        cppsort::sort(std::begin(vec), std::end(vec), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(vec), std::end(vec), std::greater<>{}) );
+        cppsort::sort(vec.begin(), vec.end(), std::greater<>{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with bidirectional iterators" )
     {
-        std::list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        std::list<int> li(vec.begin(), vec.end());
+        cppsort::sort(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with bidirectional iterators and compare" )
     {
-        std::list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        std::list<int> li(vec.begin(), vec.end());
+        cppsort::sort(li.begin(), li.end(), std::greater<>{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with forward iterators" )
     {
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li));
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        std::forward_list<int> li(vec.begin(), vec.end());
+        cppsort::sort(li.begin(), li.end());
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with forward iterators and compare" )
     {
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
-        cppsort::sort(std::begin(li), std::end(li), std::greater<>{});
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        std::forward_list<int> li(vec.begin(), vec.end());
+        cppsort::sort(li.begin(), li.end(), std::greater<>{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with self-sortable iterable" )
     {
-        std::list<int> li(std::begin(vec), std::end(vec));
+        std::list<int> li(vec.begin(), vec.end());
         cppsort::sort(li);
-        CHECK( std::is_sorted(std::begin(li), std::end(li)) );
+        CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
     SECTION( "sort with self-sortable iterable and compare" )
     {
-        std::forward_list<int> li(std::begin(vec), std::end(vec));
+        std::forward_list<int> li(vec.begin(), vec.end());
         cppsort::sort(li, std::greater<>{});
-        CHECK( std::is_sorted(std::begin(li), std::end(li), std::greater<>{}) );
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
     }
 }

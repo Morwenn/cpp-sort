@@ -79,7 +79,7 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
         sorter_type res1 = sorter(vec);
         CHECK( res1 == sorter_type::ascending );
 
-        sorter_type res2 = sorter(std::begin(vec), std::end(vec));
+        sorter_type res2 = sorter(vec.begin(), vec.end());
         CHECK( res2 == sorter_type::ascending );
     }
 
@@ -88,7 +88,7 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
         sorter_type res1 = sorter(vec, std::less<>{});
         CHECK( res1 == sorter_type::ascending );
 
-        sorter_type res2 = sorter(std::begin(vec), std::end(vec), std::less<>{});
+        sorter_type res2 = sorter(vec.begin(), vec.end(), std::less<>{});
         CHECK( res2 == sorter_type::ascending );
     }
 
@@ -97,7 +97,7 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
         sorter_type res1 = sorter(vec, std::greater<>{});
         CHECK( res1 == sorter_type::descending );
 
-        sorter_type res2 = sorter(std::begin(vec), std::end(vec), std::greater<>{});
+        sorter_type res2 = sorter(vec.begin(), vec.end(), std::greater<>{});
         CHECK( res2 == sorter_type::descending );
     }
 
@@ -106,7 +106,7 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
         sorter_type res1 = sorter(vec, std::less_equal<>{});
         CHECK( res1 == sorter_type::generic );
 
-        sorter_type res2 = sorter(std::begin(vec), std::end(vec), std::less_equal<>{});
+        sorter_type res2 = sorter(vec.begin(), vec.end(), std::less_equal<>{});
         CHECK( res2 == sorter_type::generic );
     }
 }

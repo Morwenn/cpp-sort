@@ -27,7 +27,7 @@ TEST_CASE( "spin_sorter tests", "[spin_sorter]" )
         collection.reserve(size);
         distribution(std::back_inserter(collection), size, 0);
         cppsort::spin_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "odd number of levels" )
@@ -36,6 +36,6 @@ TEST_CASE( "spin_sorter tests", "[spin_sorter]" )
         collection.reserve(size);
         distribution(std::back_inserter(collection), size, 0);
         cppsort::spin_sort(collection);
-        CHECK( std::is_sorted(std::begin(collection), std::end(collection)) );
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }
