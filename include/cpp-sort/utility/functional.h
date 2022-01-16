@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_FUNCTIONAL_H_
@@ -114,7 +114,7 @@ namespace utility
 
             public:
 
-                as_projection_fn() = delete;
+                as_projection_fn() = default;
                 as_projection_fn(const as_projection_fn&) = default;
                 as_projection_fn(as_projection_fn&&) = default;
 
@@ -180,7 +180,7 @@ namespace utility
 
             public:
 
-                as_comparison_fn() = delete;
+                as_comparison_fn() = default;
                 as_comparison_fn(const as_comparison_fn&) = default;
                 as_comparison_fn(as_comparison_fn&&) = default;
 
