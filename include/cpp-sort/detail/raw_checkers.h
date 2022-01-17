@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_RAW_CHECKERS_H_
@@ -16,8 +16,12 @@ namespace cppsort
 {
 namespace detail
 {
+    // Raw checkers: type traits that check whether a specific type member
+    // exists within a type. Inheriting from the checker will give to the
+    // child type the same type member aliasing the same type.
+
     ////////////////////////////////////////////////////////////
-    // Raw checkers (check with the type itself)
+    // iterator_category
 
     template<typename T, typename=void>
     struct has_iterator_category:
@@ -48,6 +52,9 @@ namespace detail
         >
     {};
 
+    ////////////////////////////////////////////////////////////
+    // is_always_stable
+
     template<typename T, typename=void>
     struct has_is_always_stable:
         std::false_type
@@ -77,6 +84,18 @@ namespace detail
             Sorters...
         >
     {};
+
+    ////////////////////////////////////////////////////////////
+    // is_transparent
+
+    template<typename T, typename=void>
+    struct raw_check_is_transparent {};
+
+    template<typename T>
+    struct raw_check_is_transparent<T, void_t<typename T::is_transparent>>
+    {
+        using is_transparent = typename T::is_transparent;
+    };
 }}
 
 #endif // CPPSORT_DETAIL_RAW_CHECKERS_H_

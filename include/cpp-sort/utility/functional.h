@@ -13,6 +13,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
+#include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -106,7 +107,8 @@ namespace utility
     {
         template<typename Function>
         struct as_projection_fn:
-            projection_base
+            projection_base,
+            cppsort::detail::raw_check_is_transparent<Function>
         {
             private:
 
@@ -172,7 +174,8 @@ namespace utility
         {};
 
         template<typename Function>
-        struct as_comparison_fn
+        struct as_comparison_fn:
+            cppsort::detail::raw_check_is_transparent<Function>
         {
             private:
 
@@ -289,6 +292,8 @@ namespace utility
         {
             return std::forward<T>(value) / 2;
         }
+
+        using is_transparent = void;
     };
 
     struct log
@@ -300,6 +305,8 @@ namespace utility
             using std::log;
             return log(std::forward<T>(value));
         }
+
+        using is_transparent = void;
     };
 
     struct sqrt
@@ -311,6 +318,8 @@ namespace utility
             using std::sqrt;
             return sqrt(std::forward<T>(value));
         }
+
+        using is_transparent = void;
     };
 
     ////////////////////////////////////////////////////////////

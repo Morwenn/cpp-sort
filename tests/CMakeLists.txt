@@ -218,6 +218,7 @@ add_executable(main-tests
 
     # Utilities tests
     utility/adapter_storage.cpp
+    utility/as_comparison.cpp
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
     utility/branchless_traits.cpp

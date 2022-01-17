@@ -40,9 +40,13 @@ constexpr auto as_comparison(Function&& func)
     -> /* implementation-defined */;
 ```
 
+When the object passed to `as_comparison` or `as_projection` is a [*transparent function object*][transparent-comparator], then the object returned by those functions will also be *transparent*.
+
 *Changed in version 1.7.0:* `as_comparison` and `as_projection` accept any *Callable*.
 
 *Changed in version 1.7.0:* the object returned by `as_projection` inherits from `projection_base`.
+
+*Changed in version 1.13.0:* the objects returned by `as_comparison` and `as_projection` are now conditionally [*transparent*][transparent-comparator].
 
 ### `as_function`
 
@@ -155,6 +159,8 @@ This header also provides additional function objects implementing basic unary o
 * `log`: returns the base 10 logarithm of the passed value.
 * `sqrt`: returns the square root of the passed value.
 
+All of those function objects can double as projections are are [*transparent  function objects*][transparent-comparator].
+
 Since C++17, the following utility is also available when some level of micro-optimization is needed:
 
 ```cpp
@@ -183,6 +189,8 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 *New in version 1.7.0:* `projection_base` and chainable projections.
 
 *Changed in version 1.9.0:* `std::identity` is now also supported wherever the library has special behavior for `utility::identity`.
+
+*Changed in version 1.13.0:* `half`, `log` and `sqrt` are now [*transparent function objects*][transparent-comparator].
 
 ### `iter_move` and `iter_swap`
 
@@ -345,3 +353,4 @@ You can read more about this instantiation pattern in [this article][eric-nieble
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-size]: https://en.cppreference.com/w/cpp/iterator/size
+  [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
