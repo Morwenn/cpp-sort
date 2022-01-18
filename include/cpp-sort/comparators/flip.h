@@ -33,6 +33,8 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Construction
 
+            flip_t() = default;
+
             explicit constexpr flip_t(const F& func):
                 func(func)
             {}

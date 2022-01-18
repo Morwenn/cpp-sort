@@ -32,6 +32,8 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Construction
 
+            not_fn_t() = default;
+
             explicit constexpr not_fn_t(const F& func):
                 func(func)
             {}
