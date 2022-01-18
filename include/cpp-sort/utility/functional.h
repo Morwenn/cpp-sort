@@ -31,7 +31,8 @@ namespace utility
     {
         template<typename T, typename U>
         struct projection_base_pipe_result:
-            projection_base
+            projection_base,
+            cppsort::detail::raw_check_is_transparent<T, U>
         {
             T lhs;
             U rhs;

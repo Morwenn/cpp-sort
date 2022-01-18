@@ -13,8 +13,8 @@ TEST_CASE( "is_transparent over as_projection", "[utility][as_projection][is_tra
     using cmp1 = cppsort::utility::detail::as_comparison_fn<std::less<is_transparent_helper_stored>>;
     using cmp2 = cppsort::utility::detail::as_comparison_fn<std::less<>>;
 
-    STATIC_CHECK_FALSE( has_is_transparent_v<cmp1> );
-    STATIC_CHECK( has_is_transparent_v<cmp2> );
+    STATIC_CHECK_FALSE( cppsort::detail::has_is_transparent_v<cmp1> );
+    STATIC_CHECK( cppsort::detail::has_is_transparent_v<cmp2> );
 
     std::map<is_transparent_helper_stored, int, cmp1> mapping1 = {
         {1, 1},

@@ -89,13 +89,33 @@ namespace detail
     // is_transparent
 
     template<typename T, typename=void>
-    struct raw_check_is_transparent {};
+    struct has_is_transparent:
+        std::false_type
+    {};
 
     template<typename T>
-    struct raw_check_is_transparent<T, void_t<typename T::is_transparent>>
+    struct has_is_transparent<T, void_t<typename T::is_transparent>>:
+        std::true_type
+    {};
+
+    template<typename T>
+    constexpr bool has_is_transparent_v = has_is_transparent<remove_cvref_t<T>>::value;
+
+    template<bool>
+    struct raw_check_is_transparent_impl {};
+
+    template<>
+    struct raw_check_is_transparent_impl<true>
     {
-        using is_transparent = typename T::is_transparent;
+        using is_transparent = void;
     };
+
+    template<typename... TT>
+    struct raw_check_is_transparent:
+        raw_check_is_transparent_impl<
+            all(has_is_transparent<TT>::value...)
+        >
+    {};
 }}
 
 #endif // CPPSORT_DETAIL_RAW_CHECKERS_H_
