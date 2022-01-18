@@ -8,7 +8,7 @@
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/is_transparent.h>
 
-TEST_CASE( "is_transparent over as_projection", "[utility][as_projection][is_transparent]" )
+TEST_CASE( "is_transparent over as_projection", "[utility][comparison][is_transparent]" )
 {
     using cmp1 = cppsort::utility::detail::as_comparison_fn<std::less<is_transparent_helper_stored>>;
     using cmp2 = cppsort::utility::detail::as_comparison_fn<std::less<>>;

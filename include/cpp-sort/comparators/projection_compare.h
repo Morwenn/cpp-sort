@@ -14,12 +14,14 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/config.h"
+#include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
 {
     template<typename Compare, typename Projection>
-    class projection_compare
+    class projection_compare:
+        public detail::raw_check_is_transparent<Compare, Projection>
     {
         private:
 
@@ -32,6 +34,8 @@ namespace cppsort
             std::tuple<compare_t, projection_t> data;
 
         public:
+
+            projection_compare() = default;
 
             projection_compare(Compare compare, Projection projection):
                 data(utility::as_function(compare), utility::as_function(projection))
@@ -58,8 +62,6 @@ namespace cppsort
                 return std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
                                          std::get<1>(data)(std::forward<U>(rhs)));
             }
-
-            using is_transparent = void;
     };
 
     ////////////////////////////////////////////////////////////

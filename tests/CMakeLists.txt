@@ -152,6 +152,7 @@ add_executable(main-tests
     comparators/case_insensitive_less.cpp
     comparators/flip_not.cpp
     comparators/natural_less.cpp
+    comparators/projection_compare.cpp
     comparators/total_less.cpp
     comparators/transparent_comparators.cpp
 

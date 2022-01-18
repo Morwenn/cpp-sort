@@ -88,6 +88,8 @@ constexpr auto base() const
 
 The class template `projection_compare` can be used to embed a comparison and a projection in a single comparison object, allowing to provide projection support to algorithms that only support comparisons, such as standard library algorithms prior to C++20. Both the passed comparison and projection functions can be [*Callable*][callable].
 
+`projection_compare` is [*transparent*][transparent-comparator] when the passed comparison and projection are both *transparent*.
+
 It is accompanied by a `make_projection_compare` function template to avoid having to pass the template parameters by hand.
 
 **Example:**
@@ -114,4 +116,5 @@ std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::gr
   [flip-prelude]: https://hackage.haskell.org/package/base-4.16.0.0/docs/Prelude.html#v:flip
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-not-fn]: https://en.cppreference.com/w/cpp/utility/functional/not_fn
+  [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
   [utility-identity]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
