@@ -44,7 +44,9 @@ constexpr auto base() const
 * When given `flip_t<F>`, it returns `F`.
 * When given `not_fn_t<flip_t<F>>`, it returns `not_fn_t<F>`.
 
-`flip_t` is considered [branchless][branchless-traits] when the *Callable* it wraps is considered branchless.
+`flip_t<F>` is [*transparent*][transparent-comparator] when `F` is *transparent*.
+
+`flip_t<F>` is considered [branchless][branchless-traits] when `F` is considered branchless.
 
 *New in version 1.13.0*
 
@@ -77,6 +79,8 @@ constexpr auto base() const
 `cppsort::not_fn` takes a *Callable* of type `F` and returns an instance of `not_fn_t<std::decay_t<F>>` except in the following cases:
 * When given `not_fn_t<F>`, it returns `F`.
 * When given `flip_t<not_fn_t<F>>`, it returns `flip_t<F>`.
+
+`not_fn_t<F>` is [*transparent*][transparent-comparator] when `F` is *transparent*.
 
 *New in version 1.13.0*
 

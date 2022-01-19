@@ -12,6 +12,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
+#include "../detail/raw_checkers.h"
 
 namespace cppsort
 {
@@ -22,7 +23,8 @@ namespace cppsort
     // flip_t
 
     template<typename F>
-    struct flip_t
+    struct flip_t:
+        detail::raw_check_is_transparent<F>
     {
         private:
 

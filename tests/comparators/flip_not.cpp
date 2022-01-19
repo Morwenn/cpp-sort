@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
+#include <map>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/comparators/not_fn.h>
+#include <testing-tools/is_transparent.h>
 
 TEST_CASE( "flip", "[comparison]" )
 {
@@ -78,4 +80,50 @@ TEST_CASE( "mixed flip and not_fn", "[comparison]" )
         STATIC_CHECK( cmp(2, 1) );
         STATIC_CHECK( cmp(2, 2) );
     }
+}
+
+TEST_CASE( "is_transparent over flip", "[comparison][is_transparent]" )
+{
+    using cmp1 = cppsort::flip_t<std::less<is_transparent_helper_stored>>;
+    using cmp2 = cppsort::flip_t<std::less<>>;
+
+    STATIC_CHECK_FALSE( cppsort::detail::has_is_transparent_v<cmp1> );
+    STATIC_CHECK( cppsort::detail::has_is_transparent_v<cmp2> );
+
+    std::map<is_transparent_helper_stored, int, cmp1> mapping1 = {
+        {1, 1},
+        {2, 2},
+        {3, 3},
+    };
+    CHECK_THROWS( mapping1.find(is_transparent_helper_compared(2)) );
+
+    std::map<is_transparent_helper_stored, int, cmp2> mapping2 = {
+        {1, 1},
+        {2, 2},
+        {3, 3},
+    };
+    CHECK_NOTHROW( mapping2.find(is_transparent_helper_compared(2)) );
+}
+
+TEST_CASE( "is_transparent over not_fn", "[comparison][is_transparent]" )
+{
+    using cmp1 = cppsort::not_fn_t<std::less<is_transparent_helper_stored>>;
+    using cmp2 = cppsort::not_fn_t<std::less<>>;
+
+    STATIC_CHECK_FALSE( cppsort::detail::has_is_transparent_v<cmp1> );
+    STATIC_CHECK( cppsort::detail::has_is_transparent_v<cmp2> );
+
+    std::map<is_transparent_helper_stored, int, cmp1> mapping1 = {
+        {1, 1},
+        {2, 2},
+        {3, 3},
+    };
+    CHECK_THROWS( mapping1.find(is_transparent_helper_compared(2)) );
+
+    std::map<is_transparent_helper_stored, int, cmp2> mapping2 = {
+        {1, 1},
+        {2, 2},
+        {3, 3},
+    };
+    CHECK_NOTHROW( mapping2.find(is_transparent_helper_compared(2)) );
 }

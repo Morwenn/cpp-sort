@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "../detail/raw_checkers.h"
 
 namespace cppsort
 {
@@ -21,7 +22,8 @@ namespace cppsort
     // not_fn_t
 
     template<typename F>
-    struct not_fn_t
+    struct not_fn_t:
+        detail::raw_check_is_transparent<F>
     {
         private:
 
