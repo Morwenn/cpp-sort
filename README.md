@@ -202,17 +202,9 @@ slightly modified version of Matthew Bentley's [indiesort](https://github.com/ma
 comes from Danila Kutenin's [miniselect library](https://github.com/danlark1/miniselect) and uses
 Andrei Alexandrescu's [*AdaptiveQuickselect*](https://arxiv.org/abs/1606.00484) algorithm.
 
-* The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
-Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
-
-* The algorithm 17 used by `sorting_network_sorter` correspond to the ones found by
-Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
-Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam and Miikkulainen.
-
-* The algorithms 18 to 26 and 28 used by `sorting_network_sorter` have been found and
-proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
-Huge thanks for this contribution :) You can find a full list of most well-known sorting
-networks up to 32 inputs on his website.
+* The sorting networks used by `sorting_network_sorter` all come [from this list](http://users.telenet.be/bertdobbelaere/SorterHunter/sorting_networks.html)
+maintained by Bert Dobbelaere. The page has references to the sources of all of the sorting networks
+it lists.
 
 * Some of the optimizations used by `sorting_network_sorter` come from [this
 discussion](https://stackoverflow.com/q/2786899/1364752) on StackOverflow and are
