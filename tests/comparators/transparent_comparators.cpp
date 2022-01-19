@@ -96,7 +96,8 @@ namespace
     }
 }
 
-TEST_CASE( "Check that comparators work as transparent comparators", "[comparison]" )
+TEST_CASE( "Check that comparators work as transparent comparators",
+           "[comparison][is_transparent]" )
 {
     using namespace std::string_literals;
 
