@@ -1,4 +1,4 @@
-Most sorting algorithms in **cpp-sort** accept comparison and/or projection parameters. The library therefore considers these kinds of functions to be first-class citizens too and provides dedicated [[comparators|Comparators]], [[comparator adapters|Comparator adapters]] projections and tools to combine them and to solve common problems in the domain.
+Most sorting algorithms in **cpp-sort** accept comparison and/or projection parameters. The library therefore considers these kinds of functions to be first-class citizens too and provides dedicated [comparators][comparators], [comparator adapters][comparator-adapters] projections and tools to combine them and to solve common problems in the domain.
 
 All the functions and classes in **cpp-sort** that take comparison or projection functions as parameters expect [*Callable*][callable] parameters, which correspond to anything that can be used as the first parameter of [`std::invoke`][std-invoke]. This allows to pass entities such as pointers to members or pointer to member functions to the sorting algorithms; it should work out-of-the-box without any wrapping needed on the user side.
 
@@ -28,14 +28,16 @@ This additional guarantee is allowed by the resolution of [LWG3031][lwg3031]. Ho
 *New in version 1.7.0*
 
 
-  [as-comparison-as-projection]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_comparison-and-as_projection
-  [as-function]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function
-  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
+  [as-comparison-as-projection]: Miscellaneous-utilities.md#as_comparison-and-as_projection
+  [as-function]: Miscellaneous-utilities.md#as_function
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
+  [comparator-adapters]: Comparator-adapters.md
+  [comparators]: Comparators.md
   [lwg3031]: https://wg21.link/LWG3031
-  [misc-function-objects]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
+  [misc-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-set-find]: https://en.cppreference.com/w/cpp/container/set/find
   [std-set-lower-bound]: https://en.cppreference.com/w/cpp/container/set/lower_bound
-  [utilities]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities
+  [utilities]: Miscellaneous-utilities.md

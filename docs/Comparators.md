@@ -1,4 +1,4 @@
-The comparators described below can be used as needed with [[*sorters*|Sorters]] and [[*sorter adapters*|Sorter adapters]] that accept comparisons. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
+The comparators described below can be used as needed with [*sorters*][sorters] and [*sorter adapters*][sorter-adapters] that accept comparisons. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
 
 Every non-refined comparator described below is also a [transparent comparator][transparent-comparator]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
 
@@ -112,7 +112,7 @@ The two-parameter version of the customization point calls the three-parameter o
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate
-  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [case-sensitivity]: https://en.wikipedia.org/wiki/Case_sensitivity
   [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler%20-%20Lawrence%20Crowl%20-%20CppCon%202015
@@ -120,7 +120,9 @@ The two-parameter version of the customization point calls the three-parameter o
   [natural-sort]: https://en.wikipedia.org/wiki/Natural_sort_order
   [P0100]: http://open-std.org/JTC1/SC22/WG21/docs/papers/2015/p0100r1.html
   [partial-order]: https://en.wikipedia.org/wiki/Partially_ordered_set#Formal_definition
-  [refining]: https://github.com/Morwenn/cpp-sort/wiki/Refined-functions
+  [refining]: Refined-functions.md
+  [sorter-adapters]: Sorter-adapters.md
+  [sorters]: Sorters.md
   [std-is-arithmetic]: https://en.cppreference.com/w/cpp/types/is_arithmetic
   [std-is-digit]: https://en.cppreference.com/w/cpp/string/byte/isdigit
   [std-is-integral]: https://en.cppreference.com/w/cpp/types/is_integral

@@ -6,7 +6,7 @@ The following utilities are available in the directory `cpp-sort/utility` and li
 #include <cpp-sort/utility/adapter_storage.h>
 ```
 
-`adapter_storage` is a wrapper type meant to be used to store a *sorter* in the internals of [[*sorter adapter*|Sorter adapters]] which adapts a single [[*sorter*|Sorters]]. One of its goal is to remain an empty type when possible in order to play nice with the parts of the libraries that allow to cast empty sorters to function pointers. It provides three different operations:
+`adapter_storage` is a wrapper type meant to be used to store a *sorter* in the internals of [*sorter adapter*][sorter-adapters] which adapts a single [*sorter*][sorters]. One of its goal is to remain an empty type when possible in order to play nice with the parts of the libraries that allow to cast empty sorters to function pointers. It provides three different operations:
 * *Construction:* it is constructed with a copy of the wrapped sorter which it stores in its internals. If `Sorter` is empty and default-constructible, then `adapter_storage<Sorter>` is also empty and default-constructible.
 * *Sorter access:* a `get()` member function returns a reference to the wrapped sorter with `const` and reference qualifications matching those of the `adapter_storage` instance. If `Sorter` is empty and default-constructible, then `get()` returns a default-constructed instance of `Sorter` instead.
 * *Invocation:* it has a `const`-qualified `operator()` which forwards its parameter to the corresponding operator in the wrapped `Sorter` (or in a default-constructed instance of `Sorter`) and returns its result.
@@ -28,7 +28,7 @@ The usual way to use it when implementing a *sorter adapter* is to make said ada
 
 When given a [*Callable*][callable] that satisfies both the comparison and projection concepts, every sorter in **cpp-sort** considers that it is a comparison function (unless it is a projection-only sorter, in which case the function is considered to be a projection). To make such ambiguous callables usable as projections, the utility function `as_projection` is provided, which wraps a function and exposes only its unary overload. A similar `as_comparison` function is also provided in case one needs to explicitly expose the binary overload of a function.
 
-The result of `as_projection` also inherits from `projection_base`, which makes it usable to [[compose projections|Chainable projections]] with `operator|`.
+The result of `as_projection` also inherits from `projection_base`, which makes it usable to [compose projections][chainable-projections] with `operator|`.
 
 ```cpp
 template<typename Function>
@@ -62,7 +62,7 @@ To be more specific, `as_function` returns the passed object as is if it is alre
 struct wrapper { int foo; };
 // func is a function taking an instance of wrapper
 // and returning the value of its member foo
-auto&& func = utility::as_function(&wrapper::foo);
+auto&& func = cppsort::utility::as_function(&wrapper::foo);
 ```
 
 ### Branchless traits
@@ -136,7 +136,7 @@ This buffer provider allocates on the heap a number of elements depending on a g
 
 ***WARNING:** `utility::identity` is removed in version 2.0.0, use `std::identity` instead.*
 
-This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [[Chainable projections]] for more information.
+This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
 
 Also available in this header, the struct `identity` is a function object that can type any value of any movable type and return it as is. It is used as a default for every projection parameter in the library so that sorters view the values as they are by default, without a modification.
 
@@ -263,7 +263,7 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/sorting_network.h>
 ```
 
-Some of the library's *fixed-size sorters* implement [sorting networks][sorting-network]. It is a subdomain of sorting that has seen extensive research and there is no way all of the interesting bits could be provided as mere sorters; therefore the following tools are provided specifically to experiment with sorting networks, and with comparator networks more generally.
+Some of the library's [*fixed-size sorters*][fixed-size-sorters] implement [sorting networks][sorting-network]. It is a subdomain of sorting that has seen extensive research and there is no way all of the interesting bits could be provided as mere sorters; therefore the following tools are provided specifically to experiment with sorting networks, and with comparator networks more generally.
 
 All comparator networks execute a fixed sequence of compare-exchanges, operations that compare two elements and exchange them if they are out-of-order. The following `index_pair` class template represents a pair of indices meant to contain the indices used to perform a compare-exchange operation:
 
@@ -329,13 +329,17 @@ namespace
 You can read more about this instantiation pattern in [this article][eric-niebler-static-const] by Eric Niebler.
 
 
+  [chainable-projections]: Chainable-projections.md
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo
   [eric-niebler-static-const]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
+  [fixed-size-sorters]: Fixed-size-sorters.md
   [inline-variables]: https://en.cppreference.com/w/cpp/language/inline
   [p0022]: https://wg21.link/P0022
-  [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
+  [pdq-sorter]: Sorters.md#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3
+  [sorter-adapters]: Sorter-adapters.md
+  [sorters]: Sorters.md
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
   [std-bad-alloc]: https://en.cppreference.com/w/cpp/memory/new/bad_alloc

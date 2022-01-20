@@ -29,7 +29,7 @@ The graph below shows the partial ordering of several measures of presortedness:
 - *m₀* is a measure of presortedness that always returns 0.
 - *m₀₁* is a measure of presortedness that returns 0 when *X* is sorted and 1 otherwise.
 
-![Partial ordering of measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/images/mops-partial-ordering.png)
+![Partial ordering of measures of presortedness](images/mops-partial-ordering.png)
 
 This graph is a modified version of the one in *A framework for adaptive sorting* by O. Petersson and A. Moffat. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Max*, *Osc* and *SUS*).
 
@@ -323,6 +323,6 @@ T. Altman and Y. Igarashi mention the concept of *k*-sortedness and the measure 
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [neatsort]: https://arxiv.org/pdf/1407.6183.pdf
-  [original-research]: https://github.com/Morwenn/cpp-sort/wiki/Original-research#partial-ordering-of-mono
-  [probe-dis]: https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#dis
+  [original-research]: Original-research.md#partial-ordering-of-mono
+  [probe-dis]: Measures-of-presortedness.md#dis
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf

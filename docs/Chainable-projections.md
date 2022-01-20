@@ -32,6 +32,6 @@ If both of the projections composed with `operator|` are [*transparent*][transpa
 *Changed in version 1.13.0:* the object returned by `operator|` is now conditionally [*transparent*][transparent-comparator].
 
 
-  [as_projection]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_comparison-and-as_projection
+  [as_projection]: Miscellaneous-utilities.md#as_comparison-and-as_projection
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752

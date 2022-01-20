@@ -58,7 +58,7 @@ The following 24 inputs network uses the technique described in the previous sec
 
 The resulting network has 123 compare-exchanges and a depth of 18. The 12-12 merging network has 45 compare-exchanges, which is equivalent to a 12-12 odd-even merge.
 
-![Sorting network 24](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-24.png)
+![Sorting network 24](images/sorting-network-24.png)
 
     [[0, 1],[2, 3],[4, 5],[6, 7],[8, 9],[10, 11],[12, 13],[14, 15],[16, 17],[18, 19],[20, 21],[22, 23]]
     [[1, 3],[5, 7],[9, 11],[0, 2],[4, 6],[8, 10],[13, 15],[17, 19],[21, 23],[12, 14],[16, 18],[20, 22]]
@@ -81,7 +81,7 @@ The resulting network has 123 compare-exchanges and a depth of 18. The 12-12 mer
 
 Removing the first or the last line of the network yields the following 23-sorter with 118 compare-exchanges and a depth of 18.
 
-![Sorting network 23](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-23.png)
+![Sorting network 23](images/sorting-network-23.png)
 
     [[0, 1],[2, 3],[4, 5],[6, 7],[8, 9],[10, 11],[12, 13],[14, 15],[16, 17],[18, 19],[20, 21]]
     [[1, 3],[5, 7],[9, 11],[0, 2],[4, 6],[8, 10],[13, 15],[17, 19],[12, 14],[16, 18],[20, 22]]
@@ -116,7 +116,7 @@ That said, even though I have been unable to find a 29-input sorting network wit
 
 The paper does not mention a better result than 166 CEs for the 29-input sorting networks, but that's only because our solution relies on a 13-input sorting networks that uses 45 CEs, while the best known such network in 1971 used 46 CEs. I couldn't find any resource using the technique to improve the 29-input sorting network since then, even though some of them mention a 156-CE 28-input sorting network that has apparently only been described in the aforementioned paper.
 
-![Sorting network 29](https://github.com/Morwenn/cpp-sort/wiki/images/sorting-network-29.png)
+![Sorting network 29](images/sorting-network-29.png)
 
     [[0, 1],[2, 3],[4, 5],[6, 7],[8, 9],[10, 11],[12, 13],[14, 15],[17, 23],[25, 27]]
     [[0, 2],[4, 6],[8, 10],[12, 14],[19, 20],[21, 24]]
@@ -229,7 +229,7 @@ The following relations have yet to be analyzed:
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [divide-sort-merge-strategy]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
   [exact-sort]: https://www.geocities.ws/p356spt/
-  [indirect-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter
+  [indirect-adapter]: Sorter-adapters.md#indirect_adapter
   [morwenn-gist]: https://gist.github.com/Morwenn
   [mountain_sort]: https://github.com/Morwenn/mountain-sort
   [poplar-heap]: https://github.com/Morwenn/poplar-heap

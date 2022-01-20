@@ -115,10 +115,10 @@ std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::gr
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate
-  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
-  [flip-prelude]: https://hackage.haskell.org/package/base-4.16.0.0/docs/Prelude.html#v:flip
+  [prelude-flip]: https://hackage.haskell.org/package/base-4.16.0.0/docs/Prelude.html#v:flip
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-not-fn]: https://en.cppreference.com/w/cpp/utility/functional/not_fn
   [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
-  [utility-identity]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
+  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects

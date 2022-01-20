@@ -46,7 +46,7 @@ Some of those options also exist without the `CPPSORT_` prefix, but they are dep
 
 *Changed in version 1.7.0:* if a suitable Catch2 version is found on the system, it will be used.
 
-*Changed in version 1.13.0 (BREAKING):* cpp-sort now requires Catch2 version 3.0.0-preview4 instead of 2.6.0.
+*Changed in version 1.13.0:* cpp-sort now requires Catch2 version 3.0.0-preview4 instead of 2.6.0.
 
 ## Conan
 

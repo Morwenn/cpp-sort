@@ -201,4 +201,4 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-result-of]: https://en.cppreference.com/w/cpp/types/result_of
-  [utility-identity]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
+  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects

@@ -1,4 +1,4 @@
-Sorter adapters are the main reason for using sorter function objects instead of regular functions. A *sorter adapter* is a class template that takes another `Sorter` template parameter and alters its behavior. The resulting class can be used as a regular sorter, and be adapted in turn. Note that some of the adapters are actually *[[fixed-size sorter|Fixed-size sorters]] adapters* instead of regular *sorter adapters*. It is possible to include all of the available adapters at once with the following directive:
+Sorter adapters are the main reason for using sorter function objects instead of regular functions. A *sorter adapter* is a class template that takes another `Sorter` template parameter and alters its behavior. The resulting class can be used as a regular sorter, and be adapted in turn. Note that some of the adapters are actually *[fixed-size sorter][fixed-size-sorters] adapters* instead of regular *sorter adapters*. It is possible to include all of the available adapters at once with the following directive:
 
 ```cpp
 #include <cpp-sort/adapters.h>
@@ -191,7 +191,7 @@ Since it is impossible to guarantee the stability of the `sort` method of a give
 #include <cpp-sort/adapters/small_array_adapter.h>
 ```
 
-This adapter is not a regular sorter adapter, but a *fixed-size sorter adapter*. It wraps a [fixed-size sorter][fixed-size-sorter] and calls it whenever it is passed a fixed-size C array or an `std::array` with an appropriate size.
+This adapter is not a regular sorter adapter, but a *fixed-size sorter adapter*. It wraps a [fixed-size sorter][fixed-size-sorters] and calls it whenever it is passed a fixed-size C array or an `std::array` with an appropriate size.
 
 ```cpp
 template<
@@ -258,7 +258,7 @@ Specializations of `stable_adapter` must provide an `is_always_stable` member ty
 
 The main `stable_adapter` template uses [`is_stable`][is-stable] when called to check whether the *adapted sorter* produces a stable sorter when called with a given set of parameters. If the call is already stable then th *adapted sorter* is used directly otherwise `make_stable` is used to artificially turn it into a stable sort.
 
-![Visual explanation of what stable_adapter does](https://github.com/Morwenn/cpp-sort/wiki/images/stable_adapter.png)
+![Visual explanation of what stable_adapter does](images/stable_adapter.png)
 
 ```cpp
 template<typename Sorter>
@@ -273,7 +273,7 @@ using stable_t = /* implementation-defined */;
 
 This little dance sometimes allows to reduce the nesting of function calls and to get better error messages in some places (it notably unwraps nested top-level `stable_adapter`). As such `stable_t` is generally a better alternative to `stable_adapter` from a consumer point of view.
 
-![Visual explanation of what stable_t aliases](https://github.com/Morwenn/cpp-sort/wiki/images/stable_t.png)
+![Visual explanation of what stable_t aliases](images/stable_t.png)
 
 *New in version 1.9.0:* `stable_t` and `stable_adapter<Sorter>::type`
 
@@ -299,23 +299,23 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
 
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
-  [default-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#default_sorter
-  [fixed-size-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters
-  [fixed-sorter-traits]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits
-  [hybrid-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter
-  [is-always-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_always_stable
-  [is-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_stable
+  [default-sorter]: Sorters.md#default_sorter
+  [fixed-size-sorters]: Fixed-size-sorters.md
+  [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
+  [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
+  [is-always-stable]: Sorter-traits.md#is_always_stable
+  [is-stable]: Sorter-traits.md#is_stable
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
-  [low-moves-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters#low_moves_sorter
+  [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
-  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter-make_stable-and-stable_t
-  [self-sort-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter
+  [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
+  [self-sort-adapter]: Sorter-adapters.md#self_sort_adapter
   [std-index-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
-  [std-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#std_sorter
+  [std-sorter]: Sorters.md#std_sorter
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
   [std-true-type]: https://en.cppreference.com/w/cpp/types/integral_constant
-  [verge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#verge_adapter
-  [verge-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#verge_sorter
+  [verge-adapter]: Sorter-adapters.md#verge_adapter
+  [verge-sorter]: Sorters.md#verge_sorter
   [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/master/fallbacks.md
