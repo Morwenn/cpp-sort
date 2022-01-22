@@ -6,17 +6,17 @@
             cppsort::utility::fixed_buffer<512>
         >;
 
-* *Comparison function*: most of the sorting algorithms in the library are comparison sorts. It means that the algorithm uses a comparison function to know the order of the elements and sort them accordingly; such a comparison function shall take two values and have a return type convertible to `bool`. The available sorting algorithms transform comparison functions on the fly so that some pointers to member functions can also be used as comparison functions, as if called with [`std::invoke`](https://en.cppreference.com/w/cpp/utility/functional/invoke). The default comparison function used by the sorting algorithms is [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void). Many sorters can take a comparison function as an additional parameter. For example, using `std::greater<>` instead of the default comparison function would sort a collection in descending order.
+* *Comparison function*: most of the sorting algorithms in the library are comparison sorts. It means that the algorithm uses a comparison function to know the order of the elements and sort them accordingly; such a comparison function shall take two values and have a return type convertible to `bool`. The available sorting algorithms transform comparison functions on the fly so that some pointers to member functions can also be used as comparison functions, as if called with [`std::invoke`][std-invoke]. The default comparison function used by the sorting algorithms is [`std::less<>`][std-less-void]. Many sorters can take a comparison function as an additional parameter. For example, using `std::greater<>` instead of the default comparison function would sort a collection in descending order.
 
         cppsort::heap_sort(collection, std::greater<>{});
 
-    Some algorithms don't accept such an additional parameter. It may be because they implement a non-comparison sort instead, a sorting algorithm that uses other properties of the elements to perform the sort rather than a comparison function (for example a [radix sort](https://en.wikipedia.org/wiki/Radix_sort)).
+    Some algorithms don't accept such an additional parameter. It may be because they implement a non-comparison sort instead, a sorting algorithm that uses other properties of the elements to perform the sort rather than a comparison function (for example a [radix sort][radix-sort]).
 
-    The library provides a set of additional [comparators](Comparators.md) generally corresponding to common ways to compare common types.
+    The library provides a set of additional [comparators][comparators] generally corresponding to common ways to compare common types.
 
 * *Fixed-size sorter*: [fixed-size sorters][fixed-size-sorters] are a special breed of sorters designed to sort a fixed number of values. While they try their best to be full-fledge sorters, they are definitely not full-fledge sorters and probably don't blend as well as one would like into the library. Their main advantage is that they can be more performant than regular sorters in some specific scenarios.
 
-* *Iterator category*: the C++ standard defines [several categories of iterators](https://en.cppreference.com/w/cpp/iterator) such as forward iterators, bidirectional iterators or random-access iterators. The standard library uses [iterator tags](https://en.cppreference.com/w/cpp/iterator/iterator_tags) to document the category of an iterator. These categories are important since algorithms are designed to work with some categories of iterators and not with other categories, and those in this library are not different: in-place sorting needs at least forward iterators. You can use the [`iterator_category`](Sorter-traits.md#iterator_category) sorter trait to get the least constrained iterator category associated with a sorter.
+* *Iterator category*: the C++ standard defines [several categories of iterators][iterator-categories] such as forward iterators, bidirectional iterators or random-access iterators. The standard library uses [iterator tags][iterator-tags] to document the category of an iterator. These categories are important since algorithms are designed to work with some categories of iterators and not with other categories, and those in this library are not different: in-place sorting needs at least forward iterators. You can use the [`iterator_category`][iterator-category] sorter trait to get the least constrained iterator category associated with a sorter.
 
         using category = cppsort::iterator_category<cppsort::merge_sorter>;
 
@@ -26,7 +26,7 @@
 
         auto max_inversion = cppsort::probe::dis(collection);
 
-* *Projection*: some sorters accept a projection as an additional parameter. A projection is a unary function that allows to "view" the values of a collection differently. For example it may allow to sort a collection of values on a specific field. The available sorting algorithms transform projections on the fly so that pointers to member data can also be used as projections. Projections were pioneered by the [Adobe Source Libraries](https://stlab.adobe.com/) and appear in the C++20 [constrained algorithms](https://en.cppreference.com/w/cpp/algorithm/ranges).
+* *Projection*: some sorters accept a projection as an additional parameter. A projection is a unary function that allows to "view" the values of a collection differently. For example it may allow to sort a collection of values on a specific field. The available sorting algorithms transform projections on the fly so that pointers to member data can also be used as projections. Projections were pioneered by the [Adobe Source Libraries][stlab] and appear in the C++20 [constrained algorithms][std-ranges].
 
         struct wrapper { int value; };
         std::vector<wrapper> collection = { /* ... */ };
@@ -34,7 +34,7 @@
 
     Every *comparison sorter* is also a *projection sorter*, but there are also projection-only sorters, such as  [`spread_sorter`][spread-sorter].
 
-* *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however there are [standard proposals](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0022r1.html) to solve the problem by introducing a function named `iter_move` and making it as well as `iter_swap` customization points. No proposal has been accepted yet, so standard libraries don't handle proxy iterators; however every sorter in **cpp-sort** can actually handle such iterators (except `std_sorter` and `std_stable_sorter`). The library exposes the functions [`utility::iter_move` and `utility::iter_swap`](Miscellaneous-utilities.md#iter_move-and-iter_swap) in case you also need to make your own algorithms handle proxy iterators.
+* *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however there are [standard proposals][p0022] to solve the problem by introducing a function named `iter_move` and making it as well as `iter_swap` customization points. No proposal has been accepted yet, so standard libraries don't handle proxy iterators; however every sorter in **cpp-sort** can actually handle such iterators (except `std_sorter` and `std_stable_sorter`). The library exposes the functions [`utility::iter_move` and `utility::iter_swap`][utility-iter-move] in case you also need to make your own algorithms handle proxy iterators.
 
 * *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions.
 
@@ -43,11 +43,11 @@
 
 * *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section in the documentation.
 
-* *Stability*: a sorting algorithm is *stable* if it preserves the relative order of equivalent elements. While it does not matter when the equivalence relationship is also an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`](Sorter-traits.md#is_always_stable) sorter trait.
+* *Stability*: a sorting algorithm is *stable* if it preserves the relative order of equivalent elements. While it does not matter when the equivalence relationship is also an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`][is-always-stable] sorter trait.
 
         using stability = cppsort::is_stable<cppsort::tim_sorter>;
 
-    It is possible have have more fine-grained information about the stability of a sorter with the [`is_stable`](Sorter-traits.md#is_stable) type trait, which tells whether a sorter is stable when called with a specific set of parameters.
+    It is possible have have more fine-grained information about the stability of a sorter with the [`is_stable`][is-stable] type trait, which tells whether a sorter is stable when called with a specific set of parameters.
 
         using sorter = cppsort::self_sort_adapter<cppsort::verge_sorter>;
         using stability1 = cppsort::is_stable<sorter(std::list<int>&)>; // stable
@@ -62,9 +62,22 @@
 * *Type-specific sorter*: some non-comparison sorters such as the [`spread_sorter`][spread-sorter] implement specific sorting algorithms which only work with some specific types (for example integers or strings).
 
 
+  [comparators]: Comparators.md
   [fixed-size-sorters]: Fixed-size-sorters.md
+  [is-always-stable]: Sorter-traits.md#is_always_stable
+  [is-stable]: Sorter-traits.md#is_stable
+  [iterator-categories]: https://en.cppreference.com/w/cpp/iterator
+  [iterator-category]: Sorter-traits.md#iterator_category
+  [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [measures-of-presortedness]: Measures-of-presortedness.md
+  [p0022]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0022r1.html
+  [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
   [sorter-adapters]: Sorter-adapters.md
   [sorters]: Sorters.md
   [spread-sorter]: Sorters.md#spread_sorter
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
+  [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
+  [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-ranges]: https://en.cppreference.com/w/cpp/algorithm/ranges
+  [stlab]: https://stlab.adobe.com/
+  [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap

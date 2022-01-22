@@ -99,6 +99,7 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [feature-test-macros]: https://wg21.link/SD6
   [pdq-sorter]: Sorters.md#pdq_sorter
   [ska-sorter]: Sorters.md#ska_sorter
+  [smooth-sorter]: Sorters.md#smooth-sorter_sorter
   [sorter-facade]: Sorter-facade.md
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity

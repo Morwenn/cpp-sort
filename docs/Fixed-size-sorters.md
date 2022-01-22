@@ -1,6 +1,6 @@
 Fixed-size sorters, sometimes called *fixed sorters* for simplicity are a special kind of sorters designed to sort a fixed number of values. Their `operator()` also takes either an iterable or a pair of iterators as well as an optional comparison and projection functions. Most of the time the end iterator is unused, but future versions of the library may start to use it to optionally perform bound-checking.
 
-Fixed-size sorters are not actual sorters *per se* but class templates that take an `std::size_t` template parameter. Every valid specialization of a fixed-size sorter for a given size yields a "valid" sorter. Several fixed-size sorters have specializations for some sizes only and will trigger a compile-time error when one tries to instantiate a specialization which is not part of the fixed-size sorter's domain (the domain corresponds to the set of valid specializations). Information about fixed-size sorters can be obtained via [`fixed_sorter_traits`](Sorter-traits.md#fixed_sorter_traits). One can also make sure that a given fixed-size sorter is automatically used to sort small fixed-size arrays thanks to [`small_array_adapter`](Sorter-adapters#small_array_adapter).
+Fixed-size sorters are not actual sorters *per se* but class templates that take an `std::size_t` template parameter. Every valid specialization of a fixed-size sorter for a given size yields a "valid" sorter. Several fixed-size sorters have specializations for some sizes only and will trigger a compile-time error when one tries to instantiate a specialization which is not part of the fixed-size sorter's domain (the domain corresponds to the set of valid specializations). Information about fixed-size sorters can be obtained via [`fixed_sorter_traits`][fixed-sorter-traits]. One can also make sure that a given fixed-size sorter is automatically used to sort small fixed-size arrays thanks to [`small_array_adapter`][small-array-adapter].
 
 It is possible to include all the fixed-size sorters at once with the following directive:
 
@@ -34,10 +34,10 @@ Size | Comparison weight | Algorithm
 9 | 6759936 | Merge-insertion sort
 10 | 79937280 | Insertion sort*
 11 | 1020833280 | Insertion sort*
-12 | 15167554560 | [Double gnome sort*](Original-research.md#double-insertion-sort)
+12 | 15167554560 | [Double gnome sort*][double-insertion-sort]
 13 | 223436206080 | Double gnome sort*
 
-While `low_comparisons_sorter` is optimal from 0 through 8 with regard to the *comparison weight*, it is worth noting that [`merge_insertion_sorter`](Sorters.md#merge_insertion_sorter) performs fewer comparisons on average than some other specializations. However the algorithm is rather complex and has a high runtime cost, which makes it unsuitable for such a sorter, which seeks to provide tiny and fast algorithm.
+While `low_comparisons_sorter` is optimal from 0 through 8 with regard to the *comparison weight*, it is worth noting that [`merge_insertion_sort`][merge-insertion-sorter] performs fewer comparisons on average than some other specializations. However the algorithm is rather complex and has a high runtime cost, which makes it unsuitable for such a sorter, which seeks to provide tiny and fast algorithm.
 
 It is worth noting that the algorithm used to sort 9 elements in not strictly a merge-insertion sort: instead it uses an equivalent algorithm described in *A variant of the Ford–Johnson algorithm that is more space efficient* by Ayala-Rincón et al. That said I did not implement it correctly since it still performs more comparisons than `merge_insertion_sorter` (but it's still better than the previous solution, so that's ok for now).
 
@@ -80,7 +80,7 @@ template<std::size_t N>
 struct low_moves_sorter;
 ```
 
-Note that this fixed-size sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`](Sorter-adapters.md#indirect_adapter) instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
+Note that this fixed-size sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`][indirect-adapter] instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
 
 ### `merge_exchange_network_sorter`
 
@@ -172,7 +172,12 @@ static constexpr auto index_pairs()
 *Changed in version 1.13.0:* sorting 21, 22, 23, 25 and 27 inputs respectively require 99, 106, 114, 131 and 149 CEs instead of 100, 107, 115, 132 and 150.
 
 
+  [double-insertion-sort]: Original-research.md#double-insertion-sort
+  [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
+  [indirect-adapter]: Sorter-adapters.md#indirect_adapter
+  [merge-insertion-sorter]: Sorters.md#merge_insertion_sorter
   [odd-even-mergesort]: https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort
+  [small-array-adapter]: Sorter-adapters.md#small_array_adapter
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
   [taocp]: https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming

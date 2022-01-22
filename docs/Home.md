@@ -81,9 +81,10 @@ This wiki also includes a small section about the [original research][original-r
 
 If you ever feel that this wiki is incomplete, that it needs more examples or more detailed explanation about stuff, you are welcome to report it and/or contribute.
 
-*Always keep in mind that even if the library does contain production-ready algorithms, many of them are also experimental algorithms taken straight from research papers and reimplemented from scratch. If you are only interested in usable algorithms, you should look at the ones analyzed in the [benchmarks](Benchmarks.md).*
+*Always keep in mind that even if the library does contain production-ready algorithms, many of them are also experimental algorithms taken straight from research papers and reimplemented from scratch. If you are only interested in usable algorithms, you should look at the ones analyzed in the [benchmarks][benchmarks].*
 
 Hope you have fun!
 
+  [benchmarks]: Benchmarks.md
   [original-research]: Original-research.md
   [swappable]: https://en.cppreference.com/w/cpp/concepts/swappable

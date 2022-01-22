@@ -47,7 +47,7 @@ The return type `Ret` can either match that of the sorter, or be `void`, in whic
 
 Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is the [`std::result_of_t`][std-result-of] of the sorter called with the parameters. The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
-***WARNING:** conversion to function pointers does not work with MSVC (issue #185).*
+***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
 
 *Changed in version 1.5.0:* these conversion operators exists if and only if the wrapped *sorter implementation* is empty and default-constructible.
 
@@ -194,6 +194,7 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
 *Changed in version 1.10.0:* those overloads are now `constexpr`.
 
 
+  [issue-185]: https://github.com/Morwenn/cpp-sort/issues/185
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
   [std-begin]: https://en.cppreference.com/w/cpp/iterator/begin
   [std-end]: https://en.cppreference.com/w/cpp/iterator/end

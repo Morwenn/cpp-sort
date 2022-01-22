@@ -143,7 +143,7 @@ constexpr bool is_always_stable_v
     = is_always_stable<Sorter>::value;
 ```
 
-This type trait is always either [`std::true_type` or `std::false_type`][integral-constant] and tells whether a sorter is always [stable][stability] or not. This information may be useful in some contexts, and is most notably by [`stable_t`][stable-adapter] to avoid unnecessarily nesting templates when possible.
+This type trait is always either [`std::true_type` or `std::false_type`][std-integral-constant] and tells whether a sorter is always [stable][stability] or not. This information may be useful in some contexts, and is most notably by [`stable_t`][stable-adapter] to avoid unnecessarily nesting templates when possible.
 
 When a sorter adapter is used, the *resulting sorter* is considered always stable if and only if its stability can be guaranteed, and considered unstable otherwise, even when the *adapted sorter* may be stable (for example, [`self_sort_adapter`][self-sort-adapter]`::is_always_stable` is aliased to `std::false_type` since it is impossible to guarantee the stability of every collection's `sort` method).
 
