@@ -64,8 +64,21 @@ conan install cpp-sort/1.12.1
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to build your own package with the `conanfile.py` available in this repository.
 
+## Gollum
+
+[Gollum][gollum], if installed, can be used to browse this documentation offline:
+
+1. Navigate to the main `cpp-sort` directory in the command line
+2. `gollum --page-file-dir docs --ref <branch-name>
+3. Visit http://localhost:4567/Home
+
+This can notably used to browse old versions of the documentation. It seems however that `--ref` doesn't understand Git tags, so you have to create a proper branch from the version tag you want to browse beforehand.
+
+Due to slight markup differences, some pages might not fully render correctly but it should nonetheless be a better experience than navigaitng the Markdown files by hand.
+
 
   [catch2]: https://github.com/catchorg/Catch2
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/
   [conan-center]: https://conan.io/center/cpp-sort
+  [gollum]: https://github.com/gollum/gollum
