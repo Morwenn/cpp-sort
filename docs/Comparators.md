@@ -1,8 +1,8 @@
 The comparators described below can be used as needed with [*sorters*][sorters] and [*sorter adapters*][sorter-adapters] that accept comparisons. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
 
-Every non-refined comparator described below is also a [transparent comparator][transparent-comparator]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
+Every non-refined comparator described below is also a [transparent comparator][transparent-func]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
 
-*Changed in version 1.5.0:* every non-refined comparator is now a [transparent comparator][transparent-comparator].
+*Changed in version 1.5.0:* every non-refined comparator is now a [transparent comparator][transparent-func].
 
 ### Total order comparators
 
@@ -129,5 +129,5 @@ The two-parameter version of the customization point calls the three-parameter o
   [std-locale]: https://en.cppreference.com/w/cpp/locale/locale
   [to-lower]: https://en.cppreference.com/w/cpp/locale/ctype/tolower
   [total-order]: https://en.wikipedia.org/wiki/Total_order
-  [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
+  [transparent-func]: Comparators-and-projections.md#Transparent-function-objects
   [weak-order]: https://en.wikipedia.org/wiki/Weak_ordering

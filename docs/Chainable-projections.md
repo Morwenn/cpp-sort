@@ -27,11 +27,11 @@ cppsort::poplar_sort(vec, &wrapper::value | projection);
 
 The object returned by the utility function [`utility::as_projection`][as_projection] also inherits from `utility::projection_base`, making `as_projection` the proper function to turn any suitable projection into a projection composable with `operator|`.
 
-If both of the projections composed with `operator|` are [*transparent*][transparent-comparator], then the returned object is also a *transparent* projection.
+If both of the projections composed with `operator|` are [*transparent*][transparent-func], then the returned object is also a *transparent* projection.
 
-*Changed in version 1.13.0:* the object returned by `operator|` is now conditionally [*transparent*][transparent-comparator].
+*Changed in version 1.13.0:* the object returned by `operator|` is now conditionally [*transparent*][transparent-func].
 
 
   [as_projection]: Miscellaneous-utilities.md#as_comparison-and-as_projection
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
-  [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
+  [transparent-func]: Comparators-and-projections.md#Transparent-function-objects
