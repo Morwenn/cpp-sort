@@ -41,9 +41,10 @@ constexpr auto base() const
     -> F;
 ```
 
-`cppsort::flip` takes a *Callable* of type `F` and returns an instance of `flip_t<std::decay_t<F>>` except in the following cases:
-* When given `flip_t<F>`, it returns `F`.
-* When given `not_fn_t<flip_t<F>>`, it returns `not_fn_t<F>`.
+`cppsort::flip` takes a *Callable* `f` of type `F` and returns an instance of `flip_t<std::decay_t<F>>` except in the following cases:
+* When given a `flip_t<F>`, it returns a `F`.
+* When given a `not_fn_t<flip_t<F>>`, it returns a `not_fn_t<F>`.
+* When given a `projection_compare` it returns `make_projection_compare(flip(f.comparison()), f.projection())`.
 
 `flip_t<F>` is [*transparent*][transparent-func] when `F` is *transparent*.
 
@@ -78,9 +79,10 @@ constexpr auto base() const
     -> F;
 ```
 
-`cppsort::not_fn` takes a *Callable* of type `F` and returns an instance of `not_fn_t<std::decay_t<F>>` except in the following cases:
-* When given `not_fn_t<F>`, it returns `F`.
-* When given `flip_t<not_fn_t<F>>`, it returns `flip_t<F>`.
+`cppsort::not_fn` takes a *Callable* `f` of type `F` and returns an instance of `not_fn_t<std::decay_t<F>>` except in the following cases:
+* When given a `not_fn_t<F>`, it returns a `F`.
+* When given a `flip_t<not_fn_t<F>>`, it returns a `flip_t<F>`.
+* When given a `projection_compare` it returns `make_projection_compare(not_fn(f.comparison()), f.projection())`.
 
 `not_fn_t<F>` is [*transparent*][transparent-func] when `F` is *transparent*.
 
@@ -113,7 +115,7 @@ projection_compare(C comp, P proj);
 
 // Call
 template<typename T1, typename T2>
-constexpr auto operator()(T1&& x, T2&& y) &/const&
+constexpr auto operator()(T1&& x, T2&& y) &/const&/&&/const&&
     noexcept(noexcept(std::invoke(comparison(),
                                   std::invoke(projection(), std::forward<T1>(x)),
                                   std::invoke(projection(), std::forward<T1>(y)))))

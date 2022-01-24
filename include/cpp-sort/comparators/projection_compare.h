@@ -25,55 +25,91 @@ namespace cppsort
     {
         private:
 
-            using compare_t = detail::remove_cvref_t<
-                decltype(utility::as_function(std::declval<Compare>()))
-            >;
-            using projection_t = detail::remove_cvref_t<
-                decltype(utility::as_function(std::declval<Projection>()))
-            >;
-            std::tuple<compare_t, projection_t> data;
+            std::tuple<Compare, Projection> data;
 
         public:
 
             projection_compare() = default;
 
             projection_compare(Compare compare, Projection projection):
-                data(utility::as_function(compare), utility::as_function(projection))
+                data(std::move(compare), std::move(projection))
             {}
 
-            template<typename T, typename U>
-            constexpr auto operator()(T&& lhs, U&& rhs)
-                noexcept(noexcept(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
-                                                    std::get<1>(data)(std::forward<U>(rhs)))))
-                -> decltype(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
-                                              std::get<1>(data)(std::forward<U>(rhs))))
+            template<typename T1, typename T2>
+            constexpr auto operator()(T1&& x, T2&& y) &
+                noexcept(noexcept(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                )))
+                -> decltype(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                ))
             {
-                return std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
-                                         std::get<1>(data)(std::forward<U>(rhs)));
+                auto&& comp = utility::as_function(std::get<0>(data));
+                auto&& proj = utility::as_function(std::get<1>(data));
+                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
             }
 
-            template<typename T, typename U>
-            constexpr auto operator()(T&& lhs, U&& rhs) const
-                noexcept(noexcept(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
-                                                    std::get<1>(data)(std::forward<U>(rhs)))))
-                -> decltype(std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
-                                              std::get<1>(data)(std::forward<U>(rhs))))
+            template<typename T1, typename T2>
+            constexpr auto operator()(T1&& x, T2&& y) const&
+                noexcept(noexcept(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                )))
+                -> decltype(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                ))
             {
-                return std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
-                                         std::get<1>(data)(std::forward<U>(rhs)));
+                auto&& comp = utility::as_function(std::get<0>(data));
+                auto&& proj = utility::as_function(std::get<1>(data));
+                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
+            }
+
+            template<typename T1, typename T2>
+            constexpr auto operator()(T1&& x, T2&& y) &&
+                noexcept(noexcept(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                )))
+                -> decltype(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                ))
+            {
+                auto&& comp = utility::as_function(std::get<0>(data));
+                auto&& proj = utility::as_function(std::get<1>(data));
+                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
+            }
+
+            template<typename T1, typename T2>
+            constexpr auto operator()(T1&& x, T2&& y) const&&
+                noexcept(noexcept(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                )))
+                -> decltype(utility::as_function(std::get<0>(data))(
+                    utility::as_function(std::get<1>(data))(std::forward<T1>(x)),
+                    utility::as_function(std::get<1>(data))(std::forward<T2>(y))
+                ))
+            {
+                auto&& comp = utility::as_function(std::get<0>(data));
+                auto&& proj = utility::as_function(std::get<1>(data));
+                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
             }
 
             ////////////////////////////////////////////////////////////
             // Accessors
 
             constexpr auto comparison() const
-                -> compare_t
+                -> Compare
             {
                 return std::get<0>(data);
             }
 
             constexpr auto projection() const
-                -> projection_t
+                -> Projection
             {
                 return std::get<1>(data);
             }
