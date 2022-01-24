@@ -26,6 +26,7 @@ The class template `flip_t` is a function object which, when called, passes the 
 
 ```cpp
 // Construction
+flip_t() = default;
 explicit constexpr flip_t(const F& func);
 explicit constexpr flip_t(F&& func);
 
@@ -62,6 +63,7 @@ The class template `not_fn_t` is roughly equivalent to the one returned by the C
 
 ```cpp
 // Construction
+not_fn_t() = default;
 explicit constexpr not_fn_t(const F& func);
 explicit constexpr not_fn_t(F&& func);
 
