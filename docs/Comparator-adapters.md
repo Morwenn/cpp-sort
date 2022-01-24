@@ -92,8 +92,6 @@ constexpr auto base() const
 
 The class template `projection_compare` can be used to embed a comparison and a projection in a single comparison object, allowing to provide projection support to algorithms that only support comparisons, such as standard library algorithms prior to C++20. Both the passed comparison and projection functions can be [*Callable*][callable].
 
-`projection_compare` is [*transparent*][transparent-func] when the passed comparison and projection are both *transparent*.
-
 It is accompanied by a `make_projection_compare` function template to avoid having to pass the template parameters by hand.
 
 **Example:**
@@ -104,12 +102,42 @@ std::vector<Person> family = { /* ... */ };
 std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::greater<>{}, &Person::age));
 ```
 
+`projection_compare<C, P>` has the following member functions:
+
+```cpp
+// Construction
+projection_compare() = default;
+projection_compare(C comp, P proj);
+
+// Call
+template<typename T1, typename T2>
+constexpr auto operator()(T1&& x, T2&& y) &/const&
+    noexcept(noexcept(std::invoke(comparison(),
+                                  std::invoke(projection(), std::forward<T1>(x)),
+                                  std::invoke(projection(), std::forward<T1>(y)))))
+    -> decltype(std::invoke(comparison(),
+                            std::invoke(projection(), std::forward<T1>(x)),
+                            std::invoke(projection(), std::forward<T1>(y))));
+
+// Retrieve the passed comparison
+constexpr auto comparison() const
+    -> C;
+
+// Retrieve the passed projection
+constexpr auto projection() const
+    -> P;
+```
+
 `cppsort::make_projection_compare` takes two *Callable* of types `C` and `P` and returns an instance of `projection_compare<std::decay_t<C>, std::decay_t<P>>` except in the following cases:
 * When `std::decay_t<P>` is of type [`utility::identity`][utility-identity] or [`std::identity`][std-identity], it returns `C` directly.
+
+`projection_compare` is [*transparent*][transparent-func] when the passed comparison and projection are both *transparent*.
 
 `projection_compare` is considered [branchless][branchless-traits] when the projection it wraps is considered branchless and the comparison it wraps is considered branchless when called with the result of the projection.
 
 *New in version 1.9.0*
+
+*Changed in version 1.13.0:* `projection_compare` is now conditionally default-constructible.
 
 *Changed in version 1.13.0:* `make_projection_compare` now returns the comparison directly when the passed projection is an identity function object.
 

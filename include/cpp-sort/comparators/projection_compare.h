@@ -62,6 +62,21 @@ namespace cppsort
                 return std::get<0>(data)(std::get<1>(data)(std::forward<T>(lhs)),
                                          std::get<1>(data)(std::forward<U>(rhs)));
             }
+
+            ////////////////////////////////////////////////////////////
+            // Accessors
+
+            constexpr auto comparison() const
+                -> compare_t
+            {
+                return std::get<0>(data);
+            }
+
+            constexpr auto projection() const
+                -> projection_t
+            {
+                return std::get<1>(data);
+            }
     };
 
     ////////////////////////////////////////////////////////////
