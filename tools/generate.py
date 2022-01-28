@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2020 Morwenn
+# Copyright (c) 2015-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 import sys
 
 
 def transform(line):
-    line = line.strip('[],\nSWAP();')
+    line = line.strip('[],\nSWAP();{}')
     if line:
         x, y = map(int, line.split(','))
         return 'iter_swap_if(first + {0}u, first + {1}u, compare, projection);'.format(x, y)
