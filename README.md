@@ -1,3 +1,5 @@
+![cpp-sort logo](docs/images/cpp-sort-logo.svg)
+
 [![Latest Release](https://img.shields.io/badge/release-1.12.1-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.12.1)
 [![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.12.1-blue.svg)](https://conan.io/center/cpp-sort?version=1.12.1)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
