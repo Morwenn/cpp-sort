@@ -69,7 +69,7 @@ The packages downloaded from conan-center are minimal and only contain the files
 [Gollum][gollum], if installed, can be used to browse this documentation offline:
 
 1. Navigate to the main `cpp-sort` directory in the command line
-2. `gollum --page-file-dir docs --ref <branch-name>
+2. `gollum --page-file-dir docs --ref <branch-name>`
 3. Visit http://localhost:4567/Home
 
 This can notably used to browse old versions of the documentation. It seems however that `--ref` doesn't understand Git tags, so you have to create a proper branch from the version tag you want to browse beforehand.
