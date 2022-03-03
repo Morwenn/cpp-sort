@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_ENC_H_
@@ -20,6 +20,7 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
 #include "../detail/type_traits.h"
@@ -42,19 +43,17 @@ namespace probe
                 utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
                 utility::is_probably_branchless_projection_v<Projection, value_type>;
 
-            auto proj = [&projection, &accessor](const auto& list) -> decltype(auto) {
-                return projection(*(list.*accessor));
-            };
-
             if (can_optimize) {
                 return cppsort::detail::lower_monobound_n(
                     lists.begin(), lists.size() - 1, value,
-                    std::move(compare), proj
+                    std::move(compare),
+                    accessor | cppsort::detail::indirect(projection)
                 );
             } else {
                 return cppsort::detail::lower_bound_n(
                     lists.begin(), lists.size() - 1, value,
-                    std::move(compare), proj
+                    std::move(compare),
+                    accessor | cppsort::detail::indirect(projection)
                 );
             }
         }
