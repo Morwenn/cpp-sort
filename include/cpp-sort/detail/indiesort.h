@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Morwenn
+ * Copyright (c) 2020-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -40,15 +40,15 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename PointerType, typename SizeType>
-    struct pointer_index_tuple
+    template<typename Iterator>
+    struct it_and_index
     {
-        PointerType original_location;
-        SizeType original_index;
+        Iterator original_location;
+        difference_type_t<Iterator> original_index;
 
-        pointer_index_tuple() = default;
+        it_and_index() = default;
 
-        pointer_index_tuple(PointerType item, SizeType index) noexcept:
+        it_and_index(Iterator item, difference_type_t<Iterator> index) noexcept:
             original_location(item),
             original_index(index)
         {}
@@ -60,15 +60,13 @@ namespace detail
                    Compare compare, Projection projection)
         -> decltype(auto)
     {
-        using difference_type = difference_type_t<ForwardIterator>;
         using utility::iter_move;
-        auto&& proj = utility::as_function(projection);
 
-        using item_index_tuple = pointer_index_tuple<ForwardIterator, difference_type>;
+        using item_index_tuple = it_and_index<ForwardIterator>;
         immovable_vector<item_index_tuple> storage(size);
 
         // Construct pointers to all elements in the sequence
-        difference_type index = 0;
+        difference_type_t<ForwardIterator> index = 0;
         for (auto current_element = first; current_element != last; ++current_element) {
             storage.emplace_back(current_element, index);
             ++index;
@@ -78,9 +76,7 @@ namespace detail
         // Sort the iterators on pointed values
         std::forward<Sorter>(sorter)(
             storage.begin(), storage.end(), std::move(compare),
-            [&proj](auto& elem) -> decltype(auto) {
-                return proj(*(elem.original_location));
-            }
+            &item_index_tuple::original_location | indirect(projection)
         );
 #else
         // Work around the sorters that return void
@@ -93,8 +89,8 @@ namespace detail
                 if (current_tuple->original_index != index) {
                     auto end_value = iter_move(current_tuple->original_location);
 
-                    difference_type destination_index = index;
-                    difference_type source_index = current_tuple->original_index;
+                    auto destination_index = index;
+                    auto source_index = current_tuple->original_index;
 
                     do {
                         *(storage[destination_index].original_location) = iter_move(storage[source_index].original_location);
@@ -117,9 +113,7 @@ namespace detail
         // Sort the iterators on pointed values
         return std::forward<Sorter>(sorter)(
             storage.begin(), storage.end(), std::move(compare),
-            [&proj](auto& elem) -> decltype(auto) {
-                return proj(*(elem.original_location));
-            }
+            &item_index_tuple::original_location | indirect(projection)
         );
 #endif
     }
