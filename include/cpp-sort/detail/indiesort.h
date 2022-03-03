@@ -58,7 +58,22 @@ namespace detail
     auto indiesort(Sorter&& sorter, ForwardIterator first, ForwardIterator last,
                    difference_type_t<ForwardIterator> size,
                    Compare compare, Projection projection)
-        -> decltype(auto)
+#ifdef __cpp_lib_uncaught_exceptions
+        -> decltype(std::forward<Sorter>(sorter)(
+            (it_and_index<ForwardIterator>*)0, (it_and_index<ForwardIterator>*)0,
+            std::move(compare),
+            &it_and_index<ForwardIterator>::original_location | indirect(projection)
+        ))
+#else
+        -> std::enable_if_t<
+                has_comparison_projection_sort_iterator<
+                    Sorter,
+                    it_and_index<ForwardIterator>*,
+                    Compare,
+                    decltype(&it_and_index<ForwardIterator>::original_location | indirect(projection))
+                >::value
+            >
+#endif
     {
         using utility::iter_move;
 

@@ -9,6 +9,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
+#include <cpp-sort/sorters/spread_sorter.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/span.h>
@@ -89,4 +90,17 @@ TEST_CASE( "indirect_adapter with temporary span",
         sorter(make_span(collection), std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
+}
+
+
+TEST_CASE( "indirect_adapter over non-comparison sorter",
+           "[indirect_adapter][spread_sorter]" )
+{
+    std::vector<int> collection; collection.reserve(221);
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(collection), 221, -32);
+
+    cppsort::indirect_adapter<cppsort::spread_sorter> sorter;
+    sorter(collection, std::negate<>{});
+    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
 }
