@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FUNCTIONAL_H_
@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 
 namespace cppsort
 {
@@ -20,7 +21,8 @@ namespace detail
     // indirect
 
     template<typename Projection>
-    class indirect_t
+    class indirect_t:
+        utility::projection_base
     {
         private:
 
