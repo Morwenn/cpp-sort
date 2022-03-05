@@ -13,6 +13,7 @@
 #include <testing-tools/test_vector.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with an int8_t difference_type", "[sorters]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,

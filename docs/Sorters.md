@@ -14,6 +14,22 @@ If you want to read more about sorters and/or write your own one, then you shoul
 
 The following sorters are available and will work with any type for which `std::less` works and should accept any well-formed comparison function:
 
+### `adaptive_shivers_sorter`
+
+```cpp
+#include <cpp-sort/sorters/adaptive_shivers_sorter.h>
+```
+
+Implements an [adative ShiversSort][adaptive-shivers-sort], a *k*-aware natural mergesort with a better worst case than [timsort][timsort] described by Vincent Jugé in *Adaptive Shivers Sort: An Alternative Sorting Algorithm*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | Yes         | Random-access |
+
+While the sorting algorithm is stable and the complexity guarantees are good enough, this sorter is rather slow compared to the some other ones when the data distribution is random. That said, it would probably be a good choice when comparing data is expensive, but moving it is inexpensive (this is the use case for which it was designed).
+
+*New in version 1.13.0*
+
 ### `block_sorter<>`
 
 ```cpp
@@ -550,6 +566,7 @@ struct spread_sorter:
 
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [adaptive-shivers-sort]: https://arxiv.org/abs/1809.08411
   [bitmap-allocator]: https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html
   [block-sort]: https://en.wikipedia.org/wiki/Block_sort
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits

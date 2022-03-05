@@ -13,6 +13,7 @@
 #include <testing-tools/functional_checks.h>
 
 TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[sorters]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
@@ -52,6 +53,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
 }
 
 TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[sorters][projection]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

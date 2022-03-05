@@ -13,6 +13,7 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distribution", "[distributions]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

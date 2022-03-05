@@ -28,6 +28,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     std::list<long long int> li(collection.begin(), collection.end());
     std::forward_list<long long int> fli(collection.begin(), collection.end());
 
+    SECTION( "adaptive_shivers_sort" )
+    {
+        cppsort::adaptive_shivers_sort(collection);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
+
     SECTION( "cartesian_tree_sort" )
     {
         cppsort::cartesian_tree_sort(collection);

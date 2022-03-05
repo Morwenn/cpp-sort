@@ -12,6 +12,7 @@
 #include <testing-tools/move_only.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

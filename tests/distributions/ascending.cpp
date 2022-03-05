@@ -12,12 +12,13 @@
 #include <testing-tools/distributions.h>
 
 TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]",
+                    cppsort::adaptive_shivers_sorter,
+                    cppsort::cartesian_tree_sorter,
                     // While counting_sort shouldn't be affected by patterns, its
                     // underlying minmax_element_and_is_sorted function had a bug
                     // that could specifically appear with an ascending distribution,
                     // so here is the dedicated test (see issue #103)
                     cppsort::counting_sorter,
-                    cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

@@ -8,6 +8,7 @@
 #include <cpp-sort/sorters.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with small collections", "[sorters]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::drop_merge_sorter,

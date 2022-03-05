@@ -15,6 +15,7 @@
 #include <testing-tools/wrapper.h>
 
 TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
@@ -49,6 +50,7 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
 }
 
 TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][stable_adapter]",
+                    cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,

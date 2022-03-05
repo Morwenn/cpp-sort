@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FWD_H_
@@ -24,6 +24,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sorters
 
+    struct adaptive_shivers_sorter;
     template<typename BufferProvider>
     struct block_sorter;
     struct cartesian_tree_sorter;
