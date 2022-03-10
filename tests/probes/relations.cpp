@@ -40,6 +40,10 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // by Heikki Mannila
     CHECK( exc <= inv );
 
+    // Splitsort - an adaptive sorting algorithm
+    // by Christos Levcopoulos and Ola Petersson
+    CHECK( rem <= inv );
+
     // A framework for adaptive sorting
     // by Ola Petersson and Alistair Moffat
     CHECK( runs <= rem + 1 );
