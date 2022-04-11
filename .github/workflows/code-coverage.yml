@@ -55,7 +55,7 @@ jobs:
         run: cmake --build . --target lcov-capture
 
       - name: Upload coverage info
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           directory: ${{runner.workspace}}/build/lcov/data
           files: '*.info'
