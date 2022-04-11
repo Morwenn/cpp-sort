@@ -285,7 +285,8 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // Math functions (mostly useful for buffer providers)
 
-    struct half
+    struct half:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -297,7 +298,8 @@ namespace utility
         using is_transparent = void;
     };
 
-    struct log
+    struct log:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -310,7 +312,8 @@ namespace utility
         using is_transparent = void;
     };
 
-    struct sqrt
+    struct sqrt:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
