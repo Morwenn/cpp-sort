@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_ENC_H_
@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -42,19 +43,17 @@ namespace probe
                 utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
                 utility::is_probably_branchless_projection_v<Projection, value_type>;
 
-            auto proj = [&projection, &accessor](const auto& list) -> decltype(auto) {
-                return projection(*(list.*accessor));
-            };
-
             if (can_optimize) {
                 return cppsort::detail::lower_monobound_n(
                     lists.begin(), lists.size() - 1, value,
-                    std::move(compare), proj
+                    std::move(compare),
+                    accessor | cppsort::detail::indirect(projection)
                 );
             } else {
                 return cppsort::detail::lower_bound_n(
                     lists.begin(), lists.size() - 1, value,
-                    std::move(compare), proj
+                    std::move(compare),
+                    accessor | cppsort::detail::indirect(projection)
                 );
             }
         }
@@ -95,7 +94,7 @@ namespace probe
                     if (not comp(value, proj(*last_list.second))) {
                         // Element belongs to the tails (bigger elements)
                         auto insertion_point = enc_lower_bound(
-                            lists, value, cppsort::detail::invert(compare), proj,
+                            lists, value, cppsort::flip(compare), proj,
                             &std::pair<ForwardIterator, ForwardIterator>::second
                         );
                         insertion_point->second = first;

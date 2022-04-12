@@ -6,7 +6,8 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Copyright (c) 2015-2021 Morwenn.
+ * Copyright (c) 2015-2022 Morwenn.
+ * Copyright (c) 2021 Igor Kushnir <igorkuo@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -33,6 +34,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <memory>
 #include <new>
@@ -69,8 +71,13 @@ namespace detail
         {}
     };
 
-    template<typename RandomAccessIterator, typename Compare, typename Projection>
-    class TimSort
+    template<
+        typename ChildClass,
+        typename RandomAccessIterator,
+        typename Compare,
+        typename Projection
+    >
+    struct TimSortBase
     {
         using iterator = RandomAccessIterator;
         using rvalue_type = rvalue_type_t<iterator>;
@@ -86,7 +93,7 @@ namespace detail
         std::ptrdiff_t buffer_size = 0;
 
         // Silence GCC -Winline warning
-        ~TimSort() noexcept {}
+        ~TimSortBase() noexcept {}
 
         std::vector<run<iterator>> pending_;
 
@@ -106,7 +113,7 @@ namespace detail
                 return;
             }
 
-            TimSort ts{};
+            ChildClass ts{};
             difference_type const minRun = minRunLength(nRemaining);
             iterator cur = lo;
             do {
@@ -717,18 +724,67 @@ namespace detail
                 detail::move(buffer.get(), buffer.get() + len2, dest - (len2 - 1));
             }
         }
-
-        // the only interface is the friend timsort() function
-        template<typename IterT, typename LessT, typename Proj>
-        friend void timsort(IterT, IterT, LessT, Proj);
     };
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto timsort(RandomAccessIterator const first, RandomAccessIterator const last,
+    struct TimSort:
+        TimSortBase<
+            TimSort<RandomAccessIterator, Compare, Projection>,
+            RandomAccessIterator,
+            Compare,
+            Projection
+        >
+    {};
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    struct AdaptiveShiversSort:
+        TimSortBase<
+            AdaptiveShiversSort<RandomAccessIterator, Compare, Projection>,
+            RandomAccessIterator,
+            Compare,
+            Projection
+        >
+    {
+        using base = TimSortBase<
+            AdaptiveShiversSort<RandomAccessIterator, Compare, Projection>,
+            RandomAccessIterator,
+            Compare,
+            Projection
+        >;
+        using difference_type = typename base::difference_type;
+
+        AdaptiveShiversSort() = default;
+
+        auto mergeCollapse(Compare compare, Projection projection)
+            -> void
+        {
+            while (this->pending_.size() > 1) {
+                difference_type n = this->pending_.size() - 3;
+                auto x = this->pending_[n + 1].len | this->pending_[n + 2].len;
+                if (n < 0 || x <= (this->pending_[n].len & ~x)) {
+                    break;
+                }
+                base::mergeAt(n, compare, projection);
+            }
+        }
+    };
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto timsort(RandomAccessIterator first, RandomAccessIterator last,
                  Compare compare, Projection projection)
         -> void
     {
         TimSort<RandomAccessIterator, Compare, Projection>::sort(
+            std::move(first), std::move(last),
+            std::move(compare), std::move(projection));
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto adaptive_shivers_sort(RandomAccessIterator first, RandomAccessIterator last,
+                               Compare compare, Projection projection)
+        -> void
+    {
+        AdaptiveShiversSort<RandomAccessIterator, Compare, Projection>::sort(
             std::move(first), std::move(last),
             std::move(compare), std::move(projection));
     }

@@ -11,10 +11,10 @@
 #include <cmath>
 #include <iterator>
 #include <vector>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "fixed_size_list.h"
-#include "functional.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "merge_move.h"
@@ -165,7 +165,7 @@ namespace detail
             if (not comp(value, proj(last_list.back()))) {
                 // Element belongs to the tails (bigger elements)
                 auto insertion_point = detail::lower_bound(
-                    lists.begin(), std::prev(lists.end()), value, invert(compare),
+                    lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
                     [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
                 );
                 insertion_point->push_back(iter_move(it));

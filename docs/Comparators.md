@@ -1,28 +1,8 @@
-While comparators are not inherent to sorting *per se*, most sorting algorithms (at least in this library) are *comparison sorts*, hence providing some common useful comparators along with the sorters can be useful. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
+The comparators described below can be used as needed with [*sorters*][sorters] and [*sorter adapters*][sorter-adapters] that accept comparisons. Every comparator in this module satisfies the [`BinaryPredicate`][binary-predicate] library concept.
 
-Every non-refined comparator described below is also a [transparent comparator][transparent-comparator]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
+Every non-refined comparator described below is also a [transparent comparator][transparent-func]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
 
-*Changed in version 1.5.0:* every non-refined comparator is now a [transparent comparator][transparent-comparator].
-
-### `projection_compare`
-
-```cpp
-#include <cpp-sort/comparators/projection_compare.h>
-```
-
-The class template `projection_compare` can be used to embed a comparison and a projection in a single comparison object, allowing to provide projection support to algorithms that only support comparisons, such as standard library algorithms prior to C++20. Both the passed comparison and projection functions can be [*Callable*][callable].
-
-It is accompanied by a `make_projection_compare` function template to avoid having to pass the template parameters by hand.
-
-**Example:**
-
-```cpp
-// Sort a family from older to younger member
-std::vector<Person> family = { /* ... */ };
-std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::greater<>{}, &Person::age));
-```
-
-*New in version 1.9.0*
+*Changed in version 1.5.0:* every non-refined comparator is now a [transparent comparator][transparent-func].
 
 ### Total order comparators
 
@@ -132,7 +112,7 @@ The two-parameter version of the customization point calls the three-parameter o
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate
-  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [case-sensitivity]: https://en.wikipedia.org/wiki/Case_sensitivity
   [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler%20-%20Lawrence%20Crowl%20-%20CppCon%202015
@@ -140,12 +120,14 @@ The two-parameter version of the customization point calls the three-parameter o
   [natural-sort]: https://en.wikipedia.org/wiki/Natural_sort_order
   [P0100]: http://open-std.org/JTC1/SC22/WG21/docs/papers/2015/p0100r1.html
   [partial-order]: https://en.wikipedia.org/wiki/Partially_ordered_set#Formal_definition
-  [refining]: https://github.com/Morwenn/cpp-sort/wiki/Refined-functions
+  [refining]: Refined-functions.md
+  [sorter-adapters]: Sorter-adapters.md
+  [sorters]: Sorters.md
   [std-is-arithmetic]: https://en.cppreference.com/w/cpp/types/is_arithmetic
   [std-is-digit]: https://en.cppreference.com/w/cpp/string/byte/isdigit
   [std-is-integral]: https://en.cppreference.com/w/cpp/types/is_integral
   [std-locale]: https://en.cppreference.com/w/cpp/locale/locale
   [to-lower]: https://en.cppreference.com/w/cpp/locale/ctype/tolower
   [total-order]: https://en.wikipedia.org/wiki/Total_order
-  [transparent-comparator]: https://stackoverflow.com/q/20317413/1364752
+  [transparent-func]: Comparators-and-projections.md#Transparent-function-objects
   [weak-order]: https://en.wikipedia.org/wiki/Weak_ordering

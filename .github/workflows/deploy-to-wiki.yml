@@ -1,3 +1,6 @@
+# Copyright (c) 2020-2022 Morwenn
+# SPDX-License-Identifier: MIT
+
 name: Wiki Deployment
 
 on:
@@ -5,7 +8,7 @@ on:
     branches:
       - master
     paths:
-      - 'docs/**'    
+      - 'docs/**'
 
 jobs:
   sync-wiki-files:
@@ -15,10 +18,37 @@ jobs:
 
     steps:
       - name: Checkout /docs
-        uses: actions/checkout@master
-      - name: Sync .wiki with /docs
-        uses: SwiftDocOrg/github-wiki-publish-action@rsync
+        uses: actions/checkout@v2
         with:
-          path: docs/
-        env:
-          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.DEPLOY_TO_WIKI_ACCESS_TOKEN }}
+          repository: ${{github.repository}}
+          path: main
+
+      - name: Checkout wiki
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}.wiki
+          path: wiki
+
+      - name: Sync wiki files
+        run: |
+          for docname in main/docs/*.md; do
+            old=$(basename "$docname");
+            new=${old%.*};
+            find main/docs -name "*.md" -exec sed -i "s/$old/$new/g" {} \;
+          done
+          rsync -avzr --delete --exclude='.git/' "main/docs/" "wiki/"
+
+      - name: Commit changes
+        working-directory: wiki
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Synchronize wiki with docs/"
+
+      - name: Push changes to wiki
+        uses: ad-m/github-push-action@master
+        with:
+          directory: wiki
+          repository: ${{github.repository}}.wiki
+          branch: master

@@ -1,4 +1,4 @@
-Sometimes, iterators are not enough and you want to use the full abilities of containers to sort them, like O(1) insertion for [`std::list`](https://en.cppreference.com/w/cpp/container/list) and [`std::forward_list`](https://en.cppreference.com/w/cpp/container/forward_list). **cpp-sort** makes it possible to enhance sorters so that they can recognize specific containers and use a dedicated altered version of the sorting algorithm to sort the container thanks to [`container_aware_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter).
+Sometimes, iterators are not enough and you want to use the full abilities of containers to sort them, like O(1) insertion for [`std::list`][std-list] and [`std::forward_list`][std-forward-list]. **cpp-sort** makes it possible to enhance sorters so that they can recognize specific containers and use a dedicated altered version of the sorting algorithm to sort the container thanks to [`container_aware_adapter`][container-aware-adapter].
 
 Let's get straight to example and enhance `selection_sort` for a custom list class to take advantage of the O(1) insertion. Here is the list implementation:
 
@@ -38,7 +38,7 @@ namespace example
 }
 ```
 
-As is, `container_aware_adapter` doesn't know about the sorting algorithm and can't use it. In order to find dedicated algorithm, it performs an ADL lookup to find a suitable `sort` function in the container's namespace. The `sort` function shall take the "overloaded" sorter as a first parameter, the container to sort as a second parameter, and comparison and projection functions may follow. Many overload generation rules from [`sorter_facade`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) are also implemented in `container_aware_adapter` to ensure that it will try to call the dedicated algorithm whenever it can. Here is the whole thing:
+As is, `container_aware_adapter` doesn't know about the sorting algorithm and can't use it. In order to find dedicated algorithm, it performs an ADL lookup to find a suitable `sort` function in the container's namespace. The `sort` function shall take the "overloaded" sorter as a first parameter, the container to sort as a second parameter, and comparison and projection functions may follow. Many overload generation rules from [`sorter_facade`][sorter-facade] are also implemented in `container_aware_adapter` to ensure that it will try to call the dedicated algorithm whenever it can. Here is the whole thing:
 
 ```cpp
 namespace example
@@ -71,3 +71,9 @@ namespace example
 ```
 
 There will be improvements to `container_aware_adapter` in the future to make `stable_sort` another customization point, and probably to make `sort` fall back to `stable_sort` when there is an ADL-found `stable_sort` but no ADL-found `sort`. However, it's a huge piece of work, so it probably won't be before a while.
+
+
+  [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
+  [sorter-facade]: Sorter-facade.md
+  [std-forward-list]: https://en.cppreference.com/w/cpp/container/forward_list
+  [std-list]: https://en.cppreference.com/w/cpp/container/list

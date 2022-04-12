@@ -1,6 +1,9 @@
-[![Latest Release](https://img.shields.io/badge/release-1.12.1-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.12.1)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.12.1-blue.svg)](https://conan.io/center/cpp-sort?version=1.12.1)
+![cpp-sort logo](docs/images/cpp-sort-logo.svg)
+
+[![Latest Release](https://img.shields.io/badge/release-1.13.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.13.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.13.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.13.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
+[![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
 > regardless of application or the computer being used. But in fact, each method has its own
@@ -201,17 +204,9 @@ slightly modified version of Matthew Bentley's [indiesort](https://github.com/ma
 comes from Danila Kutenin's [miniselect library](https://github.com/danlark1/miniselect) and uses
 Andrei Alexandrescu's [*AdaptiveQuickselect*](https://arxiv.org/abs/1606.00484) algorithm.
 
-* The algorithms 0 to 16 used by `sorting_network_sorter` have been generated with
-Perl's [`Algorithm::Networksort` module](https://metacpan.org/pod/release/JGAMBLE/Algorithm-Networksort-1.30/lib/Algorithm/Networksort.pm).
-
-* The algorithm 17 used by `sorting_network_sorter` correspond to the ones found by
-Symmetry and Evolution based Network Sort Optimization (SENSO) published in *Using
-Symmetry and Evolutionary Search to Minimize Sorting Networks* by Valsalam and Miikkulainen.
-
-* The algorithms 18 to 26 and 28 used by `sorting_network_sorter` have been found and
-proposed for inclusion by Bert Dobbelaere with his [SorterHunter project](https://github.com/bertdobbelaere/SorterHunter).
-Huge thanks for this contribution :) You can find a full list of most well-known sorting
-networks up to 32 inputs on his website.
+* The sorting networks used by `sorting_network_sorter` all come [from this list](http://users.telenet.be/bertdobbelaere/SorterHunter/sorting_networks.html)
+maintained by Bert Dobbelaere. The page has references to the sources of all of the sorting networks
+it lists.
 
 * Some of the optimizations used by `sorting_network_sorter` come from [this
 discussion](https://stackoverflow.com/q/2786899/1364752) on StackOverflow and are

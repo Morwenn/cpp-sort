@@ -1,10 +1,10 @@
 Someday, you might want to use a specific sorting algorithm that does not exist in **cpp-sort** (there are plenty of those) but still benefit from the tools available in this library. In order to do so, you would have to wrap such an algorithm into a sorter. In this tutorial, we will see the quirks involved in writing a good sorter to wrap a sorting algorithm. Writing a basic sorter is easy, but getting everything right to the details might be a bit tricky from time to time. This guide should help you to make the good choices (well, at least I hope so).
 
-*This tutorial is mostly a collection of good practice, tips, and design considerations. For a full step-by-step tutorial to write a sorter, you can read [Writing a `bubble_sorter`](https://github.com/Morwenn/cpp-sort/wiki/writing-a-bubble_sorter).*
+*This tutorial is mostly a collection of good practice, tips, and design considerations. For a full step-by-step tutorial to write a sorter, you can read [Writing a `bubble_sorter`][writing-a-bubble-sorter].*
 
 ## Which kind of sorter
 
-Writing a proper **cpp-sort**-compatible sorter generally implies some familiarity with library's [nomenclature](https://github.com/Morwenn/cpp-sort/wiki/Library-nomenclature): each term of art might imply design decisions and tricky things to take into account. These terms of art can be converted into a series of questions to answer before designing a sorter:
+Writing a proper **cpp-sort**-compatible sorter generally implies some familiarity with library's [nomenclature][library-nomenclature]: each term of art might imply design decisions and tricky things to take into account. These terms of art can be converted into a series of questions to answer before designing a sorter:
 * Is it a *fixed-size sorter*? Is it meant to sort a collection of arbitrary size or a fixed number of values?
 * Which *category of iterators* does it work with? Can it be used to sort an `std::forward_list`?
 * Does it implement a *comparison sort*? Does it handle arbitrary comparison functions?
@@ -18,7 +18,7 @@ This tutorial describes what should be taken into account when writing a sorter,
 
 ## The most basic sorter
 
-Let's put *fixed-size sorters* aside for a while since they are a really special breed of sorters, and concentrate on sorters meant to sort collections of any size. Let's assume that we already have the following `selection_sort` algorithm, which implements a [selection sort](https://en.wikipedia.org/wiki/Selection_sort) in the most straightforward way, taking a pair of iterators like many standard library algorithms, and sorting the corresponding range in-place:
+Let's put *fixed-size sorters* aside for a while since they are a really special breed of sorters, and concentrate on sorters meant to sort collections of any size. Let's assume that we already have the following `selection_sort` algorithm, which implements a [selection sort][selection-sort] in the most straightforward way, taking a pair of iterators like many standard library algorithms, and sorting the corresponding range in-place:
 
 ```cpp
 template<typename ForwardIterator>
@@ -51,11 +51,11 @@ struct selection_sorter:
 {};
 ```
 
-We just wrote what we call a *sorter implementation* and wrapped it into [`sorter_facade`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade), a class template designed to provide additional features to a given sorter implementation. We only had to write an `operator()` that takes a pair of iterators and forwards it to `selection_sort`, yet the resulting `selection_sorter` also has an `operator()` overload which can be passed a full collection instead of a pair of iterators, and it is additionally convertible to function pointers of type `void(*)(Iterator, Iterator)` and `void(*)(Iterable&)`. This is what `sorter_facade` gives you for even the most basic sorter, without any effort.
+We just wrote what we call a *sorter implementation* and wrapped it into [`sorter_facade`][sorter-facade], a class template designed to provide additional features to a given sorter implementation. We only had to write an `operator()` that takes a pair of iterators and forwards it to `selection_sort`, yet the resulting `selection_sorter` also has an `operator()` overload which can be passed a full collection instead of a pair of iterators, and it is additionally convertible to function pointers of type `void(*)(Iterator, Iterator)` and `void(*)(Iterable&)`. This is what `sorter_facade` gives you for even the most basic sorter, without any effort.
 
 Now, let's define a set of rules to apply when writing sorters. These rules don't *have* to be enforced, but enforcing them will ensure that a sorter will work smoothly with most tool available in this library. In this tutorial, every section will define a small set of rules instead of defining all of them at once without introducing the relevant concepts first. Fortunately, the simpler the sorter, the simpler the rules.
 
-**Rule 1.1:** for any *sorter*, [`std::is_sorted`](https://en.cppreference.com/w/cpp/algorithm/is_sorted) called without a comparison function on the resulting range shall return `true` (note that this is not exactly true: floating point numbers are an example of types that will almost always cause problems).
+**Rule 1.1:** for any *sorter*, [`std::is_sorted`][std-is-sorted] called without a comparison function on the resulting range shall return `true` (note that this is not exactly true: floating point numbers are an example of types that will almost always cause problems).
 
 **Rule 1.2:** a *sorter* shall be callable with either a pair of iterators or an iterable.
 
@@ -63,11 +63,11 @@ Now, let's define a set of rules to apply when writing sorters. These rules don'
 
 **Rule 1.4:** *sorters* shall be immutable and every overload of `operator()` shall explicitly be marked `const` (make sure to check twice: forgetting to `const`-qualify them can cause hundreds of lines of cryptic error messages). Some parts of the library *may* accept mutable sorters, but that's never guaranteed unless specified otherwise.
 
-**Rule 1.5:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables (C++17) or the library's [`static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const) utility (C++14) can be used to avoid ODR-related problems.
+**Rule 1.5:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables (C++17) or the library's [`static_const`][static-const] utility (C++14) can be used to avoid ODR-related problems.
 
 ## Category of iterators
 
-When writing a sorter, one of the most important things to consider is the [category of iterators](https://en.cppreference.com/w/cpp/iterator) it is meant to work with. It directly influences the kinds of collections that the sorter will be able to sort. Sorters implement in-place sorting algorithms, therefore they can only sort forward iterators or more specific types. **cpp-sort** does more than document the sorter category a sorter is supposed to work with: it actually embeds the information directly into the *sorter implementation* itself. If we take the `selection_sorter` from the previous section, we can document its properties as follows:
+When writing a sorter, one of the most important things to consider is the [category of iterators][std-iterators] it is meant to work with. It directly influences the kinds of collections that the sorter will be able to sort. Sorters implement in-place sorting algorithms, therefore they can only sort forward iterators or more specific types. **cpp-sort** does more than document the sorter category a sorter is supposed to work with: it actually embeds the information directly into the *sorter implementation* itself. If we take the `selection_sorter` from the previous section, we can document its properties as follows:
 
 ```cpp
 struct selection_sorter_impl
@@ -83,7 +83,7 @@ struct selection_sorter_impl
 };
 ```
 
-The standard library's [iterator tags](https://en.cppreference.com/w/cpp/iterator/iterator_tags) are used to document the iterator category supported by the sorter (stability is also documented but we'll come back to that later). It is a bit useful for error messages, but some other tools from the library rely of this information. For example [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter) can take several sorters with different iterator categories and generate a new sorter that will call the appropriate sorter depending on the iterator category of the passed collection:
+The standard library's [iterator tags][std-iterator-tags] are used to document the iterator category supported by the sorter (stability is also documented but we'll come back to that later). It is a bit useful for error messages, but some other tools from the library rely of this information. For example [`hybrid_adapter`][hybrid-adapter] can take several sorters with different iterator categories and generate a new sorter that will call the appropriate sorter depending on the iterator category of the passed collection:
 
 ```cpp
 using sorter = cppsort::hybrid_adapter<
@@ -97,7 +97,7 @@ sorter{}(std::forward_list<int>{});  // calls forward_sorter
 sorter{}(std::list<int>{});          // calls bidirectional_sorter
 ```
 
-Say you have several sorters with the same iterator category (`std::forward_iterator_tag`) but you know that one of them is better with forward iterators while the other one is better when it comes to random-access and bidirectional iterators. You can use [`rebind_iterator_category`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#rebind_iterator_category) so that the second sorter is considered as a bidirectional sorter instead:
+Say you have several sorters with the same iterator category (`std::forward_iterator_tag`) but you know that one of them is better with forward iterators while the other one is better when it comes to random-access and bidirectional iterators. You can use [`rebind_iterator_category`][rebind-iterator-category] so that the second sorter is considered as a bidirectional sorter instead:
 
 ```cpp
 using sorter = cppsort::hybrid_adapter<
@@ -109,7 +109,7 @@ using sorter = cppsort::hybrid_adapter<
 >;
 ```
 
-If you ever need to access the iterator category of a sorter, don't directly ask for it, use  [sorter traits](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#sorter_traits) instead. It shouldn't make a difference when using the regular sorters provided by **cpp-sort**, but the library's *fixed-size sorters* are an example of sorters for which the traits are not embedded in the sorter but provided as a specialization of `sorter_traits` (mainly for maintainability reasons).
+If you ever need to access the iterator category of a sorter, don't directly ask for it, use  [sorter traits][sorter-traits] instead. It shouldn't make a difference when using the regular sorters provided by **cpp-sort**, but the library's *fixed-size sorters* are an example of sorters for which the traits are not embedded in the sorter but provided as a specialization of `sorter_traits` (mainly for maintainability reasons).
 
 As you can see, the iterator category supported by a given sorter is not only there for documentation. You have tools to play with it and tools that actually need the information, so make sure to get it right when designing your sorters.
 
@@ -121,7 +121,7 @@ As you can see, the iterator category supported by a given sorter is not only th
 
 ## Comparison sorters
 
-Most sorting algorithms are [comparison sorts](https://en.wikipedia.org/wiki/Comparison_sort). It means that, to sort the elements of a collection, they repeatedly use a comparison function that returns whether two elements are already in order. The standard library's [`std::sort`](https://en.cppreference.com/w/cpp/algorithm/sort) implicitly uses an ADL-found `operator<` to compare two elements, but it also provides an overload which takes a user-provided comparison function to compare two elements. **cpp-sort** loosely follows this design (it defaults to `std::less<>` instead of `operator<`) and allows its sorters to take an additional parameter for user-provided comparison functions. Let's write a *sorter implementation* to wrap the three-parameter overload of `std::sort`:
+Most sorting algorithms are [comparison sorts][comparison-sort]. It means that, to sort the elements of a collection, they repeatedly use a comparison function that returns whether two elements are already in order. The standard library's [`std::sort`][std-sort] implicitly uses an ADL-found `operator<` to compare two elements, but it also provides an overload which takes a user-provided comparison function to compare two elements. **cpp-sort** loosely follows this design (it defaults to `std::less<>` instead of `operator<`) and allows its sorters to take an additional parameter for user-provided comparison functions. Let's write a *sorter implementation* to wrap the three-parameter overload of `std::sort`:
 
 ```cpp
 struct std_sorter_impl
@@ -147,22 +147,22 @@ struct std_sorter:
 {};
 ```
 
-Compared to the previous `selection_sorter_impl`, the only things we had to add was a template parameter defaulted to [`std::less<>`](https://en.cppreference.com/w/cpp/utility/functional/less_void) and a default-contructed (when not provided) parameter to `operator()`. As usual, [`sorter_facade`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) generates a bunch of additional features: it still adds the overload of `operator()` taking a single iterable, but also adds an overload taking an iterable and a comparison function. Basically, it ensures that you always only have to provide a single overload of `operator()`, and generates all the other ones as well as all the corresponding conversions to function pointers.
+Compared to the previous `selection_sorter_impl`, the only things we had to add was a template parameter defaulted to [`std::less<>`][std-less-void] and a default-contructed (when not provided) parameter to `operator()`. As usual, [`sorter_facade`][sorter-facade] generates a bunch of additional features: it still adds the overload of `operator()` taking a single iterable, but also adds an overload taking an iterable and a comparison function. Basically, it ensures that you always only have to provide a single overload of `operator()`, and generates all the other ones as well as all the corresponding conversions to function pointers.
 
-This kind of comparison sorters help to compare things that don't have an overloaded `operator<` or to compare things differently. For example, passing [`std::greater<>`](https://en.cppreference.com/w/cpp/utility/functional/greater_void) to a sorter instead of `std::less<>` sorts a collection in descending order:
+This kind of comparison sorters help to compare things that don't have an overloaded `operator<` or to compare things differently. For example, passing [`std::greater<>`][std-greater-void] to a sorter instead of `std::less<>` sorts a collection in descending order:
 
 ```cpp
 // Sort collection in reverse order with std::sort
 cppsort::std_sort(collection, std::greater<>{});
 ```
 
-It is worth noting that every *comparison sorter* provided by the library transforms the comparison parameter with [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function) before actually using it. It allows to use pointers to member functions of the `lhs.compare_to(rhs)` kind out-of-the-box.
+It is worth noting that every *comparison sorter* provided by the library transforms the comparison parameter with [`utility::as_function`][utility-as-function] before actually using it. It allows to use pointers to member functions of the `lhs.compare_to(rhs)` kind out-of-the-box.
 
 The rules for *comparison sorters* are but an extension to the rules defined for basic sorters. You will see that they are very similar.
 
 **Rule 3.1:** a *comparison sorter* is also a *sorter*, which means that it shall be called without a comparison function and shall obey all the rules defined for regular *sorters*.
 
-**Rule 3.2:** for any *comparison sorter* called with a specific comparison function, [`std::is_sorted`](https://en.cppreference.com/w/cpp/algorithm/is_sorted) called with the same comparison function on the resulting collection shall return `true`.
+**Rule 3.2:** for any *comparison sorter* called with a specific comparison function, [`std::is_sorted`][std-is-sorted] called with the same comparison function on the resulting collection shall return `true`.
 
 **Rule 3.3:** calling a *comparison sorter* with `std::less<>` or without a comparison function shall be strictly equivalent: calling `std::is_sorted` without a comparison function on the resulting collection shall return `true`.
 
@@ -172,7 +172,7 @@ The rules for *comparison sorters* are but an extension to the rules defined for
 
 ## Handling projections
 
-The [Ranges TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4560.pdf) introduces the notion of callable *projections*, borrowed from the [Adobe Source Libraries](https://stlab.adobe.com/). A projection is a callable object that can be passed to an algorithm so that it "views" the values to be compared differently. For example, [`std::negate<>`](https://en.cppreference.com/w/cpp/utility/functional/negate_void) could be used to sort a collection of integers in descending order. Let's assume that our `selection_sort` algorithm from a while has been given a fourth parameter to handle projections; here is the corresponding *sorter implementation*: 
+C++20 introduces the notion of callable *projections*, borrowed from the [Adobe Source Libraries][stlab]. A projection is a callable object that can be passed to an algorithm so that it "views" the values to be compared differently. For example, [`std::negate<>`][std-negate-void] could be used to sort a collection of integers in descending order. Let's assume that our `selection_sort` algorithm from a while has been given a fourth parameter to handle projections; here is the corresponding *sorter implementation*: 
 
 ```cpp
 struct selection_sorter_impl
@@ -198,11 +198,11 @@ struct selection_sorter_impl
 };
 ```
 
-As you can see, extending the sorter to handle projections is similar to extending it to support comparisons. Note that this sorter is both a *comparison sorter* and a *projection sorter*, but some sorters can also handle projections without handling comparisons. While the default function object for comparisons is `std::less`, the equivalent default function object for projections is [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) (and probably `std::identity` in a future revision of the C++ standard): it simply returns the passed value as is.
+As you can see, extending the sorter to handle projections is similar to extending it to support comparisons. Note that this sorter is both a *comparison sorter* and a *projection sorter*, but some sorters can also handle projections without handling comparisons. While the default function object for comparisons is `std::less`, the equivalent default function objects for projections is [`utility::identity`][utility-identity] (and probably [`std::identity`][std-identity] in C++20): it simply returns the passed value as is.
 
-The only subtle trick in the example above is the use of [`is_projection_iterator`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_projection-and-is_projection_iterator): this trait is used to disambiguate comparison functions from projection functions when a sorter can be called with both, and is not needed when the sorter is only a *projection sorter*. It is actually some kind of concept check and should go away when concepts make their way to the standard.
+The only subtle trick in the example above is the use of [`is_projection_iterator`][is-projection]: this trait is used to disambiguate comparison functions from projection functions when a sorter can be called with both, and is not needed when the sorter is only a *projection sorter*. It is actually some kind of concept check and should go away when concepts make their way to the standard.
 
-Note that most of the algorithms (actually, every *projection sorter* provided by the library) transform the projection parameter with [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function) before actually using it. This small tool allows to use pointers to member data as projections; here is an example of how it can be used:
+Note that most of the algorithms (actually, every *projection sorter* provided by the library) transform the projection parameter with [`utility::as_function`][utility-as-function] before actually using it. This small tool allows to use pointers to member data as projections; here is an example of how it can be used:
 
 ```cpp
 struct wrapper { int value; }
@@ -212,7 +212,7 @@ cppsort::selection_sort(vec, &wrapper::value);
 
 Thanks to that small trick, the `selection_sorter` will sort `vec`, using the member data `wrapper::value` instead of a full `wrapper` instance (which cannot be compared) to perform the comparisons on.
 
-Algorithms generally apply the projection on-the-fly to the values when they are compared. Some algorithms are a bit more subtle and project a specific object once when they know that its projection will be used extensively (*e.g.* quicksort projects a pivot once before calling the partition function). If projections are really expensive, one can still use [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter), which projects every element of the collection once prior to the sorting.
+Algorithms generally apply the projection on-the-fly to the values when they are compared. Some algorithms are a bit more subtle and project a specific object once when they know that its projection will be used extensively (*e.g.* quicksort projects a pivot once before calling the partition function). If projections are really expensive, one can still use [`schwartz_adapter`][schwartz-adapter], which projects every element of the collection once prior to the sorting.
 
 Now that you know everything about implementing projections... it's time tell you that you don't actually need to implement them most of the time: if you create a *sorter implementation* with an `operator()` taking only two iterators and a comparison function, `sorter_facade` will create additional overloads that accept projection parameters, bake the projection into the comparison function and pass that hybrid to the appropriate overload of `operator()` in the *sorter implementation*. You only need to add a small SFINAE guard to disambiguate between comparison and  projection functions:
 
@@ -245,9 +245,9 @@ The general rules for *projection sorters* are really close to the ones for *com
 
 **Rule 4.2:** a sorter can be both a *comparison sorter* and a *projection sorter* at once. Such a sorter shall also obey all the rules defined for *sorters*, for *comparison sorters* and for *projection sorters*.
 
-**Rule 4.3:** for any *projection sorter* called with a specific projection function, [`std::is_sorted`](https://en.cppreference.com/w/cpp/algorithm/is_sorted) called with `std::less<>` and the same projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, for any such sorter called with a specific pair of comparison and projection function, `std::is_sorted` called with the same pair of functions on the resulting collection shall return `true`.
+**Rule 4.3:** for any *projection sorter* called with a specific projection function, [`std::is_sorted`][std-is-sorted] called with `std::less<>` and the same projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, for any such sorter called with a specific pair of comparison and projection function, `std::is_sorted` called with the same pair of functions on the resulting collection shall return `true`.
 
-**Rule 4.4:** calling a *projection sorter* with [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) or without a projection function shall be strictly equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `utility::identity`, and calling it without any additional function should be strictly equivalent.
+**Rule 4.4:** calling a *projection sorter* with [`utility::identity`][utility-identity] or without a projection function shall be strictly equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `utility::identity`, and calling it without any additional function should be strictly equivalent.
 
 **Rule 4.5:** a *projection sorter* which can be called with a collection and a projection function shall also be callable with two corresponding iterators and the same projection function. If the *projection sorter* is also a *comparison sorter*, it shall also be callable with an iterable, a comparison function and a projection function.
 
@@ -257,7 +257,7 @@ The general rules for *projection sorters* are really close to the ones for *com
 
 ## Non-comparison sorters
 
-While most of the well-known sorting algorithms handle user-provided comparison functions, some do not. It might be for several reasons: the sorter might wrap an algorithm that does not support such custom comparisons, or the algorithm may simply not be based on comparison (*e.g.* [radix sort](https://en.wikipedia.org/wiki/Radix_sort)). Let's assume that we have got our hands on a `counting_sort` function, implementing a [counting sort](https://en.wikipedia.org/wiki/Counting_sort) algorithm. We can trivially write a *sorter implementation* to wrap it:
+While most of the well-known sorting algorithms handle user-provided comparison functions, some do not. It might be for several reasons: the sorter might wrap an algorithm that does not support such custom comparisons, or the algorithm may simply not be based on comparison (*e.g.* [radix sort][radix-sort]). Let's assume that we have got our hands on a `counting_sort` function, implementing a [counting sort][counting-sort] algorithm. We can trivially write a *sorter implementation* to wrap it:
 
 ```cpp
 struct counting_sorter_impl
@@ -307,7 +307,7 @@ struct counting_sorter_impl
 };
 ```
 
-With such an implementation, this sorter satisfies the *comparison sorter* concept when given an instance of `std::greater<>` without breaking any of the rules defined in the previous sections. Now it may seem a bit unfair for `std::less<>`... but actually [`sorter_facade`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) automagically generates several `operator()` overloads taking `std::less<>` when the provided *sorter implementation* doesn't handle it natively. Note that even though this section is about non-comparison sorters, the same applies to non-projection sorters (you could provide a specific overload for [`std::negate<>`](https://en.cppreference.com/w/cpp/utility/functional/negate_void) for a descending sort too), and `sorter_facade` would provide equivalent `operator()` overloads taking [`utility::identity`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) for *sorter implementations* that cannot handle it natively).
+With such an implementation, this sorter satisfies the *comparison sorter* concept when given an instance of `std::greater<>` without breaking any of the rules defined in the previous sections. Now it may seem a bit unfair for `std::less<>`... but actually [`sorter_facade`][sorter-facade] automagically generates several `operator()` overloads taking `std::less<>` when the provided *sorter implementation* doesn't handle it natively. Note that even though this section is about non-comparison sorters, the same applies to non-projection sorters (you could provide a specific overload for [`std::negate<>`][std-negate-void] for a descending sort too), and `sorter_facade` would provide equivalent `operator()` overloads taking [`utility::identity`][utility-identity] for *sorter implementations* that cannot handle it natively).
 
 The most beautiful thing in my opinion is that no new rule is needed to support that model. All the rules previously defined guarantee that these specific overloads using standard function object as tags work. The only advice I can give is to try to use the most standard function objects as tags, or at least the ones that are the most likely to be used for the specific task. Since **cpp-sort** is heavily based on modern C++ features, it is designed to only work with the `void` specializations of the standard function objects from `<functional>`.
 
@@ -347,7 +347,7 @@ struct counting_sorter_impl
 };
 ```
 
-Using such a soft error mechanism instead of a hard one will make it possible to use this sorter together with [`hybrid_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter) (as long as the sorter provides a valid `iterator_category`) so that it can fall back to another sorter when a collection not handled by `counting_sorter` is given to the resulting sorter:
+Using such a soft error mechanism instead of a hard one will make it possible to use this sorter together with [`hybrid_adapter`][hybrid-adapter] (as long as the sorter provides a valid `iterator_category`) so that it can fall back to another sorter when a collection not handled by `counting_sorter` is given to the resulting sorter:
 
 ```cpp
 // This sorter will use couting_sorter if a random-access collection of
@@ -362,19 +362,19 @@ using generic_sorter = cppsort::hybrid_adapter<
 
 Note that the aggregate above plays well: `counting_sorter` sorter will be called if `generic_sorter` is given a collection of integers and either `std::less<>`, `std::greater<>` or no comparison function at all. `cppsort::merge_sorter` will only be called if `counting_sorter` really has no means to sort the collection.
 
-While type-specific sorters are, by their very nature, unable to generically handle comparison functions, it might be possible for some of them to handle projections. A simple `counting_sorter` can't handle them because it "discards" the original information and recreates integer values laters, but other sorters such as [`spread_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#spread_sorter) keep the original items around. Typically, a projection-enhanced type-specific sorter will be able to handle collections of any type provided the projection function projects the items to a type originally handled by the sorter (*e.g.* `spread_sorter` handles any type projected to an integer, a floating point number or an `std::string`).
+While type-specific sorters are, by their very nature, unable to generically handle comparison functions, it might be possible for some of them to handle projections. A simple `counting_sorter` can't handle them because it "discards" the original information and recreates integer values laters, but other sorters such as [`spread_sorter`][spread-sorter] keep the original items around. Typically, a projection-enhanced type-specific sorter will be able to handle collections of any type provided the projection function projects the items to a type originally handled by the sorter (*e.g.* `spread_sorter` handles any type projected to an integer, a floating point number or an `std::string`).
 
 **Rule 5.1:** a *type-specific sorter*'s `operator()` shall use SFINAE instead of hard errors to avoid being considered during overload resolution when the value type of the collection to sort is not compatible.
 
 ## Stability
 
-A sorting algorithm is said to be [stable](https://en.wikipedia.org/wiki/Sorting_algorithm#Stability) if it preserves the relative order of equivalent elements. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a boolean specialization of `std::integer_constant`. This information should be accessed via [`sorter_traits`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#sorter_traits) or via the more specific [`is_always_stable`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_always_stable) type alias. The stability of a sorter is always either [`std::true_type`](https://en.cppreference.com/w/cpp/types/integral_constant) or `std::false_type`.
+A sorting algorithm is said to be [stable][stability] if it preserves the relative order of equivalent elements. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a boolean specialization of `std::integer_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
 
 ```cpp
 using stability = cppsort::is_always_stable<cppsort::tim_sorter>;
 ```
 
-The library contains a *sorter adapter* named [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) that can be used to obtain a stable sorter, no matter which sorter it is given. If the *adapted sorter* `Sorter` is guaranteed to always be stable (if it defines `is_always_stable` as `std::true_type`), then `stable_sorter<Sorter>` will use it directly, otherwise it will use `make_stable<Sorter>`, where `make_stable` is a sorter adapter that uses the starting position of the elements in the collection to sort to make the *adapted sorter* stable. This mechanism only works if the *adapted sorter* is able to handle *proxy iterators*.
+The library contains a *sorter adapter* named [`stable_adapter`][stable-adapter] that can be used to obtain a stable sorter, no matter which sorter it is given. If the *adapted sorter* `Sorter` is guaranteed to always be stable (if it defines `is_always_stable` as `std::true_type`), then `stable_sorter<Sorter>` will use it directly, otherwise it will use `make_stable<Sorter>`, where `make_stable` is a sorter adapter that uses the starting position of the elements in the collection to sort to make the *adapted sorter* stable. This mechanism only works if the *adapted sorter* is able to handle *proxy iterators*.
 
 Users are allowed to explicitly specialize `stable_adapter` to provide a stable sorter related to the original sorter. For example, if we have a `stable_selection_sorter` wrapping a stable selection sort algorithm, we can specialize `selection_sorter` as follows:
 
@@ -388,7 +388,7 @@ namespace cppsort
 }
 ```
 
-The library also contains another stability-related type trait, [`is_stable`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_stable), which tells whether a *sorter* is stable when called with a specific set of parameters. It doesn't make a difference for *sorters* alone, but become incredibly useful to predict whether a call to an *adapted sorter* is stable or not. This trait is specialized for the library's *sorter adapters* and used by [`stable_adapter`]. When not specialized, it uses a *sorter*'s `is_always_stable` property as the stability of every call.
+The library also contains another stability-related type trait, [`is_stable`][is-stable], which tells whether a *sorter* is stable when called with a specific set of parameters. It doesn't make a difference for *sorters* alone, but become incredibly useful to predict whether a call to an *adapted sorter* is stable or not. This trait is specialized for the library's *sorter adapters* and used by [`stable_adapter`][stable-adapter]. When not specialized, it uses a *sorter*'s `is_always_stable` property as the stability of every call.
 
 **Rule 6.1:** to document the *stability* of a *sorter*, it shall be given an `is_always_stable` type aliasing either `std::true_type` or `std::false_type`. If the sorter can't be altered, `sorter_traits` shall be specialized instead.
 
@@ -420,15 +420,15 @@ There are no specific rules to differentiate the way *stateful* and *stateless s
 
 ## Buffered sorters
 
-Some sorting algorithms can take advantage of buffers of any size to improve their performance, generally to perform merge operations. However, depending on many parameters not known to a sorter's implementer, the best method used to get a buffer of reasonable size might not always be the same. To avoid this problem (and to avoid the duplication of similar algorithms), **cpp-sort** provides some tools to specify the way a buffer is allocated. Let's take a simple example: [SqrtSort](https://github.com/Mrrl/SqrtSort) is apparently a [GrailSort](https://github.com/Mrrl/GrailSort) whose exchange buffer has a size roughly equal to the square root of the size of the collection to sort. While these algorithms are presented as separate algorithms, one can simply pass a *buffer provider* template parameter to a [`grail_sorter`][grail-sorter] and use it to define define `sqrt_sorter`:
+Some sorting algorithms can take advantage of buffers of any size to improve their performance, generally to perform merge operations. However, depending on many parameters not known to a sorter's implementer, the best method used to get a buffer of reasonable size might not always be the same. To avoid this problem (and to avoid the duplication of similar algorithms), **cpp-sort** provides some tools to specify the way a buffer is allocated. Let's take a simple example: [SqrtSort][sqrtsort] is apparently a [GrailSort][grailsort] whose exchange buffer has a size roughly equal to the square root of the size of the collection to sort. While these algorithms are presented as separate algorithms, one can simply pass a *buffer provider* template parameter to a [`grail_sorter`][grail-sorter] and use it to define `sqrt_sorter`:
 
 ```cpp
 using sqrt_sorter = grail_sorter<dynamic_buffer<sqrt>>;
 ```
 
-In this example, `dynamic_buffer` is one of the [*buffer providers*](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#buffer-providers) that come with the library. A *buffer provider* is a class that describes how the buffer should be allocated; it has a nested class template `buffer<T>` that actually contains the allocated memory. While `sqrt_sorter` is a regular sorter, [`grail_sorter`][grail-sorter] is a *buffered sorter*.
+In this example, `dynamic_buffer` is one of the [*buffer providers*][buffer-providers] that come with the library. A *buffer provider* is a class that describes how the buffer should be allocated; it has a nested class template `buffer<T>` that actually contains the allocated memory. While `sqrt_sorter` is a regular sorter, [`grail_sorter`][grail-sorter] is a *buffered sorter*.
 
-The library's `dynamic_buffer` takes what is called a *size policy*: this is a class with an overloaded `operator()` taking an instance of `std::size_t` and returning an instance of a type convertible to `std::size_t`. The library provides [some function objects](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects) that can be used as size policies. It also provides  a `fixed_buffer` which takes an `std::size_t` template parameter corresponding to the number of elements to allocate on the stack for the buffer. For example, [`wiki_sorter`][wiki-sorter] uses a fixed-size buffer of 512 elements unless told otherwise:
+The library's `dynamic_buffer` takes what is called a *size policy*: this is a class with an overloaded `operator()` taking an instance of `std::size_t` and returning an instance of a type convertible to `std::size_t`. The library provides [some function objects][utility-function-objects] that can be used as size policies. It also provides  a `fixed_buffer` which takes an `std::size_t` template parameter corresponding to the number of elements to allocate on the stack for the buffer. For example, [`wiki_sorter`][wiki-sorter] uses a fixed-size buffer of 512 elements unless told otherwise:
 
 ```cpp
 template<
@@ -447,7 +447,7 @@ struct wiki_sorter;
 
 ## Fixed-size sorters
 
-Sorters are generally designed to sort collections of arbitrary size. However, **cpp-sort** also includes [*fixed-size sorters*](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters), especially designed to sort a fixed number of values. Among other things, those algorithms include [sorting networks](https://en.wikipedia.org/wiki/Sorting_network) and sorting algorithms designed to perform a minimal number of move or comparison operations. They mainly exist to sort small fixed-size arrays, when the sorting operation appears in a critical section of the code and needs to be as fast as possible.
+Sorters are generally designed to sort collections of arbitrary size. However, **cpp-sort** also includes [*fixed-size sorters*][fixed-size-sorters], especially designed to sort a fixed number of values. Among other things, those algorithms include [sorting networks][sorting-networks] and sorting algorithms designed to perform a minimal number of move or comparison operations. They mainly exist to sort small fixed-size arrays, when the sorting operation appears in a critical section of the code and needs to be as fast as possible.
 
 A *fixed-size sorter* is not a sorter *per se*: it's a class template taking an `std::size_t` template parameter corresponding to the number of values to sort. Every specialization of such a template is an actual sorter, which obeys all the rules defined in the previous sections as long as the collection to sort has the right size. Let's have a look at what a `low_projections_sorter` - a fixed-size sorter designed to perform a minimal number of projections - may look like:
 
@@ -511,7 +511,7 @@ struct low_projections_sorter_impl<2u>
 };
 ```
 
-We won't show other specializations here because it is rather tedious and takes some place in the tutorial, but the idea is clear: any valid specialization can be a full-fledged sorter when used properly and can also be both a *comparison sorter* and a *projection sorter* if needed. It might be interesting to know which specializations of a fixed-size sorter can be used; in order to provide this information and some more, one has to specialize the trait class template [`fixed_sorter_traits`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits):
+We won't show other specializations here because it is rather tedious and takes some place in the tutorial, but the idea is clear: any valid specialization can be a full-fledged sorter when used properly and can also be both a *comparison sorter* and a *projection sorter* if needed. It might be interesting to know which specializations of a fixed-size sorter can be used; in order to provide this information and some more, one has to specialize the trait class template [`fixed_sorter_traits`][fixed-sorter-traits]:
 
 ```cpp
 namespace cppsort
@@ -533,7 +533,7 @@ namespace cppsort
 
 If `domain` does not exist in the `fixed_sorter_traits` specialization, it means that every specialization of the fixed-size sorter is a valid sorter.
 
-Using the specializations of a fixed-size sorter by hand is not the sweetest thing either; that is why the library provides the fixed-size sorter adapter [`small_array_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#small_array_adapter) which takes a whole *fixed-size sorter* and almost transforms it into a sorter (the resulting class doesn't handle pairs of iterators). The resulting object, when given an instance of [`std::array`](https://en.cppreference.com/w/cpp/container/array) or a fixed-size C array, will sort it in-place with the specialization corresponding to the size of the passed array. To transform that into a full sorter able to handle anything, one needs to aggregate it with another sorter into a `hybrid_adapter`:
+Using the specializations of a fixed-size sorter by hand is not the sweetest thing either; that is why the library provides the fixed-size sorter adapter [`small_array_adapter`][small-array-adapter] which takes a whole *fixed-size sorter* and almost transforms it into a sorter (the resulting class doesn't handle pairs of iterators). The resulting object, when given an instance of [`std::array`][std-array] or a fixed-size C array, will sort it in-place with the specialization corresponding to the size of the passed array. To transform that into a full sorter able to handle anything, one needs to aggregate it with another sorter into a `hybrid_adapter`:
 
 ```cpp
 using sorter = cppsort::hybrid_adapter<
@@ -545,7 +545,7 @@ using sorter = cppsort::hybrid_adapter<
 >;
 ```
 
-In the example above, the resulting sorter will use our `low_projections_sorter` when given an `std::array` or a fixed-size C array of size less than 5, and fall back to [`verge_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#verge_sorter) when given any other collection or a pair of iterators.
+In the example above, the resulting sorter will use our `low_projections_sorter` when given an `std::array` or a fixed-size C array of size less than 5, and fall back to [`verge_sorter`][verge-sorter] when given any other collection or a pair of iterators.
 
 **Rule 8.1:** a *fixed-size sorter* is allowed but not required to work with fixed arrays of any size.
 
@@ -554,5 +554,45 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
 **Rule 8.3:** a *fixed-size sorter* shall specialize the class `cppsort::fixed_sorter_traits` if it needs to provide information about its domain, its iterator category or its stability. See the exact meaning of these types and how to define them in the dedicated part of the documentation.
 
 
-  [grail-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#grail_sorter
-  [wiki-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#wiki_sorter
+  [buffer-providers]: Miscellaneous-utilities.md#buffer-providers
+  [comparison-sort]: https://en.wikipedia.org/wiki/Comparison_sort
+  [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
+  [fixed-size-sorters]: Fixed-size-sorters.md
+  [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
+  [grailsort]: https://github.com/Mrrl/GrailSort
+  [grail-sorter]: Sorters.md#grail_sorter
+  [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
+  [is-always-stable]: Sorter-traits.md#is_always_stable
+  [is-projection]: Sorter-traits.md#is_projection-and-is_projection_iterator
+  [is-stable]: Sorter-traits.md#is_stable
+  [library-nomenclature]: Library-nomenclature.md
+  [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
+  [rebind-iterator-category]: Sorter-traits.md#rebind_iterator_category
+  [schwartz-adapter]: Sorter-adapters.md#schwartz_adapter
+  [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
+  [small-array-adapter]: Sorter-adapters.md#small_array_adapter
+  [sorter-facade]: Sorter-facade.md
+  [sorter-traits]: Sorter-traits.md#sorter_traits
+  [sorting-networks]: https://en.wikipedia.org/wiki/Sorting_network
+  [spread-sorter]: Sorters.md#spread_sorter
+  [sqrtsort]: https://github.com/Mrrl/SqrtSort
+  [stability]: https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
+  [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
+  [static-const]: Miscellaneous-utilities.md#static_const
+  [std-array]: https://en.cppreference.com/w/cpp/container/array
+  [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
+  [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
+  [std-integral-constant]: https://en.cppreference.com/w/cpp/types/integral_constant
+  [std-is-sorted]: https://en.cppreference.com/w/cpp/algorithm/is_sorted
+  [std-iterators]: https://en.cppreference.com/w/cpp/iterator
+  [std-iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
+  [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-negate-void]: https://en.cppreference.com/w/cpp/utility/functional/negate_void
+  [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
+  [stlab]: https://stlab.adobe.com/
+  [utility-as-function]: Miscellaneous-utilities.md#as_function
+  [utility-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
+  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects
+  [verge-sorter]: Sorters.md#verge_sorter
+  [wiki-sorter]: Sorters.md#wiki_sorter
+  [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md

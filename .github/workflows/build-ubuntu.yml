@@ -11,7 +11,7 @@ on:
       - 'cmake/**'
       - 'examples/**'
       - 'include/**'
-      - 'testsuite/**'
+      - 'tests/**'
   pull_request:
     paths:
       - '.github/workflows/build-ubuntu.yml'
@@ -19,7 +19,7 @@ on:
       - 'cmake/**'
       - 'examples/**'
       - 'include/**'
-      - 'testsuite/**'
+      - 'tests/**'
 
 jobs:
   build:

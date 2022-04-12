@@ -12,10 +12,10 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/heapsort.h"
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -153,7 +153,7 @@ namespace detail
         std::vector<node_type*> pq; // Priority queue
         pq.push_back(tree.root());
 
-        auto&& comp = invert(compare);
+        auto&& comp = cppsort::flip(compare);
         auto proj_value = [proj=utility::as_function(projection)](auto* node) -> decltype(auto) {
             return proj(node->value);
         };

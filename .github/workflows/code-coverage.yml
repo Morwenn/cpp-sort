@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 Morwenn
+# Copyright (c) 2020-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Coverage Upload to Codecov
@@ -15,7 +15,7 @@ on:
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'include/**'
-      - 'testsuite/**'
+      - 'tests/**'
 
 jobs:
   upload-coverage:
@@ -55,7 +55,7 @@ jobs:
         run: cmake --build . --target lcov-capture
 
       - name: Upload coverage info
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           directory: ${{runner.workspace}}/build/lcov/data
           files: '*.info'

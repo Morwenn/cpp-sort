@@ -1,4 +1,4 @@
-If you have read the general tutorial about [[writing sorters|Writing a sorter]], you might be interested in a full concrete example. In this tutorial, we will see how to implement a simple [bubble sort][bubble-sort] and how to write a `bubble_sorter` to wrap it. Step by step.
+If you have read the general tutorial about [writing sorters][writing-a-sorter], you might be interested in a full concrete example. In this tutorial, we will see how to implement a simple [bubble sort][bubble-sort] and how to write a `bubble_sorter` to wrap it. Step by step.
 
 ## The bubble sort algorithm
 
@@ -75,7 +75,7 @@ Now our `bubble_sorter` satisfies the library's requirements and implements all 
 
 ## Sorter traits
 
-For example let's take [`hybrid_adapter`][hybrid-adapter], a [[*sorter adapter*|Sorter adapters]] which allows to aggregate different sorters together: it needs to know the iterator category of the sorters it aggregates. In order to provide that information, we need to explicitly document the iterator category our sorter is designed to work with by giving it an `iterator_category` type aliasing one of the standard iterator tags:
+For example let's take [`hybrid_adapter`][hybrid-adapter], a [*sorter adapter*][sorter-adapters] which allows to aggregate different sorters together: it needs to know the iterator category of the sorters it aggregates. In order to provide that information, we need to explicitly document the iterator category our sorter is designed to work with by giving it an `iterator_category` type aliasing one of the standard iterator tags:
 
 ```cpp
 struct bubble_sorter_impl
@@ -437,16 +437,18 @@ Concepts might improve some error messages too, but they're out of scope for **c
 That's it: we have covered pretty much every interesting aspect of writing a simple comparison sorter. I hope you enjoyed the tutorial, even if bubble sort is not the most interesting sorting algorithm around. You can find the full implementation in the examples folder :)
 
 
-  [as-function]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function
+  [as-function]: Miscellaneous-utilities.md#as_function
+  [bubble-sort]: https://en.wikipedia.org/wiki/Bubble_sort
   [bubble-sorter]: https://en.wikipedia.org/wiki/Bubble_sort
-  [heap-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
-  [hybrid-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter
-  [is-projection]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_projection-and-is_projection_iterator
+  [heap-sorter]: Sorters.md#heap_sorter
+  [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
+  [is-projection]: Sorter-traits.md#is_projection-and-is_projection_iterator
   [projections]: https://ezoeryou.github.io/blog/article/2019-01-22-ranges-projection.html
   [proxy-iterators]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0022r2.html
-  [sorter-facade]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade
-  [sorter-traits]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#sorter_traits
-  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter-make_stable-and-stable_t
+  [sorter-adapters]: Sorter-adapters.md
+  [sorter-facade]: Sorter-facade.md
+  [sorter-traits]: Sorter-traits.md#sorter_traits
+  [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
   [std-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move
@@ -454,7 +456,8 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
   [std-list]: https://en.cppreference.com/w/cpp/container/list
   [std-span]: https://en.cppreference.com/w/cpp/container/span
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
-  [utility-identity]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
-  [utility-iter-move]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#iter_move-and-iter_swap
-  [utility-size]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#size
-  [utility-static-const]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const
+  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects
+  [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
+  [utility-size]: Miscellaneous-utilities.md#size
+  [utility-static-const]: Miscellaneous-utilities.md#static_const
+  [writing-a-sorter]: Writing-a-sorter.md

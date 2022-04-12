@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_FUNCTIONAL_H_
@@ -13,6 +13,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
+#include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -30,7 +31,8 @@ namespace utility
     {
         template<typename T, typename U>
         struct projection_base_pipe_result:
-            projection_base
+            projection_base,
+            cppsort::detail::raw_check_is_transparent<T, U>
         {
             T lhs;
             U rhs;
@@ -106,7 +108,8 @@ namespace utility
     {
         template<typename Function>
         struct as_projection_fn:
-            projection_base
+            projection_base,
+            cppsort::detail::raw_check_is_transparent<Function>
         {
             private:
 
@@ -114,7 +117,7 @@ namespace utility
 
             public:
 
-                as_projection_fn() = delete;
+                as_projection_fn() = default;
                 as_projection_fn(const as_projection_fn&) = default;
                 as_projection_fn(as_projection_fn&&) = default;
 
@@ -172,7 +175,8 @@ namespace utility
         {};
 
         template<typename Function>
-        struct as_comparison_fn
+        struct as_comparison_fn:
+            cppsort::detail::raw_check_is_transparent<Function>
         {
             private:
 
@@ -180,7 +184,7 @@ namespace utility
 
             public:
 
-                as_comparison_fn() = delete;
+                as_comparison_fn() = default;
                 as_comparison_fn(const as_comparison_fn&) = default;
                 as_comparison_fn(as_comparison_fn&&) = default;
 
@@ -281,7 +285,8 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // Math functions (mostly useful for buffer providers)
 
-    struct half
+    struct half:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -289,9 +294,12 @@ namespace utility
         {
             return std::forward<T>(value) / 2;
         }
+
+        using is_transparent = void;
     };
 
-    struct log
+    struct log:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -300,9 +308,12 @@ namespace utility
             using std::log;
             return log(std::forward<T>(value));
         }
+
+        using is_transparent = void;
     };
 
-    struct sqrt
+    struct sqrt:
+        projection_base
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -311,6 +322,8 @@ namespace utility
             using std::sqrt;
             return sqrt(std::forward<T>(value));
         }
+
+        using is_transparent = void;
     };
 
     ////////////////////////////////////////////////////////////

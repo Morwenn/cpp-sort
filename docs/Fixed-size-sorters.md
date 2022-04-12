@@ -1,6 +1,6 @@
 Fixed-size sorters, sometimes called *fixed sorters* for simplicity are a special kind of sorters designed to sort a fixed number of values. Their `operator()` also takes either an iterable or a pair of iterators as well as an optional comparison and projection functions. Most of the time the end iterator is unused, but future versions of the library may start to use it to optionally perform bound-checking.
 
-Fixed-size sorters are not actual sorters *per se* but class templates that take an `std::size_t` template parameter. Every valid specialization of a fixed-size sorter for a given size yields a "valid" sorter. Several fixed-size sorters have specializations for some sizes only and will trigger a compile-time error when one tries to instantiate a specialization which is not part of the fixed-size sorter's domain (the domain corresponds to the set of valid specializations). Information about fixed-size sorters can be obtained via [`fixed_sorter_traits`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#fixed_sorter_traits). One can also make sure that a given fixed-size sorter is automatically used to sort small fixed-size arrays thanks to [`small_array_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#small_array_adapter).
+Fixed-size sorters are not actual sorters *per se* but class templates that take an `std::size_t` template parameter. Every valid specialization of a fixed-size sorter for a given size yields a "valid" sorter. Several fixed-size sorters have specializations for some sizes only and will trigger a compile-time error when one tries to instantiate a specialization which is not part of the fixed-size sorter's domain (the domain corresponds to the set of valid specializations). Information about fixed-size sorters can be obtained via [`fixed_sorter_traits`][fixed-sorter-traits]. One can also make sure that a given fixed-size sorter is automatically used to sort small fixed-size arrays thanks to [`small_array_adapter`][small-array-adapter].
 
 It is possible to include all the fixed-size sorters at once with the following directive:
 
@@ -34,10 +34,10 @@ Size | Comparison weight | Algorithm
 9 | 6759936 | Merge-insertion sort
 10 | 79937280 | Insertion sort*
 11 | 1020833280 | Insertion sort*
-12 | 15167554560 | [Double gnome sort*](https://github.com/Morwenn/cpp-sort/wiki/Original-research#double-insertion-sort)
+12 | 15167554560 | [Double gnome sort*][double-insertion-sort]
 13 | 223436206080 | Double gnome sort*
 
-While `low_comparisons_sorter` is optimal from 0 through 8 with regard to the *comparison weight*, it is worth noting that [`merge_insertion_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#merge_insertion_sorter) performs fewer comparisons on average than some other specializations. However the algorithm is rather complex and has a high runtime cost, which makes it unsuitable for such a sorter, which seeks to provide tiny and fast algorithm.
+While `low_comparisons_sorter` is optimal from 0 through 8 with regard to the *comparison weight*, it is worth noting that [`merge_insertion_sort`][merge-insertion-sorter] performs fewer comparisons on average than some other specializations. However the algorithm is rather complex and has a high runtime cost, which makes it unsuitable for such a sorter, which seeks to provide tiny and fast algorithm.
 
 It is worth noting that the algorithm used to sort 9 elements in not strictly a merge-insertion sort: instead it uses an equivalent algorithm described in *A variant of the Ford–Johnson algorithm that is more space efficient* by Ayala-Rincón et al. That said I did not implement it correctly since it still performs more comparisons than `merge_insertion_sorter` (but it's still better than the previous solution, so that's ok for now).
 
@@ -80,7 +80,7 @@ template<std::size_t N>
 struct low_moves_sorter;
 ```
 
-Note that this fixed-size sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#indirect_adapter) instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
+Note that this fixed-size sorter is *not* move-optimal: it tries to perform a few moves without wasting too much memory and with a somewhat reasonable number of comparisons for small collections. If you really need a sorting algorithm that performs the lowest possible number of move operations, you can use the library's [`indirect_adapter`][indirect-adapter] instead, but it comes at the cost of a higher memory footprint. You probably want to use if only when the objects are *really* expensive to copy.
 
 ### `merge_exchange_network_sorter`
 
@@ -90,7 +90,7 @@ Note that this fixed-size sorter is *not* move-optimal: it tries to perform a fe
 
 This fixed-size sorter implements *merge-exchange sort* a variation of Batcher's [*odd-even mergesort*][odd-even-mergesort] described by Knuth in *[The Art of Computer Programming][taocp] vol.3 - Sorting and Searching*. Unlike the algorithm described in the Wikipedia article, this produces two interleaved [sorting networks][sorting-network] and merges them.
 
-![Merge-exchange sorting network for 8 inputs](https://github.com/Morwenn/cpp-sort/wiki/images/merge-exchange-network-8.png)
+![Merge-exchange sorting network for 8 inputs](images/merge-exchange-network-8.png)
 
 ```cpp
 template<std::size_t N>
@@ -113,7 +113,7 @@ template<typename DifferenceType=std::ptrdiff_t>
 
 This fixed-size sorter implements Batcher's [*odd-even mergesort*][odd-even-mergesort], which can be implemented as a family of sorting networks recursively sorting both halves of the input and merging them.
 
-![Odd-even mergesort network for 8 inputs](https://github.com/Morwenn/cpp-sort/wiki/images/odd-even-merge-network-8.png)
+![Odd-even mergesort network for 8 inputs](images/odd-even-merge-network-8.png)
 
 ```cpp
 template<std::size_t N>
@@ -147,7 +147,7 @@ Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-:
 **CEs** | 0 | 1 | 3 | 5 | 9 | 12 | 16 | 19 | 25 | 29 | 35 | 39 | 45 | 51 | 56 | 60
 **Size** | **17** | **18** | **19** | **20** | **21** | **22** | **23** | **24** | **25** | **26** | **27** | **28** | **29** | **30** | **31** | **32**
-**CEs** | 71 | 77 | 85 | 91 | 100 | 107 | 115 | 120 | 132 | 139 | 150 | 155 | 165 | 172 | 180 | 185
+**CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 131 | 139 | 148 | 155 | 164 | 172 | 180 | 185
 
 One of the main advantages of sorting networks is the fixed number of CEs required to sort a collection: this means that sorting networks are far more resistant to time and cache attacks since the number of performed comparisons does not depend on the contents of the collection. However, additional care (not provided by the library) is required to ensure that the algorithms always perform the same amount of memory loads and stores. For example, one could create a `constant_time_iterator` with a dedicated `iter_swap` tuned to perform a constant-time compare-exchange operation.
 
@@ -167,11 +167,18 @@ static constexpr auto index_pairs()
 
 *Changed in version 1.8.0:* sorting 18 inputs requires 77 CEs instead of 78.
 
-*Changed in version 1.10.0:* added `sorting_network_sorter<N>::index_pairs<DifferenceType>`
+*Changed in version 1.10.0:* added `sorting_network_sorter<N>::index_pairs<DifferenceType>`.
+
+*Changed in version 1.13.0:* sorting 21, 22, 23, 25, 27 and 29 inputs respectively require 99, 106, 114, 131, 149 and 164 CEs instead of 100, 107, 115, 132, 150 and 165.
 
 
+  [double-insertion-sort]: Original-research.md#double-insertion-sort
+  [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
+  [indirect-adapter]: Sorter-adapters.md#indirect_adapter
+  [merge-insertion-sorter]: Sorters.md#merge_insertion_sorter
   [odd-even-mergesort]: https://en.wikipedia.org/wiki/Batcher_odd%E2%80%93even_mergesort
+  [small-array-adapter]: Sorter-adapters.md#small_array_adapter
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
   [taocp]: https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming
-  [utility-sorting-networks]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#Sorting-network-tools
+  [utility-sorting-networks]: Miscellaneous-utilities.md#Sorting-network-tools

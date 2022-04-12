@@ -177,6 +177,6 @@ It makes rather easy to see the different groups of complexities:
 * All of the other measures of presortedness run in O(n log n) time.
 
 
-  [measures-of-presortedness]: https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness
+  [measures-of-presortedness]: Measures-of-presortedness.md
   [std-forward-list-sort]: https://en.cppreference.com/w/cpp/container/list/sort
   [std-list-sort]: https://en.cppreference.com/w/cpp/container/list/sort

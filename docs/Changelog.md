@@ -92,14 +92,15 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 * When using libstdc++, libc++ or the Microsoft STL, the return type of [`std::mem_fn`][std-mem-fn] is considered ["probably branchless"][branchless-traits] when it wraps a pointer to data member, which can improve the speed of [`pdq_sorter`][pdq-sorter] and everything that relies on it in some scenarios.
 
 
-  [branchless-traits]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits
-  [counting-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#counting_sorter
-  [cpp-sort-function-objects]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#miscellaneous-function-objects
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
+  [counting-sorter]: Sorters.md#counting_sorter
+  [cpp-sort-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [cpp-sort-releases]: https://github.com/Morwenn/cpp-sort/releases
   [feature-test-macros]: https://wg21.link/SD6
-  [pdq-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#pdq_sorter
-  [ska-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#ska_sorter
-  [sorter-facade]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade
+  [pdq-sorter]: Sorters.md#pdq_sorter
+  [ska-sorter]: Sorters.md#ska_sorter
+  [smooth-sorter]: Sorters.md#smooth-sorter_sorter
+  [sorter-facade]: Sorter-facade.md
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
@@ -107,4 +108,5 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view
-  [utility-iter-move]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#iter_move-and-iter_swap
+  [std-swap]: https://en.cppreference.com/w/cpp/algorithm/swap
+  [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap

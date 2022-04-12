@@ -39,5 +39,5 @@ using refined_t = std::remove_cvref_t<
 ```
 
 
-  [case-insensitive-less]: https://github.com/Morwenn/cpp-sort/wiki/Comparators#case-insensitive-comparator
+  [case-insensitive-less]: Comparators.md#case-insensitive-comparator
   [case-insensitive-strcmp]: http://lafstern.org/matt/col2_new.pdf

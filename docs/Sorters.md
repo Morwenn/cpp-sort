@@ -1,18 +1,34 @@
 **cpp-sort** uses function objects called *sorters* instead of regular function templates in order to implement sorting algorithms. The library provides two categories of sorters: generic sorters that will sort a collection with any given comparison function, and type-specific sorters which will be optimized to sort collections of a given type, and generally don't allow to use custom comparison functions due to the way they work. Every comparison sorter as well as some type-specific sorters may also take an additional projection parameter, allowing the algorithm to "view" the data to sort through an on-the-fly transformation.
 
-While these function objects offer little more than regular sorting functions by themselves, they can be used together with *[[sorter adapters|Sorter adapters]]* to craft more elaborate sorters effortlessly. Every sorter is available in its own file. However, all the available sorters can be included at once with the following line:
+While these function objects offer little more than regular sorting functions by themselves, they can be used together with *[sorter adapters][sorter-adapters]* to craft more elaborate sorters effortlessly. Every sorter is available in its own file. However, all the available sorters can be included at once with the following line:
 
 ```cpp
 #include <cpp-sort/sorters.h>
 ```
 
-Note that for every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`](https://github.com/Morwenn/cpp-sort/wiki/Sorters#default_sorter) since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`](https://github.com/Morwenn/cpp-sort/wiki/Sorting-functions) when they are called without an explicit sorter.
+Note that for every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`][default-sorter] since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`][sorting-functions] when they are called without an explicit sorter.
 
-If you want to read more about sorters and/or write your own one, then you should have a look at [[the dedicated page|Writing a sorter]] or at [[a specific example|Writing a bubble_sorter]].
+If you want to read more about sorters and/or write your own one, then you should have a look at [the dedicated page][writing-a-sorter] or at [a specific example][writing-a-bubble-sorter].
 
 ## Comparison sorters
 
 The following sorters are available and will work with any type for which `std::less` works and should accept any well-formed comparison function:
+
+### `adaptive_shivers_sorter`
+
+```cpp
+#include <cpp-sort/sorters/adaptive_shivers_sorter.h>
+```
+
+Implements an [adative ShiversSort][adaptive-shivers-sort], a *k*-aware natural mergesort with a better worst case than [timsort][timsort] described by Vincent Jugé in *Adaptive Shivers Sort: An Alternative Sorting Algorithm*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | Yes         | Random-access |
+
+While the sorting algorithm is stable and the complexity guarantees are good enough, this sorter is rather slow compared to the some other ones when the data distribution is random. That said, it would probably be a good choice when comparing data is expensive, but moving it is inexpensive (this is the use case for which it was designed).
+
+*New in version 1.13.0*
 
 ### `block_sorter<>`
 
@@ -44,9 +60,9 @@ Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highl
 #include <cpp-sort/sorters/default_sorter.h>
 ```
 
-***WARNING:** `default_sorter` is deprecated in version 1.8.0 and removed in version 2.0.0, see [issue #168](https://github.com/Morwenn/cpp-sort/issues/167) for the rationale.*
+***WARNING:** `default_sorter` is deprecated in version 1.8.0 and removed in version 2.0.0, see [issue #168][issue-168] for the rationale.*
 
-Sorter striving to use a sorting algorithm as optimized as possible. It is the fallback sorter used by [`cppsort::sort`](https://github.com/Morwenn/cpp-sort/wiki/sorting-function) when no sorter is given. The current implementation defines it as follows:
+Sorter striving to use a sorting algorithm as optimized as possible. It is the fallback sorter used by [`cppsort::sort`][cppsort-sort] when no sorter is given. The current implementation defines it as follows:
 
 ```cpp
 struct default_sorter:
@@ -63,7 +79,7 @@ struct default_sorter:
 {};
 ```
 
-The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) has an explicit specialization for `default_sorter` defined as follows:
+The adapter [`stable_adapter`][stable-adapter] has an explicit specialization for `default_sorter` defined as follows:
 
 ```cpp
 template<>
@@ -82,13 +98,13 @@ struct stable_adapter<default_sorter>:
 #include <cpp-sort/sorters/drop_merge_sorter.h>
 ```
 
-Implements a [drop-merge sort](https://github.com/emilk/drop-merge-sort).
+Implements a [drop-merge sort][drop-merge-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | No          | Bidirectional |
 
-Drop-merge sort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#rem) sorting algorithm. While it is not as good as other sorting algorithms to sort shuffled data, it is excellent when more than 80% of the data is already ordered according to *Rem*.
+Drop-merge sort is a [*Rem*-adaptive][probe-rem] sorting algorithm. While it is not as good as other sorting algorithms to sort shuffled data, it is excellent when more than 80% of the data is already ordered according to *Rem*.
 
 ### `grail_sorter<>`
 
@@ -96,7 +112,7 @@ Drop-merge sort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/M
 #include <cpp-sort/sorters/grail_sorter.h>
 ```
 
-Implements a [Grail sort](https://github.com/Mrrl/GrailSort).
+Implements a [Grail sort][grailsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -121,7 +137,7 @@ Whether this sorter works with types that are not default-constructible depends 
 #include <cpp-sort/sorters/heap_sorter.h>
 ```
 
-Implements a [heapsort](https://en.wikipedia.org/wiki/Heapsort).
+Implements a [heapsort][heapsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -133,13 +149,13 @@ Implements a [heapsort](https://en.wikipedia.org/wiki/Heapsort).
 #include <cpp-sort/sorters/insertion_sorter.h>
 ```
 
-Implements an [insertion sort](https://en.wikipedia.org/wiki/Insertion_sort).
+Implements an [insertion sort][insertion-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n²          | n²          | 1           | Yes         | Bidirectional |
 
-This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter):
+This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`][container-aware-adapter]:
 
 | Container           | Best        | Average     | Worst       | Memory      | Stable      |
 | ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
@@ -185,7 +201,7 @@ Implements the Ford-Johnson merge-insertion sort. This algorithm isn't meant to 
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | ?           | n log n     | n log n     | n           | No          | Random-access |
 
-*Until version 1.7.0:* the algorithm used GNU's [`bitmap_allocator`](https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html) with `std::list` when possible instead of the default allocator, leading to speed improvements up to 25%.
+*Until version 1.7.0:* the algorithm used GNU's [`bitmap_allocator`][bitmap-allocator] with `std::list` when possible instead of the default allocator, leading to speed improvements up to 25%.
 
 *Changed in version 1.7.0:* the `std::list` used by the algorithm has been replaced with a custom list implementation whose speed does not depend on the availability of some allocator, and which should be faster than the previous implementation in any case (still not anywhere near fast).
 
@@ -195,7 +211,7 @@ Implements the Ford-Johnson merge-insertion sort. This algorithm isn't meant to 
 #include <cpp-sort/sorters/merge_sorter.h>
 ```
 
-Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
+Implements a [merge sort][merge-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -204,7 +220,7 @@ Implements a [merge sort](https://en.wikipedia.org/wiki/Merge_sort).
 
 When additional memory is available, `merge_sorter` runs in O(n log n), however if there is no additional memory available, it uses a O(n log² n) algorithm instead. The merging algorithm is memory adaptive, so even if it can only allocate a bit of memory instead of all the memory it needs, it will still take advantage of this additional memory. This memory scheme means that this sorter can't throw `std::bad_alloc`.
 
-This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter):
+This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`][container-aware-adapter]:
 
 | Container           | Best        | Average     | Worst       | Memory      | Stable      |
 | ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
@@ -219,13 +235,13 @@ None of the container-aware algorithms invalidates iterators.
 #include <cpp-sort/sorters/pdq_sorter.h>
 ```
 
-Implements a [pattern-defeating quicksort](https://github.com/orlp/pdqsort).
+Implements a [pattern-defeating quicksort][pdqsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | log n       | No          | Random-access |
 
-`pdq_sorter` uses a more performant partitioning algorithm under the hood if the comparison and projection functions generate branchless code. You can provide this information to the algorithm by specializing the library's [branchless traits](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#branchless-traits) for the given comparison/type or projection/type pairs if they aren't arleady handled natively by the library.
+`pdq_sorter` uses a more performant partitioning algorithm under the hood if the comparison and projection functions generate branchless code. You can provide this information to the algorithm by specializing the library's [branchless traits][branchless-traits] for the given comparison/type or projection/type pairs if they aren't arleady handled natively by the library.
 
 This sorter can't throw `std::bad_alloc`.
 
@@ -275,14 +291,14 @@ This sorter can't throw `std::bad_alloc`.
 #include <cpp-sort/sorters/quick_sorter.h>
 ```
 
-Implements a [quicksort](https://en.wikipedia.org/wiki/Quicksort).
+Implements a [quicksort][quicksort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | log² n      | No          | Bidirectional |
 | n           | n log² n    | n log² n    | log² n      | No          | Forward       |
 
-Despite the name, this sorter actually implements some flavour of introsort: if quicksort performs more than 2*log(n) steps, it falls back to a [median-of-medians](https://en.wikipedia.org/wiki/Median_of_medians) pivot selection instead of the usual median-of-9 one. The median-of-medians selection being mutually recursive with an introselect algorithm explains the use of log²n stack memory.
+Despite the name, this sorter actually implements some flavour of introsort: if quicksort performs more than 2*log(n) steps, it falls back to a [median-of-medians][median-of-medians] pivot selection instead of the usual median-of-9 one. The median-of-medians selection being mutually recursive with an introselect algorithm explains the use of log²n stack memory.
 
 This sorter can't throw `std::bad_alloc`.
 
@@ -294,13 +310,13 @@ This sorter can't throw `std::bad_alloc`.
 #include <cpp-sort/sorters/selection_sorter.h>
 ```
 
-Implements a [selection sort](https://en.wikipedia.org/wiki/Selection_sort).
+Implements a [selection sort][selection-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n²          | n²          | n²          | 1           | No          | Forward       |
 
-This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter):
+This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`][container-aware-adapter]:
 
 | Container           | Best        | Average     | Worst       | Memory      | Stable      |
 | ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
@@ -333,7 +349,7 @@ This algorithm actually uses a rather big amount of memory but scales better tha
 #include <cpp-sort/sorters/smooth_sorter.h>
 ```
 
-Implements a [smoothsort](https://en.wikipedia.org/wiki/Smoothsort).
+Implements a [smoothsort][smoothsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -347,7 +363,7 @@ While the complexity guarantees of this algorithm are optimal, this smoothsort i
 #include <cpp-sort/sorters/spin_sorter.h>
 ```
 
-Implements a [spinsort](https://www.boost.org/doc/libs/1_72_0/libs/sort/doc/html/sort/single_thread/spinsort.html)
+Implements a [spinsort][spinsort]
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -367,7 +383,7 @@ Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive so
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | No          | Random-Access |
 
-SplitSort is a [*Rem*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#rem) sorting algorithm and shares many similarities with drop-merge sort but has the following differences:
+SplitSort is a [*Rem*-adaptive][probe-rem] sorting algorithm and shares many similarities with drop-merge sort but has the following differences:
 * It only works with random-access iterators.
 * While it uses O(n) extra memory to merge some elements, it can run perfectly fine with O(1) extra memory.
 * Benchmarks shows that drop-merge sort is better when few elements aren't in place, but SplitSort has a lower overhead on random data while still performing better than most general-purpose sorting algorithms when the data is already somewhat sorted.
@@ -382,7 +398,7 @@ This sorter can't throw `std::bad_alloc`.
 #include <cpp-sort/sorters/std_sorter.h>
 ```
 
-Uses the standard library [`std::sort`](https://en.cppreference.com/w/cpp/algorithm/sort) to sort a collection. While the complexity guarantees are only partial in the standard, here is what's expected:
+Uses the standard library [`std::sort`][std-sort] to sort a collection. While the complexity guarantees are only partial in the standard, here is what's expected:
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -390,14 +406,14 @@ Uses the standard library [`std::sort`](https://en.cppreference.com/w/cpp/algori
 
 \* *`std::sort` is mandated by the standard to be O(n log n), but the libc++ implementation of the algorithm - despite non-trivial optimizations - [is still O(n²)](https://bugs.llvm.org/show_bug.cgi?id=20837). If you are using another standard library implementation then `std_sorter` should be O(n log n) for randon-access iterators, as expected.*
 
-The adapter [`stable_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter) has an explicit specialization for `std_sorter` which calls [`std::stable_sort`](https://en.cppreference.com/w/cpp/algorithm/stable_sort) instead. Its complexity depends on whether it can allocate additional memory or not. While the complexity guarantees are only partial in the standard, here is what's expected:
+The adapter [`stable_adapter`][stable-adapter] has an explicit specialization for `std_sorter` which calls [`std::stable_sort`][std-stable-sort] instead. Its complexity depends on whether it can allocate additional memory or not. While the complexity guarantees are only partial in the standard, here is what's expected:
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n log n     | n log n     | n log n     | n           | Yes         | Random-access |
 | n log² n    | n log² n    | n log² n    | 1           | Yes         | Random-access |
 
-`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#schwartz_adapter)) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could be the best choice to sort an [`std::vector<bool>`](https://en.cppreference.com/w/cpp/container/vector_bool).
+`std::sort` and `std::stable_sort` are likely not able to handle proxy iterators, therefore trying to use `std_sorter` with code that relies on proxy iterators (*e.g.* [`schwartz_adapter`][schwartz-adapter]) is deemed to cause errors. However, some standard libraries provide overloads of standard algorithms for some containers; for example, libc++ has an overload of `std::sort` for bit iterators, which means that `std_sorter` could be the best choice to sort an [`std::vector<bool>`][std-vector-bool].
 
 This sorter can't throw `std::bad_alloc`.
 
@@ -407,7 +423,7 @@ This sorter can't throw `std::bad_alloc`.
 #include <cpp-sort/sorters/tim_sorter.h>
 ```
 
-Implements a [timsort](https://en.wikipedia.org/wiki/Timsort).
+Implements a [timsort][timsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -423,7 +439,7 @@ While the sorting algorithm is stable and the complexity guarantees are good eno
 #include <cpp-sort/sorters/verge_sorter.h>
 ```
 
-Implements a [vergesort](https://github.com/Morwenn/vergesort) algorithm backed by a quicksort derivative.
+Implements a [vergesort][vergesort] algorithm backed by a quicksort derivative.
 
 | Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
@@ -432,7 +448,7 @@ Implements a [vergesort](https://github.com/Morwenn/vergesort) algorithm backed 
 | n           | n log n     | n log n log log n | n           | No          | Bidirectional |
 | n           | n log n     | n log n           | log² n      | No          | Bidirectional |
 
-Vergesort is a [*Runs*-adaptive](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness#runs) algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergesort otherwise).
+Vergesort is a [*Runs*-adaptive][probe-runs] algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergesort otherwise).
 
 Vergesort's complexity is bound either by its optimization layer or by the fallback sorter's complexity:
 * When it doesn't find big runs, the complexity is bound by the fallback sorter: depending on the category of iterators you can refer to the tables of either `pdq_sorter` or `quick_merge_sorter`.
@@ -479,7 +495,7 @@ The following sorters are available but will only work for some specific types i
 #include <cpp-sort/sorters/counting_sorter.h>
 ```
 
-`counting_sorter` implements a simple [counting sort](https://en.wikipedia.org/wiki/Counting_sort). This sorter also supports reverse sorting with `std::greater<>` or `std::ranges::greater`.
+`counting_sorter` implements a simple [counting sort][counting-sort]. This sorter also supports reverse sorting with [`std::greater<>`][std-greater-void] or [`std::ranges::greater`][std-ranges-greater].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -491,7 +507,7 @@ This sorter works with any type satisfying the trait `std::is_integral` (as well
 
 *Changed in version 1.6.0:* support for `[un]signed __int128`.
 
-*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
+*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`][std-ranges-greater].
 
 ### `ska_sorter`
 
@@ -499,7 +515,7 @@ This sorter works with any type satisfying the trait `std::is_integral` (as well
 #include <cpp-sort/sorters/ska_sorter.h>
 ```
 
-`ska_sorter` implements a [ska_sort](https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/).
+`ska_sorter` implements a [ska_sort][ska-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -522,7 +538,7 @@ This sorter accepts projections, as long as `ska_sorter` can handle the return t
 #include <cpp-sort/sorters/spread_sorter.h>
 ```
 
-`spread_sorter` implements a [spreadsort](https://en.wikipedia.org/wiki/Spreadsort).
+`spread_sorter` implements a [spreadsort][spreadsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -546,15 +562,50 @@ struct spread_sorter:
 {};
 ```
 
-*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`](https://en.cppreference.com/w/cpp/utility/functional/ranges/greater).
+*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`][std-ranges-greater].
 
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
+  [adaptive-shivers-sort]: https://arxiv.org/abs/1809.08411
+  [bitmap-allocator]: https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html
   [block-sort]: https://en.wikipedia.org/wiki/Block_sort
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
-  [container-aware-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#container_aware_adapter
+  [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
+  [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
+  [cppsort-sort]: Sorting-functions.md#cppsortsort
+  [default-sorter]: Sorters.md#default_sorter
+  [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
+  [grailsort]: https://github.com/Mrrl/GrailSort
+  [heapsort]: https://en.wikipedia.org/wiki/Heapsort
+  [insertion-sort]: https://en.wikipedia.org/wiki/Insertion_sort
   [introselect]: https://en.wikipedia.org/wiki/Introselect
+  [issue-168]: https://github.com/Morwenn/cpp-sort/issues/168
+  [median-of-medians]: https://en.wikipedia.org/wiki/Median_of_medians
+  [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort
+  [pdqsort]: https://github.com/orlp/pdqsort
+  [probe-rem]: Measures-of-presortedness.md#rem
+  [probe-runs]: Measures-of-presortedness.md#runs
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
+  [quicksort]: https://en.wikipedia.org/wiki/Quicksort
+  [schwartz-adapter]: Sorter-adapters.md#schwartz_adapter
   [selection-algorithm]: https://en.wikipedia.org/wiki/Selection_algorithm
+  [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
+  [ska-sort]: https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
+  [smoothsort]: https://en.wikipedia.org/wiki/Smoothsort
+  [sorter-adapters]: Sorter-adapters.md
+  [sorting-functions]: Sorting-functions.md
+  [spinsort]: https://www.boost.org/doc/libs/1_78_0/libs/sort/doc/html/sort/single_thread/spinsort.html
+  [spreadsort]: https://en.wikipedia.org/wiki/Spreadsort
+  [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
+  [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
+  [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
+  [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
+  [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
+  [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
+  [timsort]: https://en.wikipedia.org/wiki/Timsort
+  [vergesort]: https://github.com/Morwenn/vergesort
   [wiki-sort]: https://github.com/BonzaiThePenguin/WikiSort
-  [wiki-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#wiki_sorter
+  [wiki-sorter]: Sorters.md#wiki_sorter
+  [writing-a-sorter]: Writing-a-sorter.md
+  [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md

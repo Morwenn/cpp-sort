@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
@@ -39,7 +39,9 @@ namespace cppsort
                              ForwardIterator first, ForwardIterator last,
                              difference_type_t<ForwardIterator> size,
                              Compare compare, Projection projection)
-            -> decltype(auto)
+            -> decltype(cppsort::detail::indiesort(std::forward<Sorter>(sorter),
+                                                   first, last, size,
+                                                   std::move(compare), std::move(projection)))
         {
             return cppsort::detail::indiesort(std::forward<Sorter>(sorter),
                                               first, last, size,
@@ -51,7 +53,21 @@ namespace cppsort
                              RandomAccessIterator first, RandomAccessIterator last,
                              difference_type_t<RandomAccessIterator> size,
                              Compare compare, Projection projection)
-            -> decltype(auto)
+#ifdef __cpp_lib_uncaught_exceptions
+        -> decltype(std::forward<Sorter>(sorter)(
+            (RandomAccessIterator*)0, (RandomAccessIterator*)0,
+            std::move(compare), indirect(projection)
+        ))
+#else
+        -> std::enable_if_t<
+                has_comparison_projection_sort_iterator<
+                    Sorter,
+                    RandomAccessIterator*,
+                    Compare,
+                    indirect_t<Projection>
+                >::value
+            >
+#endif
         {
             using utility::iter_move;
 
@@ -142,7 +158,11 @@ namespace cppsort
             >
             auto operator()(ForwardIterable&& iterable,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> decltype(sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(iterable))>>{},
+                                            this->get(),
+                                            std::begin(iterable), std::end(iterable),
+                                            cppsort::utility::size(iterable),
+                                            std::move(compare), std::move(projection)))
             {
                 auto size = cppsort::utility::size(iterable);
                 return sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(iterable))>>{},
@@ -161,7 +181,10 @@ namespace cppsort
             >
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> decltype(sort_indirectly(iterator_category_t<ForwardIterator>{},
+                                            this->get(), first, last,
+                                            std::distance(first, last),
+                                            std::move(compare), std::move(projection)))
             {
                 auto size = std::distance(first, last);
                 return sort_indirectly(iterator_category_t<ForwardIterator>{},

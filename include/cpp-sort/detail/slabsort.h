@@ -11,6 +11,7 @@
 #include <iterator>
 #include <utility>
 #include <vector>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
@@ -151,7 +152,7 @@ namespace detail
             if (not comp(value, proj(*std::prev(last_list.end()).base()->it))) {
                 // Element belongs to the tails (bigger elements)
                 auto insertion_point = detail::lower_bound(
-                    lists.begin(), std::prev(lists.end()), value, invert(compare),
+                    lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
                     [&proj](auto& list) -> decltype(auto) {
                         return proj(*std::prev(list.end()).base()->it);
                     }

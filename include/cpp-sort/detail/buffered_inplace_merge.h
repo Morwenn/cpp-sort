@@ -20,10 +20,10 @@
 #include <iterator>
 #include <memory>
 #include <utility>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
-#include "functional.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
@@ -123,7 +123,7 @@ namespace detail
             half_inplace_merge(rv(ptr), rv(buff),
                                rbi(middle), rbi(first),
                                rbi(last), len2,
-                               invert(compare), std::move(projection));
+                               cppsort::flip(compare), std::move(projection));
         }
     }
 }}

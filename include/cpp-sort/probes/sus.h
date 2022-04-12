@@ -12,12 +12,12 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/comparators/not_fn.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/functional.h"
 #include "../detail/longest_non_descending_subsequence.h"
 #include "../detail/type_traits.h"
 
@@ -46,7 +46,7 @@ namespace probe
                 auto res = cppsort::detail::longest_non_descending_subsequence<false>(
                     first, last,
                     0, // Dummy value, not useful here
-                    cppsort::detail::not_fn(compare), std::move(projection)
+                    cppsort::not_fn(compare), std::move(projection)
                 );
                 return res.first > 0 ? res.first - 1 : 0;
             }

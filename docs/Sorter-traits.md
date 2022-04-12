@@ -106,7 +106,7 @@ constexpr bool is_comparison_projection_sorter_iterator_v
 
 ### `sorter_traits`
 
-The class template `sorter_traits<Sorter>` contains information about *[[sorters|Sorters]]* and *[[sorter adapters|Sorter adapters]]* such as the kind of iterators accepted by a sorter and whether it is guaranteed to always sort stably.
+The class template `sorter_traits<Sorter>` contains information about *[sorters][sorters]* and *[sorter adapters][sorter-adapters]* such as the kind of iterators accepted by a sorter and whether it is guaranteed to always sort stably.
 
 ```cpp
 template<typename Sorter>
@@ -130,7 +130,7 @@ using iterator_category = typename sorter_traits<Sorter>::iterator_category;
 
 Some tools need to know which category of iterators a sorting algorithm can work with. A sorter that intends to work with those tools must document its iterator category by aliasing one of the standard library [iterator tags][iterator-tags].
 
-The iterator category of the *resulting sorter* of a [[*sorter adapter*|Sorter adapters]] doesn't always match that of the *adapted sorter*: for example [`heap_sorter`][heap-sorter] only accepts random-access iterators, but it accepts forward iterators when wrapped into [`out_of_place_adapter`][out-of-place-adapter].
+The iterator category of the *resulting sorter* of a [*sorter adapter*][sorter-adapters] doesn't always match that of the *adapted sorter*: for example [`heap_sorter`][heap-sorter] only accepts random-access iterators, but it accepts forward iterators when wrapped into [`out_of_place_adapter`][out-of-place-adapter].
 
 ### `is_always_stable`
 
@@ -143,7 +143,7 @@ constexpr bool is_always_stable_v
     = is_always_stable<Sorter>::value;
 ```
 
-This type trait is always either [`std::true_type` or `std::false_type`][integral-constant] and tells whether a sorter is always [stable][stability] or not. This information may be useful in some contexts, and is most notably by [`stable_t`][stable-adapter] to avoid unnecessarily nesting templates when possible.
+This type trait is always either [`std::true_type` or `std::false_type`][std-integral-constant] and tells whether a sorter is always [stable][stability] or not. This information may be useful in some contexts, and is most notably by [`stable_t`][stable-adapter] to avoid unnecessarily nesting templates when possible.
 
 When a sorter adapter is used, the *resulting sorter* is considered always stable if and only if its stability can be guaranteed, and considered unstable otherwise, even when the *adapted sorter* may be stable (for example, [`self_sort_adapter`][self-sort-adapter]`::is_always_stable` is aliased to `std::false_type` since it is impossible to guarantee the stability of every collection's `sort` method).
 
@@ -169,7 +169,7 @@ using sorter = self_sort_adapter<heap_sorter>;
 static_assert(is_stable<sorter(std::list<int>&)>, "");
 ```
 
-[`self_sort_adapter`][self-sort-adapter] is a [[*sorter adapter*|Sorter adapters]] that checks whether a container can sort itself and, if so, uses the container's sorting method instead of the *adapted sorter*. As a matter of fact, [`std::list::sort`][std-list-sort] implements a stable sorting algorithm and **cpp-sort** specializes `is_stable` to take that information into account, so `is_stable_v<sorter(std::list<int>&)>` is `true` despite `is_always_stable_v<sorter>` being `false`. However, `is_stable_v<sorter(std::vector<int>&)>` and `is_stable_v<sorter(std::list<int>::iterator, std::list<int>::iterator)>` remain `false`.
+[`self_sort_adapter`][self-sort-adapter] is a [*sorter adapter*][sorter-adapters] that checks whether a container can sort itself and, if so, uses the container's sorting method instead of the *adapted sorter*. As a matter of fact, [`std::list::sort`][std-list-sort] implements a stable sorting algorithm and **cpp-sort** specializes `is_stable` to take that information into account, so `is_stable_v<sorter(std::list<int>&)>` is `true` despite `is_always_stable_v<sorter>` being `false`. However, `is_stable_v<sorter(std::vector<int>&)>` and `is_stable_v<sorter(std::list<int>::iterator, std::list<int>::iterator)>` remain `false`.
 
 The default version of `is_stable` uses `sorter_traits<Sorter>::is_always_stable` to infer the stability of a sorter, but most sorter adapters have dedicated specializations. These specializations notably allow [`stable_adapter`][stable-adapter] to sometimes avoid using `make_stable` and to instead use the *adapted sorter* directly when it knows that calling it with specific parameters already yields a stable sort.
 
@@ -214,14 +214,16 @@ This class template can be specialized for any fixed-size sorter and exposes the
 * `is_always_stable`: an alias for [`std::true_type`][std-integral-constant] if every specialization of the fixed-size sorter is guaranteed to always be stable, and `std::false_type` otherwise.
 
 
-  [heap-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
-  [hybrid-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#hybrid_adapter
-  [is-always-stable]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-traits#is_always_stable
+  [heap-sorter]: Sorters.md#heap_sorter
+  [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
+  [is-always-stable]: Sorter-traits.md#is_always_stable
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
-  [out-of-place-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#out_of_place_adapter
-  [self-sort-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#self_sort_adapter
+  [out-of-place-adapter]: Sorter-adapters.md#out_of_place_adapter
+  [self-sort-adapter]: Sorter-adapters.md#self_sort_adapter
+  [sorter-adapters]: Sorter-adapters.md
+  [sorters]: Sorters.md
   [stability]: https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
-  [stable-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#stable_adapter-make_stable-and-stable_t
+  [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-integer-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
   [std-integral-constant]: https://en.cppreference.com/w/cpp/types/integral_constant
   [std-list-sort]: https://en.cppreference.com/w/cpp/container/list/sort

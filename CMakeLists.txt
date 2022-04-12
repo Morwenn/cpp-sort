@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.12.1 LANGUAGES CXX)
+project(cpp-sort VERSION 1.13.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -86,7 +86,7 @@ export(
 if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     if (CPPSORT_BUILD_TESTING)
         enable_testing()
-        add_subdirectory(testsuite)
+        add_subdirectory(tests)
     endif()
 
     if (CPPSORT_BUILD_EXAMPLES)

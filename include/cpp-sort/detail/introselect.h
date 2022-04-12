@@ -192,7 +192,7 @@ namespace detail
             ++medians_it;
         }
 
-        // Rest variables for the next iteration
+        // Reset variables for the next iteration
         last = medians_it;
         size = rounded_size == size ? size / 5 : size / 5 + 1;
 

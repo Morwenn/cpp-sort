@@ -1,14 +1,14 @@
-# Copyright (c) 2018-2020 Morwenn
+# Copyright (c) 2018-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 coverage:
   ignore:
-    - "testsuite"
+    - "tests"
     # This unrolled version of a merge-insertion sort derivative was tested
     # exhaustively for every permutation of an integer sequence of 9 elements,
     # thus we don't include it
     - "include/cpp-sort/detail/low_comparisons/sort9.h"
     # Sorting networks have been tested independently with the 0-1 principle
-    # when needed, and are otherwise simple enough that we do not need the
-    # testsuite to test all of them
+    # when needed, so we do not need to test them exhaustively in the test
+    # suite
     - "include/cpp-sort/detail/sorting_network/*"

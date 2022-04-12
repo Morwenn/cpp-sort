@@ -1,23 +1,24 @@
-* [[Home]]
+* [Home](Home.md)
 * Sorting library
-    * [[Library nomenclature]]
-    * [[Sorting functions]]
-    * [[Sorters]]
-    * [[Fixed-size sorters]]
-    * [[Sorter adapters]]
-    * [[Sorter facade]]
-    * [[Sorter traits]]
-    * [[Measures of presortedness]]
-* [[Comparators and projections]]
-    * [[Comparators]]
-    * [[Chainable projections]]
-    * [[Refined functions]]
-* [[Miscellaneous utilities]]
+    * [Library nomenclature](Library-nomenclature.md)
+    * [Sorting functions](Sorting-functions.md)
+    * [Sorters](Sorters.md)
+    * [Fixed-size sorters](Fixed-size-sorters.md)
+    * [Sorter adapters](Sorter-adapters.md)
+    * [Sorter facade](Sorter-facade.md)
+    * [Sorter traits](Sorter-traits.md)
+    * [Measures of presortedness](Measures-of-presortedness.md)
+* [Comparators and projections](Comparators-and-projections.md)
+    * [Comparators](Comparators.md)
+    * [Comparator adapters](Comparator-adapters.md)
+    * [Chainable projections](Chainable-projections.md)
+    * [Refined functions](Refined-functions.md)
+* [Miscellaneous utilities](Miscellaneous-utilities.md)
 * Tutorials
-    * [[Writing a sorter]]
-    * [Writing a `bubble_sorter`](https://github.com/Morwenn/cpp-sort/wiki/writing-a-bubble_sorter)
-    * [[Writing a container-aware algorithm]]
-* [[Tooling]]
-* [[Benchmarks]]
-* [[Changelog]]
-* [[Original research]]
+    * [Writing a sorter](Writing-a-sorter.md)
+    * [Writing a `bubble_sorter`](Writing-a-bubble_sorter.md)
+    * [Writing a container-aware algorithm](Writing-a-container-aware-algorithm.md)
+* [Tooling](Tooling.md)
+* [Benchmarks](Benchmarks.md)
+* [Changelog](Changelog.md)
+* [Original research](Original-research.md)
