@@ -159,7 +159,7 @@ This header also provides additional function objects implementing basic unary o
 * `log`: returns the base 10 logarithm of the passed value.
 * `sqrt`: returns the square root of the passed value.
 
-All of those function objects can double as projections are are [*transparent  function objects*][transparent-func].
+All of those function objects inherit from `projection_base` and are [*transparent  function objects*][transparent-func].
 
 Since C++17, the following utility is also available when some level of micro-optimization is needed:
 
