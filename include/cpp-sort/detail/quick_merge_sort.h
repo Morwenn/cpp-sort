@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
@@ -90,7 +90,7 @@ namespace detail
         -> void
     {
         if (size <= qmsort_limit) {
-            small_sort(first, last, size, std::move(compare), std::move(projection));
+            small_sort(first, last, std::move(compare), std::move(projection));
             return;
         }
 
@@ -148,7 +148,7 @@ namespace detail
             }
             size -= size_left;
         }
-        small_sort(first, last, size, std::move(compare), std::move(projection));
+        small_sort(first, last, std::move(compare), std::move(projection));
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
