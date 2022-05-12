@@ -444,7 +444,7 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
   [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
   [is-projection]: Sorter-traits.md#is_projection-and-is_projection_iterator
   [projections]: https://ezoeryou.github.io/blog/article/2019-01-22-ranges-projection.html
-  [proxy-iterators]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0022r2.html
+  [proxy-iterators]: https://wg21.link/P0022
   [sorter-adapters]: Sorter-adapters.md
   [sorter-facade]: Sorter-facade.md
   [sorter-traits]: Sorter-traits.md#sorter_traits

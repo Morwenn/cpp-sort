@@ -70,7 +70,7 @@
   [iterator-category]: Sorter-traits.md#iterator_category
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [measures-of-presortedness]: Measures-of-presortedness.md
-  [p0022]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0022r1.html
+  [p0022]: https://wg21.link/P0022
   [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
   [sorter-adapters]: Sorter-adapters.md
   [sorters]: Sorters.md
