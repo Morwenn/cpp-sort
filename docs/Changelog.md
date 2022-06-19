@@ -89,6 +89,8 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 
 * Assumptions: some algorithms use assumptions in select places to make the compiler generate more efficient code. Whether such assumptions are available depends on the compiler.
 
+* Vectorized algorithms: when compiled against the Microsoft STL, **cpp-sort** tries to take advantage of their vectorized algorithms when possible. This improves some algorithms when sorting contiguous collections of trivially copyable types.
+
 * When using libstdc++, libc++ or the Microsoft STL, the return type of [`std::mem_fn`][std-mem-fn] is considered ["probably branchless"][branchless-traits] when it wraps a pointer to data member, which can improve the speed of [`pdq_sorter`][pdq-sorter] and everything that relies on it in some scenarios.
 
 
