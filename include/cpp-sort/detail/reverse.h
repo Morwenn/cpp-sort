@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -17,10 +17,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
+#include "move.h"
+#include "type_traits.h"
 
 namespace cppsort
 {
@@ -33,23 +36,40 @@ namespace detail
     {
         using utility::iter_swap;
 
-        while (first != last)
-        {
+        while (first != last) {
             if (first == --last) break;
             iter_swap(first, last);
             ++first;
         }
     }
 
+#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
     template<typename RandomAccessIterator>
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
-        -> void
+        -> detail::enable_if_t<
+            not is_invocable_v<hide_adl::dummy_callable, RandomAccessIterator>,
+            void
+        >
     {
-        if (first != last)
-        {
-            for (; first < --last ; ++first)
-            {
+        std::reverse(first, last);
+    }
+#endif
+
+    template<typename RandomAccessIterator>
+    auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
+                      std::random_access_iterator_tag)
+#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
+        -> detail::enable_if_t<
+            is_invocable_v<hide_adl::dummy_callable, RandomAccessIterator>,
+            void
+        >
+#else
+        -> void
+#endif
+    {
+        if (first != last) {
+            for (; first < --last ; ++first) {
                 using utility::iter_swap;
                 iter_swap(first, last);
             }
