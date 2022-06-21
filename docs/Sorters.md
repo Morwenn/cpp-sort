@@ -137,7 +137,7 @@ Whether this sorter works with types that are not default-constructible depends 
 #include <cpp-sort/sorters/heap_sorter.h>
 ```
 
-Implements a [heapsort][heapsort].
+Implements a bottom-up [heapsort][heapsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |

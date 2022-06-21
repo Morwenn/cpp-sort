@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -17,9 +17,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "iterator_traits.h"
 
 namespace cppsort
@@ -36,17 +38,17 @@ namespace detail
         using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        using difference_type = difference_type_t<RandomAccessIterator>;
 
         // left-child of start is at 2 * start + 1
         // right-child of start is at 2 * start + 2
-        difference_type child = start - first;
+        auto child = start - first;
 
-        if (len < 2 || (len - 2) / 2 < child)
+        if (len < 2 || (len - 2) / 2 < child) {
             return;
+        }
 
         child = 2 * child + 1;
-        RandomAccessIterator child_i = first + child;
+        auto child_i = first + child;
 
         if ((child + 1) < len && comp(proj(*child_i), proj(*(child_i + 1)))) {
             // right-child exists and is greater than left-child
@@ -55,19 +57,20 @@ namespace detail
         }
 
         // check if we are in heap-order
-        if (comp(proj(*child_i), proj(*start)))
+        if (comp(proj(*child_i), proj(*start))) {
             // we are, start is larger than it's largest child
             return;
+        }
 
         auto top = iter_move(start);
-        do
-        {
+        do {
             // we are not in heap-order, swap the parent with it's largest child
             *start = iter_move(child_i);
             start = child_i;
 
-            if ((len - 2) / 2 < child)
+            if ((len - 2) / 2 < child) {
                 break;
+            }
 
             // recompute the child based off of the updated parent
             child = 2 * child + 1;
@@ -80,21 +83,43 @@ namespace detail
             }
 
             // check if we are in heap-order
-        } while (!comp(proj(*child_i), proj(top)));
+        } while (not comp(proj(*child_i), proj(top)));
         *start = std::move(top);
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto make_heap(RandomAccessIterator first, RandomAccessIterator last,
-                   Compare compare, Projection projection)
-        -> void
+    auto floyd_sift_down(RandomAccessIterator first, Compare compare, Projection projection,
+                         difference_type_t<RandomAccessIterator> len)
+        -> RandomAccessIterator
     {
+        CPPSORT_ASSERT(len >= 2);
+
+        using utility::iter_move;
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
         using difference_type = difference_type_t<RandomAccessIterator>;
-        difference_type n = last - first;
-        if (n > 1) {
-            // start from the first parent, there is no need to consider children
-            for (difference_type start = (n - 2) / 2; start >= 0; --start) {
-                sift_down<Compare>(first, last, compare, projection, n, first + start);
+
+        auto hole = first;
+        auto child_i = first;
+        difference_type child = 0;
+
+        while (true) {
+            child_i += difference_type(child + 1);
+            child = 2 * child + 1;
+
+            if ((child + 1) < len && comp(proj(*child_i), proj(*std::next(child_i)))) {
+                // right-child exists and is greater than left-child
+                ++child_i;
+                ++child;
+            }
+
+            // swap hole with its largest child
+            *hole = iter_move(child_i);
+            hole = child_i;
+
+            // if hole is now a leaf, we're done
+            if (child > (len - 2) / 2) {
+                return hole;
             }
         }
     }
@@ -128,16 +153,40 @@ namespace detail
         }
     }
 
-    template<typename Compare, typename RandomAccessIterator, typename Projection>
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
                   Compare compare, Projection projection,
                   difference_type_t<RandomAccessIterator> len)
         -> void
     {
+        using utility::iter_move;
+
         if (len > 1) {
-            using utility::iter_swap;
-            iter_swap(first, --last);
-            sift_down<Compare>(first, last, compare, std::move(projection), len - 1, first);
+            auto top = iter_move(first);  // create a hole at first
+            auto hole = detail::floyd_sift_down(first, compare, projection, len);
+            if (hole == --last) {
+                *hole = std::move(top);
+            } else {
+                *hole = iter_move(last);
+                ++hole;
+                *last = std::move(top);
+                detail::push_heap(first, hole, compare, projection, hole - first);
+            }
+        }
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto make_heap(RandomAccessIterator first, RandomAccessIterator last,
+                   Compare compare, Projection projection)
+        -> void
+    {
+        using difference_type = difference_type_t<RandomAccessIterator>;
+        difference_type n = last - first;
+        if (n > 1) {
+            // start from the first parent, there is no need to consider children
+            for (difference_type start = (n - 2) / 2; start >= 0; --start) {
+                detail::sift_down(first, last, compare, projection, n, first + start);
+            }
         }
     }
 
@@ -146,9 +195,8 @@ namespace detail
                    Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
-        for (difference_type n = last - first; n > 1; --last, (void) --n) {
-            pop_heap<Compare>(first, last, compare, projection, n);
+        for (auto n = last - first; n > 1; --last, (void) --n) {
+            detail::pop_heap(first, last, compare, projection, n);
         }
     }
 
@@ -157,9 +205,9 @@ namespace detail
                   Compare compare, Projection projection)
         -> void
     {
-        make_heap(first, last, compare, projection);
-        sort_heap(std::move(first), std::move(last),
-                  std::move(compare), std::move(projection));
+        detail::make_heap(first, last, compare, projection);
+        detail::sort_heap(std::move(first), std::move(last),
+                          std::move(compare), std::move(projection));
     }
 }}
 
