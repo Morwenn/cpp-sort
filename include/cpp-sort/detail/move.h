@@ -21,43 +21,12 @@ namespace cppsort
 namespace detail
 {
     ////////////////////////////////////////////////////////////
-    // Check whether iter_move is specialized
-    //
-    // The idea behind this check is that if an iterator has a
-    // dedicated iter_move found by ADL, then we ought to use it,
-    // otherwise we can fallback to std::move which is supposedly
-    // more optimized than what we would write by hand (notably
-    // for standard library iterators)
-    //
-
-    namespace hide_adl
-    {
-        template<typename Iterator>
-        auto iter_move(Iterator) = delete;
-
-        struct dummy_callable
-        {
-            template<typename Iterator>
-            auto operator()(Iterator it)
-                -> decltype(iter_move(it));
-
-            template<typename Iterator>
-            auto operator()(const std::reverse_iterator<Iterator>& it)
-                -> decltype(iter_move(it.base())); // only there for type information
-
-            template<typename Iterator>
-            auto operator()(const std::move_iterator<Iterator>& it)
-                -> decltype(iter_move(it.base()));
-        };
-    }
-
-    ////////////////////////////////////////////////////////////
     // move
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            not is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            not is_invocable_v<hide_adl::call_iter_move, InputIterator>,
             OutputIterator
         >
     {
@@ -67,7 +36,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            is_invocable_v<hide_adl::call_iter_move, InputIterator>,
             OutputIterator
         >
     {
@@ -84,7 +53,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            not is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            not is_invocable_v<hide_adl::call_iter_move, InputIterator>,
             OutputIterator
         >
     {
@@ -94,7 +63,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            is_invocable_v<hide_adl::dummy_callable, InputIterator>,
+            is_invocable_v<hide_adl::call_iter_move, InputIterator>,
             OutputIterator
         >
     {

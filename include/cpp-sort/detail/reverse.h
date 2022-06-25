@@ -48,7 +48,7 @@ namespace detail
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
         -> detail::enable_if_t<
-            not is_invocable_v<hide_adl::dummy_callable, RandomAccessIterator>,
+            not is_invocable_v<hide_adl::call_iter_move, RandomAccessIterator>,
             void
         >
     {
@@ -61,7 +61,7 @@ namespace detail
                       std::random_access_iterator_tag)
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
         -> detail::enable_if_t<
-            is_invocable_v<hide_adl::dummy_callable, RandomAccessIterator>,
+            is_invocable_v<hide_adl::call_iter_move, RandomAccessIterator>,
             void
         >
 #else
