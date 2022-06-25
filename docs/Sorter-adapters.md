@@ -59,7 +59,7 @@ An interesting property of dedicated sorting algorithms is that one can craft an
 
 Unlike usual sorters, `counting_adapter::operator()` does not return `void` but the number of comparisons that have been needed to sort the iterable. It will adapt the comparison function so that it can count the number of comparisons made by any other sorter with a reasonable implementation. The actual number of comparisons needed to sort an iterable can be used as a heuristic in hybrid sorts and may constitute interesting information nevertheless.
 
-The actual counter type can be configured with the template parameter `CountType`, which defaults to `std::size_t` if not specified. While this doesn't matter most of the times, this parameter may be changed to `std::atomic<std::size_t>` to count the number of comparisons performed by parallel sorting algorithms (or to a reducer, which would probably be a better idea).
+The actual counter type can be configured with the template parameter `CountType`, which defaults to `std::size_t` if not specified.
 
 ```cpp
 template<
