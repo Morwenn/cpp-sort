@@ -48,13 +48,13 @@ jobs:
         if: ${{matrix.cxx == 'clang++'}}
         uses: KyleMayes/install-llvm-action@v1
         with:
-          version: "11.0"
+          version: "10.0"
 
       - name: Configure LLVM
         if: ${{matrix.cxx == 'clang++'}}
         run: |
           LLVM_PATH=${{ env.LLVM_PATH }}
-          LLVM_VERSION=11
+          LLVM_VERSION=10
           echo "SDKROOT=$(xcrun --sdk macosx --show-sdk-path)" >> $GITHUB_ENV
           echo "CPATH=$LLVM_PATH/lib/clang/$LLVM_VERSION/include/" >> $GITHUB_ENV
           echo "LDFLAGS=-L$LLVM_PATH/lib" >> $GITHUB_ENV
