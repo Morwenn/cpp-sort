@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MOVE_H_
@@ -26,7 +26,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            not is_invocable_v<hide_adl::call_iter_move, InputIterator>,
+            not cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
     {
@@ -36,7 +36,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            is_invocable_v<hide_adl::call_iter_move, InputIterator>,
+            cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
     {
@@ -53,7 +53,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            not is_invocable_v<hide_adl::call_iter_move, InputIterator>,
+            not cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
     {
@@ -63,7 +63,7 @@ namespace detail
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
         -> detail::enable_if_t<
-            is_invocable_v<hide_adl::call_iter_move, InputIterator>,
+            cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
     {

@@ -178,8 +178,8 @@ namespace detail
         typename Compare,
         typename Projection,
         typename = detail::enable_if_t<
-            cppsort::detail::is_invocable_v<detail::hide_adl::call_iter_move, Iterator> ||
-            cppsort::detail::is_invocable_v<detail::hide_adl::call_iter_swap, Iterator, Iterator>
+            cppsort::detail::has_iter_move_v<Iterator> ||
+            cppsort::detail::has_iter_swap_v<Iterator>
         >
     >
     auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
@@ -199,8 +199,8 @@ namespace detail
         typename Compare,
         typename Projection,
         typename = detail::enable_if_t<
-            not cppsort::detail::is_invocable_v<detail::hide_adl::call_iter_move, Iterator> &&
-            not cppsort::detail::is_invocable_v<detail::hide_adl::call_iter_swap, Iterator, Iterator>
+            not cppsort::detail::has_iter_move_v<Iterator> &&
+            not cppsort::detail::has_iter_swap_v<Iterator>
         >,
         typename = void // dummy parameter for ODR
     >

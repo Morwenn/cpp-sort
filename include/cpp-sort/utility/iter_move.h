@@ -18,51 +18,46 @@ namespace cppsort
     namespace detail
     {
         ////////////////////////////////////////////////////////////
-        // Check whether iter_move and iter_swap are specialized:
-        // the extra namespace and deleted overloads ensure that the
-        // call_* classes will only be callable when an iter_move or
-        // iter_swap overload is found via ADL.
+        // Check whether iter_move and iter_swap are available for
+        // the given iterators. Having those checks outside of the
+        // utility namespace avoids its iter_move and iter_swap
+        // overloads getting in the way
 
-        namespace hide_adl
+        struct call_iter_move
         {
             template<typename Iterator>
-            auto iter_move(Iterator) = delete;
+            auto operator()(Iterator it) const
+                -> decltype(iter_move(it));
 
             template<typename Iterator>
-            auto iter_swap(Iterator, Iterator) = delete;
+            auto operator()(std::move_iterator<Iterator> it) const
+                -> decltype(iter_move(it.base()));
 
-            struct call_iter_move
-            {
-                template<typename Iterator>
-                auto operator()(Iterator it)
-                    -> decltype(iter_move(it));
+            template<typename Iterator>
+            auto operator()(std::reverse_iterator<Iterator> it) const
+                -> decltype(iter_move(it.base()));
+        };
 
-                template<typename Iterator>
-                auto operator()(const std::reverse_iterator<Iterator>& it)
-                    -> decltype(iter_move(it.base()));
+        struct call_iter_swap
+        {
+            template<typename Iterator>
+            auto operator()(Iterator it1, Iterator it2) const
+                -> decltype(iter_swap(it1, it2));
 
-                template<typename Iterator>
-                auto operator()(const std::move_iterator<Iterator>& it)
-                    -> decltype(iter_move(it.base()));
-            };
+            template<typename Iterator>
+            auto operator()(std::move_iterator<Iterator> it1, std::move_iterator<Iterator> it2) const
+                -> decltype(iter_swap(it1.base(), it2.base()));
 
-            struct call_iter_swap
-            {
-                template<typename Iterator>
-                auto operator()(Iterator it1, Iterator it2)
-                    -> decltype(iter_swap(it1, it2));
+            template<typename Iterator>
+            auto operator()(std::reverse_iterator<Iterator> it1, std::reverse_iterator<Iterator> it2) const
+                -> decltype(iter_swap(it1.base(), it2.base()));
+        };
 
-                template<typename Iterator>
-                auto operator()(const std::reverse_iterator<Iterator>& it1,
-                                const std::reverse_iterator<Iterator>& it2)
-                    -> decltype(iter_swap(it1.base(), it2.base()));
+        template<typename Iterator>
+        constexpr bool has_iter_move_v = detail::is_invocable_v<call_iter_move, Iterator>;
 
-                template<typename Iterator>
-                auto operator()(const std::move_iterator<Iterator>& it1,
-                                const std::move_iterator<Iterator>& it2)
-                    -> decltype(iter_swap(it1.base(), it2.base()));
-            };
-        }
+        template<typename Iterator>
+        constexpr bool has_iter_swap_v = detail::is_invocable_v<call_iter_swap, Iterator, Iterator>;
 
         ////////////////////////////////////////////////////////////
         // Result type of a non-specialized iter_move call
@@ -91,7 +86,8 @@ namespace cppsort
         template<
             typename Iterator,
             typename = cppsort::detail::enable_if_t<
-                cppsort::detail::is_invocable_v<cppsort::detail::hide_adl::call_iter_move, Iterator>
+                not cppsort::detail::has_iter_swap_v<Iterator> &&
+                cppsort::detail::has_iter_move_v<Iterator>
             >
         >
         constexpr auto iter_swap(Iterator lhs, Iterator rhs)
@@ -105,7 +101,8 @@ namespace cppsort
         template<
             typename Iterator,
             typename = cppsort::detail::enable_if_t<
-                not cppsort::detail::is_invocable_v<cppsort::detail::hide_adl::call_iter_move, Iterator>
+                not cppsort::detail::has_iter_swap_v<Iterator> &&
+                not cppsort::detail::has_iter_move_v<Iterator>
             >,
             typename = void // dummy parameter for ODR
         >
@@ -123,14 +120,24 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::reverse_iterator overloads
 
-        template<typename Iterator>
+        template<
+            typename Iterator,
+            typename = cppsort::detail::enable_if_t<
+                not cppsort::detail::has_iter_move_v<std::reverse_iterator<Iterator>>
+            >
+        >
         auto iter_move(const std::reverse_iterator<Iterator>& it)
             -> decltype(iter_move(it.base()))
         {
             return iter_move(std::prev(it.base()));
         }
 
-        template<typename Iterator>
+        template<
+            typename Iterator,
+            typename = cppsort::detail::enable_if_t<
+                not cppsort::detail::has_iter_swap_v<std::reverse_iterator<Iterator>>
+            >
+        >
         auto iter_swap(std::reverse_iterator<Iterator> lhs, std::reverse_iterator<Iterator> rhs)
             -> void
         {
@@ -140,14 +147,24 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::move_iterator overloads
 
-        template<typename Iterator>
+        template<
+            typename Iterator,
+            typename = cppsort::detail::enable_if_t<
+                not cppsort::detail::has_iter_move_v<std::move_iterator<Iterator>>
+            >
+        >
         auto iter_move(const std::move_iterator<Iterator>& it)
             -> decltype(iter_move(it.base()))
         {
             return iter_move(it.base());
         }
 
-        template<typename Iterator>
+        template<
+            typename Iterator,
+            typename = cppsort::detail::enable_if_t<
+                not cppsort::detail::has_iter_swap_v<std::move_iterator<Iterator>>
+            >
+        >
         auto iter_swap(std::move_iterator<Iterator> lhs, std::move_iterator<Iterator> rhs)
             -> void
         {

@@ -78,7 +78,7 @@ namespace detail
                                 RandomAccessIterator first1, RandomAccessIterator last1,
                                 RandomAccessIterator first2)
         -> detail::enable_if_t<
-            not is_invocable_v<hide_adl::call_iter_move, RandomAccessIterator>,
+            not detail::has_iter_move_v<RandomAccessIterator>,
             RandomAccessIterator
         >
     {
@@ -99,7 +99,7 @@ namespace detail
                                 RandomAccessIterator first2)
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
         -> detail::enable_if_t<
-            is_invocable_v<hide_adl::call_iter_move, RandomAccessIterator>,
+            detail::has_iter_move_v<RandomAccessIterator>,
             RandomAccessIterator
         >
 #else

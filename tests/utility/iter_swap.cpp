@@ -109,7 +109,7 @@ TEST_CASE( "ADL tests for swap and iter_swap",
         std::vector<adl_swap::foo> vec = { {}, {} };
 
         using cppsort::utility::iter_swap;
-        iter_swap(vec.begin(), vec.begin() + 1);
+        iter_swap(vec.data(), vec.data() + 1);
         CHECK( vec.front().swap_flag );
         CHECK( not vec.front().iter_swap_flag );
         CHECK( not vec.front().iter_move_flag );
@@ -118,12 +118,11 @@ TEST_CASE( "ADL tests for swap and iter_swap",
     SECTION( "custom iter_swap is found" )
     {
         std::vector<adl_swap::foo> vec = { {}, {} };
-        using it_t = std::vector<adl_swap::foo>::iterator;
 
         using cppsort::utility::iter_swap;
         iter_swap(
-            adl_iter_swap::iterator<it_t>{vec.begin()},
-            adl_iter_swap::iterator<it_t>{vec.begin() + 1}
+            adl_iter_swap::iterator<adl_swap::foo*>{vec.data()},
+            adl_iter_swap::iterator<adl_swap::foo*>{vec.data() + 1}
         );
         CHECK( not vec.front().swap_flag );
         CHECK( vec.front().iter_swap_flag );
@@ -133,12 +132,11 @@ TEST_CASE( "ADL tests for swap and iter_swap",
     SECTION( "custom iter_move is found" )
     {
         std::vector<adl_swap::foo> vec = { {}, {} };
-        using it_t = std::vector<adl_swap::foo>::iterator;
 
         using cppsort::utility::iter_swap;
         iter_swap(
-            adl_iter_move::iterator<it_t>{vec.begin()},
-            adl_iter_move::iterator<it_t>{vec.begin() + 1}
+            adl_iter_move::iterator<adl_swap::foo*>{vec.data()},
+            adl_iter_move::iterator<adl_swap::foo*>{vec.data() + 1}
         );
         CHECK( not vec.front().swap_flag );
         CHECK( not vec.front().iter_swap_flag );
@@ -148,12 +146,11 @@ TEST_CASE( "ADL tests for swap and iter_swap",
     SECTION( "custom iter_swap is found even when iter_move is there" )
     {
         std::vector<adl_swap::foo> vec = { {}, {} };
-        using it_t = std::vector<adl_swap::foo>::iterator;
 
         using cppsort::utility::iter_swap;
         iter_swap(
-            adl_iter_swap_and_move::iterator<it_t>{vec.begin()},
-            adl_iter_swap_and_move::iterator<it_t>{vec.begin() + 1}
+            adl_iter_swap_and_move::iterator<adl_swap::foo*>{vec.data()},
+            adl_iter_swap_and_move::iterator<adl_swap::foo*>{vec.data() + 1}
         );
         CHECK( not vec.front().swap_flag );
         CHECK( vec.front().iter_swap_flag );
