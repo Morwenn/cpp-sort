@@ -8,7 +8,7 @@ on:
     branches:
       - master
       - develop
-      - 2.0.0-develop
+      - 2.x.y-develop
     paths:
       - '.github/workflows/code-coverage.yml'
       - '.github/.codecov.yml'

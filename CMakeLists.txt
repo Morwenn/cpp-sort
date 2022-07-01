@@ -1,7 +1,7 @@
-# Copyright (c) 2015-2021 Morwenn
+# Copyright (c) 2015-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.8.0)
+cmake_minimum_required(VERSION 3.12.1)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -23,7 +23,7 @@ target_include_directories(cpp-sort INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(cpp-sort INTERFACE cxx_std_14)
+target_compile_features(cpp-sort INTERFACE cxx_std_20)
 
 # MSVC won't work without a stricter standard compliance
 if (MSVC)

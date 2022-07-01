@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Morwenn
+# Copyright (c) 2021-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Ubuntu Builds
@@ -23,14 +23,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
       matrix:
         cxx:
-          - g++-5
-          - clang++-6.0
+          - g++-11
+          - clang++-14
         config:
           # Release build
           - build_type: Release
@@ -44,14 +44,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install GCC
-        if: ${{matrix.cxx == 'g++-5'}}
-        run: sudo apt-get install -y g++-5
-
-      - name: Install Clang
-        if: ${{matrix.cxx == 'clang++-6.0'}}
-        run: sudo apt-get install -y clang-6.0 lld-6.0
 
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}
