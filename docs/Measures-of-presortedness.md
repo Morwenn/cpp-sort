@@ -241,14 +241,6 @@ When there isn't enough extra memory available, `probe::osc` falls back to an in
 
 *Changed in version 1.12.0:* `probe::osc` is now O(n log n) instead of O(n²) but now also requires O(n) memory. The O(n²) is kept for backward compatibility but will be removed in the future.
 
-### *Par*
-
-```cpp
-#include <cpp-sort/probes/par.h>
-```
-
-***WARNING:** `probe::par` is deprecated since version 1.12.0 and removed in version 2.0.0, use [`probe::dis`][probe-dis] instead.*
-
 ### *Rem*
 
 ```cpp
