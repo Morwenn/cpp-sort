@@ -25,8 +25,6 @@ namespace cppsort
     // Sorters
 
     struct adaptive_shivers_sorter;
-    template<typename BufferProvider>
-    struct block_sorter;
     struct cartesian_tree_sorter;
     struct counting_sorter;
     struct default_sorter;

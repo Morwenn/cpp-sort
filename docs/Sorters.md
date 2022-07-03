@@ -30,14 +30,6 @@ While the sorting algorithm is stable and the complexity guarantees are good eno
 
 *New in version 1.13.0*
 
-### `block_sorter<>`
-
-```cpp
-#include <cpp-sort/sorters/block_sorter.h>
-```
-
-***WARNING:** `block_sorter` is deprecated in version 1.11.0 and removed in version 2.0.0, use [`wiki_sorter`][wiki-sorter] instead.*
-
 ### `cartesian_tree_sorter`
 
 ```cpp

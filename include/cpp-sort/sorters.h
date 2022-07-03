@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/sorters/adaptive_shivers_sorter.h>
-#include <cpp-sort/sorters/block_sorter.h>
 #include <cpp-sort/sorters/cartesian_tree_sorter.h>
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
