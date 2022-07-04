@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SMALL_ARRAY_ADAPTER_H_
@@ -32,7 +32,7 @@ namespace cppsort
         };
 
         template<typename T>
-        struct has_domain<T, void_t<typename T::domain>>:
+        struct has_domain<T, std::void_t<typename T::domain>>:
             std::true_type
         {
             using domain = typename T::domain;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_STABLE_ADAPTER_H_
@@ -281,7 +281,7 @@ namespace cppsort
         };
 
         template<typename Sorter>
-        struct stable_t_impl_type_or<Sorter, detail::void_t<typename Sorter::type>>
+        struct stable_t_impl_type_or<Sorter, std::void_t<typename Sorter::type>>
         {
             using type = typename Sorter::type;
         };

@@ -29,7 +29,7 @@ namespace detail
     {};
 
     template<typename T>
-    struct has_iterator_category<T, void_t<typename T::iterator_category>>:
+    struct has_iterator_category<T, std::void_t<typename T::iterator_category>>:
         std::true_type
     {};
 
@@ -61,7 +61,7 @@ namespace detail
     {};
 
     template<typename T>
-    struct has_is_always_stable<T, void_t<typename T::is_always_stable>>:
+    struct has_is_always_stable<T, std::void_t<typename T::is_always_stable>>:
         std::true_type
     {};
 
@@ -94,7 +94,7 @@ namespace detail
     {};
 
     template<typename T>
-    struct has_is_transparent<T, void_t<typename T::is_transparent>>:
+    struct has_is_transparent<T, std::void_t<typename T::is_transparent>>:
         std::true_type
     {};
 
