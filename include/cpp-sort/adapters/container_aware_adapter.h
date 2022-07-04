@@ -55,35 +55,35 @@ namespace cppsort
 
         template<typename Sorter, typename Iterable>
         struct can_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<adl_despair, Sorter, Iterable&>,
-                negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&>>
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&>>
             >
         {};
 
         template<typename Sorter, typename Iterable, typename Compare>
         struct can_comparison_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<adl_despair, Sorter, Iterable&, Compare>,
-                negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare>>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare>>,
                 is_projection<utility::identity, Iterable, Compare>
             >
         {};
 
         template<typename Sorter, typename Iterable, typename Projection>
         struct can_projection_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<adl_despair, Sorter, Iterable&, Projection>,
-                negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Projection>>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Projection>>,
                 is_projection<Projection, Iterable>
             >
         {};
 
         template<typename Sorter, typename Iterable, typename Compare, typename Projection>
         struct can_comparison_projection_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<adl_despair, Sorter, Iterable&, Compare, Projection>,
-                negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare, Projection>>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare, Projection>>,
                 is_projection<Projection, Iterable, Compare>
             >
         {};

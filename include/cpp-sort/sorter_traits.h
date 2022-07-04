@@ -75,7 +75,7 @@ namespace cppsort
 
         template<typename Sorter, typename Iterable, typename Compare>
         struct has_comparison_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<Sorter, Iterable&, Compare>,
                 is_projection<utility::identity, Iterable, Compare>
             >
@@ -83,7 +83,7 @@ namespace cppsort
 
         template<typename Sorter, typename Iterable, typename Projection>
         struct has_projection_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<Sorter, Iterable&, Projection>,
                 is_projection<Projection, Iterable>
             >
@@ -91,7 +91,7 @@ namespace cppsort
 
         template<typename Sorter, typename Iterable, typename Compare, typename Projection>
         struct has_comparison_projection_sort:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<Sorter, Iterable&, Compare, Projection>,
                 is_projection<Projection, Iterable, Compare>
             >
@@ -104,7 +104,7 @@ namespace cppsort
 
         template<typename Sorter, typename Iterator, typename Compare>
         struct has_comparison_sort_iterator:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<Sorter, Iterator, Iterator, Compare>,
                 is_projection_iterator<utility::identity, Iterator, Compare>
             >
@@ -112,7 +112,7 @@ namespace cppsort
 
         template<typename Sorter, typename Iterator, typename Projection>
         struct has_projection_sort_iterator:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<Sorter, Iterator, Iterator, Projection>,
                 is_projection_iterator<Projection, Iterator>
             >
@@ -120,7 +120,7 @@ namespace cppsort
 
         template<typename Sorter, typename Iterator, typename Compare, typename Projection>
         struct has_comparison_projection_sort_iterator:
-            conjunction<
+            std::conjunction<
                 std::is_invocable<Sorter, Iterator, Iterator, Compare, Projection>,
                 is_projection_iterator<Projection, Iterator, Compare>
             >

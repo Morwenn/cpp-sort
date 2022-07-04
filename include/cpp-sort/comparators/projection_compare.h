@@ -188,7 +188,7 @@ namespace cppsort
     {
         template<typename Compare, typename Projection, typename T>
         struct is_probably_branchless_comparison<projection_compare<Compare, Projection>, T>:
-            cppsort::detail::conjunction<
+            std::conjunction<
                 is_probably_branchless_projection<Projection, T>,
                 is_probably_branchless_comparison<
                     Compare,

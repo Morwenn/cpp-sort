@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_COMPARISON_COUNTER_H_
@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
@@ -54,7 +55,7 @@ namespace cppsort
             cppsort::detail::comparison_counter<Compare, CountType>,
             T
         >:
-            cppsort::detail::conjunction<
+            std::conjunction<
                 std::is_arithmetic<CountType>, // Probably a safe enough bet
                 is_probably_branchless_comparison<Compare, T>
             >

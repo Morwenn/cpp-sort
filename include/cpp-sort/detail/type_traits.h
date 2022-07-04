@@ -103,50 +103,6 @@ namespace detail
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
     ////////////////////////////////////////////////////////////
-    // std::conjunction from C++17
-
-    template<typename...>
-    struct conjunction:
-        std::true_type
-    {};
-
-    template<typename Head>
-    struct conjunction<Head>:
-        Head
-    {};
-
-    template<typename Head, typename... Tail>
-    struct conjunction<Head, Tail...>:
-        conditional_t<Head::value != false, conjunction<Tail...>, Head>
-    {};
-
-    ////////////////////////////////////////////////////////////
-    // std::disjunction from C++17
-
-    template<typename...>
-    struct disjunction:
-        std::false_type
-    {};
-
-    template<typename Head>
-    struct disjunction<Head>:
-        Head
-    {};
-
-    template<typename Head, typename... Tail>
-    struct disjunction<Head, Tail...>:
-        conditional_t<Head::value != false, Head, disjunction<Tail...>>
-    {};
-
-    ////////////////////////////////////////////////////////////
-    // std::negation from C++17
-
-    template<typename T>
-    struct negation:
-        std::integral_constant<bool, not T::value>
-    {};
-
-    ////////////////////////////////////////////////////////////
     // std::remove_cvref from C++20
 
     template<typename T>

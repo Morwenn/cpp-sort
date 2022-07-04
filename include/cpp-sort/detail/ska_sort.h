@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -1008,7 +1008,7 @@ namespace detail
 
     template<typename T>
     struct is_ska_sortable:
-        disjunction<
+        std::disjunction<
             is_integral<T>,
             is_index_ska_sortable<has_indexing_operator_t, T>
         >
@@ -1037,7 +1037,7 @@ namespace detail
 
     template<typename T, typename U>
     struct is_ska_sortable<std::pair<T, U>>:
-        conjunction<
+        std::conjunction<
             is_ska_sortable<T>,
             is_ska_sortable<U>
         >
@@ -1045,7 +1045,7 @@ namespace detail
 
     template<typename... Args>
     struct is_ska_sortable<std::tuple<Args...>>:
-        conjunction<
+        std::conjunction<
             is_ska_sortable<Args>...
         >
     {};
