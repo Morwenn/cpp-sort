@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_ADAPTER_STORAGE_H_
@@ -40,12 +40,8 @@ namespace utility
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args) const
-#ifdef __cpp_lib_is_invocable
             noexcept(std::is_nothrow_default_constructible_v<Sorter> &&
                      std::is_nothrow_invocable_v<Sorter, Args...>)
-#else
-            noexcept(noexcept(Sorter{}(std::forward<Args>(args)...)))
-#endif
             -> decltype(Sorter{}(std::forward<Args>(args)...))
         {
             return Sorter{}(std::forward<Args>(args)...);
@@ -78,11 +74,7 @@ namespace utility
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args) const
-#ifdef __cpp_lib_is_invocable
             noexcept(std::is_nothrow_invocable_v<Sorter, Args...>)
-#else
-            noexcept(noexcept(sorter(std::forward<Args>(args)...)))
-#endif
             -> decltype(sorter(std::forward<Args>(args)...))
         {
             return sorter(std::forward<Args>(args)...);
@@ -90,11 +82,7 @@ namespace utility
 
         template<typename... Args>
         constexpr auto operator()(Args&&... args)
-#ifdef __cpp_lib_is_invocable
             noexcept(std::is_nothrow_invocable_v<Sorter, Args...>)
-#else
-            noexcept(noexcept(sorter(std::forward<Args>(args)...)))
-#endif
             -> decltype(sorter(std::forward<Args>(args)...))
         {
             return sorter(std::forward<Args>(args)...);

@@ -54,11 +54,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.
 
-**Correctness improvements:**
-* Some handy C++17 type traits such as `std::is_invocable` are manually reimplemented in C++14 mode while they are used as is in C++17 mode if available. It's likely that the C++17 implementation covers more corner cases and is thus more often correct than the manual C++14 implementation.
-
-    The C++17 traits are used as is when the feature-test macro `__cpp_lib_is_invocable` is defined.
-
 **Size improvements:**
 * When used in different translation units, [`smooth_sorter`][smooth-sorter] might produce fewer duplicates and consume less binary size in C++17.
 
