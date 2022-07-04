@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_REFINED_H_
@@ -56,7 +56,7 @@ namespace cppsort
     }
 
     template<typename T, typename Function>
-    using refined_t = detail::remove_cvref_t<
+    using refined_t = std::remove_cvref_t<
         decltype(refined<std::decay_t<T>>(std::declval<Function&>()))
     >;
 }

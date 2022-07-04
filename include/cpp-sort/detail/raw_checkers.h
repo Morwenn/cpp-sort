@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -98,7 +97,7 @@ namespace detail
     {};
 
     template<typename T>
-    constexpr bool has_is_transparent_v = has_is_transparent<remove_cvref_t<T>>::value;
+    constexpr bool has_is_transparent_v = has_is_transparent<std::remove_cvref_t<T>>::value;
 
     template<bool>
     struct raw_check_is_transparent_impl {};

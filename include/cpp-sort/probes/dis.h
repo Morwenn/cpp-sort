@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_DIS_H_
@@ -151,7 +151,7 @@ namespace probe
                 -> decltype(auto)
             {
                 using category = cppsort::detail::iterator_category_t<
-                    cppsort::detail::remove_cvref_t<decltype(std::begin(iterable))>
+                    std::remove_cvref_t<decltype(std::begin(iterable))>
                 >;
                 return dis_probe_algo(std::begin(iterable), std::end(iterable),
                                       utility::size(iterable),

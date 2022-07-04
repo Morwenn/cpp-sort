@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -38,7 +38,7 @@ namespace utility
             constexpr auto operator()(T&& t) const
                 noexcept(noexcept(std::mem_fn(t)))
                 -> cppsort::detail::enable_if_t<
-                    std::is_member_pointer<cppsort::detail::remove_cvref_t<T>>::value,
+                    std::is_member_pointer<std::remove_cvref_t<T>>::value,
                     decltype(std::mem_fn(t))
                 >
             {
@@ -49,7 +49,7 @@ namespace utility
             constexpr auto operator()(T&& t) const
                 noexcept(std::is_nothrow_constructible<T, T>::value)
                 -> cppsort::detail::enable_if_t<
-                    not std::is_member_pointer<cppsort::detail::remove_cvref_t<T>>::value,
+                    not std::is_member_pointer<std::remove_cvref_t<T>>::value,
                     T
                 >
             {

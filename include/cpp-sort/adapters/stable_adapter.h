@@ -39,10 +39,10 @@ namespace cppsort
         {
             private:
 
-                using projection_t = detail::remove_cvref_t<
+                using projection_t = std::remove_cvref_t<
                     decltype(utility::as_function(std::declval<Projection>()))
                 >;
-                using compare_t = detail::remove_cvref_t<
+                using compare_t = std::remove_cvref_t<
                     decltype(utility::as_function(std::declval<Compare>()))
                 >;
                 std::tuple<compare_t, projection_t> data;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
@@ -201,8 +201,8 @@ namespace cppsort
         template<
             typename First, typename... Args,
             typename = detail::enable_if_t<
-                not detail::is_specialization_of_v<detail::remove_cvref_t<First>, std::list> &&
-                not detail::is_specialization_of_v<detail::remove_cvref_t<First>, std::forward_list>
+                not detail::is_specialization_of_v<std::remove_cvref_t<First>, std::list> &&
+                not detail::is_specialization_of_v<std::remove_cvref_t<First>, std::forward_list>
             >
         >
         auto operator()(First&& first, Args&&... args) const

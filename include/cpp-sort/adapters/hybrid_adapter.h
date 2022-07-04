@@ -42,7 +42,7 @@ namespace cppsort
         {};
 
         template<typename T>
-        using is_hybrid_adapter = is_hybrid_adapter_impl<remove_cvref_t<T>>;
+        using is_hybrid_adapter = is_hybrid_adapter_impl<std::remove_cvref_t<T>>;
 
         ////////////////////////////////////////////////////////////
         // Overload resolution tool

@@ -158,14 +158,14 @@ namespace cppsort
             >
             auto operator()(ForwardIterable&& iterable,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(iterable))>>{},
+                -> decltype(sort_indirectly(iterator_category_t<std::remove_cvref_t<decltype(std::begin(iterable))>>{},
                                             this->get(),
                                             std::begin(iterable), std::end(iterable),
                                             cppsort::utility::size(iterable),
                                             std::move(compare), std::move(projection)))
             {
                 auto size = cppsort::utility::size(iterable);
-                return sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(iterable))>>{},
+                return sort_indirectly(iterator_category_t<std::remove_cvref_t<decltype(std::begin(iterable))>>{},
                                        this->get(),
                                        std::begin(iterable), std::end(iterable), size,
                                        std::move(compare), std::move(projection));

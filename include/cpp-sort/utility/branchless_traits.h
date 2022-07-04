@@ -77,8 +77,8 @@ namespace utility
                 std::is_volatile<T>
             >::value,
             is_probably_branchless_comparison<
-                cppsort::detail::remove_cvref_t<Compare>,
-                cppsort::detail::remove_cvref_t<T>
+                std::remove_cvref_t<Compare>,
+                std::remove_cvref_t<T>
             >,
             detail::is_probably_branchless_comparison_impl<Compare, T>
         >
@@ -133,8 +133,8 @@ struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
                 std::is_volatile<T>
             >::value,
             is_probably_branchless_projection<
-                cppsort::detail::remove_cvref_t<Projection>,
-                cppsort::detail::remove_cvref_t<T>
+                std::remove_cvref_t<Projection>,
+                std::remove_cvref_t<T>
             >,
             detail::is_probably_branchless_projection_impl<Projection, T>
         >

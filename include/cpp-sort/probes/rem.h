@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_REM_H_
@@ -39,7 +39,7 @@ namespace probe
                             ForwardIterable
                         > ||
                         cppsort::detail::is_bounded_array_v<
-                            cppsort::detail::remove_cvref_t<ForwardIterable>
+                            std::remove_cvref_t<ForwardIterable>
                         >
                     )
                 >

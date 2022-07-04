@@ -97,18 +97,6 @@ namespace detail
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
     ////////////////////////////////////////////////////////////
-    // std::remove_cvref from C++20
-
-    template<typename T>
-    struct remove_cvref
-    {
-        using type = std::remove_cv_t<std::remove_reference_t<T>>;
-    };
-
-    template<typename T>
-    using remove_cvref_t = typename remove_cvref<T>::type;
-
-    ////////////////////////////////////////////////////////////
     // std::is_bounded_array from C++20
 
     template<typename T>
