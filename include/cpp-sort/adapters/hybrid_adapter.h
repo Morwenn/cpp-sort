@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include "../detail/any_all.h"
 #include "../detail/checkers.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -240,7 +239,7 @@ namespace cppsort
             detail::check_is_always_stable<Sorters...>,
             detail::sorter_facade_fptr<
                 hybrid_adapter_impl<Sorters...>,
-                detail::all(std::is_empty<Sorters>::value...)
+                (std::is_empty<Sorters>::value && ...)
             >
         {
             private:

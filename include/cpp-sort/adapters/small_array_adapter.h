@@ -14,7 +14,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include "../detail/any_all.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -62,7 +61,7 @@ namespace cppsort
         fixed_sorter_traits<FixedSizeSorter>,
         detail::sorter_facade_fptr<
             small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>,
-            detail::all(std::is_empty<FixedSizeSorter<Indices>>::value...)
+            (std::is_empty<FixedSizeSorter<Indices>>::value && ...)
         >
     {
         template<

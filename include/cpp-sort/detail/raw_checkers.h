@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
-#include "any_all.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -47,7 +46,7 @@ namespace detail
     template<typename... Sorters>
     struct raw_check_iterator_category:
         raw_check_iterator_category_impl<
-            all(has_iterator_category<Sorters>::value...),
+            (has_iterator_category<Sorters>::value && ...),
             Sorters...
         >
     {};
@@ -73,14 +72,14 @@ namespace detail
     {
         using is_always_stable = std::integral_constant<
             bool,
-            all(typename Sorters::is_always_stable{}()...)
+            (typename Sorters::is_always_stable{}() && ...)
         >;
     };
 
     template<typename... Sorters>
     struct raw_check_is_always_stable:
         raw_check_is_always_stable_impl<
-            all(has_is_always_stable<Sorters>::value...),
+            (has_is_always_stable<Sorters>::value && ...),
             Sorters...
         >
     {};
@@ -113,7 +112,7 @@ namespace detail
     template<typename... TT>
     struct raw_check_is_transparent:
         raw_check_is_transparent_impl<
-            all(has_is_transparent<TT>::value...)
+            (has_is_transparent<TT>::value && ...)
         >
     {};
 }}

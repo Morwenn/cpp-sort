@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CHECKERS_H_
@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
-#include "any_all.h"
 #include "raw_checkers.h"
 
 namespace cppsort
@@ -34,7 +33,7 @@ namespace detail
     template<typename... Sorters>
     struct check_iterator_category:
         check_iterator_category_impl<
-            all(has_iterator_category<sorter_traits<Sorters>>::value...),
+            (has_iterator_category<sorter_traits<Sorters>>::value && ...),
             Sorters...
         >
     {};
@@ -47,14 +46,14 @@ namespace detail
     {
         using is_always_stable = std::integral_constant<
             bool,
-            all(typename sorter_traits<Sorters>::is_always_stable{}()...)
+            (typename sorter_traits<Sorters>::is_always_stable{}() && ...)
         >;
     };
 
     template<typename... Sorters>
     struct check_is_always_stable:
         check_is_always_stable_impl<
-            all(has_is_always_stable<sorter_traits<Sorters>>::value...),
+            (has_is_always_stable<sorter_traits<Sorters>>::value && ...),
             Sorters...
         >
     {};
