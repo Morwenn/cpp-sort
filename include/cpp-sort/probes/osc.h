@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_OSC_H_
@@ -36,44 +36,9 @@ namespace probe
     namespace detail
     {
         template<typename ForwardIterator, typename Compare, typename Projection>
-        auto inplace_osc_algo(ForwardIterator first, ForwardIterator last,
-                              cppsort::detail::difference_type_t<ForwardIterator> size,
-                              Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<ForwardIterator>
-        {
-            // Deprecated in-place O(n^2) algorithm
-
-            using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;
-            auto&& comp = utility::as_function(compare);
-            auto&& proj = utility::as_function(projection);
-
-            if (size < 2) {
-                return 0;
-            }
-
-            difference_type count = 0;
-            for (auto it = first; it != last; ++it) {
-                auto&& value = proj(*it);
-
-                auto current = first;
-                auto next = std::next(first);
-
-                while (next != last) {
-                    if (comp((std::min)(proj(*current), proj(*next), comp), value) &&
-                        comp(value, (std::max)(proj(*current), proj(*next), comp))) {
-                        ++count;
-                    }
-                    ++current;
-                    ++next;
-                }
-            }
-            return count;
-        }
-
-        template<typename ForwardIterator, typename Compare, typename Projection>
-        auto allocating_osc_algo(ForwardIterator first, ForwardIterator last,
-                                 cppsort::detail::difference_type_t<ForwardIterator> size,
-                                 Compare compare, Projection projection)
+        auto osc_algo(ForwardIterator first, ForwardIterator last,
+                      cppsort::detail::difference_type_t<ForwardIterator> size,
+                      Compare compare, Projection projection)
             -> ::cppsort::detail::difference_type_t<ForwardIterator>
         {
             using difference_type = ::cppsort::detail::difference_type_t<ForwardIterator>;
@@ -156,22 +121,6 @@ namespace probe
 
             std::partial_sum(cross.begin(), cross.end(), cross.begin());
             return std::accumulate(cross.begin(), cross.end(), difference_type(0));
-        }
-
-        template<typename ForwardIterator, typename Compare, typename Projection>
-        auto osc_algo(ForwardIterator first, ForwardIterator last,
-                      cppsort::detail::difference_type_t<ForwardIterator> size,
-                      Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<ForwardIterator>
-        {
-            try {
-                return allocating_osc_algo(first, last, size, compare, projection);
-            } catch (std::bad_alloc&) {
-                return inplace_osc_algo(
-                    first, last, size,
-                    std::move(compare), std::move(projection)
-                );
-            }
         }
 
         struct osc_impl
