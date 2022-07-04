@@ -11,13 +11,14 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/no_post_iterator.h>
+#include <testing-tools/old_default_sorter.h>
 #include <testing-tools/random.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,

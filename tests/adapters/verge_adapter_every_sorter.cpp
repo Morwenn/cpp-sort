@@ -12,12 +12,13 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_default_sorter.h>
 #include <testing-tools/wrapper.h>
 
 TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
@@ -52,7 +53,6 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
 TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][stable_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,

@@ -9,10 +9,10 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/stable_adapter.h>
-#include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_default_sorter.h>
 
 namespace
 {
@@ -44,8 +44,8 @@ TEST_CASE( "try mixed comparison/projection function object",
     distribution(std::back_inserter(collection), 100);
 
     tricky_function func;
-    cppsort::default_sorter sorter;
-    cppsort::stable_adapter<cppsort::default_sorter> stable_sorter;
+    old_default_sorter sorter;
+    cppsort::stable_adapter<old_default_sorter> stable_sorter;
 
     SECTION( "without an untransformed function" )
     {

@@ -9,11 +9,12 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_default_sorter.h>
 
 TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,

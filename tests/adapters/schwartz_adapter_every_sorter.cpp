@@ -14,6 +14,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_default_sorter.h>
 #include <testing-tools/random.h>
 #include <testing-tools/wrapper.h>
 
@@ -24,9 +25,9 @@ template<typename T=float>
 using wrapper = generic_wrapper<T>;
 
 TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapter", "[schwartz_adapter]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
@@ -58,6 +59,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
 }
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapter", "[schwartz_adapter]",
+                    old_default_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
@@ -80,6 +82,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapt
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "[schwartz_adapter]",
+                    old_default_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,

@@ -12,6 +12,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_default_sorter.h>
 #include <testing-tools/random.h>
 
 namespace
@@ -38,9 +39,9 @@ namespace
 }
 
 TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
