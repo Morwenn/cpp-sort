@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ATTRIBUTES_H_
@@ -18,22 +18,6 @@
 // don't officially exist, so we need to fall back to older
 // platform-specific equivalents when possible
 //
-
-// CPPSORT_ATTRIBUTE_FALLTHROUGH
-
-#if __has_cpp_attribute(fallthrough) && !(defined(__clang__) && __cplusplus < 201703L)
-#   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[fallthrough]]
-#elif defined(__clang__)
-#   define CPPSORT_ATTRIBUTE_FALLTHROUGH [[clang::fallthrough]]
-#elif defined(__GNUC__)
-#   if __GNUC__ >= 7
-#       define CPPSORT_ATTRIBUTE_FALLTHROUGH [[gnu::fallthrough]]
-#   else
-#       define CPPSORT_ATTRIBUTE_FALLTHROUGH (void)0
-#   endif
-#else
-#   define CPPSORT_ATTRIBUTE_FALLTHROUGH (void)0
-#endif
 
 // CPPSORT_ATTRIBUTE_NODISCARD
 

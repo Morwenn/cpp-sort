@@ -204,11 +204,11 @@ namespace detail
             case 3:
                 to_call(begin);
                 ++begin;
-                CPPSORT_ATTRIBUTE_FALLTHROUGH;
+                [[fallthrough]];
             case 2:
                 to_call(begin);
                 ++begin;
-                CPPSORT_ATTRIBUTE_FALLTHROUGH;
+                [[fallthrough]];
             case 1:
                 to_call(begin);
         }
