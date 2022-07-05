@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Morwenn
+ * Copyright (c) 2020-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SIZED_ITERATOR_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
-#include "attributes.h"
 #include "iterator_traits.h"
 
 namespace cppsort
@@ -55,14 +54,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto base() const
                 -> iterator_type
             {
                 return _it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto size() const
                 -> difference_type
             {
@@ -72,14 +71,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator*() const
                 -> reference
             {
                 return *_it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator->() const
                 -> pointer
             {
@@ -95,7 +94,7 @@ namespace detail
     // Alternative to std::distance meant to be picked up by ADL in
     // specific places, uses the size of the *second* iterator
     template<typename Iterator>
-    CPPSORT_ATTRIBUTE_NODISCARD
+    [[nodiscard]]
     constexpr auto distance(sized_iterator<Iterator>, sized_iterator<Iterator> last)
         -> difference_type_t<Iterator>
     {
@@ -103,7 +102,7 @@ namespace detail
     }
 
     template<typename Iterator>
-    CPPSORT_ATTRIBUTE_NODISCARD
+    [[nodiscard]]
     auto make_sized_iterator(Iterator it, difference_type_t<Iterator> size)
         -> sized_iterator<Iterator>
     {

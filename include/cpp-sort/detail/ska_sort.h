@@ -26,7 +26,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "attributes.h"
 #include "iterator_traits.h"
 #include "memcpy_cast.h"
 #include "pdqsort.h"

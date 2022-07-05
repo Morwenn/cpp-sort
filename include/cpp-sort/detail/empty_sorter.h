@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_EMPTY_SORTER_H_
@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/sorting_networks.h>
-#include "attributes.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -51,7 +50,7 @@ namespace detail
         empty_sorter_impl
     {
         template<typename DifferenceType=std::ptrdiff_t>
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         static constexpr auto index_pairs()
             -> std::array<utility::index_pair<DifferenceType>, 0>
         {

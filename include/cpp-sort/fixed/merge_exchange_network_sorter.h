@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_MERGE_EXCHANGE_NETWORK_SORTER_H_
@@ -17,7 +17,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/sorting_networks.h>
-#include "../detail/attributes.h"
 #include "../detail/bitops.h"
 #include "../detail/empty_sorter.h"
 #include "../detail/iterator_traits.h"
@@ -65,7 +64,7 @@ namespace cppsort
         struct merge_exchange_network_sorter_impl
         {
             template<typename DifferenceType=std::ptrdiff_t>
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             static constexpr auto index_pairs()
                 -> auto
             {

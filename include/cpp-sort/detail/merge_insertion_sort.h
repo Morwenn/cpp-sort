@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "attributes.h"
 #include "fixed_size_list.h"
 #include "functional.h"
 #include "immovable_vector.h"
@@ -58,14 +57,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto base() const
                 -> iterator_type
             {
                 return _it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto size() const
                 -> difference_type
             {
@@ -75,14 +74,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator*() const
                 -> reference
             {
                 return *std::next(_it, _size - 1);
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator->() const
                 -> pointer
             {
@@ -139,7 +138,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Elements access operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
             {
@@ -149,14 +148,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Comparison operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator==(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() == rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator!=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
@@ -166,28 +165,28 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Relational operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator<(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() < rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator<=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() <= rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator>(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
                 return lhs.base() > rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator>=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
             {
@@ -197,7 +196,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Arithmetic operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator+(group_iterator it, difference_type size)
                 -> group_iterator
             {
@@ -205,7 +204,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator+(difference_type size, group_iterator it)
                 -> group_iterator
             {
@@ -213,7 +212,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator-(group_iterator it, difference_type size)
                 -> group_iterator
             {
@@ -221,7 +220,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator-(const group_iterator& lhs, const group_iterator& rhs)
                 -> difference_type
             {
@@ -247,7 +246,7 @@ namespace detail
     // Construction function
 
     template<typename Iterator>
-    CPPSORT_ATTRIBUTE_NODISCARD
+    [[nodiscard]]
     auto make_group_iterator(Iterator it, difference_type_t<Iterator> size)
         -> group_iterator<Iterator>
     {
@@ -255,7 +254,7 @@ namespace detail
     }
 
     template<typename Iterator>
-    CPPSORT_ATTRIBUTE_NODISCARD
+    [[nodiscard]]
     auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<Iterator> size)
         -> group_iterator<Iterator>
     {

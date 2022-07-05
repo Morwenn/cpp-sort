@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_NO_POST_ITERATOR_H_
@@ -55,7 +55,7 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Members access
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto base() const
             -> iterator_type
         {
@@ -65,14 +65,14 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Element access
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto operator*() const
             -> decltype(*base())
         {
             return *_it;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto operator->() const
             -> pointer
         {
@@ -113,7 +113,7 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Elements access operators
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto operator[](difference_type pos) const
             -> decltype(base()[pos])
         {
@@ -123,14 +123,14 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Comparison operators
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator==(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> bool
         {
             return lhs.base() == rhs.base();
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator!=(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> bool
         {
@@ -140,28 +140,28 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Relational operators
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator<(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> bool
         {
             return lhs.base() < rhs.base();
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator<=(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> bool
         {
             return lhs.base() <= rhs.base();
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator>(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> bool
         {
             return lhs.base() > rhs.base();
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator>=(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> bool
         {
@@ -171,7 +171,7 @@ class no_post_iterator
         ////////////////////////////////////////////////////////////
         // Arithmetic operators
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator+(no_post_iterator it, difference_type size)
             -> no_post_iterator
         {
@@ -179,7 +179,7 @@ class no_post_iterator
             return it;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator+(difference_type size, no_post_iterator it)
             -> no_post_iterator
         {
@@ -187,7 +187,7 @@ class no_post_iterator
             return it;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator-(no_post_iterator it, difference_type size)
             -> no_post_iterator
         {
@@ -195,7 +195,7 @@ class no_post_iterator
             return it;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         friend auto operator-(const no_post_iterator& lhs, const no_post_iterator& rhs)
             -> difference_type
         {
