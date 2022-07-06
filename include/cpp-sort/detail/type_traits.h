@@ -97,22 +97,6 @@ namespace detail
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
     ////////////////////////////////////////////////////////////
-    // std::is_bounded_array from C++20
-
-    template<typename T>
-    struct is_bounded_array:
-        std::false_type
-    {};
-
-    template<typename T, std::size_t N>
-    struct is_bounded_array<T[N]>:
-        std::true_type
-    {};
-
-    template<typename T>
-    constexpr bool is_bounded_array_v = is_bounded_array<T>::value;
-
-    ////////////////////////////////////////////////////////////
     // Type traits to take __int128 into account even when the
     // standard library isn't instrumented but the type is still
     // available (e.g. -std=c++17)

@@ -38,9 +38,7 @@ namespace probe
                             cppsort::utility::detail::has_size_method_t,
                             ForwardIterable
                         > ||
-                        cppsort::detail::is_bounded_array_v<
-                            std::remove_cvref_t<ForwardIterable>
-                        >
+                        std::is_bounded_array_v<std::remove_cvref_t<ForwardIterable>>
                     )
                 >
             >
