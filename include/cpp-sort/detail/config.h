@@ -1,20 +1,9 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
 #define CPPSORT_DETAIL_CONFIG_H_
-
-////////////////////////////////////////////////////////////
-// Check for __has_* macros
-
-#ifndef __has_include
-#   define __has_include(x) 0
-#endif
-
-#ifndef __has_cpp_attribute
-#   define __has_cpp_attribute(x) 0
-#endif
 
 ////////////////////////////////////////////////////////////
 // Check for C++17 features
