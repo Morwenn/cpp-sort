@@ -157,13 +157,13 @@ namespace cppsort
         {
             using type = Compare;
 
-            static constexpr auto construct(const Compare& comp, const utility::identity&)
+            static constexpr auto construct(const Compare& comp, const std::identity&)
                 -> type
             {
                 return comp;
             }
 
-            static constexpr auto construct(Compare&& comp, const utility::identity&)
+            static constexpr auto construct(Compare&& comp, const std::identity&)
                 -> type
             {
                 return comp;
