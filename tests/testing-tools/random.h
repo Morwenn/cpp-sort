@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <cassert>
 #include <cstdint>
+#include <functional>
 #include <utility>
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/utility/as_function.h>
