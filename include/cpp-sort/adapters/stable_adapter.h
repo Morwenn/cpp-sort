@@ -17,7 +17,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
@@ -69,7 +68,7 @@ namespace cppsort
                 }
         };
 
-        template<typename Compare, typename Projection=utility::identity>
+        template<typename Compare, typename Projection=std::identity>
         auto make_stable_compare(Compare compare, Projection projection={})
             -> stable_compare<Compare, Projection>
         {
@@ -152,7 +151,7 @@ namespace cppsort
             template<
                 typename ForwardIterable,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
@@ -169,7 +168,7 @@ namespace cppsort
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >

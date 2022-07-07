@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPREAD_SORTER_STRING_SPREAD_SORTER_H_
@@ -15,7 +15,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../../detail/config.h"
 #include "../../detail/iterator_traits.h"
@@ -40,7 +39,7 @@ namespace cppsort
 
             template<
                 typename RandomAccessIterator,
-                typename Projection = utility::identity
+                typename Projection = std::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
@@ -66,7 +65,7 @@ namespace cppsort
 
             template<
                 typename RandomAccessIterator,
-                typename Projection = utility::identity
+                typename Projection = std::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
@@ -96,7 +95,7 @@ namespace cppsort
 
             template<
                 typename RandomAccessIterator,
-                typename Projection = utility::identity
+                typename Projection = std::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
@@ -123,7 +122,7 @@ namespace cppsort
 
             template<
                 typename RandomAccessIterator,
-                typename Projection = utility::identity
+                typename Projection = std::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
@@ -152,7 +151,7 @@ namespace cppsort
 #ifdef __cpp_lib_ranges
             template<
                 typename RandomAccessIterator,
-                typename Projection = utility::identity
+                typename Projection = std::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::ranges::greater compare, Projection projection={}) const
@@ -177,7 +176,7 @@ namespace cppsort
 
             template<
                 typename RandomAccessIterator,
-                typename Projection = utility::identity
+                typename Projection = std::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::ranges::greater compare, Projection projection={}) const

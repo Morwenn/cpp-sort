@@ -80,28 +80,6 @@ namespace utility
     }
 
     ////////////////////////////////////////////////////////////
-    // Identity (mostly useful for projections)
-
-    struct identity:
-        projection_base
-    {
-        template<typename T>
-        constexpr auto operator()(T&& value) const noexcept
-            -> T&&
-        {
-            return std::forward<T>(value);
-        }
-
-        using is_transparent = void;
-    };
-
-    template<typename T>
-    struct is_probably_branchless_projection<identity, T>:
-        std::true_type
-    {};
-
-
-    ////////////////////////////////////////////////////////////
     // Transform overload in unary or binary function
 
     namespace detail

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SCHWARTZ_ADAPTER_H_
@@ -18,7 +18,6 @@
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
@@ -110,7 +109,7 @@ namespace cppsort
             template<
                 typename ForwardIterable,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
@@ -126,7 +125,7 @@ namespace cppsort
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
@@ -164,24 +163,6 @@ namespace cppsort
             }
 
             template<typename ForwardIterable, typename Compare>
-            auto operator()(ForwardIterable&& iterable, Compare compare, utility::identity projection) const
-                -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
-            {
-                // utility::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
-            }
-
-            template<typename ForwardIterator, typename Compare>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare, utility::identity projection) const
-                -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
-            {
-                // utility::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::move(first), std::move(last), std::move(compare), projection);
-            }
-
-#if CPPSORT_STD_IDENTITY_AVAILABLE
-            template<typename ForwardIterable, typename Compare>
             auto operator()(ForwardIterable&& iterable, Compare compare, std::identity projection) const
                 -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
             {
@@ -197,7 +178,6 @@ namespace cppsort
                 // std::identity does nothing, bypass schartz_adapter entirely
                 return this->get()(std::move(first), std::move(last), std::move(compare), projection);
             }
-#endif
         };
     }
 

@@ -8,7 +8,7 @@ It is possible to include all the fixed-size sorters at once with the following 
 #include <cpp-sort/fixed_sorters.h>
 ```
 
-The following fixed-size sorters are available and should work with any type for which `std::less<>` and `utility::identity` work:
+The following fixed-size sorters are available and should work with any type for which `std::less<>` and `std::identity` work:
 
 ### `low_comparisons_sorter`
 

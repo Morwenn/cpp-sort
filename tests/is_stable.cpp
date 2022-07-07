@@ -9,7 +9,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/merge_sorter.h>
 #include <cpp-sort/sorters/quick_sorter.h>
-#include <cpp-sort/utility/functional.h>
 
 TEST_CASE( "test is_stable with raw sorters",
            "[is_stable]" )
@@ -18,7 +17,6 @@ TEST_CASE( "test is_stable with raw sorters",
     // supposed to trivially fall back to is_always_stable
 
     using cppsort::is_stable;
-    using cppsort::utility::identity;
 
     SECTION( "merge_sorter" )
     {
@@ -35,21 +33,21 @@ TEST_CASE( "test is_stable with raw sorters",
         STATIC_CHECK( is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
                                        std::greater<>)>::value );
 
-        STATIC_CHECK( is_stable<sorter(std::vector<int>&, identity)>::value );
+        STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::identity)>::value );
         STATIC_CHECK( is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
-                                       identity)>::value );
+                                       std::identity)>::value );
 
         STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::negate<>)>::value );
         STATIC_CHECK( is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
                                        std::negate<>)>::value );
 
-        STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::less<>, identity)>::value );
+        STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::less<>, std::identity)>::value );
         STATIC_CHECK( is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
-                                       std::less<>, identity)>::value );
+                                       std::less<>, std::identity)>::value );
 
-        STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::greater<>, identity)>::value );
+        STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::greater<>, std::identity)>::value );
         STATIC_CHECK( is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
-                                       std::greater<>, identity)>::value );
+                                       std::greater<>, std::identity)>::value );
 
         STATIC_CHECK( is_stable<sorter(std::vector<int>&, std::less<>, std::negate<>)>::value );
         STATIC_CHECK( is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
@@ -75,21 +73,21 @@ TEST_CASE( "test is_stable with raw sorters",
         STATIC_CHECK( not is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
                                            std::greater<>)>::value );
 
-        STATIC_CHECK( not is_stable<sorter(std::vector<int>&, identity)>::value );
+        STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::identity)>::value );
         STATIC_CHECK( not is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
-                                           identity)>::value );
+                                           std::identity)>::value );
 
         STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::negate<>)>::value );
         STATIC_CHECK( not is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
                                            std::negate<>)>::value );
 
-        STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::less<>, identity)>::value );
+        STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::less<>, std::identity)>::value );
         STATIC_CHECK( not is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
-                                           std::less<>, identity)>::value );
+                                           std::less<>, std::identity)>::value );
 
-        STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::greater<>, identity)>::value );
+        STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::greater<>, std::identity)>::value );
         STATIC_CHECK( not is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,
-                                           std::greater<>, identity)>::value );
+                                           std::greater<>, std::identity)>::value );
 
         STATIC_CHECK( not is_stable<sorter(std::vector<int>&, std::less<>, std::negate<>)>::value );
         STATIC_CHECK( not is_stable<sorter(std::vector<int>::iterator, std::vector<int>::iterator,

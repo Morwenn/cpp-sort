@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -30,7 +30,6 @@ Phil Endecott and Frank Gennari
 #include <tuple>
 #include <type_traits>
 #include <vector>
-#include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
 #include "../../type_traits.h"
@@ -253,9 +252,8 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-                  offset_less_than<Projection, Unsigned_char_type>(
-                    char_offset + 1, projection),
-                  utility::identity{});
+                  offset_less_than<Projection, Unsigned_char_type>(char_offset + 1, projection),
+                  std::identity{});
         else
           string_sort_rec<Unsigned_char_type>(lastPos, bin_cache[u], char_offset + 1,
                                               bin_cache, cache_end, bin_sizes, projection);
@@ -367,9 +365,8 @@ namespace spreadsort
         //using pdqsort if its worst-case is better
         if (count < max_size)
           pdqsort(lastPos, bin_cache[u],
-                  offset_greater_than<Projection, Unsigned_char_type>(
-                    char_offset + 1, projection),
-                  utility::identity{});
+                  offset_greater_than<Projection, Unsigned_char_type>(char_offset + 1, projection),
+                  std::identity{});
         else
           reverse_string_sort_rec<Unsigned_char_type>(lastPos, bin_cache[u], char_offset + 1,
                                                       bin_cache, cache_end, bin_sizes, projection);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_RANDOM_H_
@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 
 namespace hasard // Blame POSIX for picking the good name
 {
@@ -176,7 +175,7 @@ namespace hasard // Blame POSIX for picking the good name
         typename T=long long int,
         typename OutputIterator,
         typename URBG,
-        typename Projection = cppsort::utility::identity
+        typename Projection = std::identity
     >
     auto fill_with_shuffle(OutputIterator out, long long int size, long long int start,
                            URBG& engine, Projection projection={})

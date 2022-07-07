@@ -9,7 +9,6 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/utility/functional.h>
 #include <testing-tools/random.h>
 
 TEST_CASE( "spread_sorter generate overloads",
@@ -33,17 +32,17 @@ TEST_CASE( "spread_sorter generate overloads",
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::less<>{}) );
     }
 
-    SECTION( "default operator() with utility::identity" )
+    SECTION( "default operator() with std::identity" )
     {
         std::vector<int> vec(100'000);
         std::iota(vec.begin(), vec.end(), 0);
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec, cppsort::utility::identity{});
+        cppsort::spread_sort(vec, std::identity{});
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec.begin(), vec.end(), cppsort::utility::identity{});
+        cppsort::spread_sort(vec.begin(), vec.end(), std::identity{});
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
@@ -53,11 +52,11 @@ TEST_CASE( "spread_sorter generate overloads",
         std::iota(vec.begin(), vec.end(), 0);
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec, std::less<>{}, cppsort::utility::identity{});
+        cppsort::spread_sort(vec, std::less<>{}, std::identity{});
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec.begin(), vec.end(), std::less<>{}, cppsort::utility::identity{});
+        cppsort::spread_sort(vec.begin(), vec.end(), std::less<>{}, std::identity{});
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

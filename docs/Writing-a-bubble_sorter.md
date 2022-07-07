@@ -236,7 +236,7 @@ struct bubble_sorter_impl
     template<
         typename ForwardIterator,
         typename Compare = std::less<>,
-        typename Projection = cppsort::utility::identity,
+        typename Projection = std::identity,
         typename = std::enable_if_t<cppsort::is_projection_iterator_v<
             Projection, ForwardIterator, Compare
         >>
@@ -254,7 +254,7 @@ struct bubble_sorter_impl
 };
 ```
 
-We can see several improvements compared to the previous version: first of all, we added an optional projection parameter which defauts to [`utility::identity`][utility-identity] (in C++20 we would use [`std::identity`][std-identity]). This is a function object that takes a value and returns it as is so that the default behaviour of the algorithm is to run *as if* projections didn't exist. It is very likely to be optimized aways by the compiler.
+We can see several improvements compared to the previous version: first of all, we added an optional projection parameter which defauts to [`std::identity`][std-identity]. This is a function object that takes a value and returns it as is so that the default behaviour of the algorithm is to run *as if* projections didn't exist. It is very likely to be optimized away by the compiler.
 
 The second modification is one I wish we could do without (but will have to live with until concepts): [`is_projection_iterator_v`][is-projection] is a trait that checks whether a projection function can be used on a dereferenced iterator. It also optionally checks that a given comparison function can be called with the result of two such projections. This trait exists to ensure that a sorter's `operator()` won't be called when these conditions are not satisfied, which may be crucial when aggregating sorters with [`hybrid_adapter`][hybrid-adapter].
 
@@ -456,7 +456,6 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
   [std-list]: https://en.cppreference.com/w/cpp/container/list
   [std-span]: https://en.cppreference.com/w/cpp/container/span
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
-  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
   [utility-size]: Miscellaneous-utilities.md#size
   [utility-static-const]: Miscellaneous-utilities.md#static_const

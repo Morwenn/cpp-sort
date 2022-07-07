@@ -59,8 +59,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 When compiled with C++20, **cpp-sort** might gain a few additional features depending on the level of C++20 support provided by the compiler. The availability of those features depends on the presence of corresponding [feature-testing macros][feature-test-macros] when possible, even though some checks are more granular. Don't hesitate to open an issue if your compiler and standard library supports one of those features but it doesn't seem to work in **cpp-sort**.
 
 **New features:**
-* When available, [`std::identity`][std-identity] benefits from dedicated support wherever [`utility::identity`][cpp-sort-function-objects] is supported, with equivalent semantics.
-
 * When available, [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater] benefit from dedicated support wherever [`std::less<>`][std-less-void] and [`std::greater<>`][std-greater-void] are supported, with equivalent semantics.
 
 * [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] begin `constexpr`.
@@ -94,7 +92,6 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [smooth-sorter]: Sorters.md#smooth-sorter_sorter
   [sorter-facade]: Sorter-facade.md
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
-  [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater

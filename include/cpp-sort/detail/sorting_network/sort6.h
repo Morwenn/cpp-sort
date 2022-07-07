@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT6_H_
@@ -15,7 +15,7 @@ namespace detail
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = utility::identity,
+            typename Projection = std::identity,
             typename = detail::enable_if_t<is_projection_iterator_v<
                 Projection, RandomAccessIterator, Compare
             >>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MONO_H_
@@ -14,7 +14,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -30,7 +29,7 @@ namespace probe
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = cppsort::detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >

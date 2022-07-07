@@ -48,7 +48,7 @@ namespace
             typename Iterator,
             typename Compare = std::less<>,
             typename = std::enable_if_t<cppsort::is_projection_iterator_v<
-                cppsort::utility::identity, Iterator, Compare
+                std::identity, Iterator, Compare
             >>
         >
         auto operator()(Iterator first, Iterator last, Compare compare={}) const
@@ -62,7 +62,7 @@ namespace
             typename Iterable,
             typename Compare = std::less<>,
             typename = std::enable_if_t<cppsort::is_projection_v<
-                cppsort::utility::identity, Iterable, Compare
+                std::identity, Iterable, Compare
             >>
         >
         auto operator()(Iterable& iterable, Compare compare={}) const
@@ -77,7 +77,7 @@ namespace
     {
         template<
             typename Iterator,
-            typename Projection=cppsort::utility::identity,
+            typename Projection=std::identity,
             typename = std::enable_if_t<cppsort::is_projection_iterator_v<
                 Projection, Iterator
             >>
@@ -92,7 +92,7 @@ namespace
 
         template<
             typename Iterable,
-            typename Projection=cppsort::utility::identity,
+            typename Projection=std::identity,
             typename = std::enable_if_t<cppsort::is_projection_v<
                 Projection, Iterable
             >>

@@ -8,7 +8,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
 
 namespace
 {
@@ -19,7 +18,7 @@ namespace
         template<
             typename Iterator,
             typename Compare = std::less<>,
-            typename Projection = cppsort::utility::identity,
+            typename Projection = std::identity,
             typename = std::enable_if_t<cppsort::is_projection_iterator_v<
                 Projection, Iterator, Compare
             >>

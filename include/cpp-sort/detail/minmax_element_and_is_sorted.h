@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MINMAX_ELEMENT_AND_IS_SORTED_H_
@@ -11,7 +11,6 @@
 #include <functional>
 #include <iterator>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include "minmax_element.h"
 
 namespace cppsort
@@ -21,7 +20,7 @@ namespace detail
     template<
         typename ForwardIterator,
         typename Compare = std::less<>,
-        typename Projection = utility::identity
+        typename Projection = std::identity
     >
     auto minmax_element_and_is_sorted(ForwardIterator first, ForwardIterator last,
                                       Compare compare={}, Projection projection={})
@@ -46,14 +45,12 @@ namespace detail
 
         // While it is sorted, the min and max are obvious
         auto current = first;
-        while (not comp(proj(*next), proj(*current)))
-        {
+        while (not comp(proj(*next), proj(*current))) {
             ++current;
             ++next;
 
             // The range is fully sorted
-            if (next == last)
-            {
+            if (next == last) {
                 result.max = current;
                 return result;
             }
@@ -65,12 +62,10 @@ namespace detail
         result.max = current;
 
         auto tmp = minmax_element(next, last, compare, projection);
-        if (comp(proj(*tmp.first), proj(*result.min)))
-        {
+        if (comp(proj(*tmp.first), proj(*result.min))) {
             result.min = tmp.first;
         }
-        if (not comp(proj(*tmp.second), proj(*result.max)))
-        {
+        if (not comp(proj(*tmp.second), proj(*result.max))) {
             result.max = tmp.second;
         }
         return result;

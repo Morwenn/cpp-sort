@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTER_FACADE_H_
@@ -14,8 +14,6 @@
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/refined.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
-#include "detail/config.h"
 #include "detail/type_traits.h"
 
 namespace cppsort
@@ -467,45 +465,8 @@ namespace cppsort
 #endif
 
         ////////////////////////////////////////////////////////////
-        // utility::identity overloads
+        // std::identity overloads
 
-        template<typename Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, utility::identity) const
-            -> detail::enable_if_t<
-                not detail::has_projection_sort_iterator<Sorter, Iterator, utility::identity>::value &&
-                not detail::has_comparison_projection_sort_iterator<
-                    Sorter,
-                    Iterator,
-                    std::less<>,
-                    utility::identity
-                >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last)))
-            >
-        {
-            return Sorter::operator()(std::move(first), std::move(last));
-        }
-
-        template<typename Iterable>
-        constexpr auto operator()(Iterable&& iterable, utility::identity) const
-            -> detail::enable_if_t<
-                not detail::has_projection_sort_iterator<
-                    Sorter,
-                    decltype(std::begin(iterable)),
-                utility::identity
-                >::value &&
-                not detail::has_comparison_projection_sort_iterator<
-                    Sorter,
-                    decltype(std::begin(iterable)),
-                    std::less<>,
-                    utility::identity
-                >::value,
-                decltype(operator()(std::forward<Iterable>(iterable)))
-            >
-        {
-            return operator()(std::forward<Iterable>(iterable));
-        }
-
-#if CPPSORT_STD_IDENTITY_AVAILABLE
         template<typename Iterator>
         constexpr auto operator()(Iterator first, Iterator last, std::identity) const
             -> detail::enable_if_t<
@@ -541,7 +502,6 @@ namespace cppsort
         {
             return operator()(std::forward<Iterable>(iterable));
         }
-#endif
 
         ////////////////////////////////////////////////////////////
         // Fused comparison-projection overloads
@@ -610,39 +570,8 @@ namespace cppsort
         }
 
         ////////////////////////////////////////////////////////////
-        // std::less<> and utility::identity overloads
+        // std::less<> and std::identity overloads
 
-        template<typename Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, std::less<>, utility::identity) const
-            -> detail::enable_if_t<
-                not detail::has_comparison_projection_sort_iterator<
-                    Sorter,
-                    Iterator,
-                    std::less<>,
-                    utility::identity
-                >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last)))
-            >
-        {
-            return Sorter::operator()(std::move(first), std::move(last));
-        }
-
-        template<typename Iterable>
-        constexpr auto operator()(Iterable&& iterable, std::less<>, utility::identity) const
-            -> detail::enable_if_t<
-                not detail::has_comparison_projection_sort_iterator<
-                    Sorter,
-                    decltype(std::begin(iterable)),
-                    std::less<>,
-                    utility::identity
-                >::value,
-                decltype(operator()(std::forward<Iterable>(iterable)))
-            >
-        {
-            return operator()(std::forward<Iterable>(iterable));
-        }
-
-#if CPPSORT_STD_IDENTITY_AVAILABLE
         template<typename Iterator>
         constexpr auto operator()(Iterator first, Iterator last, std::less<>, std::identity) const
             -> detail::enable_if_t<
@@ -672,7 +601,6 @@ namespace cppsort
         {
             return operator()(std::forward<Iterable>(iterable));
         }
-#endif
 
         template<typename Iterator, typename Projection>
         constexpr auto operator()(Iterator first, Iterator last, std::less<> compare, Projection projection) const

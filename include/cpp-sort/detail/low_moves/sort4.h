@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_MOVES_SORT4_H_
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../min_element.h"
 #include "../type_traits.h"
@@ -27,7 +26,7 @@ namespace detail
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = utility::identity,
+            typename Projection = std::identity,
             typename = detail::enable_if_t<is_projection_iterator_v<
                 Projection, RandomAccessIterator, Compare
             >>
@@ -39,8 +38,7 @@ namespace detail
             using utility::iter_swap;
 
             RandomAccessIterator min = min_element(first, last, compare, projection);
-            if (min != first)
-            {
+            if (min != first) {
                 iter_swap(min, first);
             }
             low_moves_sorter<3u>{}(first+1u, last, std::move(compare), std::move(projection));

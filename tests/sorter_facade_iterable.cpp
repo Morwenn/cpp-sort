@@ -8,7 +8,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
 #include <testing-tools/wrapper.h>
 
 namespace
@@ -38,14 +37,14 @@ namespace
 
     struct projection_sorter_impl
     {
-        template<typename Iterator, typename Projection=cppsort::utility::identity>
+        template<typename Iterator, typename Projection=std::identity>
         auto operator()(Iterator, Iterator, Projection={}) const
             -> call
         {
             return call::iterator;
         }
 
-        template<typename Iterable, typename Projection=cppsort::utility::identity>
+        template<typename Iterable, typename Projection=std::identity>
         auto operator()(Iterable&, Projection={}) const
             -> call
         {
@@ -58,7 +57,7 @@ namespace
         template<
             typename Iterator,
             typename Compare = std::less<>,
-            typename Projection = cppsort::utility::identity,
+            typename Projection = std::identity,
             typename = std::enable_if_t<cppsort::is_projection_iterator_v<
                 Projection, Iterator, Compare
             >>
@@ -72,7 +71,7 @@ namespace
         template<
             typename Iterable,
             typename Compare = std::less<>,
-            typename Projection = cppsort::utility::identity,
+            typename Projection = std::identity,
             typename = std::enable_if_t<cppsort::is_projection_v<
                 Projection, Iterable, Compare
             >>
@@ -126,9 +125,9 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
 
     SECTION( "with projection only" )
     {
-        call res1 = projection_sorter{}(vec, cppsort::utility::identity{});
+        call res1 = projection_sorter{}(vec, std::identity{});
         CHECK( res1 == call::iterable );
-        call res2 = projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{});
+        call res2 = projection_sorter{}(vec.begin(), vec.end(), std::identity{});
         CHECK( res2 == call::iterator );
 
         call res3 = projection_sorter{}(vec_wrap, &wrapper::value);
@@ -149,10 +148,10 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
         call res4 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::greater<>{});
         CHECK( res4 == call::iterator );
 
-        call res5 = comparison_projection_sorter{}(vec, cppsort::utility::identity{});
+        call res5 = comparison_projection_sorter{}(vec, std::identity{});
         CHECK( res5 == call::iterable );
         call res6 = comparison_projection_sorter{}(vec.begin(), vec.end(),
-                                                   cppsort::utility::identity{});
+                                                   std::identity{});
         CHECK( res6 == call::iterator );
 
         call res7 = comparison_projection_sorter{}(vec_wrap, &wrapper::value);
@@ -160,10 +159,10 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
         call res8 = comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(), &wrapper::value);
         CHECK( res8 == call::iterator );
 
-        call res9 = comparison_projection_sorter{}(vec, std::greater<>{}, cppsort::utility::identity{});
+        call res9 = comparison_projection_sorter{}(vec, std::greater<>{}, std::identity{});
         CHECK( res9 == call::iterable );
         call res10 = comparison_projection_sorter{}(vec.begin(), vec.end(),
-                                                    std::greater<>{}, cppsort::utility::identity{});
+                                                    std::greater<>{}, std::identity{});
         CHECK( res10 == call::iterator );
 
         call res11 = comparison_projection_sorter{}(vec_wrap, std::greater<>{}, &wrapper::value);

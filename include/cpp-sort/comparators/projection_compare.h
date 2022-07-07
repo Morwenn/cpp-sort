@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/functional.h>
 #include "../detail/config.h"
 #include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
@@ -134,42 +133,22 @@ namespace cppsort
         };
 
         template<typename Compare>
-        struct proj_comp_impl<Compare, utility::identity>
-        {
-            using type = Compare;
-
-            static constexpr auto construct(const Compare& comp, const utility::identity&)
-                -> type
-            {
-                return comp;
-            }
-
-            static constexpr auto construct(Compare&& comp, const utility::identity&)
-                -> type
-            {
-                return comp;
-            }
-        };
-
-#if CPPSORT_STD_IDENTITY_AVAILABLE
-        template<typename Compare>
         struct proj_comp_impl<Compare, std::identity>
         {
             using type = Compare;
 
-            static constexpr auto construct(const Compare& comp, const utility::identity&)
+            static constexpr auto construct(const Compare& comp, const std::identity&)
                 -> type
             {
                 return comp;
             }
 
-            static constexpr auto construct(Compare&& comp, const utility::identity&)
+            static constexpr auto construct(Compare&& comp, const std::identity&)
                 -> type
             {
                 return comp;
             }
         };
-#endif
     }
 
     ////////////////////////////////////////////////////////////

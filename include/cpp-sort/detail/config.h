@@ -6,29 +6,6 @@
 #define CPPSORT_DETAIL_CONFIG_H_
 
 ////////////////////////////////////////////////////////////
-// Check for C++20 features
-
-// There is no feature-test macro for std::identity that can
-// be used reliably, so we have to fall back to checking
-// compiler and standard versions
-
-#if defined(__GNUC__)
-#   if __GNUC__ > 9 && __cplusplus > 201703L
-#       define CPPSORT_STD_IDENTITY_AVAILABLE 1
-#   else
-#       define CPPSORT_STD_IDENTITY_AVAILABLE 0
-#   endif
-#elif defined(__clang__)
-#   define CPPSORT_STD_IDENTITY_AVAILABLE 0
-#else
-#   if defined(__cpp_lib_ranges)
-#       define CPPSORT_STD_IDENTITY_AVAILABLE 1
-#   else
-#       define CPPSORT_STD_IDENTITY_AVAILABLE 0
-#   endif
-#endif
-
-////////////////////////////////////////////////////////////
 // CPPSORT_ASSUME
 
 // Assumptions may help the compiler to remove unnecessary code;

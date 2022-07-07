@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_LOW_COMPARISONS_SORTER_H_
@@ -76,7 +76,6 @@ namespace cppsort
 #include <functional>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/front_insert.h"
 #include "../detail/swap_if.h"

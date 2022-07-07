@@ -12,7 +12,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include <cpp-sort/utility/functional.h>
 
 namespace
 {
@@ -32,7 +31,7 @@ namespace
         template<
             typename ForwardIterator,
             typename Compare = std::less<>,
-            typename Projection = cppsort::utility::identity
+            typename Projection = std::identity
         >
         auto operator()(ForwardIterator first, ForwardIterator last,
                         Compare compare={}, Projection projection={}) const

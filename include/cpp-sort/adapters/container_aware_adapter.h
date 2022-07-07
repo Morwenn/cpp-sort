@@ -66,7 +66,7 @@ namespace cppsort
             std::conjunction<
                 std::is_invocable<adl_despair, Sorter, Iterable&, Compare>,
                 std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare>>,
-                is_projection<utility::identity, Iterable, Compare>
+                is_projection<std::identity, Iterable, Compare>
             >
         {};
 

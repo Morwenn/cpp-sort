@@ -96,9 +96,8 @@ constexpr bool is_probably_branchless_projection_v
 ```
 
 This trait tells whether the projection function `Projection` is likely to generate branchless code when called with an instance of `T`. By default it considers that the following projection functions are likely to be branchless:
-* `cppsort::utility::identity` for any type
-* [`std::identity`][std-identity] for any type (when available)
-* Any type that satisfies [`std::is_member_function_pointer`][std-is-member-function-pointer] provided it is called with an instance of the appropriate class
+* [`std::identity`][std-identity] for any type.
+* Any type that satisfies [`std::is_member_function_pointer`][std-is-member-function-pointer] provided it is called with an instance of the appropriate class.
 
 These traits can be specialized for user-defined types. If one of the traits is specialized to consider that a user-defined type is likely to be branchless with a comparison/projection function, cv-qualified and reference-qualified versions of the same user-defined type will also be considered to produce branchless code when compared/projected with the same function.
 
@@ -134,25 +133,7 @@ This buffer provider allocates on the heap a number of elements depending on a g
 #include <cpp-sort/utility/functional.h>
 ```
 
-***WARNING:** `utility::identity` is removed in version 2.0.0, use `std::identity` instead.*
-
 This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
-
-Also available in this header, the struct `identity` is a function object that can type any value of any movable type and return it as is. It is used as a default for every projection parameter in the library so that sorters view the values as they are by default, without a modification.
-
-```cpp
-struct identity:
-    projection_base
-{
-    template<typename T>
-    constexpr auto operator()(T&& t) const noexcept
-        -> T&&;
-
-    using is_transparent = /* implementation-defined */;
-};
-```
-
-It is equivalent to the C++20 [`std::identity`][std-identity]. Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
 
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:
 * `half`: returns the passed value divided by 2.
@@ -254,7 +235,7 @@ template<
     typename IndexType,
     std::size_t N,
     typename Compare = std::less<>,
-    typename Projection = utility::identity
+    typename Projection = std::identity
 >
 auto swap_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
                       Compare compare={}, Projection projection={})
@@ -265,7 +246,7 @@ template<
     typename IndexType,
     std::size_t N,
     typename Compare = std::less<>,
-    typename Projection = utility::identity
+    typename Projection = std::identity
 >
 auto swap_index_pairs_force_unroll(RandomAccessIterator first,
                                    const std::array<index_pair<IndexType>, N>& index_pairs,

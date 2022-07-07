@@ -13,7 +13,6 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/utility/functional.h>
 #include "detail/raw_checkers.h"
 #include "detail/type_traits.h"
 
@@ -77,7 +76,7 @@ namespace cppsort
         struct has_comparison_sort:
             std::conjunction<
                 std::is_invocable<Sorter, Iterable&, Compare>,
-                is_projection<utility::identity, Iterable, Compare>
+                is_projection<std::identity, Iterable, Compare>
             >
         {};
 
@@ -106,7 +105,7 @@ namespace cppsort
         struct has_comparison_sort_iterator:
             std::conjunction<
                 std::is_invocable<Sorter, Iterator, Iterator, Compare>,
-                is_projection_iterator<utility::identity, Iterator, Compare>
+                is_projection_iterator<std::identity, Iterator, Compare>
             >
         {};
 

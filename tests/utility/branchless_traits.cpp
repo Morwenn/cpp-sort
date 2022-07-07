@@ -9,7 +9,6 @@
 #include <cpp-sort/comparators/total_less.h>
 #include <cpp-sort/comparators/weak_less.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/functional.h>
 
 TEST_CASE( "test that some specific comparisons are branchless",
            "[utility][branchless][comparison]" )
@@ -88,10 +87,7 @@ TEST_CASE( "test that some specific projections are branchless",
         int bar() { return 0; }
     };
 
-    STATIC_CHECK( is_probably_branchless_projection_v<identity, std::string> );
-#if CPPSORT_STD_IDENTITY_AVAILABLE
     STATIC_CHECK( is_probably_branchless_projection_v<std::identity, std::string> );
-#endif
 
     STATIC_CHECK( is_probably_branchless_projection_v<decltype(&foobar::foo), foobar> );
     STATIC_CHECK_FALSE( is_probably_branchless_projection_v<decltype(&foobar::bar), foobar> );

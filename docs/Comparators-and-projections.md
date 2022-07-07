@@ -8,7 +8,6 @@ Several of the [miscellaneous utilities][utilities] provided by the library are 
 - [`as_comparison` and `as_projection`][as-comparison-as-projection] are used to make it explicit whether an ambiguous function object should be used for comparison or for projection.
 - [`as_function`][as-function] can be used to turn any [*Callable*][callable] into an object invokable with regular parentheses.
 - [`is_probably_branchless_comparison` and `is_probably_branchless_projection`][branchless-traits] are type traits that can be used to mark whether functions are likely to be branchless when called with a specific type.
-- [`identity`][misc-function-objects] is the default projection returning the argument it is passed without modifying it.
 
 ### Transparent function objects
 
@@ -35,7 +34,6 @@ This additional guarantee is allowed by the resolution of [LWG3031][lwg3031]. Ho
   [comparator-adapters]: Comparator-adapters.md
   [comparators]: Comparators.md
   [lwg3031]: https://wg21.link/LWG3031
-  [misc-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-set-find]: https://en.cppreference.com/w/cpp/container/set/find

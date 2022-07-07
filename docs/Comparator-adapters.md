@@ -133,7 +133,7 @@ constexpr auto projection() const
 ```
 
 `cppsort::make_projection_compare` takes two *Callable* of types `C` and `P` and returns an instance of `projection_compare<std::decay_t<C>, std::decay_t<P>>` except in the following cases:
-* When `std::decay_t<P>` is of type [`utility::identity`][utility-identity] or [`std::identity`][std-identity], it returns `C` directly.
+* When `std::decay_t<P>` is of type [`std::identity`][std-identity], it returns `C` directly.
 
 `projection_compare` is [*transparent*][transparent-func] when the passed comparison and projection are both *transparent*.
 
@@ -153,4 +153,3 @@ constexpr auto projection() const
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-not-fn]: https://en.cppreference.com/w/cpp/utility/functional/not_fn
   [transparent-func]: Comparators-and-projections.md#Transparent-function-objects
-  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects

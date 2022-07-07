@@ -16,7 +16,6 @@
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/poplar_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include <cpp-sort/utility/functional.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/wrapper.h>
@@ -28,7 +27,7 @@ namespace
         template<
             typename ForwardIterator,
             typename Compare = std::less<>,
-            typename Projection = cppsort::utility::identity,
+            typename Projection = std::identity,
             typename = std::enable_if_t<cppsort::is_projection_iterator_v<
                 Projection, ForwardIterator, Compare
             >>

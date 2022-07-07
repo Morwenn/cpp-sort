@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_MOVES_SORT2_H_
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
 #include "../swap_if.h"
 #include "../type_traits.h"
 
@@ -26,7 +25,7 @@ namespace detail
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = utility::identity,
+            typename Projection = std::identity,
             typename = detail::enable_if_t<is_projection_iterator_v<
                 Projection, RandomAccessIterator, Compare
             >>

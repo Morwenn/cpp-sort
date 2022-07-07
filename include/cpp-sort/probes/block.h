@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_BLOCK_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/functional.h"
@@ -33,8 +32,8 @@ namespace probe
     {
         template<typename ForwardIterator, typename Compare, typename Projection>
         auto block_probe_algo(ForwardIterator first, ForwardIterator last,
-                            cppsort::detail::difference_type_t<ForwardIterator> size,
-                            Compare compare, Projection projection)
+                              cppsort::detail::difference_type_t<ForwardIterator> size,
+                              Compare compare, Projection projection)
             -> ::cppsort::detail::difference_type_t<ForwardIterator>
         {
             using difference_type = ::cppsort::detail::difference_type_t<ForwardIterator>;
@@ -87,7 +86,7 @@ namespace probe
             template<
                 typename ForwardIterable,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = cppsort::detail::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
@@ -104,7 +103,7 @@ namespace probe
             template<
                 typename ForwardIterator,
                 typename Compare = std::less<>,
-                typename Projection = utility::identity,
+                typename Projection = std::identity,
                 typename = cppsort::detail::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >

@@ -11,7 +11,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <testing-tools/algorithm.h>
 
@@ -22,7 +21,7 @@ namespace
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = cppsort::utility::identity,
+            typename Projection = std::identity,
             typename = std::enable_if_t<
                 cppsort::is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
             >

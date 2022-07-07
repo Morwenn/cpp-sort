@@ -13,9 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "config.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -40,14 +38,14 @@ namespace detail
 
     template<typename T>
     auto swap_if(T& lhs, T& rhs)
-        noexcept(noexcept(swap_if(lhs, rhs, std::less<>{}, utility::identity{})))
+        noexcept(noexcept(swap_if(lhs, rhs, std::less<>{}, std::identity{})))
         -> void
     {
-        swap_if(lhs, rhs, std::less<>{}, utility::identity{});
+        swap_if(lhs, rhs, std::less<>{}, std::identity{});
     }
 
     template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::less<>, utility::identity) noexcept
+    auto swap_if(Integer& x, Integer& y, std::less<>, std::identity) noexcept
         -> detail::enable_if_t<std::is_integral<Integer>::value>
     {
         Integer dx = x;
@@ -56,7 +54,7 @@ namespace detail
     }
 
     template<typename Float>
-    auto swap_if(Float& x, Float& y, std::less<>, utility::identity) noexcept
+    auto swap_if(Float& x, Float& y, std::less<>, std::identity) noexcept
         -> detail::enable_if_t<std::is_floating_point<Float>::value>
     {
         Float dx = x;
@@ -65,7 +63,7 @@ namespace detail
     }
 
     template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::greater<>, utility::identity) noexcept
+    auto swap_if(Integer& x, Integer& y, std::greater<>, std::identity) noexcept
         -> detail::enable_if_t<std::is_integral<Integer>::value>
     {
         Integer dx = x;
@@ -74,7 +72,7 @@ namespace detail
     }
 
     template<typename Float>
-    auto swap_if(Float& x, Float& y, std::greater<>, utility::identity) noexcept
+    auto swap_if(Float& x, Float& y, std::greater<>, std::identity) noexcept
         -> detail::enable_if_t<std::is_floating_point<Float>::value>
     {
         Float dx = x;
@@ -82,91 +80,33 @@ namespace detail
         y = (std::min)(dx, y);
     }
 
-#if CPPSORT_STD_IDENTITY_AVAILABLE
-    template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::less<> comp, std::identity) noexcept
-        -> detail::enable_if_t<std::is_integral<Integer>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
-    template<typename Float>
-    auto swap_if(Float& x, Float& y, std::less<> comp, std::identity) noexcept
-        -> detail::enable_if_t<std::is_floating_point<Float>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
-    template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::greater<> comp, std::identity) noexcept
-        -> detail::enable_if_t<std::is_integral<Integer>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
-    template<typename Float>
-    auto swap_if(Float& x, Float& y, std::greater<> comp, std::identity) noexcept
-        -> detail::enable_if_t<std::is_floating_point<Float>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-#endif
-
 #ifdef __cpp_lib_ranges
-    template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::ranges::less comp, utility::identity) noexcept
-        -> detail::enable_if_t<std::is_integral<Integer>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
-    template<typename Float>
-    auto swap_if(Float& x, Float& y, std::ranges::less comp, utility::identity) noexcept
-        -> detail::enable_if_t<std::is_floating_point<Float>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
-    template<typename Integer>
-    auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, utility::identity) noexcept
-        -> detail::enable_if_t<std::is_integral<Integer>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
-    template<typename Float>
-    auto swap_if(Float& x, Float& y, std::ranges::greater comp, utility::identity) noexcept
-        -> detail::enable_if_t<std::is_floating_point<Float>::value>
-    {
-        return swap_if(x, y, comp, utility::identity{});
-    }
-
     template<typename Integer>
     auto swap_if(Integer& x, Integer& y, std::ranges::less comp, std::identity) noexcept
         -> detail::enable_if_t<std::is_integral<Integer>::value>
     {
-        return swap_if(x, y, comp, utility::identity{});
+        return swap_if(x, y, comp, std::identity{});
     }
 
     template<typename Float>
     auto swap_if(Float& x, Float& y, std::ranges::less comp, std::identity) noexcept
         -> detail::enable_if_t<std::is_floating_point<Float>::value>
     {
-        return swap_if(x, y, comp, utility::identity{});
+        return swap_if(x, y, comp, std::identity{});
     }
 
     template<typename Integer>
     auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, std::identity) noexcept
         -> detail::enable_if_t<std::is_integral<Integer>::value>
     {
-        return swap_if(x, y, comp, utility::identity{});
+        return swap_if(x, y, comp, std::identity{});
     }
 
     template<typename Float>
     auto swap_if(Float& x, Float& y, std::ranges::greater comp, std::identity) noexcept
         -> detail::enable_if_t<std::is_floating_point<Float>::value>
     {
-        return swap_if(x, y, comp, utility::identity{});
+        return swap_if(x, y, comp, std::identity{});
     }
 #endif
 

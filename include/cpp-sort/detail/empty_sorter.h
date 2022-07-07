@@ -13,7 +13,6 @@
 #include <functional>
 #include <type_traits>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/sorting_networks.h>
 #include "type_traits.h"
 
@@ -31,7 +30,7 @@ namespace detail
         template<
             typename ForwardIterator,
             typename Compare = std::less<>,
-            typename Projection = utility::identity,
+            typename Projection = std::identity,
             typename = detail::enable_if_t<is_projection_iterator_v<
                 Projection, ForwardIterator, Compare
             >>

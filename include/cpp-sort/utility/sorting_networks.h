@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SORTING_NETWORKS_H_
@@ -12,7 +12,6 @@
 #include <cstddef>
 #include <functional>
 #include <utility>
-#include <cpp-sort/utility/functional.h>
 #include "../detail/swap_if.h"
 
 namespace cppsort
@@ -41,7 +40,7 @@ namespace utility
         typename IndexType,
         std::size_t N,
         typename Compare = std::less<>,
-        typename Projection = utility::identity
+        typename Projection = std::identity
     >
     auto swap_index_pairs(RandomAccessIterator first, const std::array<index_pair<IndexType>, N>& index_pairs,
                           Compare compare={}, Projection projection={})
@@ -108,7 +107,7 @@ namespace utility
         typename IndexType,
         std::size_t N,
         typename Compare = std::less<>,
-        typename Projection = utility::identity
+        typename Projection = std::identity
     >
     auto swap_index_pairs_force_unroll(RandomAccessIterator first,
                                        const std::array<index_pair<IndexType>, N>& index_pairs,

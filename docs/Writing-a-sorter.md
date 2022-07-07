@@ -180,7 +180,7 @@ struct selection_sorter_impl
     template<
         typename ForwardIterator,
         typename Compare = std::less<>,
-        typename Projection = cppsort::utility::identity,
+        typename Projection = std::identity,
         typename = std::enable_if_t<cppsort::is_projection_iterator<
             Projection, ForwardIterator, Compare
         >>
@@ -198,7 +198,7 @@ struct selection_sorter_impl
 };
 ```
 
-As you can see, extending the sorter to handle projections is similar to extending it to support comparisons. Note that this sorter is both a *comparison sorter* and a *projection sorter*, but some sorters can also handle projections without handling comparisons. While the default function object for comparisons is `std::less`, the equivalent default function objects for projections is [`utility::identity`][utility-identity] (and probably [`std::identity`][std-identity] in C++20): it simply returns the passed value as is.
+As you can see, extending the sorter to handle projections is similar to extending it to support comparisons. Note that this sorter is both a *comparison sorter* and a *projection sorter*, but some sorters can also handle projections without handling comparisons. While the default function object for comparisons is `std::less`, the equivalent default function objects for projections is [`std::identity`][std-identity]: it simply returns the passed value as is.
 
 The only subtle trick in the example above is the use of [`is_projection_iterator`][is-projection]: this trait is used to disambiguate comparison functions from projection functions when a sorter can be called with both, and is not needed when the sorter is only a *projection sorter*. It is actually some kind of concept check and should go away when concepts make their way to the standard.
 
@@ -247,7 +247,7 @@ The general rules for *projection sorters* are really close to the ones for *com
 
 **Rule 4.3:** for any *projection sorter* called with a specific projection function, [`std::is_sorted`][std-is-sorted] called with `std::less<>` and the same projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, for any such sorter called with a specific pair of comparison and projection function, `std::is_sorted` called with the same pair of functions on the resulting collection shall return `true`.
 
-**Rule 4.4:** calling a *projection sorter* with [`utility::identity`][utility-identity] or without a projection function shall be strictly equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `utility::identity`, and calling it without any additional function should be strictly equivalent.
+**Rule 4.4:** calling a *projection sorter* with [`std::identity`][std-identity] or without a projection function shall be strictly equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `std::identity`, and calling it without any additional function should be strictly equivalent.
 
 **Rule 4.5:** a *projection sorter* which can be called with a collection and a projection function shall also be callable with two corresponding iterators and the same projection function. If the *projection sorter* is also a *comparison sorter*, it shall also be callable with an iterable, a comparison function and a projection function.
 
@@ -307,7 +307,7 @@ struct counting_sorter_impl
 };
 ```
 
-With such an implementation, this sorter satisfies the *comparison sorter* concept when given an instance of `std::greater<>` without breaking any of the rules defined in the previous sections. Now it may seem a bit unfair for `std::less<>`... but actually [`sorter_facade`][sorter-facade] automagically generates several `operator()` overloads taking `std::less<>` when the provided *sorter implementation* doesn't handle it natively. Note that even though this section is about non-comparison sorters, the same applies to non-projection sorters (you could provide a specific overload for [`std::negate<>`][std-negate-void] for a descending sort too), and `sorter_facade` would provide equivalent `operator()` overloads taking [`utility::identity`][utility-identity] for *sorter implementations* that cannot handle it natively).
+With such an implementation, this sorter satisfies the *comparison sorter* concept when given an instance of `std::greater<>` without breaking any of the rules defined in the previous sections. Now it may seem a bit unfair for `std::less<>`... but actually [`sorter_facade`][sorter-facade] automagically generates several `operator()` overloads taking `std::less<>` when the provided *sorter implementation* doesn't handle it natively. Note that even though this section is about non-comparison sorters, the same applies to non-projection sorters (you could provide a specific overload for [`std::negate<>`][std-negate-void] for a descending sort too), and `sorter_facade` would provide equivalent `operator()` overloads taking [`std::identity`][std-identity] for *sorter implementations* that cannot handle it natively).
 
 The most beautiful thing in my opinion is that no new rule is needed to support that model. All the rules previously defined guarantee that these specific overloads using standard function object as tags work. The only advice I can give is to try to use the most standard function objects as tags, or at least the ones that are the most likely to be used for the specific task. Since **cpp-sort** is heavily based on modern C++ features, it is designed to only work with the `void` specializations of the standard function objects from `<functional>`.
 
@@ -476,7 +476,7 @@ struct low_projections_sorter_impl<0u>
     template<
         typename RandomAccessIterator,
         typename Compare = std::less<>,
-        typename Projection = utility::identity
+        typename Projection = std::identity
     >
     auto operator()(RandomAccessIterator, RandomAccessIterator,
                     Compare={}, Projection={}) const
@@ -492,7 +492,7 @@ struct low_projections_sorter_impl<2u>
     template<
         typename RandomAccessIterator,
         typename Compare = std::less<>,
-        typename Projection = utility::identity,
+        typename Projection = std::identity,
         typename = std::enable_if_t<cppsort::is_projection_iterator<
             Projection, RandomAccessIterator, Compare
         >>
@@ -592,7 +592,6 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [stlab]: https://stlab.adobe.com/
   [utility-as-function]: Miscellaneous-utilities.md#as_function
   [utility-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
-  [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [verge-sorter]: Sorters.md#verge_sorter
   [wiki-sorter]: Sorters.md#wiki_sorter
   [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md

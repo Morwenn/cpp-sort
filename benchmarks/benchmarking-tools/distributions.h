@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,7 +12,6 @@
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/detail/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 
 // Pseudo-random number generator, used by some distributions
 thread_local std::mt19937_64 distributions_prng(std::time(nullptr));
@@ -60,7 +59,7 @@ namespace dist
     struct shuffled:
         base_distribution<shuffled>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -80,7 +79,7 @@ namespace dist
     struct shuffled_16_values:
         base_distribution<shuffled_16_values>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -100,7 +99,7 @@ namespace dist
     struct all_equal:
         base_distribution<all_equal>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -116,7 +115,7 @@ namespace dist
     struct ascending:
         base_distribution<ascending>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -132,7 +131,7 @@ namespace dist
     struct descending:
         base_distribution<descending>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -148,7 +147,7 @@ namespace dist
     struct pipe_organ:
         base_distribution<pipe_organ>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -167,7 +166,7 @@ namespace dist
     struct push_front:
         base_distribution<push_front>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -186,7 +185,7 @@ namespace dist
     struct push_middle:
         base_distribution<push_middle>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -207,7 +206,7 @@ namespace dist
     struct ascending_sawtooth:
         base_distribution<ascending_sawtooth>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -224,7 +223,7 @@ namespace dist
     struct ascending_sawtooth_bad:
         base_distribution<ascending_sawtooth_bad>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -241,7 +240,7 @@ namespace dist
     struct descending_sawtooth:
         base_distribution<descending_sawtooth>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -258,7 +257,7 @@ namespace dist
     struct descending_sawtooth_bad:
         base_distribution<descending_sawtooth_bad>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -275,7 +274,7 @@ namespace dist
     struct alternating:
         base_distribution<alternating>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -291,7 +290,7 @@ namespace dist
     struct reversed_alternating:
         base_distribution<reversed_alternating>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -309,7 +308,7 @@ namespace dist
     struct descending_plateau:
         base_distribution<descending_plateau>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -345,7 +344,7 @@ namespace dist
             factor(factor)
         {}
 
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
@@ -371,7 +370,7 @@ namespace dist
     struct vergesort_killer:
         base_distribution<vergesort_killer>
     {
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {

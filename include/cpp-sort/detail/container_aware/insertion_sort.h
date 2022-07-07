@@ -18,7 +18,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include "../bitops.h"
 #include "../type_traits.h"
 #include "../upper_bound.h"
@@ -116,16 +115,16 @@ namespace cppsort
         auto operator()(std::list<Args...>& iterable) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::less<>{}, utility::identity{});
+            detail::list_insertion_sort(iterable, std::less<>{}, std::identity{});
         }
 
         template<typename Compare, typename... Args>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
             -> detail::enable_if_t<
-                is_projection_v<utility::identity, std::list<Args...>, Compare>
+                is_projection_v<std::identity, std::list<Args...>, Compare>
             >
         {
-            detail::list_insertion_sort(iterable, std::move(compare), utility::identity{});
+            detail::list_insertion_sort(iterable, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
@@ -159,16 +158,16 @@ namespace cppsort
         auto operator()(std::forward_list<Args...>& iterable) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::less<>{}, utility::identity{});
+            detail::flist_insertion_sort(iterable, std::less<>{}, std::identity{});
         }
 
         template<typename Compare, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
             -> detail::enable_if_t<
-                is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
+                is_projection_v<std::identity, std::forward_list<Args...>, Compare>
             >
         {
-            detail::flist_insertion_sort(iterable, std::move(compare), utility::identity{});
+            detail::flist_insertion_sort(iterable, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
