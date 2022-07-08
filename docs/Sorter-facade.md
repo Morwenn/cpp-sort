@@ -141,9 +141,9 @@ Some *sorter implementations* are able to handle custom comparison functions but
 
 The reverse operation (baking a comparison function into a projection function) is not doable and simply does not make sense most of the time, so `sorter_facade` does not provide it for projection-only *sorter implementations*.
 
-### Universal support for `std::less<>` and `std::identity`
+### Universal support for `std::less<>`/`std::ranges::less` and `std::identity`
 
-**cpp-sort** considers that every collection sorted without a specific comparison nor projection function shoud work *as if* it was sorted with `std::less<>` and `std::identity`. However, some sorters do not provide overloads for `operator()` taking comparison and/or projection functions. `sorter_facade` provides the following overloads so that every sorter can be passed `std::less<>` and/or `std::identity` even if does not handle other comparisons or projections:
+**cpp-sort** considers that every collection sorted without a specific comparison nor projection function shoud work *as if* it was sorted with [`std::less<>`][std-less-void] and [`std::identity`][std-identity]. However, some sorters do not provide overloads for `operator()` taking comparison and/or projection functions. `sorter_facade` provides the following overloads so that every sorter can be passed `std::less<>` and/or `std::identity` even if does not handle other comparisons or projections:
 
 ```cpp
 template<typename Iterable>
@@ -181,7 +181,7 @@ auto operator()(Iterator first, Iterator last,
     -> /* implementation-defined */;
 ```
 
-When [`std::ranges::less`][std-ranges-less] is available, special overloads are provided with a behaviour similar to that of the `std::less<>` ones.
+Special overloads using [`std::ranges::less`][std-ranges-less] as a vocabulary are also available, with a behaviour similar to that of the `std::less<>` ones.
 
 While it does not appear in this documentation, `sorter_facade` actually relies on an extensive amount of SFINAE tricks to ensure that only the `operator()` overloads that are needed and viable are generated. For example, the magic `std::less<>` overloads won't be generated if the wrapped *sorter implementation* already accepts a comparison function.
 

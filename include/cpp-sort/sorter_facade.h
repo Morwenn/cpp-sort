@@ -438,7 +438,6 @@ namespace cppsort
             return operator()(std::forward<Iterable>(iterable));
         }
 
-#ifdef __cpp_lib_ranges
         template<typename Iterator>
         constexpr auto operator()(Iterator first, Iterator last, std::ranges::less) const
             -> detail::enable_if_t<
@@ -462,7 +461,6 @@ namespace cppsort
         {
             return operator()(std::forward<Iterable>(iterable));
         }
-#endif
 
         ////////////////////////////////////////////////////////////
         // std::identity overloads
@@ -742,7 +740,6 @@ namespace cppsort
                                       refined<decltype(*std::begin(iterable))>(std::move(projection)));
         }
 
-#ifdef __cpp_lib_ranges
         template<typename Iterator>
         constexpr auto operator()(Iterator first, Iterator last, std::ranges::less, std::identity) const
             -> detail::enable_if_t<
@@ -912,7 +909,6 @@ namespace cppsort
             return Sorter::operator()(std::begin(iterable), std::end(iterable),
                                       refined<decltype(*std::begin(iterable))>(std::move(projection)));
         }
-#endif
 
         ////////////////////////////////////////////////////////////
         // Embed projection in comparison

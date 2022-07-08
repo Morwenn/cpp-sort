@@ -449,7 +449,7 @@ The following sorters are available but will only work for some specific types i
 #include <cpp-sort/sorters/counting_sorter.h>
 ```
 
-`counting_sorter` implements a simple [counting sort][counting-sort]. This sorter also supports reverse sorting with [`std::greater<>`][std-greater-void] or [`std::ranges::greater`][std-ranges-greater].
+`counting_sorter` implements a simple [counting sort][counting-sort]. This sorter also supports reverse sorting with [`std::greater<>`][std-greater-void] and [`std::ranges::greater`][std-ranges-greater].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |

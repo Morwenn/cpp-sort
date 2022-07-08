@@ -83,8 +83,8 @@ constexpr bool is_probably_branchless_comparison_v
 ```
 
 This trait tells whether the comparison function `Compare` is likely to generate branchless code when comparing two instances of `T`. By default it considers that the following comparison functions are likely to be branchless:
-* [`std::less<>`][std-less-void], [`std::ranges::less`][std-ranges-less] and [`std::less<T>`][std-less] for any `T` satisfying [`std::is_arithmetic`][std-is-arithmetic]
-* [`std::greater<>`][std-greater-void], [`std::ranges::greater`][std-ranges-greater] and [`std::greater<T>`][std-greater] for any `T` satisfying [`std::is_arithmetic`][std-is-arithmetic]
+* [`std::less<>`][std-less-void], [`std::ranges::less`][std-ranges-less] and [`std::less<T>`][std-less] for any `T` satisfying [`std::is_arithmetic`][std-is-arithmetic].
+* [`std::greater<>`][std-greater-void], [`std::ranges::greater`][std-ranges-greater] and [`std::greater<T>`][std-greater] for any `T` satisfying [`std::is_arithmetic`][std-is-arithmetic].
 
 ```cpp
 template<typename Projection, typename T>

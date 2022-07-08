@@ -80,7 +80,6 @@ namespace detail
         y = (std::min)(dx, y);
     }
 
-#ifdef __cpp_lib_ranges
     template<typename Integer>
     auto swap_if(Integer& x, Integer& y, std::ranges::less comp, std::identity) noexcept
         -> detail::enable_if_t<std::is_integral<Integer>::value>
@@ -108,7 +107,6 @@ namespace detail
     {
         return swap_if(x, y, comp, std::identity{});
     }
-#endif
 
     ////////////////////////////////////////////////////////////
     // iter_swap_if

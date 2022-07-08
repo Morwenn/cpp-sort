@@ -20,30 +20,22 @@ TEST_CASE( "test that some specific comparisons are branchless",
         STATIC_CHECK( is_probably_branchless_comparison_v<std::less<int>, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<std::less<>, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<std::less<long double>, long double> );
-#ifdef __cpp_lib_ranges
         STATIC_CHECK( is_probably_branchless_comparison_v<std::ranges::less, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<std::ranges::less, long double> );
-#endif
 
         STATIC_CHECK( is_probably_branchless_comparison_v<std::greater<int>, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<std::greater<>, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<std::greater<long double>, long double> );
-#ifdef __cpp_lib_ranges
         STATIC_CHECK( is_probably_branchless_comparison_v<std::ranges::greater, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<std::ranges::greater, long double> );
-#endif
 
         STATIC_CHECK_FALSE( is_probably_branchless_comparison_v<std::less<std::string>, std::string> );
         STATIC_CHECK_FALSE( is_probably_branchless_comparison_v<std::less<>, std::string> );
-#ifdef __cpp_lib_ranges
         STATIC_CHECK_FALSE( is_probably_branchless_comparison_v<std::ranges::less, std::string> );
-#endif
 
         STATIC_CHECK_FALSE( is_probably_branchless_comparison_v<std::greater<std::string>, std::string> );
         STATIC_CHECK_FALSE( is_probably_branchless_comparison_v<std::greater<>, std::string> );
-#ifdef __cpp_lib_ranges
         STATIC_CHECK_FALSE( is_probably_branchless_comparison_v<std::ranges::greater, std::string> );
-#endif
     }
 
     SECTION( "partial/weak/less function objects" )
@@ -70,9 +62,7 @@ TEST_CASE( "test that some specific comparisons are branchless",
         STATIC_CHECK( is_probably_branchless_comparison_v<std::less<>, const int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<const std::less<>&, int> );
         STATIC_CHECK( is_probably_branchless_comparison_v<const std::greater<>, int&&> );
-#ifdef __cpp_lib_ranges
         STATIC_CHECK( is_probably_branchless_comparison_v<std::ranges::greater, const int&> );
-#endif
     }
 }
 

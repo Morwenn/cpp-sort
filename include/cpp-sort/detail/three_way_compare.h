@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_THREE_WAY_COMPARE_H_
@@ -141,7 +141,6 @@ namespace detail
         }
     };
 
-#ifdef __cpp_lib_ranges
     template<>
     struct three_way_compare<std::ranges::less, true>:
         three_way_compare_base<three_way_compare<std::ranges::less>>
@@ -168,7 +167,6 @@ namespace detail
             return {};
         }
     };
-#endif
 
     template<>
     struct three_way_compare<std::greater<>, true>:
@@ -198,7 +196,6 @@ namespace detail
         }
     };
 
-#ifdef __cpp_lib_ranges
     template<>
     struct three_way_compare<std::ranges::greater, true>:
         three_way_compare_base<three_way_compare<std::ranges::greater>>
@@ -226,7 +223,6 @@ namespace detail
             return {};
         }
     };
-#endif
 }}
 
 #endif // CPPSORT_DETAIL_THREE_WAY_COMPARE_H_

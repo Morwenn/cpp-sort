@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_COUNTING_SORTER_H_
@@ -61,7 +61,6 @@ namespace cppsort
                 reverse_counting_sort(std::move(first), std::move(last));
             }
 
-#ifdef __cpp_lib_ranges
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
                 -> detail::enable_if_t<
@@ -78,7 +77,6 @@ namespace cppsort
 
                 reverse_counting_sort(std::move(first), std::move(last));
             }
-#endif
 
             ////////////////////////////////////////////////////////////
             // Sorter traits

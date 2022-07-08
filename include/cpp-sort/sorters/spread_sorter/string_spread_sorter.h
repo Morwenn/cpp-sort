@@ -136,7 +136,6 @@ namespace cppsort
                                                 unused);
             }
 
-#ifdef __cpp_lib_ranges
             template<
                 typename RandomAccessIterator,
                 typename Projection = std::identity
@@ -187,7 +186,6 @@ namespace cppsort
                                                 std::move(compare), std::move(projection),
                                                 unused);
             }
-#endif
 
             ////////////////////////////////////////////////////////////
             // Sorter traits
