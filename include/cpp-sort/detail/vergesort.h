@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -534,7 +534,7 @@ namespace verge
         verge::sort<Stable>(iterator_category_t<BidirectionalIterator>{},
                             std::move(first), std::move(last), size,
                             std::move(compare), std::move(projection),
-                            get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
+                            get_maybe_stable(std::bool_constant<Stable>{}, std::move(fallback)));
     }
 
     constexpr auto default_sorter_for_impl(std::bidirectional_iterator_tag)

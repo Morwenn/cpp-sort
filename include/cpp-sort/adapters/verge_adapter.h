@@ -65,7 +65,7 @@ namespace cppsort
             // Sorter traits
 
             using iterator_category = std::random_access_iterator_tag;
-            using is_always_stable = std::integral_constant<bool, Stable>;
+            using is_always_stable = std::bool_constant<Stable>;
         };
     }
 

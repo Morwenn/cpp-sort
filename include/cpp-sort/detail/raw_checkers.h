@@ -69,8 +69,7 @@ namespace detail
     template<typename... Sorters>
     struct raw_check_is_always_stable_impl<true, Sorters...>
     {
-        using is_always_stable = std::integral_constant<
-            bool,
+        using is_always_stable = std::bool_constant<
             (typename Sorters::is_always_stable{}() && ...)
         >;
     };

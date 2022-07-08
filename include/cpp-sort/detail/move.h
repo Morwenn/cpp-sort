@@ -101,7 +101,7 @@ namespace detail
     auto uninitialized_move(InputIterator first, InputIterator last, T* result, destruct_n<T>& destroyer)
         -> T*
     {
-        using truth_type = std::integral_constant<bool,
+        using truth_type = std::bool_constant<
             std::is_trivial<value_type_t<InputIterator>>::value &&
             std::is_trivial<T>::value
         >;
