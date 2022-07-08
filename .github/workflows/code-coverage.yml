@@ -19,7 +19,7 @@ on:
 
 jobs:
   upload-coverage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout project
@@ -31,6 +31,8 @@ jobs:
       - name: Configure CMake
         shell: bash
         working-directory: ${{runner.workspace}}
+        env:
+          CXX: g++-11
         run: >
           cmake -H${{github.event.repository.name}} -Bbuild
           -DCMAKE_BUILD_TYPE=Debug
