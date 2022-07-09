@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SLABSORT_H_
@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <memory>
 #include <utility>
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
@@ -197,7 +198,7 @@ namespace detail
             for (auto it = list.begin(), end = list.end() ; it != end ; ++it) {
                 auto node = it.base();
                 auto value_it = node->it;
-                detail::destroy_at(&node->it);
+                std::destroy_at(&node->it);
                 ::new(&node->value) rvalue_type(iter_move(value_it));
             }
             list.set_node_destructor(destroy_node_contents<rvalue_type, node_type, &node_type::value>);

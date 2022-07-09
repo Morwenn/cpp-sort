@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -19,46 +19,15 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <limits>
-#include <memory>
 #include <new>
 #include <type_traits>
+#include <utility>
 #include "type_traits.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    ////////////////////////////////////////////////////////////
-    // C++17 std::destroy and friends
-
-    template<typename T>
-    auto destroy_at(T* ptr)
-        -> void
-    {
-        // TODO: implement if needed
-        static_assert(not std::is_array<T>::value, "destroy_at() does no handle arrays");
-        ptr->~T();
-    }
-
-    template<typename ForwardIterator>
-    auto destroy(ForwardIterator first, ForwardIterator last)
-        -> void
-    {
-        for (; first != last; ++first) {
-            detail::destroy_at(std::addressof(*first));
-        }
-    }
-
-    template<typename ForwardIterator, typename Size>
-    auto destroy_n(ForwardIterator first, Size n)
-        -> void
-    {
-        for (; n > 0; --n) {
-            detail::destroy_at(std::addressof(*first));
-            ++first;
-        }
-    }
-
     ////////////////////////////////////////////////////////////
     // Deleter for ::operator new(std::size_t)
 
@@ -121,7 +90,7 @@ namespace detail
         constexpr auto operator()(T* pointer) noexcept
             -> void
         {
-            detail::destroy_n(pointer, size);
+            std::destroy_n(pointer, size);
         }
 
         // Number of allocated objects to destroy

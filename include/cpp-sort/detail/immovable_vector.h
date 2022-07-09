@@ -9,11 +9,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <memory>
 #include <new>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
-#include "memory.h"
 
 namespace cppsort
 {
@@ -59,7 +59,7 @@ namespace detail
             ~immovable_vector()
             {
                 // Destroy the constructed elements
-                detail::destroy(memory_, end_);
+                std::destroy(memory_, end_);
 
                 // Free the allocated memory
 #ifdef __cpp_sized_deallocation
@@ -115,7 +115,7 @@ namespace detail
                 -> void
             {
                 // Destroy the constructed elements
-                detail::destroy(memory_, end_);
+                std::destroy(memory_, end_);
 
                 // Ensure the new size is zero
                 end_ = memory_;
@@ -143,7 +143,7 @@ namespace detail
                     }
                 } catch (...) {
                     // Cleanup
-                    detail::destroy(end_, writer);
+                    std::destroy(end_, writer);
                     throw;
                 }
                 end_ = writer;

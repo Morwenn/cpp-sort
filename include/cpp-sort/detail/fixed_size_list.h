@@ -91,7 +91,7 @@ namespace detail
     auto destroy_node_contents(NodeType* node)
         -> void
     {
-        detail::destroy_at(&(node->*Ptr));
+        std::destroy_at(&(node->*Ptr));
     }
 
     ////////////////////////////////////////////////////////////
@@ -170,8 +170,8 @@ namespace detail
             {
                 // Destroy the nodes
                 node_type* ptr = buffer_.get();
-                for (std::ptrdiff_t n = 0 ; n < capacity_ ; ++n, ++ptr) {
-                    detail::destroy_at(ptr);
+                for (std::ptrdiff_t n = 0; n < capacity_; ++n, ++ptr) {
+                    std::destroy_at(ptr);
                 }
             }
 
