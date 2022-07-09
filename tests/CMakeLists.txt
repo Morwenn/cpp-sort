@@ -7,12 +7,9 @@ include(DownloadProject)
 ########################################
 # Test suite options
 
-option(USE_VALGRIND "Whether to run the tests with Valgrind (deprecated, use CPPSORT_USE_VALGRIND)" OFF)
-option(ENABLE_COVERAGE "Whether to produce code coverage (deprecated, use CPPSORT_ENABLE_COVERAGE)" OFF)
-set(SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize (deprecated, use CPPSORT_SANITIZE)")
-option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" ${USE_VALGRIND})
-option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" ${ENABLE_COVERAGE})
-set(CPPSORT_SANITIZE ${SANITIZE} CACHE STRING "Comma-separated list of options to pass to -fsanitize")
+option(CPPSORT_USE_VALGRIND "Whether to run the tests with Valgrind" OFF)
+option(CPPSORT_ENABLE_COVERAGE "Whether to produce code coverage" OFF)
+set(CPPSORT_SANITIZE "" CACHE STRING "Comma-separated list of options to pass to -fsanitize")
 option(CPPSORT_STATIC_TESTS "Whether to turn some tests into static assertions" OFF)
 
 ########################################
