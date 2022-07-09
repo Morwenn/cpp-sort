@@ -19,7 +19,7 @@
 namespace cppsort
 {
     template<typename Compare, typename Projection>
-    class projection_compare:
+    class projection_compare_t:
         public detail::raw_check_is_transparent<Compare, Projection>
     {
         private:
@@ -28,9 +28,9 @@ namespace cppsort
 
         public:
 
-            projection_compare() = default;
+            projection_compare_t() = default;
 
-            projection_compare(Compare compare, Projection projection):
+            projection_compare_t(Compare compare, Projection projection):
                 data(std::move(compare), std::move(projection))
             {}
 
@@ -122,7 +122,7 @@ namespace cppsort
         template<typename Compare, typename Projection>
         struct proj_comp_impl
         {
-            using type = projection_compare<Compare, Projection>;
+            using type = projection_compare_t<Compare, Projection>;
 
             template<typename C, typename P>
             static constexpr auto construct(C&& comp, P&& proj)
@@ -152,10 +152,10 @@ namespace cppsort
     }
 
     ////////////////////////////////////////////////////////////
-    // make_projection_compare
+    // projection_compare
 
     template<typename Compare, typename Projection>
-    constexpr auto make_projection_compare(Compare&& compare, Projection&& projection)
+    constexpr auto projection_compare(Compare&& compare, Projection&& projection)
         -> typename detail::proj_comp_impl<std::decay_t<Compare>, std::decay_t<Projection>>::type
     {
         return detail::proj_comp_impl<std::decay_t<Compare>, std::decay_t<Projection>>::construct(
@@ -166,7 +166,7 @@ namespace cppsort
     namespace utility
     {
         template<typename Compare, typename Projection, typename T>
-        struct is_probably_branchless_comparison<projection_compare<Compare, Projection>, T>:
+        struct is_probably_branchless_comparison<projection_compare_t<Compare, Projection>, T>:
             std::conjunction<
                 is_probably_branchless_projection<Projection, T>,
                 is_probably_branchless_comparison<

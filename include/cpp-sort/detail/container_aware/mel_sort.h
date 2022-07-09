@@ -79,14 +79,14 @@ namespace cppsort
                 if (lists.size() % 2 != 0) {
                     auto last_it = std::prev(lists.end());
                     auto last_1_it = std::prev(last_it);
-                    last_1_it->merge(*last_it, make_projection_compare(comp, proj));
+                    last_1_it->merge(*last_it, projection_compare(comp, proj));
                     lists.pop_back();
                 }
 
                 auto first_it = lists.begin();
                 auto half_it = first_it + lists.size() / 2;
                 while (half_it != lists.end()) {
-                    first_it->merge(*half_it, make_projection_compare(comp, proj));
+                    first_it->merge(*half_it, projection_compare(comp, proj));
                     ++first_it;
                     ++half_it;
                 }
@@ -171,14 +171,14 @@ namespace cppsort
                 if (lists.size() % 2 != 0) {
                     auto last_it = std::prev(lists.end());
                     auto last_1_it = std::prev(last_it);
-                    last_1_it->list.merge(last_it->list, make_projection_compare(comp, proj));
+                    last_1_it->list.merge(last_it->list, projection_compare(comp, proj));
                     lists.pop_back();
                 }
 
                 auto first_it = lists.begin();
                 auto half_it = first_it + lists.size() / 2;
                 while (half_it != lists.end()) {
-                    first_it->list.merge(half_it->list, make_projection_compare(comp, proj));
+                    first_it->list.merge(half_it->list, projection_compare(comp, proj));
                     ++first_it;
                     ++half_it;
                 }

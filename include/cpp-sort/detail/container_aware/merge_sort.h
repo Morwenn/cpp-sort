@@ -41,8 +41,8 @@ namespace cppsort
             // Recursively sort, then merge
             list_merge_sort(left, compare, projection);
             list_merge_sort(collection, compare, projection);
-            collection.merge(std::move(left), make_projection_compare(std::move(compare),
-                                                                      std::move(projection)));
+            collection.merge(std::move(left), projection_compare(std::move(compare),
+                                                                 std::move(projection)));
         }
 
         template<typename Compare, typename Projection,
@@ -62,8 +62,8 @@ namespace cppsort
             // Recursively sort, then merge
             flist_merge_sort(left, size / 2, compare, projection);
             flist_merge_sort(collection, size - size / 2, compare, projection);
-            collection.merge(std::move(left), make_projection_compare(std::move(compare),
-                                                                      std::move(projection)));
+            collection.merge(std::move(left), projection_compare(std::move(compare),
+                                                                 std::move(projection)));
         }
     }
 

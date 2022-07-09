@@ -38,10 +38,10 @@ namespace
 
 TEST_CASE( "is_transparent over projection_compare", "[comparison][is_transparent]" )
 {
-    using cmp1 = cppsort::projection_compare<std::less<is_transparent_helper_stored>, fake_identity>;
-    using cmp2 = cppsort::projection_compare<std::less<is_transparent_helper_stored>, fake_identity_transparent>;
-    using cmp3 = cppsort::projection_compare<std::less<>, fake_identity>;
-    using cmp4 = cppsort::projection_compare<std::less<>, fake_identity_transparent>;
+    using cmp1 = cppsort::projection_compare_t<std::less<is_transparent_helper_stored>, fake_identity>;
+    using cmp2 = cppsort::projection_compare_t<std::less<is_transparent_helper_stored>, fake_identity_transparent>;
+    using cmp3 = cppsort::projection_compare_t<std::less<>, fake_identity>;
+    using cmp4 = cppsort::projection_compare_t<std::less<>, fake_identity_transparent>;
 
     STATIC_CHECK_FALSE( cppsort::detail::has_is_transparent_v<cmp1> );
     STATIC_CHECK_FALSE( cppsort::detail::has_is_transparent_v<cmp2> );

@@ -221,18 +221,18 @@ namespace cppsort
                     detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        projection_compare<std::less<>, Projection>
+                        projection_compare_t<std::less<>, Projection>
                     >::value,
                     conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
-                                                       make_projection_compare(std::less<>{}, std::move(projection))))
+                                                       projection_compare(std::less<>{}, std::move(projection))))
                     >
                 >
             {
                 return detail::adl_despair{}(this->get(), iterable,
-                                             make_projection_compare(std::less<>{}, std::move(projection)));
+                                             projection_compare(std::less<>{}, std::move(projection)));
             }
 
             template<
@@ -248,7 +248,7 @@ namespace cppsort
                     not detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        projection_compare<std::less<>, Projection>
+                        projection_compare_t<std::less<>, Projection>
                     >::value,
                     conditional_t<
                         Stability,
@@ -293,18 +293,18 @@ namespace cppsort
                     detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        projection_compare<Compare, Projection>
+                        projection_compare_t<Compare, Projection>
                     >::value,
                     conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
-                                                       make_projection_compare(std::move(compare), std::move(projection))))
+                                                       projection_compare(std::move(compare), std::move(projection))))
                     >
                 >
             {
                 return detail::adl_despair{}(this->get(), iterable,
-                                             make_projection_compare(std::move(compare), std::move(projection)));
+                                             projection_compare(std::move(compare), std::move(projection)));
             }
 
             template<
@@ -319,7 +319,7 @@ namespace cppsort
                     not detail::can_comparison_sort<
                         Sorter,
                         Iterable,
-                        projection_compare<Compare, Projection>
+                        projection_compare_t<Compare, Projection>
                     >::value,
                     conditional_t<
                         Stability,
