@@ -319,23 +319,19 @@ Now is time to remember that the counting sort doesn't handle comparisons becaus
 struct counting_sorter_impl
 {
     template<typename ForwardIterator>
+        requires std::integral<typename std::iterator_traits<ForwardIterator>::value_type>
     auto operator()(ForwardIterator first, ForwardIterator last) const
-        -> std::enable_if_t<
-            std::is_integral<
-                typename std::iterator_traits<ForwardIterator>::value_type
-            >::value
+        -> void
         >
     {
         counting_sort(first, last);
     }
 
     template<typename ForwardIterator>
+        requires std::integral<typename std::iterator_traits<ForwardIterator>::value_type>
     auto operator()(ForwardIterator first, ForwardIterator last,
                     std::greater<>) const
-        -> std::enable_if_t<
-            std::is_integral<
-                typename std::iterator_traits<ForwardIterator>::value_type
-            >::value
+        -> void
         >
     {
         reverse_counting_sort(first, last);

@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+#include <concepts>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/branchless_traits.h>
@@ -22,9 +23,9 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Total order for integral types
 
-        template<typename T>
+        template<integral T>
         constexpr auto total_less(T lhs, T rhs) noexcept
-            -> detail::enable_if_t<std::is_integral<T>::value, bool>
+            -> bool
         {
             return lhs < rhs;
         }
@@ -32,9 +33,9 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Total order for floating point types
 
-        template<typename T>
+        template<std::floating_point T>
         auto total_less(T lhs, T rhs)
-            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> bool
         {
             if (std::isfinite(lhs) && std::isfinite(rhs)) {
                 if (lhs == 0 && rhs == 0) {

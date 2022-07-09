@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/weak_greater.h>
@@ -21,9 +22,9 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Weak order for floating point types
 
-        template<typename T>
+        template<std::floating_point T>
         auto partial_greater(T lhs, T rhs) noexcept
-            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> bool
         {
             return lhs > rhs;
         }

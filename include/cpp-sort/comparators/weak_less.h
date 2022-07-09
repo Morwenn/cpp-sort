@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+#include <concepts>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/total_less.h>
@@ -23,9 +24,9 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Weak order for floating point types
 
-        template<typename T>
+        template<std::floating_point T>
         auto weak_less(T lhs, T rhs)
-            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> bool
         {
             if (std::isfinite(lhs) && std::isfinite(rhs)) {
                 return lhs < rhs;

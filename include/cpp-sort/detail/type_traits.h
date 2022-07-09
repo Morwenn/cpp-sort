@@ -148,6 +148,18 @@ namespace detail
 #endif
 
     ////////////////////////////////////////////////////////////
+    // Arithmetic concepts
+
+    template<typename T>
+    concept integral = is_integral<T>::value;
+
+    template <typename T>
+    concept signed_integral = integral<T> && is_signed<T>::value;
+
+    template <typename T>
+    concept unsigned_integral = integral<T> && is_unsigned<T>::value;
+
+    ////////////////////////////////////////////////////////////
     // is_specialization_of: check that a given type is a
     // specialization of a given class template, with the caveat
     // that the class template can only have type template

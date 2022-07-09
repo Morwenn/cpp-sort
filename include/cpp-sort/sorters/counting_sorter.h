@@ -27,10 +27,9 @@ namespace cppsort
         struct counting_sorter_impl
         {
             template<typename ForwardIterator>
+                requires detail::integral<value_type_t<ForwardIterator>>
             auto operator()(ForwardIterator first, ForwardIterator last) const
-                -> detail::enable_if_t<
-                    detail::is_integral<value_type_t<ForwardIterator>>::value
-                >
+                -> void
             {
                 static_assert(
                     std::is_base_of<
@@ -44,10 +43,9 @@ namespace cppsort
             }
 
             template<typename ForwardIterator>
+                requires detail::integral<value_type_t<ForwardIterator>>
             auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
-                -> detail::enable_if_t<
-                    detail::is_integral<value_type_t<ForwardIterator>>::value
-                >
+                -> void
             {
                 static_assert(
                     std::is_base_of<
@@ -61,10 +59,9 @@ namespace cppsort
             }
 
             template<typename ForwardIterator>
+                requires detail::integral<value_type_t<ForwardIterator>>
             auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
-                -> detail::enable_if_t<
-                    detail::is_integral<value_type_t<ForwardIterator>>::value
-                >
+                -> void
             {
                 static_assert(
                     std::is_base_of<
