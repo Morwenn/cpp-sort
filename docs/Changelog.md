@@ -36,16 +36,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     This feature is made available through the check `__cpp_lib_uncaught_exceptions`.
 
-* New [`function_constant`][cpp-sort-function-objects] utility to micro-optimize function pointers and class member pointers.
-
-    ```cpp
-    insertion_sort(collection, function_constant<&foo::bar>{});
-    ```
-
-    It sometimes results in fewer indirections than a raw `&foo::bar`, and can be subject to *empty base class optimization* when stored.
-
-    This feature is available when the feature-testing macro `__cpp_nontype_template_parameter_auto` is defined.
-
 * [`sorter_facade`][sorter-facade] range overloads can now be used in `constexpr` functions.
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.

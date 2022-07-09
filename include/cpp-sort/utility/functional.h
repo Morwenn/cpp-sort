@@ -307,7 +307,6 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // Function constant (micro-optimization)
 
-#ifdef __cpp_nontype_template_parameter_auto
     template<auto Function>
     struct function_constant
     {
@@ -342,7 +341,6 @@ namespace utility
             typename function_constant<Function>::value_type, T
         >
     {};
-#endif
 }}
 
 #endif // CPPSORT_UTILITY_FUNCTIONAL_H_
