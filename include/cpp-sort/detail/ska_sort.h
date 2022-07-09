@@ -996,7 +996,7 @@ namespace detail
     using has_indexing_operator_t
         = std::remove_cvref_t<decltype(std::declval<T&>()[0])>;
 
-    template<template<typename...> class Op, typename... Args>
+    template<template<typename...> typename Op, typename... Args>
     using is_index_ska_sortable = is_ska_sortable<detected_t<Op, Args...>>;
 
     // A bit hackish, but I'm bad at workarounds...

@@ -68,7 +68,7 @@ namespace detail
     template<
         typename Default,
         typename AlwaysVoid,
-        template<typename...> class Op, typename... Args
+        template<typename...> typename Op, typename... Args
     >
     struct detector
     {
@@ -78,7 +78,7 @@ namespace detail
 
     template<
         typename Default,
-        template<typename...> class Op,
+        template<typename...> typename Op,
         typename... Args
     >
     struct detector<Default, std::void_t<Op<Args...>>, Op, Args...>
@@ -87,13 +87,13 @@ namespace detail
         using type = Op<Args...>;
     };
 
-    template<template<typename...> class Op, typename... Args>
+    template<template<typename...> typename Op, typename... Args>
     using is_detected = typename detector<nonesuch, void, Op, Args...>::value_t;
 
-    template<template<typename...> class Op, typename... Args >
+    template<template<typename...> typename Op, typename... Args >
     constexpr bool is_detected_v = is_detected<Op, Args...>::value;
 
-    template<template<typename...> class Op, typename... Args>
+    template<template<typename...> typename Op, typename... Args>
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
     ////////////////////////////////////////////////////////////
@@ -155,17 +155,17 @@ namespace detail
     //
     // See https://wg21.link/P2098R0
 
-    template<typename T, template<typename...> class Template>
+    template<typename T, template<typename...> typename Template>
     struct is_specialization_of:
         std::false_type
     {};
 
-    template<template<typename...> class Template, typename... Args>
+    template<template<typename...> typename Template, typename... Args>
     struct is_specialization_of<Template<Args...>, Template>:
         std::true_type
     {};
 
-    template<typename T, template<typename...> class Template>
+    template<typename T, template<typename...> typename Template>
     constexpr bool is_specialization_of_v = is_specialization_of<T, Template>::value;
 
     ////////////////////////////////////////////////////////////

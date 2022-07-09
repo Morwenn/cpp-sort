@@ -86,7 +86,7 @@ namespace cppsort
     struct schwartz_adapter;
     template<typename Sorter>
     struct self_sort_adapter;
-    template<template<std::size_t> class FixedSizeSorter, typename Indices>
+    template<template<std::size_t> typename FixedSizeSorter, typename Indices>
     struct small_array_adapter;
     template<typename Sorter>
     struct stable_adapter;
