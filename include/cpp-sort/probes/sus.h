@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/longest_non_descending_subsequence.h"
 #include "../detail/type_traits.h"
 
@@ -59,12 +58,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& sus = utility::static_const<
-            sorter_facade<detail::sus_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::sus_impl> sus{};
 }}
 
 #endif // CPPSORT_PROBES_SUS_H_

@@ -18,7 +18,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
@@ -125,12 +124,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& enc = utility::static_const<
-            sorter_facade<detail::enc_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::enc_impl> enc{};
 }}
 
 #endif // CPPSORT_PROBES_ENC_H_

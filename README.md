@@ -159,7 +159,6 @@ of a Timsort](https://github.com/gfx/cpp-TimSort).
 module](https://www.boost.org/doc/libs/1_71_0/libs/sort/doc/html/index.html).
 
 * [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function),
-[`utility::static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const),
 and several projection-enhanced helper algorithms come from Eric Niebler's [Range
 v3](https://github.com/ericniebler/range-v3) library. Several ideas such as proxy
 iterators, customization points and projections, as well as a few other utility

@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/merge_sort.h"
 #include "../detail/type_traits.h"
@@ -94,11 +93,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& merge_sort
-            = utility::static_const<merge_sorter>::value;
-    }
+    inline constexpr merge_sorter merge_sort{};
 }
 
 #ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_

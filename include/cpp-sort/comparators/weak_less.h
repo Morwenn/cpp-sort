@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_WEAK_LESS_H_
@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/comparators/total_less.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
 #include "../detail/type_traits.h"
 
@@ -66,13 +65,7 @@ namespace cppsort
     }
 
     using weak_less_t = detail::weak_less_fn;
-
-    namespace
-    {
-        constexpr auto&& weak_less = utility::static_const<
-            detail::weak_less_fn
-        >::value;
-    }
+    inline constexpr weak_less_t weak_less{};
 
     // Branchless traits
 

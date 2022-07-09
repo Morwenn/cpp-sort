@@ -13,7 +13,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/counting_sort.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -93,11 +92,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& counting_sort
-            = utility::static_const<counting_sorter>::value;
-    }
+    inline constexpr counting_sorter counting_sort{};
 }
 
 #endif // CPPSORT_SORTERS_COUNTING_SORTER_H_

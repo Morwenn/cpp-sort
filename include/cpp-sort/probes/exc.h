@@ -17,7 +17,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -151,12 +150,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& exc = utility::static_const<
-            sorter_facade<detail::exc_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::exc_impl> exc{};
 }}
 
 #endif // CPPSORT_PROBES_EXC_H_

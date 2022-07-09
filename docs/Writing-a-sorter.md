@@ -63,7 +63,7 @@ Now, let's define a set of rules to apply when writing sorters. These rules don'
 
 **Rule 1.4:** *sorters* shall be immutable and every overload of `operator()` shall explicitly be marked `const` (make sure to check twice: forgetting to `const`-qualify them can cause hundreds of lines of cryptic error messages). Some parts of the library *may* accept mutable sorters, but that's never guaranteed unless specified otherwise.
 
-**Rule 1.5:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables (C++17) or the library's [`static_const`][static-const] utility (C++14) can be used to avoid ODR-related problems.
+**Rule 1.5:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables can be used to avoid ODR-related problems.
 
 ## Category of iterators
 
@@ -578,7 +578,6 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [sqrtsort]: https://github.com/Mrrl/SqrtSort
   [stability]: https://en.wikipedia.org/wiki/Sorting_algorithm#Stability
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
-  [static-const]: Miscellaneous-utilities.md#static_const
   [std-array]: https://en.cppreference.com/w/cpp/container/array
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity

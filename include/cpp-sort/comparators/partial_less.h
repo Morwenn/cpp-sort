@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PARTIAL_LESS_H_
@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/comparators/weak_less.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -58,13 +57,7 @@ namespace cppsort
     }
 
     using partial_less_t = detail::partial_less_fn;
-
-    namespace
-    {
-        constexpr auto&& partial_less = utility::static_const<
-            detail::partial_less_fn
-        >::value;
-    }
+    inline constexpr partial_less_t partial_less{};
 
     // Branchless traits
 

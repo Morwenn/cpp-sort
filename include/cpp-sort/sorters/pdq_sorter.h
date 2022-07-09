@@ -14,7 +14,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 #include "../detail/type_traits.h"
@@ -67,11 +66,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& pdq_sort
-            = utility::static_const<pdq_sorter>::value;
-    }
+    inline constexpr pdq_sorter pdq_sort{};
 }
 
 #endif // CPPSORT_SORTERS_PDQ_SORTER_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_WEAK_GREATER_H_
@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/comparators/total_greater.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
 #include "../detail/type_traits.h"
 
@@ -66,13 +65,7 @@ namespace cppsort
     }
 
     using weak_greater_t = detail::weak_greater_fn;
-
-    namespace
-    {
-        constexpr auto&& weak_greater = utility::static_const<
-            detail::weak_greater_fn
-        >::value;
-    }
+    inline constexpr weak_greater_t weak_greater{};
 
     // Branchless traits
 

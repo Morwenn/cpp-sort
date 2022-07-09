@@ -393,18 +393,8 @@ We use forwarding references to ensure that the range overload works with lvalue
 The sorter abstraction is useful, but most of the time we only need a sorting algorithm. Therefore, it might be a good idea to instantiate `bubble_sorter` and to have a global `bubble_sort` instance, more versatile than the original `bubble_sort` algorithm.
 
 ```cpp
-// C++14
-namespace
-{
-    constexpr auto&& bubble_sort
-        = cppsort::utility::static_const<bubble_sorter>::value;
-}
-
-// C++17
-inline constexpr auto&& bubble_sort = bubble_sorter{};
+inline constexpr bubble_sorter bubble_sort{};
 ```
-
-The combination of [`utility::static_const`][utility-static-const] with an anonymous namespace is a trick used to avoid ODR problems; you can read more about how and why it works in [Eric Niebler's original article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/). It is basically a poor man's substitute to compensate the lack of `inline` variables pre-C++17.
 
 ## Better error messages
 
@@ -458,5 +448,4 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
   [utility-size]: Miscellaneous-utilities.md#size
-  [utility-static-const]: Miscellaneous-utilities.md#static_const
   [writing-a-sorter]: Writing-a-sorter.md

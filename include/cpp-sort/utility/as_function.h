@@ -23,7 +23,6 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -58,12 +57,7 @@ namespace utility
         };
     }
 
-    namespace
-    {
-        constexpr auto&& as_function = static_const<
-            detail::as_function_fn
-        >::value;
-    }
+    inline constexpr detail::as_function_fn as_function{};
 }}
 
 #endif // CPPSORT_UTILITY_AS_FUNCTION_H_

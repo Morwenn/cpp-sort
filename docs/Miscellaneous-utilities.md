@@ -258,33 +258,11 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
 
 *New in version 1.11.0*
 
-### `static_const`
-
-```cpp
-#include <cpp-sort/utility/static_const.h>
-```
-
-***WARNING:** `utility::static_const` is removed in version 2.0.0, use [`inline` variables][inline-variables] instead.*
-
-`static_const` is a tiny utility used to instantiate function objects (for example sorters) and expose a single global instance to users of the library while avoiding ODR problems. It is taken straight from [Range-v3][range-v3]. The general pattern to instantiate function objects is as follows:
-
-```cpp
-namespace
-{
-    constexpr auto&& awesome_sort
-        = cppsort::utility::static_const<awesome_sorter>::value;
-}
-```
-
-You can read more about this instantiation pattern in [this article][eric-niebler-static-const] by Eric Niebler.
-
 
   [chainable-projections]: Chainable-projections.md
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo
-  [eric-niebler-static-const]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
   [fixed-size-sorters]: Fixed-size-sorters.md
-  [inline-variables]: https://en.cppreference.com/w/cpp/language/inline
   [p0022]: https://wg21.link/P0022
   [pdq-sorter]: Sorters.md#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3

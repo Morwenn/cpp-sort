@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/count_inversions.h"
 #include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
@@ -99,12 +98,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& inv = utility::static_const<
-            sorter_facade<detail::inv_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::inv_impl> inv{};
 }}
 
 #endif // CPPSORT_PROBES_INV_H_

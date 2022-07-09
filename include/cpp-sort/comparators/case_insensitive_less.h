@@ -13,7 +13,6 @@
 #include <locale>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -270,13 +269,7 @@ namespace cppsort
     }
 
     using case_insensitive_less_t = detail::case_insensitive_less_fn;
-
-    namespace
-    {
-        constexpr auto&& case_insensitive_less = utility::static_const<
-            detail::case_insensitive_less_fn
-        >::value;
-    }
+    inline case_insensitive_less_t case_insensitive_less{};
 }
 
 #endif // CPPSORT_COMPARATORS_CASE_INSENSITIVE_LESS_H_

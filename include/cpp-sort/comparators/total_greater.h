@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_TOTAL_GREATER_H_
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
 #include "../detail/type_traits.h"
 
@@ -67,13 +66,7 @@ namespace cppsort
     }
 
     using total_greater_t = detail::total_greater_fn;
-
-    namespace
-    {
-        constexpr auto&& total_greater = utility::static_const<
-            detail::total_greater_fn
-        >::value;
-    }
+    inline constexpr total_greater_t total_greater{};
 
     // Branchless traits
 

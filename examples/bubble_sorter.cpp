@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -11,7 +11,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 
 namespace detail
 {
@@ -95,11 +94,7 @@ struct bubble_sorter:
     cppsort::sorter_facade<detail::bubble_sorter_impl>
 {};
 
-namespace
-{
-    constexpr auto&& bubble_sort
-        = cppsort::utility::static_const<bubble_sorter>::value;
-}
+inline constexpr bubble_sorter bubble_sort{};
 
 #include <algorithm>
 #include <array>

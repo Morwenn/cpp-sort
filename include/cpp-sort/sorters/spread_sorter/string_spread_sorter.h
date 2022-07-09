@@ -16,7 +16,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/string_sort.h"
 #include "../../detail/type_traits.h"
@@ -202,11 +201,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& string_spread_sort
-            = utility::static_const<string_spread_sorter>::value;
-    }
+    inline constexpr string_spread_sorter string_spread_sort{};
 }
 
 #endif // CPPSORT_SORTERS_SPREAD_SORTER_STRING_SPREAD_SORTER_H_

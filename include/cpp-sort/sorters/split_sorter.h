@@ -14,7 +14,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/split_sort.h"
 #include "../detail/type_traits.h"
@@ -67,11 +66,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& split_sort
-            = utility::static_const<split_sorter>::value;
-    }
+    inline constexpr split_sorter split_sort{};
 }
 
 #endif // CPPSORT_SORTERS_SPLIT_SORTER_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PARTIAL_GREATER_H_
@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/comparators/weak_greater.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -58,13 +57,7 @@ namespace cppsort
     }
 
     using partial_greater_t = detail::partial_greater_fn;
-
-    namespace
-    {
-        constexpr auto&& partial_greater = utility::static_const<
-            detail::partial_greater_fn
-        >::value;
-    }
+    inline constexpr partial_greater_t partial_greater{};
 
     // Branchless traits
 

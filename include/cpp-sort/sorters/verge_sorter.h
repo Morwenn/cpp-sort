@@ -17,7 +17,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 #include "../detail/vergesort.h"
@@ -111,11 +110,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& verge_sort
-            = utility::static_const<verge_sorter>::value;
-    }
+    inline constexpr verge_sorter verge_sort{};
 }
 
 #endif // CPPSORT_SORTERS_VERGE_SORTER_H_

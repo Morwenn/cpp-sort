@@ -14,7 +14,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/timsort.h"
 #include "../detail/type_traits.h"
@@ -67,11 +66,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& adaptive_shivers_sort
-            = utility::static_const<adaptive_shivers_sorter>::value;
-    }
+    inline constexpr adaptive_shivers_sorter adaptive_shivers_sort{};
 }
 
 #endif // CPPSORT_SORTERS_ADAPTIVE_SHIVERS_SORTER_H_

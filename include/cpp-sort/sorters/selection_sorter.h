@@ -14,7 +14,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/selection_sort.h"
 #include "../detail/type_traits.h"
@@ -67,11 +66,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& selection_sort
-            = utility::static_const<selection_sorter>::value;
-    }
+    inline constexpr selection_sorter selection_sort{};
 }
 
 #ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_
