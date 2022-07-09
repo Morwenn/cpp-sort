@@ -105,7 +105,7 @@ template<typename DifferenceType=std::ptrdiff_t>
     -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
 ```
 
-### `merge_exchange_network_sorter`
+### `odd_even_merge_network_sorter`
 
 ```cpp
 #include <cpp-sort/fixed/odd_even_merge_network_sorter.h>
@@ -160,16 +160,6 @@ template<typename DifferenceType=std::ptrdiff_t>
 static constexpr auto index_pairs()
     -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
 ```
-
-*Changed in version 1.2.0:* sorting 21 inputs requires 100 CEs instead of 101.
-
-*Changed in version 1.3.0:* sorting 23, 24, 25 and 26 inputs respectively require 115, 120, 132 and 139 CEs instead of 116, 121, 133 and 140.
-
-*Changed in version 1.8.0:* sorting 18 inputs requires 77 CEs instead of 78.
-
-*Changed in version 1.10.0:* added `sorting_network_sorter<N>::index_pairs<DifferenceType>`.
-
-*Changed in version 1.13.0:* sorting 21, 22, 23, 25, 27 and 29 inputs respectively require 99, 106, 114, 131, 149 and 164 CEs instead of 100, 107, 115, 132, 150 and 165.
 
 
   [double-insertion-sort]: Original-research.md#double-insertion-sort

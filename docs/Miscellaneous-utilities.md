@@ -18,8 +18,6 @@ struct adapter_storage;
 
 The usual way to use it when implementing a *sorter adapter* is to make said adapter inherit from `adapter_storage<Sorter>` and to feed it a copy of the *original sorter*. Then either `get()` or `operator()` can be used to correctly call the wrapped sorter.
 
-*New in version 1.5.0*
-
 ### `as_comparison` and `as_projection`
 
 ```cpp
@@ -41,12 +39,6 @@ constexpr auto as_comparison(Function&& func)
 ```
 
 When the object passed to `as_comparison` or `as_projection` is a [*transparent function object*][transparent-func], then the object returned by those functions will also be *transparent*.
-
-*Changed in version 1.7.0:* `as_comparison` and `as_projection` accept any *Callable*.
-
-*Changed in version 1.7.0:* the object returned by `as_projection` inherits from `projection_base`.
-
-*Changed in version 1.13.0:* the objects returned by `as_comparison` and `as_projection` are now conditionally [*transparent*][transparent-func].
 
 ### `as_function`
 
@@ -100,10 +92,6 @@ This trait tells whether the projection function `Projection` is likely to gener
 * Any type that satisfies [`std::is_member_function_pointer`][std-is-member-function-pointer] provided it is called with an instance of the appropriate class.
 
 These traits can be specialized for user-defined types. If one of the traits is specialized to consider that a user-defined type is likely to be branchless with a comparison/projection function, cv-qualified and reference-qualified versions of the same user-defined type will also be considered to produce branchless code when compared/projected with the same function.
-
-*Changed in version 1.9.0:* conditional support for [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater].
-
-*Changed in version 1.9.0:* conditional support for [`std::identity`][std-identity].
 
 ### Buffer providers
 
@@ -167,12 +155,6 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 
 *Warning: `function_constant` is only available since C++17.*
 
-*New in version 1.7.0:* `projection_base` and chainable projections.
-
-*Changed in version 1.9.0:* `std::identity` is now also supported wherever the library has special behavior for `utility::identity`.
-
-*Changed in version 1.13.0:* `half`, `log` and `sqrt` are now [*transparent function objects*][transparent-func].
-
 ### `iter_move` and `iter_swap`
 
 ```cpp
@@ -195,8 +177,6 @@ constexpr auto iter_swap(Iterator lhs, Iterator rhs)
 
 *NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
 
-*Changed in version 1.10.0:* generic `iter_move` and `iter_swap` overloads are now marked as `constexpr`.
-
 ### `size`
 
 ```cpp
@@ -204,8 +184,6 @@ constexpr auto iter_swap(Iterator lhs, Iterator rhs)
 ```
 
 `size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
-
-*Changed in version 1.12.1:* `utility::size()` now also works for collections that only provide non-`const` `begin()` and `end()`.
 
 ### Sorting network tools
 
@@ -255,8 +233,6 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
 ```
 
 `swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
-
-*New in version 1.11.0*
 
 
   [chainable-projections]: Chainable-projections.md

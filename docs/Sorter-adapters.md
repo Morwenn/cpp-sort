@@ -24,8 +24,6 @@ Most of the library's *sorter adapters* can store the passed *sorters* in their 
 
 It is worth noting that in the current state of things, sorters & adapters are expected to have a `const operator()`, and thus don't play nice with *mutable sorters*. There are plans to properly handle *mutable sorters* in the future: you can track [the corresponding issue][issue-104].
 
-*Changed in version 1.5.0:* adapters can store the sorters they adapt, enabling the use of *stateful sorters*. The overall semantics of sorters and adapters have evolved accordingly.
-
 ## Available sorter adapters
 
 The following sorter adapters and fixed-size sorter adapters are available in the library:
@@ -99,8 +97,6 @@ If `hybrid_adapter` is wrapped into [`stable_adapter`][stable-adapter], it wraps
 
 The *resulting sorter*'s `is_always_stable` is `std::true_type` if and only if every *adapted sorter*'s `is_always_stable` is `std::true_type`. `is_stable` is specialized so that it will return the stability of the called *adapted sorter* with the given parameters. The iterator category of the *resulting sorter* is the most permissive iterator category among the *adapted sorters*.
 
-*Changed in version 1.4.0:* nested `hybrid_adapter<A, hybrid_adapter<B, C>, D>` now unwrap to `hybrid_adapter<A, B, C, D>`.
-
 ### `indirect_adapter`
 
 ```cpp
@@ -120,10 +116,6 @@ class indirect_adapter;
 
 The *resulting sorter* accepts forward iterators, and the iterator category of the *adapted sorter* does not matter. Note that this algorithm performs even fewer move operations than [`low_moves_sorter`][low-moves-sorter], but at the cost of a higher constant factor that may not always be worth it for small collections.
 
-*Changed in version 1.3.0:* `indirect_adapter` now returns the result of the *adapted sorter* in C++17 mode.
-
-*Changed in version 1.8.0:* `indirect_adapter` now accepts forward and bidirectional iterators.
-
 ### `out_of_place_adapter`
 
 ```cpp
@@ -140,10 +132,6 @@ class out_of_place_adapter;
 ```
 
 The *resulting sorter* accepts forward iterators, and the iterator category of the *adapted sorter* does not matter.
-
-*New in version 1.2.0*
-
-*Changed in version 1.3.0:* `out_of_place_adapter` now returns the result of the *adapted sorter* in C++17 mode.
 
 ### `schwartz_adapter`
 
@@ -163,8 +151,6 @@ struct schwartz_adapter;
 The mechanism used to synchronize the collection of projected objects with the original collection during the sort might be too expensive when the projection is cheap. When in doubt, time things before drawing conclusions.
 
 *Warning: a sorter wrapped into `schwartz_adapter` is only guaranteed to work if it properly handles proxy iterators.*
-
-*Changed in version 1.3.0:* `schwartz_adapter` now returns the result of the *adapted sorter*.
 
 ### `self_sort_adapter`
 
@@ -274,8 +260,6 @@ This little dance sometimes allows to reduce the nesting of function calls and t
 
 ![Visual explanation of what stable_t aliases](images/stable_t.png)
 
-*New in version 1.9.0:* `stable_t` and `stable_adapter<Sorter>::type`
-
 ### `verge_adapter`
 
 ```cpp
@@ -292,8 +276,6 @@ struct verge_adapter;
 ```
 
 When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and faster than just using `make_stable`.
-
-*New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
 
 
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction

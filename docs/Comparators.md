@@ -2,8 +2,6 @@ The comparators described below can be used as needed with [*sorters*][sorters] 
 
 Every non-refined comparator described below is also a [transparent comparator][transparent-func]. While this ability is not used by the library itself, it means that the comparators can be used with the standard library associative containers to compare heterogeneous objects without having to create temporaries.
 
-*Changed in version 1.5.0:* every non-refined comparator is now a [transparent comparator][transparent-func].
-
 ### Total order comparators
 
 ```cpp
@@ -27,8 +25,6 @@ That said, the comparators are currently unable to discriminate between quiet an
 
 Total order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_integral`][std-is-integral].
 
-*Changed in version 1.5.0:* `total_greater` and `total_less` are respectively of type `total_greater_t` and `total_less_t`.
-
 ### Weak order comparators
 
 ```cpp
@@ -49,8 +45,6 @@ When it doesn't handle a type natively and ADL doesn't find any suitable `weak_l
 
 Weak order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_integral`][std-is-integral].
 
-*Changed in version 1.5.0:* `weak_greater` and `weak_less` are respectively of type `weak_greater_t` and `weak_less_t`.
-
 ### Partial order comparators
 
 ```cpp
@@ -64,8 +58,6 @@ When it doesn't handle a type natively and ADL doesn't find any suitable `partia
 
 Partial order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_arithmetic`][std-is-arithmetic].
 
-*Changed in version 1.5.0:* `partial_greater` and `partial_less` are respectively of type `partial_greater_t` and `partial_less_t`.
-
 ### Natural order comparator
 
 ```cpp
@@ -73,10 +65,6 @@ Partial order comparators are considered as [generating branchless code][branchl
 ```
 
 The comparator `natural_less` is a [customization point][custom-point] that can be used to perform a [natural sort][natural-sort]. The function handles any two forward iterable sequences of `char` out of the box using [`std::isdigit`][std-is-digit] to identify digits (which includes `std::string`, `std::vector<char>` and `char[]`). Other character types and locales are currently not handled and it is unlikely that the library will evolve more than switching to `<locale>`'s `std::isdigit` instead of `<cctype>`'s one.
-
-*Changed in version 1.5.0:* `natural_less` can compare heterogeneous types as long as they provide `begin` and `end` functions returning iterators to a sequence of `char`.
-
-*Changed in version 1.5.0:* `natural_less` is an instance of type `natural_less_t`.
 
 ### Case-insensitive comparator
 
@@ -107,8 +95,6 @@ sort(sequence, case_insensitive_less(std::locale::classic()));
 The two-parameter version of the customization point calls the three-parameter one with `std::locale::global()` as the third argument, so customizing only the three-parameter version will also extend the customization to the two-parameter one.
 
 *This comparator can be [refined][refining] for a specific type to provide better performance.*
-
-*Changed in version 1.5.0:* `case_insensitive_less` is an instance of type `case_insensitive_less_t`.
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate

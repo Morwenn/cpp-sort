@@ -50,8 +50,6 @@ constexpr auto base() const
 
 `flip_t<F>` is considered [branchless][branchless-traits] when `F` is considered branchless.
 
-*New in version 1.13.0*
-
 ### `not_fn`
 
 ```cpp
@@ -85,8 +83,6 @@ constexpr auto base() const
 * When given a `projection_compare_t` it returns `projection_compare(not_fn(f.comparison()), f.projection())`.
 
 `not_fn_t<F>` is [*transparent*][transparent-func] when `F` is *transparent*.
-
-*New in version 1.13.0*
 
 ### `projection_compare`
 
@@ -138,12 +134,6 @@ constexpr auto projection() const
 `projection_compare_t` is [*transparent*][transparent-func] when the passed comparison and projection are both *transparent*.
 
 `projection_compare_t` is considered [branchless][branchless-traits] when the projection it wraps is considered branchless and the comparison it wraps is considered branchless when called with the result of the projection.
-
-*New in version 1.9.0*
-
-*Changed in version 1.13.0:* `projection_compare` is now conditionally default-constructible.
-
-*Changed in version 1.13.0:* `make_projection_compare` now returns the comparison directly when the passed projection is an identity function object.
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate

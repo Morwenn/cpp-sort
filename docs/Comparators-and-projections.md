@@ -24,8 +24,6 @@ Sorters and adapters in the library accept comparators taking their parameters b
 
 This additional guarantee is allowed by the resolution of [LWG3031][lwg3031]. However when a comparator can take its parameters by both `const` and non-`const` reference, it is required to return consistent results no matter which overload is used (see the LWG issue for an example of inconsistent results).
 
-*New in version 1.7.0*
-
 
   [as-comparison-as-projection]: Miscellaneous-utilities.md#as_comparison-and-as_projection
   [as-function]: Miscellaneous-utilities.md#as_function
