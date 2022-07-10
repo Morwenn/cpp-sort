@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -39,8 +39,8 @@ namespace cppsort
 namespace detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
-                        Compare compare, Projection projection)
+    constexpr auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
+                                  Compare compare, Projection projection)
         -> void
     {
         if (first == last) return;
