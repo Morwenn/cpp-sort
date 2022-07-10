@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MIN_ELEMENT_H_
@@ -17,8 +17,8 @@ namespace cppsort
 namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto unchecked_min_element(ForwardIterator first, ForwardIterator last,
-                               Compare compare, Projection projection)
+    constexpr auto unchecked_min_element(ForwardIterator first, ForwardIterator last,
+                                         Compare compare, Projection projection)
         -> ForwardIterator
     {
         // Same algorithm as min_element, but assumes that the
@@ -38,11 +38,13 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto min_element(ForwardIterator first, ForwardIterator last,
-                     Compare compare, Projection projection)
+    constexpr auto min_element(ForwardIterator first, ForwardIterator last,
+                               Compare compare, Projection projection)
         -> ForwardIterator
     {
-        if (first == last) return last;
+        if (first == last) {
+            return last;
+        }
         return unchecked_min_element(std::move(first), std::move(last),
                                      std::move(compare), std::move(projection));
     }

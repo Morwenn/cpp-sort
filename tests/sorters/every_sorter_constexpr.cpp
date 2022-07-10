@@ -27,7 +27,8 @@ namespace
 }
 
 TEMPLATE_TEST_CASE( "test every constexpr sorter", "[sorters][constexpr]",
-                    cppsort::insertion_sorter )
+                    cppsort::insertion_sorter,
+                    cppsort::selection_sorter )
 {
     constexpr bool is_sorted = test_constexpr_sorter<TestType>();
     STATIC_CHECK( is_sorted );
