@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BUBBLE_SORT_H_
@@ -27,8 +27,8 @@ namespace detail
     //
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto bubble_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
-                     Compare compare, Projection projection)
+    constexpr auto bubble_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
+                               Compare compare, Projection projection)
         -> void
     {
         if (size < 2) return;
@@ -36,7 +36,7 @@ namespace detail
         while (--size) {
             ForwardIterator current = first;
             ForwardIterator next = std::next(current);
-            for (difference_type_t<ForwardIterator> i = 0 ; i < size ; ++i) {
+            for (difference_type_t<ForwardIterator> i = 0; i < size; ++i) {
                 iter_swap_if(current, next, compare, projection);
                 ++next;
                 ++current;

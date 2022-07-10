@@ -29,6 +29,7 @@ namespace
 TEMPLATE_TEST_CASE( "test every constexpr sorter", "[sorters][constexpr]",
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::quick_sorter,
                     cppsort::selection_sorter )
 {
     constexpr bool is_sorted = test_constexpr_sorter<TestType>();

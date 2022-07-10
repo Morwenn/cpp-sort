@@ -26,9 +26,9 @@ namespace cppsort
 namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto small_sort(ForwardIterator first, ForwardIterator last,
-                    Compare compare, Projection projection,
-                    std::forward_iterator_tag)
+    constexpr auto small_sort(ForwardIterator first, ForwardIterator last,
+                              Compare compare, Projection projection,
+                              std::forward_iterator_tag)
         -> void
     {
         selection_sort(std::move(first), std::move(last),
@@ -36,9 +36,9 @@ namespace detail
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto small_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    Compare compare, Projection projection,
-                    std::bidirectional_iterator_tag)
+    constexpr auto small_sort(BidirectionalIterator first, BidirectionalIterator last,
+                              Compare compare, Projection projection,
+                              std::bidirectional_iterator_tag)
         -> void
     {
         insertion_sort(std::move(first), std::move(last),
@@ -46,8 +46,8 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto small_sort(ForwardIterator first, ForwardIterator last,
-                    Compare compare, Projection projection)
+    constexpr auto small_sort(ForwardIterator first, ForwardIterator last,
+                              Compare compare, Projection projection)
         -> void
     {
         using category = iterator_category_t<ForwardIterator>;
@@ -56,9 +56,9 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto iter_median_5(ForwardIterator it1, ForwardIterator it2, ForwardIterator it3,
-                       ForwardIterator it4, ForwardIterator it5,
-                       Compare compare, Projection projection)
+    constexpr auto iter_median_5(ForwardIterator it1, ForwardIterator it2, ForwardIterator it3,
+                                 ForwardIterator it4, ForwardIterator it5,
+                                 Compare compare, Projection projection)
         -> ForwardIterator
     {
         // Median of 5, adapted from https://stackoverflow.com/a/481398/1364752
@@ -93,8 +93,8 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto iter_median_rest(ForwardIterator first, difference_type_t<ForwardIterator> size,
-                          Compare compare, Projection projection)
+    constexpr auto iter_median_rest(ForwardIterator first, difference_type_t<ForwardIterator> size,
+                                    Compare compare, Projection projection)
         -> ForwardIterator
     {
         using utility::iter_swap;
@@ -140,16 +140,16 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto introselect(ForwardIterator first, ForwardIterator last,
-                     difference_type_t<ForwardIterator> nth_pos,
-                     difference_type_t<ForwardIterator> size,
-                     Compare compare, Projection projection)
+    constexpr auto introselect(ForwardIterator first, ForwardIterator last,
+                               difference_type_t<ForwardIterator> nth_pos,
+                               difference_type_t<ForwardIterator> size,
+                               Compare compare, Projection projection)
         -> ForwardIterator;
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto median_of_medians(ForwardIterator first, ForwardIterator last,
-                           difference_type_t<ForwardIterator> size,
-                           Compare compare, Projection projection)
+    constexpr auto median_of_medians(ForwardIterator first, ForwardIterator last,
+                                     difference_type_t<ForwardIterator> size,
+                                     Compare compare, Projection projection)
         -> ForwardIterator
     {
         using utility::iter_swap;
@@ -201,23 +201,23 @@ namespace detail
     // Get iterator to last element
 
     template<typename Iterator>
-    auto last_it(Iterator first, Iterator, difference_type_t<Iterator> size,
-                 std::forward_iterator_tag)
+    constexpr auto last_it(Iterator first, Iterator, difference_type_t<Iterator> size,
+                           std::forward_iterator_tag)
         -> Iterator
     {
         return std::next(first, size - 1);
     }
 
     template<typename Iterator>
-    auto last_it(Iterator, Iterator last, difference_type_t<Iterator>,
-                 std::bidirectional_iterator_tag)
+    constexpr auto last_it(Iterator, Iterator last, difference_type_t<Iterator>,
+                           std::bidirectional_iterator_tag)
         -> Iterator
     {
         return std::prev(last);
     }
 
     template<typename Iterator>
-    auto last_it(Iterator first, Iterator last, difference_type_t<Iterator> size)
+    constexpr auto last_it(Iterator first, Iterator last, difference_type_t<Iterator> size)
         -> Iterator
     {
         using category = iterator_category_t<Iterator>;
@@ -228,9 +228,9 @@ namespace detail
     // Pick a pivot for quicksort and quickselect
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto pick_pivot(ForwardIterator first, ForwardIterator last,
-                    difference_type_t<ForwardIterator> size, int bad_allowed,
-                    Compare compare, Projection projection)
+    constexpr auto pick_pivot(ForwardIterator first, ForwardIterator last,
+                              difference_type_t<ForwardIterator> size, int bad_allowed,
+                              Compare compare, Projection projection)
         -> std::pair<ForwardIterator, ForwardIterator>
     {
         if (bad_allowed > 0) {
@@ -259,10 +259,10 @@ namespace detail
     // Introselect
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto introselect(ForwardIterator first, ForwardIterator last,
-                     difference_type_t<ForwardIterator> nth_pos,
-                     difference_type_t<ForwardIterator> size,
-                     Compare compare, Projection projection)
+    constexpr auto introselect(ForwardIterator first, ForwardIterator last,
+                               difference_type_t<ForwardIterator> nth_pos,
+                               difference_type_t<ForwardIterator> size,
+                               Compare compare, Projection projection)
         -> ForwardIterator
     {
         using utility::iter_swap;

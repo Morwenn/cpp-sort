@@ -25,7 +25,7 @@ namespace detail
     // swap_if
 
     template<typename T, typename Compare, typename Projection>
-    auto swap_if(T& lhs, T& rhs, Compare compare, Projection projection)
+    constexpr auto swap_if(T& lhs, T& rhs, Compare compare, Projection projection)
         -> void
     {
         auto&& comp = utility::as_function(compare);
@@ -38,7 +38,7 @@ namespace detail
     }
 
     template<typename T>
-    auto swap_if(T& lhs, T& rhs)
+    constexpr auto swap_if(T& lhs, T& rhs)
         noexcept(noexcept(swap_if(lhs, rhs, std::less<>{}, std::identity{})))
         -> void
     {
@@ -46,7 +46,7 @@ namespace detail
     }
 
     template<integral Integer>
-    auto swap_if(Integer& x, Integer& y, std::less<>, std::identity) noexcept
+    constexpr auto swap_if(Integer& x, Integer& y, std::less<>, std::identity) noexcept
         -> void
     {
         Integer dx = x;
@@ -55,7 +55,7 @@ namespace detail
     }
 
     template<std::floating_point Float>
-    auto swap_if(Float& x, Float& y, std::less<>, std::identity) noexcept
+    constexpr auto swap_if(Float& x, Float& y, std::less<>, std::identity) noexcept
         -> void
     {
         Float dx = x;
@@ -64,7 +64,7 @@ namespace detail
     }
 
     template<integral Integer>
-    auto swap_if(Integer& x, Integer& y, std::greater<>, std::identity) noexcept
+    constexpr auto swap_if(Integer& x, Integer& y, std::greater<>, std::identity) noexcept
         -> void
     {
         Integer dx = x;
@@ -73,7 +73,7 @@ namespace detail
     }
 
     template<std::floating_point Float>
-    auto swap_if(Float& x, Float& y, std::greater<>, std::identity) noexcept
+    constexpr auto swap_if(Float& x, Float& y, std::greater<>, std::identity) noexcept
         -> void
     {
         Float dx = x;
@@ -82,28 +82,28 @@ namespace detail
     }
 
     template<integral Integer>
-    auto swap_if(Integer& x, Integer& y, std::ranges::less comp, std::identity) noexcept
+    constexpr auto swap_if(Integer& x, Integer& y, std::ranges::less comp, std::identity) noexcept
         -> void
     {
         return swap_if(x, y, comp, std::identity{});
     }
 
     template<std::floating_point Float>
-    auto swap_if(Float& x, Float& y, std::ranges::less comp, std::identity) noexcept
+    constexpr auto swap_if(Float& x, Float& y, std::ranges::less comp, std::identity) noexcept
         -> void
     {
         return swap_if(x, y, comp, std::identity{});
     }
 
     template<integral Integer>
-    auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, std::identity) noexcept
+    constexpr auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, std::identity) noexcept
         -> void
     {
         return swap_if(x, y, comp, std::identity{});
     }
 
     template<std::floating_point Float>
-    auto swap_if(Float& x, Float& y, std::ranges::greater comp, std::identity) noexcept
+    constexpr auto swap_if(Float& x, Float& y, std::ranges::greater comp, std::identity) noexcept
         -> void
     {
         return swap_if(x, y, comp, std::identity{});
@@ -121,7 +121,7 @@ namespace detail
             cppsort::detail::has_iter_swap_v<Iterator>
         >
     >
-    auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
+    constexpr auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
         -> void
     {
         auto&& comp = utility::as_function(compare);
@@ -143,7 +143,7 @@ namespace detail
         >,
         typename = void // dummy parameter for ODR
     >
-    auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
+    constexpr auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
         noexcept(noexcept(swap_if(*lhs, *rhs, std::move(compare), std::move(projection))))
         -> void
     {

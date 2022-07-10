@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ITER_SORT3_H_
@@ -16,8 +16,8 @@ namespace cppsort
 namespace detail
 {
     template<typename Iterator, typename Compare, typename Projection>
-    auto iter_sort3(Iterator a, Iterator b, Iterator c,
-                    Compare compare, Projection projection)
+    constexpr auto iter_sort3(Iterator a, Iterator b, Iterator c,
+                              Compare compare, Projection projection)
         -> Iterator
     {
         iter_swap_if(b, c, compare, projection);

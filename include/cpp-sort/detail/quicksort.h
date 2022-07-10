@@ -27,10 +27,10 @@ namespace detail
     // when the collection is too small for quicksort to be
     // worth it
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto quicksort_fallback(ForwardIterator first, ForwardIterator,
-                            difference_type_t<ForwardIterator> size,
-                            Compare compare, Projection projection,
-                            std::forward_iterator_tag)
+    constexpr auto quicksort_fallback(ForwardIterator first, ForwardIterator,
+                                      difference_type_t<ForwardIterator> size,
+                                      Compare compare, Projection projection,
+                                      std::forward_iterator_tag)
         -> bool
     {
         if (size < 10) {
@@ -42,10 +42,10 @@ namespace detail
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto quicksort_fallback(BidirectionalIterator first, BidirectionalIterator last,
-                            difference_type_t<BidirectionalIterator> size,
-                            Compare compare, Projection projection,
-                            std::bidirectional_iterator_tag)
+    constexpr auto quicksort_fallback(BidirectionalIterator first, BidirectionalIterator last,
+                                      difference_type_t<BidirectionalIterator> size,
+                                      Compare compare, Projection projection,
+                                      std::bidirectional_iterator_tag)
         -> bool
     {
         if (size < 42) {
@@ -57,9 +57,9 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto quicksort(ForwardIterator first, ForwardIterator last,
-                   difference_type_t<ForwardIterator> size, int bad_allowed,
-                   Compare compare, Projection projection)
+    constexpr auto quicksort(ForwardIterator first, ForwardIterator last,
+                             difference_type_t<ForwardIterator> size, int bad_allowed,
+                             Compare compare, Projection projection)
         -> void
     {
         using difference_type = difference_type_t<ForwardIterator>;
@@ -117,9 +117,9 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto quicksort(ForwardIterator first, ForwardIterator last,
-                   difference_type_t<ForwardIterator> size,
-                   Compare compare, Projection projection)
+    constexpr auto quicksort(ForwardIterator first, ForwardIterator last,
+                             difference_type_t<ForwardIterator> size,
+                             Compare compare, Projection projection)
         -> void
     {
         int bad_allowed = 2 * detail::log2(size);  // Usual introsort recursion limit

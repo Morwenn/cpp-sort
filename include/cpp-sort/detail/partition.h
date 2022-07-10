@@ -27,8 +27,8 @@ namespace cppsort
 namespace detail
 {
     template<typename Predicate, typename ForwardIterator>
-    auto partition_impl(ForwardIterator first, ForwardIterator last, Predicate pred,
-                        std::forward_iterator_tag)
+    constexpr auto partition_impl(ForwardIterator first, ForwardIterator last, Predicate pred,
+                                  std::forward_iterator_tag)
         -> ForwardIterator
     {
         while (true) {
@@ -51,8 +51,8 @@ namespace detail
     }
 
     template<typename Predicate, typename BidirectionalIterator>
-    auto partition_impl(BidirectionalIterator first, BidirectionalIterator last, Predicate pred,
-                        std::bidirectional_iterator_tag)
+    constexpr auto partition_impl(BidirectionalIterator first, BidirectionalIterator last, Predicate pred,
+                                  std::bidirectional_iterator_tag)
         -> BidirectionalIterator
     {
         while (true) {
@@ -77,7 +77,7 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Predicate>
-    auto partition(ForwardIterator first, ForwardIterator last, Predicate pred)
+    constexpr auto partition(ForwardIterator first, ForwardIterator last, Predicate pred)
         -> ForwardIterator
     {
         return partition_impl<Predicate&>(
