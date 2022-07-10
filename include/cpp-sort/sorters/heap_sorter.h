@@ -35,8 +35,8 @@ namespace cppsort
                     is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}, Projection projection={}) const
+            constexpr auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                                      Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(

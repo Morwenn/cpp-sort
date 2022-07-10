@@ -29,10 +29,10 @@ namespace cppsort
 namespace detail
 {
     template<typename Compare, typename RandomAccessIterator, typename Projection>
-    auto sift_down(RandomAccessIterator first, RandomAccessIterator,
-                   Compare compare, Projection projection,
-                   difference_type_t<RandomAccessIterator> len,
-                   RandomAccessIterator start)
+    constexpr auto sift_down(RandomAccessIterator first, RandomAccessIterator,
+                             Compare compare, Projection projection,
+                             difference_type_t<RandomAccessIterator> len,
+                             RandomAccessIterator start)
         -> void
     {
         using utility::iter_move;
@@ -88,8 +88,8 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto floyd_sift_down(RandomAccessIterator first, Compare compare, Projection projection,
-                         difference_type_t<RandomAccessIterator> len)
+    constexpr auto floyd_sift_down(RandomAccessIterator first, Compare compare, Projection projection,
+                                   difference_type_t<RandomAccessIterator> len)
         -> RandomAccessIterator
     {
         CPPSORT_ASSERT(len >= 2);
@@ -125,9 +125,9 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto push_heap(RandomAccessIterator first, RandomAccessIterator last,
-                   Compare compare, Projection projection,
-                   difference_type_t<RandomAccessIterator> len)
+    constexpr auto push_heap(RandomAccessIterator first, RandomAccessIterator last,
+                             Compare compare, Projection projection,
+                             difference_type_t<RandomAccessIterator> len)
     {
         using utility::iter_move;
         auto&& comp = utility::as_function(compare);
@@ -154,9 +154,9 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
-                  Compare compare, Projection projection,
-                  difference_type_t<RandomAccessIterator> len)
+    constexpr auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare, Projection projection,
+                            difference_type_t<RandomAccessIterator> len)
         -> void
     {
         using utility::iter_move;
@@ -176,8 +176,8 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto make_heap(RandomAccessIterator first, RandomAccessIterator last,
-                   Compare compare, Projection projection)
+    constexpr auto make_heap(RandomAccessIterator first, RandomAccessIterator last,
+                             Compare compare, Projection projection)
         -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
@@ -191,8 +191,8 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto sort_heap(RandomAccessIterator first, RandomAccessIterator last,
-                   Compare compare, Projection projection)
+    constexpr auto sort_heap(RandomAccessIterator first, RandomAccessIterator last,
+                             Compare compare, Projection projection)
         -> void
     {
         for (auto n = last - first; n > 1; --last, (void) --n) {
@@ -201,8 +201,8 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto heapsort(RandomAccessIterator first, RandomAccessIterator last,
-                  Compare compare, Projection projection)
+    constexpr auto heapsort(RandomAccessIterator first, RandomAccessIterator last,
+                            Compare compare, Projection projection)
         -> void
     {
         detail::make_heap(first, last, compare, projection);
