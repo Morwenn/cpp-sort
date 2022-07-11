@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -47,17 +47,19 @@ namespace detail
 
             CPPSORT_ASSERT(k < length);
             iter_swap(r, r + k);
+            auto&& pivot_proj = proj(*r);
+
             difference_type_t<RandomAccessIterator> lo = 1, hi = length - 1;
             for (;; ++lo, --hi) {
                 for (;; ++lo) {
                     if (lo > hi) {
                         goto loop_done;
                     }
-                    if (not comp(proj(r[lo]), proj(*r))) break;
+                    if (not comp(proj(r[lo]), pivot_proj)) break;
                 }
                 // found the left bound:  r[lo] >= r[0]
                 CPPSORT_ASSERT(lo <= hi);
-                for (; comp(proj(*r), proj(r[hi])) ; --hi) {}
+                for (; comp(pivot_proj, proj(r[hi])) ; --hi) {}
                 if (lo >= hi) break;
                 // found the right bound: r[hi] <= r[0], swap & make progress
                 iter_swap(r + lo, r + hi);
