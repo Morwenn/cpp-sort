@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_NTH_ELEMENT_H_
@@ -22,11 +22,11 @@ namespace detail
     // nth_element for forward iterators with introselect
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto nth_element(std::forward_iterator_tag,
-                     ForwardIterator first, ForwardIterator last,
-                     difference_type_t<ForwardIterator> nth_pos,
-                     difference_type_t<ForwardIterator> size,
-                     Compare compare, Projection projection)
+    constexpr auto nth_element(std::forward_iterator_tag,
+                               ForwardIterator first, ForwardIterator last,
+                               difference_type_t<ForwardIterator> nth_pos,
+                               difference_type_t<ForwardIterator> size,
+                               Compare compare, Projection projection)
         -> ForwardIterator
     {
         return introselect(first, last, nth_pos, size,
@@ -38,11 +38,11 @@ namespace detail
     // Alexandrescu's adaptive quickselect
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto nth_element(std::random_access_iterator_tag,
-                     RandomAccessIterator first, RandomAccessIterator last,
-                     difference_type_t<RandomAccessIterator> nth_pos,
-                     difference_type_t<RandomAccessIterator>, // unused
-                     Compare compare, Projection projection)
+    constexpr auto nth_element(std::random_access_iterator_tag,
+                               RandomAccessIterator first, RandomAccessIterator last,
+                               difference_type_t<RandomAccessIterator> nth_pos,
+                               difference_type_t<RandomAccessIterator>, // unused
+                               Compare compare, Projection projection)
         -> RandomAccessIterator
     {
         return median_of_ninthers_select(first, first + nth_pos, last,
@@ -57,10 +57,10 @@ namespace detail
     // nth iterator
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto nth_element(ForwardIterator first, ForwardIterator last,
-                     difference_type_t<ForwardIterator> nth_pos,
-                     difference_type_t<ForwardIterator> size,
-                     Compare compare, Projection projection)
+    constexpr auto nth_element(ForwardIterator first, ForwardIterator last,
+                               difference_type_t<ForwardIterator> nth_pos,
+                               difference_type_t<ForwardIterator> size,
+                               Compare compare, Projection projection)
         -> ForwardIterator
     {
         using category = iterator_category_t<ForwardIterator>;

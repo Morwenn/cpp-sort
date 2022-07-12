@@ -29,7 +29,8 @@ namespace detail
     // library's algorithms to work
 
     template<typename ForwardIterator1, typename ForwardIterator2>
-    auto swap_ranges_overlap(ForwardIterator1 first1, ForwardIterator1 last1, ForwardIterator2 first2)
+    constexpr auto swap_ranges_overlap(ForwardIterator1 first1, ForwardIterator1 last1,
+                                       ForwardIterator2 first2)
         -> ForwardIterator2
     {
         while (first1 != last1) {
@@ -50,9 +51,9 @@ namespace detail
     // additional diagnostics when the precondition is violated
 
     template<typename ForwardIterator>
-    auto swap_ranges_inner_impl(std::forward_iterator_tag,
-                                ForwardIterator first1, ForwardIterator last1,
-                                ForwardIterator first2)
+    constexpr auto swap_ranges_inner_impl(std::forward_iterator_tag,
+                                          ForwardIterator first1, ForwardIterator last1,
+                                          ForwardIterator first2)
         -> ForwardIterator
     {
 #ifdef CPPSORT_ENABLE_AUDITS
@@ -74,9 +75,9 @@ namespace detail
 
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
     template<typename RandomAccessIterator>
-    auto swap_ranges_inner_impl(std::random_access_iterator_tag,
-                                RandomAccessIterator first1, RandomAccessIterator last1,
-                                RandomAccessIterator first2)
+    constexpr auto swap_ranges_inner_impl(std::random_access_iterator_tag,
+                                          RandomAccessIterator first1, RandomAccessIterator last1,
+                                          RandomAccessIterator first2)
         -> detail::enable_if_t<
             not detail::has_iter_move_v<RandomAccessIterator>,
             RandomAccessIterator
@@ -94,9 +95,9 @@ namespace detail
 #endif
 
     template<typename RandomAccessIterator>
-    auto swap_ranges_inner_impl(std::random_access_iterator_tag,
-                                RandomAccessIterator first1, RandomAccessIterator last1,
-                                RandomAccessIterator first2)
+    constexpr auto swap_ranges_inner_impl(std::random_access_iterator_tag,
+                                          RandomAccessIterator first1, RandomAccessIterator last1,
+                                          RandomAccessIterator first2)
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
         -> detail::enable_if_t<
             detail::has_iter_move_v<RandomAccessIterator>,
@@ -117,7 +118,8 @@ namespace detail
     }
 
     template<typename ForwardIterator>
-    auto swap_ranges_inner(ForwardIterator first1, ForwardIterator last1, ForwardIterator first2)
+    constexpr auto swap_ranges_inner(ForwardIterator first1, ForwardIterator last1,
+                                     ForwardIterator first2)
         -> ForwardIterator
     {
         using category = iterator_category_t<ForwardIterator>;

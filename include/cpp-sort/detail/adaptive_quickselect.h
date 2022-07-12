@@ -33,9 +33,9 @@ namespace detail
     namespace median_common_detail
     {
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto pivot_partition(RandomAccessIterator r, difference_type_t<RandomAccessIterator> k,
-                             difference_type_t<RandomAccessIterator> length,
-                             Compare compare, Projection projection)
+        constexpr auto pivot_partition(RandomAccessIterator r, difference_type_t<RandomAccessIterator> k,
+                                       difference_type_t<RandomAccessIterator> length,
+                                       Compare compare, Projection projection)
             -> RandomAccessIterator
         {
             using utility::iter_swap;
@@ -53,9 +53,9 @@ namespace detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto median_index(RandomAccessIterator r, difference_type_t<RandomAccessIterator> a,
-                          difference_type_t<RandomAccessIterator> b, difference_type_t<RandomAccessIterator> c,
-                          Compare compare, Projection projection)
+        constexpr auto median_index(RandomAccessIterator r, difference_type_t<RandomAccessIterator> a,
+                                    difference_type_t<RandomAccessIterator> b, difference_type_t<RandomAccessIterator> c,
+                                    Compare compare, Projection projection)
             -> difference_type_t<RandomAccessIterator>
         {
             auto&& comp = utility::as_function(compare);
@@ -74,10 +74,10 @@ namespace detail
         }
 
         template<bool LeanRight, typename RandomAccessIterator, typename Compare, typename Projection>
-        auto median_index(RandomAccessIterator r,
-                          difference_type_t<RandomAccessIterator> a, difference_type_t<RandomAccessIterator> b,
-                          difference_type_t<RandomAccessIterator> c, difference_type_t<RandomAccessIterator> d,
-                          Compare compare, Projection projection)
+        constexpr auto median_index(RandomAccessIterator r,
+                                    difference_type_t<RandomAccessIterator> a, difference_type_t<RandomAccessIterator> b,
+                                    difference_type_t<RandomAccessIterator> c, difference_type_t<RandomAccessIterator> d,
+                                    Compare compare, Projection projection)
             -> difference_type_t<RandomAccessIterator>
         {
             auto&& comp = utility::as_function(compare);
@@ -109,11 +109,11 @@ namespace detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto ninther(RandomAccessIterator r, difference_type_t<RandomAccessIterator> _1, difference_type_t<RandomAccessIterator> _2,
-                     difference_type_t<RandomAccessIterator> _3, difference_type_t<RandomAccessIterator> _4,
-                     difference_type_t<RandomAccessIterator> _5, difference_type_t<RandomAccessIterator> _6,
-                     difference_type_t<RandomAccessIterator> _7, difference_type_t<RandomAccessIterator> _8,
-                     difference_type_t<RandomAccessIterator> _9, Compare compare, Projection projection)
+        constexpr auto ninther(RandomAccessIterator r, difference_type_t<RandomAccessIterator> _1, difference_type_t<RandomAccessIterator> _2,
+                               difference_type_t<RandomAccessIterator> _3, difference_type_t<RandomAccessIterator> _4,
+                               difference_type_t<RandomAccessIterator> _5, difference_type_t<RandomAccessIterator> _6,
+                               difference_type_t<RandomAccessIterator> _7, difference_type_t<RandomAccessIterator> _8,
+                               difference_type_t<RandomAccessIterator> _9, Compare compare, Projection projection)
             -> void
         {
             using utility::iter_swap;
@@ -160,9 +160,9 @@ namespace detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto expand_partition_left(RandomAccessIterator r, difference_type_t<RandomAccessIterator> lo,
-                                   difference_type_t<RandomAccessIterator> pivot,
-                                   Compare compare, Projection projection)
+        constexpr auto expand_partition_left(RandomAccessIterator r, difference_type_t<RandomAccessIterator> lo,
+                                             difference_type_t<RandomAccessIterator> pivot,
+                                             Compare compare, Projection projection)
             -> difference_type_t<RandomAccessIterator>
         {
             using utility::iter_swap;
@@ -205,9 +205,9 @@ namespace detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto expand_partition_right(RandomAccessIterator r, difference_type_t<RandomAccessIterator> hi,
-                                    difference_type_t<RandomAccessIterator> rite,
-                                    Compare compare, Projection projection)
+        constexpr auto expand_partition_right(RandomAccessIterator r, difference_type_t<RandomAccessIterator> hi,
+                                              difference_type_t<RandomAccessIterator> rite,
+                                              Compare compare, Projection projection)
             -> difference_type_t<RandomAccessIterator>
         {
             using utility::iter_swap;
@@ -247,9 +247,9 @@ namespace detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto expand_partition(RandomAccessIterator r, difference_type_t<RandomAccessIterator> lo,
-                              difference_type_t<RandomAccessIterator> pivot, difference_type_t<RandomAccessIterator> hi,
-                              difference_type_t<RandomAccessIterator> length, Compare compare, Projection projection)
+        constexpr auto expand_partition(RandomAccessIterator r, difference_type_t<RandomAccessIterator> lo,
+                                        difference_type_t<RandomAccessIterator> pivot, difference_type_t<RandomAccessIterator> hi,
+                                        difference_type_t<RandomAccessIterator> length, Compare compare, Projection projection)
             -> difference_type_t<RandomAccessIterator>
         {
             using utility::iter_swap;
@@ -281,18 +281,18 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto adaptive_quickselect(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                              difference_type_t<RandomAccessIterator> length,
-                              Compare compare, Projection projection)
+    constexpr auto adaptive_quickselect(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
+                                        difference_type_t<RandomAccessIterator> length,
+                                        Compare compare, Projection projection)
         -> void;
 
     /*
     Median of minima
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto median_of_minima(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                          difference_type_t<RandomAccessIterator> length,
-                          Compare compare, Projection projection)
+    constexpr auto median_of_minima(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
+                                    difference_type_t<RandomAccessIterator> length,
+                                    Compare compare, Projection projection)
         -> difference_type_t<RandomAccessIterator>
     {
         auto&& comp = utility::as_function(compare);
@@ -330,9 +330,9 @@ namespace detail
     Median of maxima
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto median_of_maxima(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                          difference_type_t<RandomAccessIterator> length,
-                          Compare compare, Projection projection)
+    constexpr auto median_of_maxima(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
+                                    difference_type_t<RandomAccessIterator> length,
+                                    Compare compare, Projection projection)
         -> difference_type_t<RandomAccessIterator>
     {
         using utility::iter_swap;
@@ -371,8 +371,8 @@ namespace detail
     pivot that approximates the median. Returns the position of the pivot.
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto median_of_ninthers(RandomAccessIterator r, difference_type_t<RandomAccessIterator> length,
-                            Compare compare, Projection projection)
+    constexpr auto median_of_ninthers(RandomAccessIterator r, difference_type_t<RandomAccessIterator> length,
+                                      Compare compare, Projection projection)
         -> difference_type_t<RandomAccessIterator>
     {
         CPPSORT_ASSERT(length >= 12);
@@ -411,9 +411,9 @@ namespace detail
     sought order statistics) and length.
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto adaptive_quickselect(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                              difference_type_t<RandomAccessIterator> length,
-                              Compare compare, Projection projection)
+    constexpr auto adaptive_quickselect(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
+                                        difference_type_t<RandomAccessIterator> length,
+                                        Compare compare, Projection projection)
         -> void
     {
         using utility::iter_swap;
@@ -473,8 +473,9 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto median_of_ninthers_select(RandomAccessIterator begin, RandomAccessIterator mid, RandomAccessIterator end,
-                                   Compare compare, Projection projection)
+    constexpr auto median_of_ninthers_select(RandomAccessIterator begin, RandomAccessIterator mid,
+                                             RandomAccessIterator end,
+                                             Compare compare, Projection projection)
         -> RandomAccessIterator
     {
         if (mid != end) {

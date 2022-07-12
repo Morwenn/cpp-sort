@@ -36,8 +36,8 @@ namespace cppsort
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            constexpr auto operator()(ForwardIterable&& iterable,
+                                      Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
@@ -61,8 +61,8 @@ namespace cppsort
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}, Projection projection={}) const
+            constexpr auto operator()(ForwardIterator first, ForwardIterator last,
+                                      Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
