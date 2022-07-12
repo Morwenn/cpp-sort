@@ -27,6 +27,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "partition.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -46,28 +47,13 @@ namespace detail
             auto&& proj = utility::as_function(projection);
 
             CPPSORT_ASSERT(k < length);
-            iter_swap(r, r + k);
+            iter_swap(r, r + k); // Move pivot out of the way
             auto&& pivot_proj = proj(*r);
-
-            difference_type_t<RandomAccessIterator> lo = 1, hi = length - 1;
-            for (;; ++lo, --hi) {
-                for (;; ++lo) {
-                    if (lo > hi) {
-                        goto loop_done;
-                    }
-                    if (not comp(proj(r[lo]), pivot_proj)) break;
-                }
-                // found the left bound:  r[lo] >= r[0]
-                CPPSORT_ASSERT(lo <= hi);
-                for (; comp(pivot_proj, proj(r[hi])) ; --hi) {}
-                if (lo >= hi) break;
-                // found the right bound: r[hi] <= r[0], swap & make progress
-                iter_swap(r + lo, r + hi);
-            }
-        loop_done:
-            --lo;
-            iter_swap(r + lo, r);
-            return r + lo;
+            auto pivot_pos = detail::partition(r, r + length, [&](auto&& elem) {
+                return not comp(pivot_proj, proj(elem));
+            });
+            iter_swap(r, --pivot_pos); // Put pivot back in its place
+            return pivot_pos;
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
