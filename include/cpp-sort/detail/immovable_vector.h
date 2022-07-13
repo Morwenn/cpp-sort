@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <memory>
-#include <new>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
@@ -46,10 +45,9 @@ namespace detail
             // Construction
 
             explicit immovable_vector(std::ptrdiff_t n):
+                alloc_(),
                 capacity_(n),
-                memory_(
-                    static_cast<T*>(::operator new(n * sizeof(T)))
-                ),
+                memory_(alloc_.allocate(n)),
                 end_(memory_)
             {}
 
@@ -62,11 +60,7 @@ namespace detail
                 std::destroy(memory_, end_);
 
                 // Free the allocated memory
-#ifdef __cpp_sized_deallocation
-                ::operator delete(memory_, capacity_ * sizeof(T));
-#else
-                ::operator delete(memory_);
-#endif
+                alloc_.deallocate(memory_, capacity_);
             }
 
             ////////////////////////////////////////////////////////////
@@ -151,8 +145,9 @@ namespace detail
 
         private:
 
+            [[no_unique_address]] std::allocator<T> alloc_;
             std::ptrdiff_t capacity_;
-            T* memory_;
+            T* memory_; // owning
             T* end_;
     };
 }}
