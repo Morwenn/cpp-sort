@@ -30,7 +30,7 @@ jobs:
       matrix:
         cxx:
           - g++-11
-          - $(brew --prefix llvm@13)/bin/clang++
+          - $(brew --prefix llvm@14)/bin/clang++
         config:
           # Release build
           - build_type: Release
