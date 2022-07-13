@@ -14,7 +14,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
-#include "memory.h"
 
 namespace cppsort
 {
@@ -141,9 +140,9 @@ namespace detail
 
             explicit fixed_size_list_node_pool(std::ptrdiff_t capacity):
                 // Allocate enough space to store N nodes
-                buffer_(static_cast<node_type*>(::operator new(capacity * sizeof(node_type))),
-                       operator_deleter(capacity * sizeof(node_type))),
-                first_free_(buffer_.get()),
+                alloc_(),
+                buffer_(alloc_.allocate(capacity)),
+                first_free_(buffer_),
                 capacity_(capacity)
             {
                 CPPSORT_ASSERT(capacity > 0);
@@ -152,7 +151,7 @@ namespace detail
                 // the cleanup of list nodes that would have been required if
                 // exceptions could have been thrown
 
-                auto ptr = buffer_.get();
+                auto ptr = buffer_;
                 for (std::ptrdiff_t n = 0 ; n < capacity - 1 ; ++n, ++ptr) {
                     // Each node is initialized with a "next" field pointing to the next
                     // node in memory: this allows to create a list of free nodes laid
@@ -169,10 +168,13 @@ namespace detail
             ~fixed_size_list_node_pool()
             {
                 // Destroy the nodes
-                node_type* ptr = buffer_.get();
+                node_type* ptr = buffer_;
                 for (std::ptrdiff_t n = 0; n < capacity_; ++n, ++ptr) {
                     std::destroy_at(ptr);
                 }
+
+                // Deallocate the memory
+                alloc_.deallocate(buffer_, capacity_);
             }
 
             ////////////////////////////////////////////////////////////
@@ -220,7 +222,7 @@ namespace detail
             auto reset_nodes(std::ptrdiff_t until_n)
                 -> void
             {
-                auto ptr = buffer_.get();
+                auto ptr = buffer_;
                 for (std::ptrdiff_t n = 0 ; n < until_n - 1 ; ++n, ++ptr) {
                     ptr->next = ptr + 1;
                 }
@@ -229,7 +231,7 @@ namespace detail
                 } else {
                     ptr->next = ptr + 1;
                 }
-                first_free_ = buffer_.get();
+                first_free_ = buffer_;
             }
 
         private:
@@ -238,7 +240,8 @@ namespace detail
             // Data members
 
             // Backing storage
-            std::unique_ptr<node_type, operator_deleter> buffer_;
+            [[no_unique_address]] std::allocator<node_type> alloc_;
+            node_type* buffer_; // owning
 
             // First free node of the pool
             list_node_base* first_free_;
