@@ -4,6 +4,7 @@
  */
 #include <algorithm>
 #include <forward_list>
+#include <functional>
 #include <iterator>
 #include <list>
 #include <vector>
@@ -24,6 +25,14 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
         distribution(std::back_inserter(vec), size, -1568);
         cppsort::counting_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
+    }
+
+    SECTION( "reverse sort with int iterable" )
+    {
+        std::vector<int> vec; vec.reserve(size);
+        distribution(std::back_inserter(vec), size, -1568);
+        cppsort::counting_sort(vec, std::greater<>{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "sort with unsigned int iterators" )
