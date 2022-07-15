@@ -68,8 +68,8 @@ namespace detail
         // Sorts [begin, end) using insertion sort with the given comparison function. Assumes
         // *(begin - 1) is an element smaller than or equal to any element in [begin, end).
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto unguarded_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                      Compare compare, Projection projection)
+        constexpr auto unguarded_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
+                                                Compare compare, Projection projection)
             -> void
         {
             if (begin == end) return;
@@ -101,8 +101,8 @@ namespace detail
         // partial_insertion_sort_limit elements were moved, and abort sorting. Otherwise it will
         // successfully sort and return true.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto partial_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
-                                    Compare compare, Projection projection)
+        constexpr auto partial_insertion_sort(RandomAccessIterator begin, RandomAccessIterator end,
+                                              Compare compare, Projection projection)
             -> bool
         {
             if (begin == end) return true;
@@ -136,9 +136,9 @@ namespace detail
         }
 
         template<typename RandomAccessIterator>
-        auto swap_offsets(RandomAccessIterator first, RandomAccessIterator last,
-                          unsigned char* offsets_l, unsigned char* offsets_r,
-                          std::size_t num, bool use_swaps)
+        constexpr auto swap_offsets(RandomAccessIterator first, RandomAccessIterator last,
+                                    unsigned char* offsets_l, unsigned char* offsets_r,
+                                    std::size_t num, bool use_swaps)
             -> void
         {
             using utility::iter_move;
@@ -171,8 +171,8 @@ namespace detail
         // pivot is a median of at least 3 elements and that [begin, end) is at least
         // insertion_sort_threshold long. Uses branchless partitioning.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto partition_right_branchless(RandomAccessIterator begin, RandomAccessIterator end,
-                                        Compare compare, Projection projection)
+        constexpr auto partition_right_branchless(RandomAccessIterator begin, RandomAccessIterator end,
+                                                  Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
             using utility::iter_move;
@@ -314,8 +314,8 @@ namespace detail
         // pivot is a median of at least 3 elements and that [begin, end) is at least
         // insertion_sort_threshold long.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto partition_right(RandomAccessIterator begin, RandomAccessIterator end,
-                             Compare compare, Projection projection)
+        constexpr auto partition_right(RandomAccessIterator begin, RandomAccessIterator end,
+                                       Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
             using utility::iter_move;
@@ -363,8 +363,8 @@ namespace detail
         // Similar function to the one above, except elements equal to the pivot are put to the left of
         // the pivot and it doesn't check or return if the passed sequence already was partitioned.
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto partition_left(RandomAccessIterator begin, RandomAccessIterator end,
-                            Compare compare, Projection projection)
+        constexpr auto partition_left(RandomAccessIterator begin, RandomAccessIterator end,
+                                      Compare compare, Projection projection)
             -> RandomAccessIterator
         {
             using utility::iter_move;
@@ -397,9 +397,9 @@ namespace detail
 
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        auto pdqsort_loop(RandomAccessIterator begin, RandomAccessIterator end,
-                          Compare compare, Projection projection,
-                          int bad_allowed, bool leftmost=true)
+        constexpr auto pdqsort_loop(RandomAccessIterator begin, RandomAccessIterator end,
+                                    Compare compare, Projection projection,
+                                    int bad_allowed, bool leftmost=true)
             -> void
         {
             using utility::iter_swap;
@@ -515,8 +515,8 @@ namespace detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto pdqsort(RandomAccessIterator begin, RandomAccessIterator end,
-                 Compare compare, Projection projection)
+    constexpr auto pdqsort(RandomAccessIterator begin, RandomAccessIterator end,
+                           Compare compare, Projection projection)
         -> void
     {
         auto size = end - begin;
