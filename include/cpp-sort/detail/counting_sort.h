@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_COUNTING_SORT_H_
@@ -10,7 +10,8 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
-#include <vector>
+#include <iterator>
+#include "immovable_vector.h"
 #include "iterator_traits.h"
 #include "minmax_element_and_is_sorted.h"
 
@@ -22,21 +23,25 @@ namespace detail
     auto counting_sort(ForwardIterator first, ForwardIterator last)
         -> void
     {
+        using difference_type = difference_type_t<ForwardIterator>;
+
         auto info = minmax_element_and_is_sorted(first, last);
         if (info.is_sorted) return;
 
-        using difference_type = difference_type_t<ForwardIterator>;
         auto min = *info.min;
         auto max = *info.max;
-        std::vector<difference_type> counts(max - min + 1, 0);
+        difference_type value_range = max - min + 1;
 
-        for (auto it = first ; it != last ; ++it)
-        {
+        immovable_vector<difference_type> counts(value_range);
+        for (difference_type n = 0; n < value_range; ++n) {
+            counts.emplace_back(0);
+        }
+
+        for (auto it = first; it != last; ++it) {
             ++counts[*it - min];
         }
 
-        for (auto count: counts)
-        {
+        for (auto count: counts) {
             first = std::fill_n(first, count, min++);
         }
     }
@@ -45,22 +50,26 @@ namespace detail
     auto reverse_counting_sort(ForwardIterator first, ForwardIterator last)
         -> void
     {
+        using difference_type = difference_type_t<ForwardIterator>;
+
         auto info = minmax_element_and_is_sorted(first, last, std::greater<>{});
         if (info.is_sorted) return;
 
-        using difference_type = difference_type_t<ForwardIterator>;
         auto min = *info.max;
         auto max = *info.min;
-        std::vector<difference_type> counts(max - min + 1, 0);
+        difference_type value_range = max - min + 1;
 
-        for (auto it = first ; it != last ; ++it)
-        {
+        immovable_vector<difference_type> counts(value_range);
+        for (difference_type n = 0; n < value_range; ++n) {
+            counts.emplace_back(0);
+        }
+
+        for (auto it = first; it != last; ++it) {
             ++counts[*it - min];
         }
 
-        for (auto rit = counts.rbegin() ; rit != counts.rend() ; ++rit)
-        {
-            auto count = *rit;
+        for (auto rit = counts.end(); rit != counts.begin(); --rit) {
+            auto count = *std::prev(rit);
             first = std::fill_n(first, count, max--);
         }
     }
