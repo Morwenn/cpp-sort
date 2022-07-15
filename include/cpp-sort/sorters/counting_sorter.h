@@ -28,7 +28,7 @@ namespace cppsort
         {
             template<typename ForwardIterator>
                 requires detail::integral<value_type_t<ForwardIterator>>
-            auto operator()(ForwardIterator first, ForwardIterator last) const
+            constexpr auto operator()(ForwardIterator first, ForwardIterator last) const
                 -> void
             {
                 static_assert(
@@ -44,7 +44,7 @@ namespace cppsort
 
             template<typename ForwardIterator>
                 requires detail::integral<value_type_t<ForwardIterator>>
-            auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
+            constexpr auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
                 -> void
             {
                 static_assert(
@@ -60,7 +60,7 @@ namespace cppsort
 
             template<typename ForwardIterator>
                 requires detail::integral<value_type_t<ForwardIterator>>
-            auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
+            constexpr auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
                 -> void
             {
                 static_assert(

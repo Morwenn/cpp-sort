@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -33,8 +33,8 @@ namespace cppsort
 namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto unchecked_minmax_element(ForwardIterator begin, ForwardIterator end,
-                                  Compare compare, Projection projection)
+    constexpr auto unchecked_minmax_element(ForwardIterator begin, ForwardIterator end,
+                                            Compare compare, Projection projection)
         -> std::pair<ForwardIterator, ForwardIterator>
     {
         // Same as minmax_element, except that it assumes that the collection
@@ -81,8 +81,8 @@ namespace detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto minmax_element(ForwardIterator begin, ForwardIterator end,
-                        Compare compare, Projection projection)
+    constexpr auto minmax_element(ForwardIterator begin, ForwardIterator end,
+                                  Compare compare, Projection projection)
         -> std::pair<ForwardIterator, ForwardIterator>
     {
         std::pair<ForwardIterator, ForwardIterator> result{begin, begin};

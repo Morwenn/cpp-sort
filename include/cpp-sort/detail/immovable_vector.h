@@ -44,7 +44,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Construction
 
-            explicit immovable_vector(std::ptrdiff_t n):
+            constexpr explicit immovable_vector(std::ptrdiff_t n):
                 alloc_(),
                 capacity_(n),
                 memory_(alloc_.allocate(n)),
@@ -54,7 +54,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Destruction
 
-            ~immovable_vector()
+            constexpr ~immovable_vector()
             {
                 // Destroy the constructed elements
                 std::destroy(memory_, end_);
@@ -66,7 +66,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            auto operator[](std::ptrdiff_t pos)
+            constexpr auto operator[](std::ptrdiff_t pos)
                 -> T&
             {
                 CPPSORT_ASSERT(pos <= end_ - memory_);
@@ -90,13 +90,13 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Iterators
 
-            auto begin()
+            constexpr auto begin()
                 -> T*
             {
                 return memory_;
             }
 
-            auto end()
+            constexpr auto end()
                 -> T*
             {
                 return end_;
@@ -116,11 +116,11 @@ namespace detail
             }
 
             template<typename... Args>
-            auto emplace_back(Args&&... args)
+            constexpr auto emplace_back(Args&&... args)
                 -> T*
             {
                 CPPSORT_ASSERT(end_ - memory_ < capacity_);
-                ::new(end_) T(std::forward<Args>(args)...);
+                std::construct_at(end_, std::forward<Args>(args)...);
                 return std::exchange(end_, end_ + 1);
             }
 

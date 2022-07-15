@@ -20,7 +20,7 @@ namespace cppsort
 namespace detail
 {
     template<typename ForwardIterator>
-    auto counting_sort(ForwardIterator first, ForwardIterator last)
+    constexpr auto counting_sort(ForwardIterator first, ForwardIterator last)
         -> void
     {
         using difference_type = difference_type_t<ForwardIterator>;
@@ -47,7 +47,7 @@ namespace detail
     }
 
     template<typename ForwardIterator>
-    auto reverse_counting_sort(ForwardIterator first, ForwardIterator last)
+    constexpr auto reverse_counting_sort(ForwardIterator first, ForwardIterator last)
         -> void
     {
         using difference_type = difference_type_t<ForwardIterator>;

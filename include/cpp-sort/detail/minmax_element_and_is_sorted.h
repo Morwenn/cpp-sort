@@ -22,8 +22,8 @@ namespace detail
         typename Compare = std::less<>,
         typename Projection = std::identity
     >
-    auto minmax_element_and_is_sorted(ForwardIterator first, ForwardIterator last,
-                                      Compare compare={}, Projection projection={})
+    constexpr auto minmax_element_and_is_sorted(ForwardIterator first, ForwardIterator last,
+                                                Compare compare={}, Projection projection={})
         -> decltype(auto)
     {
         auto&& comp = utility::as_function(compare);
