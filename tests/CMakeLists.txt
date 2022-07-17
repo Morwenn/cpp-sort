@@ -15,8 +15,8 @@ option(CPPSORT_STATIC_TESTS "Whether to turn some tests into static assertions" 
 ########################################
 # Find or download Catch2
 
-message(STATUS "Looking for Catch2 3.0.0+")
-find_package(Catch2 3.0.0 QUIET)
+message(STATUS "Looking for Catch2 3.1.0+")
+find_package(Catch2 3.1.0 QUIET)
 if (TARGET Catch2::Catch2)
     get_target_property(Catch2_INCLUDE_DIRECTORY Catch2::Catch2 INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "Catch2 found: ${Catch2_INCLUDE_DIRECTORY}")
@@ -24,7 +24,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.0.0-preview4
+                     GIT_TAG v3.1.0
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
