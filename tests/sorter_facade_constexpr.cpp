@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <utility>
 #include <catch2/catch_test_macros.hpp>
+#include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -63,12 +64,13 @@ namespace
         cppsort::sorter_facade<constexpr_insertion_sorter_impl>
     {};
 
+    template<typename Sorter>
     constexpr auto test_sorter()
         -> bool
     {
         constexpr std::size_t size = 13;
         int collection[size] = { 15, 6, 0, 2, 2, 3, 8, 12, 10, 5, 9, 7, 10 };
-        constexpr_insertion_sorter sorter;
+        Sorter sorter;
         sorter(collection, collection + size);
         return helpers::is_sorted(collection, collection + size);
     }
@@ -76,8 +78,19 @@ namespace
 
 TEST_CASE( "test basic constexpr support", "[sorter_facade][constexpr]" )
 {
-    // Check that sorter_facade can be useful in a constexpr constext
-    // if the sorter implementation is constexpr-friendly itself
-    constexpr bool is_sorted = test_sorter();
-    STATIC_CHECK( is_sorted );
+    SECTION( "simple test" )
+    {
+        // Check that sorter_facade can be useful in a constexpr constext
+        // if the sorter implementation is constexpr-friendly itself
+        constexpr bool is_sorted = test_sorter<constexpr_insertion_sorter>();
+        STATIC_CHECK( is_sorted );
+    }
+
+    SECTION( "hybrid_adapter test" )
+    {
+        constexpr bool is_sorted = test_sorter<
+            cppsort::hybrid_adapter<constexpr_insertion_sorter>
+        >();
+        STATIC_CHECK( is_sorted );
+    }
 }
