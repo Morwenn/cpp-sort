@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_OUT_OF_PLACE_ADAPTER_H_
@@ -42,7 +42,6 @@ namespace cppsort
             immovable_vector<rvalue_type> buffer(size);
             buffer.insert_back(first, last);
 
-#ifdef __cpp_lib_uncaught_exceptions
             // Work around the sorters that return void
             auto exit_function = make_scope_success([&] {
                 // Copy the sorted elements back in the original collection
@@ -51,12 +50,6 @@ namespace cppsort
 
             // Sort the elements in the memory buffer
             return sorter(buffer.begin(), buffer.end(), std::forward<Args>(args)...);
-#else
-            // Sort the elements in the memory buffer
-            sorter(buffer.begin(), buffer.end(), std::forward<Args>(args)...);
-            // Copy the sorted elements back in the original collection
-            std::move(buffer.begin(), buffer.end(), first);
-#endif
         }
     }
 

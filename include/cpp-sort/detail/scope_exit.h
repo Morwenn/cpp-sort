@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SCOPE_EXIT_H_
@@ -71,7 +71,6 @@ namespace detail
         return scope_exit<EF>(std::forward<EF>(function));
     }
 
-#ifdef __cpp_lib_uncaught_exceptions
     template<typename EF>
     struct scope_success
     {
@@ -127,7 +126,6 @@ namespace detail
     {
         return scope_success<EF>(std::forward<EF>(function));
     }
-#endif // __cpp_lib_uncaught_exceptions
 }}
 
 #endif // CPPSORT_DETAIL_SCOPE_EXIT_H_

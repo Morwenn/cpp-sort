@@ -32,10 +32,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     There is no specific check for this feature: the sorter adpater constructors have been written in such a way that implicit deduction guides work out-of-the-box.
 
-* `indirect_adapter` and `out_of_place_adapter` return the result returned by the *adapter sorter*.
-
-    This feature is made available through the check `__cpp_lib_uncaught_exceptions`.
-
 * [`sorter_facade`][sorter-facade] range overloads can now be used in `constexpr` functions.
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.

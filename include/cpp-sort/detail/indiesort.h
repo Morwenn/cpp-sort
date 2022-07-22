@@ -58,22 +58,11 @@ namespace detail
     auto indiesort(Sorter&& sorter, ForwardIterator first, ForwardIterator last,
                    difference_type_t<ForwardIterator> size,
                    Compare compare, Projection projection)
-#ifdef __cpp_lib_uncaught_exceptions
         -> decltype(std::forward<Sorter>(sorter)(
             (it_and_index<ForwardIterator>*)0, (it_and_index<ForwardIterator>*)0,
             std::move(compare),
             &it_and_index<ForwardIterator>::original_location | indirect(projection)
         ))
-#else
-        -> std::enable_if_t<
-                has_comparison_projection_sort_iterator<
-                    Sorter,
-                    it_and_index<ForwardIterator>*,
-                    Compare,
-                    decltype(&it_and_index<ForwardIterator>::original_location | indirect(projection))
-                >::value
-            >
-#endif
     {
         using utility::iter_move;
 
@@ -87,16 +76,8 @@ namespace detail
             ++index;
         }
 
-#ifndef __cpp_lib_uncaught_exceptions
-        // Sort the iterators on pointed values
-        std::forward<Sorter>(sorter)(
-            storage.begin(), storage.end(), std::move(compare),
-            &item_index_tuple::original_location | indirect(projection)
-        );
-#else
         // Work around the sorters that return void
         auto exit_function = make_scope_success([&] {
-#endif
 
             // Sort the actual elements via the tuple array:
             index = 0;
@@ -118,7 +99,6 @@ namespace detail
                 }
             }
 
-#ifdef __cpp_lib_uncaught_exceptions
         });
 
         if (size < 2) {
@@ -130,7 +110,6 @@ namespace detail
             storage.begin(), storage.end(), std::move(compare),
             &item_index_tuple::original_location | indirect(projection)
         );
-#endif
     }
 }}
 
