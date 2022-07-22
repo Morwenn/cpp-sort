@@ -22,13 +22,13 @@ namespace cppsort
         {
             public:
 
-                comparison_counter(Compare compare, CountType& count):
+                constexpr comparison_counter(Compare compare, CountType& count):
                     compare(std::move(compare)),
                     count(count)
                 {}
 
                 template<typename T, typename U>
-                auto operator()(T&& lhs, U&& rhs)
+                constexpr auto operator()(T&& lhs, U&& rhs)
                     -> decltype(auto)
                 {
                     ++count;

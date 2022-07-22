@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_COUNTING_ADAPTER_H_
@@ -45,7 +45,7 @@ namespace cppsort
                     not is_projection_v<Compare, Iterable>
                 >
             >
-            auto operator()(Iterable&& iterable, Compare compare={}) const
+            constexpr auto operator()(Iterable&& iterable, Compare compare={}) const
                 -> CountType
             {
                 CountType count(0);
@@ -61,7 +61,7 @@ namespace cppsort
                     not is_projection_iterator_v<Compare, Iterator>
                 >
             >
-            auto operator()(Iterator first, Iterator last, Compare compare={}) const
+            constexpr auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> CountType
             {
                 CountType count(0);
@@ -78,7 +78,7 @@ namespace cppsort
                     is_projection_v<Projection, Iterable, Compare>
                 >
             >
-            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
+            constexpr auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
                 -> CountType
             {
                 CountType count(0);
@@ -95,8 +95,8 @@ namespace cppsort
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
-                            Compare compare, Projection projection) const
+            constexpr auto operator()(Iterator first, Iterator last,
+                                      Compare compare, Projection projection) const
                 -> CountType
             {
                 CountType count(0);
