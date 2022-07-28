@@ -33,8 +33,8 @@ namespace probe
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}, Projection projection={}) const
+            constexpr auto operator()(ForwardIterator first, ForwardIterator last,
+                                      Compare compare={}, Projection projection={}) const
                 -> cppsort::detail::difference_type_t<ForwardIterator>
             {
                 using difference_type = cppsort::detail::difference_type_t<ForwardIterator>;

@@ -15,6 +15,7 @@ constexpr auto test_constexpr_mop()
 }
 
 TEMPLATE_TEST_CASE( "test every probe in a constexpr context", "[probe][constexpr]",
+                    decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::runs) )
 {
     constexpr int presortedness = test_constexpr_mop<TestType>();
