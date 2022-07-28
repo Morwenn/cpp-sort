@@ -181,6 +181,7 @@ add_executable(main-tests
     probes/sus.cpp
     probes/relations.cpp
     probes/every_probe_common.cpp
+    probes/every_probe_constexpr.cpp
     probes/every_probe_move_compare_projection.cpp
 
     # Sorters tests
