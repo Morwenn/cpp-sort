@@ -30,22 +30,6 @@ namespace cppsort
     namespace detail
     {
         ////////////////////////////////////////////////////////////
-        // Trait to detect hybrid_adapter
-
-        template<typename T>
-        struct is_hybrid_adapter_impl:
-            std::false_type
-        {};
-
-        template<typename... Sorters>
-        struct is_hybrid_adapter_impl<hybrid_adapter<Sorters...>>:
-            std::true_type
-        {};
-
-        template<typename T>
-        using is_hybrid_adapter = is_hybrid_adapter_impl<remove_cvref_t<T>>;
-
-        ////////////////////////////////////////////////////////////
         // Overload resolution tool
 
         template<std::size_t Value>
@@ -395,7 +379,7 @@ namespace cppsort
             template<typename Sorter>
             static constexpr auto get_flat_tuple(Sorter&& value)
                 -> detail::enable_if_t<
-                    not detail::is_hybrid_adapter<Sorter>::value,
+                    not detail::is_specialization_of_v<detail::remove_cvref_t<Sorter>, cppsort::hybrid_adapter>,
                     std::tuple<std::remove_reference_t<Sorter>&&>
                 >
             {
@@ -405,7 +389,7 @@ namespace cppsort
             template<typename Sorter>
             static constexpr auto get_flat_tuple(Sorter&& value)
                 -> detail::enable_if_t<
-                    detail::is_hybrid_adapter<Sorter>::value,
+                    detail::is_specialization_of_v<detail::remove_cvref_t<Sorter>, cppsort::hybrid_adapter>,
                     decltype(get_sorters_from_impl(std::move(value)))
                 >
             {
