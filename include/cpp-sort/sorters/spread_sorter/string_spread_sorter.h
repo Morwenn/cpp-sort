@@ -39,15 +39,15 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> detail::enable_if_t<
-                    std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
-                    || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
+                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "string_spread_sorter requires at least random-access iterators"
                 );
 
@@ -63,16 +63,16 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> detail::enable_if_t<(
-                        std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
-                        || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
+                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "string_spread_sorter requires at least random-access iterators"
                 );
 
@@ -91,15 +91,15 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
                 -> detail::enable_if_t<
-                    std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
-                    || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
+                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "string_spread_sorter requires at least random-access iterators"
                 );
 
@@ -116,16 +116,16 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
                 -> detail::enable_if_t<(
-                        std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
-                        || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
+                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "string_spread_sorter requires at least random-access iterators"
                 );
 

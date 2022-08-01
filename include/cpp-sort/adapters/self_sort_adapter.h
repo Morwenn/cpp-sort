@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_
@@ -64,7 +64,7 @@ namespace cppsort
         detail::check_iterator_category<Sorter>,
         detail::sorter_facade_fptr<
             self_sort_adapter<Sorter>,
-            std::is_empty<Sorter>::value
+            std::is_empty_v<Sorter>
         >
     {
         ////////////////////////////////////////////////////////////

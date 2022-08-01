@@ -59,7 +59,7 @@ namespace cppsort
         detail::check_is_always_stable<Sorter>,
         detail::sorter_facade_fptr<
             out_of_place_adapter<Sorter>,
-            std::is_empty<Sorter>::value
+            std::is_empty_v<Sorter>
         >
     {
         ////////////////////////////////////////////////////////////

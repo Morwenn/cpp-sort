@@ -36,7 +36,7 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> detail::enable_if_t<
-                    std::is_integral<projected_t<RandomAccessIterator, Projection>>::value && (
+                    std::is_integral_v<projected_t<RandomAccessIterator, Projection>> && (
                         sizeof(projected_t<RandomAccessIterator, Projection>) <= sizeof(std::size_t) ||
                         sizeof(projected_t<RandomAccessIterator, Projection>) <= sizeof(std::uintmax_t)
                     ) &&
@@ -44,10 +44,10 @@ namespace cppsort
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "integer_spread_sorter requires at least random-access iterators"
                 );
 

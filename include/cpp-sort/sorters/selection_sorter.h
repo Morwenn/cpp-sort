@@ -40,10 +40,10 @@ namespace cppsort
                 -> void
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<ForwardIterator>
-                    >::value,
+                    >,
                     "selection_sorter requires at least forward iterators"
                 );
 

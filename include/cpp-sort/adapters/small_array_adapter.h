@@ -61,7 +61,7 @@ namespace cppsort
         fixed_sorter_traits<FixedSizeSorter>,
         detail::sorter_facade_fptr<
             small_array_adapter<FixedSizeSorter, std::index_sequence<Indices...>>,
-            (std::is_empty<FixedSizeSorter<Indices>>::value && ...)
+            (std::is_empty_v<FixedSizeSorter<Indices>> && ...)
         >
     {
         template<

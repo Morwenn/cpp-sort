@@ -214,7 +214,7 @@ namespace cppsort
         detail::check_iterator_category<Sorter>,
         detail::sorter_facade_fptr<
             stable_adapter<Sorter>,
-            std::is_empty<Sorter>::value
+            std::is_empty_v<Sorter>
         >
     {
         stable_adapter() = default;

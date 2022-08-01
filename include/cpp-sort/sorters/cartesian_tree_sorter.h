@@ -41,10 +41,10 @@ namespace cppsort
                 -> void
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<decltype(std::begin(iterable))>
-                    >::value,
+                    >,
                     "cartesian_tree_sorter requires at least forward iterators"
                 );
 
@@ -66,10 +66,10 @@ namespace cppsort
                 -> void
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<ForwardIterator>
-                    >::value,
+                    >,
                     "cartesian_tree_sorter requires at least forward iterators"
                 );
 

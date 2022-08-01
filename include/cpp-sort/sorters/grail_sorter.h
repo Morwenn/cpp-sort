@@ -41,10 +41,10 @@ namespace cppsort
                 -> void
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "grail_sorter requires at least random-access iterators"
                 );
 

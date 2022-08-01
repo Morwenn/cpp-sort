@@ -223,7 +223,7 @@ namespace cppsort
             detail::check_is_always_stable<Sorters...>,
             detail::sorter_facade_fptr<
                 hybrid_adapter_impl<Sorters...>,
-                (std::is_empty<Sorters>::value && ...)
+                (std::is_empty_v<Sorters> && ...)
             >
         {
             private:

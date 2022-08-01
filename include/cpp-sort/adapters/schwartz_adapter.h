@@ -65,9 +65,9 @@ namespace cppsort
                                 Compare compare, Projection projection, Sorter&& sorter)
             -> decltype(auto)
         {
-            static_assert(not std::is_same<Sorter, std_sorter>::value,
+            static_assert(not std::is_same_v<Sorter, std_sorter>,
                           "std_sorter doesn't work with schwartz_adapter");
-            static_assert(not std::is_same<Sorter, stable_adapter<std_sorter>>::value,
+            static_assert(not std::is_same_v<Sorter, stable_adapter<std_sorter>>,
                           "stable_adapter<std_sorter> doesn't work with schwartz_adapter");
 
             auto&& proj = utility::as_function(projection);
