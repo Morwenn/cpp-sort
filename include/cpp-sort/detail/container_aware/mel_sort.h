@@ -196,7 +196,7 @@ namespace cppsort
         detail::container_aware_adapter_base<mel_sorter>,
         detail::sorter_facade_fptr<
             container_aware_adapter<mel_sorter>,
-            std::is_empty<mel_sorter>::value
+            std::is_empty_v<mel_sorter>
         >
     {
         using detail::container_aware_adapter_base<mel_sorter>::operator();

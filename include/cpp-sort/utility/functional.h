@@ -64,8 +64,8 @@ namespace utility
         typename T,
         typename U,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of<projection_base, std::remove_cvref_t<T>>::value ||
-            std::is_base_of<projection_base, std::remove_cvref_t<U>>::value
+            std::is_base_of_v<projection_base, std::remove_cvref_t<T>> ||
+            std::is_base_of_v<projection_base, std::remove_cvref_t<U>>
         >
     >
     constexpr auto operator|(T&& lhs, U&& rhs)
@@ -102,7 +102,7 @@ namespace utility
                 template<
                     typename Func,
                     typename = cppsort::detail::enable_if_t<
-                        not std::is_same<std::remove_cvref_t<Func>, as_projection_fn>::value
+                        not std::is_same_v<std::remove_cvref_t<Func>, as_projection_fn>
                     >
                 >
                 constexpr explicit as_projection_fn(Func&& func):
@@ -143,14 +143,10 @@ namespace utility
         };
 
         template<typename T>
-        struct is_as_projection_fn:
-            std::false_type
-        {};
+        constexpr bool is_as_projection_fn = false;
 
         template<typename T>
-        struct is_as_projection_fn<as_projection_fn<T>>:
-            std::true_type
-        {};
+        constexpr bool is_as_projection_fn<as_projection_fn<T>> = true;
 
         template<typename Function>
         struct as_comparison_fn:
@@ -169,7 +165,7 @@ namespace utility
                 template<
                     typename Func,
                     typename = cppsort::detail::enable_if_t<
-                        not std::is_same<std::remove_cvref_t<Func>, as_comparison_fn>::value
+                        not std::is_same_v<std::remove_cvref_t<Func>, as_comparison_fn>
                     >
                 >
                 constexpr explicit as_comparison_fn(Func&& func):
@@ -210,20 +206,16 @@ namespace utility
         };
 
         template<typename T>
-        struct is_as_comparison_fn:
-            std::false_type
-        {};
+        constexpr bool is_as_comparison_fn = false;
 
         template<typename T>
-        struct is_as_comparison_fn<as_comparison_fn<T>>:
-            std::true_type
-        {};
+        constexpr bool is_as_comparison_fn<as_comparison_fn<T>> = true;
     }
 
     template<typename Function>
     constexpr auto as_projection(Function&& func)
         -> cppsort::detail::enable_if_t<
-            not detail::is_as_projection_fn<std::remove_cvref_t<Function>>::value,
+            not detail::is_as_projection_fn<std::remove_cvref_t<Function>>,
             detail::as_projection_fn<std::remove_cvref_t<Function>>
         >
     {
@@ -233,7 +225,7 @@ namespace utility
     template<typename Function>
     constexpr auto as_projection(Function&& func)
         -> cppsort::detail::enable_if_t<
-            detail::is_as_projection_fn<std::remove_cvref_t<Function>>::value,
+            detail::is_as_projection_fn<std::remove_cvref_t<Function>>,
             decltype(std::forward<Function>(func))
         >
     {
@@ -243,7 +235,7 @@ namespace utility
     template<typename Function>
     constexpr auto as_comparison(Function&& func)
         -> cppsort::detail::enable_if_t<
-            not detail::is_as_comparison_fn<std::remove_cvref_t<Function>>::value,
+            not detail::is_as_comparison_fn<std::remove_cvref_t<Function>>,
             detail::as_comparison_fn<std::remove_cvref_t<Function>>
         >
     {
@@ -253,7 +245,7 @@ namespace utility
     template<typename Function>
     constexpr auto as_comparison(Function&& func)
         -> cppsort::detail::enable_if_t<
-            detail::is_as_comparison_fn<std::remove_cvref_t<Function>>::value,
+            detail::is_as_comparison_fn<std::remove_cvref_t<Function>>,
             decltype(std::forward<Function>(func))
         >
     {

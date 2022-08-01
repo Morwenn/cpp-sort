@@ -37,7 +37,7 @@ namespace utility
             constexpr auto operator()(T&& t) const
                 noexcept(noexcept(std::mem_fn(t)))
                 -> cppsort::detail::enable_if_t<
-                    std::is_member_pointer<std::remove_cvref_t<T>>::value,
+                    std::is_member_pointer_v<std::remove_cvref_t<T>>,
                     decltype(std::mem_fn(t))
                 >
             {
@@ -46,9 +46,9 @@ namespace utility
 
             template<typename T>
             constexpr auto operator()(T&& t) const
-                noexcept(std::is_nothrow_constructible<T, T>::value)
+                noexcept(std::is_nothrow_constructible_v<T, T>)
                 -> cppsort::detail::enable_if_t<
-                    not std::is_member_pointer<std::remove_cvref_t<T>>::value,
+                    not std::is_member_pointer_v<std::remove_cvref_t<T>>,
                     T
                 >
             {

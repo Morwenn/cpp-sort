@@ -99,7 +99,7 @@ namespace detail
 
     template<typename T>
     using destruct_n = conditional_t<
-        std::is_trivially_destructible<T>::value,
+        std::is_trivially_destructible_v<T>,
         destruct_n_trivial,
         destruct_n_impl<T>
     >;

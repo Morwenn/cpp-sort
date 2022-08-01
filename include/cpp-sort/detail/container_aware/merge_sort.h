@@ -72,7 +72,7 @@ namespace cppsort
         detail::container_aware_adapter_base<merge_sorter>,
         detail::sorter_facade_fptr<
             container_aware_adapter<merge_sorter>,
-            std::is_empty<merge_sorter>::value
+            std::is_empty_v<merge_sorter>
         >
     {
         using detail::container_aware_adapter_base<merge_sorter>::operator();

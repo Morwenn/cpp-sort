@@ -76,7 +76,7 @@ namespace detail
 
     template<
         typename Compare,
-        bool = std::is_empty<Compare>::value && std::is_default_constructible<Compare>::value
+        bool = std::is_empty_v<Compare> && std::is_default_constructible_v<Compare>
     >
     struct three_way_compare:
         three_way_compare_base<three_way_compare<Compare>>

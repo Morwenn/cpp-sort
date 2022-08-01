@@ -63,14 +63,14 @@ namespace utility
     template<typename Compare, typename T>
     struct is_probably_branchless_comparison:
         cppsort::detail::conditional_t<
-            std::disjunction<
+            std::disjunction_v<
                 std::is_reference<Compare>,
                 std::is_const<Compare>,
                 std::is_volatile<Compare>,
                 std::is_reference<T>,
                 std::is_const<T>,
                 std::is_volatile<T>
-            >::value,
+            >,
             is_probably_branchless_comparison<
                 std::remove_cvref_t<Compare>,
                 std::remove_cvref_t<T>
@@ -117,14 +117,14 @@ struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
     template<typename Projection, typename T>
     struct is_probably_branchless_projection:
         cppsort::detail::conditional_t<
-            std::disjunction<
+            std::disjunction_v<
                 std::is_reference<Projection>,
                 std::is_const<Projection>,
                 std::is_volatile<Projection>,
                 std::is_reference<T>,
                 std::is_const<T>,
                 std::is_volatile<T>
-            >::value,
+            >,
             is_probably_branchless_projection<
                 std::remove_cvref_t<Projection>,
                 std::remove_cvref_t<T>

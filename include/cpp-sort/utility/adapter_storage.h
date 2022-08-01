@@ -28,7 +28,7 @@ namespace utility
 
     template<
         typename Sorter,
-        bool = std::is_empty<Sorter>::value && std::is_default_constructible<Sorter>::value
+        bool = std::is_empty_v<Sorter> && std::is_default_constructible_v<Sorter>
     >
     struct adapter_storage;
 
@@ -48,7 +48,7 @@ namespace utility
         }
 
         constexpr auto get() const
-            noexcept(std::is_nothrow_default_constructible<Sorter>::value)
+            noexcept(std::is_nothrow_default_constructible_v<Sorter>)
             -> Sorter
         {
             return Sorter{};
@@ -63,12 +63,12 @@ namespace utility
         adapter_storage() = default;
 
         explicit constexpr adapter_storage(const Sorter& sorter)
-            noexcept(std::is_nothrow_copy_constructible<Sorter>::value):
+            noexcept(std::is_nothrow_copy_constructible_v<Sorter>):
             sorter(sorter)
         {}
 
         explicit constexpr adapter_storage(Sorter&& sorter)
-            noexcept(std::is_nothrow_move_constructible<Sorter>::value):
+            noexcept(std::is_nothrow_move_constructible_v<Sorter>):
             sorter(std::move(sorter))
         {}
 

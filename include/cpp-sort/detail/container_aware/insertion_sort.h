@@ -102,7 +102,7 @@ namespace cppsort
         detail::container_aware_adapter_base<insertion_sorter>,
         detail::sorter_facade_fptr<
             container_aware_adapter<insertion_sorter>,
-            std::is_empty<insertion_sorter>::value
+            std::is_empty_v<insertion_sorter>
         >
     {
         container_aware_adapter() = default;

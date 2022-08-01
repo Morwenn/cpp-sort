@@ -102,8 +102,8 @@ namespace detail
         -> T*
     {
         using truth_type = std::bool_constant<
-            std::is_trivial<value_type_t<InputIterator>>::value &&
-            std::is_trivial<T>::value
+            std::is_trivial_v<value_type_t<InputIterator>> &&
+            std::is_trivial_v<T>
         >;
         return uninitialized_move_impl(truth_type{}, std::move(first), std::move(last),
                                        std::move(result), destroyer);

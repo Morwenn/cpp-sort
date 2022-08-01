@@ -28,7 +28,7 @@ namespace detail
     struct cartesian_tree_node
     {
         constexpr cartesian_tree_node(T&& value, cartesian_tree_node* parent, cartesian_tree_node* left_child)
-            noexcept(std::is_nothrow_move_constructible<T>::value):
+            noexcept(std::is_nothrow_move_constructible_v<T>):
             value(std::move(value)),
             parent(parent),
             left_child(left_child)

@@ -80,7 +80,7 @@ namespace cppsort
         detail::container_aware_adapter_base<selection_sorter>,
         detail::sorter_facade_fptr<
             container_aware_adapter<selection_sorter>,
-            std::is_empty<selection_sorter>::value
+            std::is_empty_v<selection_sorter>
         >
     {
         using detail::container_aware_adapter_base<selection_sorter>::operator();

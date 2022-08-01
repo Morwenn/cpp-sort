@@ -131,7 +131,7 @@ namespace detail
         -> ForwardIterator
     {
         using value_type = value_type_t<ForwardIterator>;
-        if (std::is_trivially_move_assignable<value_type>::value)
+        if (std::is_trivially_move_assignable_v<value_type>)
         {
             if (std::next(first) == middle)
                 return rotate_left(first, last);
@@ -145,7 +145,7 @@ namespace detail
         -> BidirectionalIterator
     {
         using value_type = value_type_t<BidirectionalIterator>;
-        if (std::is_trivially_move_assignable<value_type>::value)
+        if (std::is_trivially_move_assignable_v<value_type>)
         {
             if (std::next(first) == middle)
                 return rotate_left(first, last);
@@ -161,7 +161,7 @@ namespace detail
         -> RandomAccessIterator
     {
         using value_type = value_type_t<RandomAccessIterator>;
-        if (std::is_trivially_move_assignable<value_type>::value)
+        if (std::is_trivially_move_assignable_v<value_type>)
         {
             if (std::next(first) == middle)
                 return rotate_left(first, last);

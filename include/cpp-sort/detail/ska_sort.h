@@ -317,7 +317,7 @@ namespace detail
     };
 
     template<typename T>
-    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same<void, decltype(to_unsigned_or_bool(std::declval<T>()))>::value>>:
+    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same_v<void, decltype(to_unsigned_or_bool(std::declval<T>()))>>>:
         SubKey<decltype(to_unsigned_or_bool(std::declval<T>()))>
     {};
 
@@ -363,7 +363,7 @@ namespace detail
         }
 
         using next = conditional_t<
-            std::is_same<SubKey<void>, typename Current::next>::value,
+            std::is_same_v<SubKey<void>, typename Current::next>,
             SubKey<void>,
             PairSecondSubKey<F, S, typename Current::next>
         >;
@@ -380,7 +380,7 @@ namespace detail
         }
 
         using next = conditional_t<
-            std::is_same<SubKey<void>, typename Current::next>::value,
+            std::is_same_v<SubKey<void>, typename Current::next>,
             PairSecondSubKey<F, S, SubKey<S>>,
             PairFirstSubKey<F, S, typename Current::next>
         >;
@@ -502,7 +502,7 @@ namespace detail
     };
 
     template<typename T>
-    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same<void, decltype(std::declval<T>()[0])>::value>>:
+    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same_v<void, decltype(std::declval<T>()[0])>>>:
         ListSubKey<T>
     {};
 
@@ -890,7 +890,7 @@ namespace detail
     template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold,
              typename CurrentSubKey, typename SubKeyType>
     struct FallbackInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, SubKeyType,
-                                 detail::enable_if_t<not std::is_same<void, decltype(std::declval<SubKeyType>()[0])>::value>>:
+                                 detail::enable_if_t<not std::is_same_v<void, decltype(std::declval<SubKeyType>()[0])>>>:
         ListInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, SubKeyType>
     {};
 
