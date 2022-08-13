@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_TOTAL_LESS_H_
@@ -25,7 +25,7 @@ namespace cppsort
 
         template<typename T>
         constexpr auto total_less(T lhs, T rhs) noexcept
-            -> detail::enable_if_t<std::is_integral<T>::value, bool>
+            -> detail::enable_if_t<is_integral<T>::value, bool>
         {
             return lhs < rhs;
         }

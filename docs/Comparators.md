@@ -29,6 +29,8 @@ Total order comparators are considered as [generating branchless code][branchles
 
 *Changed in version 1.5.0:* `total_greater` and `total_less` are respectively of type `total_greater_t` and `total_less_t`.
 
+*Changed in version 1.13.1:* support for `[un]signed __int128`.
+
 ### Weak order comparators
 
 ```cpp
@@ -51,6 +53,8 @@ Weak order comparators are considered as [generating branchless code][branchless
 
 *Changed in version 1.5.0:* `weak_greater` and `weak_less` are respectively of type `weak_greater_t` and `weak_less_t`.
 
+*Changed in version 1.13.1:* support for `[un]signed __int128`.
+
 ### Partial order comparators
 
 ```cpp
@@ -65,6 +69,8 @@ When it doesn't handle a type natively and ADL doesn't find any suitable `partia
 Partial order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_arithmetic`][std-is-arithmetic].
 
 *Changed in version 1.5.0:* `partial_greater` and `partial_less` are respectively of type `partial_greater_t` and `partial_less_t`.
+
+*Changed in version 1.13.1:* support for `[un]signed __int128`.
 
 ### Natural order comparator
 
