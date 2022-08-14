@@ -29,7 +29,7 @@ namespace cppsort
     {
         private:
 
-            F func;
+            [[no_unique_address]] F func;
 
         public:
 

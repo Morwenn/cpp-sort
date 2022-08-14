@@ -58,7 +58,7 @@ namespace utility
     template<typename Sorter>
     struct adapter_storage<Sorter, false>
     {
-        Sorter sorter;
+        [[no_unique_address]] Sorter sorter;
 
         adapter_storage() = default;
 

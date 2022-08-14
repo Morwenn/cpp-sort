@@ -26,7 +26,7 @@ namespace detail
     {
         private:
 
-            Projection projection;
+            [[no_unique_address]] Projection projection;
 
         public:
 

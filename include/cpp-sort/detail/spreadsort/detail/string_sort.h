@@ -27,7 +27,6 @@ Phil Endecott and Frank Gennari
 #include <cstring>
 #include <iterator>
 #include <memory>
-#include <tuple>
 #include <type_traits>
 #include <vector>
 #include "common.h"
@@ -92,22 +91,20 @@ namespace spreadsort
     struct offset_less_than
     {
         offset_less_than(std::size_t char_offset, Projection projection):
-            data(char_offset, projection)
+            char_offset(char_offset),
+            projection(std::move(projection))
         {}
 
         template<typename T, typename U>
         auto operator()(const T& x, const U& y) const
             -> bool
         {
-            auto&& proj = utility::as_function(std::get<1>(data));
+            auto&& proj = utility::as_function(projection);
 
             std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
-            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
-            {
+            for (std::size_t u = char_offset; u < minSize; ++u) {
                 static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
-                    static_cast<Unsigned_char_type>(proj(y)[u]))
-                {
+                if (static_cast<Unsigned_char_type>(proj(x)[u]) != static_cast<Unsigned_char_type>(proj(y)[u])) {
                     return static_cast<Unsigned_char_type>(proj(x)[u]) <
                            static_cast<Unsigned_char_type>(proj(y)[u]);
                 }
@@ -115,8 +112,8 @@ namespace spreadsort
             return proj(x).size() < proj(y).size();
         }
 
-      // Pack fchar_offset and projection
-      std::tuple<std::size_t, Projection> data;
+        std::size_t char_offset;
+        [[no_unique_address]] Projection projection;
     };
 
     //Compares strings assuming they are identical up to char_offset
@@ -124,22 +121,20 @@ namespace spreadsort
     struct offset_greater_than
     {
         offset_greater_than(std::size_t char_offset, Projection projection):
-            data(char_offset, projection)
+            char_offset(char_offset),
+            projection(std::move(projection))
         {}
 
         template<typename T, typename U>
         auto operator()(const T& x, const U& y) const
             -> bool
         {
-            auto&& proj = utility::as_function(std::get<1>(data));
+            auto&& proj = utility::as_function(projection);
 
             std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
-            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
-            {
+            for (std::size_t u = char_offset; u < minSize; ++u) {
                 static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
-                    static_cast<Unsigned_char_type>(proj(y)[u]))
-                {
+                if (static_cast<Unsigned_char_type>(proj(x)[u]) != static_cast<Unsigned_char_type>(proj(y)[u])) {
                     return static_cast<Unsigned_char_type>(proj(x)[u]) >
                            static_cast<Unsigned_char_type>(proj(y)[u]);
                 }
@@ -147,8 +142,8 @@ namespace spreadsort
             return proj(x).size() > proj(y).size();
         }
 
-      // Pack fchar_offset and projection
-      std::tuple<std::size_t, Projection> data;
+        std::size_t char_offset;
+        [[no_unique_address]] Projection projection;
     };
 
     //String sorting recursive implementation

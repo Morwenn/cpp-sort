@@ -95,7 +95,7 @@ namespace detail
 
         private:
 
-            Compare compare;
+            [[no_unique_address]] Compare compare;
     };
 
     template<typename Compare>

@@ -37,7 +37,7 @@ namespace cppsort
                 }
 
                 // Accessible member data
-                Compare compare;
+                [[no_unique_address]] Compare compare;
 
             private:
 

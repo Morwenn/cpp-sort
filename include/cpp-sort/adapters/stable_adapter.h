@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
@@ -38,30 +37,30 @@ namespace cppsort
         {
             private:
 
-                using projection_t = std::remove_cvref_t<
-                    decltype(utility::as_function(std::declval<Projection>()))
-                >;
                 using compare_t = std::remove_cvref_t<
                     decltype(utility::as_function(std::declval<Compare>()))
                 >;
-                std::tuple<compare_t, projection_t> data;
+                using projection_t = std::remove_cvref_t<
+                    decltype(utility::as_function(std::declval<Projection>()))
+                >;
+                [[no_unique_address]] compare_t comp;
+                [[no_unique_address]] projection_t proj;
 
             public:
 
                 stable_compare(Compare compare, Projection projection):
-                    data(utility::as_function(compare), utility::as_function(projection))
+                    comp(utility::as_function(compare)),
+                    proj(utility::as_function(projection))
                 {}
 
                 template<typename T, typename U>
                 auto operator()(T&& lhs, U&& rhs)
                     -> bool
                 {
-                    if (std::get<0>(data)(std::get<1>(data)(lhs.get()),
-                                          std::get<1>(data)(rhs.get()))) {
+                    if (comp(proj(lhs.get()), proj(rhs.get()))) {
                         return true;
                     }
-                    if (std::get<0>(data)(std::get<1>(data)(rhs.get()),
-                                          std::get<1>(data)(lhs.get()))) {
+                    if (comp(proj(rhs.get()), proj(lhs.get()))) {
                         return false;
                     }
                     return lhs.data < rhs.data;
