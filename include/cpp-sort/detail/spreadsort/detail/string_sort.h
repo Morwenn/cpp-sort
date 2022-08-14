@@ -31,6 +31,7 @@ Phil Endecott and Frank Gennari
 #include <vector>
 #include "common.h"
 #include "constants.h"
+#include "../../pdqsort.h"
 #include "../../type_traits.h"
 
 namespace cppsort
