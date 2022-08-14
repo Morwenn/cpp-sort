@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -66,7 +66,7 @@ namespace detail
             // Move the falses into the temporary buffer, and the trues to the front of the line
             // Update first to always point to the end of the trues
             auto ptr = buffer.data();
-            ::new (ptr) rvalue_type(iter_move(first));
+            std::construct_at(ptr, iter_move(first));
             ++d;
             ++ptr;
             auto it = first;
@@ -75,7 +75,7 @@ namespace detail
                     *first = iter_move(it);
                     ++first;
                 } else {
-                    ::new (ptr) rvalue_type(iter_move(it));
+                    std::construct_at(ptr, iter_move(it));
                     ++d;
                     ++ptr;
                 }

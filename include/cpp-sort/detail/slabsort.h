@@ -140,7 +140,7 @@ namespace detail
         std::vector<fixed_size_list<node_type>> lists;
         lists.emplace_back(node_pool, destroy_node_contents<BidirectionalIterator, node_type, &node_type::it>);
         lists.back().push_back([&first](node_type* node) {
-            ::new (&node->it) BidirectionalIterator(first);
+            std::construct_at(&node->it, first);
         });
 
         ////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ namespace detail
                     }
                 );
                 insertion_point->push_back([&it](node_type* node) {
-                    ::new (&node->it) BidirectionalIterator(it);
+                    std::construct_at(&node->it, it);
                 });
             } else if (not comp(proj(*last_list.begin().base()->it), value)) {
                 // Element belongs to the heads (smaller elements)
@@ -170,14 +170,14 @@ namespace detail
                     }
                 );
                 insertion_point->push_front([&it](node_type* node) {
-                    ::new (&node->it) BidirectionalIterator(it);
+                    std::construct_at(&node->it, it);
                 });
             } else {
                 // Element does not belong to the existing encroaching lists,
                 // create a new list for it
                 lists.emplace_back(node_pool, destroy_node_contents<BidirectionalIterator, node_type, &node_type::it>);
                 lists.back().push_back([&it](node_type* node) {
-                    ::new (&node->it) BidirectionalIterator(it);
+                    std::construct_at(&node->it, it);
                 });
             }
 
@@ -199,7 +199,7 @@ namespace detail
                 auto node = it.base();
                 auto value_it = node->it;
                 std::destroy_at(&node->it);
-                ::new(&node->value) rvalue_type(iter_move(value_it));
+                std::construct_at(&node->value, iter_move(value_it));
             }
             list.set_node_destructor(destroy_node_contents<rvalue_type, node_type, &node_type::value>);
         }

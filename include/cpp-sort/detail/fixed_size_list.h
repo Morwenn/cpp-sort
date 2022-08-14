@@ -156,10 +156,10 @@ namespace detail
                     // Each node is initialized with a "next" field pointing to the next
                     // node in memory: this allows to create a list of free nodes laid
                     // out contiguously in memory in one pass
-                    ::new (ptr) node_type(ptr + 1);
+                    std::construct_at(ptr, ptr + 1);
                 }
                 // Initialize the last node, guard with nullptr
-                ::new (ptr) node_type(nullptr);
+                std::construct_at(ptr, nullptr);
             }
 
             ////////////////////////////////////////////////////////////
@@ -792,7 +792,7 @@ namespace detail
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
-                ::new (&new_node->value) value_type(value);
+                std::construct_at(&new_node->value, value);
                 link_node_before_(new_node, pos);
                 return new_node;
             }
@@ -801,7 +801,7 @@ namespace detail
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
-                ::new (&new_node->value) value_type(std::move(value));
+                std::construct_at(&new_node->value, std::move(value));
                 link_node_before_(new_node, pos);
                 return new_node;
             }

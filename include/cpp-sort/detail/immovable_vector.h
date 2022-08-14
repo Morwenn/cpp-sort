@@ -132,7 +132,7 @@ namespace detail
                 try {
                     for (; first != last; ++first) {
                         using utility::iter_move;
-                        ::new(writer) T(iter_move(first));
+                        std::construct_at(writer, iter_move(first));
                         ++writer;
                     }
                 } catch (...) {

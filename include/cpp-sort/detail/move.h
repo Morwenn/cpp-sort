@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <iterator>
+#include <memory>
 #include <type_traits>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
@@ -92,7 +93,7 @@ namespace detail
     {
         for (; first != last; ++first, (void) ++result, ++destroyer) {
             using utility::iter_move;
-            ::new(static_cast<void*>(result)) T(iter_move(first));
+            std::construct_at(result, iter_move(first));
         }
         return result;
     }
