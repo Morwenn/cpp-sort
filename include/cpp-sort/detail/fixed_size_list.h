@@ -354,13 +354,6 @@ namespace detail
                 return lhs.base() == rhs.base();
             }
 
-            [[nodiscard]]
-            friend constexpr auto operator!=(const fixed_size_list_iterator& lhs, const fixed_size_list_iterator& rhs)
-                -> bool
-            {
-                return lhs.base() != rhs.base();
-            }
-
         private:
 
             list_node_base* ptr_ = nullptr;
