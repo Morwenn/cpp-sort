@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -33,6 +33,7 @@ Phil Endecott and Frank Gennari
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
+#include "../../pdqsort.h"
 #include "../../type_traits.h"
 
 namespace cppsort
