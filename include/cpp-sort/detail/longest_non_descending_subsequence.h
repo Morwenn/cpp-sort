@@ -52,7 +52,7 @@ namespace detail
         // we can compute it as-we-go when it is not known in order to avoid
         // making two passes over the sequence - when the sequence is made
         // of random-access iterators, we only compute it once
-        if (RecomputeSize && is_random_access) {
+        if constexpr (RecomputeSize && is_random_access) {
             size = std::distance(first, last);
         }
 
@@ -77,7 +77,7 @@ namespace detail
             }
             ++first;
 
-            if (RecomputeSize && not is_random_access) {
+            if constexpr (RecomputeSize && not is_random_access) {
                 // Compute the size as-we-go if iterators are not random-access
                 ++size;
             }

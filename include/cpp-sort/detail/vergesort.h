@@ -247,7 +247,7 @@ namespace verge
                 ++next;
 
                 difference_type run_size = 2;
-                if (Stable) {
+                if constexpr (Stable) {
                     // Find a strictly descending run
                     while (next != last) {
                         if (not comp(proj(*next), proj(*current))) break;
@@ -390,7 +390,7 @@ namespace verge
             if (comp(proj(*next), proj(*current))) {
                 // Found a descending run, scan to the left and to the right
                 // until the limits of the run are reached
-                if (Stable) {
+                if constexpr (Stable) {
                     // Find a strictly descending run to avoid breaking
                     // the stability of the algorithm with reverse()
                     do {

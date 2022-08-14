@@ -86,7 +86,7 @@ namespace detail
                 } else {
                     for (difference_type i = 0 ; i < num_dropped_in_row ; ++i) {
                         --read;
-                        if (not std::is_trivially_copyable_v<rvalue_type>) {
+                        if constexpr (not std::is_trivially_copyable_v<rvalue_type>) {
                             // If the value is trivially copyable, then it shouldn't have
                             // been modified by the call to iter_move, and the original
                             // value is still fully where it should be
@@ -101,7 +101,7 @@ namespace detail
                     num_dropped_in_row = 0;
                 }
             } else {
-                if (std::is_trivially_copyable_v<rvalue_type>) {
+                if constexpr (std::is_trivially_copyable_v<rvalue_type>) {
                     // If the type is trivially copyable, the potential self-move
                     // should not trigger any issue
                     *write = iter_move(read);

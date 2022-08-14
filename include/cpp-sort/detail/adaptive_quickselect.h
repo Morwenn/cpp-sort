@@ -87,7 +87,7 @@ namespace detail
                 std::swap(c, d);
             }
 
-            if (LeanRight) {
+            if constexpr (LeanRight) {
                 if (comp(proj(r[c]), proj(r[a]))) {
                     CPPSORT_ASSERT(comp(proj(r[c]), proj(r[a])) && not comp(proj(r[d]), proj(r[c])));  // so r[c]) is out
                     return median_index(r, a, b, d, std::move(compare), std::move(projection));
