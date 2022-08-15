@@ -102,23 +102,22 @@ namespace spreadsort
             -> bool
         {
             auto&& proj = utility::as_function(std::get<1>(data));
+            auto&& proj_x = proj(x);
+            auto&& proj_y = proj(y);
 
-            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
-            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
-            {
-                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
-                    static_cast<Unsigned_char_type>(proj(y)[u]))
-                {
-                    return static_cast<Unsigned_char_type>(proj(x)[u]) <
-                           static_cast<Unsigned_char_type>(proj(y)[u]);
+            std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
+            for (std::size_t u = std::get<0>(data); u < minSize; ++u) {
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
+                    return static_cast<Unsigned_char_type>(proj_x[u]) <
+                           static_cast<Unsigned_char_type>(proj_y[u]);
                 }
             }
-            return proj(x).size() < proj(y).size();
+            return proj_x.size() < proj_y.size();
         }
 
-      // Pack fchar_offset and projection
-      std::tuple<std::size_t, Projection> data;
+        // Pack char_offset and projection
+        std::tuple<std::size_t, Projection> data;
     };
 
     //Compares strings assuming they are identical up to char_offset
@@ -134,23 +133,22 @@ namespace spreadsort
             -> bool
         {
             auto&& proj = utility::as_function(std::get<1>(data));
+            auto&& proj_x = proj(x);
+            auto&& proj_y = proj(y);
 
-            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
-            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
-            {
-                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
-                    static_cast<Unsigned_char_type>(proj(y)[u]))
-                {
-                    return static_cast<Unsigned_char_type>(proj(x)[u]) >
-                           static_cast<Unsigned_char_type>(proj(y)[u]);
+            std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
+            for (std::size_t u = std::get<0>(data); u < minSize; ++u) {
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
+                    return static_cast<Unsigned_char_type>(proj_x[u]) >
+                           static_cast<Unsigned_char_type>(proj_y[u]);
                 }
             }
-            return proj(x).size() > proj(y).size();
+            return proj_x.size() > proj_y.size();
         }
 
-      // Pack fchar_offset and projection
-      std::tuple<std::size_t, Projection> data;
+        // Pack char_offset and projection
+        std::tuple<std::size_t, Projection> data;
     };
 
     //String sorting recursive implementation
