@@ -101,16 +101,18 @@ namespace spreadsort
             -> bool
         {
             auto&& proj = utility::as_function(projection);
+            auto&& proj_x = proj(x);
+            auto&& proj_y = proj(y);
 
-            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
+            std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
             for (std::size_t u = char_offset; u < minSize; ++u) {
-                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) != static_cast<Unsigned_char_type>(proj(y)[u])) {
-                    return static_cast<Unsigned_char_type>(proj(x)[u]) <
-                           static_cast<Unsigned_char_type>(proj(y)[u]);
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
+                    return static_cast<Unsigned_char_type>(proj_x[u]) <
+                           static_cast<Unsigned_char_type>(proj_y[u]);
                 }
             }
-            return proj(x).size() < proj(y).size();
+            return proj_x.size() < proj_y.size();
         }
 
         std::size_t char_offset;
@@ -131,16 +133,18 @@ namespace spreadsort
             -> bool
         {
             auto&& proj = utility::as_function(projection);
+            auto&& proj_x = proj(x);
+            auto&& proj_y = proj(y);
 
-            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
+            std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
             for (std::size_t u = char_offset; u < minSize; ++u) {
-                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) != static_cast<Unsigned_char_type>(proj(y)[u])) {
-                    return static_cast<Unsigned_char_type>(proj(x)[u]) >
-                           static_cast<Unsigned_char_type>(proj(y)[u]);
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
+                    return static_cast<Unsigned_char_type>(proj_x[u]) >
+                           static_cast<Unsigned_char_type>(proj_y[u]);
                 }
             }
-            return proj(x).size() > proj(y).size();
+            return proj_x.size() > proj_y.size();
         }
 
         std::size_t char_offset;
