@@ -43,8 +43,6 @@ namespace detail
 namespace spreadsort
 {
   namespace detail {
-    static constexpr int max_step_size = 64;
-
     //Offsetting on identical characters.  This function works a chunk of
     //characters at a time for cache efficiency and optimal worst-case
     //performance.
@@ -55,7 +53,9 @@ namespace spreadsort
     {
       auto&& proj = utility::as_function(projection);
 
-      const int char_size = sizeof(Unsigned_char_type);
+      constexpr int max_step_size = 64;
+      constexpr int char_size = sizeof(Unsigned_char_type);
+
       std::size_t nextOffset = char_offset;
       int step_size = max_step_size / char_size;
       while (true) {
@@ -177,10 +177,10 @@ namespace spreadsort
       //a few characters at a time for optimal worst-case performance.
       update_offset<Unsigned_char_type>(first, finish, char_offset, projection);
 
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
+      constexpr unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
       //Equal worst-case of radix and comparison is when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
+      constexpr unsigned max_size = bin_count;
+      constexpr unsigned membin_count = bin_count + 1;
       unsigned cache_end;
       RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
                                           cache_end, membin_count) + 1;
@@ -288,11 +288,11 @@ namespace spreadsort
       update_offset<Unsigned_char_type>(curr, last, char_offset, projection);
       RandomAccessIter * target_bin;
 
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
+      constexpr unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
       //Equal worst-case of radix and comparison when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
-      const unsigned max_bin = bin_count - 1;
+      constexpr unsigned max_size = bin_count;
+      constexpr unsigned membin_count = bin_count + 1;
+      constexpr unsigned max_bin = bin_count - 1;
       unsigned cache_end;
       RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
                                           cache_end, membin_count);
