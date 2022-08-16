@@ -85,8 +85,7 @@ namespace detail
     {
         CPPSORT_ASSERT(first1 <= last1);
 
-        auto last2 = first2 + (last1 - first1);
-        (void)last2;
+        [[maybe_unused]] auto last2 = first2 + (last1 - first1);
         CPPSORT_ASSERT(not (first2 >= first1 && first2 < last1));
         CPPSORT_ASSERT(not (last2 > first1 && last2 <= last1));
 
@@ -109,8 +108,7 @@ namespace detail
     {
         CPPSORT_ASSERT(first1 <= last1);
 
-        auto last2 = first2 + (last1 - first1);
-        (void)last2;
+        [[maybe_unused]] auto last2 = first2 + (last1 - first1);
         CPPSORT_ASSERT(not (first2 >= first1 && first2 < last1));
         CPPSORT_ASSERT(not (last2 > first1 && last2 <= last1));
 

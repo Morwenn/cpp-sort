@@ -144,13 +144,12 @@ namespace detail
     }
 
     template<typename T>
-    auto return_temporary_buffer(T* ptr, std::size_t count) noexcept
+    auto return_temporary_buffer(T* ptr, [[maybe_unused]] std::size_t count) noexcept
         -> void
     {
 #ifdef __cpp_sized_deallocation
         ::operator delete(ptr, count * sizeof(T));
 #else
-        (void)count;
         ::operator delete(ptr);
 #endif
     }

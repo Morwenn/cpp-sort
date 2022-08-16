@@ -410,7 +410,6 @@ namespace detail
             constexpr bool is_branchless =
                 utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
                 utility::is_probably_branchless_projection_v<Projection, value_type>;
-            (void)is_branchless; // Silence a -Wunused-but-set-variable false positive
 
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
