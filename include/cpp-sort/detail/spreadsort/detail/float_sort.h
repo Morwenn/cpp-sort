@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -22,6 +22,7 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
@@ -35,7 +36,6 @@ Phil Endecott and Frank Gennari
 #include "constants.h"
 #include "integer_sort.h"
 #include "../../iterator_traits.h"
-#include "../../memcpy_cast.h"
 #include "../../pdqsort.h"
 #include "../../type_traits.h"
 
@@ -62,13 +62,13 @@ namespace detail
       for (RandomAccessIter current = *local_bin; current < nextbinstart;
           ++current) {
         for (RandomAccessIter * target_bin =
-            (bins + ((memcpy_cast<Div_type>(proj(*current)) >>
+            (bins + ((std::bit_cast<Div_type>(proj(*current)) >>
                       log_divisor) - div_min));  target_bin != local_bin;
-          target_bin = bins + ((memcpy_cast<Div_type>(proj(*current)) >> log_divisor)
+          target_bin = bins + ((std::bit_cast<Div_type>(proj(*current)) >> log_divisor)
                             - div_min)) {
           RandomAccessIter b = *target_bin;
           ++(*target_bin);
-          RandomAccessIter * b_bin = bins + ((memcpy_cast<Div_type>(proj(*b)) >> log_divisor)
+          RandomAccessIter * b_bin = bins + ((std::bit_cast<Div_type>(proj(*b)) >> log_divisor)
                                           - div_min);
           //Three-way swap; if the item to be swapped doesn't belong in the
           //current bin, swap it to where it belongs
@@ -112,11 +112,11 @@ namespace detail
     {
       auto&& proj = utility::as_function(projection);
 
-      min = max = memcpy_cast<Cast_type>(proj(*current));
+      min = max = std::bit_cast<Cast_type>(proj(*current));
       RandomAccessIter prev = current;
       bool sorted = true;
       while (++current < last) {
-        Cast_type value = memcpy_cast<Cast_type>(proj(*current));
+        auto value = std::bit_cast<Cast_type>(proj(*current));
         sorted &= proj(*current) >= proj(*prev);
         prev = current;
         if (max < value)
@@ -153,7 +153,7 @@ namespace detail
 
       //Calculating the size of each bin
       for (RandomAccessIter current = first; current != last;) {
-        bin_sizes[unsigned((memcpy_cast<Div_type>(
+        bin_sizes[unsigned((std::bit_cast<Div_type>(
             proj(*current)) >> log_divisor) - div_min)]++;
         ++current;
       }
@@ -219,7 +219,7 @@ namespace detail
 
       //Calculating the size of each bin
       for (RandomAccessIter current = first; current != last;) {
-        bin_sizes[unsigned((memcpy_cast<Div_type>(
+        bin_sizes[unsigned((std::bit_cast<Div_type>(
             proj(*current)) >> log_divisor) - div_min)]++;
         ++current;
       }
@@ -284,7 +284,7 @@ namespace detail
 
       //Calculating the size of each bin
       for (RandomAccessIter current = first; current != last;) {
-        bin_sizes[unsigned((memcpy_cast<Div_type>(
+        bin_sizes[unsigned((std::bit_cast<Div_type>(
             proj(*current)) >> log_divisor) - div_min)]++;
         ++current;
       }

@@ -13,6 +13,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <bit>
 #include <climits>
 #include <cstddef>
 #include <cstdint>
@@ -24,7 +25,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h" // projected_t
-#include "memcpy_cast.h"
 #include "partition.h"
 #include "pdqsort.h"
 #include "type_traits.h"
@@ -148,7 +148,7 @@ namespace detail
     inline auto to_unsigned_or_bool(float f)
         -> std::uint32_t
     {
-        auto u = memcpy_cast<std::uint32_t>(f);
+        auto u = std::bit_cast<std::uint32_t>(f);
         std::uint32_t sign_bit = -std::int32_t(u >> 31);
         return u ^ (sign_bit | 0x80000000);
     }
@@ -156,7 +156,7 @@ namespace detail
     inline auto to_unsigned_or_bool(double f)
         -> std::uint64_t
     {
-        auto u = memcpy_cast<std::uint64_t>(f);
+        auto u = std::bit_cast<std::uint64_t>(f);
         std::uint64_t sign_bit = -std::int64_t(u >> 63);
         return u ^ (sign_bit | 0x8000000000000000);
     }
