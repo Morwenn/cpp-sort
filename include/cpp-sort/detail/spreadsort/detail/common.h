@@ -69,13 +69,13 @@ namespace detail
       constexpr unsigned min_size = log_mean_bin_size + log_min_split_count;
       //Assuring that constants have valid settings
       static_assert(log_min_split_count <= max_splits &&
-                    log_min_split_count > 0, "");
+                    log_min_split_count > 0);
       static_assert(max_splits > 1 &&
-                    max_splits < (8 * sizeof(unsigned)), "");
+                    max_splits < (8 * sizeof(unsigned)));
       static_assert(max_finishing_splits >= max_splits &&
-                    max_finishing_splits < (8 * sizeof(unsigned)), "");
-      static_assert(log_mean_bin_size >= 0, "");
-      static_assert(log_finishing_count >= 0, "");
+                    max_finishing_splits < (8 * sizeof(unsigned)));
+      static_assert(log_mean_bin_size >= 0);
+      static_assert(log_finishing_count >= 0);
       //if we can complete in one iteration, do so
       //This first check allows the compiler to optimize never-executed code out
       if (log_finishing_count < min_size) {
