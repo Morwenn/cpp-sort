@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
-include(DownloadProject)
+include(FetchContent)
 
 ########################################
 # Test suite options
@@ -22,13 +22,20 @@ if (TARGET Catch2::Catch2)
     message(STATUS "Catch2 found: ${Catch2_INCLUDE_DIRECTORY}")
 else()
     message(STATUS "Catch2 not found")
-    download_project(PROJ Catch2
-                     GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.1.0
-                     UPDATE_DISCONNECTED 1
+    message(STATUS "Downloading Catch2")
+    FetchContent_Declare(
+        catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2
+        GIT_TAG v3.1.0
     )
-    add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
-    list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
+
+    FetchContent_GetProperties(catch2)
+    if (NOT catch2_POPULATED)
+        FetchContent_Populate(catch2)
+        add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
+        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+        include(Catch)
+    endif()
 endif()
 include(Catch)
 
