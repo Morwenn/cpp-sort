@@ -536,11 +536,11 @@ namespace detail
              typename CurrentSubKey, std::size_t NumBytes, std::size_t Offset=0>
     struct UnsignedInplaceSorter
     {
-        static constexpr std::size_t ShiftAmount = (((NumBytes - 1) - Offset) * 8);
         template<typename T>
         static auto current_byte(T&& elem, void* sort_data)
             -> std::uint8_t
         {
+            constexpr std::size_t ShiftAmount = (((NumBytes - 1) - Offset) * 8);
             return CurrentSubKey::sub_key(elem, sort_data) >> ShiftAmount;
         }
 
@@ -1020,7 +1020,7 @@ namespace detail
     {};
 
     template<typename T>
-    constexpr bool is_ska_sortable_v = is_ska_sortable<T>::value;
+    inline constexpr bool is_ska_sortable_v = is_ska_sortable<T>::value;
 }}
 
 #endif // CPPSORT_DETAIL_SKA_SORT_H_

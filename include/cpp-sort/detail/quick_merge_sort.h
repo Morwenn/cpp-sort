@@ -24,7 +24,7 @@ namespace cppsort
 {
 namespace detail
 {
-    constexpr int qmsort_limit = 32;
+    inline constexpr int qmsort_limit = 32;
 
     template<typename ForwardIterator1, typename ForwardIterator2, typename OutputIterator,
              typename Size, typename Compare, typename Projection>

@@ -54,10 +54,12 @@ namespace cppsort
         };
 
         template<typename Iterator>
-        constexpr bool has_iter_move_v = std::is_invocable_v<call_iter_move, Iterator>;
+        inline constexpr bool has_iter_move_v
+            = std::is_invocable_v<call_iter_move, Iterator>;
 
         template<typename Iterator>
-        constexpr bool has_iter_swap_v = std::is_invocable_v<call_iter_swap, Iterator, Iterator>;
+        inline constexpr bool has_iter_swap_v
+            = std::is_invocable_v<call_iter_swap, Iterator, Iterator>;
 
         ////////////////////////////////////////////////////////////
         // Result type of a non-specialized iter_move call

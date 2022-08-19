@@ -24,7 +24,7 @@ namespace cppsort
             = decltype(std::declval<Function&>().template refine<T>());
 
         template<typename Function, typename T>
-        constexpr bool has_refine_method
+        inline constexpr bool has_refine_method
             = is_detected_v<has_refine_method_t, Function, T>;
     }
 

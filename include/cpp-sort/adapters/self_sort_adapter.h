@@ -26,32 +26,20 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Whether a class has a member sort method
 
-        template<
-            typename Iterable,
-            typename... Args
-        >
+        template<typename Iterable, typename... Args>
         using has_sort_method_t
             = decltype(std::declval<Iterable&>().sort(utility::as_function(std::declval<Args&>())...));
 
-        template<
-            typename Iterable,
-            typename... Args
-        >
-        constexpr bool has_sort_method
+        template<typename Iterable, typename... Args>
+        inline constexpr bool has_sort_method
             = is_detected_v<has_sort_method_t, Iterable, Args...>;
 
-        template<
-            typename Iterable,
-            typename... Args
-        >
+        template<typename Iterable, typename... Args>
         using has_stable_sort_method_t
             = decltype(std::declval<Iterable&>().stable_sort(utility::as_function(std::declval<Args&>())...));
 
-        template<
-            typename Iterable,
-            typename... Args
-        >
-        constexpr bool has_stable_sort_method
+        template<typename Iterable, typename... Args>
+        inline constexpr bool has_stable_sort_method
             = is_detected_v<has_stable_sort_method_t, Iterable, Args...>;
     }
 

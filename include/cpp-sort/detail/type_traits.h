@@ -91,7 +91,7 @@ namespace detail
     using is_detected = typename detector<nonesuch, void, Op, Args...>::value_t;
 
     template<template<typename...> typename Op, typename... Args >
-    constexpr bool is_detected_v = is_detected<Op, Args...>::value;
+    inline constexpr bool is_detected_v = is_detected<Op, Args...>::value;
 
     template<template<typename...> typename Op, typename... Args>
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
@@ -178,7 +178,8 @@ namespace detail
     {};
 
     template<typename T, template<typename...> typename Template>
-    constexpr bool is_specialization_of_v = is_specialization_of<T, Template>::value;
+    inline constexpr bool is_specialization_of_v
+        = is_specialization_of<T, Template>::value;
 
     ////////////////////////////////////////////////////////////
     // is_in_pack: check whether a given std::size_t value
@@ -198,10 +199,10 @@ namespace detail
     }
 
     template<std::size_t Value, std::size_t... Values>
-    constexpr bool is_in_pack = is_in_pack_impl<Values...>(Value);
+    inline constexpr bool is_in_pack = is_in_pack_impl<Values...>(Value);
 
     template<std::size_t Value>
-    constexpr bool is_in_pack<Value> = false;
+    inline constexpr bool is_in_pack<Value> = false;
 }}
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_

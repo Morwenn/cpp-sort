@@ -46,7 +46,7 @@ namespace cppsort
     {};
 
     template<typename Projection, typename Iterable, typename Compare=std::less<>>
-    constexpr bool is_projection_v
+    inline constexpr bool is_projection_v
         = is_projection<Projection, Iterable, Compare>::value;
 
     template<
@@ -59,7 +59,7 @@ namespace cppsort
     {};
 
     template<typename Projection, typename Iterator, typename Compare=std::less<>>
-    constexpr bool is_projection_iterator_v
+    inline constexpr bool is_projection_iterator_v
         = is_projection_iterator<Projection, Iterator, Compare>::value;
 
     ////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterable>
-    constexpr bool is_sorter_v
+    inline constexpr bool is_sorter_v
         = is_sorter<Sorter, Iterable>::value;
 
     template<typename Sorter, typename Iterable, typename Compare>
@@ -141,7 +141,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterable, typename Compare>
-    constexpr bool is_comparison_sorter_v
+    inline constexpr bool is_comparison_sorter_v
         = is_comparison_sorter<Sorter, Iterable, Compare>::value;
 
     template<typename Sorter, typename Iterable, typename Projection>
@@ -150,7 +150,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterable, typename Projection>
-    constexpr bool is_projection_sorter_v
+    inline constexpr bool is_projection_sorter_v
         = is_projection_sorter<Sorter, Iterable, Projection>::value;
 
     template<typename Sorter, typename Iterable, typename Compare, typename Projection>
@@ -159,7 +159,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterable, typename Compare, typename Projection>
-    constexpr bool is_comparison_projection_sorter_v
+    inline constexpr bool is_comparison_projection_sorter_v
         = is_comparison_projection_sorter<Sorter, Iterable, Compare, Projection>::value;
 
     template<typename Sorter, typename Iterator>
@@ -168,7 +168,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterator>
-    constexpr bool is_sorter_iterator_v
+    inline constexpr bool is_sorter_iterator_v
         = is_sorter_iterator<Sorter, Iterator>::value;
 
     template<typename Sorter, typename Iterator, typename Compare>
@@ -177,7 +177,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterator, typename Compare>
-    constexpr bool is_comparison_sorter_iterator_v
+    inline constexpr bool is_comparison_sorter_iterator_v
         = is_comparison_sorter_iterator<Sorter, Iterator, Compare>::value;
 
     template<typename Sorter, typename Iterator, typename Projection>
@@ -186,7 +186,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterator, typename Projection>
-    constexpr bool is_projection_sorter_iterator_v
+    inline constexpr bool is_projection_sorter_iterator_v
         = is_projection_sorter_iterator<Sorter, Iterator, Projection>::value;
 
     template<typename Sorter, typename Iterator, typename Compare, typename Projection>
@@ -195,7 +195,7 @@ namespace cppsort
     {};
 
     template<typename Sorter, typename Iterator, typename Compare, typename Projection>
-    constexpr bool is_comparison_projection_sorter_iterator_v
+    inline constexpr bool is_comparison_projection_sorter_iterator_v
         = is_comparison_projection_sorter_iterator<Sorter, Iterator, Compare, Projection>::value;
 
     ////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ namespace cppsort
     using is_always_stable = typename sorter_traits<Sorter>::is_always_stable;
 
     template<typename Sorter>
-    constexpr bool is_always_stable_v = is_always_stable<Sorter>::value;
+    inline constexpr bool is_always_stable_v = is_always_stable<Sorter>::value;
 
     ////////////////////////////////////////////////////////////
     // Whether a sorter is stable when called with parameter of
@@ -234,7 +234,7 @@ namespace cppsort
     {};
 
     template<typename Arg>
-    constexpr bool is_stable_v = is_stable<Arg>::value;
+    inline constexpr bool is_stable_v = is_stable<Arg>::value;
 
     ////////////////////////////////////////////////////////////
     // Fixed-size sorter traits

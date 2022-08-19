@@ -76,7 +76,7 @@ namespace cppsort
             = decltype(*std::begin(std::declval<T&>()));
 
         template<typename T>
-        constexpr bool can_be_refined_for
+        inline constexpr bool can_be_refined_for
             = is_detected_v<can_be_refined_for_t, T>;
 
         struct case_insensitive_less_locale_fn

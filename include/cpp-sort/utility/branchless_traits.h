@@ -80,7 +80,7 @@ namespace utility
     {};
 
     template<typename Compare, typename T>
-    constexpr bool is_probably_branchless_comparison_v
+    inline constexpr bool is_probably_branchless_comparison_v
         = is_probably_branchless_comparison<Compare, T>::value;
 
     ////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
     {};
 
     template<typename Projection, typename T>
-    constexpr bool is_probably_branchless_projection_v
+    inline constexpr bool is_probably_branchless_projection_v
         = is_probably_branchless_projection<Projection, T>::value;
 }}
 

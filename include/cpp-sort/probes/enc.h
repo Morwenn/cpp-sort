@@ -41,7 +41,7 @@ namespace probe
                 utility::is_probably_branchless_comparison_v<Compare, projected_type> &&
                 utility::is_probably_branchless_projection_v<Projection, value_type>;
 
-            if (can_optimize) {
+            if constexpr (can_optimize) {
                 return cppsort::detail::lower_monobound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),

@@ -41,15 +41,18 @@ namespace cppsort
 {
 namespace detail
 {
-    constexpr static bool double_comparison = true;
-
-    // move-only version
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
                          Compare compare, Projection projection)
         -> void
     {
+        using difference_type = difference_type_t<BidirectionalIterator>;
+        using rvalue_type = rvalue_type_t<BidirectionalIterator>;
         using utility::iter_move;
+
+        // Configuration variables
+        constexpr bool double_comparison = true;
+        constexpr difference_type recency = 8;
 
         if (begin == end || std::next(begin) == end) {
             return;
@@ -58,15 +61,10 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        using difference_type = difference_type_t<BidirectionalIterator>;
-        using rvalue_type = rvalue_type_t<BidirectionalIterator>;
         std::vector<rvalue_type> dropped;
-
         difference_type num_dropped_in_row = 0;
         auto write = begin;
         auto read = begin;
-
-        constexpr difference_type recency = 8;
 
         do {
             if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
