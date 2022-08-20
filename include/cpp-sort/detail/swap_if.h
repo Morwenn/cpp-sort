@@ -39,10 +39,10 @@ namespace detail
 
     template<typename T>
     constexpr auto swap_if(T& lhs, T& rhs)
-        noexcept(noexcept(swap_if(lhs, rhs, std::less<>{}, std::identity{})))
+        noexcept(noexcept(swap_if(lhs, rhs, std::less{}, std::identity{})))
         -> void
     {
-        swap_if(lhs, rhs, std::less<>{}, std::identity{});
+        swap_if(lhs, rhs, std::less{}, std::identity{});
     }
 
     template<integral Integer>

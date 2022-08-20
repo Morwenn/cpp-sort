@@ -39,6 +39,8 @@
 #include "../benchmarking-tools/distributions.h"
 #include "../benchmarking-tools/rdtsc.h"
 
+#include <poplar.h>
+
 // Type of data to sort during the benchmark
 using value_t = double;
 // Type of collection to sort
@@ -46,7 +48,21 @@ using collection_t = std::vector<value_t>;
 
 // Handy function pointer aliases
 using distr_f = void (*)(std::back_insert_iterator<collection_t>, long long int);
-using sort_f = void (*)(collection_t&);
+using sort_f = void (*)(collection_t::iterator, collection_t::iterator);
+
+template<typename Iterator>
+void poplar_sort(Iterator begin, Iterator end)
+{
+    poplar::make_heap(begin, end);
+    poplar::sort_heap(begin, end);
+}
+
+template<typename Iterator>
+void poplar_sort2(Iterator begin, Iterator end)
+{
+    poplar::make_heap(begin, end);
+    poplar::sort_heap2(begin, end);
+}
 
 int main()
 {
@@ -73,12 +89,8 @@ int main()
     };
 
     std::pair<std::string, sort_f> sorts[] = {
-        { "heap_sort",  cppsort::heap_sort  },
-        { "pdq_sort",   cppsort::pdq_sort   },
-        { "quick_sort", cppsort::quick_sort },
-        { "ska_sort",   cppsort::ska_sort   },
-        { "std_sort",   cppsort::std_sort   },
-        { "verge_sort", cppsort::verge_sort },
+        { "poplar sort (old)", poplar_sort<collection_t::iterator> },
+        { "poplar sort (new)", poplar_sort2<collection_t::iterator> },
     };
 
     std::size_t sizes[] = { 1'000'000 };
@@ -102,7 +114,7 @@ int main()
                     collection_t collection;
                     distribution.second(std::back_inserter(collection), size);
                     std::uint64_t start = rdtsc();
-                    sort.second(collection);
+                    sort.second(collection.begin(), collection.end());
                     std::uint64_t end = rdtsc();
                     assert(std::is_sorted(std::begin(collection), std::end(collection)));
                     cycles.push_back(double(end - start) / size + 0.5);

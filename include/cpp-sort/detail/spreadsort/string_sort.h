@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -85,12 +85,13 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
       -> void
   {
     //Don't sort if it's too small to optimize
-    if (last - first < detail::min_sort_size)
+    if (last - first < detail::min_sort_size) {
       pdqsort(std::move(first), std::move(last),
-              std::less<>{}, std::move(projection));
-    else
+              std::less{}, std::move(projection));
+    } else {
       detail::string_sort(std::move(first), std::move(last),
                           std::move(projection), unused);
+    }
   }
 
 /*! \brief String sort algorithm using random access iterators, allowing character-type overloads.
@@ -150,12 +151,13 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
       -> void
   {
     //Don't sort if it's too small to optimize.
-    if (last - first < detail::min_sort_size)
+    if (last - first < detail::min_sort_size) {
       pdqsort(std::move(first), std::move(last),
               std::move(comp), std::move(projection));
-    else
+    } else {
       detail::reverse_string_sort(std::move(first), std::move(last),
                                   std::move(projection), unused);
+    }
   }
 }}}
 

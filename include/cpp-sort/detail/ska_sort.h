@@ -510,7 +510,7 @@ namespace detail
     auto StdSortFallback(RandomAccessIterator begin, RandomAccessIterator end, Projection projection)
         -> void
     {
-        pdqsort(std::move(begin), std::move(end), std::less<>{}, std::move(projection));
+        pdqsort(std::move(begin), std::move(end), std::less{}, std::move(projection));
     }
 
     template<std::ptrdiff_t StdSortThreshold, typename RandomAccessIterator, typename Projection>

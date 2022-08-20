@@ -52,7 +52,7 @@ namespace detail
     {
         using difference_type = difference_type_t<ForwardIterator>;
 
-        auto info = minmax_element_and_is_sorted(first, last, std::greater<>{});
+        auto info = minmax_element_and_is_sorted(first, last, std::greater{});
         if (info.is_sorted) return;
 
         auto min = *info.max;

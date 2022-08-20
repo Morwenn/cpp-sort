@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -187,7 +187,7 @@ namespace spreadsort
           continue;
         //using pdqsort if its worst-case is better
         if (count < max_count)
-          pdqsort(lastPos, bin_cache[u], std::less<>{}, projection);
+          pdqsort(lastPos, bin_cache[u], std::less{}, projection);
         else
           spreadsort_rec<RandomAccessIter, Div_type, Size_type>(lastPos,
                                                                 bin_cache[u],
