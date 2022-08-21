@@ -15,9 +15,7 @@
 #include "iterator_traits.h"
 #include "minmax_element_and_is_sorted.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator>
     constexpr auto counting_sort(ForwardIterator first, ForwardIterator last)
@@ -73,6 +71,6 @@ namespace detail
             first = std::fill_n(first, count, max--);
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_COUNTING_SORT_H_

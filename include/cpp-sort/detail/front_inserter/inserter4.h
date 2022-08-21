@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FRONT_INSERTER4_H_
@@ -11,9 +11,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "../rotate_left.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct front_inserter_n<4u>
@@ -43,6 +41,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_FRONT_INSERTER4_H_

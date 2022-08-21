@@ -16,9 +16,7 @@
 #include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     ////////////////////////////////////////////////////////////
     // Base type to allow piping projections
@@ -321,6 +319,6 @@ namespace utility
             typename function_constant<Function>::value_type, T
         >
     {};
-}}
+}
 
 #endif // CPPSORT_UTILITY_FUNCTIONAL_H_

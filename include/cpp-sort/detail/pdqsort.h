@@ -42,11 +42,10 @@
 #include "iterator_traits.h"
 #include "iter_sort3.h"
 
-namespace cppsort
+namespace cppsort::detail
 {
-namespace detail
-{
-    namespace pdqsort_detail {
+    namespace pdqsort_detail
+    {
         enum {
             // Partitions below this size are sorted using insertion sort.
             insertion_sort_threshold = 24,
@@ -525,6 +524,6 @@ namespace detail
                                      std::move(compare), std::move(projection),
                                      detail::log2(size));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_PDQSORT_H_

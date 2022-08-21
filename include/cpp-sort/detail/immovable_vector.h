@@ -14,9 +14,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Immovable vector
@@ -150,6 +148,6 @@ namespace detail
             T* memory_; // owning
             T* end_;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_IMMOVABLE_VECTOR_H_

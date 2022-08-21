@@ -34,9 +34,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     constexpr auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
@@ -50,8 +48,8 @@ namespace detail
         auto&& proj = utility::as_function(projection);
 
         for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur) {
-            BidirectionalIterator sift = cur;
-            BidirectionalIterator sift_1 = std::prev(cur);
+            auto sift = cur;
+            auto sift_1 = std::prev(cur);
 
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
@@ -66,6 +64,6 @@ namespace detail
             }
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_INSERTION_SORT_H_

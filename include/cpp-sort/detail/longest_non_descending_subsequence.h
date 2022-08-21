@@ -17,9 +17,7 @@
 #include "iterator_traits.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     // Longest non-decreasing subsequence, computed with an altered
     // patience sorting algorithm - returns a pair containing the
@@ -85,6 +83,6 @@ namespace detail
 
         return { stack_tops.size(), size };
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_LONGEST_NON_DESCENDING_SUBSEQUENCE_H_

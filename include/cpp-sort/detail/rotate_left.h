@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ROTATE_LEFT_H_
@@ -13,9 +13,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<std::size_t N>
     struct rotate_left_n
@@ -28,13 +26,10 @@ namespace detail
             using difference_type = difference_type_t<RandomAccessIterator>;
 
             auto tmp = iter_move(first);
-            for (difference_type i = 0 ;
-                 i < static_cast<difference_type>(N - 1) ;
-                 ++i)
-            {
+            for (difference_type i = 0; i < static_cast<difference_type>(N - 1); ++i) {
                 first[i] = iter_move(first + (i + 1));
             }
-            first[N-1] = std::move(tmp);
+            first[N - 1] = std::move(tmp);
         }
     };
 
@@ -53,6 +48,6 @@ namespace detail
     {
         return rotate_left_n<N>{}(first);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_ROTATE_LEFT_H_

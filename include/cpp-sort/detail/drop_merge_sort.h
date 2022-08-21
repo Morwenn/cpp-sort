@@ -37,9 +37,7 @@
 #include "pdqsort.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
@@ -137,6 +135,6 @@ namespace detail
             dropped.pop_back();
         } while (not dropped.empty());
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_DROP_MERGE_SORT_H_

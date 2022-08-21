@@ -36,9 +36,7 @@
 #include "iterator_traits.h"
 #include "scope_exit.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename Iterator>
     struct it_and_index
@@ -111,6 +109,6 @@ namespace detail
             &item_index_tuple::original_location | indirect(projection)
         );
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_INDIESORT_H_

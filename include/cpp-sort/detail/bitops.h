@@ -14,9 +14,7 @@
 #include "../detail/config.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     // Cast signed value to unsigned one
     template<typename Integer>
@@ -137,6 +135,6 @@ namespace detail
         constexpr auto n = std::numeric_limits<Unsigned>::digits;
         return (x << s) | (x >> (n - s));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_BITOPS_H_

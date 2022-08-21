@@ -14,9 +14,7 @@
 #include "introselect.h"
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // nth_element for forward iterators with introselect
@@ -67,6 +65,6 @@ namespace detail
         return detail::nth_element(category{}, first, last, nth_pos, size,
                                    std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_NTH_ELEMENT_H_

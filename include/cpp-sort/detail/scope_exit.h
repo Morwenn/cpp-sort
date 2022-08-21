@@ -12,9 +12,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename EF>
     struct scope_exit
@@ -126,6 +124,6 @@ namespace detail
     {
         return scope_success<EF>(std::forward<EF>(function));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SCOPE_EXIT_H_

@@ -26,9 +26,7 @@
 #include "move.h"
 #include "swap_ranges.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator>
     auto rotate_left(ForwardIterator first, ForwardIterator last)
@@ -37,7 +35,7 @@ namespace detail
         using utility::iter_move;
 
         auto tmp = iter_move(first);
-        ForwardIterator lm1 = detail::move(std::next(first), last, first);
+        auto lm1 = detail::move(std::next(first), last, first);
         *lm1 = std::move(tmp);
         return lm1;
     }
@@ -48,9 +46,9 @@ namespace detail
     {
         using utility::iter_move;
 
-        BidirectionalIterator lm1 = std::prev(last);
+        auto lm1 = std::prev(last);
         auto tmp = iter_move(lm1);
-        BidirectionalIterator fp1 = detail::move_backward(first, lm1, last);
+        auto fp1 = detail::move_backward(first, lm1, last);
         *first = std::move(tmp);
         return fp1;
     }
@@ -61,32 +59,31 @@ namespace detail
     {
         using utility::iter_swap;
 
-        ForwardIterator i = middle;
-        while (true)
-        {
+        auto i = middle;
+        while (true) {
             iter_swap(first, i);
             ++first;
-            if (++i == last)
+            if (++i == last) {
                 break;
-            if (first == middle)
+            }
+            if (first == middle) {
                 middle = i;
+            }
         }
-        ForwardIterator r = first;
-        if (first != middle)
-        {
+        auto r = first;
+        if (first != middle) {
             i = middle;
-            while (true)
-            {
+            while (true) {
                 iter_swap(first, i);
                 ++first;
-                if (++i == last)
-                {
-                    if (first == middle)
+                if (++i == last) {
+                    if (first == middle) {
                         break;
+                    }
                     i = middle;
-                }
-                else if (first == middle)
+                } else if (first == middle) {
                     middle = i;
+                }
             }
         }
         return r;
@@ -184,6 +181,6 @@ namespace detail
             return first;
         return rotate_impl(first, middle, last, iterator_category_t<ForwardIterator>{});
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_ROTATE_H_

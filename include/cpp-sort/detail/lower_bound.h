@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOWER_BOUND_H_
@@ -14,9 +14,7 @@
 #include "bitops.h"
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
@@ -76,6 +74,6 @@ namespace detail
         }
         return first;
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOWER_BOUND_H_

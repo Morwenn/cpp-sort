@@ -13,9 +13,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename Derived>
     struct three_way_compare_base
@@ -223,6 +221,6 @@ namespace detail
             return {};
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_THREE_WAY_COMPARE_H_

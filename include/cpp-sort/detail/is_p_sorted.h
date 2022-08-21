@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_IS_P_SORTED_H_
@@ -11,9 +11,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto is_p_sorted(ForwardIterator first, ForwardIterator last, ForwardIterator pth,
@@ -37,6 +35,6 @@ namespace detail
         }
         return true;
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_IS_P_SORTED_H_

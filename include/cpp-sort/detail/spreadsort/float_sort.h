@@ -28,48 +28,41 @@ Phil Endecott and Frank Gennari
 #include "detail/float_sort.h"
 #include "../pdqsort.h"
 
-namespace cppsort
+namespace cppsort::detail::spreadsort
 {
-namespace detail
-{
-namespace spreadsort
-{
-  /*!
-    \brief @c float_sort with casting to the appropriate size.
+    /*!
+        \brief @c float_sort with casting to the appropriate size.
 
-    \param[in] first Iterator pointer to first element.
-    \param[in] last Iterator pointing to one beyond the end of data.
+        \param[in] first Iterator pointer to first element.
+        \param[in] last Iterator pointing to one beyond the end of data.
 
-Some performance plots of runtime vs. n and log(range) are provided:\n
-   <a href="../../doc/graph/windows_float_sort.htm"> windows_float_sort</a>
-   \n
-   <a href="../../doc/graph/osx_float_sort.htm"> osx_float_sort</a>
+        Some performance plots of runtime vs. n and log(range) are provided:\n
+        <a href="../../doc/graph/windows_float_sort.htm"> windows_float_sort</a>
+        \n
+        <a href="../../doc/graph/osx_float_sort.htm"> osx_float_sort</a>
 
-
-
-   \par A simple example of sorting some floating-point is:
-   \code
-     vector<float> vec;
-     vec.push_back(1.0);
-     vec.push_back(2.3);
-     vec.push_back(1.3);
-     spreadsort(vec.begin(), vec.end());
-   \endcode
-   \par The sorted vector contains ascending values "1.0 1.3 2.3".
-
-  */
-  template<typename RandomAccessIter, typename Projection>
-  auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-      -> void
-  {
-    if (last - first < detail::min_sort_size) {
-      pdqsort(std::move(first), std::move(last),
-              std::less{}, std::move(projection));
-    } else {
-      detail::float_sort(std::move(first), std::move(last),
-                         std::move(projection));
+        \par A simple example of sorting some floating-point is:
+        \code
+            vector<float> vec;
+            vec.push_back(1.0);
+            vec.push_back(2.3);
+            vec.push_back(1.3);
+            spreadsort(vec.begin(), vec.end());
+        \endcode
+        \par The sorted vector contains ascending values "1.0 1.3 2.3".
+    */
+    template<typename RandomAccessIter, typename Projection>
+    auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
+        -> void
+    {
+        if (last - first < detail::min_sort_size) {
+            pdqsort(std::move(first), std::move(last),
+                    std::less{}, std::move(projection));
+        } else {
+            detail::float_sort(std::move(first), std::move(last),
+                               std::move(projection));
+        }
     }
-  }
-}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_

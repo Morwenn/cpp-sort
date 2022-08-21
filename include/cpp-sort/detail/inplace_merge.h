@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_INPLACE_MERGE_H_
@@ -20,9 +20,7 @@
 #include "symmerge.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Forward algorithm using recmerge
@@ -204,6 +202,6 @@ namespace detail
                       len1, len2, buff, buff_size,
                       category{});
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_INPLACE_MERGE_H_

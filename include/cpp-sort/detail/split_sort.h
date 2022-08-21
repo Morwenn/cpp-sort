@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SPLIT_SORT_H_
@@ -15,9 +15,7 @@
 #include "iterator_traits.h"
 #include "pdqsort.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto split_sort(RandomAccessIterator first, RandomAccessIterator last,
@@ -55,6 +53,6 @@ namespace detail
         pdqsort(middle, last, compare, projection);
         inplace_merge(first, middle, last, std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SPLIT_SORT_H_

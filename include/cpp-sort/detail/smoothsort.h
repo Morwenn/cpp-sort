@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -30,11 +30,10 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 
-namespace cppsort
+namespace cppsort::detail
 {
-namespace detail
-{
-    namespace smoothsort_detail {
+    namespace smoothsort_detail
+    {
       /* A constant containing the number of Leonardo numbers that can fit into
        * 64 bits.
        */
@@ -470,7 +469,7 @@ namespace detail
         -> void
     {
       /* Edge case: Check that the range isn't empty or a singleton. */
-      if ((end - begin) < 2) return;
+      if (end - begin < 2) return;
 
       /* Construct a shape object describing the empty heap. */
       smoothsort_detail::HeapShape shape;
@@ -486,6 +485,6 @@ namespace detail
       for (RandomIterator itr = end; itr != begin; --itr)
         smoothsort_detail::LeonardoHeapRemove(begin, itr, shape, compare, projection);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SMOOTHSORT_H_

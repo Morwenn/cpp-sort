@@ -19,9 +19,7 @@
 #include "../detail/longest_non_descending_subsequence.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace probe
+namespace cppsort::probe
 {
     namespace detail
     {
@@ -59,6 +57,6 @@ namespace probe
     }
 
     inline constexpr sorter_facade<detail::sus_impl> sus{};
-}}
+}
 
 #endif // CPPSORT_PROBES_SUS_H_

@@ -25,9 +25,7 @@
 #include <utility>
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     namespace detail
     {
@@ -58,6 +56,6 @@ namespace utility
     }
 
     inline constexpr detail::as_function_fn as_function{};
-}}
+}
 
 #endif // CPPSORT_UTILITY_AS_FUNCTION_H_

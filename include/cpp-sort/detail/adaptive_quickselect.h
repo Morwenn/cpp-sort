@@ -26,9 +26,7 @@
 #include "partition.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     namespace median_common_detail
     {
@@ -483,6 +481,6 @@ namespace detail
         }
         return mid;
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_QUICKSELECT_ADAPTIVE_H_

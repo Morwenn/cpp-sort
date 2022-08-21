@@ -11,9 +11,7 @@
 #include "../rotate_left.h"
 #include "../rotate_right.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_comparisons_sorter_impl<3u>
@@ -55,6 +53,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT3_H_

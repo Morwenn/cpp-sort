@@ -13,9 +13,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // indirect
@@ -59,6 +57,6 @@ namespace detail
     {
         return indirect_t<std::decay_t<Projection>>(std::forward<Projection>(proj));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_FUNCTIONAL_H_

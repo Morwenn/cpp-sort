@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICKSORT_H_
@@ -19,9 +19,7 @@
 #include "iterator_traits.h"
 #include "partition.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     // Function that dispatches the sort to another algorithm
     // when the collection is too small for quicksort to be
@@ -125,6 +123,6 @@ namespace detail
         int bad_allowed = 2 * detail::log2(size);  // Usual introsort recursion limit
         quicksort(first, last, size, bad_allowed, std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_QUICKSORT_H_

@@ -5,9 +5,7 @@
 #ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT13_H_
 #define CPPSORT_DETAIL_LOW_COMPARISONS_SORT13_H_
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_comparisons_sorter_impl<13u>
@@ -98,6 +96,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT13_H_

@@ -22,9 +22,7 @@
 #include "swap_ranges.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Iterator used to sort groups
@@ -444,6 +442,6 @@ namespace detail
             std::move(compare), std::move(projection)
         );
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_

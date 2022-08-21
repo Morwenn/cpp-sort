@@ -39,13 +39,7 @@ Phil Endecott and Frank Gennari
 #include "../../pdqsort.h"
 #include "../../type_traits.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace spreadsort
-{
-namespace detail
+namespace cppsort::detail::spreadsort::detail
 {
     //Specialized swap loops for floating-point casting
     template<typename RandomAccessIter, typename Div_type, typename Projection>
@@ -390,6 +384,6 @@ namespace detail
       float_sort_rec<RandomAccessIter, std::int64_t, std::uint64_t>
         (first, last, bin_cache, 0, bin_sizes, projection);
     }
-}}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_DETAIL_FLOAT_SORT_H_

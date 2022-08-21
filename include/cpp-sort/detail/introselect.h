@@ -21,9 +21,7 @@
 #include "selection_sort.h"
 #include "swap_if.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto small_sort(ForwardIterator first, ForwardIterator last,
@@ -318,6 +316,6 @@ namespace detail
         small_sort(first, last, std::move(compare), std::move(projection));
         return std::next(first, nth_pos);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_INTROSELECT_H_

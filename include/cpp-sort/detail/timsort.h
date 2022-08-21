@@ -53,9 +53,7 @@
 #include "type_traits.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename Iterator>
     struct run
@@ -785,6 +783,6 @@ namespace detail
             std::move(first), std::move(last),
             std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_TIMSORT_H_

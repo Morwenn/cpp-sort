@@ -14,9 +14,7 @@
 #include <utility>
 #include "../detail/swap_if.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     ////////////////////////////////////////////////////////////
     // Extremely simple but sufficient replacement for std::pair
@@ -122,6 +120,6 @@ namespace utility
                                        Compare, Projection)
         -> void
     {}
-}}
+}
 
 #endif // CPPSORT_UTILITY_SORTING_NETWORKS_H_

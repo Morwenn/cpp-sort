@@ -15,9 +15,7 @@
 #include "iterator_traits.h"
 #include "lower_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
@@ -46,6 +44,6 @@ namespace detail
             std::move(projection)
         );
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_UPPER_BOUND_H_

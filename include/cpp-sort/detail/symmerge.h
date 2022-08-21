@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SYMMERGE_H_
@@ -16,9 +16,7 @@
 #include "rotate.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Random-access algorithm using symmerge
@@ -84,6 +82,6 @@ namespace detail
             len2 = last - middle;
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SYMMERGE_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SIZE_H_
@@ -14,9 +14,7 @@
 #include <utility>
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     namespace detail
     {
@@ -66,6 +64,6 @@ namespace utility
     {
         return N;
     }
-}}
+}
 
 #endif // CPPSORT_UTILITY_SIZE_H_

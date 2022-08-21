@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -29,11 +29,7 @@
 #include "../iterator_traits.h"
 #include "../move.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace boost_common
+namespace cppsort::detail::boost_common
 {
     ///---------------------------------------------------------------------------
     /// @struct range
@@ -209,6 +205,6 @@ namespace boost_common
                                        compare, projection);
         return range<Iter2_t>(dest.first, it_aux);
     }
-}}}
+}
 
 #endif  // CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_

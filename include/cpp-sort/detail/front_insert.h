@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FRONT_INSERT_H_
@@ -11,9 +11,7 @@
 #include <cstddef>
 #include <utility>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     //
     // Family of fixed-size functions which will try to insert
@@ -38,7 +36,7 @@ namespace detail
     {
         return front_inserter_n<N>{}(std::move(first), std::move(compare), std::move(projection));
     }
-}}
+}
 
 // Specializations of low_moves_sorter_n for some values of N
 #include "front_inserter/inserter0.h"

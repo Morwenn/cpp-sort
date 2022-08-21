@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -41,9 +41,7 @@
 #include "type_traits.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     namespace spin_detail
     {
@@ -396,6 +394,6 @@ namespace detail
             std::move(compare), std::move(projection)
         );
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SPINSORT_H_

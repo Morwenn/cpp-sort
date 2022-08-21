@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MELSORT_H_
@@ -21,9 +21,7 @@
 #include "move.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename NodeType, typename Compare, typename Projection>
     auto merge_encroaching_lists(std::vector<fixed_size_list<NodeType>>& lists,
@@ -195,6 +193,6 @@ namespace detail
         merge_encroaching_lists(lists, first, bad_distribution,
                                 std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MELSORT_H_

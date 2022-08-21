@@ -23,9 +23,7 @@
 #include "../detail/pdqsort.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace probe
+namespace cppsort::probe
 {
     namespace detail
     {
@@ -151,6 +149,6 @@ namespace probe
     }
 
     inline constexpr sorter_facade<detail::exc_impl> exc{};
-}}
+}
 
 #endif // CPPSORT_PROBES_EXC_H_

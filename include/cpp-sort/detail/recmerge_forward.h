@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -39,9 +39,7 @@
 #include "type_traits.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // recmerge for forward iterators
@@ -145,6 +143,6 @@ namespace detail
         recmerge(f1_0, n1_0, f1_1, n1_1, buffer, buff_size,
                  std::move(compare), std::move(projection), tag);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_RECMERGE_FORWARD_H_

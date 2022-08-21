@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MAKE_ARRAY_H_
@@ -12,9 +12,7 @@
 #include <cstddef>
 #include <utility>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // The constexpr capabilities of std::array are seriously
@@ -36,6 +34,6 @@ namespace detail
         using indices = std::make_index_sequence<N>;
         return make_array_impl(arr, indices{});
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MAKE_ARRAY_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_SORT_H_
@@ -18,9 +18,7 @@
 #include "memory.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort_impl(ForwardIterator first, difference_type_t<ForwardIterator> size,
@@ -173,6 +171,6 @@ namespace detail
                    std::move(compare), std::move(projection),
                    category{});
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MERGE_SORT_H_

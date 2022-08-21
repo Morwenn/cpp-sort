@@ -5,9 +5,7 @@
 #ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT10_H_
 #define CPPSORT_DETAIL_LOW_COMPARISONS_SORT10_H_
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_comparisons_sorter_impl<10u>
@@ -28,6 +26,6 @@ namespace detail
             front_insert<10u>(std::move(first), std::move(compare), std::move(projection));
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT10_H_

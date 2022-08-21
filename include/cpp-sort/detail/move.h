@@ -17,9 +17,7 @@
 #include "memory.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // move
@@ -109,6 +107,6 @@ namespace detail
         return uninitialized_move_impl(truth_type{}, std::move(first), std::move(last),
                                        std::move(result), destroyer);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MOVE_H_

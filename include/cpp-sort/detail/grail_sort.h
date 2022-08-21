@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -34,11 +34,7 @@
 #include "type_traits.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace grail
+namespace cppsort::detail::grail
 {
     // cost: 2 * len + nk^2 / 2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -753,6 +749,6 @@ namespace grail
                     three_way_compare<compare_t>(utility::as_function(compare)),
                     std::move(projection));
     }
-}}}
+}
 
 #endif // CPPSORT_DETAIL_GRAIL_SORT_H_

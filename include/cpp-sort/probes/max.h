@@ -24,9 +24,7 @@
 #include "../detail/pdqsort.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace probe
+namespace cppsort::probe
 {
     namespace detail
     {
@@ -130,6 +128,6 @@ namespace probe
     }
 
     inline constexpr sorter_facade<detail::max_impl> max{};
-}}
+}
 
 #endif // CPPSORT_PROBES_MAX_H_

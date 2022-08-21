@@ -11,9 +11,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Alternative to std::conditional_t from C++11
@@ -203,6 +201,6 @@ namespace detail
 
     template<std::size_t Value>
     inline constexpr bool is_in_pack<Value> = false;
-}}
+}
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_

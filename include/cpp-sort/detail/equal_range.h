@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -25,9 +25,7 @@
 #include "lower_bound.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
@@ -42,7 +40,7 @@ namespace detail
         difference_type len = std::distance(first, last);
         while (len != 0) {
             difference_type l2 = half(len);
-            ForwardIterator m = first;
+            auto m = first;
             std::advance(m, l2);
             if (comp(proj(*m), value)) {
                 first = ++m;
@@ -51,7 +49,7 @@ namespace detail
                 last = m;
                 len = l2;
             } else {
-                ForwardIterator mp1 = m;
+                auto mp1 = m;
                 return std::make_pair(
                     lower_bound(first, m, value, compare, projection),
                     upper_bound(++mp1, last, value, compare, projection)
@@ -60,6 +58,6 @@ namespace detail
         }
         return std::make_pair(first, first);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_EQUAL_RANGE_H_

@@ -12,9 +12,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto unchecked_min_element(ForwardIterator first, ForwardIterator last,
@@ -48,6 +46,6 @@ namespace detail
         return unchecked_min_element(std::move(first), std::move(last),
                                      std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MIN_ELEMENT_H_

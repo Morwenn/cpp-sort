@@ -28,9 +28,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto unchecked_minmax_element(ForwardIterator begin, ForwardIterator end,
@@ -92,6 +90,6 @@ namespace detail
         return unchecked_minmax_element(std::move(begin), std::move(end),
                                         std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MINMAX_ELEMENT_H_

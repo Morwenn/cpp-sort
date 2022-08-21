@@ -20,9 +20,7 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename T>
     struct cartesian_tree_node
@@ -182,6 +180,6 @@ namespace detail
             }
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_CARTESIAN_TREE_SORT_H_

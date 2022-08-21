@@ -25,9 +25,7 @@
 #include "stable_partition.h"
 #include "nth_element.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     // Basically list_node, except that the internal union contains
     // either a value or an iterator pointing to that value. This
@@ -289,6 +287,6 @@ namespace detail
             std::move(compare), std::move(projection)
         );
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SLABSORT_H_

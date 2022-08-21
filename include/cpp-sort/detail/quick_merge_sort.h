@@ -20,9 +20,7 @@
 #include "sized_iterator.h"
 #include "swap_ranges.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     inline constexpr int qmsort_limit = 32;
 
@@ -162,6 +160,6 @@ namespace detail
         quick_merge_sort(first.base(), last.base(), size,
                          std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_QUICK_MERGE_SORT_H_

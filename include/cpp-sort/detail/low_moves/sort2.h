@@ -15,9 +15,7 @@
 #include "../swap_if.h"
 #include "../type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_moves_sorter_impl<2u>
@@ -38,6 +36,6 @@ namespace detail
                          std::move(compare), std::move(projection));
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT2_H_

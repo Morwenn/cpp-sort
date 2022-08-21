@@ -24,9 +24,7 @@
 #include <utility>
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Deleter for ::operator new(std::size_t)
@@ -248,6 +246,6 @@ namespace detail
             T* buffer = nullptr;
             std::ptrdiff_t buffer_size = 0;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_MEMORY_H_

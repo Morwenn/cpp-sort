@@ -11,9 +11,7 @@
 #include <utility>
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Mostly a hack to avoid some gratuitous performance loss
@@ -108,7 +106,6 @@ namespace detail
     {
         return { it, size };
     }
-
-}}
+}
 
 #endif // CPPSORT_DETAIL_SIZED_ITERATOR_H_

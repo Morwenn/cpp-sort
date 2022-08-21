@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FLOATING_POINT_WEIGHT_H_
@@ -10,9 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <cmath>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     //
     // Helpers for floating point comparison, mostly
@@ -35,8 +33,7 @@ namespace detail
 
         // Only matters for NaN and infinity
         int res = std::signbit(value) ? -1 : 1;
-        switch (std::fpclassify(value))
-        {
+        switch (std::fpclassify(value)) {
             case FP_NAN:
                 return res * 2;
             case FP_INFINITE:
@@ -64,8 +61,7 @@ namespace detail
 
         // Only matters for NaN and infinity
         int res = std::signbit(value) ? -1 : 1;
-        switch (std::fpclassify(value))
-        {
+        switch (std::fpclassify(value)) {
             case FP_NAN:
                 // TODO: discriminate quiet and signaling NaNs
                 return res * 2;
@@ -75,6 +71,6 @@ namespace detail
                 return 0;
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_FLOATING_POINT_WEIGHT_H_

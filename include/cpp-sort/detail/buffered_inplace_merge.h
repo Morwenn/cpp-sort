@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -29,9 +29,7 @@
 #include "move.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Blind merge with a buffer
@@ -126,6 +124,6 @@ namespace detail
                                cppsort::flip(compare), std::move(projection));
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_BUFFERED_INPLACE_MERGE_H_

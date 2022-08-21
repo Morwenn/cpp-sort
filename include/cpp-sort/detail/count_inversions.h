@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_COUNT_INVERSIONS_H_
@@ -14,9 +14,7 @@
 #include "iterator_traits.h"
 #include "move.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<
         typename ResultType,
@@ -92,6 +90,6 @@ namespace detail
                                                          std::move(compare), std::move(projection));
         return inversions;
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_COUNT_INVERSIONS_H_
