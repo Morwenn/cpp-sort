@@ -157,7 +157,7 @@ All specializations of `sorting_network_sorter` provide a `index_pairs() static`
 
 ```cpp
 template<typename DifferenceType=std::ptrdiff_t>
-static constexpr auto index_pairs()
+[[nodiscard]] static constexpr auto index_pairs()
     -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
 ```
 
@@ -172,6 +172,8 @@ static constexpr auto index_pairs()
 *Changed in version 1.13.0:* sorting 21, 22, 23, 25, 27 and 29 inputs respectively require 99, 106, 114, 131, 149 and 164 CEs instead of 100, 107, 115, 132, 150 and 165.
 
 *Changed in version 1.13.1:* sorting 25 inputs requires 130 CEs instead of 131.
+
+*Changed in version 1.13.1:* `index_pair()` is now `[[nodiscard]]` when possible for all `sorting_network_sorter` specializations.
 
 
   [double-insertion-sort]: Original-research.md#double-insertion-sort
