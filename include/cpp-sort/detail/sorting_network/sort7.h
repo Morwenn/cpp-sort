@@ -5,12 +5,10 @@
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT7_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT7_H_
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
-    struct sorting_network_sorter_impl<7u>
+    struct sorting_network_sorter_impl<7>
     {
         template<
             typename RandomAccessIterator,
@@ -24,26 +22,26 @@ namespace detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            iter_swap_if(first + 1u, first + 2u, compare, projection);
-            iter_swap_if(first, first + 2u, compare, projection);
-            iter_swap_if(first, first + 1u, compare, projection);
-            iter_swap_if(first + 3u, first + 4u, compare, projection);
-            iter_swap_if(first + 5u, first + 6u, compare, projection);
-            iter_swap_if(first + 3u, first + 5u, compare, projection);
-            iter_swap_if(first + 4u, first + 6u, compare, projection);
-            iter_swap_if(first + 4u, first + 5u, compare, projection);
-            iter_swap_if(first, first + 4u, compare, projection);
-            iter_swap_if(first, first + 3u, compare, projection);
-            iter_swap_if(first + 1u, first + 5u, compare, projection);
-            iter_swap_if(first + 2u, first + 6u, compare, projection);
-            iter_swap_if(first + 2u, first + 5u, compare, projection);
-            iter_swap_if(first + 1u, first + 3u, compare, projection);
-            iter_swap_if(first + 2u, first + 4u, compare, projection);
-            iter_swap_if(first + 2u, first + 3u, compare, projection);
+            iter_swap_if(first, first + 6, compare, projection);
+            iter_swap_if(first + 2, first + 3, compare, projection);
+            iter_swap_if(first + 4, first + 5, compare, projection);
+            iter_swap_if(first, first + 2, compare, projection);
+            iter_swap_if(first + 1, first + 4, compare, projection);
+            iter_swap_if(first + 3, first + 6, compare, projection);
+            iter_swap_if(first, first + 1, compare, projection);
+            iter_swap_if(first + 2, first + 5, compare, projection);
+            iter_swap_if(first + 3, first + 4, compare, projection);
+            iter_swap_if(first + 1, first + 2, compare, projection);
+            iter_swap_if(first + 4, first + 6, compare, projection);
+            iter_swap_if(first + 2, first + 3, compare, projection);
+            iter_swap_if(first + 4, first + 5, compare, projection);
+            iter_swap_if(first + 1, first + 2, compare, projection);
+            iter_swap_if(first + 3, first + 4, compare, projection);
+            iter_swap_if(first + 5, first + 6, compare, projection);
         }
 
         template<typename DifferenceType=std::ptrdiff_t>
-        static constexpr auto index_pairs()
+        [[nodiscard]] static constexpr auto index_pairs()
             -> std::array<utility::index_pair<DifferenceType>, 16>
         {
             return {{
@@ -56,6 +54,6 @@ namespace detail
             }};
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT7_H_

@@ -5,12 +5,10 @@
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT30_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT30_H_
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
-    struct sorting_network_sorter_impl<30u>
+    struct sorting_network_sorter_impl<30>
     {
         template<
             typename RandomAccessIterator,
@@ -20,186 +18,77 @@ namespace detail
                 Projection, RandomAccessIterator, Compare
             >>
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator,
+        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            iter_swap_if(first, first + 2u, compare, projection);
-            iter_swap_if(first + 4u, first + 6u, compare, projection);
-            iter_swap_if(first + 8u, first + 10u, compare, projection);
-            iter_swap_if(first + 12u, first + 14u, compare, projection);
-            iter_swap_if(first + 16u, first + 18u, compare, projection);
-            iter_swap_if(first + 20u, first + 22u, compare, projection);
-            iter_swap_if(first + 24u, first + 26u, compare, projection);
-            iter_swap_if(first, first + 4u, compare, projection);
-            iter_swap_if(first + 8u, first + 12u, compare, projection);
-            iter_swap_if(first + 16u, first + 20u, compare, projection);
-            iter_swap_if(first + 24u, first + 28u, compare, projection);
-            iter_swap_if(first + 2u, first + 6u, compare, projection);
-            iter_swap_if(first + 10u, first + 14u, compare, projection);
-            iter_swap_if(first + 18u, first + 22u, compare, projection);
-            iter_swap_if(first, first + 8u, compare, projection);
-            iter_swap_if(first + 16u, first + 24u, compare, projection);
-            iter_swap_if(first + 2u, first + 10u, compare, projection);
-            iter_swap_if(first + 18u, first + 26u, compare, projection);
-            iter_swap_if(first + 4u, first + 12u, compare, projection);
-            iter_swap_if(first + 20u, first + 28u, compare, projection);
-            iter_swap_if(first + 6u, first + 14u, compare, projection);
-            iter_swap_if(first, first + 16u, compare, projection);
-            iter_swap_if(first + 2u, first + 18u, compare, projection);
-            iter_swap_if(first + 4u, first + 20u, compare, projection);
-            iter_swap_if(first + 6u, first + 22u, compare, projection);
-            iter_swap_if(first + 8u, first + 24u, compare, projection);
-            iter_swap_if(first + 10u, first + 26u, compare, projection);
-            iter_swap_if(first + 12u, first + 28u, compare, projection);
-            iter_swap_if(first + 10u, first + 20u, compare, projection);
-            iter_swap_if(first + 12u, first + 18u, compare, projection);
-            iter_swap_if(first + 6u, first + 24u, compare, projection);
-            iter_swap_if(first + 26u, first + 28u, compare, projection);
-            iter_swap_if(first + 14u, first + 22u, compare, projection);
-            iter_swap_if(first + 2u, first + 4u, compare, projection);
-            iter_swap_if(first + 8u, first + 16u, compare, projection);
-            iter_swap_if(first + 2u, first + 8u, compare, projection);
-            iter_swap_if(first + 14u, first + 26u, compare, projection);
-            iter_swap_if(first + 4u, first + 16u, compare, projection);
-            iter_swap_if(first + 22u, first + 28u, compare, projection);
-            iter_swap_if(first + 4u, first + 8u, compare, projection);
-            iter_swap_if(first + 10u, first + 12u, compare, projection);
-            iter_swap_if(first + 18u, first + 20u, compare, projection);
-            iter_swap_if(first + 22u, first + 26u, compare, projection);
-            iter_swap_if(first + 6u, first + 16u, compare, projection);
-            iter_swap_if(first + 14u, first + 24u, compare, projection);
-            iter_swap_if(first + 12u, first + 16u, compare, projection);
-            iter_swap_if(first + 20u, first + 24u, compare, projection);
-            iter_swap_if(first + 6u, first + 10u, compare, projection);
-            iter_swap_if(first + 14u, first + 18u, compare, projection);
-            iter_swap_if(first + 6u, first + 8u, compare, projection);
-            iter_swap_if(first + 10u, first + 12u, compare, projection);
-            iter_swap_if(first + 14u, first + 16u, compare, projection);
-            iter_swap_if(first + 18u, first + 20u, compare, projection);
-            iter_swap_if(first + 22u, first + 24u, compare, projection);
-            iter_swap_if(first + 12u, first + 14u, compare, projection);
-            iter_swap_if(first + 16u, first + 18u, compare, projection);
-            iter_swap_if(first + 1u, first + 3u, compare, projection);
-            iter_swap_if(first + 5u, first + 7u, compare, projection);
-            iter_swap_if(first + 9u, first + 11u, compare, projection);
-            iter_swap_if(first + 13u, first + 15u, compare, projection);
-            iter_swap_if(first + 17u, first + 19u, compare, projection);
-            iter_swap_if(first + 21u, first + 23u, compare, projection);
-            iter_swap_if(first + 25u, first + 27u, compare, projection);
-            iter_swap_if(first + 1u, first + 5u, compare, projection);
-            iter_swap_if(first + 9u, first + 13u, compare, projection);
-            iter_swap_if(first + 17u, first + 21u, compare, projection);
-            iter_swap_if(first + 25u, first + 29u, compare, projection);
-            iter_swap_if(first + 3u, first + 7u, compare, projection);
-            iter_swap_if(first + 11u, first + 15u, compare, projection);
-            iter_swap_if(first + 19u, first + 23u, compare, projection);
-            iter_swap_if(first + 1u, first + 9u, compare, projection);
-            iter_swap_if(first + 17u, first + 25u, compare, projection);
-            iter_swap_if(first + 3u, first + 11u, compare, projection);
-            iter_swap_if(first + 19u, first + 27u, compare, projection);
-            iter_swap_if(first + 5u, first + 13u, compare, projection);
-            iter_swap_if(first + 21u, first + 29u, compare, projection);
-            iter_swap_if(first + 7u, first + 15u, compare, projection);
-            iter_swap_if(first + 1u, first + 17u, compare, projection);
-            iter_swap_if(first + 3u, first + 19u, compare, projection);
-            iter_swap_if(first + 5u, first + 21u, compare, projection);
-            iter_swap_if(first + 7u, first + 23u, compare, projection);
-            iter_swap_if(first + 9u, first + 25u, compare, projection);
-            iter_swap_if(first + 11u, first + 27u, compare, projection);
-            iter_swap_if(first + 13u, first + 29u, compare, projection);
-            iter_swap_if(first + 11u, first + 21u, compare, projection);
-            iter_swap_if(first + 13u, first + 19u, compare, projection);
-            iter_swap_if(first + 7u, first + 25u, compare, projection);
-            iter_swap_if(first + 27u, first + 29u, compare, projection);
-            iter_swap_if(first + 15u, first + 23u, compare, projection);
-            iter_swap_if(first + 3u, first + 5u, compare, projection);
-            iter_swap_if(first + 9u, first + 17u, compare, projection);
-            iter_swap_if(first + 3u, first + 9u, compare, projection);
-            iter_swap_if(first + 15u, first + 27u, compare, projection);
-            iter_swap_if(first + 5u, first + 17u, compare, projection);
-            iter_swap_if(first + 23u, first + 29u, compare, projection);
-            iter_swap_if(first + 5u, first + 9u, compare, projection);
-            iter_swap_if(first + 11u, first + 13u, compare, projection);
-            iter_swap_if(first + 19u, first + 21u, compare, projection);
-            iter_swap_if(first + 23u, first + 27u, compare, projection);
-            iter_swap_if(first + 7u, first + 17u, compare, projection);
-            iter_swap_if(first + 15u, first + 25u, compare, projection);
-            iter_swap_if(first + 13u, first + 17u, compare, projection);
-            iter_swap_if(first + 21u, first + 25u, compare, projection);
-            iter_swap_if(first + 7u, first + 11u, compare, projection);
-            iter_swap_if(first + 15u, first + 19u, compare, projection);
-            iter_swap_if(first + 7u, first + 9u, compare, projection);
-            iter_swap_if(first + 11u, first + 13u, compare, projection);
-            iter_swap_if(first + 15u, first + 17u, compare, projection);
-            iter_swap_if(first + 19u, first + 21u, compare, projection);
-            iter_swap_if(first + 23u, first + 25u, compare, projection);
-            iter_swap_if(first + 13u, first + 15u, compare, projection);
-            iter_swap_if(first + 17u, first + 19u, compare, projection);
-            iter_swap_if(first, first + 1u, compare, projection);
-            iter_swap_if(first + 2u, first + 3u, compare, projection);
-            iter_swap_if(first + 4u, first + 5u, compare, projection);
-            iter_swap_if(first + 6u, first + 7u, compare, projection);
-            iter_swap_if(first + 8u, first + 9u, compare, projection);
-            iter_swap_if(first + 10u, first + 11u, compare, projection);
-            iter_swap_if(first + 12u, first + 13u, compare, projection);
-            iter_swap_if(first + 14u, first + 15u, compare, projection);
-            iter_swap_if(first + 16u, first + 17u, compare, projection);
-            iter_swap_if(first + 18u, first + 19u, compare, projection);
-            iter_swap_if(first + 20u, first + 21u, compare, projection);
-            iter_swap_if(first + 22u, first + 23u, compare, projection);
-            iter_swap_if(first + 24u, first + 25u, compare, projection);
-            iter_swap_if(first + 26u, first + 27u, compare, projection);
-            iter_swap_if(first + 28u, first + 29u, compare, projection);
-            iter_swap_if(first + 1u, first + 16u, compare, projection);
-            iter_swap_if(first + 3u, first + 18u, compare, projection);
-            iter_swap_if(first + 5u, first + 20u, compare, projection);
-            iter_swap_if(first + 7u, first + 22u, compare, projection);
-            iter_swap_if(first + 9u, first + 24u, compare, projection);
-            iter_swap_if(first + 11u, first + 26u, compare, projection);
-            iter_swap_if(first + 13u, first + 28u, compare, projection);
-            iter_swap_if(first + 1u, first + 8u, compare, projection);
-            iter_swap_if(first + 3u, first + 10u, compare, projection);
-            iter_swap_if(first + 5u, first + 12u, compare, projection);
-            iter_swap_if(first + 7u, first + 14u, compare, projection);
-            iter_swap_if(first + 9u, first + 16u, compare, projection);
-            iter_swap_if(first + 11u, first + 18u, compare, projection);
-            iter_swap_if(first + 13u, first + 20u, compare, projection);
-            iter_swap_if(first + 15u, first + 22u, compare, projection);
-            iter_swap_if(first + 17u, first + 24u, compare, projection);
-            iter_swap_if(first + 19u, first + 26u, compare, projection);
-            iter_swap_if(first + 21u, first + 28u, compare, projection);
-            iter_swap_if(first + 1u, first + 4u, compare, projection);
-            iter_swap_if(first + 3u, first + 6u, compare, projection);
-            iter_swap_if(first + 5u, first + 8u, compare, projection);
-            iter_swap_if(first + 7u, first + 10u, compare, projection);
-            iter_swap_if(first + 9u, first + 12u, compare, projection);
-            iter_swap_if(first + 11u, first + 14u, compare, projection);
-            iter_swap_if(first + 13u, first + 16u, compare, projection);
-            iter_swap_if(first + 15u, first + 18u, compare, projection);
-            iter_swap_if(first + 17u, first + 20u, compare, projection);
-            iter_swap_if(first + 19u, first + 22u, compare, projection);
-            iter_swap_if(first + 21u, first + 24u, compare, projection);
-            iter_swap_if(first + 23u, first + 26u, compare, projection);
-            iter_swap_if(first + 25u, first + 28u, compare, projection);
-            iter_swap_if(first + 1u, first + 2u, compare, projection);
-            iter_swap_if(first + 3u, first + 4u, compare, projection);
-            iter_swap_if(first + 5u, first + 6u, compare, projection);
-            iter_swap_if(first + 7u, first + 8u, compare, projection);
-            iter_swap_if(first + 9u, first + 10u, compare, projection);
-            iter_swap_if(first + 11u, first + 12u, compare, projection);
-            iter_swap_if(first + 13u, first + 14u, compare, projection);
-            iter_swap_if(first + 15u, first + 16u, compare, projection);
-            iter_swap_if(first + 17u, first + 18u, compare, projection);
-            iter_swap_if(first + 19u, first + 20u, compare, projection);
-            iter_swap_if(first + 21u, first + 22u, compare, projection);
-            iter_swap_if(first + 23u, first + 24u, compare, projection);
-            iter_swap_if(first + 25u, first + 26u, compare, projection);
-            iter_swap_if(first + 27u, first + 28u, compare, projection);
+            sorting_network_sorter<15>{}(first, first + 15, compare, projection);
+            sorting_network_sorter<15>{}(first + 15, last, compare, projection);
+
+            iter_swap_if(first + 14, first + 29, compare, projection);
+            iter_swap_if(first, first + 15, compare, projection);
+            iter_swap_if(first + 13, first + 28, compare, projection);
+            iter_swap_if(first + 1, first + 16, compare, projection);
+            iter_swap_if(first + 12, first + 27, compare, projection);
+            iter_swap_if(first + 2, first + 17, compare, projection);
+            iter_swap_if(first + 3, first + 18, compare, projection);
+            iter_swap_if(first + 4, first + 19, compare, projection);
+            iter_swap_if(first + 9, first + 24, compare, projection);
+            iter_swap_if(first + 10, first + 25, compare, projection);
+            iter_swap_if(first + 11, first + 26, compare, projection);
+            iter_swap_if(first + 5, first + 20, compare, projection);
+            iter_swap_if(first + 6, first + 21, compare, projection);
+            iter_swap_if(first + 7, first + 22, compare, projection);
+            iter_swap_if(first + 8, first + 23, compare, projection);
+            iter_swap_if(first + 9, first + 16, compare, projection);
+            iter_swap_if(first + 10, first + 17, compare, projection);
+            iter_swap_if(first + 11, first + 18, compare, projection);
+            iter_swap_if(first + 12, first + 19, compare, projection);
+            iter_swap_if(first + 5, first + 9, compare, projection);
+            iter_swap_if(first + 6, first + 10, compare, projection);
+            iter_swap_if(first + 7, first + 11, compare, projection);
+            iter_swap_if(first + 8, first + 15, compare, projection);
+            iter_swap_if(first + 13, first + 20, compare, projection);
+            iter_swap_if(first + 14, first + 21, compare, projection);
+            iter_swap_if(first + 18, first + 22, compare, projection);
+            iter_swap_if(first + 19, first + 23, compare, projection);
+            iter_swap_if(first + 3, first + 5, compare, projection);
+            iter_swap_if(first + 4, first + 8, compare, projection);
+            iter_swap_if(first + 7, first + 9, compare, projection);
+            iter_swap_if(first + 12, first + 15, compare, projection);
+            iter_swap_if(first + 13, first + 16, compare, projection);
+            iter_swap_if(first + 14, first + 17, compare, projection);
+            iter_swap_if(first + 20, first + 24, compare, projection);
+            iter_swap_if(first + 21, first + 25, compare, projection);
+            iter_swap_if(first + 2, first + 4, compare, projection);
+            iter_swap_if(first + 6, first + 8, compare, projection);
+            iter_swap_if(first + 10, first + 12, compare, projection);
+            iter_swap_if(first + 11, first + 13, compare, projection);
+            iter_swap_if(first + 14, first + 15, compare, projection);
+            iter_swap_if(first + 16, first + 18, compare, projection);
+            iter_swap_if(first + 17, first + 19, compare, projection);
+            iter_swap_if(first + 20, first + 22, compare, projection);
+            iter_swap_if(first + 21, first + 23, compare, projection);
+            iter_swap_if(first + 24, first + 26, compare, projection);
+            iter_swap_if(first + 25, first + 27, compare, projection);
+            iter_swap_if(first + 1, first + 2, compare, projection);
+            iter_swap_if(first + 3, first + 4, compare, projection);
+            iter_swap_if(first + 5, first + 6, compare, projection);
+            iter_swap_if(first + 7, first + 8, compare, projection);
+            iter_swap_if(first + 9, first + 10, compare, projection);
+            iter_swap_if(first + 11, first + 12, compare, projection);
+            iter_swap_if(first + 13, first + 14, compare, projection);
+            iter_swap_if(first + 15, first + 16, compare, projection);
+            iter_swap_if(first + 17, first + 18, compare, projection);
+            iter_swap_if(first + 19, first + 20, compare, projection);
+            iter_swap_if(first + 21, first + 22, compare, projection);
+            iter_swap_if(first + 23, first + 24, compare, projection);
+            iter_swap_if(first + 25, first + 26, compare, projection);
+            iter_swap_if(first + 27, first + 28, compare, projection);
         }
 
         template<typename DifferenceType=std::ptrdiff_t>
-        static constexpr auto index_pairs()
+        [[nodiscard]] static constexpr auto index_pairs()
             -> std::array<utility::index_pair<DifferenceType>, 172>
         {
             return {{
@@ -221,6 +110,6 @@ namespace detail
             }};
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT30_H_
