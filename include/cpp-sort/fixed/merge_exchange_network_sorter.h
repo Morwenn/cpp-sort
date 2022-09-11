@@ -20,7 +20,6 @@
 #include "../detail/bitops.h"
 #include "../detail/empty_sorter.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/make_array.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -93,7 +92,7 @@ namespace cppsort
                     }
                 }
 
-                return cppsort::detail::make_array(pairs);
+                return std::to_array(pairs);
             }
 
             template<
