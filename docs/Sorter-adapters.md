@@ -6,14 +6,10 @@ Sorter adapters are the main reason for using sorter function objects instead of
 
 In this documentation, we will call *adapted sorters* the sorters passed to the adapters and *resulting sorter* the sorter class that results from the adaption of a sorter by an adapter. If not specified, the stability and the iterator category of the *resulting sorter* is that of the *adapted sorter* provided there is a single *adapted sorter*.
 
-In C++17, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides][ctad]. The following example illustrates how it simplifies their use:
+For convenience, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides][ctad]:
 
 ```cpp
-// C++14
-using sorter = indirect_adapter<quick_sorter>;
-constexpr auto sort = sorter{};
-
-// C++17
+// Indirectly sort using quick_sorter
 constexpr auto sort = indirect_adapter(quick_sort);
 ```
 
@@ -201,7 +197,7 @@ using sorter = cppsort::hybrid_adapter<
 >;
 ```
 
-*Warning: this adapter does note take advantage of the C++17 deduction guides.*
+*Warning: this adapter does note take advantage of deduction guides.*
 
 *Warning: this adapter only supports default-constructible stateless sorters.*
 

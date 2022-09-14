@@ -85,7 +85,7 @@ randomizing_adapter() = default;
 constexpr explicit randomizing_adapter(Sorter) {}
 ```
 
-It might seem useless since our adapter does not store an instance of the sorter it wraps, but it adds expressiveness with C++17 [class template argument deduction][ctad]:
+It might seem useless since our adapter does not store an instance of the sorter it wraps, but it adds expressiveness with [class template argument deduction][ctad]:
 
 ```cpp
 auto sort = randomizing_adapter(cppsort::poplar_sorter);

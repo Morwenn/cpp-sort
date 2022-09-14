@@ -12,26 +12,6 @@ While **cpp-sort** theoretically requires a fully C++14-compliant compiler, a fe
 When compiled with C++17, **cpp-sort** might gain a few additional features depending on the level of C++17 support provided by the compiler. The availability of most of the features depends on the presence of corresponding [feature-testing macros][feature-test-macros]. The support for feature-testing macros being optional in C++17, it is possible that some of the features listed below aren't available even though the compiler is implements them. If it is the case and it is a problem for you, don't hesitate to open an issue so that we can explicitly support the given compiler.
 
 **New features:**
-* Sorter adapters have been updated to take advantage of deduction guides:
-
-    ```cpp
-    // C++14
-    constexpr auto sort = schwartz_adapter<quick_sorter>{};
-    // C++17
-    constexpr auto sort = schwartz_adapter(quick_sort);
-    ```
-
-    This notably makes measures of presortedness more usable with the few sorter adapters that make sense for them:
-
-    ```cpp
-    // C++14
-    auto rem = indirect_adapter<decltype(probe::rem)>{};
-    // C++17
-    auto rem = indirect_adapter(probe::rem);
-    ```
-
-    There is no specific check for this feature: the sorter adpater constructors have been written in such a way that implicit deduction guides work out-of-the-box.
-
 * [`sorter_facade`][sorter-facade] range overloads can now be used in `constexpr` functions.
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.
