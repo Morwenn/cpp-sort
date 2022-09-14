@@ -103,7 +103,7 @@ This adapter implements an indirect sort: a sorting algorithm that actually sort
 
 Note that `indirect_adapter` provides a rather good exception guarantee: as long as the collection of iterators is being sorted, if an exception is thrown, the collection to sort will remain in its original state. However, it doesn't provide the *strong exception guarantee* since exceptions could still be thrown when the elements are moved to their sorted position.
 
-In C++17 mode, `indirect_adapter` returns the result of the *adapted sorter* if any.
+`indirect_adapter` returns the result of the *adapted sorter* if any.
 
 ```cpp
 template<typename Sorter>
@@ -120,7 +120,7 @@ The *resulting sorter* accepts forward iterators, and the iterator category of t
 
 This adapter is a straigthforward solution to sort forward iterators or bidirectional iterators fast: it moves the elements of the collection to sort to a buffer, sorts the buffer with the *adapted sorter*, then moves the sorted elements back to the original collection. If memory use isn't an issue it allows to use the fastest random-access sorters to sort any collection.
 
-In C++17 mode, `out_of_place_adapter` returns the result of the *adapted sorter* if any.
+`out_of_place_adapter` returns the result of the *adapted sorter* if any.
 
 ```cpp
 template<typename Sorter>
