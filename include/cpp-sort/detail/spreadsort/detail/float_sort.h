@@ -30,6 +30,7 @@ Phil Endecott and Frank Gennari
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "common.h"
@@ -37,7 +38,6 @@ Phil Endecott and Frank Gennari
 #include "integer_sort.h"
 #include "../../iterator_traits.h"
 #include "../../pdqsort.h"
-#include "../../type_traits.h"
 
 namespace cppsort::detail::spreadsort::detail
 {
@@ -358,7 +358,7 @@ namespace cppsort::detail::spreadsort::detail
     //Checking whether the value type is a float, and trying a 32-bit integer
     template<typename RandomAccessIter, typename Projection>
     auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             sizeof(std::uint32_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
             std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559,
             void
@@ -373,7 +373,7 @@ namespace cppsort::detail::spreadsort::detail
     //Checking whether the value type is a double, and using a 64-bit integer
     template<typename RandomAccessIter, typename Projection>
     auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             sizeof(std::uint64_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
             std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559,
             void

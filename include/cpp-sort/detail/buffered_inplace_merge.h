@@ -27,7 +27,6 @@
 #include "iterator_traits.h"
 #include "memory.h"
 #include "move.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {

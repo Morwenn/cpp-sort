@@ -12,10 +12,10 @@
 #include <iterator>
 #include <memory>
 #include <type_traits>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "memory.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {
@@ -24,7 +24,7 @@ namespace cppsort::detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             not cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
@@ -34,7 +34,7 @@ namespace cppsort::detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
@@ -51,7 +51,7 @@ namespace cppsort::detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             not cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >
@@ -61,7 +61,7 @@ namespace cppsort::detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             cppsort::detail::has_iter_move_v<InputIterator>,
             OutputIterator
         >

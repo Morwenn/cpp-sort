@@ -14,6 +14,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -37,7 +38,7 @@ namespace cppsort
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<is_projection_iterator_v<
+                typename = mstd::enable_if_t<is_projection_iterator_v<
                     Projection, RandomAccessIterator, Compare
                 >>
             >

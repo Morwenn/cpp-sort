@@ -57,7 +57,7 @@ def generate_cxx(network: list[list[tuple]]):
                     typename RandomAccessIterator,
                     typename Compare = std::less<>,
                     typename Projection = std::identity,
-                    typename = detail::enable_if_t<is_projection_iterator_v<
+                    typename = mstd::enable_if_t<is_projection_iterator_v<
                         Projection, RandomAccessIterator, Compare
                     >>
                 >

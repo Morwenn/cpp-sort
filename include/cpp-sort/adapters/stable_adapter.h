@@ -12,6 +12,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -151,7 +152,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -168,7 +169,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
@@ -228,7 +229,7 @@ namespace cppsort
 
         template<
             typename... Args,
-            typename = detail::enable_if_t<is_stable_v<Sorter(Args...)>>
+            typename = mstd::enable_if_t<is_stable_v<Sorter(Args...)>>
         >
         auto operator()(Args&&... args) const
             -> decltype(this->get()(std::forward<Args>(args)...))
@@ -238,7 +239,7 @@ namespace cppsort
 
         template<
             typename... Args,
-            typename = detail::enable_if_t<not is_stable_v<Sorter(Args...)>>,
+            typename = mstd::enable_if_t<not is_stable_v<Sorter(Args...)>>,
             typename = void
         >
         auto operator()(Args&&... args) const
@@ -251,7 +252,7 @@ namespace cppsort
         // Sorter traits
 
         using is_always_stable = std::true_type;
-        using type = detail::conditional_t<
+        using type = mstd::conditional_t<
             cppsort::is_always_stable_v<Sorter>,
             Sorter,
             stable_adapter<Sorter>

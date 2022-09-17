@@ -15,11 +15,11 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../min_element.h"
-#include "../type_traits.h"
 
 namespace cppsort
 {
@@ -100,7 +100,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 is_projection_v<std::identity, std::list<Args...>, Compare>
             >
         {
@@ -109,7 +109,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::list<Args...>& iterable, Projection projection) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
@@ -120,7 +120,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
@@ -143,7 +143,7 @@ namespace cppsort
 
         template<typename Compare, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 is_projection_v<std::identity, std::forward_list<Args...>, Compare>
             >
         {
@@ -152,7 +152,7 @@ namespace cppsort
 
         template<typename Projection, typename... Args>
         auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
@@ -163,7 +163,7 @@ namespace cppsort
             typename Compare,
             typename Projection,
             typename... Args,
-            typename = detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >

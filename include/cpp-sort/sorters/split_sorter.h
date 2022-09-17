@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <type_traits>
 #include <cpp-sort/adapters/split_adapter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 

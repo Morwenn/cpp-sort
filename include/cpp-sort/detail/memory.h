@@ -22,7 +22,7 @@
 #include <new>
 #include <type_traits>
 #include <utility>
-#include "type_traits.h"
+#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort::detail
 {
@@ -96,7 +96,7 @@ namespace cppsort::detail
     };
 
     template<typename T>
-    using destruct_n = conditional_t<
+    using destruct_n = mstd::conditional_t<
         std::is_trivially_destructible_v<T>,
         destruct_n_trivial,
         destruct_n_impl<T>

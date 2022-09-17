@@ -13,13 +13,13 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/count_inversions.h"
 #include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort::probe
 {
@@ -58,7 +58,7 @@ namespace cppsort::probe
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = cppsort::detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -75,7 +75,7 @@ namespace cppsort::probe
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = cppsort::detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

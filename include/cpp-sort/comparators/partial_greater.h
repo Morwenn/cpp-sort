@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/comparators/weak_greater.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {

@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include "detail/type_traits.h"
 
 namespace cppsort
@@ -35,7 +36,7 @@ namespace cppsort
     template<
         typename T,
         typename Function,
-        typename = detail::enable_if_t<detail::has_refine_method<Function, T>>
+        typename = mstd::enable_if_t<detail::has_refine_method<Function, T>>
     >
     auto refined(Function func)
         noexcept(noexcept(func.template refine<T>()))
@@ -47,7 +48,7 @@ namespace cppsort
     template<
         typename T,
         typename Function,
-        typename = detail::enable_if_t<not detail::has_refine_method<Function, T>>
+        typename = mstd::enable_if_t<not detail::has_refine_method<Function, T>>
     >
     constexpr auto refined(Function&& func) noexcept
         -> Function&&

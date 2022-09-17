@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -24,7 +25,6 @@
 #include "../detail/config.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -110,7 +110,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -126,7 +126,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >
@@ -141,7 +141,7 @@ namespace cppsort
 
             template<typename ForwardIterable, typename Compare=std::less<>>
             auto operator()(ForwardIterable&& iterable, Compare compare={}) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not is_projection_v<Compare, ForwardIterable>,
                     decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare)))
                 >
@@ -153,7 +153,7 @@ namespace cppsort
             template<typename ForwardIterator, typename Compare=std::less<>>
             auto operator()(ForwardIterator first, ForwardIterator last,
                             Compare compare={}) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not is_projection_iterator_v<Compare, ForwardIterator>,
                     decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
                 >

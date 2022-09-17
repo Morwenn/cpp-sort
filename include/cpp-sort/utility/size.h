@@ -12,6 +12,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort::utility
@@ -24,7 +25,7 @@ namespace cppsort::utility
 
     template<
         typename Iterable,
-        typename = cppsort::detail::enable_if_t<
+        typename = mstd::enable_if_t<
             cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
         >
     >
@@ -36,7 +37,7 @@ namespace cppsort::utility
 
     template<
         typename Iterable,
-        typename = cppsort::detail::enable_if_t<
+        typename = mstd::enable_if_t<
             not cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
         >
     >
@@ -48,7 +49,7 @@ namespace cppsort::utility
 
     template<
         typename Iterable,
-        typename = cppsort::detail::enable_if_t<
+        typename = mstd::enable_if_t<
             not cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
         >
     >

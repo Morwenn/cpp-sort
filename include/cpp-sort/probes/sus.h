@@ -13,11 +13,11 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/not_fn.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/longest_non_descending_subsequence.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort::probe
 {
@@ -29,7 +29,7 @@ namespace cppsort::probe
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = cppsort::detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

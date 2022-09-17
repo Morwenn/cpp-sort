@@ -12,10 +12,10 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/projection_compare.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -103,9 +103,9 @@ namespace cppsort
                 typename Iterable
             >
             auto operator()(Iterable& iterable) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     detail::can_sort<Sorter, Iterable>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable))
@@ -120,9 +120,9 @@ namespace cppsort
                 typename Iterable
             >
             auto operator()(Iterable& iterable) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::can_sort<Sorter, Iterable>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&)>,
                         decltype(this->get()(iterable))
@@ -138,9 +138,9 @@ namespace cppsort
                 typename Compare
             >
             auto operator()(Iterable& iterable, Compare compare) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     detail::can_comparison_sort<Sorter, Iterable, Compare>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable, std::move(compare)))
@@ -156,10 +156,10 @@ namespace cppsort
                 typename Compare
             >
             auto operator()(Iterable& iterable, Compare compare) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not is_projection_v<Compare, Iterable> &&
                     not detail::can_comparison_sort<Sorter, Iterable, Compare>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare)>,
                         decltype(this->get()(iterable, std::move(compare)))
@@ -175,10 +175,10 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::can_comparison_sort<Sorter, Iterable, Projection>::value &&
                     detail::can_projection_sort<Sorter, Iterable, Projection>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable, std::move(projection)))
@@ -194,10 +194,10 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
                     detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable, std::less{}, std::move(projection)))
@@ -213,7 +213,7 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
                     not detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
                     detail::can_comparison_sort<
@@ -221,7 +221,7 @@ namespace cppsort
                         Iterable,
                         projection_compare_t<std::less<>, Projection>
                     >::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
@@ -239,7 +239,7 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     is_projection_v<Projection, Iterable> &&
                     not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
                     not detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
@@ -248,7 +248,7 @@ namespace cppsort
                         Iterable,
                         projection_compare_t<std::less<>, Projection>
                     >::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Projection)>,
                         decltype(this->get()(iterable, std::move(projection)))
@@ -265,9 +265,9 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Compare compare, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     detail::can_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
@@ -286,14 +286,14 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Compare compare, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::can_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value &&
                     detail::can_comparison_sort<
                         Sorter,
                         Iterable,
                         projection_compare_t<Compare, Projection>
                     >::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
@@ -312,14 +312,14 @@ namespace cppsort
                 typename Projection
             >
             auto operator()(Iterable& iterable, Compare compare, Projection projection) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::can_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value &&
                     not detail::can_comparison_sort<
                         Sorter,
                         Iterable,
                         projection_compare_t<Compare, Projection>
                     >::value,
-                    conditional_t<
+                    mstd::conditional_t<
                         Stability,
                         cppsort::is_stable<Sorter(Iterable&, Compare, Projection)>,
                         decltype(this->get()(iterable, std::move(compare), std::move(projection)))

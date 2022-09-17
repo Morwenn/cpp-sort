@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <type_traits>
-#include "../detail/type_traits.h"
+#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort::utility
 {
@@ -60,7 +60,7 @@ namespace cppsort::utility
 
     template<typename Compare, typename T>
     struct is_probably_branchless_comparison:
-        cppsort::detail::conditional_t<
+        mstd::conditional_t<
             std::disjunction_v<
                 std::is_reference<Compare>,
                 std::is_const<Compare>,
@@ -114,7 +114,7 @@ struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
 
     template<typename Projection, typename T>
     struct is_probably_branchless_projection:
-        cppsort::detail::conditional_t<
+        mstd::conditional_t<
             std::disjunction_v<
                 std::is_reference<Projection>,
                 std::is_const<Projection>,

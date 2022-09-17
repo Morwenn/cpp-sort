@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_STABLE_ADAPTER_SELF_SORT_ADAPTER_H_
@@ -12,12 +12,12 @@
 #include <list>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include "checkers.h"
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -46,7 +46,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 detail::has_stable_sort_method<Iterable, Args...>,
                 decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
             >
@@ -56,7 +56,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 not detail::has_stable_sort_method<Iterable, Args...>,
                 decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
             >
@@ -85,7 +85,7 @@ namespace cppsort
         template<
             typename T,
             typename Compare,
-            typename = detail::enable_if_t<not is_projection_v<Compare, std::forward_list<T>&>>
+            typename = mstd::enable_if_t<not is_projection_v<Compare, std::forward_list<T>&>>
         >
         auto operator()(std::forward_list<T>& iterable, Compare compare) const
             -> void
@@ -103,7 +103,7 @@ namespace cppsort
         template<
             typename T,
             typename Compare,
-            typename = detail::enable_if_t<not is_projection_v<Compare, std::list<T>&>>
+            typename = mstd::enable_if_t<not is_projection_v<Compare, std::list<T>&>>
         >
         auto operator()(std::list<T>& iterable, Compare compare) const
             -> void

@@ -13,7 +13,6 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include "../detail/config.h"
 #include "../detail/raw_checkers.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {

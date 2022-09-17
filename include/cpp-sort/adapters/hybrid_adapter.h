@@ -13,6 +13,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -95,7 +96,7 @@ namespace cppsort
 
             template<typename... Args>
             static constexpr auto _detail_stability(choice<Ind>, Args&&... args)
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     std::is_invocable_v<Sorter, Args...>,
                     is_stable<Sorter(Args...)>
                 >;
@@ -356,7 +357,7 @@ namespace cppsort
 
             template<typename Sorter>
             static constexpr auto get_flat_tuple(Sorter&& value)
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not detail::is_specialization_of_v<std::remove_cvref_t<Sorter>, cppsort::hybrid_adapter>,
                     std::tuple<std::remove_reference_t<Sorter>&&>
                 >
@@ -366,7 +367,7 @@ namespace cppsort
 
             template<typename Sorter>
             static constexpr auto get_flat_tuple(Sorter&& value)
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     detail::is_specialization_of_v<std::remove_cvref_t<Sorter>, cppsort::hybrid_adapter>,
                     decltype(get_sorters_from_impl(std::move(value)))
                 >

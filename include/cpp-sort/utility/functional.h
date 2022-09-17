@@ -11,6 +11,7 @@
 #include <cmath>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include "../detail/raw_checkers.h"
@@ -61,7 +62,7 @@ namespace cppsort::utility
     template<
         typename T,
         typename U,
-        typename = cppsort::detail::enable_if_t<
+        typename = mstd::enable_if_t<
             std::is_base_of_v<projection_base, std::remove_cvref_t<T>> ||
             std::is_base_of_v<projection_base, std::remove_cvref_t<U>>
         >
@@ -99,7 +100,7 @@ namespace cppsort::utility
 
                 template<
                     typename Func,
-                    typename = cppsort::detail::enable_if_t<
+                    typename = mstd::enable_if_t<
                         not std::is_same_v<std::remove_cvref_t<Func>, as_projection_fn>
                     >
                 >
@@ -156,7 +157,7 @@ namespace cppsort::utility
 
                 template<
                     typename Func,
-                    typename = cppsort::detail::enable_if_t<
+                    typename = mstd::enable_if_t<
                         not std::is_same_v<std::remove_cvref_t<Func>, as_comparison_fn>
                     >
                 >
@@ -200,7 +201,7 @@ namespace cppsort::utility
 
     template<typename Function>
     constexpr auto as_projection(Function&& func)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             not cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_projection_fn>,
             detail::as_projection_fn<std::remove_cvref_t<Function>>
         >
@@ -210,7 +211,7 @@ namespace cppsort::utility
 
     template<typename Function>
     constexpr auto as_projection(Function&& func)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_projection_fn>,
             decltype(std::forward<Function>(func))
         >
@@ -220,7 +221,7 @@ namespace cppsort::utility
 
     template<typename Function>
     constexpr auto as_comparison(Function&& func)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             not cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_comparison_fn>,
             detail::as_comparison_fn<std::remove_cvref_t<Function>>
         >
@@ -230,7 +231,7 @@ namespace cppsort::utility
 
     template<typename Function>
     constexpr auto as_comparison(Function&& func)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_comparison_fn>,
             decltype(std::forward<Function>(func))
         >

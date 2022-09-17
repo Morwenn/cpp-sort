@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/type_traits.h"
@@ -70,7 +71,7 @@ namespace cppsort
             typename... Args
         >
         auto operator()(std::array<T, N>& array, Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 detail::is_in_pack<N, Indices...>,
                 decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
             >
@@ -82,10 +83,10 @@ namespace cppsort
             typename T,
             std::size_t N,
             typename... Args,
-            typename = detail::enable_if_t<detail::is_in_pack<N, Indices...>>
+            typename = mstd::enable_if_t<detail::is_in_pack<N, Indices...>>
         >
         auto operator()(T (&array)[N], Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 detail::is_in_pack<N, Indices...>,
                 decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
             >

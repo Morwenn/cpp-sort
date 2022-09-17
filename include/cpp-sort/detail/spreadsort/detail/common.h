@@ -25,14 +25,14 @@ Phil Endecott and Frank Gennari
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <vector>
+#include <cpp-sort/mstd/type_traits.h>
 #include "constants.h"
-#include "../../type_traits.h"
 
 namespace cppsort::detail::spreadsort::detail
 {
     //Well, we're not using Boost in the end
     template<bool Condition, typename T=void>
-    using disable_if_t = cppsort::detail::enable_if_t<not Condition, T>;
+    using disable_if_t = mstd::enable_if_t<not Condition, T>;
 
     //This only works on unsigned data types
     template<typename T>

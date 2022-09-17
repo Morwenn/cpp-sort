@@ -24,7 +24,6 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "partition.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {

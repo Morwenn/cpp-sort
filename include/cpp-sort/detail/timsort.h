@@ -50,7 +50,6 @@
 #include "move.h"
 #include "reverse.h"
 #include "rotate.h"
-#include "type_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort::detail

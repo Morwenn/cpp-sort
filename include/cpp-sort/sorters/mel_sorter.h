@@ -12,12 +12,12 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/melsort.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -32,7 +32,7 @@ namespace cppsort
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
@@ -57,7 +57,7 @@ namespace cppsort
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

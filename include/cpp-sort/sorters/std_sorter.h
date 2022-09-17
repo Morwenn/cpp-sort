@@ -14,11 +14,11 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/iterator_traits.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -32,7 +32,7 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename = detail::enable_if_t<not is_projection_iterator_v<
+                typename = mstd::enable_if_t<not is_projection_iterator_v<
                     Compare, RandomAccessIterator
                 >>
             >
@@ -74,7 +74,7 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
-                typename = detail::enable_if_t<not is_projection_iterator_v<
+                typename = mstd::enable_if_t<not is_projection_iterator_v<
                     Compare, RandomAccessIterator
                 >>
             >

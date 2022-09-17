@@ -20,10 +20,10 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "move.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {
@@ -45,7 +45,7 @@ namespace cppsort::detail
     template<typename RandomAccessIterator>
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             not detail::has_iter_move_v<RandomAccessIterator>,
             void
         >
@@ -58,7 +58,7 @@ namespace cppsort::detail
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             detail::has_iter_move_v<RandomAccessIterator>,
             void
         >

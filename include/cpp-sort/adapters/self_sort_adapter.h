@@ -12,6 +12,7 @@
 #include <list>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -69,7 +70,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 detail::has_sort_method<Iterable, Args...>,
                 decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
             >
@@ -79,7 +80,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 not detail::has_sort_method<Iterable, Args...> &&
                 detail::has_stable_sort_method<Iterable, Args...>,
                 decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
@@ -90,7 +91,7 @@ namespace cppsort
 
         template<typename Iterable, typename... Args>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> detail::enable_if_t<
+            -> mstd::enable_if_t<
                 not detail::has_sort_method<Iterable, Args...> &&
                 not detail::has_stable_sort_method<Iterable, Args...>,
                 decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
@@ -124,10 +125,10 @@ namespace cppsort
 
     template<typename Sorter, typename... Args>
     struct is_stable<self_sort_adapter<Sorter>(Args...)>:
-        detail::conditional_t<
+        mstd::conditional_t<
             detail::has_sort_method<Args...>,
             std::false_type,
-            detail::conditional_t<
+            mstd::conditional_t<
                 detail::has_stable_sort_method<Args...>,
                 std::true_type,
                 is_stable<Sorter(Args...)>
@@ -142,7 +143,7 @@ namespace cppsort
 
     template<typename Sorter, typename T, typename Function>
     struct is_stable<self_sort_adapter<Sorter>(std::forward_list<T>&, Function)>:
-        detail::conditional_t<
+        mstd::conditional_t<
             is_projection_v<Function, std::forward_list<T>&>,
             is_stable<Sorter(std::forward_list<T>&, Function)>,
             std::true_type
@@ -156,7 +157,7 @@ namespace cppsort
 
     template<typename Sorter, typename T, typename Function>
     struct is_stable<self_sort_adapter<Sorter>(std::list<T>&, Function)>:
-        detail::conditional_t<
+        mstd::conditional_t<
             is_projection_v<Function, std::list<T>&>,
             is_stable<Sorter(std::list<T>&, Function)>,
             std::true_type

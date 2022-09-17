@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -21,7 +22,6 @@
 #include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort::probe
 {
@@ -60,7 +60,7 @@ namespace cppsort::probe
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = cppsort::detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, ForwardIterator, Compare>
                 >
             >

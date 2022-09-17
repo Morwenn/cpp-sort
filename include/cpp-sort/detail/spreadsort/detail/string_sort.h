@@ -29,10 +29,10 @@ Phil Endecott and Frank Gennari
 #include <memory>
 #include <type_traits>
 #include <vector>
+#include <cpp-sort/mstd/type_traits.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
-#include "../../type_traits.h"
 
 namespace cppsort::detail::spreadsort::detail
 {
@@ -372,7 +372,7 @@ namespace cppsort::detail::spreadsort::detail
     template<typename RandomAccessIter, typename Projection, typename Unsigned_char_type>
     auto string_sort(RandomAccessIter first, RandomAccessIter last,
                      Projection projection, Unsigned_char_type)
-        -> cppsort::detail::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
+        -> mstd::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
     {
         std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
         std::vector<RandomAccessIter> bin_cache;
@@ -385,7 +385,7 @@ namespace cppsort::detail::spreadsort::detail
              typename Unsigned_char_type>
     auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
                              Projection projection, Unsigned_char_type)
-        -> cppsort::detail::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
+        -> mstd::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
     {
         std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
         std::vector<RandomAccessIter> bin_cache;

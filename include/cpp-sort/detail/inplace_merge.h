@@ -20,7 +20,6 @@
 #include "recmerge_bidirectional.h"
 #include "recmerge_forward.h"
 #include "symmerge.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {

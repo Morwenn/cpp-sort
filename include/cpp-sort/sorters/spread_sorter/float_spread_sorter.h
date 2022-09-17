@@ -14,11 +14,11 @@
 #include <limits>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/float_sort.h"
-#include "../../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -35,7 +35,7 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> detail::enable_if_t<
+                -> mstd::enable_if_t<
                     std::numeric_limits<projected_t<RandomAccessIterator, Projection>>::is_iec559 && (
                         sizeof(projected_t<RandomAccessIterator, Projection>) == sizeof(std::uint32_t) ||
                         sizeof(projected_t<RandomAccessIterator, Projection>) == sizeof(std::uint64_t)

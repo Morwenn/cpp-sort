@@ -11,12 +11,12 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/ska_sort.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -30,13 +30,13 @@ namespace cppsort
             template<
                 typename RandomAccessIterator,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, RandomAccessIterator>
                 >
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
-                -> detail::enable_if_t<detail::is_ska_sortable_v<
+                -> mstd::enable_if_t<detail::is_ska_sortable_v<
                     projected_t<RandomAccessIterator, Projection>
                 >>
             {

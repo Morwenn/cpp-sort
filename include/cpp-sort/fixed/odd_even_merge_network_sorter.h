@@ -14,13 +14,13 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/sorting_networks.h>
 #include "../detail/bitops.h"
 #include "../detail/empty_sorter.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -87,7 +87,7 @@ namespace cppsort
                 typename RandomAccessIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<is_projection_iterator_v<
+                typename = mstd::enable_if_t<is_projection_iterator_v<
                     Projection, RandomAccessIterator, Compare
                 >>
             >

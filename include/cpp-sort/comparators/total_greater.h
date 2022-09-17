@@ -12,9 +12,9 @@
 #include <concepts>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include "../detail/floating_point_weight.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -23,7 +23,7 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Total order for integral types
 
-        template<integral T>
+        template<mstd::integral T>
         constexpr auto total_greater(T lhs, T rhs) noexcept
             -> bool
         {

@@ -31,7 +31,6 @@
 #include "rotate.h"
 #include "swap_ranges.h"
 #include "three_way_compare.h"
-#include "type_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort::detail::grail

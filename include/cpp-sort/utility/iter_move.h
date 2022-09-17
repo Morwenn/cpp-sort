@@ -11,7 +11,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include "../detail/type_traits.h"
+#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort
 {
@@ -65,7 +65,7 @@ namespace cppsort
         // Result type of a non-specialized iter_move call
 
         template<typename Iterator>
-        using iter_move_t = cppsort::detail::conditional_t<
+        using iter_move_t = mstd::conditional_t<
             std::is_reference_v<typename std::iterator_traits<Iterator>::reference>,
             std::remove_reference_t<typename std::iterator_traits<Iterator>::reference>&&,
             std::decay_t<typename std::iterator_traits<Iterator>::reference>
@@ -87,7 +87,7 @@ namespace cppsort
 
         template<
             typename Iterator,
-            typename = cppsort::detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_swap_v<Iterator> &&
                 cppsort::detail::has_iter_move_v<Iterator>
             >
@@ -102,7 +102,7 @@ namespace cppsort
 
         template<
             typename Iterator,
-            typename = cppsort::detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_swap_v<Iterator> &&
                 not cppsort::detail::has_iter_move_v<Iterator>
             >,
@@ -124,7 +124,7 @@ namespace cppsort
 
         template<
             typename Iterator,
-            typename = cppsort::detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_move_v<std::reverse_iterator<Iterator>>
             >
         >
@@ -136,7 +136,7 @@ namespace cppsort
 
         template<
             typename Iterator,
-            typename = cppsort::detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_swap_v<std::reverse_iterator<Iterator>>
             >
         >
@@ -151,7 +151,7 @@ namespace cppsort
 
         template<
             typename Iterator,
-            typename = cppsort::detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_move_v<std::move_iterator<Iterator>>
             >
         >
@@ -163,7 +163,7 @@ namespace cppsort
 
         template<
             typename Iterator,
-            typename = cppsort::detail::enable_if_t<
+            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_swap_v<std::move_iterator<Iterator>>
             >
         >

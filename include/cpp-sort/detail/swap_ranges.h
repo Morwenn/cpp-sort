@@ -12,10 +12,10 @@
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "move.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {
@@ -76,7 +76,7 @@ namespace cppsort::detail
     constexpr auto swap_ranges_inner_impl(std::random_access_iterator_tag,
                                           RandomAccessIterator first1, RandomAccessIterator last1,
                                           RandomAccessIterator first2)
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             not detail::has_iter_move_v<RandomAccessIterator>,
             RandomAccessIterator
         >
@@ -96,7 +96,7 @@ namespace cppsort::detail
                                           RandomAccessIterator first1, RandomAccessIterator last1,
                                           RandomAccessIterator first2)
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        -> detail::enable_if_t<
+        -> mstd::enable_if_t<
             detail::has_iter_move_v<RandomAccessIterator>,
             RandomAccessIterator
         >

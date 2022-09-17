@@ -31,7 +31,6 @@
 #include "move.h"
 #include "rotate.h"
 #include "swap_ranges.h"
-#include "type_traits.h"
 #include "upper_bound.h"
 
 namespace cppsort::detail

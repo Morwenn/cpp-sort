@@ -28,12 +28,12 @@ Phil Endecott and Frank Gennari
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
-#include "../../type_traits.h"
 
 namespace cppsort::detail::spreadsort::detail
 {
@@ -198,7 +198,7 @@ namespace cppsort::detail::spreadsort::detail
     template<typename RandomAccessIter, typename Div_type, typename Projection>
     auto integer_sort(RandomAccessIter first, RandomAccessIter last,
                       Div_type, Projection projection)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             sizeof(Div_type) <= sizeof(std::size_t),
             void
         >
@@ -214,7 +214,7 @@ namespace cppsort::detail::spreadsort::detail
     template<typename RandomAccessIter, typename Div_type, typename Projection>
     auto integer_sort(RandomAccessIter first, RandomAccessIter last,
                       Div_type, Projection projection)
-        -> cppsort::detail::enable_if_t<
+        -> mstd::enable_if_t<
             (sizeof(Div_type) > sizeof(std::size_t)) &&
             sizeof(Div_type) <= sizeof(std::uintmax_t),
             void

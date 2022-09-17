@@ -12,12 +12,12 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/checkers.h"
 #include "../detail/comparison_counter.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -41,7 +41,7 @@ namespace cppsort
             template<
                 typename Iterable,
                 typename Compare = std::less<>,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     not is_projection_v<Compare, Iterable>
                 >
             >
@@ -57,7 +57,7 @@ namespace cppsort
             template<
                 typename Iterator,
                 typename Compare = std::less<>,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     not is_projection_iterator_v<Compare, Iterator>
                 >
             >
@@ -74,7 +74,7 @@ namespace cppsort
                 typename Iterable,
                 typename Compare,
                 typename Projection,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_v<Projection, Iterable, Compare>
                 >
             >
@@ -91,7 +91,7 @@ namespace cppsort
                 typename Iterator,
                 typename Compare,
                 typename Projection,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >

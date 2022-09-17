@@ -15,7 +15,6 @@
 #include <cpp-sort/comparators/total_greater.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include "../detail/floating_point_weight.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {

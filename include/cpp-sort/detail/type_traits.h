@@ -10,45 +10,10 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <type_traits>
+#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort::detail
 {
-    ////////////////////////////////////////////////////////////
-    // Alternative to std::conditional_t from C++11
-
-    template<bool>
-    struct conditional
-    {
-        template<typename T, typename U>
-        using type = T;
-    };
-
-    template<>
-    struct conditional<false>
-    {
-        template<typename T, typename U>
-        using type = U;
-    };
-
-    template<bool B, typename T, typename U>
-    using conditional_t = typename conditional<B>::template type<T, U>;
-
-    ////////////////////////////////////////////////////////////
-    // Alternative to std::enable_if_t from C++11
-
-    template<bool>
-    struct enable_if_impl {};
-
-    template<>
-    struct enable_if_impl<true>
-    {
-        template<typename T>
-        using type = T;
-    };
-
-    template<bool B, typename T=void>
-    using enable_if_t = typename enable_if_impl<B>::template type<T>;
-
     ////////////////////////////////////////////////////////////
     // std::nonesuch from Library Fundamentals TS v2
 
@@ -93,67 +58,6 @@ namespace cppsort::detail
 
     template<template<typename...> typename Op, typename... Args>
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
-
-    ////////////////////////////////////////////////////////////
-    // Type traits to take __int128 into account even when the
-    // standard library isn't instrumented but the type is still
-    // available:
-    // * libstdc++ is instrumented in gnu++ mode only
-    // * libc++ is always instrumented
-    // * Microsoft STL is never instrumented
-
-#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
-    template<typename T>
-    struct is_integral:
-        std::is_integral<T>::type
-    {};
-
-    template<>
-    struct is_integral<__int128_t>:
-        std::true_type
-    {};
-
-    template<>
-    struct is_integral<__uint128_t>:
-        std::true_type
-    {};
-
-    template<typename T>
-    struct is_signed:
-        std::is_signed<T>::type
-    {};
-
-    template<>
-    struct is_signed<__int128_t>:
-        std::true_type
-    {};
-
-    template<typename T>
-    struct is_unsigned:
-        std::is_unsigned<T>::type
-    {};
-
-    template<>
-    struct is_unsigned<__uint128_t>:
-        std::true_type
-    {};
-#else
-    using std::is_integral;
-    using std::is_signed;
-    using std::is_unsigned;
-#endif
-
-    ////////////////////////////////////////////////////////////
-    // Arithmetic concepts
-
-    template<typename T>
-    concept integral = is_integral<T>::value;
-
-    template <typename T>
-    concept signed_integral = integral<T> && is_signed<T>::value;
-
-    template <typename T>
-    concept unsigned_integral = integral<T> && is_unsigned<T>::value;
 
     ////////////////////////////////////////////////////////////
     // is_specialization_of: check that a given type is a

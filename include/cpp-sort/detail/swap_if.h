@@ -13,9 +13,10 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/concepts.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "type_traits.h"
 
 namespace cppsort::detail
 {
@@ -43,7 +44,7 @@ namespace cppsort::detail
         swap_if(lhs, rhs, std::less{}, std::identity{});
     }
 
-    template<integral Integer>
+    template<mstd::integral Integer>
     constexpr auto swap_if(Integer& x, Integer& y, std::less<>, std::identity) noexcept
         -> void
     {
@@ -61,7 +62,7 @@ namespace cppsort::detail
         y = (std::max)(dx, y);
     }
 
-    template<integral Integer>
+    template<mstd::integral Integer>
     constexpr auto swap_if(Integer& x, Integer& y, std::greater<>, std::identity) noexcept
         -> void
     {
@@ -79,7 +80,7 @@ namespace cppsort::detail
         y = (std::min)(dx, y);
     }
 
-    template<integral Integer>
+    template<mstd::integral Integer>
     constexpr auto swap_if(Integer& x, Integer& y, std::ranges::less comp, std::identity) noexcept
         -> void
     {
@@ -93,7 +94,7 @@ namespace cppsort::detail
         return swap_if(x, y, comp, std::identity{});
     }
 
-    template<integral Integer>
+    template<mstd::integral Integer>
     constexpr auto swap_if(Integer& x, Integer& y, std::ranges::greater comp, std::identity) noexcept
         -> void
     {
@@ -114,7 +115,7 @@ namespace cppsort::detail
         typename Iterator,
         typename Compare,
         typename Projection,
-        typename = detail::enable_if_t<
+        typename = mstd::enable_if_t<
             cppsort::detail::has_iter_move_v<Iterator> ||
             cppsort::detail::has_iter_swap_v<Iterator>
         >
@@ -135,7 +136,7 @@ namespace cppsort::detail
         typename Iterator,
         typename Compare,
         typename Projection,
-        typename = detail::enable_if_t<
+        typename = mstd::enable_if_t<
             not cppsort::detail::has_iter_move_v<Iterator> &&
             not cppsort::detail::has_iter_swap_v<Iterator>
         >,

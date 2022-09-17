@@ -12,10 +12,10 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/sorter_facade.h>
 #include "../detail/counting_sort.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -27,7 +27,7 @@ namespace cppsort
         struct counting_sorter_impl
         {
             template<typename ForwardIterator>
-                requires detail::integral<value_type_t<ForwardIterator>>
+                requires mstd::integral<value_type_t<ForwardIterator>>
             constexpr auto operator()(ForwardIterator first, ForwardIterator last) const
                 -> void
             {
@@ -43,7 +43,7 @@ namespace cppsort
             }
 
             template<typename ForwardIterator>
-                requires detail::integral<value_type_t<ForwardIterator>>
+                requires mstd::integral<value_type_t<ForwardIterator>>
             constexpr auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
                 -> void
             {
@@ -59,7 +59,7 @@ namespace cppsort
             }
 
             template<typename ForwardIterator>
-                requires detail::integral<value_type_t<ForwardIterator>>
+                requires mstd::integral<value_type_t<ForwardIterator>>
             constexpr auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
                 -> void
             {

@@ -19,7 +19,6 @@
 #include "lower_bound.h"
 #include "merge_move.h"
 #include "move.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {

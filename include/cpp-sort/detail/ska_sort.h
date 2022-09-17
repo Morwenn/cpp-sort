@@ -22,6 +22,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h" // projected_t
@@ -281,14 +282,14 @@ namespace cppsort::detail
     };
 
     template<typename T>
-    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same_v<void, decltype(to_unsigned_or_bool(std::declval<T>()))>>>:
+    struct FallbackSubKey<T, mstd::enable_if_t<not std::is_same_v<void, decltype(to_unsigned_or_bool(std::declval<T>()))>>>:
         SubKey<decltype(to_unsigned_or_bool(std::declval<T>()))>
     {};
 
     template<typename T>
     struct SubKey:
-        conditional_t<
-            is_unsigned<T>::value,
+        mstd::conditional_t<
+            mstd::is_unsigned<T>::value,
             SizedSubKey<sizeof(T)>,
             FallbackSubKey<T>
         >
@@ -326,7 +327,7 @@ namespace cppsort::detail
             return Current::sub_key(value.second, sort_data);
         }
 
-        using next = conditional_t<
+        using next = mstd::conditional_t<
             std::is_same_v<SubKey<void>, typename Current::next>,
             SubKey<void>,
             PairSecondSubKey<F, S, typename Current::next>
@@ -343,7 +344,7 @@ namespace cppsort::detail
             return Current::sub_key(value.first, sort_data);
         }
 
-        using next = conditional_t<
+        using next = mstd::conditional_t<
             std::is_same_v<SubKey<void>, typename Current::next>,
             PairSecondSubKey<F, S, SubKey<S>>,
             PairFirstSubKey<F, S, typename Current::next>
@@ -466,7 +467,7 @@ namespace cppsort::detail
     };
 
     template<typename T>
-    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same_v<void, decltype(std::declval<T>()[0])>>>:
+    struct FallbackSubKey<T, mstd::enable_if_t<not std::is_same_v<void, decltype(std::declval<T>()[0])>>>:
         ListSubKey<T>
     {};
 
@@ -854,7 +855,7 @@ namespace cppsort::detail
     template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold,
              typename CurrentSubKey, typename SubKeyType>
     struct FallbackInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, SubKeyType,
-                                 detail::enable_if_t<not std::is_same_v<void, decltype(std::declval<SubKeyType>()[0])>>>:
+                                 mstd::enable_if_t<not std::is_same_v<void, decltype(std::declval<SubKeyType>()[0])>>>:
         ListInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, SubKeyType>
     {};
 
@@ -942,7 +943,7 @@ namespace cppsort::detail
     template<typename T>
     struct is_ska_sortable:
         std::disjunction<
-            is_integral<T>,
+            mstd::is_integral<T>,
             is_index_ska_sortable<has_indexing_operator_t, T>
         >
     {};

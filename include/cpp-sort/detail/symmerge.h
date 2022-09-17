@@ -14,7 +14,6 @@
 #include "buffered_inplace_merge.h"
 #include "iterator_traits.h"
 #include "rotate.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {

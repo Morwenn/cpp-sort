@@ -23,7 +23,7 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include "../detail/type_traits.h"
+#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort::utility
 {
@@ -34,7 +34,7 @@ namespace cppsort::utility
             template<typename T>
             constexpr auto operator()(T&& t) const
                 noexcept(noexcept(std::mem_fn(t)))
-                -> cppsort::detail::enable_if_t<
+                -> mstd::enable_if_t<
                     std::is_member_pointer_v<std::remove_cvref_t<T>>,
                     decltype(std::mem_fn(t))
                 >
@@ -45,7 +45,7 @@ namespace cppsort::utility
             template<typename T>
             constexpr auto operator()(T&& t) const
                 noexcept(std::is_nothrow_constructible_v<T, T>)
-                -> cppsort::detail::enable_if_t<
+                -> mstd::enable_if_t<
                     not std::is_member_pointer_v<std::remove_cvref_t<T>>,
                     T
                 >

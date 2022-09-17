@@ -11,8 +11,8 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
+#include <cpp-sort/mstd/concepts.h>
 #include "../detail/config.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort::detail
 {
@@ -99,7 +99,7 @@ namespace cppsort::detail
 
     // Halves a positive number, using unsigned division if possible
 
-    template<integral Integer>
+    template<mstd::integral Integer>
     constexpr auto half(Integer value)
         -> Integer
     {

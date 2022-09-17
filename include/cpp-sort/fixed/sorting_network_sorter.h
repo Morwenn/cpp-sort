@@ -75,9 +75,9 @@ namespace cppsort
 // Common includes for specializations
 #include <array>
 #include <functional>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/sorting_networks.h>
 #include "../detail/swap_if.h"
-#include "../detail/type_traits.h"
 
 // Specializations of sorting_network_sorter for some values of N
 #include "../detail/sorting_network/sort2.h"
