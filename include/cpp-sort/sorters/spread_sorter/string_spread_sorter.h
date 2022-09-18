@@ -15,6 +15,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include "../../detail/iterator_traits.h"
@@ -33,49 +34,31 @@ namespace cppsort
             // Ascending string sort
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Projection projection={}) const
+            auto operator()(Iterator first, Iterator last, Projection projection={}) const
                 -> mstd::enable_if_t<
-                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
-                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
+                    std::is_same_v<projected_t<Iterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<Iterator, Projection>, std::string_view>
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
                 unsigned char unused = '\0';
                 spreadsort::string_sort(std::move(first), std::move(last),
                                         std::move(projection), unused);
             }
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Projection projection={}) const
+            auto operator()(Iterator first, Iterator last, Projection projection={}) const
                 -> mstd::enable_if_t<(
-                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
-                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
+                        std::is_same_v<projected_t<Iterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<Iterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
                 std::uint16_t unused = 0;
                 spreadsort::string_sort(std::move(first), std::move(last),
                                         std::move(projection), unused);
@@ -85,24 +68,16 @@ namespace cppsort
             // Descending string sort
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(Iterator first, Iterator last,
                             std::greater<> compare, Projection projection={}) const
                 -> mstd::enable_if_t<
-                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
-                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
+                    std::is_same_v<projected_t<Iterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<Iterator, Projection>, std::string_view>
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
                 unsigned char unused = '\0';
                 spreadsort::reverse_string_sort(std::move(first), std::move(last),
                                                 std::move(compare), std::move(projection),
@@ -110,25 +85,17 @@ namespace cppsort
             }
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(Iterator first, Iterator last,
                             std::greater<> compare, Projection projection={}) const
                 -> mstd::enable_if_t<(
-                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
-                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
+                        std::is_same_v<projected_t<Iterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<Iterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
                 std::uint16_t unused = 0;
                 spreadsort::reverse_string_sort(std::move(first), std::move(last),
                                                 std::move(compare), std::move(projection),
@@ -136,24 +103,16 @@ namespace cppsort
             }
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(Iterator first, Iterator last,
                             std::ranges::greater compare, Projection projection={}) const
                 -> mstd::enable_if_t<
-                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
-                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
+                    std::is_same_v<projected_t<Iterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<Iterator, Projection>, std::string_view>
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
                 unsigned char unused = '\0';
                 spreadsort::reverse_string_sort(std::move(first), std::move(last),
                                                 std::move(compare), std::move(projection),
@@ -161,25 +120,17 @@ namespace cppsort
             }
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(Iterator first, Iterator last,
                             std::ranges::greater compare, Projection projection={}) const
                 -> mstd::enable_if_t<(
-                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
-                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
+                        std::is_same_v<projected_t<Iterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<Iterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
                 std::uint16_t unused = 0;
                 spreadsort::reverse_string_sort(std::move(first), std::move(last),
                                                 std::move(compare), std::move(projection),

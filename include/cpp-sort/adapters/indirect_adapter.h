@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -33,10 +34,14 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename ForwardIterator, typename Sorter, typename Compare, typename Projection>
-        auto sort_indirectly(std::forward_iterator_tag, Sorter&& sorter,
-                             ForwardIterator first, ForwardIterator last,
-                             difference_type_t<ForwardIterator> size,
+        template<
+            mstd::forward_iterator Iterator,
+            typename Sorter,
+            typename Compare,
+            typename Projection
+        >
+        auto sort_indirectly(Sorter&& sorter, Iterator first, Iterator last,
+                             difference_type_t<Iterator> size,
                              Compare compare, Projection projection)
             -> decltype(cppsort::detail::indiesort(std::forward<Sorter>(sorter),
                                                    first, last, size,
@@ -47,13 +52,17 @@ namespace cppsort
                                               std::move(compare), std::move(projection));
         }
 
-        template<typename RandomAccessIterator, typename Sorter, typename Compare, typename Projection>
-        auto sort_indirectly(std::random_access_iterator_tag, Sorter&& sorter,
-                             RandomAccessIterator first, RandomAccessIterator last,
-                             difference_type_t<RandomAccessIterator> size,
+        template<
+            mstd::random_access_iterator Iterator,
+            typename Sorter,
+            typename Compare,
+            typename Projection
+        >
+        auto sort_indirectly(Sorter&& sorter, Iterator first, Iterator last,
+                             difference_type_t<Iterator> size,
                              Compare compare, Projection projection)
         -> decltype(std::forward<Sorter>(sorter)(
-            (RandomAccessIterator*)0, (RandomAccessIterator*)0,
+            (Iterator*)0, (Iterator*)0,
             std::move(compare), indirect(projection)
         ))
         {
@@ -62,7 +71,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Indirectly sort the iterators
 
-            immovable_vector<RandomAccessIterator> iterators(size);
+            immovable_vector<Iterator> iterators(size);
             for (auto it = first; it != last; ++it) {
                 iterators.emplace_back(it);
             }
@@ -135,39 +144,33 @@ namespace cppsort
                     is_projection_v<Projection, ForwardIterable, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(iterator_category_t<std::remove_cvref_t<decltype(std::begin(iterable))>>{},
-                                            this->get(),
+            auto operator()(ForwardIterable&& iterable, Compare compare={}, Projection projection={}) const
+                -> decltype(sort_indirectly(this->get(),
                                             std::begin(iterable), std::end(iterable),
                                             cppsort::utility::size(iterable),
                                             std::move(compare), std::move(projection)))
             {
-                auto size = cppsort::utility::size(iterable);
-                return sort_indirectly(iterator_category_t<std::remove_cvref_t<decltype(std::begin(iterable))>>{},
-                                       this->get(),
-                                       std::begin(iterable), std::end(iterable), size,
+                return sort_indirectly(this->get(),
+                                       std::begin(iterable), std::end(iterable),
+                                       cppsort::utility::size(iterable),
                                        std::move(compare), std::move(projection));
             }
 
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = mstd::enable_if_t<is_projection_iterator_v<
-                    Projection, ForwardIterator, Compare
-                >>
+                typename = mstd::enable_if_t<
+                    is_projection_iterator_v<Projection, Iterator, Compare>
+                >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(iterator_category_t<ForwardIterator>{},
-                                            this->get(), first, last,
+            auto operator()(Iterator first, Iterator last, Compare compare={}, Projection projection={}) const
+                -> decltype(sort_indirectly(this->get(), first, last,
                                             std::distance(first, last),
                                             std::move(compare), std::move(projection)))
             {
-                auto size = std::distance(first, last);
-                return sort_indirectly(iterator_category_t<ForwardIterator>{},
-                                       this->get(), first, last, size,
+                return sort_indirectly(this->get(), first, last,
+                                       std::distance(first, last),
                                        std::move(compare), std::move(projection));
             }
 

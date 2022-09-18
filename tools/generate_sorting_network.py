@@ -54,14 +54,14 @@ def generate_cxx(network: list[list[tuple]]):
             struct sorting_network_sorter_impl<{nb_inputs}>
             {{
                 template<
-                    typename RandomAccessIterator,
+                    mstd::random_access_iterator Iterator,
                     typename Compare = std::less<>,
                     typename Projection = std::identity,
                     typename = mstd::enable_if_t<is_projection_iterator_v<
-                        Projection, RandomAccessIterator, Compare
+                        Projection, Iterator, Compare
                     >>
                 >
-                auto operator()(RandomAccessIterator first, RandomAccessIterator,
+                auto operator()(Iterator first, Iterator,
                                 Compare compare={{}}, Projection projection={{}}) const
                     -> void
                 {{

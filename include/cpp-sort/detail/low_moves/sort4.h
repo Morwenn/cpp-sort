@@ -11,6 +11,7 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -22,20 +23,20 @@ namespace cppsort::detail
     struct low_moves_sorter_impl<4u>
     {
         template<
-            typename RandomAccessIterator,
+            mstd::random_access_iterator Iterator,
             typename Compare = std::less<>,
             typename Projection = std::identity,
             typename = mstd::enable_if_t<is_projection_iterator_v<
-                Projection, RandomAccessIterator, Compare
+                Projection, Iterator, Compare
             >>
         >
-        auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+        auto operator()(Iterator first, Iterator last,
                         Compare compare={}, Projection projection={}) const
             -> void
         {
             using utility::iter_swap;
 
-            RandomAccessIterator min = min_element(first, last, compare, projection);
+            auto min = min_element(first, last, compare, projection);
             if (min != first) {
                 iter_swap(min, first);
             }

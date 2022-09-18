@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include "config.h"
 #include "iterator_traits.h"
 
 namespace cppsort::detail
@@ -81,6 +82,41 @@ namespace cppsort::detail
                 -> pointer
             {
                 return &(operator*());
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Increment/decrement operators
+
+            auto operator++()
+                -> sized_iterator&
+            {
+                CPPSORT_UNREACHABLE;
+                return *this;
+            }
+            auto operator--()
+                -> sized_iterator&
+            {
+                CPPSORT_UNREACHABLE;
+                return *this;
+            }
+
+            ////////////////////////////////////////////////////////////
+            // Comparison operators
+
+            [[nodiscard]]
+            friend auto operator==(const sized_iterator& lhs, const sized_iterator& rhs)
+                -> bool
+            {
+                CPPSORT_UNREACHABLE;
+                return lhs.base() == rhs.base();
+            }
+
+            [[nodiscard]]
+            friend auto operator!=(const sized_iterator& lhs, const sized_iterator& rhs)
+                -> bool
+            {
+                CPPSORT_UNREACHABLE;
+                return lhs.base() != rhs.base();
             }
 
         private:

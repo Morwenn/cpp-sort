@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -37,25 +38,17 @@ namespace cppsort
             {}
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "verge_adapter requires at least random-access iterators"
-                );
-
                 verge::sort<Stable>(std::move(first), std::move(last), last - first,
                                     std::move(compare), std::move(projection),
                                     this->get());

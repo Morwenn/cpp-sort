@@ -12,6 +12,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -73,7 +74,7 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Wrap and call the sorter
 
-        template<typename Iterator, typename... Args>
+        template<mstd::forward_iterator Iterator, typename... Args>
         auto operator()(Iterator first, Iterator last, Args&&... args) const
             -> decltype(auto)
         {

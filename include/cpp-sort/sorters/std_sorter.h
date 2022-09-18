@@ -18,7 +18,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -30,24 +29,15 @@ namespace cppsort
         struct std_sorter_impl
         {
             template<
-                typename RandomAccessIterator,
+                std::random_access_iterator Iterator,
                 typename Compare = std::less<>,
-                typename = mstd::enable_if_t<not is_projection_iterator_v<
-                    Compare, RandomAccessIterator
-                >>
+                typename = mstd::enable_if_t<
+                    not is_projection_iterator_v<Compare, Iterator>
+                >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}) const
+            auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "std_sorter requires at least random-access iterators"
-                );
-
                 std::sort(std::move(first), std::move(last),
                           utility::as_function(compare));
             }
@@ -72,24 +62,15 @@ namespace cppsort
         struct std_stable_sorter_impl
         {
             template<
-                typename RandomAccessIterator,
+                std::random_access_iterator Iterator,
                 typename Compare = std::less<>,
-                typename = mstd::enable_if_t<not is_projection_iterator_v<
-                    Compare, RandomAccessIterator
-                >>
+                typename = mstd::enable_if_t<
+                    not is_projection_iterator_v<Compare, Iterator>
+                >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Compare compare={}) const
+            auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        std::random_access_iterator_tag,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "stable_adapter<std_sorter> requires at least random-access iterators"
-                );
-
                 std::stable_sort(std::move(first), std::move(last),
                                  utility::as_function(compare));
             }

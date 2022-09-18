@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -123,14 +124,14 @@ namespace cppsort
             }
 
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare, Projection projection) const
                 -> decltype(auto)
             {
@@ -150,11 +151,13 @@ namespace cppsort
                 return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare));
             }
 
-            template<typename ForwardIterator, typename Compare=std::less<>>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}) const
+            template<
+                mstd::forward_iterator Iterator,
+                typename Compare = std::less<>
+            >
+            auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> mstd::enable_if_t<
-                    not is_projection_iterator_v<Compare, ForwardIterator>,
+                    not is_projection_iterator_v<Compare, Iterator>,
                     decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
                 >
             {
@@ -170,9 +173,8 @@ namespace cppsort
                 return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
             }
 
-            template<typename ForwardIterator, typename Compare>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare, std::identity projection) const
+            template<mstd::forward_iterator Iterator, typename Compare>
+            auto operator()(Iterator first, Iterator last, Compare compare, std::identity projection) const
                 -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
             {
                 // std::identity does nothing, bypass schartz_adapter entirely

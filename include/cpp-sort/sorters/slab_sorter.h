@@ -12,6 +12,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -54,25 +55,17 @@ namespace cppsort
             }
 
             template<
-                typename BidirectionalIterator,
+                mstd::bidirectional_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<BidirectionalIterator>
-                    >,
-                    "slab_sorter requires at least bidirectional iterators"
-                );
-
                 auto size = std::distance(first, last);
                 slabsort(std::move(first), std::move(last), size,
                          std::move(compare), std::move(projection));

@@ -14,6 +14,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -96,18 +97,18 @@ namespace cppsort
             }
 
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<is_projection_iterator_v<
-                    Projection, RandomAccessIterator, Compare
+                    Projection, Iterator, Compare
                 >>
             >
-            constexpr auto operator()(RandomAccessIterator first, RandomAccessIterator,
+            constexpr auto operator()(Iterator first, Iterator,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                using difference_type = difference_type_t<RandomAccessIterator>;
+                using difference_type = difference_type_t<Iterator>;
                 auto pairs = index_pairs<difference_type>();
                 utility::swap_index_pairs(first, pairs, std::move(compare), std::move(projection));
             }

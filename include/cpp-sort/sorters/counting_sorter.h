@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/concepts.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include "../detail/counting_sort.h"
 #include "../detail/iterator_traits.h"
@@ -26,51 +27,27 @@ namespace cppsort
     {
         struct counting_sorter_impl
         {
-            template<typename ForwardIterator>
-                requires mstd::integral<value_type_t<ForwardIterator>>
-            constexpr auto operator()(ForwardIterator first, ForwardIterator last) const
+            template<mstd::forward_iterator Iterator>
+                requires mstd::integral<value_type_t<Iterator>>
+            constexpr auto operator()(Iterator first, Iterator last) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<ForwardIterator>
-                    >,
-                    "counting_sorter requires at least forward iterators"
-                );
-
                 counting_sort(std::move(first), std::move(last));
             }
 
-            template<typename ForwardIterator>
-                requires mstd::integral<value_type_t<ForwardIterator>>
-            constexpr auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
+            template<mstd::forward_iterator Iterator>
+                requires mstd::integral<value_type_t<Iterator>>
+            constexpr auto operator()(Iterator first, Iterator last, std::greater<>) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<ForwardIterator>
-                    >,
-                    "counting_sorter requires at least forward iterators"
-                );
-
                 reverse_counting_sort(std::move(first), std::move(last));
             }
 
-            template<typename ForwardIterator>
-                requires mstd::integral<value_type_t<ForwardIterator>>
-            constexpr auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
+            template<mstd::forward_iterator Iterator>
+                requires mstd::integral<value_type_t<Iterator>>
+            constexpr auto operator()(Iterator first, Iterator last, std::ranges::greater) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<ForwardIterator>
-                    >,
-                    "counting_sorter requires at least forward iterators"
-                );
-
                 reverse_counting_sort(std::move(first), std::move(last));
             }
 

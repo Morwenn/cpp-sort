@@ -12,10 +12,10 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include "../detail/iterator_traits.h"
 #include "../detail/selection_sort.h"
 
 namespace cppsort
@@ -28,25 +28,17 @@ namespace cppsort
         struct selection_sorter_impl
         {
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            constexpr auto operator()(ForwardIterator first, ForwardIterator last,
+            constexpr auto operator()(Iterator first, Iterator last,
                                       Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<ForwardIterator>
-                    >,
-                    "selection_sorter requires at least forward iterators"
-                );
-
                 selection_sort(std::move(first), std::move(last),
                                std::move(compare), std::move(projection));
             }

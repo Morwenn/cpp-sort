@@ -12,10 +12,10 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include "../detail/iterator_traits.h"
 #include "../detail/spinsort.h"
 
 namespace cppsort
@@ -28,25 +28,17 @@ namespace cppsort
         struct spin_sorter_impl
         {
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "spin_sorter requires at least random-access iterators"
-                );
-
                 spinsort(std::move(first), std::move(last),
                          std::move(compare), std::move(projection));
             }

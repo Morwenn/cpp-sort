@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -55,7 +56,7 @@ namespace cppsort
             }
 
             template<
-                typename Iterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename = mstd::enable_if_t<
                     not is_projection_iterator_v<Compare, Iterator>
@@ -88,7 +89,7 @@ namespace cppsort
             }
 
             template<
-                typename Iterator,
+                mstd::forward_iterator Iterator,
                 typename Compare,
                 typename Projection,
                 typename = mstd::enable_if_t<

@@ -14,6 +14,7 @@
 #include <limits>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -30,27 +31,18 @@ namespace cppsort
         struct float_spread_sorter_impl
         {
             template<
-                typename RandomAccessIterator,
+                mstd::random_access_iterator Iterator,
                 typename Projection = std::identity
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            Projection projection={}) const
+            auto operator()(Iterator first, Iterator last, Projection projection={}) const
                 -> mstd::enable_if_t<
-                    std::numeric_limits<projected_t<RandomAccessIterator, Projection>>::is_iec559 && (
-                        sizeof(projected_t<RandomAccessIterator, Projection>) == sizeof(std::uint32_t) ||
-                        sizeof(projected_t<RandomAccessIterator, Projection>) == sizeof(std::uint64_t)
+                    std::numeric_limits<projected_t<Iterator, Projection>>::is_iec559 && (
+                        sizeof(projected_t<Iterator, Projection>) == sizeof(std::uint32_t) ||
+                        sizeof(projected_t<Iterator, Projection>) == sizeof(std::uint64_t)
                     ) &&
-                    is_projection_iterator_v<Projection, RandomAccessIterator>
+                    is_projection_iterator_v<Projection, Iterator>
                 >
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >,
-                    "float_spread_sorter requires at least random-access iterators"
-                );
-
                 spreadsort::float_sort(std::move(first), std::move(last), std::move(projection));
             }
 

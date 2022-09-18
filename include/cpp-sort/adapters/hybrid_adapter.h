@@ -13,6 +13,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -249,7 +250,7 @@ namespace cppsort
                     );
                 }
 
-                template<typename Iterator, typename... Args>
+                template<mstd::forward_iterator Iterator, typename... Args>
                 constexpr auto operator()(Iterator first, Iterator last, Args&&... args) const
                     -> decltype(base_class::operator()(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
@@ -275,7 +276,7 @@ namespace cppsort
                         std::forward<Args>(args)...
                     ));
 
-                template<typename Iterator, typename... Args>
+                template<mstd::forward_iterator Iterator, typename... Args>
                 static constexpr auto _detail_stability(Iterator first, Iterator last, Args&&... args)
                     -> decltype(base_class::_detail_stability(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},

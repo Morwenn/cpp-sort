@@ -74,6 +74,7 @@ namespace cppsort
 
 // Common includes for specializations
 #include <functional>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
