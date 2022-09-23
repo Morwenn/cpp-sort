@@ -1,6 +1,6 @@
 *New in version 1.7.0*
 
-Sometimes one might need to apply several transformations to the elements of a collection before comparing them. To support this use case, some projection functions in **cpp-sort** can be composed with `operator|`
+Sometimes one needs to apply several transformations to the elements of a collection before comparing them. To support this use case, some projection functions in **cpp-sort** can be composed with `operator|`
 
 ```cpp
 struct my_negate:

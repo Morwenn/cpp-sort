@@ -73,7 +73,7 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 
 * When available, [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater] benefit from dedicated support wherever [`std::less<>`][std-less-void] and [`std::greater<>`][std-greater-void] are supported, with equivalent semantics.
 
-* [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] begin `constexpr`.
+* [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] being `constexpr`.
 
     The feature-test macro `__cpp_lib_constexpr_algorithms` can be used to check whether `std::swap` is `constexpr`.
 

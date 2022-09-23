@@ -401,7 +401,7 @@ namespace
 }
 
 // C++17
-inline constexpr auto&& bubble_sort = bubble_sorter{};
+inline constexpr bubble_sorter bubble_sort{};
 ```
 
 The combination of [`utility::static_const`][utility-static-const] with an anonymous namespace is a trick used to avoid ODR problems; you can read more about how and why it works in [Eric Niebler's original article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/). It is basically a poor man's substitute to compensate the lack of `inline` variables pre-C++17.

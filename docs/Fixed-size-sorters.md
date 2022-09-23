@@ -105,7 +105,9 @@ template<typename DifferenceType=std::ptrdiff_t>
     -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
 ```
 
-### `merge_exchange_network_sorter`
+*New in version 1.11.0*
+
+### `odd_even_merge_network_sorter`
 
 ```cpp
 #include <cpp-sort/fixed/odd_even_merge_network_sorter.h>
@@ -127,6 +129,8 @@ template<typename DifferenceType=std::ptrdiff_t>
 [[nodiscard]] static constexpr auto index_pairs()
     -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
 ```
+
+*New in version 1.11.0*
 
 ### `sorting_network_sorter`
 
