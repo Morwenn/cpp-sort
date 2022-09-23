@@ -30,7 +30,6 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/immovable_vector.h"
 #include "iterator_traits.h"

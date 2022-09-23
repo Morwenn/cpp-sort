@@ -30,6 +30,7 @@ Phil Endecott and Frank Gennari
 #include <tuple>
 #include <type_traits>
 #include <vector>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"

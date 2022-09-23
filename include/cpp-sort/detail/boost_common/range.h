@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,7 +23,6 @@
 #include <iterator>
 #include <memory>
 #include <vector>
-#include <cpp-sort/utility/as_function.h>
 #include "util/merge.h"
 #include "../config.h"
 #include "../iterator_traits.h"
