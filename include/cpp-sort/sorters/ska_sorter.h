@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SKA_SORTER_H_
@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"

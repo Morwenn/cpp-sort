@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SLABSORT_H_
@@ -21,6 +21,7 @@
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "melsort.h"
+#include "memory.h"
 #include "stable_partition.h"
 #include "nth_element.h"
 

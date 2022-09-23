@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <iterator>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>

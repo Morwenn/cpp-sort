@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -22,6 +22,7 @@
 #include <memory>
 #include <new>
 #include <type_traits>
+#include <utility>
 #include "type_traits.h"
 
 namespace cppsort
