@@ -308,7 +308,7 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Mechanism used to unwrap nested hybrid_adapter
 
-        template<template<class...> class Flattenable, class TypeList, class Accumulator>
+        template<template<typename...> class Flattenable, typename TypeList, typename Accumulator>
         struct flatten_fold;
 
         template<
