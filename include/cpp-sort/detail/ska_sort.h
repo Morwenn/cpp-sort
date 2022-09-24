@@ -34,16 +34,12 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // ska_sort algorithm
 
-    inline auto to_unsigned_or_bool(bool b)
-        -> bool
+    // also covers bool
+    template<detail::unsigned_integral Unsigned>
+    auto to_unsigned_or_bool(Unsigned value)
+        -> Unsigned
     {
-        return b;
-    }
-
-    inline auto to_unsigned_or_bool(unsigned char c)
-        -> unsigned char
-    {
-        return c;
+        return value;
     }
 
     inline auto to_unsigned_or_bool(signed char c)
@@ -83,23 +79,11 @@ namespace cppsort::detail
              + static_cast<unsigned short>(1 << std::numeric_limits<short>::digits);
     }
 
-    inline auto to_unsigned_or_bool(unsigned short i)
-        -> unsigned short
-    {
-        return i;
-    }
-
     inline auto to_unsigned_or_bool(int i)
         -> unsigned int
     {
         return static_cast<unsigned int>(i)
              + static_cast<unsigned int>(1 << std::numeric_limits<int>::digits);
-    }
-
-    inline auto to_unsigned_or_bool(unsigned int i)
-        -> unsigned int
-    {
-        return i;
     }
 
     inline auto to_unsigned_or_bool(long l)
@@ -109,23 +93,11 @@ namespace cppsort::detail
              + static_cast<unsigned long>(1l << std::numeric_limits<long>::digits);
     }
 
-    inline auto to_unsigned_or_bool(unsigned long l)
-        -> unsigned long
-    {
-        return l;
-    }
-
     inline auto to_unsigned_or_bool(long long l)
         -> unsigned long long
     {
         return static_cast<unsigned long long>(l)
              + static_cast<unsigned long long>(1ll << std::numeric_limits<long long>::digits);
-    }
-
-    inline auto to_unsigned_or_bool(unsigned long long l)
-        -> unsigned long long
-    {
-        return l;
     }
 
 #ifdef __SIZEOF_INT128__
@@ -134,12 +106,6 @@ namespace cppsort::detail
     {
         return static_cast<__uint128_t>(l)
              + static_cast<__uint128_t>(__int128_t(1) << (CHAR_BIT * sizeof(__int128_t) - 1));
-    }
-
-    inline auto to_unsigned_or_bool(__uint128_t l)
-        -> __uint128_t
-    {
-        return l;
     }
 #endif
 
