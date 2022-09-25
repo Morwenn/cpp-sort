@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_TYPE_TRAITS_H_
@@ -260,12 +260,14 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // Type traits to take __int128 into account even when the
     // standard library isn't instrumented but the type is still
-    // available (e.g. -std=c++17)
+    // available:
+    // * libstdc++ is instrumented in gnu++ mode only
+    // * libc++ is always instrumented
 
-#ifdef __SIZEOF_INT128__
+#if defined(__SIZEOF_INT128__) && defined(__GLIBCXX__)
     template<typename T>
     struct is_integral:
-        std::is_integral<T>
+        std::is_integral<T>::type
     {};
 
     template<>
@@ -280,7 +282,7 @@ namespace detail
 
     template<typename T>
     struct is_signed:
-        std::is_signed<T>
+        std::is_signed<T>::type
     {};
 
     template<>
@@ -290,7 +292,7 @@ namespace detail
 
     template<typename T>
     struct is_unsigned:
-        std::is_unsigned<T>
+        std::is_unsigned<T>::type
     {};
 
     template<>
@@ -298,14 +300,9 @@ namespace detail
         std::true_type
     {};
 #else
-    template<typename T>
-    using is_integral = std::is_integral<T>;
-
-    template<typename T>
-    using is_signed = std::is_signed<T>;
-
-    template<typename T>
-    using is_unsigned = std::is_unsigned<T>;
+    using std::is_integral;
+    using std::is_signed;
+    using std::is_unsigned;
 #endif
 
     ////////////////////////////////////////////////////////////
