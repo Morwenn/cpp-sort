@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,6 +12,7 @@
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/detail/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/functional.h>
 
 // Pseudo-random number generator, used by some distributions
@@ -400,9 +401,10 @@ namespace dist
         static constexpr const char* output = "vergesort_killer.txt";
     };
 
-    struct as_long_string
+    struct as_long_string:
+        cppsort::utility::projection_base
     {
-        auto operator()(long long int value)
+        auto operator()(long long int value) const
             -> std::string
         {
             auto str = std::to_string(value);
