@@ -448,6 +448,9 @@ This sorter accepts projections, as long as `ska_sorter` can handle the return t
 
 ```cpp
 #include <cpp-sort/sorters/spread_sorter.h>
+#include <cpp-sort/sorters/spread_sorter/integer_spread_sorter.h>
+#include <cpp-sort/sorters/spread_sorter/float_spread_sorter.h>
+#include <cpp-sort/sorters/spread_sorter/string_spread_sorter.h>
 ```
 
 `spread_sorter` implements a [spreadsort][spreadsort].
