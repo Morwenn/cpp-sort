@@ -17,6 +17,7 @@
 * Tutorials
     * [Writing a sorter](Writing-a-sorter.md)
     * [Writing a `bubble_sorter`](Writing-a-bubble_sorter.md)
+    * [Writing a `randomizing_adapter`](Writing-a-randomizing_adapter.md)
     * [Writing a container-aware algorithm](Writing-a-container-aware-algorithm.md)
 * [Tooling](Tooling.md)
 * [Benchmarks](Benchmarks.md)

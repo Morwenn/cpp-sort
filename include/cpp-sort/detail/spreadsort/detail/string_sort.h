@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -30,9 +30,11 @@ Phil Endecott and Frank Gennari
 #include <tuple>
 #include <type_traits>
 #include <vector>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "common.h"
 #include "constants.h"
+#include "../../pdqsort.h"
 #include "../../type_traits.h"
 
 namespace cppsort
@@ -42,8 +44,6 @@ namespace detail
 namespace spreadsort
 {
   namespace detail {
-    static constexpr int max_step_size = 64;
-
     //Offsetting on identical characters.  This function works a chunk of
     //characters at a time for cache efficiency and optimal worst-case
     //performance.
@@ -54,7 +54,9 @@ namespace spreadsort
     {
       auto&& proj = utility::as_function(projection);
 
-      const int char_size = sizeof(Unsigned_char_type);
+      constexpr int max_step_size = 64;
+      constexpr int char_size = sizeof(Unsigned_char_type);
+
       std::size_t nextOffset = char_offset;
       int step_size = max_step_size / char_size;
       while (true) {
@@ -101,23 +103,22 @@ namespace spreadsort
             -> bool
         {
             auto&& proj = utility::as_function(std::get<1>(data));
+            auto&& proj_x = proj(x);
+            auto&& proj_y = proj(y);
 
-            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
-            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
-            {
-                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
-                    static_cast<Unsigned_char_type>(proj(y)[u]))
-                {
-                    return static_cast<Unsigned_char_type>(proj(x)[u]) <
-                           static_cast<Unsigned_char_type>(proj(y)[u]);
+            std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
+            for (std::size_t u = std::get<0>(data); u < minSize; ++u) {
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
+                    return static_cast<Unsigned_char_type>(proj_x[u]) <
+                           static_cast<Unsigned_char_type>(proj_y[u]);
                 }
             }
-            return proj(x).size() < proj(y).size();
+            return proj_x.size() < proj_y.size();
         }
 
-      // Pack fchar_offset and projection
-      std::tuple<std::size_t, Projection> data;
+        // Pack char_offset and projection
+        std::tuple<std::size_t, Projection> data;
     };
 
     //Compares strings assuming they are identical up to char_offset
@@ -133,23 +134,22 @@ namespace spreadsort
             -> bool
         {
             auto&& proj = utility::as_function(std::get<1>(data));
+            auto&& proj_x = proj(x);
+            auto&& proj_y = proj(y);
 
-            std::size_t minSize = (std::min)(proj(x).size(), proj(y).size());
-            for (std::size_t u = std::get<0>(data) ; u < minSize ; ++u)
-            {
-                static_assert(sizeof(proj(x)[u]) == sizeof(Unsigned_char_type), "");
-                if (static_cast<Unsigned_char_type>(proj(x)[u]) !=
-                    static_cast<Unsigned_char_type>(proj(y)[u]))
-                {
-                    return static_cast<Unsigned_char_type>(proj(x)[u]) >
-                           static_cast<Unsigned_char_type>(proj(y)[u]);
+            std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
+            for (std::size_t u = std::get<0>(data); u < minSize; ++u) {
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
+                    return static_cast<Unsigned_char_type>(proj_x[u]) >
+                           static_cast<Unsigned_char_type>(proj_y[u]);
                 }
             }
-            return proj(x).size() > proj(y).size();
+            return proj_x.size() > proj_y.size();
         }
 
-      // Pack fchar_offset and projection
-      std::tuple<std::size_t, Projection> data;
+        // Pack char_offset and projection
+        std::tuple<std::size_t, Projection> data;
     };
 
     //String sorting recursive implementation
@@ -178,10 +178,10 @@ namespace spreadsort
       //a few characters at a time for optimal worst-case performance.
       update_offset<Unsigned_char_type>(first, finish, char_offset, projection);
 
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
+      constexpr unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
       //Equal worst-case of radix and comparison is when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
+      constexpr unsigned max_size = bin_count;
+      constexpr unsigned membin_count = bin_count + 1;
       unsigned cache_end;
       RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
                                           cache_end, membin_count) + 1;
@@ -289,11 +289,11 @@ namespace spreadsort
       update_offset<Unsigned_char_type>(curr, last, char_offset, projection);
       RandomAccessIter * target_bin;
 
-      const unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
+      constexpr unsigned bin_count = (1 << (sizeof(Unsigned_char_type)*8));
       //Equal worst-case of radix and comparison when bin_count = n*log(n).
-      const unsigned max_size = bin_count;
-      const unsigned membin_count = bin_count + 1;
-      const unsigned max_bin = bin_count - 1;
+      constexpr unsigned max_size = bin_count;
+      constexpr unsigned membin_count = bin_count + 1;
+      constexpr unsigned max_bin = bin_count - 1;
       unsigned cache_end;
       RandomAccessIter * bins = size_bins(bin_sizes, bin_cache, cache_offset,
                                           cache_end, membin_count);

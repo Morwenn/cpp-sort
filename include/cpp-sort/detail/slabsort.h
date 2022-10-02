@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SLABSORT_H_
@@ -13,6 +13,7 @@
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "fixed_size_list.h"
@@ -21,6 +22,7 @@
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "melsort.h"
+#include "memory.h"
 #include "stable_partition.h"
 #include "nth_element.h"
 

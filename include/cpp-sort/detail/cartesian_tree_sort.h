@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CARTESIAN_TREE_SORT_H_
@@ -86,11 +86,10 @@ namespace detail
                     auto&& proj_value = proj(*first);
                     node_type* new_parent = _find_insertion_parent(prev_node, proj_value, compare, projection);
                     if (new_parent == nullptr) {
-                        buffer_.emplace_back(iter_move(first), nullptr, root_);
-                        root_ = &buffer_.back();
+                        root_ = buffer_.emplace_back(iter_move(first), nullptr, root_);
                     } else {
-                        buffer_.emplace_back(iter_move(first), new_parent, new_parent->right_child);
-                        new_parent->right_child = &buffer_.back();
+                        new_parent->right_child = buffer_.emplace_back(iter_move(first), new_parent,
+                                                                       new_parent->right_child);
                     }
                     prev_node = &buffer_.back();
                 }

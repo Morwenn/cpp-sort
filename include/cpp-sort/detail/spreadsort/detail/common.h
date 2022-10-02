@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -24,7 +24,6 @@ Phil Endecott and Frank Gennari
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
-#include <type_traits>
 #include <vector>
 #include "constants.h"
 #include "../../type_traits.h"
@@ -43,7 +42,7 @@ namespace detail
 
     //This only works on unsigned data types
     template<typename T>
-    auto rough_log_2_size(const T& input)
+    constexpr auto rough_log_2_size(const T& input)
         -> unsigned
     {
       unsigned result = 0;
@@ -58,14 +57,16 @@ namespace detail
     //runtime overhead.
     //This could be replaced by a lookup table of sizeof(Div_type)*8 but this
     //function is more general.
-    template<unsigned log_mean_bin_size,
-             unsigned log_min_split_count,
-             unsigned log_finishing_count>
-    auto get_min_count(unsigned log_range)
+    template<
+        unsigned log_mean_bin_size,
+        unsigned log_min_split_count,
+        unsigned log_finishing_count
+    >
+    constexpr auto get_min_count(unsigned log_range)
         -> std::size_t
     {
-      const std::size_t typed_one = 1;
-      const unsigned min_size = log_mean_bin_size + log_min_split_count;
+      constexpr std::size_t typed_one = 1;
+      constexpr unsigned min_size = log_mean_bin_size + log_min_split_count;
       //Assuring that constants have valid settings
       static_assert(log_min_split_count <= max_splits &&
                     log_min_split_count > 0, "");
@@ -85,9 +86,9 @@ namespace detail
           return typed_one << log_range;
         }
       }
-      const unsigned base_iterations = max_splits - log_min_split_count;
+      constexpr unsigned base_iterations = max_splits - log_min_split_count;
       //sum of n to n + x = ((x + 1) * (n + (n + x)))/2 + log_mean_bin_size
-      const unsigned base_range =
+      constexpr unsigned base_range =
           ((base_iterations + 1) * (max_splits + log_min_split_count))/2
           + log_mean_bin_size;
       //Calculating the required number of iterations, and returning

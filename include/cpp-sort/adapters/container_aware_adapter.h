@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_
@@ -157,7 +157,7 @@ namespace cppsort
             >
             auto operator()(Iterable& iterable, Compare compare) const
                 -> detail::enable_if_t<
-                    not is_projection<Compare, Iterable>::value &&
+                    not is_projection_v<Compare, Iterable> &&
                     not detail::can_comparison_sort<Sorter, Iterable, Compare>::value,
                     conditional_t<
                         Stability,
@@ -242,7 +242,7 @@ namespace cppsort
             >
             auto operator()(Iterable& iterable, Projection projection) const
                 -> detail::enable_if_t<
-                    is_projection<Projection, Iterable>::value &&
+                    is_projection_v<Projection, Iterable> &&
                     not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
                     not detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
                     not detail::can_comparison_sort<

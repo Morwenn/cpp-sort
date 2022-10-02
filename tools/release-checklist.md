@@ -22,6 +22,7 @@ List of actions to perform when releasing a new cpp-sort version.
   - [ ] Home.md in the documentation (1)
   - [ ] Tooling.md/Conan in the documentation (2)
 - [ ] Verify that the Conan recipe works.
+- [ ] Try to open `docs` with the latest version of Gollum.
 - [ ] Find a name for the new version.
 - [ ] Open a merge request, let the CI do its job.
 - [ ] Merge `develop` into `master`.

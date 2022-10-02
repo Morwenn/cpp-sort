@@ -49,7 +49,7 @@ Note that the function pointer conversion syntax above is made up, but it allows
 
 ***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
 
-*Changed in version 1.5.0:* these conversion operators exists if and only if the wrapped *sorter implementation* is empty and default-constructible.
+*Changed in version 1.5.0:* these conversion operators exist if and only if the wrapped *sorter implementation* is empty and default-constructible.
 
 *Changed in version 1.10.0:* the conversion operators are always `constexpr` (it used to be a C++17 feature).
 

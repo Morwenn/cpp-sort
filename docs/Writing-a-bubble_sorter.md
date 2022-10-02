@@ -254,7 +254,7 @@ struct bubble_sorter_impl
 };
 ```
 
-We can see several improvements compared to the previous version: first of all, we added an optional projection parameter which defauts to [`utility::identity`][utility-identity] (in C++20 we would use [`std::identity`][std-identity]). This is a function object that takes a value and returns it as is so that the default behaviour of the algorithm is to run *as if* projections didn't exist. It is very likely to be optimized aways by the compiler.
+We can see several improvements compared to the previous version: first of all, we added an optional projection parameter which defauts to [`utility::identity`][utility-identity] (in C++20 we would use [`std::identity`][std-identity]). This is a function object that takes a value and returns it as is so that the default behaviour of the algorithm is to run *as if* projections didn't exist. It is very likely to be optimized away by the compiler.
 
 The second modification is one I wish we could do without (but will have to live with until concepts): [`is_projection_iterator_v`][is-projection] is a trait that checks whether a projection function can be used on a dereferenced iterator. It also optionally checks that a given comparison function can be called with the result of two such projections. This trait exists to ensure that a sorter's `operator()` won't be called when these conditions are not satisfied, which may be crucial when aggregating sorters with [`hybrid_adapter`][hybrid-adapter].
 
@@ -401,7 +401,7 @@ namespace
 }
 
 // C++17
-inline constexpr auto&& bubble_sort = bubble_sorter{};
+inline constexpr bubble_sorter bubble_sort{};
 ```
 
 The combination of [`utility::static_const`][utility-static-const] with an anonymous namespace is a trick used to avoid ODR problems; you can read more about how and why it works in [Eric Niebler's original article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/). It is basically a poor man's substitute to compensate the lack of `inline` variables pre-C++17.
@@ -444,7 +444,7 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
   [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
   [is-projection]: Sorter-traits.md#is_projection-and-is_projection_iterator
   [projections]: https://ezoeryou.github.io/blog/article/2019-01-22-ranges-projection.html
-  [proxy-iterators]: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0022r2.html
+  [proxy-iterators]: https://wg21.link/P0022
   [sorter-adapters]: Sorter-adapters.md
   [sorter-facade]: Sorter-facade.md
   [sorter-traits]: Sorter-traits.md#sorter_traits

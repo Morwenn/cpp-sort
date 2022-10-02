@@ -23,14 +23,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: macos-11
 
     strategy:
       fail-fast: false
       matrix:
         cxx:
-          - g++-9
-          - $(brew --prefix llvm)/bin/clang++  # Clang 11
+          - g++-10
+          - clang++
         config:
           # Release build
           - build_type: Release
@@ -41,8 +41,7 @@ jobs:
             sanitize: undefined
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: seanmiddleditch/gha-setup-ninja@master
+      - uses: actions/checkout@v3
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
@@ -52,7 +51,6 @@ jobs:
                 -DCMAKE_CONFIGURATION_TYPES=${{matrix.config.build_type}} \
                 -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
                 -DCPPSORT_SANITIZE=${{matrix.config.sanitize}} \
-                -GNinja \
                 -DCPPSORT_BUILD_EXAMPLES=ON
 
       - name: Build the test suite

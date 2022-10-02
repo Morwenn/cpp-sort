@@ -1,6 +1,9 @@
-*Note: this page only benchmarls sorting algorithms under specific conditions. It can be used as a quick guide but if you really need a fast algorithm for a specific use case, you better run your own benchmarks.*
+*Note: this page only benchmarks sorting algorithms under specific conditions. It can be used as a quick guide but if you really need a fast algorithm for a specific use case, you better run your own benchmarks.*
 
-*Last meaningful update: 1.9.0 release, 1.12.0 for measures of presortedness.*
+*Last meaningful updates:*
+* *1.13.1 for unstable random-access sorts, slow O(n log n) sorts, forward sorts, and the expensive move/cheap comparison benchmark*
+* *1.12.0 for measures of presortedness*
+* *1.9.0 otherwise*
 
 Benchmarking is hard and I might not be doing it right. Moreover, benchmarking sorting algorithms highlights that the time needed to sort a collection of elements depends on several things: the type to sort, the size of the collection, the cost of comparing two values, the cost of moving an element, the patterns formed by the distribution of the values in the collection to sort, the type of the collection itself, etc. The aim of this page is to help you choose a sorting algorithm depending on your needs. You can find two main kinds of benchmarks: the ones that compare algorithms against shuffled collections of different sizes, and the ones that compare algorithms against different data patterns for a given collection size.
 
@@ -8,7 +11,7 @@ It is worth noting that most benchmarks on this page use collections of `double`
 
 All of the graphs on this page have been generated with slightly modified versions of the scripts found in the project's benchmarks folder. There are just too many things to check; if you ever want a specific benchmark, don't hesitate to ask for it.
 
-*The benchmarks were run on Windows 10 with 64-bit MinGW-w64 g++10.1, with the flags -O3 -march=native -std=c++2a.*
+*The latest benchmarks were run on Windows 10 with 64-bit MinGW-w64 g++12.0, with the flags -O3 -march=native -std=c++20.*
 
 # Random-access iterables
 
@@ -19,7 +22,7 @@ Most sorting algorithms are designed to work with random-access iterators, so th
 Sorting a random-access collection with an unstable sort is probably one of the most common things to want, and not only are those sorts among the fastest comparison sorts, but type-specific sorters can also be used to sort a variety of types. If you don't know what algorithm you want and don't have specific needs, then you probably want one of these.
 
 ![Benchmark speed of unstable sorts with increasing size for std::vector<double>](https://i.imgur.com/Q3IEeci.png)
-![Benchmark speed of unstable sorts with increasing size for std::deque<double>](https://i.imgur.com/XjRGUmc.png)
+![Benchmark speed of unstable sorts with increasing size for std::deque<double>](https://i.imgur.com/oRW5kFr.png)
 
 The plots above show a few general tendencies:
 * `selection_sort` is O(n²) and doesn't scale.
@@ -28,8 +31,8 @@ The plots above show a few general tendencies:
 
 The quicksort derivatives and the hybrid radix sorts are generally the fastest of the lot, yet `drop_merge_sort` seems to offer interesting speedups for `std::deque` despite not being designed to be the fastest on truly shuffled data. Part of the explanation is that it uses `pdq_sort` in a contiguous memory buffer underneath, which might be faster for `std::deque` than sorting completely in-place.
 
-![Benchmark unstable sorts over different patterns for std::vector<double>](https://i.imgur.com/MlEcGuL.png)
-![Benchmark unstable sorts over different patterns for std::deque<double>](https://i.imgur.com/o7sOfMB.png)
+![Benchmark unstable sorts over different patterns for std::vector<double>](https://i.imgur.com/WZ4s6Xt.png)
+![Benchmark unstable sorts over different patterns for std::deque<double>](https://i.imgur.com/UAaObUW.png)
 
 A few random takeways:
 * All the algorithms are more or less adaptive, not always for the same patterns.
@@ -61,15 +64,15 @@ These plots highlight a few important things:
 
 I decided to include a dedicated category for slow O(n log n) sorts, because I find this class of algorithms interesting. This category contains experimental algorithms, often taken from rather old research papers. `heap_sort` is used as the "fast" algorithm in this category, despite it being consistently the slowest in the previous category.
 
-![Benchmark speed of slow O(n log n) sorts with increasing size for std::vector<double>](https://i.imgur.com/nSX9n1q.png)
-![Benchmark slow O(n log n) sorts over different patterns for std::vector<double>](https://i.imgur.com/z9dR16G.png)
-![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/Viu13nj.png)
+![Benchmark speed of slow O(n log n) sorts with increasing size for std::vector<double>](https://i.imgur.com/2sx8Hk7.png)
+![Benchmark slow O(n log n) sorts over different patterns for std::vector<double>](https://i.imgur.com/RkiYdy8.png)
+![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/Z9O4I6p.png)
 
 The analysis is pretty simple here:
 * Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting. 
-* `poplar_sort` is slower for `std::vector` than for `std::deque`, which makes me suspect a codegen issue somewhere.
+* `poplar_sort` is a bit slower for `std::vector` than for `std::deque`, which makes me suspect a weird issue somewhere.
 * As a result `smooth_sort` and `poplar_sort` beat each other depending on the type of the collection to sort.
-* Slabsort has an unusual graph: it seems that even for shuffled data it might end up beating `heap_sort` when the collection grows big enough.
+* Slabsort has an unusual graph: even for shuffled data it might end up beating `heap_sort` when the collection becomes big enough.
 
 # Bidirectional iterables
 
@@ -91,14 +94,14 @@ For elements as small as `double`, there are two clear winners here: `drop_merge
 
 Even fewer sorters can handle forward iterators. `out_of_place_adapter(pdq_sort)` was not included in the patterns benchmark, because it adapts to patterns the same way `pdq_sort` does.
 
-![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/SMTKhqG.png)
-![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/XLndRbU.png)
+![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/if15kX1.png)
+![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/uF0UzLm.png)
 
 The results are roughly the same than with bidirectional iterables:
 * Sorting out-of-place is faster than anything else.
-* [`std::forward_list::sort`][std-forward-list-sort] doesn't scale well unless moves are expensive.
+* [`std::forward_list::sort`][std-forward-list-sort] doesn't scale well when moves are inexpensive.
 * `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.
-* `mel_sort` is still bad, but becomes a dcent alternative when the input exhibits recognizable patterns.
+* `mel_sort` is still bad, but becomes a decent alternative when the input exhibits recognizable patterns.
 
 # Sorting under specific constraints
 
@@ -129,11 +132,11 @@ Both algorithms can be interesting depending on the sorting scenario.
 
 ## Expensive moves, cheap comparisons
 
-Sometimes we have to sort a collection whose elements are expensive to move around but cheap to compare. In such a situation we can use `indirect_adapter` which sorts iterators to the elements and moves the elements into their direct place once the sorting order is known.
+Sometimes one has to sort a collection whose elements are expensive to move around but cheap to compare. In such a situation `indirect_adapter` can be used: it sorts a collection of iterators to the elements, and moves the elements into their direct place once the sorting order is known.
 
 The following example uses a collection of `std::array<doube, 100>` whose first element is the only one compared during the sort. Albeit a bit artificial, it illustrates the point well enough.
 
-![Benchmark heap_sort vs. indirect_adapter(heap_sort) for a collection of std::array<double, 100>](https://i.imgur.com/mYUaxRT.png)
+![Benchmark heap_sort vs. indirect_adapter(heap_sort) for a collection of std::array<double, 100>](https://i.imgur.com/Okkahwf.png)
 
 The improvements are not always as clear as in this benchmark, but it shows that `indirect_adapter` might be an interesting tool to have in your sorting toolbox in such a scenario.
 

@@ -288,7 +288,7 @@ namespace detail
 
         auto end = has_stray ? std::prev(last) : last;
         for (auto it = first ; it != end ; it += 2) {
-            iter_swap_if(it, it + 1, compare, projection);
+            iter_swap_if(it, std::next(it), compare, projection);
         }
 
         ////////////////////////////////////////////////////////////

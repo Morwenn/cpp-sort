@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_INTROSELECT_H_
@@ -13,12 +13,12 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
-#include "bubble_sort.h"
 #include "config.h"
 #include "insertion_sort.h"
 #include "iter_sort3.h"
 #include "iterator_traits.h"
 #include "partition.h"
+#include "selection_sort.h"
 #include "swap_if.h"
 
 namespace cppsort
@@ -26,20 +26,17 @@ namespace cppsort
 namespace detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto small_sort(ForwardIterator first, ForwardIterator,
-                    difference_type_t<ForwardIterator> size,
+    auto small_sort(ForwardIterator first, ForwardIterator last,
                     Compare compare, Projection projection,
                     std::forward_iterator_tag)
         -> void
     {
-        // TODO: find something better than bubble sort
-        bubble_sort(std::move(first), size,
-                    std::move(compare), std::move(projection));
+        selection_sort(std::move(first), std::move(last),
+                       std::move(compare), std::move(projection));
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto small_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    difference_type_t<BidirectionalIterator>,
                     Compare compare, Projection projection,
                     std::bidirectional_iterator_tag)
         -> void
@@ -50,12 +47,11 @@ namespace detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto small_sort(ForwardIterator first, ForwardIterator last,
-                    difference_type_t<ForwardIterator> size,
                     Compare compare, Projection projection)
         -> void
     {
         using category = iterator_category_t<ForwardIterator>;
-        small_sort(first, last, size, std::move(compare), std::move(projection),
+        small_sort(first, last, std::move(compare), std::move(projection),
                    category{});
     }
 
@@ -319,7 +315,7 @@ namespace detail
             --bad_allowed;
         }
         // Fallback when the collection is small enough
-        small_sort(first, last, size, std::move(compare), std::move(projection));
+        small_sort(first, last, std::move(compare), std::move(projection));
         return std::next(first, nth_pos);
     }
 }}

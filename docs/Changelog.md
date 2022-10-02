@@ -73,7 +73,7 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 
 * When available, [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater] benefit from dedicated support wherever [`std::less<>`][std-less-void] and [`std::greater<>`][std-greater-void] are supported, with equivalent semantics.
 
-* [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] begin `constexpr`.
+* [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] being `constexpr`.
 
     The feature-test macro `__cpp_lib_constexpr_algorithms` can be used to check whether `std::swap` is `constexpr`.
 
@@ -88,6 +88,8 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 * Bit manipulation intrinsics: there are a few places where bit tricks are used to perform a few operations faster. Some of those operations are made faster with bitwise manipulation intrinsics when those are available.
 
 * Assumptions: some algorithms use assumptions in select places to make the compiler generate more efficient code. Whether such assumptions are available depends on the compiler.
+
+* Vectorized algorithms: when compiled against the Microsoft STL, **cpp-sort** tries to take advantage of their vectorized algorithms when possible. This improves some algorithms when sorting contiguous collections of trivially copyable types.
 
 * When using libstdc++, libc++ or the Microsoft STL, the return type of [`std::mem_fn`][std-mem-fn] is considered ["probably branchless"][branchless-traits] when it wraps a pointer to data member, which can improve the speed of [`pdq_sorter`][pdq-sorter] and everything that relies on it in some scenarios.
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -19,14 +19,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <cstdint>
-#include <functional>
-#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "partition.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -46,26 +43,13 @@ namespace detail
             auto&& proj = utility::as_function(projection);
 
             CPPSORT_ASSERT(k < length);
-            iter_swap(r, r + k);
-            difference_type_t<RandomAccessIterator> lo = 1, hi = length - 1;
-            for (;; ++lo, --hi) {
-                for (;; ++lo) {
-                    if (lo > hi) {
-                        goto loop_done;
-                    }
-                    if (not comp(proj(r[lo]), proj(*r))) break;
-                }
-                // found the left bound:  r[lo] >= r[0]
-                CPPSORT_ASSERT(lo <= hi);
-                for (; comp(proj(*r), proj(r[hi])) ; --hi) {}
-                if (lo >= hi) break;
-                // found the right bound: r[hi] <= r[0], swap & make progress
-                iter_swap(r + lo, r + hi);
-            }
-        loop_done:
-            --lo;
-            iter_swap(r + lo, r);
-            return r + lo;
+            iter_swap(r, r + k); // Move pivot out of the way
+            auto&& pivot_proj = proj(*r);
+            auto pivot_pos = detail::partition(r, r + length, [&](auto&& elem) {
+                return not comp(pivot_proj, proj(elem));
+            });
+            iter_swap(r, --pivot_pos); // Put pivot back in its place
+            return pivot_pos;
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -188,11 +172,13 @@ namespace detail
             CPPSORT_ASSERT(lo > 0 && lo <= pivot);
             difference_type_t<RandomAccessIterator> left = 0;
             const auto oldPivot = pivot;
+            auto&& old_pivot_proj = proj(r[oldPivot]);
             for (; lo < pivot ; ++left) {
                 if (left == lo) {
-                    goto done;
+                    iter_swap(r + oldPivot, r + pivot);
+                    return pivot;
                 }
-                if (not comp(proj(r[oldPivot]), proj(r[left]))) continue;
+                if (not comp(old_pivot_proj, proj(r[left]))) continue;
                 --pivot;
                 iter_swap(r + left, r + pivot);
             }
@@ -200,20 +186,20 @@ namespace detail
             // Second loop: make left and pivot meet
             for (;; ++left) {
                 if (left == pivot) break;
-                if (not comp(proj(r[oldPivot]), proj(r[left]))) continue;
+                if (not comp(old_pivot_proj, proj(r[left]))) continue;
                 for (;;) {
                     if (left == pivot) {
-                        goto done;
+                        iter_swap(r + oldPivot, r + pivot);
+                        return pivot;
                     }
                     --pivot;
-                    if (comp(proj(r[pivot]), proj(r[oldPivot]))) {
+                    if (comp(proj(r[pivot]), old_pivot_proj)) {
                         iter_swap(r + left, r + pivot);
                         break;
                     }
                 }
             }
 
-        done:
             iter_swap(r + oldPivot, r + pivot);
             return pivot;
         }
@@ -231,30 +217,31 @@ namespace detail
             difference_type_t<RandomAccessIterator> pivot = 0;
             CPPSORT_ASSERT(pivot <= hi);
             CPPSORT_ASSERT(hi <= rite);
+            auto&& pivot_proj = proj(r[0]);
 
             // First loop: spend r[pivot .. hi]
             for (; pivot < hi ; --rite) {
                 if (rite == hi) {
-                    goto done;
+                    iter_swap(r, r + pivot);
+                    return pivot;
                 }
-                if (not comp(proj(r[rite]), proj(r[0]))) continue;
+                if (not comp(proj(r[rite]), pivot_proj)) continue;
                 ++pivot;
                 iter_swap(r + rite, r + pivot);
             }
 
             // Second loop: make left and pivot meet
             for (; rite > pivot ; --rite) {
-                if (not comp(proj(r[rite]), proj(r[0]))) continue;
+                if (not comp(proj(r[rite]), pivot_proj)) continue;
                 while (rite > pivot) {
                     ++pivot;
-                    if (comp(proj(r[0]), proj(r[pivot]))) {
+                    if (comp(pivot_proj, proj(r[pivot]))) {
                         iter_swap(r + rite, r + pivot);
                         break;
                     }
                 }
             }
 
-        done:
             iter_swap(r, r + pivot);
             return pivot;
         }

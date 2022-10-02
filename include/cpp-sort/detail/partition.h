@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -18,7 +18,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
@@ -32,18 +31,17 @@ namespace detail
                         std::forward_iterator_tag)
         -> ForwardIterator
     {
-        while (true)
-        {
-            if (first == last)
+        while (true) {
+            if (first == last) {
                 return first;
-            if (!pred(*first))
+            }
+            if (not pred(*first)) {
                 break;
+            }
             ++first;
         }
-        for (ForwardIterator p = first; ++p != last;)
-        {
-            if (pred(*p))
-            {
+        for (auto p = first; ++p != last;) {
+            if (pred(*p)) {
                 using utility::iter_swap;
                 iter_swap(first, p);
                 ++first;
@@ -57,21 +55,21 @@ namespace detail
                         std::bidirectional_iterator_tag)
         -> BidirectionalIterator
     {
-        while (true)
-        {
-            while (true)
-            {
-                if (first == last)
+        while (true) {
+            while (true) {
+                if (first == last) {
                     return first;
-                if (!pred(*first))
+                }
+                if (not pred(*first)) {
                     break;
+                }
                 ++first;
             }
-            do
-            {
-                if (first == --last)
+            do {
+                if (first == --last) {
                     return first;
-            } while (!pred(*last));
+                }
+            } while (not pred(*last));
             using utility::iter_swap;
             iter_swap(first, last);
             ++first;
@@ -82,7 +80,7 @@ namespace detail
     auto partition(ForwardIterator first, ForwardIterator last, Predicate pred)
         -> ForwardIterator
     {
-        return partition_impl<std::add_lvalue_reference_t<Predicate>>(
+        return partition_impl<Predicate&>(
             std::move(first), std::move(last), pred,
             iterator_category_t<ForwardIterator>{}
         );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -13,13 +13,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
-#include <array>
 #include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <iterator>
 #include <limits>
 #include <tuple>
 #include <type_traits>
@@ -27,8 +24,9 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "attributes.h"
-#include "iterator_traits.h"
+#include "iterator_traits.h" // projected_t
 #include "memcpy_cast.h"
+#include "partition.h"
 #include "pdqsort.h"
 #include "type_traits.h"
 
@@ -39,16 +37,14 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // ska_sort algorithm
 
-    inline auto to_unsigned_or_bool(bool b)
-        -> bool
+    template<typename Unsigned>
+    auto to_unsigned_or_bool(Unsigned value)
+        -> detail::enable_if_t<
+            detail::is_unsigned<Unsigned>::value, // also covers bool
+            Unsigned
+        >
     {
-        return b;
-    }
-
-    inline auto to_unsigned_or_bool(unsigned char c)
-        -> unsigned char
-    {
-        return c;
+        return value;
     }
 
     inline auto to_unsigned_or_bool(signed char c)
@@ -88,23 +84,11 @@ namespace detail
              + static_cast<unsigned short>(1 << std::numeric_limits<short>::digits);
     }
 
-    inline auto to_unsigned_or_bool(unsigned short i)
-        -> unsigned short
-    {
-        return i;
-    }
-
     inline auto to_unsigned_or_bool(int i)
         -> unsigned int
     {
         return static_cast<unsigned int>(i)
              + static_cast<unsigned int>(1 << std::numeric_limits<int>::digits);
-    }
-
-    inline auto to_unsigned_or_bool(unsigned int i)
-        -> unsigned int
-    {
-        return i;
     }
 
     inline auto to_unsigned_or_bool(long l)
@@ -114,23 +98,11 @@ namespace detail
              + static_cast<unsigned long>(1l << std::numeric_limits<long>::digits);
     }
 
-    inline auto to_unsigned_or_bool(unsigned long l)
-        -> unsigned long
-    {
-        return l;
-    }
-
     inline auto to_unsigned_or_bool(long long l)
         -> unsigned long long
     {
         return static_cast<unsigned long long>(l)
              + static_cast<unsigned long long>(1ll << std::numeric_limits<long long>::digits);
-    }
-
-    inline auto to_unsigned_or_bool(unsigned long long l)
-        -> unsigned long long
-    {
-        return l;
     }
 
 #ifdef __SIZEOF_INT128__
@@ -139,12 +111,6 @@ namespace detail
     {
         return static_cast<__uint128_t>(l)
              + static_cast<__uint128_t>(__int128_t(1) << (CHAR_BIT * sizeof(__int128_t) - 1));
-    }
-
-    inline auto to_unsigned_or_bool(__uint128_t l)
-        -> __uint128_t
-    {
-        return l;
     }
 #endif
 
@@ -212,34 +178,6 @@ namespace detail
             case 1:
                 to_call(begin);
         }
-    }
-
-    template<typename RandomAccessIterator, typename Function>
-    auto custom_std_partition(RandomAccessIterator begin, RandomAccessIterator end,
-                              Function function)
-        -> RandomAccessIterator
-    {
-        auto&& func = utility::as_function(function);
-
-        for (;; ++begin) {
-            if (begin == end) {
-                return end;
-            }
-            if (not func(*begin)) {
-                break;
-            }
-        }
-        RandomAccessIterator it = begin;
-        for (++it ; it != end ; ++it) {
-            if (not func(*it)) {
-                continue;
-            }
-
-            using utility::iter_swap;
-            iter_swap(begin, it);
-            ++begin;
-        }
-        return begin;
     }
 
     struct PartitionInfo
@@ -706,8 +644,8 @@ namespace detail
             for (std::uint8_t *last_remaining = remaining_partitions + num_partitions,
                               *end_partition = remaining_partitions + 1 ;
                  last_remaining > end_partition ;) {
-                last_remaining = custom_std_partition(remaining_partitions, last_remaining,
-                                                      [&](std::uint8_t partition) {
+                last_remaining = detail::partition(remaining_partitions, last_remaining,
+                                                    [&](std::uint8_t partition) {
                     std::size_t& begin_offset = partitions[partition].offset;
                     std::size_t& end_offset = partitions[partition].next_offset;
                     if (begin_offset == end_offset) {
@@ -810,7 +748,7 @@ namespace detail
                 return ElementSubKey::base::sub_key(elem, sort_data);
             };
             sort_data->current_index = current_index = CommonPrefix(begin, end, current_index, current_key, element_key);
-            auto end_of_shorter_ones = std::partition(begin, end, [&](auto&& elem) {
+            auto end_of_shorter_ones = detail::partition(begin, end, [&](auto&& elem) {
                 return current_key(elem).size() <= current_index;
             });
             std::ptrdiff_t num_shorter_ones = end_of_shorter_ones - begin;
@@ -871,9 +809,9 @@ namespace detail
         {
             auto&& proj = utility::as_function(projection);
 
-            auto middle = std::partition(begin, end, [&](auto&& a) {
-                                             return not CurrentSubKey::sub_key(proj(a), sort_data);
-                                         });
+            auto middle = detail::partition(begin, end, [&](auto&& a) {
+                return not CurrentSubKey::sub_key(proj(a), sort_data);
+            });
             if (next_sort) {
                 next_sort(begin, middle, middle - begin, projection, sort_data);
                 next_sort(middle, end, end - middle, projection, sort_data);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_IMMOVABLE_VECTOR_H_
@@ -123,11 +123,11 @@ namespace detail
 
             template<typename... Args>
             auto emplace_back(Args&&... args)
-                -> void
+                -> T*
             {
                 CPPSORT_ASSERT(end_ - memory_ < capacity_);
                 ::new(end_) T(std::forward<Args>(args)...);
-                ++end_;
+                return std::exchange(end_, end_ + 1);
             }
 
             template<typename Iterator>

@@ -273,8 +273,9 @@ namespace detail
             CPPSORT_ASSERT(len1 > 0);
             CPPSORT_ASSERT(len2 > 0);
             CPPSORT_ASSERT(base1 + len1 == base2);
+            auto&& proj = utility::as_function(projection);
 
-            difference_type const k = gallopRight(*base2, base1, len1, 0, compare, projection);
+            difference_type const k = gallopRight(proj(*base2), base1, len1, 0, compare, projection);
             CPPSORT_ASSERT(k >= 0);
 
             base1 += k;
@@ -284,7 +285,7 @@ namespace detail
                 return;
             }
 
-            len2 = gallopLeft(base1[len1 - 1], base2, len2, len2 - 1, compare, projection);
+            len2 = gallopLeft(proj(base1[len1 - 1]), base2, len2, len2 - 1, compare, projection);
             CPPSORT_ASSERT(len2 >= 0);
             if (len2 == 0) {
                 return;
@@ -309,14 +310,13 @@ namespace detail
 
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
-            auto&& key_proj = proj(key);
 
             difference_type lastOfs = 0;
             difference_type ofs = 1;
 
-            if (comp(proj(base[hint]), key_proj)) {
+            if (comp(proj(base[hint]), key)) {
                 difference_type const maxOfs = len - hint;
-                while (ofs < maxOfs && comp(proj(base[hint + ofs]), key_proj)) {
+                while (ofs < maxOfs && comp(proj(base[hint + ofs]), key)) {
                     lastOfs = ofs;
                     ofs = (ofs << 1) + 1;
 
@@ -330,10 +330,9 @@ namespace detail
 
                 lastOfs += hint;
                 ofs += hint;
-            }
-            else {
+            } else {
                 difference_type const maxOfs = hint + 1;
-                while (ofs < maxOfs && not comp(proj(base[hint - ofs]), key_proj)) {
+                while (ofs < maxOfs && not comp(proj(base[hint - ofs]), key)) {
                     lastOfs = ofs;
                     ofs = (ofs << 1) + 1;
 
@@ -353,7 +352,7 @@ namespace detail
             CPPSORT_ASSERT(lastOfs < ofs);
             CPPSORT_ASSERT(ofs <= len);
 
-            return lower_bound(base+(lastOfs+1), base+ofs, key_proj, compare, projection) - base;
+            return lower_bound(base+(lastOfs+1), base+ofs, key, compare, projection) - base;
         }
 
         template<typename T, typename Iter>
@@ -367,14 +366,13 @@ namespace detail
 
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
-            auto&& key_proj = proj(key);
 
             difference_type ofs = 1;
             difference_type lastOfs = 0;
 
-            if (comp(key_proj, proj(base[hint]))) {
+            if (comp(key, proj(base[hint]))) {
                 difference_type const maxOfs = hint + 1;
-                while (ofs < maxOfs && comp(key_proj, proj(base[hint - ofs]))) {
+                while (ofs < maxOfs && comp(key, proj(base[hint - ofs]))) {
                     lastOfs = ofs;
                     ofs = (ofs << 1) + 1;
 
@@ -389,10 +387,9 @@ namespace detail
                 difference_type const tmp = lastOfs;
                 lastOfs = hint - ofs;
                 ofs = hint - tmp;
-            }
-            else {
+            } else {
                 difference_type const maxOfs = len - hint;
-                while (ofs < maxOfs && not comp(key_proj, proj(base[hint + ofs]))) {
+                while (ofs < maxOfs && not comp(key, proj(base[hint + ofs]))) {
                     lastOfs = ofs;
                     ofs = (ofs << 1) + 1;
 
@@ -411,7 +408,7 @@ namespace detail
             CPPSORT_ASSERT(lastOfs < ofs);
             CPPSORT_ASSERT(ofs <= len);
 
-            return upper_bound(base+(lastOfs+1), base+ofs, key_proj, compare, projection) - base;
+            return upper_bound(base+(lastOfs+1), base+ofs, key, compare, projection) - base;
         }
 
         auto resize_buffer(std::ptrdiff_t new_size)
@@ -509,7 +506,7 @@ namespace detail
                     CPPSORT_ASSERT(len1 > 1);
                     CPPSORT_ASSERT(len2 > 0);
 
-                    count1 = gallopRight(*cursor2, cursor1, len1, 0, compare, projection);
+                    count1 = gallopRight(proj(*cursor2), cursor1, len1, 0, compare, projection);
                     if (count1 != 0) {
                         detail::move_backward(cursor1, cursor1 + count1, dest + count1);
                         dest += count1;
@@ -529,7 +526,7 @@ namespace detail
                         break;
                     }
 
-                    count2 = gallopLeft(*cursor1, cursor2, len2, 0, compare, projection);
+                    count2 = gallopLeft(proj(*cursor1), cursor2, len2, 0, compare, projection);
                     if (count2 != 0) {
                         detail::move(cursor2, cursor2 + count2, dest);
                         dest += count2;
@@ -660,7 +657,7 @@ namespace detail
                     CPPSORT_ASSERT(len1 > 0);
                     CPPSORT_ASSERT(len2 > 1);
 
-                    count1 = len1 - gallopRight(*cursor2, base1, len1, len1 - 1, compare, projection);
+                    count1 = len1 - gallopRight(proj(*cursor2), base1, len1, len1 - 1, compare, projection);
                     if (count1 != 0) {
                         dest -= count1;
                         cursor1 -= count1;
@@ -680,7 +677,7 @@ namespace detail
                         break;
                     }
 
-                    count2 = len2 - gallopLeft(*std::prev(cursor1), buffer.get(), len2, len2 - 1, compare, projection);
+                    count2 = len2 - gallopLeft(proj(*std::prev(cursor1)), buffer.get(), len2, len2 - 1, compare, projection);
                     if (count2 != 0) {
                         dest -= count2;
                         cursor2 -= count2;

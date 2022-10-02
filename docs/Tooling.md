@@ -29,7 +29,7 @@ The project's CMake files offers some options, though they are mainly used to co
 * `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`. 
 * `CPPSORT_ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
 * `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
-* `CPPSORT_SANITIZE`: values to pass to the `-fsanitize` flags of compilers that supports them, default to empty.
+* `CPPSORT_SANITIZE`: comma-separated list of values to pass to the `-fsanitize` flag of compilers that support it, defaults to an empty string.
 * `CPPSORT_STATIC_TESTS`: when `ON`, some tests are executed at compile time instead of runtime, defaults to `OFF`.
 
 Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
@@ -56,10 +56,10 @@ Some of those options also exist without the `CPPSORT_` prefix, but they are dep
 conan search cpp-sort --remote=conan-center
 ```
 
-And then install any version to your local cache as follows (here with version 1.13.0):
+And then install any version to your local cache as follows (here with version 1.13.1):
 
 ```sh
-conan install cpp-sort/1.13.0
+conan install cpp-sort/1.13.1
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to build your own package with the `conanfile.py` available in this repository.
