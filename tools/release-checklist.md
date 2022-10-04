@@ -35,6 +35,3 @@ List of actions to perform when releasing a new cpp-sort version.
 - [ ] Check that the documentation was correctly uploaded.
 - [ ] Add the new version to Conan Center Index.
 - [ ] Brag about it where relevant.
-- [ ] Merge master into 2.0.0-develop branch.
-- [ ] Fix merge issues.
-- [ ] Improve as needed with C++17 and C++20 features.
