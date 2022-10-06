@@ -28,7 +28,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_type: [Debug, Release]
+        config:
+        - build_type: Release
+        - build_type: Debug
+        - build_type: Debug
+          build_tools: '-T ClangCL'
 
     steps:
       - uses: actions/checkout@v3
@@ -38,17 +42,17 @@ jobs:
         working-directory: ${{runner.workspace}}
         run: |
           cmake -H${{github.event.repository.name}} -Bbuild `
-                -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} `
-                -DCMAKE_BUILD_TYPE=${{matrix.build_type}} `
-                -G"Visual Studio 16 2019" -A x64 `
+                -DCMAKE_CONFIGURATION_TYPES=${{matrix.config.build_type}} `
+                -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} `
+                -G"Visual Studio 16 2019" -A x64 ${{matrix.config.build_tools}} `
                 -DCPPSORT_BUILD_EXAMPLES=ON
 
       - name: Build the test suite
         working-directory: ${{runner.workspace}}/build
-        run: cmake --build . --config ${{matrix.build_type}} -j 2
+        run: cmake --build . --config ${{matrix.config.build_type}}
 
       - name: Run the test suite
         env:
           CTEST_OUTPUT_ON_FAILURE: 1
         working-directory: ${{runner.workspace}}/build
-        run: ctest -C ${{matrix.build_type}} --no-tests=error
+        run: ctest -C ${{matrix.config.build_type}} --no-tests=error
