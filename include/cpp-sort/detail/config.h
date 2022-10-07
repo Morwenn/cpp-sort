@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
 #define CPPSORT_DETAIL_CONFIG_H_
+
+////////////////////////////////////////////////////////////
+// Make <version> available when possible
+
+// config.h is what should be included to get configuration
+// information, which includes standard library feature-test
+// macros when available
+
+#if __has_include(<version>)
+#   include <version>
+#endif
 
 ////////////////////////////////////////////////////////////
 // Check for __has_* macros
@@ -35,20 +46,16 @@
 // be used reliably, so we have to fall back to checking
 // compiler and standard versions
 
-#if defined(__GNUC__)
+#if defined(__cpp_lib_ranges)
+#   define CPPSORT_STD_IDENTITY_AVAILABLE 1
+#elif defined(__GNUC__)
 #   if __GNUC__ > 9 && __cplusplus > 201703L
 #       define CPPSORT_STD_IDENTITY_AVAILABLE 1
 #   else
 #       define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #   endif
-#elif defined(__clang__)
-#   define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #else
-#   if defined(__cpp_lib_ranges)
-#       define CPPSORT_STD_IDENTITY_AVAILABLE 1
-#   else
-#       define CPPSORT_STD_IDENTITY_AVAILABLE 0
-#   endif
+#   define CPPSORT_STD_IDENTITY_AVAILABLE 0
 #endif
 
 ////////////////////////////////////////////////////////////
