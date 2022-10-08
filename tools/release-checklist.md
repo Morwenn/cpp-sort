@@ -14,13 +14,7 @@ List of actions to perform when releasing a new cpp-sort version.
 - [ ] Check `NOTICE.txt` and `README.md` conformance for stolen code.
 - [ ] Make sure that tests pass and examples build.
 - [ ] Regenerate the benchmarks as needed.
-- [ ] Replace occurrences of the version number:
-  - [ ] CMakeLists.txt (1)
-  - [ ] conanfile.py (1)
-  - [ ] README.md (4)
-  - [ ] version.h
-  - [ ] Home.md in the documentation (1)
-  - [ ] Tooling.md/Conan in the documentation (2)
+- [ ] Bump the version number with tools/update-version.py.
 - [ ] Verify that the Conan recipe works.
 - [ ] Try to open `docs` with the latest version of Gollum.
 - [ ] Find a name for the new version.
