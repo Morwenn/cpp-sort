@@ -219,6 +219,28 @@ using sorter = cppsort::hybrid_adapter<
 
 *Warning: this adapter only supports default-constructible stateless sorters.*
 
+### `split_adapter`
+
+```cpp
+#include <cpp-sort/adapters/split_adapter.h>
+```
+
+The adapter implements the "in-place" version of the *SplitSort* algorithm described in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. The algorithm works as follows:
+1. It performs a O(n) pass on the collection to isolate an approximation of a longest non-decreasing subsequence in the left part of the collection, and places the removed elements in the right part of the collection.
+2. It uses the *adapted sorter* to sort the right part of the collection.
+3. It merges the two parts of the collection in O(n) time O(n) space if possible, otherwise it merges them in O(n log n) time O(1) space.
+
+The core algorithm behind `split_adapter` requires at least bidirectional iterators to work, as such the *resulting sorter* requires bidirectional iterators if the *adapted sorter* supports them, otherwise it requires the same category of iterators at that accepted by the *adapter sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
+
+```cpp
+template<typename Sorter>
+struct split_adapter;
+```
+
+Adapting any *sorter* with `split_adapter` effectively makes it [*Rem*-adaptive][probe-rem], making it a valuable tool to add adaptiveness to existing sorters.
+
+*New in version 1.14.0*
+
 ### `stable_adapter`, `make_stable` and `stable_t`
 
 ```cpp
@@ -308,6 +330,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
+  [probe-rem]: Measures-of-presortedness.md#rem
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [self-sort-adapter]: Sorter-adapters.md#self_sort_adapter

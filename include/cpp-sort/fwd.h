@@ -92,6 +92,8 @@ namespace cppsort
     template<template<std::size_t> class FixedSizeSorter, typename Indices>
     struct small_array_adapter;
     template<typename Sorter>
+    struct split_adapter;
+    template<typename Sorter>
     struct stable_adapter;
     template<typename Sorter>
     struct verge_adapter;

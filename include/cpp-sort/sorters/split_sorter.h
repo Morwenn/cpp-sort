@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPLIT_SORTER_H_
@@ -14,6 +14,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
@@ -50,7 +51,8 @@ namespace cppsort
                 );
 
                 split_sort(std::move(first), std::move(last),
-                           std::move(compare), std::move(projection));
+                           std::move(compare), std::move(projection),
+                           cppsort::pdq_sort);
             }
 
             ////////////////////////////////////////////////////////////
