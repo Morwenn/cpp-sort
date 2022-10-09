@@ -263,8 +263,9 @@ namespace detail
     // available:
     // * libstdc++ is instrumented in gnu++ mode only
     // * libc++ is always instrumented
+    // * Microsoft STL is never instrumented
 
-#if defined(__SIZEOF_INT128__) && defined(__GLIBCXX__)
+#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
     template<typename T>
     struct is_integral:
         std::is_integral<T>::type
