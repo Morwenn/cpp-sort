@@ -13,6 +13,8 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "config.h"
+#include "is_sorted_until.h"
 #include "iterator_traits.h"
 #include "memory.h"
 #include "recmerge_bidirectional.h"
@@ -27,7 +29,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename RandomAccessIterator,
              typename Compare, typename Projection>
-    auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator,
+    auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
                        Compare compare, Projection projection,
                        difference_type_t<ForwardIterator> len1,
                        difference_type_t<ForwardIterator> len2,
@@ -35,6 +37,9 @@ namespace cppsort::detail
                        std::forward_iterator_tag)
         -> void
     {
+        CPPSORT_AUDIT(detail::is_sorted(first, middle, compare, projection));
+        CPPSORT_AUDIT(detail::is_sorted(middle, last, compare, projection));
+        (void)last;
         recmerge(std::move(first), len1, std::move(middle), len2,
                  buff, buff_size,
                  std::move(compare), std::move(projection));
@@ -54,6 +59,8 @@ namespace cppsort::detail
                        std::bidirectional_iterator_tag tag)
         -> void
     {
+        CPPSORT_AUDIT(detail::is_sorted(first, middle, compare, projection));
+        CPPSORT_AUDIT(detail::is_sorted(middle, last, compare, projection));
         recmerge(std::move(first), std::move(middle), std::move(last),
                  std::move(compare), std::move(projection),
                  len1, len2, buff, buff_size, tag);
@@ -73,6 +80,8 @@ namespace cppsort::detail
                        std::random_access_iterator_tag)
         -> void
     {
+        CPPSORT_AUDIT(detail::is_sorted(first, middle, compare, projection));
+        CPPSORT_AUDIT(detail::is_sorted(middle, last, compare, projection));
         symmerge(first, 0, middle - first, last - first,
                  std::move(compare), std::move(projection),
                  len1, len2, buff, buff_size);

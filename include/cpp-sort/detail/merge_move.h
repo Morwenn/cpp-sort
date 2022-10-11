@@ -12,6 +12,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "is_sorted_until.h"
 #include "move.h"
 
 namespace cppsort::detail
@@ -24,6 +25,9 @@ namespace cppsort::detail
                     Projection1 projection1, Projection2 projection2)
         -> OutputIterator
     {
+        CPPSORT_AUDIT(detail::is_sorted(first1, last1, compare, projection1));
+        CPPSORT_AUDIT(detail::is_sorted(first2, last2, compare, projection2));
+
         using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj1 = utility::as_function(projection1);

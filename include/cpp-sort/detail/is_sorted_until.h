@@ -13,8 +13,8 @@
 namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto is_sorted_until(ForwardIterator first, ForwardIterator last,
-                         Compare compare, Projection projection)
+    constexpr auto is_sorted_until(ForwardIterator first, ForwardIterator last,
+                                   Compare compare, Projection projection)
         -> ForwardIterator
     {
         if (first != last) {
@@ -30,6 +30,17 @@ namespace cppsort::detail
             }
         }
         return last;
+    }
+
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    constexpr auto is_sorted(ForwardIterator first, ForwardIterator last,
+                             Compare compare, Projection projection)
+        -> bool
+    {
+        return detail::is_sorted_until(
+            first, last,
+            std::move(compare), std::move(projection)
+        ) == last;
     }
 }
 
