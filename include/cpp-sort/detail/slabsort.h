@@ -20,6 +20,7 @@
 #include "fixed_size_list.h"
 #include "functional.h"
 #include "immovable_vector.h"
+#include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
 #include "melsort.h"
@@ -123,6 +124,7 @@ namespace detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto try_melsort(BidirectionalIterator first, BidirectionalIterator last,
+                     difference_type_t<BidirectionalIterator> size,
                      difference_type_t<BidirectionalIterator> p,
                      fixed_size_list_node_pool<slabsort_list_node<BidirectionalIterator>>& node_pool,
                      Compare compare, Projection projection)
@@ -134,7 +136,8 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (first == last || std::next(first) == last) {
+        if (size < 32) {
+            insertion_sort(first, last, std::move(compare), std::move(projection));
             return true;
         }
 
@@ -244,13 +247,13 @@ namespace detail
         } else {
             // The partitions are small enough, try to use melsort on them,
             // if too many encroaching lists are created, cancel and recurse
-            bool done = try_melsort(first, middle, original_p, node_pool, compare, projection);
+            bool done = try_melsort(first, middle, size_left, original_p, node_pool, compare, projection);
             if (not done) {
                 slabsort_impl(first, middle, size_left,
                               original_p * original_p, original_p * original_p,
                               iterators_buffer, node_pool, compare, projection);
             }
-            done = try_melsort(middle, last, original_p, node_pool, compare, projection);
+            done = try_melsort(middle, last, size_right, original_p, node_pool, compare, projection);
             if (not done) {
                 slabsort_impl(middle, last, size_right,
                               original_p * original_p, original_p * original_p,
@@ -276,7 +279,7 @@ namespace detail
         // Take advantage of existing presortedness once before the partitioning
         // partly gets rid of it, this makes a difference for collections with
         // a few bigs runs
-        bool done = try_melsort(first, last, 2 * detail::log2(size),
+        bool done = try_melsort(first, last, size, 2 * detail::log2(size),
                                 node_pool, compare, projection);
         if (done) {
             return;
