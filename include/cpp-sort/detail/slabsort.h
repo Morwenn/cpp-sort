@@ -16,6 +16,7 @@
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
+#include "config.h"
 #include "fixed_size_list.h"
 #include "functional.h"
 #include "immovable_vector.h"
@@ -76,7 +77,7 @@ namespace cppsort::detail
         }
 
         ////////////////////////////////////////////////////////////
-        // Run nth_element stably and indirectly
+        // Run nth_element indirectly
 
         return *nth_element(
             iterators_buffer.begin(), iterators_buffer.end(), size / 2, size,
@@ -89,7 +90,7 @@ namespace cppsort::detail
                             difference_type_t<BidirectionalIterator> size,
                             immovable_vector<BidirectionalIterator>& iterators_buffer,
                             Compare compare, Projection projection)
-        -> void
+        -> BidirectionalIterator
     {
         using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
@@ -102,19 +103,19 @@ namespace cppsort::detail
         //       difference should not have any noticeable impact on the
         //       adaptivity to presortedness
 
-        auto pivot = slabsort_get_median(first, size, iterators_buffer, compare, projection);
+        auto median_it = slabsort_get_median(first, size, iterators_buffer, compare, projection);
         auto last_1 = std::prev(last);
 
         // Put the pivot at position std::prev(last) and partition
-        iter_swap(pivot, last_1);
-        auto&& pivot1 = proj(*last_1);
-        auto middle1 = detail::stable_partition(
+        iter_swap(median_it, last_1);
+        auto&& pivot = proj(*last_1);
+        auto middle = detail::stable_partition(
             first, last_1, size - 1,
-            [&](auto&& elem) { return comp(proj(elem), pivot1); }
+            [&](auto&& elem) { return comp(proj(elem), pivot); }
         );
-
         // Put the pivot back in its final position
-        iter_swap(middle1, last_1);
+        iter_swap(middle, last_1);
+        return middle;
     }
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
@@ -226,28 +227,29 @@ namespace cppsort::detail
             return;
         }
 
-        slabsort_partition(first, last, size, iterators_buffer, compare, projection);
-        auto left_size = size / 2;
-        auto right_size = size - left_size;
-        auto middle = std::next(first, left_size);
+        auto middle = slabsort_partition(first, last, size, iterators_buffer, compare, projection);
+        auto size_left = std::distance(first, middle);
+        auto size_right = size - size_left;
+        CPPSORT_ASSERT(size_left <= size / 2);
+
         if (current_p > 2) {
             // Partition further until the partitions are small enough
-            slabsort_impl(first, middle, left_size, original_p, current_p / 2,
+            slabsort_impl(first, middle, size_left, original_p, current_p / 2,
                           iterators_buffer, node_pool, compare, projection);
-            slabsort_impl(middle, last, right_size, original_p, current_p / 2,
+            slabsort_impl(middle, last, size_right, original_p, current_p / 2,
                           iterators_buffer, node_pool, compare, projection);
         } else {
             // The partitions are small enough, try to use melsort on them,
             // if too many encroaching lists are created, cancel and recurse
             bool done = try_melsort(first, middle, original_p, node_pool, compare, projection);
             if (not done) {
-                slabsort_impl(first, middle, left_size,
+                slabsort_impl(first, middle, size_left,
                               original_p * original_p, original_p * original_p,
                               iterators_buffer, node_pool, compare, projection);
             }
             done = try_melsort(middle, last, original_p, node_pool, compare, projection);
             if (not done) {
-                slabsort_impl(middle, last, right_size,
+                slabsort_impl(middle, last, size_right,
                               original_p * original_p, original_p * original_p,
                               iterators_buffer, node_pool, compare, projection);
             }
