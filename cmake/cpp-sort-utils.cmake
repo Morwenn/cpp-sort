@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 Morwenn
+# Copyright (c) 2019-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 # Add a selection of warnings to a target
@@ -12,6 +12,9 @@ macro(cppsort_add_warnings target)
             $<$<CXX_COMPILER_ID:GNU>:-Wlogical-op -Wuseless-cast -Wzero-as-null-pointer-constant>
             # The warning when initializing an std::array is just too much of a bother
             $<$<CXX_COMPILER_ID:Clang>:-Wno-missing-braces>
+            # Without this we get thousands of -Winline warnings without even explicitly
+            # asking to inline anything, which makes compilation results unreadable
+            $<$<CXX_COMPILER_ID:GNU>:-Wno-inline>
         )
     endif()
 endmacro()
