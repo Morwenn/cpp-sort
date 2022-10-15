@@ -124,6 +124,7 @@ add_executable(main-tests
     adapters/container_aware_adapter_forward_list.cpp
     adapters/container_aware_adapter_list.cpp
     adapters/counting_adapter.cpp
+    adapters/drop_merge_adapter_every_sorter.cpp
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:adapters/every_adapter_fptr.cpp>
     adapters/every_adapter_internal_compare.cpp
     adapters/every_adapter_non_const_compare.cpp

@@ -71,6 +71,25 @@ struct counting_adapter;
 
 Note that this adapter only works with sorters that satisfy the `ComparisonSorter` concept since it needs to adapt a comparison function.
 
+### `drop_merge_adapter`
+
+```cpp
+#include <cpp-sort/adapters/drop_merge_adapter.h>
+```
+
+[Drop-merge sort][drop-merge-sort] is a [*Rem*-adaptive][probe-rem] sorting algorithm that isolates some of the elements to sort in a buffer in O(n) time in order to leave a single sorted run in the original collection, then it uses another algorithm to sort the elements isolated in a buffer, and merges the two resulting runs back into the original collection. `drop_merge_adapter` uses the *adapted sorter* to sort the (contiguous) buffer of isolated elements.
+
+The *resulting sorter* always requires at least bidirectional iterators, no matter the iterator category of the *adapted sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
+
+```cpp
+template<typename Sorter>
+struct drop_merge_adapter;
+```
+
+Adapting any *sorter* with `drop_merge_adapter` effectively makes it [*Rem*-adaptive][probe-rem], making it a valuable tool to add adaptiveness to existing sorters.
+
+*New in version 1.14.0*
+
 ### `hybrid_adapter`
 
 ```cpp
@@ -322,6 +341,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [default-sorter]: Sorters.md#default_sorter
+  [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [fixed-size-sorters]: Fixed-size-sorters.md
   [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
   [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter

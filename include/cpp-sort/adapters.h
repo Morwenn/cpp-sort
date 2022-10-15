@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/adapters/container_aware_adapter.h>
 #include <cpp-sort/adapters/counting_adapter.h>
+#include <cpp-sort/adapters/drop_merge_adapter.h>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/indirect_adapter.h>
 #include <cpp-sort/adapters/out_of_place_adapter.h>
