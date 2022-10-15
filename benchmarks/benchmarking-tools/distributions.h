@@ -358,9 +358,9 @@ namespace dist
 
             for (long long int i = 0 ; i < size ; ++i) {
                 if (percent_dis(distributions_prng) < factor) {
-                    *out++ = value_dis(distributions_prng);
+                    *out++ = proj(value_dis(distributions_prng));
                 } else {
-                    *out++ = i;
+                    *out++ = proj(i);
                 }
             }
         }
