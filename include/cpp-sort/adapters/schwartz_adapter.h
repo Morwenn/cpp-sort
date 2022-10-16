@@ -192,6 +192,31 @@ namespace cppsort
         {}
     };
 
+    // The following specialization exists for two reasons:
+    // - There does not seem to be a reason to pay twice the memory and indirection
+    //   cost when two schwarz_adapters happen to be nested, nobody should want to
+    //   pay such a cost for no apparent benefit (please open an issue if you do).
+    // - Most of the time the "normal" behaviour simply does not work: during the
+    //   first pass, the result of projections are copied. When doubly wrapping a
+    //   sorter with schwartz_adapter, the projected type is some 'association'
+    //   type which is not copyable, leading to various hard-to-debug issues. The
+    //   following speciaization helps to mitigate that specific issue.
+
+    template<typename Sorter>
+    struct schwartz_adapter<schwartz_adapter<Sorter>>:
+        schwartz_adapter<Sorter>
+    {
+        schwartz_adapter() = default;
+
+        constexpr explicit schwartz_adapter(const schwartz_adapter<Sorter>& sorter):
+            schwartz_adapter<Sorter>(sorter)
+        {}
+
+        constexpr explicit schwartz_adapter(schwartz_adapter<Sorter>&& sorter):
+            schwartz_adapter<Sorter>(std::move(sorter))
+        {}
+    };
+
     ////////////////////////////////////////////////////////////
     // is_stable specialization
 
