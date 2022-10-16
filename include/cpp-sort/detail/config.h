@@ -59,23 +59,6 @@
 #endif
 
 ////////////////////////////////////////////////////////////
-// CPPSORT_ASSUME
-
-// Assumptions may help the compiler to remove unnecessary code;
-// some parts of the library may be significantly slower if this
-// assumption mechanism isn't supported
-
-#if defined(__GNUC__)
-#   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
-#elif defined(__clang__)
-#   define CPPSORT_ASSUME(expression) __builtin_assume(expression)
-#elif defined(_MSC_VER)
-#   define CPPSORT_ASSUME(expression) __assume(expression)
-#else
-#   define CPPSORT_ASSUME(cond)
-#endif
-
-////////////////////////////////////////////////////////////
 // CPPSORT_UNREACHABLE
 
 // Mostly useful to silence compiler warnings in the default
@@ -91,6 +74,13 @@
 #endif
 
 ////////////////////////////////////////////////////////////
+// General: assertions
+
+#if defined(CPPSORT_ENABLE_ASSERTIONS) || defined(CPPSORT_ENABLE_AUDITS)
+#   include <cassert>
+#endif
+
+////////////////////////////////////////////////////////////
 // CPPSORT_ASSERT
 
 // We want a slightly finer-grain control over assertions
@@ -99,7 +89,6 @@
 
 #ifndef CPPSORT_ASSERT
 #   ifdef CPPSORT_ENABLE_ASSERTIONS
-#       include <cassert>
 #       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
 #   else
 #       define CPPSORT_ASSERT(...)
@@ -115,11 +104,31 @@
 
 #ifndef CPPSORT_AUDIT
 #   ifdef CPPSORT_ENABLE_AUDITS
-#       include <cassert>
 #       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
 #   else
 #       define CPPSORT_AUDIT(...)
 #   endif
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_ASSUME
+
+// Assumptions may help the compiler to remove unnecessary code;
+// some parts of the library may be significantly slower if this
+// assumption mechanism isn't supported. In audit mode, we want
+// to turn them into assertions to make sure the assumptions are
+// actually correct.
+
+#if defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_ASSUME(...) assert((__VA_ARGS__))
+#elif defined(__GNUC__)
+#   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
+#elif defined(__clang__)
+#   define CPPSORT_ASSUME(expression) __builtin_assume(expression)
+#elif defined(_MSC_VER)
+#   define CPPSORT_ASSUME(expression) __assume(expression)
+#else
+#   define CPPSORT_ASSUME(cond)
 #endif
 
 ////////////////////////////////////////////////////////////
