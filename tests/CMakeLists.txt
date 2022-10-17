@@ -148,6 +148,7 @@ add_executable(main-tests
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter.cpp
     adapters/small_array_adapter_is_stable.cpp
+    adapters/split_adapter_every_sorter.cpp
     adapters/stable_adapter_every_sorter.cpp
     adapters/verge_adapter_every_sorter.cpp
 
