@@ -12,11 +12,11 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include "../detail/split_sort.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -37,7 +37,7 @@ namespace cppsort
             std::void_t<typename sorter_traits<Sorter>::iterator_category>
         >
         {
-            using type = detail::conditional_t<
+            using type = mstd::conditional_t<
                 std::is_base_of_v<
                     std::bidirectional_iterator_tag,
                     typename sorter_traits<Sorter>::iterator_category
@@ -61,7 +61,7 @@ namespace cppsort
                 typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
-                typename = detail::enable_if_t<
+                typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >

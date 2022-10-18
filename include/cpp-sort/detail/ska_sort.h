@@ -22,6 +22,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -36,7 +37,7 @@ namespace cppsort::detail
     // ska_sort algorithm
 
     // also covers bool
-    template<detail::unsigned_integral Unsigned>
+    template<mstd::unsigned_integral Unsigned>
     auto to_unsigned_or_bool(Unsigned value)
         -> Unsigned
     {
