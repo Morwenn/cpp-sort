@@ -34,14 +34,18 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
-#include "pdqsort.h"
 #include "type_traits.h"
 
 namespace cppsort::detail
 {
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    template<
+        typename BidirectionalIterator,
+        typename Compare,
+        typename Projection,
+        typename Sorter
+    >
     auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
-                         Compare compare, Projection projection)
+                         Compare compare, Projection projection, Sorter&& sorter)
         -> void
     {
         using difference_type = difference_type_t<BidirectionalIterator>;
@@ -118,10 +122,9 @@ namespace cppsort::detail
         }
 
         // Sort the dropped elements
-        pdqsort(dropped.begin(), dropped.end(), compare, projection);
+        std::forward<Sorter>(sorter)(dropped.begin(), dropped.end(), compare, projection);
 
         auto back = end;
-
         do {
             auto& last_dropped = dropped.back();
 
