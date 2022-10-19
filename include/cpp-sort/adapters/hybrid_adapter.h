@@ -101,36 +101,18 @@ namespace cppsort
                 >;
         };
 
-        template<typename Head, typename... Tail>
+        template<typename... Leaves>
         struct hybrid_adapter_storage_impl:
-            Head, hybrid_adapter_storage_impl<Tail...>
+            Leaves...
         {
             hybrid_adapter_storage_impl() = default;
 
-            constexpr hybrid_adapter_storage_impl(Head&& head, Tail&&... tail):
-                Head(std::move(head)),
-                hybrid_adapter_storage_impl<Tail...>(std::move(tail)...)
+            constexpr hybrid_adapter_storage_impl(Leaves&&... leaves):
+                Leaves(std::move(leaves))...
             {};
 
-            using Head::operator();
-            using Head::_detail_stability;
-
-            using hybrid_adapter_storage_impl<Tail...>::operator();
-            using hybrid_adapter_storage_impl<Tail...>::_detail_stability;
-        };
-
-        template<typename Head>
-        struct hybrid_adapter_storage_impl<Head>:
-            Head
-        {
-            hybrid_adapter_storage_impl() = default;
-
-            constexpr hybrid_adapter_storage_impl(Head&& head):
-                Head(std::move(head))
-            {};
-
-            using Head::operator();
-            using Head::_detail_stability;
+            using Leaves::operator()...;
+            using Leaves::_detail_stability...;
         };
 
         template<typename Indices, typename... Sorters>
