@@ -13,6 +13,7 @@
 #include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -40,18 +41,18 @@ namespace cppsort
             {}
 
             template<
-                typename Iterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename = mstd::enable_if_t<
-                    not is_projection_v<Compare, Iterable>
+                    not is_projection_v<Compare, Range>
                 >
             >
-            constexpr auto operator()(Iterable&& iterable, Compare compare={}) const
+            constexpr auto operator()(Range&& range, Compare compare={}) const
                 -> CountType
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp));
+                this->get()(std::forward<Range>(range), std::move(cmp));
                 return count;
             }
 
@@ -72,19 +73,19 @@ namespace cppsort
             }
 
             template<
-                typename Iterable,
+                mstd::forward_range Range,
                 typename Compare,
                 typename Projection,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, Iterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            constexpr auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
+            constexpr auto operator()(Range&& range, Compare compare, Projection projection) const
                 -> CountType
             {
                 CountType count(0);
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp), std::move(projection));
+                this->get()(std::forward<Range>(range), std::move(cmp), std::move(projection));
                 return count;
             }
 

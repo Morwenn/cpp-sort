@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -30,27 +31,18 @@ namespace cppsort
         struct mel_sorter_impl
         {
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<decltype(std::begin(iterable))>
-                    >,
-                    "mel_sorter requires at least forward iterators"
-                );
-
-                melsort(std::begin(iterable), std::end(iterable),
-                        utility::size(iterable),
+                melsort(mstd::begin(range), mstd::end(range),
+                        utility::size(range),
                         std::move(compare), std::move(projection));
             }
 

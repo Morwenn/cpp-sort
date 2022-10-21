@@ -14,6 +14,7 @@
 #include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -108,17 +109,17 @@ namespace cppsort
             {}
 
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable, Compare compare, Projection projection) const
+            auto operator()(Range&& range, Compare compare, Projection projection) const
                 -> decltype(auto)
             {
-                return sort_with_schwartz(std::begin(iterable), utility::size(iterable),
+                return sort_with_schwartz(mstd::begin(range), utility::size(range),
                                           std::move(compare), std::move(projection),
                                           this->get());
             }
@@ -140,15 +141,18 @@ namespace cppsort
                                           this->get());
             }
 
-            template<typename ForwardIterable, typename Compare=std::less<>>
-            auto operator()(ForwardIterable&& iterable, Compare compare={}) const
+            template<
+                mstd::forward_range Range,
+                typename Compare = std::less<>
+            >
+            auto operator()(Range&& range, Compare compare={}) const
                 -> mstd::enable_if_t<
-                    not is_projection_v<Compare, ForwardIterable>,
-                    decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare)))
+                    not is_projection_v<Compare, Range>,
+                    decltype(this->get()(std::forward<Range>(range), std::move(compare)))
                 >
             {
                 // No projection to handle, forward everything to the adapted sorter
-                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare));
+                return this->get()(std::forward<Range>(range), std::move(compare));
             }
 
             template<
@@ -165,12 +169,12 @@ namespace cppsort
                 return this->get()(std::move(first), std::move(last), std::move(compare));
             }
 
-            template<typename ForwardIterable, typename Compare>
-            auto operator()(ForwardIterable&& iterable, Compare compare, std::identity projection) const
-                -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
+            template<mstd::forward_range Range, typename Compare>
+            auto operator()(Range&& range, Compare compare, std::identity projection) const
+                -> decltype(this->get()(std::forward<Range>(range), std::move(compare), projection))
             {
                 // std::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
+                return this->get()(std::forward<Range>(range), std::move(compare), projection);
             }
 
             template<mstd::forward_iterator Iterator, typename Compare>

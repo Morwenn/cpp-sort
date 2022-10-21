@@ -15,11 +15,11 @@
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
-#include "../detail/iterator_traits.h"
 #include "../detail/vergesort.h"
 
 namespace cppsort
@@ -33,27 +33,18 @@ namespace cppsort
         struct verge_sorter_impl
         {
             template<
-                typename BidirectionalIterable,
+                mstd::bidirectional_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, BidirectionalIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(BidirectionalIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<decltype(std::begin(iterable))>
-                    >,
-                    "verge_sorter requires at least bidirectional iterators"
-                );
-
-                verge::sort<Stable>(std::begin(iterable), std::end(iterable),
-                                    utility::size(iterable),
+                verge::sort<Stable>(mstd::begin(range), mstd::end(range),
+                                    utility::size(range),
                                     std::move(compare), std::move(projection));
             }
 

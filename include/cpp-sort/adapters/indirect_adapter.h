@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -137,22 +138,22 @@ namespace cppsort
             {}
 
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable, Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(sort_indirectly(this->get(),
-                                            std::begin(iterable), std::end(iterable),
-                                            cppsort::utility::size(iterable),
+                                            mstd::begin(range), mstd::end(range),
+                                            cppsort::utility::size(range),
                                             std::move(compare), std::move(projection)))
             {
                 return sort_indirectly(this->get(),
-                                       std::begin(iterable), std::end(iterable),
-                                       cppsort::utility::size(iterable),
+                                       mstd::begin(range), mstd::end(range),
+                                       cppsort::utility::size(range),
                                        std::move(compare), std::move(projection));
             }
 

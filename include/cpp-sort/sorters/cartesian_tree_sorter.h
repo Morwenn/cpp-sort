@@ -13,12 +13,12 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/cartesian_tree_sort.h"
-#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -30,27 +30,18 @@ namespace cppsort
         struct cartesian_tree_sorter_impl
         {
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> void
             {
-                static_assert(
-                    std::is_base_of_v<
-                        iterator_category,
-                        iterator_category_t<decltype(std::begin(iterable))>
-                    >,
-                    "cartesian_tree_sorter requires at least forward iterators"
-                );
-
-                cartesian_tree_sort(std::begin(iterable), std::end(iterable),
-                                    utility::size(iterable),
+                cartesian_tree_sort(mstd::begin(range), mstd::end(range),
+                                    utility::size(range),
                                     std::move(compare), std::move(projection));
             }
 
