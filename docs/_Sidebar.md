@@ -13,6 +13,7 @@
     * [Chainable projections](Chainable-projections.md)
     * [Refined functions](Refined-functions.md)
 * [Miscellaneous utilities](Miscellaneous-utilities.md)
+* [Modified standard library](Modified-standard-library.md)
 * Tutorials
     * [Writing a sorter](Writing-a-sorter.md)
     * [Writing a `bubble_sorter`](Writing-a-bubble_sorter.md)
