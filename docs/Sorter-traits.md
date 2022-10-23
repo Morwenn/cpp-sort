@@ -4,12 +4,12 @@
 
 ### `is_projection` and `is_projection_iterator`
 
-The goal is these type traits is to check whether a projection function can be applied on the `value_type` of an iterable or an iterator. An additional template parameter `Compare` may be specified, in which case the traits will also check whether the given binary comparison function can be called with two projected values.
+The goal of these type traits is to check whether a projection function can be applied on the `value_type` of a range or of an iterator. An additional template parameter `Compare` may be specified, in which case the traits will also check whether the given binary comparison function can be called with two projected values.
 
 ```cpp
 template<
     typename Projection,
-    typename Iterable,
+    typename Range,
     typename Compare = std::less<>
 >
 struct is_projection;
@@ -25,9 +25,9 @@ struct is_projection_iterator;
 These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), so you can expect them to provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
 
 ```cpp
-template<typename Projection, typename Iterable, typename Compare=std::less<>>
+template<typename Projection, typename Range, typename Compare=std::less<>>
 constexpr bool is_projection_v
-    = is_projection<Projection, Iterable, Compare>::value;
+    = is_projection<Projection, Range, Compare>::value;
 
 template<typename Projection, typename Iterator, typename Compare=std::less<>>
 constexpr bool is_projection_iterator_v
@@ -36,23 +36,23 @@ constexpr bool is_projection_iterator_v
 
 ### `is_sorter` and friends
 
-The `is_sorter` family of type traits is meant to check whether a given sorter satisfies some properties: being able to be called with of variety of parameters and checking whether the parameters play nice together. For example, `is_comparison_sorter` inherits from `std::true_type` if `Sorter` is a type that can be called with a collection `Iterable&` and a comparison function `Compare`, and inherits from `std::false_type` otherwise. These traits mainly exist for SFINAE purpose and concept checking.
+The `is_sorter` family of type traits is meant to check whether a given sorter satisfies some properties: being able to be called with of variety of parameters and checking whether the parameters play nice together. For example, `is_comparison_sorter` inherits from `std::true_type` if `Sorter` is a type that can be called with a collection `Range&` and a comparison function `Compare`, and inherits from `std::false_type` otherwise. These traits mainly exist for SFINAE purpose and concept checking.
 
 ```cpp
-template<typename Sorter, typename Iterable>
+template<typename Sorter, typename Range>
 struct is_sorter;
 
-template<typename Sorter, typename Iterable, typename Compare>
+template<typename Sorter, typename Range, typename Compare>
 struct is_comparison_sorter;
 
-template<typename Sorter, typename Iterable, typename Projection>
+template<typename Sorter, typename Range, typename Projection>
 struct is_projection_sorter;
 
-template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+template<typename Sorter, typename Range, typename Compare, typename Projection>
 struct is_comparison_projection_sorter;
 ```
 
-There are also variants of these traits which take a potential sorter type and an iterator type (instead of an iterable type). They exist to check whether the sorter can be called with a pair of iterators.
+There are also variants of these traits which take a potential sorter type and an iterator type (instead of a range type). They exist to check whether the sorter can be called with a pair of iterators.
 
 ```cpp
 template<typename Sorter, typename Iterator>
@@ -71,21 +71,21 @@ struct is_comparison_projection_sorter_iterator;
 These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), so you can expect them to provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
 
 ```cpp
-template<typename Sorter, typename Iterable>
+template<typename Sorter, typename Range>
 constexpr bool is_sorter_v
-    = is_sorter<Sorter, Iterable>::value;
+    = is_sorter<Sorter, Range>::value;
 
-template<typename Sorter, typename Iterable, typename Compare>
+template<typename Sorter, typename Range, typename Compare>
 constexpr bool is_comparison_sorter_v
-    = is_comparison_sorter<Sorter, Iterable, Compare>::value;
+    = is_comparison_sorter<Sorter, Range, Compare>::value;
 
-template<typename Sorter, typename Iterable, typename Projection>
+template<typename Sorter, typename Range, typename Projection>
 constexpr bool is_projection_sorter_v
-    = is_projection_sorter<Sorter, Iterable, Projection>::value;
+    = is_projection_sorter<Sorter, Range, Projection>::value;
 
-template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+template<typename Sorter, typename Range, typename Compare, typename Projection>
 constexpr bool is_comparison_projection_sorter_v
-    = is_comparison_projection_sorter<Sorter, Iterable, Compare, Projection>::value;
+    = is_comparison_projection_sorter<Sorter, Range, Compare, Projection>::value;
 
 template<typename Sorter, typename Iterator>
 constexpr bool is_sorter_iterator_v

@@ -13,6 +13,8 @@ struct frob_sorter:
 
 Moreover, `sorter_facade` inherits from its template parameter, therefore it has all the properties of the *sorter implementation* it wraps, including the nested type aliases and additional functions. The only things that may be overridden are described below, but all of them eventually end up calling functions from the *sorter implementation* anyway.
 
+All the `operator()` of `sorter_facade` use [`mstd::forward_iterator`][mstd-iterator] or [`mstd::forward_range`][mstd-ranges] to constrain their parameters. It is the responsibility of the *sorter implementation* author to stregthen those constraints in the implementation overloads.
+
 ### Construction
 
 `sorter_facade` is default-constructible if the *sorter implementation* is default-constructible.
@@ -31,13 +33,13 @@ constexpr sorter_facade(Args&&... args):
 As long as the *sorter implementation* it wraps is an empty and default-constructible type, `sorter_facade` provides the following member functions so that a sorter can be turned into a function pointer:
 
 ```cpp
-template<typename Iterable, typename... Args>
-constexpr operator Ret(*)(Iterable&, Args...)() const;
+template<mstd::forward_range Range, typename... Args>
+constexpr operator Ret(*)(Range&, Args...)() const;
 
-template<typename Iterable, typename... Args>
-constexpr operator Ret(*)(Iterable&&, Args...)() const;
+template<mstd::forward_range Range, typename... Args>
+constexpr operator Ret(*)(Range&&, Args...)() const;
 
-template<typename Iterator, typename... Args>
+template<mstd::forward_iterator Iterator, typename... Args>
 constexpr operator Ret(*)(Iterator, Iterator, Args...)() const;
 ```
 
@@ -52,19 +54,19 @@ Note that the function pointer conversion syntax above is made up, but it allows
 `sorter_facade` provides the following overloads of `operator()` to handle pairs of iterators:
 
 ```cpp
-template<typename Iterator>
+template<mstd::forward_iterator Iterator>
 constexpr auto operator()(Iterator first, Iterator last) const
     -> /* implementation-defined */;
 
-template<typename Iterator, typename Compare>
+template<mstd::forward_iterator Iterator, typename Compare>
 constexpr auto operator()(Iterator first, Iterator last, Compare compare) const
     -> /* implementation-defined */;
 
-template<typename Iterator, typename Projection>
+template<mstd::forward_iterator Iterator, typename Projection>
 constexpr auto operator()(Iterator first, Iterator last, Projection projection) const
     -> /* implementation-defined */;
 
-template<typename Iterator, typename Compare, typename Projection>
+template<mstd::forward_iterator Iterator, typename Compare, typename Projection>
 constexpr auto operator()(Iterator first, Iterator last,
                           Compare compare, Projection projection) const
     -> /* implementation-defined */;
@@ -100,32 +102,30 @@ struct selection_sorter:
 `sorter_facade` provides the following overloads of `operator()` to handle ranges:
 
 ```cpp
-template<typename Iterable>
-constexpr auto operator()(Iterable&& iterable) const
+template<mstd::forward_range Range>
+constexpr auto operator()(Range&& range) const
     -> /* implementation-defined */;
 
-template<typename Iterable, typename Compare>
-constexpr auto operator()(Iterable&& iterable, Compare compare) const
+template<mstd::forward_range Range, typename Compare>
+constexpr auto operator()(Range&& range, Compare compare) const
     -> /* implementation-defined */;
 
-template<typename Iterable, typename Projection>
-constexpr auto operator()(Iterable&& iterable, Projection projection) const
+template<mstd::forward_range Range, typename Projection>
+constexpr auto operator()(Range&& range, Projection projection) const
     -> /* implementation-defined */;
 
-template<typename Iterable, typename Compare, typename Projection>
-constexpr auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
+template<mstd::forward_range Range, typename Compare, typename Projection>
+constexpr auto operator()(Range&& range, Compare compare, Projection projection) const
     -> /* implementation-defined */;
 ```
 
-These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using `utility::begin` and `utility::end` on the iterable to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`][std-less-void] and/or [`std::identity`][std-identity] when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
+These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using [`mstd::begin` and `mstd::end`][mstd-ranges] on the range to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`][std-less-void] and/or [`std::identity`][std-identity] when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
 
-It will always call the most suitable iterable `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking a pair of iterators when it cannot do otherwise.
-
-*NOTE:* range overloads are marked as `constexpr` but rely on [`std::begin`][std-begin] and [`std::end`][std-end], which means that they can't actually be used in a `constexpr` context before C++17 (except for arrays).
+It will always call the most suitable range `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking a pair of iterators when it cannot do otherwise.
 
 ### Projection support for comparison-only sorters
 
-Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking a pair of iterators and a comparison function can take any iterable, pair of iterators, comparison and/or projection function once it wrapped into `sorter_facade`.
+Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking a pair of iterators and a comparison function can take any range, pair of iterators, comparison and/or projection function once it is wrapped into `sorter_facade`.
 
 The reverse operation (baking a comparison function into a projection function) is not doable and simply does not make sense most of the time, so `sorter_facade` does not provide it for projection-only *sorter implementations*.
 
@@ -134,36 +134,36 @@ The reverse operation (baking a comparison function into a projection function) 
 **cpp-sort** considers that every collection sorted without a specific comparison nor projection function shoud work *as if* it was sorted with [`std::less<>`][std-less-void] and [`std::identity`][std-identity]. However, some sorters do not provide overloads for `operator()` taking comparison and/or projection functions. `sorter_facade` provides the following overloads so that every sorter can be passed `std::less<>` and/or `std::identity` even if does not handle other comparisons or projections:
 
 ```cpp
-template<typename Iterable>
-auto operator()(Iterable&& iterable, std::less<>) const
+template<mstd::forward_range Range>
+auto operator()(Range&& range, std::less<>) const
     -> /* implementation-defined */;
 
-template<typename Iterable>
-auto operator()(Iterable&& iterable, std::identity) const
+template<mstd::forward_range Range>
+auto operator()(Range&& range, std::identity) const
     -> /* implementation-defined */;
 
-template<typename Iterable>
-auto operator()(Iterable&& iterable, std::less<>, std::identity) const
+template<mstd::forward_range Range>
+auto operator()(Range&& range, std::less<>, std::identity) const
     -> /* implementation-defined */;
 
-template<typename Iterable, typename Projection>
-auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
+template<mstd::forward_range Range, typename Projection>
+auto operator()(Range&& range, std::less<>, Projection projection) const
     -> /* implementation-defined */;
 
-template<typename Iterator>
+template<mstd::forward_iterator Iterator>
 auto operator()(Iterator first, Iterator last, std::less<>) const
     -> /* implementation-defined */;
 
-template<typename Iterator>
+template<mstd::forward_iterator Iterator>
 auto operator()(Iterator first, Iterator last, std::identity) const
     -> /* implementation-defined */;
 
-template<typename Iterator>
+template<mstd::forward_iterator Iterator>
 auto operator()(Iterator first, Iterator last,
                 std::less<>, std::identity) const
     -> /* implementation-defined */;
 
-template<typename Iterator, typename Projection>
+template<mstd::forward_iterator Iterator, typename Projection>
 auto operator()(Iterator first, Iterator last,
                 std::less<>, Projection projection) const
     -> /* implementation-defined */;
@@ -175,6 +175,8 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
 
 
   [issue-185]: https://github.com/Morwenn/cpp-sort/issues/185
+  [mstd-iterator]: Modified-standard-library.md#cpp-sortmstditeratorh
+  [mstd-ranges]: Modified-standard-library.md#cpp-sortmstdrangesh
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
   [std-begin]: https://en.cppreference.com/w/cpp/iterator/begin
   [std-end]: https://en.cppreference.com/w/cpp/iterator/end
