@@ -12,6 +12,8 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -72,35 +74,35 @@ namespace cppsort::probe
         struct ham_impl
         {
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return ham_probe_algo(std::begin(iterable), std::end(iterable),
-                                      utility::size(iterable),
+                return ham_probe_algo(mstd::begin(range), mstd::end(range),
+                                      utility::size(range),
                                       std::move(compare), std::move(projection));
             }
 
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return ham_probe_algo(first, last, std::distance(first, last),
+                return ham_probe_algo(first, last,
+                                      std::distance(first, last),
                                       std::move(compare), std::move(projection));
             }
 

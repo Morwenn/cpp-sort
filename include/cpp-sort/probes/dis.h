@@ -14,6 +14,8 @@
 #include <new>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -106,12 +108,15 @@ namespace cppsort::probe
             return res;
         }
 
-        template<typename BidirectionalIterator, typename Compare, typename Projection>
-        auto dis_probe_algo(BidirectionalIterator first, BidirectionalIterator last,
-                            cppsort::detail::difference_type_t<BidirectionalIterator> size,
-                            Compare compare, Projection projection,
-                            std::bidirectional_iterator_tag)
-            -> ::cppsort::detail::difference_type_t<BidirectionalIterator>
+        template<
+            mstd::bidirectional_iterator Iterator,
+            typename Compare,
+            typename Projection
+        >
+        auto dis_probe_algo(Iterator first, Iterator last,
+                            cppsort::detail::difference_type_t<Iterator> size,
+                            Compare compare, Projection projection)
+            -> ::cppsort::detail::difference_type_t<Iterator>
         {
             try {
                 return allocating_dis_probe_algo(first, last, size, compare, projection);
@@ -123,12 +128,15 @@ namespace cppsort::probe
             }
         }
 
-        template<typename ForwardIterator, typename Compare, typename Projection>
-        auto dis_probe_algo(ForwardIterator first, ForwardIterator last,
-                            cppsort::detail::difference_type_t<ForwardIterator> size,
-                            Compare compare, Projection projection,
-                            std::forward_iterator_tag)
-            -> ::cppsort::detail::difference_type_t<ForwardIterator>
+        template<
+            mstd::forward_iterator Iterator,
+            typename Compare,
+            typename Projection
+        >
+        auto dis_probe_algo(Iterator first, Iterator last,
+                            cppsort::detail::difference_type_t<Iterator> size,
+                            Compare compare, Projection projection)
+            -> ::cppsort::detail::difference_type_t<Iterator>
         {
             return inplace_dis_probe_algo(first, last, size, compare, projection);
         }
@@ -136,41 +144,35 @@ namespace cppsort::probe
         struct dis_impl
         {
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable, Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                using category = cppsort::detail::iterator_category_t<
-                    std::remove_cvref_t<decltype(std::begin(iterable))>
-                >;
-                return dis_probe_algo(std::begin(iterable), std::end(iterable),
-                                      utility::size(iterable),
-                                      std::move(compare), std::move(projection),
-                                      category{});
+                return dis_probe_algo(mstd::begin(range), mstd::end(range),
+                                      utility::size(range),
+                                      std::move(compare), std::move(projection));
             }
 
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                using category = cppsort::detail::iterator_category_t<ForwardIterator>;
                 return dis_probe_algo(first, last, std::distance(first, last),
-                                      std::move(compare), std::move(projection),
-                                      category{});
+                                      std::move(compare), std::move(projection));
             }
 
             template<typename Integer>

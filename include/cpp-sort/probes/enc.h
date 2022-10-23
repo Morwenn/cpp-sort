@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -57,16 +58,16 @@ namespace cppsort::probe
         struct enc_impl
         {
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
-                -> cppsort::detail::difference_type_t<ForwardIterator>
+                -> cppsort::detail::difference_type_t<Iterator>
             {
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
@@ -76,7 +77,7 @@ namespace cppsort::probe
                 }
 
                 // Heads an tails of encroaching lists
-                std::vector<std::pair<ForwardIterator, ForwardIterator>> lists;
+                std::vector<std::pair<Iterator, Iterator>> lists;
                 lists.emplace_back(first, first);
                 ++first;
 
@@ -91,14 +92,14 @@ namespace cppsort::probe
                         // Element belongs to the tails (bigger elements)
                         auto insertion_point = enc_lower_bound(
                             lists, value, cppsort::flip(compare), proj,
-                            &std::pair<ForwardIterator, ForwardIterator>::second
+                            &std::pair<Iterator, Iterator>::second
                         );
                         insertion_point->second = first;
                     } else if (not comp(proj(*last_list.first), value)) {
                         // Element belongs to the heads (smaller elements)
                         auto insertion_point = enc_lower_bound(
                             lists, value, compare, proj,
-                            &std::pair<ForwardIterator, ForwardIterator>::first
+                            &std::pair<Iterator, Iterator>::first
                         );
                         insertion_point->first = first;
                     } else {

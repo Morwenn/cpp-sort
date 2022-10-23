@@ -37,7 +37,7 @@ The measures of presortedness in bold in the graph are available in **cpp-sort**
 
 ## Measures of presortedness in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
+In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take either a range or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
 
 ```cpp
 using namespace cppsort;
@@ -142,7 +142,7 @@ Computes the minimum number of exchanges required to sort *X*, which corresponds
 
 `max_for_size`: |*X*| - 1 when every element in *X* is one element away from its sorted position.
 
-*Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
+*Warning: this algorithm might be noticeably slower when the passed range is not random-access.*
 
 ### *Ham*
 
@@ -186,7 +186,7 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
-*Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
+*Warning: this algorithm might be noticeably slower when the passed range is not random-access.*
 
 ### *Mono*
 

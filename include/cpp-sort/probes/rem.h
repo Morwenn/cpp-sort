@@ -12,6 +12,8 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -26,21 +28,20 @@ namespace cppsort::probe
         struct rem_impl
         {
             template<
-                typename ForwardIterable,
+                mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare> && (
+                    is_projection_v<Projection, Range, Compare> && (
                         cppsort::detail::is_detected_v<
                             cppsort::utility::detail::has_size_method_t,
-                            ForwardIterable
+                            Range
                         > ||
-                        std::is_bounded_array_v<std::remove_cvref_t<ForwardIterable>>
+                        std::is_bounded_array_v<std::remove_cvref_t<Range>>
                     )
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
                 // While most algorithms use utility::size() for everything, we only
@@ -49,8 +50,8 @@ namespace cppsort::probe
                 // consistent as far as the standard library is concerned. We also
                 // handle C arrays whose size is known and part of the type.
                 auto res = cppsort::detail::longest_non_descending_subsequence<false>(
-                    std::begin(iterable), std::end(iterable),
-                    utility::size(iterable),
+                    mstd::begin(range), mstd::end(range),
+                    utility::size(range),
                     std::move(compare), std::move(projection)
                 );
                 auto lnds_size = res.second - res.first;
@@ -58,14 +59,14 @@ namespace cppsort::probe
             }
 
             template<
-                typename ForwardIterator,
+                mstd::forward_iterator Iterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(Iterator first, Iterator last,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
