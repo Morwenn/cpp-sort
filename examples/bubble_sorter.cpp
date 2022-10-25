@@ -6,6 +6,8 @@
 #include <functional>
 #include <iterator>
 #include <type_traits>
+#include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -40,48 +42,34 @@ namespace detail
     {
         // Pair of iterators overload
         template<
-            typename ForwardIterator,
+            cppsort::mstd::forward_iterator Iterator,
             typename Compare = std::less<>,
-            typename = std::enable_if_t<not cppsort::is_projection_iterator_v<
-                Compare, ForwardIterator
-            >>
+            typename = std::enable_if_t<
+                not cppsort::is_projection_iterator_v<Compare, Iterator>
+            >
         >
-        auto operator()(ForwardIterator first, ForwardIterator last, Compare compare={}) const
+        auto operator()(Iterator first, Iterator last, Compare compare={}) const
             -> void
         {
-            static_assert(
-                std::is_base_of<
-                    iterator_category,
-                    typename std::iterator_traits<ForwardIterator>::iterator_category
-                >::value,
-                "bubble_sorter requires at least forward iterators"
-            );
-
-            bubble_sort(first, std::distance(first, last),
-                        compare);
+            bubble_sort(first,
+                        std::distance(first, last),
+                        std::move(compare));
         }
 
         // Iterable overload
         template<
-            typename ForwardIterable,
+            cppsort::mstd::forward_range Range,
             typename Compare = std::less<>,
-            typename = std::enable_if_t<not cppsort::is_projection_v<
-                Compare, ForwardIterable
-            >>
+            typename = std::enable_if_t<
+                not cppsort::is_projection_v<Compare, Range>
+            >
         >
-        auto operator()(ForwardIterable&& iterable, Compare compare={}) const
+        auto operator()(Range&& range, Compare compare={}) const
             -> void
         {
-            static_assert(
-                std::is_base_of<
-                    iterator_category,
-                    typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
-                >::value,
-                "bubble_sorter requires at least forward iterators"
-            );
-
-            bubble_sort(std::begin(iterable), cppsort::utility::size(iterable),
-                        compare);
+            bubble_sort(cppsort::mstd::begin(range),
+                        cppsort::utility::size(range),
+                        std::move(compare));
         }
 
         // Sorter traits

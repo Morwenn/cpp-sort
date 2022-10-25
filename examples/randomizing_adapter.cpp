@@ -7,6 +7,8 @@
 #include <random>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/utility/adapter_storage.h>
 
@@ -35,36 +37,26 @@ struct randomizing_adapter:
     ////////////////////////////////////////////////////////////
     // operator()
 
-    template<typename RandomAccessIterator, typename... Args>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end, Args&&... args) const
+    template<
+        cppsort::mstd::random_access_iterator Iterator,
+        typename... Args
+    >
+    auto operator()(Iterator begin, Iterator end, Args&&... args) const
         -> decltype(this->get()(begin, end, std::forward<Args>(args)...))
     {
-        static_assert(
-            std::is_base_of<
-                iterator_category,
-                typename std::iterator_traits<RandomAccessIterator>::iterator_category
-            >::value,
-            "randomizing_adapter requires at least forward iterators"
-        );
-
         my_shuffle(begin, end);
         return this->get()(begin, end, std::forward<Args>(args)...);
     }
 
-    template<typename RandomAccessIterable, typename... Args>
-    auto operator()(RandomAccessIterable&& iterable, Args&&... args) const
-        -> decltype(this->get()(std::forward<RandomAccessIterable>(iterable), std::forward<Args>(args)...))
+    template<
+        cppsort::mstd::forward_range Range,
+        typename... Args
+    >
+    auto operator()(Range&& range, Args&&... args) const
+        -> decltype(this->get()(std::forward<Range>(range), std::forward<Args>(args)...))
     {
-        static_assert(
-            std::is_base_of<
-                iterator_category,
-                typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
-            >::value,
-            "randomizing_adapter requires at least forward iterators"
-        );
-
-        my_shuffle(std::begin(iterable), std::end(iterable));
-        return this->get()(std::forward<RandomAccessIterable>(iterable), std::forward<Args>(args)...);
+        my_shuffle(cppsort::mstd::begin(range), cppsort::mstd::end(range));
+        return this->get()(std::forward<Range>(range), std::forward<Args>(args)...);
     }
 
     ////////////////////////////////////////////////////////////
