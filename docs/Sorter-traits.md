@@ -22,15 +22,15 @@ template<
 struct is_projection_iterator;
 ```
 
-These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), so you can expect them to provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
+These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), and as such provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
 
 ```cpp
 template<typename Projection, typename Range, typename Compare=std::less<>>
-constexpr bool is_projection_v
+inline constexpr bool is_projection_v
     = is_projection<Projection, Range, Compare>::value;
 
 template<typename Projection, typename Iterator, typename Compare=std::less<>>
-constexpr bool is_projection_iterator_v
+inline constexpr bool is_projection_iterator_v
     = is_projection_iterator<Projection, Iterator, Compare>::value;
 ```
 
@@ -52,7 +52,7 @@ template<typename Sorter, typename Range, typename Compare, typename Projection>
 struct is_comparison_projection_sorter;
 ```
 
-There are also variants of these traits which take a potential sorter type and an iterator type (instead of a range type). They exist to check whether the sorter can be called with a pair of iterators.
+The following variants of the previous traits check whether a sorter can be called with an iterator/sentinel pair.
 
 ```cpp
 template<typename Sorter, typename Iterator>
@@ -68,39 +68,39 @@ template<typename Sorter, typename Iterator, typename Compare, typename Projecti
 struct is_comparison_projection_sorter_iterator;
 ```
 
-These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), so you can expect them to provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
+These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), and as such provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
 
 ```cpp
 template<typename Sorter, typename Range>
-constexpr bool is_sorter_v
+inline constexpr bool is_sorter_v
     = is_sorter<Sorter, Range>::value;
 
 template<typename Sorter, typename Range, typename Compare>
-constexpr bool is_comparison_sorter_v
+inline constexpr bool is_comparison_sorter_v
     = is_comparison_sorter<Sorter, Range, Compare>::value;
 
 template<typename Sorter, typename Range, typename Projection>
-constexpr bool is_projection_sorter_v
+inline constexpr bool is_projection_sorter_v
     = is_projection_sorter<Sorter, Range, Projection>::value;
 
 template<typename Sorter, typename Range, typename Compare, typename Projection>
-constexpr bool is_comparison_projection_sorter_v
+inline constexpr bool is_comparison_projection_sorter_v
     = is_comparison_projection_sorter<Sorter, Range, Compare, Projection>::value;
 
 template<typename Sorter, typename Iterator>
-constexpr bool is_sorter_iterator_v
+inline constexpr bool is_sorter_iterator_v
     = is_sorter_iterator<Sorter, Iterator>::value;
 
 template<typename Sorter, typename Iterator, typename Compare>
-constexpr bool is_comparison_sorter_iterator_v
+inline constexpr bool is_comparison_sorter_iterator_v
     = is_comparison_sorter_iterator<Sorter, Iterator, Compare>::value;
 
 template<typename Sorter, typename Iterator, typename Projection>
-constexpr bool is_projection_sorter_iterator_v
+inline constexpr bool is_projection_sorter_iterator_v
     = is_projection_sorter_iterator<Sorter, Iterator, Projection>::value;
 
 template<typename Sorter, typename Iterator, typename Compare, typename Projection>
-constexpr bool is_comparison_projection_sorter_iterator_v
+inline constexpr bool is_comparison_projection_sorter_iterator_v
     = is_comparison_projection_sorter_iterator<Sorter, Iterator, Compare, Projection>::value;
 ```
 
