@@ -118,22 +118,36 @@ namespace cppsort
                     return invoker<Sorter>::template invoke<Ret, Range&&, Func1, Func2>;
                 }
 
-                template<typename Ret, mstd::forward_iterator Iterator>
-                constexpr operator fptr_t<Ret, Iterator, Iterator>() const
+                template<
+                    typename Ret,
+                    mstd::forward_iterator Iterator,
+                    mstd::sentinel_for<Iterator> Sentinel
+                >
+                constexpr operator fptr_t<Ret, Iterator, Sentinel>() const
                 {
-                    return invoker<Sorter>::template invoke<Ret, Iterator, Iterator>;
+                    return invoker<Sorter>::template invoke<Ret, Iterator, Sentinel>;
                 }
 
-                template<typename Ret, mstd::forward_iterator Iterator, typename Func>
-                constexpr operator fptr_t<Ret, Iterator, Iterator, Func>() const
+                template<
+                    typename Ret,
+                    mstd::forward_iterator Iterator,
+                    mstd::sentinel_for<Iterator> Sentinel,
+                    typename Func
+                >
+                constexpr operator fptr_t<Ret, Iterator, Sentinel, Func>() const
                 {
-                    return invoker<Sorter>::template invoke<Ret, Iterator, Iterator, Func>;
+                    return invoker<Sorter>::template invoke<Ret, Iterator, Sentinel, Func>;
                 }
 
-                template<typename Ret, mstd::forward_iterator Iterator, typename Func1, typename Func2>
-                constexpr operator fptr_t<Ret, Iterator, Iterator, Func1, Func2>() const
+                template<
+                    typename Ret,
+                    mstd::forward_iterator Iterator,
+                    mstd::sentinel_for<Iterator> Sentinel,
+                    typename Func1, typename Func2
+                >
+                constexpr operator fptr_t<Ret, Iterator, Sentinel, Func1, Func2>() const
                 {
-                    return invoker<Sorter>::template invoke<Ret, Iterator, Iterator, Func1, Func2>;
+                    return invoker<Sorter>::template invoke<Ret, Iterator, Sentinel, Func1, Func2>;
                 }
         };
 
@@ -166,8 +180,11 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Non-comparison overloads
 
-        template<mstd::forward_iterator Iterator>
-        constexpr auto operator()(Iterator first, Iterator last) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel
+        >
+        constexpr auto operator()(Iterator first, Sentinel last) const
             -> decltype(Sorter::operator()(std::move(first), std::move(last)))
         {
             return Sorter::operator()(std::move(first), std::move(last));
@@ -196,8 +213,12 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Comparison overloads
 
-        template<mstd::forward_iterator Iterator, typename Compare>
-        constexpr auto operator()(Iterator first, Iterator last, Compare compare) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Compare
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, Compare compare) const
             -> mstd::enable_if_t<
                 detail::has_comparison_sort_iterator<
                     Sorter,
@@ -238,7 +259,7 @@ namespace cppsort
                 >::value &&
                 detail::has_comparison_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Compare>
                 >::value,
                 decltype(Sorter::operator()(mstd::begin(range), mstd::end(range),
@@ -252,8 +273,12 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Projection overloads
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, Projection projection) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_sort_iterator<
                     Sorter,
@@ -273,8 +298,12 @@ namespace cppsort
                                       refined<decltype(*first)>(std::move(projection)));
         }
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, Projection projection) const
             -> mstd::enable_if_t<
                 not detail::has_projection_sort_iterator<
                     Sorter,
@@ -353,7 +382,7 @@ namespace cppsort
                 >::value &&
                 not detail::has_comparison_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
                 not detail::has_projection_sort<
@@ -369,7 +398,7 @@ namespace cppsort
                 >::value &&
                 detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
                 decltype(Sorter::operator()(mstd::begin(range), mstd::end(range),
@@ -396,12 +425,12 @@ namespace cppsort
                 >::value &&
                 not detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
@@ -416,8 +445,11 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::less<> overloads
 
-        template<mstd::forward_iterator Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, std::less<>) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::less<>) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_sort_iterator<Sorter, Iterator, std::less<>>::value,
                 decltype(Sorter::operator()(std::move(first), std::move(last)))
@@ -431,7 +463,7 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_comparison_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>
                 >::value,
                 decltype(operator()(std::forward<Range>(range)))
@@ -440,8 +472,11 @@ namespace cppsort
             return operator()(std::forward<Range>(range));
         }
 
-        template<mstd::forward_iterator Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, std::ranges::less) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::ranges::less) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_sort_iterator<Sorter, Iterator, std::ranges::less>::value,
                 decltype(Sorter::operator()(std::move(first), std::move(last)))
@@ -455,7 +490,7 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_comparison_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::ranges::less
                 >::value,
                 decltype(operator()(std::forward<Range>(range)))
@@ -467,8 +502,11 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::identity overloads
 
-        template<mstd::forward_iterator Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, std::identity) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::identity) const
             -> mstd::enable_if_t<
                 not detail::has_projection_sort_iterator<Sorter, Iterator, std::identity>::value &&
                 not detail::has_comparison_projection_sort_iterator<
@@ -488,12 +526,12 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                 std::identity
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     std::identity
                 >::value,
@@ -506,8 +544,13 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Fused comparison-projection overloads
 
-        template<mstd::forward_iterator Iterator, typename Compare, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, Compare compare, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Compare,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, Compare compare, Projection projection) const
             -> mstd::enable_if_t<
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -555,7 +598,7 @@ namespace cppsort
                 >::value &&
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Compare>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
@@ -572,8 +615,11 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::less<> and std::identity overloads
 
-        template<mstd::forward_iterator Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, std::less<>, std::identity) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::less<>, std::identity) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -592,7 +638,7 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     std::identity
                 >::value,
@@ -602,8 +648,12 @@ namespace cppsort
             return operator()(std::forward<Range>(range));
         }
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, std::less<> compare, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::less<> compare, Projection projection) const
             -> mstd::enable_if_t<
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -619,8 +669,12 @@ namespace cppsort
                                       refined<decltype(*first)>(std::move(projection)));
         }
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, std::less<>, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::less<>, Projection projection) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -669,7 +723,7 @@ namespace cppsort
                 >::value &&
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
@@ -692,7 +746,7 @@ namespace cppsort
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -720,7 +774,7 @@ namespace cppsort
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -731,7 +785,7 @@ namespace cppsort
                 >::value &&
                 detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
                 decltype(Sorter::operator()(mstd::begin(range), mstd::end(range),
@@ -742,8 +796,11 @@ namespace cppsort
                                       refined<decltype(*mstd::begin(range))>(std::move(projection)));
         }
 
-        template<mstd::forward_iterator Iterator>
-        constexpr auto operator()(Iterator first, Iterator last, std::ranges::less, std::identity) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::ranges::less, std::identity) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -762,7 +819,7 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::ranges::less,
                     std::identity
                 >::value,
@@ -772,8 +829,12 @@ namespace cppsort
             return operator()(std::forward<Range>(range));
         }
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, std::ranges::less compare, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::ranges::less compare, Projection projection) const
             -> mstd::enable_if_t<
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -789,8 +850,12 @@ namespace cppsort
                                       refined<decltype(*first)>(std::move(projection)));
         }
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, std::ranges::less, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, std::ranges::less, Projection projection) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -839,7 +904,7 @@ namespace cppsort
                 >::value &&
                 detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::ranges::less,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
@@ -862,7 +927,7 @@ namespace cppsort
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::ranges::less,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -890,7 +955,7 @@ namespace cppsort
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::ranges::less,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -901,7 +966,7 @@ namespace cppsort
                 >::value &&
                 detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value,
                 decltype(Sorter::operator()(mstd::begin(range), mstd::end(range),
@@ -915,8 +980,12 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Embed projection in comparison
 
-        template<mstd::forward_iterator Iterator, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, Projection projection) const
             -> mstd::enable_if_t<
                 not detail::has_projection_sort_iterator<Sorter, Iterator, Projection>::value &&
                 not detail::has_comparison_projection_sort_iterator<
@@ -940,8 +1009,13 @@ namespace cppsort
                                                          refined<decltype(*first)>(std::move(projection))));
         }
 
-        template<mstd::forward_iterator Iterator, typename Compare, typename Projection>
-        constexpr auto operator()(Iterator first, Iterator last, Compare compare, Projection projection) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename Compare,
+            typename Projection
+        >
+        constexpr auto operator()(Iterator first, Sentinel last, Compare compare, Projection projection) const
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
@@ -972,12 +1046,12 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -1002,12 +1076,12 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     std::less<>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -1021,7 +1095,7 @@ namespace cppsort
                 >::value &&
                 detail::has_comparison_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     projection_compare_t<
                         std::less<>,
                         refined_t<decltype(*mstd::begin(range)), Projection>
@@ -1042,7 +1116,7 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Compare>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -1069,7 +1143,7 @@ namespace cppsort
             -> mstd::enable_if_t<
                 not detail::has_comparison_projection_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     refined_t<decltype(*mstd::begin(range)), Compare>,
                     refined_t<decltype(*mstd::begin(range)), Projection>
                 >::value &&
@@ -1083,7 +1157,7 @@ namespace cppsort
                 >::value &&
                 detail::has_comparison_sort_iterator<
                     Sorter,
-                    decltype(mstd::begin(range)),
+                    mstd::iterator_t<Range>,
                     projection_compare_t<
                         refined_t<decltype(*mstd::begin(range)), Compare>,
                         refined_t<decltype(*mstd::begin(range)), Projection>
