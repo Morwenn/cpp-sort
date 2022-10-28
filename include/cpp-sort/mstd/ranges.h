@@ -279,6 +279,18 @@ namespace cppsort::mstd
                     decltype(*std::declval<iterator_t<R>&>())
                 >>;
         };
+
+    ////////////////////////////////////////////////////////////
+    // sentinel_t
+
+    template<range R>
+    using sentinel_t = decltype(mstd::end(std::declval<R&>()));
+
+    ////////////////////////////////////////////////////////////
+    // range_difference_t
+
+    template <range R>
+    using range_difference_t = iter_difference_t<iterator_t<R>>;
 }
 
 #undef CPPSORT_AUTO_CAST
