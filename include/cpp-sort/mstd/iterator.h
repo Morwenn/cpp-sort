@@ -21,18 +21,47 @@
 #include <iterator>
 #include <type_traits>
 #include <cpp-sort/mstd/concepts.h>
+#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort::mstd
 {
     namespace detail
     {
         ////////////////////////////////////////////////////////////
+        // is_primary_template
+        //
+        // Check whether a type is an instantiation of the primary
+        // template of very specific standard library classes that
+        // are "blessed" by the standard for theis kinds of check.
+        //
+        // This utility requires standard library cooperation and
+        // can not be fully reimplemented by hand, so we reuse guts
+        // of various standard library implementations to make it
+        // work.
+
+#if defined(__GLIBCXX__)
+        template<typename Iterator>
+        concept is_iter_traits_primary
+            = std::__detail::__primary_traits_iter<Iterator>;
+#elif defined(_LIBCPP_VERSION)
+        template<typename Iterator>
+        conept is_iter_traits_primary
+            = std::__is_primary_template<std::iterator_traits<Iterator>>::value;
+#elif defined(_MSC_VER)
+        template<typename Iterator>
+        concept is_iter_traits_primary
+            = std::_Is_from_primary<std::iterator_traits<Iterator>>;
+#else
+#       error "cpp-sort is not compatible with this standard library implementation"
+#endif
+
+        ////////////////////////////////////////////////////////////
         // iter_concept
         //
         // This utility requires standard library cooperation and
         // can not be fully reimplemented by hand, so we reuse guts
         // of various standard library implementations to make it
-        // work
+        // work.
 
 #if defined(__GLIBCXX__)
         template<typename Iterator>
@@ -44,7 +73,7 @@ namespace cppsort::mstd
         template<typename Iterator>
         using iter_concept = std::_Iter_concept<Iterator>;
 #else
-#       error "Your standard library is not supported by cpp-sort"
+#       error "cpp-sort is not compatible with this standard library implementation"
 #endif
 
         ////////////////////////////////////////////////////////////
@@ -114,6 +143,42 @@ namespace cppsort::mstd
         detail::indirectly_readable_impl<std::remove_cvref_t<Indirect>>;
 
     ////////////////////////////////////////////////////////////
+    // incrementable_traits
+
+#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+    template<typename T>
+    struct incrementable_traits:
+        std::incrementable_traits<T>
+    {};
+
+    template<typename T>
+        requires (!requires { typename T::difference_type; }) &&
+        requires(const T& a, const T& b) { { a - b } -> mstd::integral; }
+    struct incrementable_traits<T>
+    {
+        using difference_type = mstd::make_signed_t<
+            decltype(std::declval<T>() - std::declval<T>())
+        >;
+    };
+#else
+    using std::incrementable_traits;
+#endif
+
+    ////////////////////////////////////////////////////////////
+    // iter_difference_t
+
+#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+    template<typename Iterator>
+    using iter_difference_t = typename mstd::conditional_t<
+        detail::is_iter_traits_primary<std::remove_cvref_t<Iterator>>,
+        incrementable_traits<std::remove_cvref_t<Iterator>>,
+        std::iterator_traits<std::remove_cvref_t<Iterator>>
+    >::difference_type;
+#else
+    using std::iter_difference_t;
+#endif
+
+    ////////////////////////////////////////////////////////////
     // weakly_incrementable
     //
     // Unlike the standard iterator model, cpp-sort does not
@@ -123,8 +188,8 @@ namespace cppsort::mstd
     concept weakly_incrementable =
         std::movable<Iterator> &&
         requires(Iterator it) {
-            typename std::iter_difference_t<Iterator>;
-            requires mstd::signed_integral<std::iter_difference_t<Iterator>>;
+            typename iter_difference_t<Iterator>;
+            requires mstd::signed_integral<iter_difference_t<Iterator>>;
             { ++it } -> std::same_as<Iterator&>;
         };
 
@@ -166,8 +231,8 @@ namespace cppsort::mstd
         sentinel_for<Sentinel, Iterator> &&
         !std::disable_sized_sentinel_for<std::remove_cv_t<Sentinel>, std::remove_cv_t<Iterator>> &&
         requires(const Iterator& it, const Sentinel& s) {
-            { s - it } -> std::same_as<std::iter_difference_t<Iterator>>;
-            { it - s } -> std::same_as<std::iter_difference_t<Iterator>>;
+            { s - it } -> std::same_as<iter_difference_t<Iterator>>;
+            { it - s } -> std::same_as<iter_difference_t<Iterator>>;
         };
 
     ////////////////////////////////////////////////////////////
@@ -210,7 +275,7 @@ namespace cppsort::mstd
         std::derived_from<detail::iter_concept<Iterator>, std::random_access_iterator_tag> &&
         std::totally_ordered<Iterator> &&
         sized_sentinel_for<Iterator, Iterator> &&
-        requires(Iterator it1, const Iterator it2, const std::iter_difference_t<Iterator> n) {
+        requires(Iterator it1, const Iterator it2, const iter_difference_t<Iterator> n) {
             { it1 += n } -> std::same_as<Iterator&>;
             { it2 +  n } -> std::same_as<Iterator>;
             { n + it2 } -> std::same_as<Iterator>;

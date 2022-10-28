@@ -69,6 +69,15 @@ Unlike [`std::indirectly_readable`][std-indirectly-readable], this concept impos
 It is worth nothing that the concept is currently incomplete and might get stricter in the future as the exact rules needed for the **cpp-sort** iterator model to work become clearer.
 
 ```cpp
+template<typename T>
+struct incrementable_traits;
+template<typename Iterator>
+using iter_difference_t = /* implementation-defined */;
+```
+
+The only difference with these traits and their standard counterparts is the unconditional support for `__int128_t` as a first-class `difference_type` when the frontend supports it. When dedicated support is not needed, the corresponding `std::` traits are simply imported into the `mstd::` namespace.
+
+```cpp
 template<typename Iterator>
 concept weakly_incrementable = /* implementation-defined */;
 template<typename Iterator>
@@ -120,7 +129,7 @@ This header provides the following reimplementations of standard library compone
 * `mstd::iterator_t`
 * `mstd::sentinel_t`
 
-They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemented `std::` components instead, leading to the differences documented in the previous sections. These changes are unfortunately viral, so this list is expected to grow as more concepts are needed in the library's user-facing components.
+They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemented `mstd::` components instead, leading to the differences documented in the previous sections. The differences, albeit small, are viral - as a result this list is expected to grow as more concepts are needed in the library's user-facing components.
 
 
   [kvasir-conditional]: https://odinthenerd.blogspot.com/2017/03/start-simple-with-conditional-why.html
