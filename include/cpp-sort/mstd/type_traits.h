@@ -54,7 +54,6 @@ namespace cppsort::mstd
     template<bool B, typename T=void>
     using enable_if_t = typename detail::enable_if_impl<B>::template type<T>;
 
-
     ////////////////////////////////////////////////////////////
     // standard library isn't instrumented but the type is still
     // available:
@@ -63,41 +62,59 @@ namespace cppsort::mstd
     // * Microsoft STL is never instrumented
 
 #if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+    namespace detail
+    {
+        template<typename T>
+        struct is_integral_impl:
+            std::is_integral<T>::type
+        {};
+
+        template<>
+        struct is_integral_impl<__int128_t>:
+            std::true_type
+        {};
+
+        template<>
+        struct is_integral_impl<__uint128_t>:
+            std::true_type
+        {};
+
+        template<typename T>
+        struct is_signed_impl:
+            std::is_signed<T>::type
+        {};
+
+        template<>
+        struct is_signed_impl<__int128_t>:
+            std::true_type
+        {};
+
+        template<typename T>
+        struct is_unsigned_impl:
+            std::is_unsigned<T>::type
+        {};
+
+        template<>
+        struct is_unsigned_impl<__uint128_t>:
+            std::true_type
+        {};
+    }
+
     template<typename T>
     struct is_integral:
-        std::is_integral<T>::type
-    {};
-
-    template<>
-    struct is_integral<__int128_t>:
-        std::true_type
-    {};
-
-    template<>
-    struct is_integral<__uint128_t>:
-        std::true_type
+        detail::is_integral_impl<std::remove_cv_t<T>>
     {};
 
     template<typename T>
     struct is_signed:
-        std::is_signed<T>::type
-    {};
-
-    template<>
-    struct is_signed<__int128_t>:
-        std::true_type
+        detail::is_signed_impl<std::remove_cv_t<T>>
     {};
 
     template<typename T>
     struct is_unsigned:
-        std::is_unsigned<T>::type
+        detail::is_unsigned_impl<std::remove_cv_t<T>>
     {};
 
-    template<>
-    struct is_unsigned<__uint128_t>:
-        std::true_type
-    {};
-    
     template<typename T>
     inline constexpr bool is_integral_v = is_integral<T>::value;
 
