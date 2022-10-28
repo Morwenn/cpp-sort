@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
@@ -24,7 +25,7 @@ namespace cppsort::detail
     struct poplar
     {
         RandomAccessIterator begin, end;
-        std::make_unsigned_t<difference_type_t<RandomAccessIterator>> size;
+        mstd::make_unsigned_t<difference_type_t<RandomAccessIterator>> size;
 
         auto root() const
             -> RandomAccessIterator
@@ -123,7 +124,7 @@ namespace cppsort::detail
                      Compare compare, Projection projection)
         -> void
     {
-        using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
+        using poplar_size_t = mstd::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
 
         // Size of the unsorted subsequence
         poplar_size_t size = last - first;

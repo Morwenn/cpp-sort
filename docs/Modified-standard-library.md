@@ -31,6 +31,19 @@ inline constexpr bool is_unsigned_v = is_unsigned<T>::value;
 
 When the front-end supports `__int128_t` and `__uint128_t`, these traits detects them as integral types even when the standard library is not instrumented to recognize them, which is typically the case when using clang-cl, or when using GCC in strict standard mode. When special support is not needed, the standard library ones are directly imported in the `mstd` namespace.
 
+```cpp
+template<typename T>
+struct make_signed;
+template<typename T>
+struct make_unsigned;
+template<typename T>
+using make_signed_t = typename make_signed<T>::type;
+template<typename T>
+using make_unsigned_t = typename make_unsigned<T>::type;
+```
+
+Similarly to the previous traits, those exist to guarantee `__int128_t` and `__uint128_t` when the front-end supports such types.
+
 ### `<cpp-sort/mstd/concepts.h>`
 
 ```cpp
@@ -98,13 +111,14 @@ This header provides the following reimplementations of standard library compone
 * `mstd::begin`
 * `mstd::end`
 * `mstd::data`
-* `mstd::iterator_t`
 * `mstd::range`
 * `mstd::input_range`
 * `mstd::forward_range`
 * `mstd::bidirectional_range`
 * `mstd::random_access_range`
 * `mstd::contiguous_range`
+* `mstd::iterator_t`
+* `mstd::sentinel_t`
 
 They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemented `std::` components instead, leading to the differences documented in the previous sections. These changes are unfortunately viral, so this list is expected to grow as more concepts are needed in the library's user-facing components.
 

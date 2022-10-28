@@ -12,6 +12,7 @@
 #include <limits>
 #include <type_traits>
 #include <cpp-sort/mstd/concepts.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include "../detail/config.h"
 
 namespace cppsort::detail
@@ -20,9 +21,9 @@ namespace cppsort::detail
     template<typename Integer>
     [[nodiscard]]
     constexpr auto as_unsigned(Integer value)
-        -> std::make_unsigned_t<Integer>
+        -> mstd::make_unsigned_t<Integer>
     {
-        return static_cast<std::make_unsigned_t<Integer>>(value);
+        return static_cast<mstd::make_unsigned_t<Integer>>(value);
     }
 
     // Returns 2^floor(log2(n)), assumes n > 0

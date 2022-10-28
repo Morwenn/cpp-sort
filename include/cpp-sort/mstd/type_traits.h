@@ -100,6 +100,9 @@ namespace cppsort::mstd
         {};
     }
 
+    ////////////////////////////////////////////////////////////
+    // Type properties
+
     template<typename T>
     struct is_integral:
         detail::is_integral_impl<std::remove_cv_t<T>>
@@ -123,13 +126,94 @@ namespace cppsort::mstd
 
     template<typename T>
     inline constexpr bool is_unsigned_v = is_unsigned<T>::value;
+
+    ////////////////////////////////////////////////////////////
+    // Type modifications
+
+    template<typename T>
+    struct make_signed:
+        mstd::conditional_t<
+            mstd::is_signed_v<T>,
+            std::type_identity<T>, // Handles __int128_t
+            std::make_signed<T>
+        >
+    {};
+
+    template<>
+    struct make_signed<__uint128_t>
+    {
+        using type = __int128_t;
+    };
+
+    template<>
+    struct make_signed<const __uint128_t>
+    {
+        using type = const __int128_t;
+    };
+
+    template<>
+    struct make_signed<volatile __uint128_t>
+    {
+        using type = volatile __int128_t;
+    };
+
+    template<>
+    struct make_signed<const volatile __uint128_t>
+    {
+        using type = const volatile __int128_t;
+    };
+
+    template<typename T>
+    struct make_unsigned:
+        mstd::conditional_t<
+            mstd::is_unsigned_v<T>,
+            std::type_identity<T>, // Handles __uint128_t
+            std::make_unsigned<T>
+        >
+    {};
+
+    template<>
+    struct make_unsigned<__int128_t>
+    {
+        using type = __uint128_t;
+    };
+
+    template<>
+    struct make_unsigned<const __int128_t>
+    {
+        using type = const __uint128_t;
+    };
+
+    template<>
+    struct make_unsigned<volatile __int128_t>
+    {
+        using type = volatile __uint128_t;
+    };
+
+    template<>
+    struct make_unsigned<const volatile __int128_t>
+    {
+        using type = const volatile __uint128_t;
+    };
+
+    template<typename T>
+    using make_signed_t = typename make_signed<T>::type;
+
+    template<typename T>
+    using make_unsigned_t = typename make_unsigned<T>::type;
 #else
+    // Type properties
     using std::is_integral;
     using std::is_signed;
     using std::is_unsigned;
     using std::is_integral_v;
     using std::is_signed_v;
     using std::is_unsigned_v;
+    // Type modifications
+    using std::make_signed;
+    using std::make_unsigned;
+    using std::make_signed_t;
+    using std::make_unsigned_t;
 #endif
 }
 

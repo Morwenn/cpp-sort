@@ -25,6 +25,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/not_fn.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
@@ -196,7 +197,7 @@ namespace cppsort::detail
         template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
         auto range_sort(const range<RandomAccessIterator1>& range1, const range<RandomAccessIterator2>& range2,
                         Compare compare, Projection projection,
-                        std::make_unsigned_t<difference_type_t<RandomAccessIterator1>> level)
+                        mstd::make_unsigned_t<difference_type_t<RandomAccessIterator1>> level)
             -> void
         {
             using range_it1 = range<RandomAccessIterator1>;
