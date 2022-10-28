@@ -20,8 +20,10 @@
 #include <concepts>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 #include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/mstd/type_traits.h>
+#include "../detail/config.h"
 
 namespace cppsort::mstd
 {
@@ -145,7 +147,7 @@ namespace cppsort::mstd
     ////////////////////////////////////////////////////////////
     // incrementable_traits
 
-#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+#if CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT
     template<typename T>
     struct incrementable_traits:
         std::incrementable_traits<T>
@@ -167,7 +169,7 @@ namespace cppsort::mstd
     ////////////////////////////////////////////////////////////
     // iter_difference_t
 
-#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+#if CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT
     template<typename Iterator>
     using iter_difference_t = typename mstd::conditional_t<
         detail::is_iter_traits_primary<std::remove_cvref_t<Iterator>>,

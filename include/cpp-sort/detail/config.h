@@ -94,3 +94,22 @@
 #endif
 
 #endif // CPPSORT_DETAIL_CONFIG_H_
+
+////////////////////////////////////////////////////////////
+// CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT
+
+// The compiler front-end sometimes supports __int128_t and
+// __uint128_t but without giving it proper standard library
+// support. In such a case, cpp-sort components need to
+// provide explicit support for those types. It affects the
+// following configurations:
+// - Clang front-end with Microsoft STL
+// - libc++ with GCC in strict conformance mode
+
+#ifndef CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT
+#   if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+#       define CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT 1
+#   else
+#       define CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT 0
+#   endif
+#endif

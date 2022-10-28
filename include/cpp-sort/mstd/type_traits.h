@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <type_traits>
+#include "../detail/config.h"
 
 namespace cppsort::mstd
 {
@@ -61,7 +62,7 @@ namespace cppsort::mstd
     // * libc++ is always instrumented
     // * Microsoft STL is never instrumented
 
-#if defined(__SIZEOF_INT128__) && !defined(_LIBCPP_VERSION)
+#if CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT
     namespace detail
     {
         template<typename T>

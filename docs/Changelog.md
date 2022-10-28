@@ -21,7 +21,7 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 **cpp-sort** tries to take advantage of more than just standard features when possible by using implementation-specific tweaks to improve the user experience. The following improvements might be available depending on the your standard implementation:
 
 **Additional features:**
-* 128-bit integers support: [`counting_sorter`][counting-sorter] and [`ska_sorter`][ska-sorter] have dedicated support for 128-bit integers (`unsigned __int128` or `__uint128_t` and its signed counterpart), no matter whether the standard library is also instrumented for those types. This support should be available as long as the macro `__SIZEOF_INT128__` is defined.
+* 128-bit integers support: [`mstd::`][mstd] componenets, [`counting_sorter`][counting-sorter] and [`ska_sorter`][ska-sorter] have dedicated support for 128-bit integers (`unsigned __int128` or `__uint128_t` and its signed counterpart), no matter whether the standard library is also instrumented for those types. This support should be available as long as the macro `__SIZEOF_INT128__` is defined.
 
 **Performance improvements:**
 * Bit manipulation intrinsics: there are a few places where bit tricks are used to perform a few operations faster. Some of those operations are made faster with bitwise manipulation intrinsics when those are available.
@@ -35,12 +35,11 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
 
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [counting-sorter]: Sorters.md#counting_sorter
-  [cpp-sort-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [cpp-sort-releases]: https://github.com/Morwenn/cpp-sort/releases
   [feature-test-macros]: https://wg21.link/SD6
+  [mstd]: Modified-standard-library.md
   [pdq-sorter]: Sorters.md#pdq_sorter
   [ska-sorter]: Sorters.md#ska_sorter
-  [sorter-facade]: Sorter-facade.md
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-swap]: https://en.cppreference.com/w/cpp/algorithm/swap
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
