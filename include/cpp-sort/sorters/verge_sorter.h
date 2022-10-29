@@ -19,7 +19,6 @@
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/vergesort.h"
 
 namespace cppsort
@@ -44,7 +43,7 @@ namespace cppsort
                 -> void
             {
                 verge::sort<Stable>(mstd::begin(range), mstd::end(range),
-                                    utility::size(range),
+                                    mstd::distance(range),
                                     std::move(compare), std::move(projection));
             }
 

@@ -114,6 +114,34 @@ namespace cppsort::mstd
                 { u == t } -> boolean_testable;
                 { u != t } -> boolean_testable;
             };
+
+        ////////////////////////////////////////////////////////////
+        // integer_like
+
+#ifdef _MSC_VER
+        template<typename T>
+        concept integer_like =
+            std::_Integer_like<T>;
+
+        template<typename T>
+        concept signed_integer_like =
+            std::_Signed_integer_like<T>;
+#else
+        template<typename T>
+        concept integer_like =
+            integral<T> &&
+            not std::is_same_v<std::remove_cv_t<T>, bool>;
+
+        template<typename T>
+        concept signed_integer_like =
+            signed_integral<T> &&
+            not std::is_same_v<std::remove_cv_t<T>, bool>;
+#endif
+
+        template<typename T>
+        concept unsigned_integer_like =
+            integer_like<T> &&
+            not signed_integer_like<T>;
     }
 
     ////////////////////////////////////////////////////////////
@@ -154,7 +182,7 @@ namespace cppsort::mstd
     {};
 
     template<typename T>
-        requires (!requires { typename T::difference_type; }) &&
+        requires (not requires { typename T::difference_type; }) &&
         requires(const T& a, const T& b) { { a - b } -> mstd::integral; }
     struct incrementable_traits<T>
     {
@@ -191,7 +219,7 @@ namespace cppsort::mstd
         std::movable<Iterator> &&
         requires(Iterator it) {
             typename iter_difference_t<Iterator>;
-            requires mstd::signed_integral<iter_difference_t<Iterator>>;
+            requires detail::signed_integer_like<iter_difference_t<Iterator>>;
             { ++it } -> std::same_as<Iterator&>;
         };
 
@@ -231,7 +259,7 @@ namespace cppsort::mstd
     template<typename Sentinel, typename Iterator>
     concept sized_sentinel_for =
         sentinel_for<Sentinel, Iterator> &&
-        !std::disable_sized_sentinel_for<std::remove_cv_t<Sentinel>, std::remove_cv_t<Iterator>> &&
+        not std::disable_sized_sentinel_for<std::remove_cv_t<Sentinel>, std::remove_cv_t<Iterator>> &&
         requires(const Iterator& it, const Sentinel& s) {
             { s - it } -> std::same_as<iter_difference_t<Iterator>>;
             { it - s } -> std::same_as<iter_difference_t<Iterator>>;

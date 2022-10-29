@@ -21,7 +21,6 @@
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
 #include "../detail/config.h"
@@ -119,7 +118,7 @@ namespace cppsort
             auto operator()(Range&& range, Compare compare, Projection projection) const
                 -> decltype(auto)
             {
-                return sort_with_schwartz(mstd::begin(range), utility::size(range),
+                return sort_with_schwartz(mstd::begin(range), mstd::distance(range),
                                           std::move(compare), std::move(projection),
                                           this->get());
             }

@@ -18,7 +18,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/iter_move.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -88,7 +87,7 @@ namespace cppsort
             -> decltype(auto)
         {
             // Might be an optimization for forward/bidirectional ranges
-            auto size = utility::size(range);
+            auto size = mstd::distance(range);
             return detail::sort_out_of_place(mstd::begin(range), mstd::end(range), size,
                                              this->get(), std::forward<Args>(args)...);
         }

@@ -7,7 +7,6 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/probes/exc.h>
-#include <cpp-sort/utility/size.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/internal_compare.h>
 
@@ -35,7 +34,7 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         // the input sequence minus one
 
         std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        auto max_n = exc.max_for_size(cppsort::utility::size(li));
+        auto max_n = exc.max_for_size(cppsort::mstd::distance(li));
         CHECK( max_n == 10 );
         CHECK( exc(li) == max_n );
         CHECK( exc(li.begin(), li.end()) == max_n );

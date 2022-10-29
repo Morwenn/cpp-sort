@@ -17,7 +17,6 @@
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/merge_sort.h"
 
 namespace cppsort
@@ -41,7 +40,7 @@ namespace cppsort
                 -> void
             {
                 merge_sort(mstd::begin(range), mstd::end(range),
-                           utility::size(range),
+                           mstd::distance(range),
                            std::move(compare), std::move(projection));
             }
 

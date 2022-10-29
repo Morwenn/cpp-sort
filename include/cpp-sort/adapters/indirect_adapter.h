@@ -20,7 +20,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/iter_move.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
 #include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
@@ -148,12 +147,12 @@ namespace cppsort
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(sort_indirectly(this->get(),
                                             mstd::begin(range), mstd::end(range),
-                                            cppsort::utility::size(range),
+                                            mstd::distance(range),
                                             std::move(compare), std::move(projection)))
             {
                 return sort_indirectly(this->get(),
                                        mstd::begin(range), mstd::end(range),
-                                       cppsort::utility::size(range),
+                                       mstd::distance(range),
                                        std::move(compare), std::move(projection));
             }
 

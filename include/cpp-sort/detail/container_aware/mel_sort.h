@@ -21,7 +21,6 @@
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
 #include "../lower_bound.h"
 
 namespace cppsort

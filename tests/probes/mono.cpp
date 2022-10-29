@@ -6,7 +6,6 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/probes/mono.h>
-#include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
 
 TEST_CASE( "presortedness measure: mono", "[probe][mono]" )
@@ -35,7 +34,7 @@ TEST_CASE( "presortedness measure: mono", "[probe][mono]" )
         // size / 2
 
         const std::forward_list<int> li = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
-        auto max_n = mono.max_for_size(cppsort::utility::size(li));
+        auto max_n = mono.max_for_size(cppsort::mstd::distance(li));
         CHECK( max_n == 5 );
         CHECK( mono(li) == max_n );
         CHECK( mono(li.begin(), li.end()) == max_n );

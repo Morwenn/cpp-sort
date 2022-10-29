@@ -6,7 +6,6 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/probes/dis.h>
-#include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
 
 TEST_CASE( "presortedness measure: dis", "[probe][dis]" )
@@ -53,7 +52,7 @@ TEST_CASE( "presortedness measure: dis", "[probe][dis]" )
         // the input sequence minus one
 
         std::forward_list<int> li = { 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
-        auto max_n = dis.max_for_size(cppsort::utility::size(li));
+        auto max_n = dis.max_for_size(cppsort::mstd::distance(li));
         CHECK( max_n == 10 );
         CHECK( dis(li) == max_n );
         CHECK( dis(li.begin(), li.end()) == max_n );

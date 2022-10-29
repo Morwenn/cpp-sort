@@ -17,9 +17,7 @@
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/longest_non_descending_subsequence.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort::probe
 {
@@ -32,26 +30,19 @@ namespace cppsort::probe
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
-                    is_projection_v<Projection, Range, Compare> && (
-                        cppsort::detail::is_detected_v<
-                            cppsort::utility::detail::has_size_method_t,
-                            Range
-                        > ||
-                        std::is_bounded_array_v<std::remove_cvref_t<Range>>
-                    )
+                    is_projection_v<Projection, Range, Compare>
                 >
-            >
+            > requires mstd::sized_range<Range>
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                // While most algorithms use utility::size() for everything, we only
-                // want to handle data structures that provide their own size() method
-                // with the assumption that it's better than O(n) - which is at least
-                // consistent as far as the standard library is concerned. We also
-                // handle C arrays whose size is known and part of the type.
+                // While most algorithms use mstd::distance() for everything, we only
+                // want to handle data structures whose size can be computed in O(1),
+                // otherwise it is cheaper to let longest_non_descending_subsequence
+                // compute the size itself.
                 auto res = cppsort::detail::longest_non_descending_subsequence<false>(
                     mstd::begin(range), mstd::end(range),
-                    utility::size(range),
+                    mstd::size(range),
                     std::move(compare), std::move(projection)
                 );
                 auto lnds_size = res.second - res.first;

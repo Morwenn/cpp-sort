@@ -12,7 +12,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include <cpp-sort/utility/size.h>
 
 namespace detail
 {
@@ -56,7 +55,7 @@ namespace detail
                         std::move(compare));
         }
 
-        // Iterable overload
+        // Range overload
         template<
             cppsort::mstd::forward_range Range,
             typename Compare = std::less<>,
@@ -68,7 +67,7 @@ namespace detail
             -> void
         {
             bubble_sort(cppsort::mstd::begin(range),
-                        cppsort::utility::size(range),
+                        cppsort::mstd::distance(range),
                         std::move(compare));
         }
 

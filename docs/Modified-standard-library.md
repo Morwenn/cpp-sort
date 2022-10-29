@@ -119,8 +119,11 @@ The `mstd` iterator concepts rely on the previously described concepts, and are 
 This header provides the following reimplementations of standard library components:
 * `mstd::begin`
 * `mstd::end`
+* `mstd::size`
+* `mstd::distance`
 * `mstd::data`
 * `mstd::range`
+* `mstd::sized_range`
 * `mstd::input_range`
 * `mstd::forward_range`
 * `mstd::bidirectional_range`

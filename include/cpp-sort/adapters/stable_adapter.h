@@ -19,7 +19,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/associate_iterator.h"
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
@@ -161,7 +160,7 @@ namespace cppsort
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return make_stable_and_sort(mstd::begin(range), utility::size(range),
+                return make_stable_and_sort(mstd::begin(range), mstd::distance(range),
                                             std::move(compare), std::move(projection),
                                             this->get());
             }

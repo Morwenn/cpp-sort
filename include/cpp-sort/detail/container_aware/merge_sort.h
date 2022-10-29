@@ -16,10 +16,10 @@
 #include <utility>
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
 
 namespace cppsort
 {
@@ -130,7 +130,7 @@ namespace cppsort
         auto operator()(std::forward_list<Args...>& iterable) const
             -> void
         {
-            detail::flist_merge_sort(iterable, utility::size(iterable),
+            detail::flist_merge_sort(iterable, mstd::distance(iterable),
                                      std::less{}, std::identity{});
         }
 
@@ -140,7 +140,7 @@ namespace cppsort
                 is_projection_v<std::identity, std::forward_list<Args...>, Compare>
             >
         {
-            detail::flist_merge_sort(iterable, utility::size(iterable),
+            detail::flist_merge_sort(iterable, mstd::distance(iterable),
                                      std::move(compare), std::identity{});
         }
 
@@ -150,7 +150,7 @@ namespace cppsort
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
-            detail::flist_merge_sort(iterable, utility::size(iterable),
+            detail::flist_merge_sort(iterable, mstd::distance(iterable),
                                      std::less{}, std::move(projection));
         }
 
@@ -166,7 +166,7 @@ namespace cppsort
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::flist_merge_sort(iterable, utility::size(iterable),
+            detail::flist_merge_sort(iterable, mstd::distance(iterable),
                                      std::move(compare), std::move(projection));
         }
     };

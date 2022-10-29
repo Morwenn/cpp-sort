@@ -17,7 +17,6 @@
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/cartesian_tree_sort.h"
 
 namespace cppsort
@@ -41,7 +40,7 @@ namespace cppsort
                 -> void
             {
                 cartesian_tree_sort(mstd::begin(range), mstd::end(range),
-                                    utility::size(range),
+                                    mstd::distance(range),
                                     std::move(compare), std::move(projection));
             }
 

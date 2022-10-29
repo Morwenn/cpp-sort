@@ -175,14 +175,6 @@ constexpr auto iter_swap(Iterator lhs, Iterator rhs)
 
 *NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
 
-### `size`
-
-```cpp
-#include <cpp-sort/utility/size.h>
-```
-
-`size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
-
 ### Sorting network tools
 
 ```cpp

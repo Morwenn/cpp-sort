@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include "../detail/bitops.h"
 
 // Copy of _LIBCPP_AUTO_CAST, preserved as a macro to
 // simplify future copy-paste-steal maintenance
@@ -291,6 +292,166 @@ namespace cppsort::mstd
 
     template <range R>
     using range_difference_t = iter_difference_t<iterator_t<R>>;
+
+    ////////////////////////////////////////////////////////////
+    // size
+
+    namespace detail_size
+    {
+        void size(auto&) = delete;
+        void size(const auto&) = delete;
+
+        template<typename T>
+        concept size_enabled = not std::ranges::disable_sized_range<std::remove_cvref_t<T>>;
+
+        template<typename T>
+        concept member_size =
+            size_enabled<T> &&
+            detail::class_or_union<T> &&
+            requires(T&& value) {
+                { CPPSORT_AUTO_CAST(value.size()) } -> detail::integer_like;
+            };
+
+        template<typename T>
+        concept unqualified_size =
+            size_enabled<T> &&
+            not member_size<T> &&
+            detail::class_or_union_or_enum<std::remove_cvref_t<T>> &&
+            requires(T&& value) {
+                { CPPSORT_AUTO_CAST(size(value)) } -> detail::integer_like;
+            };
+
+        template<typename T>
+        concept difference =
+            not member_size<T> &&
+            not unqualified_size<T> &&
+            detail::class_or_union_or_enum<std::remove_cvref_t<T>> &&
+            requires(T&& value) {
+                { mstd::begin(value) } -> forward_iterator;
+                { mstd::end(value) } -> sized_sentinel_for<decltype(mstd::begin(std::declval<T>()))>;
+            };
+
+        struct size_fn
+        {
+            // `[range.prim.size]`: the array case (for rvalues).
+            template<typename T, std::size_t Size>
+            [[nodiscard]]
+            constexpr auto operator()(T (&&)[Size]) const noexcept
+                -> std::size_t
+            {
+                return Size;
+            }
+
+            // `[range.prim.size]`: the array case (for lvalues).
+            template<typename T, std::size_t Size>
+            [[nodiscard]]
+            constexpr auto operator()(T (&)[Size]) const noexcept
+                -> std::size_t
+            {
+                return Size;
+            }
+
+            // `[range.prim.size]`: `auto(t.size())` is a valid expression.
+            template<member_size T>
+            [[nodiscard]]
+            constexpr auto operator()(T&& value) const
+                noexcept(noexcept(CPPSORT_AUTO_CAST(value.size())))
+                 -> detail::integer_like auto
+            {
+                return CPPSORT_AUTO_CAST(value.size());
+            }
+
+            // `[range.prim.size]`: `auto(size(t))` is a valid expression.
+            template<unqualified_size T>
+            [[nodiscard]]
+            constexpr auto operator()(T&& value) const
+                noexcept(noexcept(CPPSORT_AUTO_CAST(size(value))))
+                 ->  detail::integer_like auto
+            {
+                return CPPSORT_AUTO_CAST(size(value));
+            }
+
+            // [range.prim.size]: the `to-unsigned-like` case.
+            template<difference T>
+            [[nodiscard]]
+            constexpr auto operator()(T&& value) const
+                noexcept(noexcept(cppsort::detail::as_unsigned(mstd::end(value) - mstd::begin(value))))
+                -> decltype(cppsort::detail::as_unsigned(mstd::end(value) - mstd::begin(value)))
+            {
+                return cppsort::detail::as_unsigned(mstd::end(value) - mstd::begin(value));
+            }
+        };
+    }
+
+    inline namespace cpo
+    {
+        inline constexpr auto size = detail_size::size_fn{};
+    }
+
+    ////////////////////////////////////////////////////////////
+    // sized_range
+
+    template<typename T>
+    concept sized_range =
+        range<T> &&
+        requires(T& t) {
+            mstd::size(t);
+        };
+
+    ////////////////////////////////////////////////////////////
+    // distance
+
+    namespace detail_distance
+    {
+        struct distance_fn
+        {
+            template<typename Iterator, sentinel_for<Iterator> Sentinel>
+                requires (not sized_sentinel_for<Sentinel, Iterator>)
+            [[nodiscard]]
+            constexpr auto operator()(Iterator first, Sentinel last) const
+                -> iter_difference_t<Iterator>
+            {
+                iter_difference_t<Iterator> n = 0;
+                while (first != last) {
+                    ++first;
+                    ++n;
+                }
+                return n;
+            }
+
+            template<
+                typename Iterator,
+                sized_sentinel_for<std::decay_t<Iterator>> Sentinel
+            >
+            [[nodiscard]]
+            constexpr auto operator()(Iterator&& first, Sentinel last) const
+                -> iter_difference_t<Iterator>
+            {
+                if constexpr (sized_sentinel_for<Sentinel, std::remove_cvref_t<Iterator>>) {
+                    return last - first;
+                } else {
+                    return last - std::decay_t<Iterator>(first);
+                }
+            }
+
+            template<range Range>
+            [[nodiscard]]
+            constexpr auto operator()(Range&& range) const
+                -> range_difference_t<Range>
+            {
+                if constexpr (sized_range<Range>) {
+                    return static_cast<range_difference_t<Range>>(mstd::size(range));
+                } else {
+                    return operator()(mstd::begin(range), mstd::end(range));
+                }
+            }
+        };
+    }
+
+    inline namespace cpo
+    {
+        inline constexpr auto distance = detail_distance::distance_fn{};
+    }
 }
 
 #undef CPPSORT_AUTO_CAST

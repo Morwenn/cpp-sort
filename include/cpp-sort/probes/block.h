@@ -19,7 +19,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -94,7 +93,7 @@ namespace cppsort::probe
                 -> decltype(auto)
             {
                 return block_probe_algo(mstd::begin(range), mstd::end(range),
-                                        utility::size(range),
+                                        mstd::distance(range),
                                         std::move(compare), std::move(projection));
             }
 

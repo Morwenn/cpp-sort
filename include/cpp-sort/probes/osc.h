@@ -22,7 +22,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/size.h>
 #include "../detail/equal_range.h"
 #include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
@@ -135,7 +134,7 @@ namespace cppsort::probe
                 -> decltype(auto)
             {
                 return osc_algo(mstd::begin(range), mstd::end(range),
-                                utility::size(range),
+                                mstd::distance(range),
                                 std::move(compare), std::move(projection));
             }
 
