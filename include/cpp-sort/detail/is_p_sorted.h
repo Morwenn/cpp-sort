@@ -13,8 +13,8 @@
 
 namespace cppsort::detail
 {
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto is_p_sorted(ForwardIterator first, ForwardIterator last, ForwardIterator pth,
+    template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+    auto is_p_sorted(ForwardIterator first, Sentinel last, ForwardIterator pth,
                      Compare compare, Projection projection)
         -> bool
     {

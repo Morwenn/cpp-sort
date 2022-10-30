@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
@@ -21,20 +20,18 @@
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
-#include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
 namespace cppsort::probe
 {
     namespace detail
     {
-        template<typename ForwardIterator, typename Compare, typename Projection>
-        auto exc_probe_algo(ForwardIterator first, ForwardIterator last,
-                            cppsort::detail::difference_type_t<ForwardIterator> size,
+        template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+        auto exc_probe_algo(ForwardIterator first, Sentinel last,
+                            mstd::iter_difference_t<ForwardIterator> size,
                             Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<ForwardIterator>
+            -> mstd::iter_difference_t<ForwardIterator>
         {
-            using difference_type = ::cppsort::detail::difference_type_t<ForwardIterator>;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -65,7 +62,7 @@ namespace cppsort::probe
             // Element where the current cycle starts
             auto start = first;
 
-            difference_type cycles = 0;
+            mstd::iter_difference_t<ForwardIterator> cycles = 0;
             while (start != last) {
                 // Find the element to put in current's place
                 auto current = start;
@@ -116,7 +113,7 @@ namespace cppsort::probe
                 >
             >
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::range_difference_t<Range>
             {
                 return exc_probe_algo(mstd::begin(range), mstd::end(range),
                                       mstd::distance(range),
@@ -125,18 +122,19 @@ namespace cppsort::probe
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::iter_difference_t<Iterator>
             {
                 return exc_probe_algo(first, last,
-                                      std::distance(first, last),
+                                      mstd::distance(first, last),
                                       std::move(compare), std::move(projection));
             }
 

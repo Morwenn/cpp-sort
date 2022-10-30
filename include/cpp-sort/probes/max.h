@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
@@ -22,20 +21,19 @@
 #include "../detail/equal_range.h"
 #include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
-#include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
 
 namespace cppsort::probe
 {
     namespace detail
     {
-        template<typename ForwardIterator, typename Compare, typename Projection>
-        auto max_probe_algo(ForwardIterator first, ForwardIterator last,
-                            cppsort::detail::difference_type_t<ForwardIterator> size,
+        template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+        auto max_probe_algo(ForwardIterator first, Sentinel last,
+                            mstd::iter_difference_t<ForwardIterator> size,
                             Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<ForwardIterator>
+            -> mstd::iter_difference_t<ForwardIterator>
         {
-            using difference_type = ::cppsort::detail::difference_type_t<ForwardIterator>;
+            using difference_type = mstd::iter_difference_t<ForwardIterator>;
             auto&& proj = utility::as_function(projection);
 
             if (size < 2) {
@@ -63,7 +61,7 @@ namespace cppsort::probe
 
             difference_type max_dist = 0;
             difference_type it_pos = 0;
-            for (auto it = first ; it != last ; ++it) {
+            for (auto it = first; it != last; ++it) {
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
                     iterators.begin(), iterators.end(), proj(*it),
@@ -95,27 +93,28 @@ namespace cppsort::probe
                 >
             >
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::range_difference_t<Range>
             {
-                return max_probe_algo(std::begin(range), std::end(range),
+                return max_probe_algo(mstd::begin(range), mstd::end(range),
                                       mstd::distance(range),
                                       std::move(compare), std::move(projection));
             }
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::iter_difference_t<Iterator>
             {
                 return max_probe_algo(first, last,
-                                      std::distance(first, last),
+                                      mstd::distance(first, last),
                                       std::move(compare), std::move(projection));
             }
 

@@ -10,13 +10,11 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include "../detail/iterator_traits.h"
 
 namespace cppsort::probe
 {
@@ -26,17 +24,17 @@ namespace cppsort::probe
         {
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            constexpr auto operator()(Iterator first, Iterator last,
+            constexpr auto operator()(Iterator first, Sentinel last,
                                       Compare compare={}, Projection projection={}) const
-                -> cppsort::detail::difference_type_t<Iterator>
+                -> mstd::iter_difference_t<Iterator>
             {
-                using difference_type = cppsort::detail::difference_type_t<Iterator>;
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
@@ -53,7 +51,7 @@ namespace cppsort::probe
                 // returning 0 when the collection is sorted), so the whole
                 // algorithm is designed in a way that it will be "late by one"
                 // on the count of runs
-                difference_type count = 0;
+                mstd::iter_difference_t<Iterator> count = 0;
 
                 while (next != last) {
 

@@ -37,7 +37,7 @@ The measures of presortedness in bold in the graph are available in **cpp-sort**
 
 ## Measures of presortedness in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take either a range or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
+In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They accept either a range or an iterator/sentinel pair, and return how much disorder there is in the sequence according to the measure. The type of the returned variable is the *difference type* of the passed iterator. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
 
 ```cpp
 using namespace cppsort;
@@ -47,15 +47,15 @@ auto c = probe::ham(li, std::greater<>{});
 auto d = probe::runs(integers, std::negate<>{});
 ```
 
-Note however that these algorithms can be expensive. Using them before an actual sorting algorithm has no interest at all; they are meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
+Note however that these algorithms can be expensive; calling them before an actual sorting algorithm generally has no interest at all. They are first and foremost meant to be profiling tools: when sorting is a critical part of an application, these measures can be used on typical data and check whether said data is mostly sorted according to one measure or another. Then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
-Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
+Measures of presortedness can be used with the library's *sorter adapters*. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 
 ```cpp
 auto inv = cppsort::indirect_adapter(cppsort::probe::inv);
 ```
 
-All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is possible to include all of them at once with the following include:
+All measures of presortedness live in the subnamespace `cppsort::probe`. While all of them are available in their own header, it is possible to include all of them at once with the following include:
 
 ```cpp
 #include <cpp-sort/probes.h>
@@ -270,7 +270,7 @@ Some additional measures of presortedness how been described in the literature b
 
 ### *Par*
 
-*Par* was described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
+*Par* is described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
 
 > *Par(X)* = min { *p* | *X* is *p*-sorted }
 
@@ -282,7 +282,7 @@ The following definition is also given to determine whether a sequence is *p*-so
 
 > In fact, *Par*(*X*) = *Dis*(*X*), for all *X*.
 
-In their subsequent papers, those authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
+In their subsequent papers, the authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
 
 ### *Radius*
 

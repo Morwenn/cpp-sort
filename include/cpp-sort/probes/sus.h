@@ -9,8 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/not_fn.h>
 #include <cpp-sort/mstd/iterator.h>
@@ -27,15 +25,16 @@ namespace cppsort::probe
         {
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::iter_difference_t<Iterator>
             {
                 // We don't need the size information, so we can avoid
                 // computing it altogether

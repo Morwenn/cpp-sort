@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "functional.h"
 #include "iterator_traits.h"
@@ -26,10 +27,11 @@ namespace cppsort::detail
     template<
         bool RecomputeSize,
         typename ForwardIterator,
+        typename Sentinel,
         typename Compare,
         typename Projection
     >
-    auto longest_non_descending_subsequence(ForwardIterator first, ForwardIterator last,
+    auto longest_non_descending_subsequence(ForwardIterator first, Sentinel last,
                                             difference_type_t<ForwardIterator> size,
                                             Compare compare, Projection projection)
         -> std::pair<difference_type_t<ForwardIterator>, difference_type_t<ForwardIterator>>
@@ -51,7 +53,7 @@ namespace cppsort::detail
         // making two passes over the sequence - when the sequence is made
         // of random-access iterators, we only compute it once
         if constexpr (RecomputeSize && is_random_access) {
-            size = std::distance(first, last);
+            size = mstd::distance(first, last);
         }
 
         auto&& proj = utility::as_function(projection);

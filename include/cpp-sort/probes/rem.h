@@ -9,8 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
@@ -34,7 +32,7 @@ namespace cppsort::probe
                 >
             > requires mstd::sized_range<Range>
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::range_difference_t<Range>
             {
                 // While most algorithms use mstd::distance() for everything, we only
                 // want to handle data structures whose size can be computed in O(1),
@@ -51,15 +49,16 @@ namespace cppsort::probe
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(auto)
+                -> mstd::iter_difference_t<Iterator>
             {
                 // We give 0 as a "dummy" value since it will be recomputed, but it
                 // is also used by the non-random-access iterators version as the

@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
@@ -59,15 +58,16 @@ namespace cppsort::probe
         {
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> cppsort::detail::difference_type_t<Iterator>
+                -> mstd::iter_difference_t<Iterator>
             {
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);

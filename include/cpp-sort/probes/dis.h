@@ -12,7 +12,6 @@
 #include <functional>
 #include <iterator>
 #include <new>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
@@ -21,17 +20,16 @@
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/immovable_vector.h"
 #include "../detail/is_p_sorted.h"
-#include "../detail/iterator_traits.h"
 
 namespace cppsort::probe
 {
     namespace detail
     {
-        template<typename ForwardIterator, typename Compare, typename Projection>
-        auto inplace_dis_probe_algo(ForwardIterator first, ForwardIterator last,
-                                    cppsort::detail::difference_type_t<ForwardIterator> size,
+        template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+        auto inplace_dis_probe_algo(ForwardIterator first, Sentinel last,
+                                    mstd::iter_difference_t<ForwardIterator> size,
                                     Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<ForwardIterator>
+            -> mstd::iter_difference_t<ForwardIterator>
         {
             // Simple algorithm in O(n log n) time and O(1) space
 
@@ -55,11 +53,11 @@ namespace cppsort::probe
 
         template<typename BidirectionalIterator, typename Compare, typename Projection>
         auto allocating_dis_probe_algo(BidirectionalIterator first, BidirectionalIterator last,
-                                       cppsort::detail::difference_type_t<BidirectionalIterator> size,
+                                       mstd::iter_difference_t<BidirectionalIterator> size,
                                        Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<BidirectionalIterator>
+            -> mstd::iter_difference_t<BidirectionalIterator>
         {
-            using difference_type = ::cppsort::detail::difference_type_t<BidirectionalIterator>;
+            using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -113,9 +111,9 @@ namespace cppsort::probe
             typename Projection
         >
         auto dis_probe_algo(Iterator first, Iterator last,
-                            cppsort::detail::difference_type_t<Iterator> size,
+                            mstd::iter_difference_t<Iterator> size,
                             Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<Iterator>
+            -> mstd::iter_difference_t<Iterator>
         {
             try {
                 return allocating_dis_probe_algo(first, last, size, compare, projection);
@@ -129,13 +127,14 @@ namespace cppsort::probe
 
         template<
             mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
             typename Compare,
             typename Projection
         >
-        auto dis_probe_algo(Iterator first, Iterator last,
-                            cppsort::detail::difference_type_t<Iterator> size,
+        auto dis_probe_algo(Iterator first, Sentinel last,
+                            mstd::iter_difference_t<Iterator> size,
                             Compare compare, Projection projection)
-            -> ::cppsort::detail::difference_type_t<Iterator>
+            -> mstd::iter_difference_t<Iterator>
         {
             return inplace_dis_probe_algo(first, last, size, compare, projection);
         }
@@ -160,17 +159,19 @@ namespace cppsort::probe
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return dis_probe_algo(first, last, std::distance(first, last),
+                return dis_probe_algo(first, last,
+                                      mstd::distance(first, last),
                                       std::move(compare), std::move(projection));
             }
 
