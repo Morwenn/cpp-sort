@@ -290,8 +290,14 @@ namespace cppsort::mstd
     ////////////////////////////////////////////////////////////
     // range_difference_t
 
-    template <range R>
+    template<range R>
     using range_difference_t = iter_difference_t<iterator_t<R>>;
+
+    ////////////////////////////////////////////////////////////
+    // range_reference_t
+
+    template<range R>
+    using range_reference_t = std::iter_reference_t<iterator_t<R>>;
 
     ////////////////////////////////////////////////////////////
     // size

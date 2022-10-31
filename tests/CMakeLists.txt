@@ -119,7 +119,7 @@ add_executable(main-tests
     sorter_facade_constexpr.cpp
     sorter_facade_defaults.cpp
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorter_facade_fptr.cpp>
-    sorter_facade_iterable.cpp
+    sorter_facade_range.cpp
 
     # Adapters tests
     adapters/container_aware_adapter.cpp

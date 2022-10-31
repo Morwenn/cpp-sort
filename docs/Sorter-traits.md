@@ -4,7 +4,7 @@
 
 ### `is_projection` and `is_projection_iterator`
 
-The goal of these type traits is to check whether a projection function can be applied on the `value_type` of a range or of an iterator. An additional template parameter `Compare` may be specified, in which case the traits will also check whether the given binary comparison function can be called with two projected values.
+The goal of these type traits is to check whether a projection function can be applied on the `reference_type` of a range or of an iterator. An additional template parameter `Compare` may be specified, in which case the traits will also check whether the given binary comparison function can be called with two projected values.
 
 ```cpp
 template<
@@ -22,7 +22,7 @@ template<
 struct is_projection_iterator;
 ```
 
-These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), and as such provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
+These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), and as such provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to mitigate the boilerplate:
 
 ```cpp
 template<typename Projection, typename Range, typename Compare=std::less<>>
@@ -68,7 +68,7 @@ template<typename Sorter, typename Iterator, typename Compare, typename Projecti
 struct is_comparison_projection_sorter_iterator;
 ```
 
-These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), and as such provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to reduce the boilerplate:
+These traits are modeled after the standard library's type traits (that is, they inherit from either `std::true_type` or `std::false_type`), and as such provide the exact same member types, functions and static variables. Also, just like the standard library type traits, they come along with associated variable templates to mitigate the boilerplate:
 
 ```cpp
 template<typename Sorter, typename Range>

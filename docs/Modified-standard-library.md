@@ -132,6 +132,7 @@ This header provides the following reimplementations of standard library compone
 * `mstd::iterator_t`
 * `mstd::sentinel_t`
 * `mstd::range_difference_t`
+* `mstd::range_reference_t`
 
 They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemented `mstd::` components instead, leading to the differences documented in the previous sections. The differences, albeit small, are viral - as a result this list is expected to grow as more concepts are needed in the library's user-facing components.
 

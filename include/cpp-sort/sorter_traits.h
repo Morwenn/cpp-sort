@@ -13,6 +13,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
 #include "detail/raw_checkers.h"
 #include "detail/type_traits.h"
@@ -26,14 +27,14 @@ namespace cppsort
     {
         template<typename Projection, typename Range, typename Compare>
         using is_projection_t = std::invoke_result_t<Compare,
-            std::invoke_result_t<Projection, decltype(*mstd::begin(std::declval<Range&>()))>,
-            std::invoke_result_t<Projection, decltype(*mstd::end(std::declval<Range&>()))>
+            std::invoke_result_t<Projection, mstd::range_reference_t<Range>>,
+            std::invoke_result_t<Projection, mstd::range_reference_t<Range>>
         >;
 
         template<typename Projection, typename Iterator, typename Compare>
         using is_projection_iterator_t = std::invoke_result_t<Compare,
-            std::invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>,
-            std::invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>
+            std::invoke_result_t<Projection, std::iter_reference_t<Iterator>>,
+            std::invoke_result_t<Projection, std::iter_reference_t<Iterator>>
         >;
     }
 

@@ -173,6 +173,14 @@ namespace cppsort::mstd
         detail::indirectly_readable_impl<std::remove_cvref_t<Indirect>>;
 
     ////////////////////////////////////////////////////////////
+    // Note: the following types do not rely of components whose
+    //       behaviour is different from theit std:: counterparts
+    //       and as such do not need to be reimplement in mstd:
+    //       * std::indirectly_readable_traits
+    //       * std::iter_value_t
+    //       * std::iter_reference_t
+
+    ////////////////////////////////////////////////////////////
     // incrementable_traits
 
 #if CPPSORT_INT128_REQUIRES_LIBRARY_SUPPORT
