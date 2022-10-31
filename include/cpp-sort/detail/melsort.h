@@ -116,8 +116,8 @@ namespace cppsort::detail
         }
     }
 
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto melsort(ForwardIterator first, ForwardIterator last,
+    template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+    auto melsort(ForwardIterator first, Sentinel last,
                  difference_type_t<ForwardIterator> size,
                  Compare compare, Projection projection)
         -> void
@@ -143,7 +143,7 @@ namespace cppsort::detail
         ////////////////////////////////////////////////////////////
         // Create encroaching lists
 
-        for (auto it = std::next(first) ; it != last ; ++it) {
+        for (auto it = std::next(first); it != last; ++it) {
             auto&& value = proj(*it);
 
             // The heads of the lists form an ascending collection while the heads

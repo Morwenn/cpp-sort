@@ -13,8 +13,8 @@
 
 namespace cppsort::detail
 {
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto selection_sort(ForwardIterator first, ForwardIterator last,
+    template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+    constexpr auto selection_sort(ForwardIterator first, Sentinel last,
                                   Compare compare, Projection projection)
         -> void
     {

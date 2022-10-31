@@ -17,11 +17,11 @@
 
 namespace cppsort::detail
 {
-    template<typename ForwardIterator>
-    constexpr auto counting_sort(ForwardIterator first, ForwardIterator last)
+    template<typename ForwardIterator, typename Sentinel>
+    constexpr auto counting_sort(ForwardIterator first, Sentinel last)
         -> void
     {
-        using difference_type = difference_type_t<ForwardIterator>;
+        using difference_type = mstd::iter_difference_t<ForwardIterator>;
 
         auto info = minmax_element_and_is_sorted(first, last);
         if (info.is_sorted) return;
@@ -44,8 +44,8 @@ namespace cppsort::detail
         }
     }
 
-    template<typename ForwardIterator>
-    constexpr auto reverse_counting_sort(ForwardIterator first, ForwardIterator last)
+    template<typename ForwardIterator, typename Sentinel>
+    constexpr auto reverse_counting_sort(ForwardIterator first, Sentinel last)
         -> void
     {
         using difference_type = difference_type_t<ForwardIterator>;

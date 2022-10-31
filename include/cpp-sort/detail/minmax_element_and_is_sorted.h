@@ -17,10 +17,11 @@ namespace cppsort::detail
 {
     template<
         typename ForwardIterator,
+        typename Sentinel,
         typename Compare = std::less<>,
         typename Projection = std::identity
     >
-    constexpr auto minmax_element_and_is_sorted(ForwardIterator first, ForwardIterator last,
+    constexpr auto minmax_element_and_is_sorted(ForwardIterator first, Sentinel last,
                                                 Compare compare={}, Projection projection={})
         -> decltype(auto)
     {

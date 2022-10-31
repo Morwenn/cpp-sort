@@ -36,8 +36,13 @@
 
 namespace cppsort::detail
 {
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    constexpr auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
+    template<
+        typename BidirectionalIterator,
+        typename Sentinel,
+        typename Compare,
+        typename Projection
+    >
+    constexpr auto insertion_sort(BidirectionalIterator first, Sentinel last,
                                   Compare compare, Projection projection)
         -> void
     {
@@ -47,7 +52,7 @@ namespace cppsort::detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        for (BidirectionalIterator cur = std::next(first) ; cur != last ; ++cur) {
+        for (auto cur = std::next(first); cur != last; ++cur) {
             auto sift = cur;
             auto sift_1 = std::prev(cur);
 

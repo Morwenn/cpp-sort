@@ -208,6 +208,7 @@ add_executable(main-tests
     sorters/every_sorter_no_post_iterator.cpp
     sorters/every_sorter_non_const_compare.cpp
     sorters/every_sorter_rvalue_projection.cpp
+    sorters/every_sorter_sentinel.cpp
     sorters/every_sorter_small_collections.cpp
     sorters/every_sorter_span.cpp
     sorters/every_sorter_throwing_moves.cpp

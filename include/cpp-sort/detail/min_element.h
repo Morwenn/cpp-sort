@@ -14,8 +14,8 @@
 
 namespace cppsort::detail
 {
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto unchecked_min_element(ForwardIterator first, ForwardIterator last,
+    template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+    constexpr auto unchecked_min_element(ForwardIterator first, Sentinel last,
                                          Compare compare, Projection projection)
         -> ForwardIterator
     {
@@ -35,13 +35,13 @@ namespace cppsort::detail
         return min;
     }
 
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto min_element(ForwardIterator first, ForwardIterator last,
+    template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
+    constexpr auto min_element(ForwardIterator first, Sentinel last,
                                Compare compare, Projection projection)
         -> ForwardIterator
     {
         if (first == last) {
-            return last;
+            return first;
         }
         return unchecked_min_element(std::move(first), std::move(last),
                                      std::move(compare), std::move(projection));
