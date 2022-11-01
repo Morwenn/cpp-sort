@@ -6,21 +6,6 @@
 #define CPPSORT_DETAIL_CONFIG_H_
 
 ////////////////////////////////////////////////////////////
-// CPPSORT_UNREACHABLE
-
-// Mostly useful to silence compiler warnings in the default
-// clause of a switch when we know the default can never be
-// reached
-
-#if defined(__GNUC__) || defined(__clang__)
-#   define CPPSORT_UNREACHABLE __builtin_unreachable()
-#elif defined(_MSC_VER)
-#   define CPPSORT_UNREACHABLE __assume(false)
-#else
-#   define CPPSORT_UNREACHABLE
-#endif
-
-////////////////////////////////////////////////////////////
 // General: assertions
 
 #if defined(CPPSORT_ENABLE_ASSERTIONS) || defined(CPPSORT_ENABLE_AUDITS)
@@ -76,6 +61,23 @@
 #   define CPPSORT_ASSUME(expression) __assume(expression)
 #else
 #   define CPPSORT_ASSUME(cond)
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_UNREACHABLE
+
+// Mostly useful to silence compiler warnings in the default
+// clause of a switch when we know the default can never be
+// reached
+
+#if defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_UNREACHABLE CPPSORT_ASSERT("unreachable", false);
+#elif defined(__GNUC__) || defined(__clang__)
+#   define CPPSORT_UNREACHABLE __builtin_unreachable()
+#elif defined(_MSC_VER)
+#   define CPPSORT_UNREACHABLE __assume(false)
+#else
+#   define CPPSORT_UNREACHABLE
 #endif
 
 ////////////////////////////////////////////////////////////

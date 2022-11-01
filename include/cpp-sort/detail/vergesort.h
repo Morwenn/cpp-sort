@@ -106,7 +106,7 @@ namespace cppsort::detail::verge
     {
         if (size < 128) {
             // vergesort is inefficient for small collections
-            fallback(make_sized_iterator(first, size),
+            fallback(make_sized_iterator(first, 0),
                      make_sized_iterator(last, size),
                      std::move(compare), std::move(projection));
             return;
@@ -200,7 +200,7 @@ namespace cppsort::detail::verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_iterator(begin_unsorted, size_unsorted),
+                        fallback(make_sized_iterator(begin_unsorted, 0),
                                  make_sized_iterator(begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted} );
@@ -263,7 +263,7 @@ namespace cppsort::detail::verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_iterator(begin_unsorted, size_unsorted),
+                        fallback(make_sized_iterator(begin_unsorted, 0),
                                  make_sized_iterator(begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted });
@@ -307,7 +307,7 @@ namespace cppsort::detail::verge
             // next run, so we add one back here to compensate
             ++size_unsorted;
             if (size_unsorted > 1) {
-                fallback(make_sized_iterator(begin_unsorted, size_unsorted),
+                fallback(make_sized_iterator(begin_unsorted, 0),
                          make_sized_iterator(last, size_unsorted),
                          compare, projection);
             }

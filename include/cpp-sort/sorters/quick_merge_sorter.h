@@ -39,26 +39,30 @@ namespace cppsort
             constexpr auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> void
             {
-                quick_merge_sort(mstd::begin(range), mstd::end(range),
+                auto first = mstd::begin(range);
+                auto last = mstd::end(range);
+                auto last_it = mstd::next(first, std::move(last));
+                quick_merge_sort(std::move(first), std::move(last_it),
                                  mstd::distance(range),
                                  std::move(compare), std::move(projection));
             }
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            constexpr auto operator()(Iterator first, Iterator last,
+            constexpr auto operator()(Iterator first, Sentinel last,
                                       Compare compare={}, Projection projection={}) const
                 -> void
             {
-                using std::distance; // Hack for sized_iterator
-                quick_merge_sort(std::move(first), std::move(last),
-                                 distance(first, last),
+                auto last_it = mstd::next(first, std::move(last));
+                auto dist = mstd::distance(first, last);
+                quick_merge_sort(std::move(first), std::move(last_it), dist,
                                  std::move(compare), std::move(projection));
             }
 

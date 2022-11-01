@@ -30,18 +30,19 @@ namespace cppsort
         {
             template<
                 mstd::random_access_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
-                            Projection projection={}) const
+            auto operator()(Iterator first, Sentinel last, Projection projection={}) const
                 -> mstd::enable_if_t<
                     detail::is_ska_sortable_v<projected_t<Iterator, Projection>>
                 >
             {
-                ska_sort(std::move(first), std::move(last), std::move(projection));
+                auto last_it = mstd::next(first, std::move(last));
+                ska_sort(std::move(first), std::move(last_it), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

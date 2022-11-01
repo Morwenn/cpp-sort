@@ -38,17 +38,19 @@ namespace cppsort
 
             template<
                 mstd::bidirectional_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                drop_merge_sort(std::move(first), std::move(last),
+                auto last_it = mstd::next(first, std::move(last));
+                drop_merge_sort(std::move(first), std::move(last_it),
                                 std::move(compare), std::move(projection),
                                 this->get());
             }

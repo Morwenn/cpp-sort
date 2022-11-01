@@ -19,6 +19,7 @@
 ////////////////////////////////////////////////////////////
 #include <concepts>
 #include <iterator>
+#include <memory> // std::to_address
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/concepts.h>
@@ -338,6 +339,175 @@ namespace cppsort::mstd
             { std::to_address(it) }
                 -> std::same_as<std::add_pointer_t<std::iter_reference_t<Iterator>>>;
         };
+
+    ////////////////////////////////////////////////////////////
+    // advance
+
+    namespace detail_advance
+    {
+        struct advance_fn
+        {
+            private:
+
+                template<typename Iterator>
+                static constexpr auto advance_forward(Iterator& it, iter_difference_t<Iterator> n)
+                    -> void
+                {
+                    while (n > 0) {
+                        --n;
+                        ++it;
+                    }
+                }
+
+                template<typename Iterator>
+                static constexpr auto advance_backward(Iterator& it, iter_difference_t<Iterator> n)
+                    -> void
+                {
+                    while (n < 0) {
+                        ++n;
+                        --it;
+                    }
+                }
+
+            public:
+
+                template<input_or_output_iterator Iterator>
+                constexpr auto operator()(Iterator& it, iter_difference_t<Iterator> n) const
+                    -> void
+                {
+                    CPPSORT_ASSERT(n >= 0 || bidirectional_iterator<Iterator>);
+
+                    if constexpr (random_access_iterator<Iterator>) {
+                        it += n;
+                    } else if constexpr (bidirectional_iterator<Iterator>) {
+                        advance_forward(it, n);
+                        advance_backward(it, n);
+                    } else {
+                        advance_forward(it, n);
+                    }
+                }
+
+                template<
+                    input_or_output_iterator Iterator,
+                    sentinel_for<Iterator> Sentinel
+                >
+                constexpr auto operator()(Iterator& it, Sentinel sent) const
+                    -> void
+                {
+                    if constexpr (std::assignable_from<Iterator&, Sentinel>) {
+                        it = std::move(sent);
+                    } else if constexpr (sized_sentinel_for<Sentinel, Iterator>) {
+                        (*this)(it, sent - it);
+                    } else {
+                        while (it != sent) {
+                            ++it;
+                        }
+                    }
+                }
+
+                template<
+                    input_or_output_iterator Iterator,
+                    sentinel_for<Iterator> Sentinel
+                >
+                constexpr auto operator()(Iterator& it, iter_difference_t<Iterator> n, Sentinel sent) const
+                    -> iter_difference_t<Iterator>
+                {
+                    CPPSORT_ASSERT(
+                        (n >= 0) ||
+                        (bidirectional_iterator<Iterator> && std::same_as<Iterator, Sentinel>)
+                    );
+
+                    if constexpr (sized_sentinel_for<Sentinel, Iterator>) {
+                        auto magnitude_geq = [](auto a, auto b) {
+                            return a == 0 ? b == 0 :
+                                   a > 0  ? a >= b :
+                                   a <= b;
+                        };
+                        if (const auto m = sent - it; magnitude_geq(n, m)) {
+                            (*this)(it, sent);
+                            return n - m;
+                        } else {
+                            (*this)(it, n);
+                            return 0;
+                        }
+                    } else {
+                        while (it != sent && n > 0) {
+                            ++it;
+                            --n;
+                        }
+
+                        if constexpr (bidirectional_iterator<Iterator> && std::same_as<Iterator, Sentinel>) {
+                            while (it != sent && n < 0) {
+                                --it;
+                                ++n;
+                            }
+                        }
+                        return n;
+                    }
+                }
+        };
+    }
+
+    inline namespace cpo
+    {
+        inline constexpr auto advance = detail_advance::advance_fn{};
+    }
+
+    ////////////////////////////////////////////////////////////
+    // next
+
+    namespace detail_next
+    {
+        struct next_fn
+        {
+            template<input_or_output_iterator Iterator>
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it) const
+                -> Iterator
+            {
+                ++it;
+                return it;
+            }
+
+            template<input_or_output_iterator Iterator>
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it, iter_difference_t<Iterator> n) const
+                -> Iterator
+            {
+                mstd::advance(it, n);
+                return it;
+            }
+
+            template<
+                input_or_output_iterator Iterator,
+                sentinel_for<Iterator> Sentinel
+            >
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it, Sentinel sent) const
+                -> Iterator
+            {
+                mstd::advance(it, sent);
+                return it;
+            }
+
+            template<
+                input_or_output_iterator Iterator,
+                sentinel_for<Iterator> Sentinel
+            >
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it, iter_difference_t<Iterator> n, Sentinel sent) const
+                -> Iterator
+            {
+                mstd::advance(it, n, sent);
+                return it;
+            }
+        };
+    }
+
+    inline namespace cpo
+    {
+        inline constexpr auto next = detail_next::next_fn{};
+    }
 }
 
 #endif // CPPSORT_MSTD_ITERATOR_H_

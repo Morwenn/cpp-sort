@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -235,23 +236,27 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Call operator
 
-                template<typename Iterable, typename... Args>
-                constexpr auto operator()(Iterable&& iterable, Args&&... args) const
+                template<mstd::forward_range Range, typename... Args>
+                constexpr auto operator()(Range&& range, Args&&... args) const
                     -> decltype(base_class::operator()(
-                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                        std::forward<Iterable>(iterable),
+                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ))
                 {
                     return base_class::operator()(
-                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                        std::forward<Iterable>(iterable),
+                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        std::forward<Range>(range),
                         std::forward<Args>(args)...
                     );
                 }
 
-                template<mstd::forward_iterator Iterator, typename... Args>
-                constexpr auto operator()(Iterator first, Iterator last, Args&&... args) const
+                template<
+                    mstd::forward_iterator Iterator,
+                    mstd::sentinel_for<Iterator> Sentinel,
+                    typename... Args
+                >
+                constexpr auto operator()(Iterator first, Sentinel last, Args&&... args) const
                     -> decltype(base_class::operator()(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                             std::move(first), std::move(last),
@@ -268,16 +273,20 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Stability of a call
 
-                template<typename Iterable, typename... Args>
-                static constexpr auto _detail_stability(Iterable&& iterable, Args&&... args)
+                template<mstd::forward_range Range, typename... Args>
+                static constexpr auto _detail_stability(Range&& range, Args&&... args)
                     -> decltype(base_class::_detail_stability(
-                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                        std::forward<Iterable>(iterable),
+                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ));
 
-                template<mstd::forward_iterator Iterator, typename... Args>
-                static constexpr auto _detail_stability(Iterator first, Iterator last, Args&&... args)
+                template<
+                    mstd::forward_iterator Iterator,
+                    mstd::sentinel_for<Iterator> Sentinel,
+                    typename... Args
+                >
+                static constexpr auto _detail_stability(Iterator first, Sentinel last, Args&&... args)
                     -> decltype(base_class::_detail_stability(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                             std::move(first), std::move(last),

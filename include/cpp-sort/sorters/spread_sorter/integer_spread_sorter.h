@@ -32,9 +32,10 @@ namespace cppsort
         {
             template<
                 mstd::random_access_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Projection = std::identity
             >
-            auto operator()(Iterator first, Iterator last, Projection projection={}) const
+            auto operator()(Iterator first, Sentinel last, Projection projection={}) const
                 -> mstd::enable_if_t<
                     std::is_integral_v<projected_t<Iterator, Projection>> && (
                         sizeof(projected_t<Iterator, Projection>) <= sizeof(std::size_t) ||
@@ -43,7 +44,8 @@ namespace cppsort
                     is_projection_iterator_v<Projection, Iterator>
                 >
             {
-                spreadsort::integer_sort(std::move(first), std::move(last), std::move(projection));
+                auto last_it = mstd::next(first, std::move(last));
+                spreadsort::integer_sort(std::move(first), std::move(last_it), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

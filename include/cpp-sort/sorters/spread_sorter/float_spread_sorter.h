@@ -32,9 +32,10 @@ namespace cppsort
         {
             template<
                 mstd::random_access_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Projection = std::identity
             >
-            auto operator()(Iterator first, Iterator last, Projection projection={}) const
+            auto operator()(Iterator first, Sentinel last, Projection projection={}) const
                 -> mstd::enable_if_t<
                     std::numeric_limits<projected_t<Iterator, Projection>>::is_iec559 && (
                         sizeof(projected_t<Iterator, Projection>) == sizeof(std::uint32_t) ||
@@ -43,7 +44,8 @@ namespace cppsort
                     is_projection_iterator_v<Projection, Iterator>
                 >
             {
-                spreadsort::float_sort(std::move(first), std::move(last), std::move(projection));
+                auto last_it = mstd::next(first, std::move(last));
+                spreadsort::float_sort(std::move(first), std::move(last_it), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////

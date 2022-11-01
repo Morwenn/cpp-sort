@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include "config.h"
 #include "iterator_traits.h"
 
@@ -101,7 +102,18 @@ namespace cppsort::detail
             }
 
             ////////////////////////////////////////////////////////////
+            // operator-
+            // Exists for mstd::distance to take advantage of
+
+            friend constexpr auto operator-(const sized_iterator& lhs, const sized_iterator& rhs)
+                -> difference_type
+            {
+                return lhs._size - rhs._size;
+            }
+            
+            ////////////////////////////////////////////////////////////
             // Comparison operators
+            // Shall not be called
 
             [[nodiscard]]
             friend auto operator==(const sized_iterator& lhs, const sized_iterator& rhs)
@@ -124,16 +136,6 @@ namespace cppsort::detail
             Iterator _it;
             difference_type _size;
     };
-
-    // Alternative to std::distance meant to be picked up by ADL in
-    // specific places, uses the size of the *second* iterator
-    template<typename Iterator>
-    [[nodiscard]]
-    constexpr auto distance(sized_iterator<Iterator>, sized_iterator<Iterator> last)
-        -> difference_type_t<Iterator>
-    {
-        return last.size();
-    }
 
     template<typename Iterator>
     [[nodiscard]]
