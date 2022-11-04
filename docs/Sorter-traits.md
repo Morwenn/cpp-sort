@@ -4,7 +4,7 @@
 
 ### `is_projection` and `is_projection_iterator`
 
-The goal is these type traits is to check whether a projection function can be applied on the `value_type` of an iterable or an iterator. An additional template parameter `Compare` may be specified, in which case the traits will also check whether the given binary comparison function can be called with two projected values.
+The goal of these type traits is to check whether a projection function can be applied on the `reference_type` of an iterable or an iterator. An additional template parameter `Compare` may be specified, in which case the traits will also check whether the given binary comparison function can be called with two projected values.
 
 ```cpp
 template<
