@@ -58,12 +58,13 @@ namespace cppsort
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename = mstd::enable_if_t<
                     not is_projection_iterator_v<Compare, Iterator>
                 >
             >
-            constexpr auto operator()(Iterator first, Iterator last, Compare compare={}) const
+            constexpr auto operator()(Iterator first, Sentinel last, Compare compare={}) const
                 -> CountType
             {
                 CountType count(0);
@@ -91,13 +92,14 @@ namespace cppsort
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare,
                 typename Projection,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            constexpr auto operator()(Iterator first, Iterator last,
+            constexpr auto operator()(Iterator first, Sentinel last,
                                       Compare compare, Projection projection) const
                 -> CountType
             {

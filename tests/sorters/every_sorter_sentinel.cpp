@@ -14,6 +14,7 @@
 #include <testing-tools/random.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with a sentinel", "[sorters][sentinel]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,

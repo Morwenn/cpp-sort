@@ -158,19 +158,20 @@ namespace cppsort
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last, Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(this->get(), first, last,
-                                            std::distance(first, last),
+            auto operator()(Iterator first, Sentinel last, Compare compare={}, Projection projection={}) const
+                -> decltype(sort_indirectly(this->get(), first, mstd::next(first, last),
+                                            mstd::distance(first, last),
                                             std::move(compare), std::move(projection)))
             {
-                return sort_indirectly(this->get(), first, last,
-                                       std::distance(first, last),
+                return sort_indirectly(this->get(), first, mstd::next(first, last),
+                                       mstd::distance(first, last),
                                        std::move(compare), std::move(projection));
             }
 

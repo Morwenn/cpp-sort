@@ -39,17 +39,20 @@ namespace cppsort
 
             template<
                 mstd::random_access_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                verge::sort<Stable>(std::move(first), std::move(last), last - first,
+                auto dist = mstd::distance(first, last);
+                auto last_it = mstd::next(first, std::move(last));
+                verge::sort<Stable>(std::move(first), std::move(last_it), dist,
                                     std::move(compare), std::move(projection),
                                     this->get());
             }

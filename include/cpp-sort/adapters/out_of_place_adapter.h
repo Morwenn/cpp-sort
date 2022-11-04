@@ -74,21 +74,26 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Wrap and call the sorter
 
-        template<mstd::forward_iterator Iterator, typename... Args>
-        auto operator()(Iterator first, Iterator last, Args&&... args) const
+        template<
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename... Args
+        >
+        auto operator()(Iterator first, Sentinel last, Args&&... args) const
             -> decltype(auto)
         {
-            auto size = std::distance(first, last);
-            return detail::sort_out_of_place(first, last, size, this->get(), std::forward<Args>(args)...);
+            auto dist = mstd::distance(first, last);
+            auto last_it = mstd::next(first, last);
+            return detail::sort_out_of_place(std::move(first), std::move(last_it), dist,
+                                             this->get(), std::forward<Args>(args)...);
         }
 
         template<mstd::forward_range Range, typename... Args>
         auto operator()(Range&& range, Args&&... args) const
             -> decltype(auto)
         {
-            // Might be an optimization for forward/bidirectional ranges
-            auto size = mstd::distance(range);
-            return detail::sort_out_of_place(mstd::begin(range), mstd::end(range), size,
+            auto dist = mstd::distance(range);
+            return detail::sort_out_of_place(mstd::begin(range), mstd::end(range), dist,
                                              this->get(), std::forward<Args>(args)...);
         }
 

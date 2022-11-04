@@ -125,17 +125,18 @@ namespace cppsort
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity,
                 typename = mstd::enable_if_t<
                     is_projection_iterator_v<Projection, Iterator, Compare>
                 >
             >
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel last,
                             Compare compare, Projection projection) const
                 -> decltype(auto)
             {
-                return sort_with_schwartz(first, std::distance(first, last),
+                return sort_with_schwartz(first, mstd::distance(first, last),
                                           std::move(compare), std::move(projection),
                                           this->get());
             }
@@ -156,9 +157,10 @@ namespace cppsort
 
             template<
                 mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>
             >
-            auto operator()(Iterator first, Iterator last, Compare compare={}) const
+            auto operator()(Iterator first, Sentinel last, Compare compare={}) const
                 -> mstd::enable_if_t<
                     not is_projection_iterator_v<Compare, Iterator>,
                     decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
@@ -176,8 +178,11 @@ namespace cppsort
                 return this->get()(std::forward<Range>(range), std::move(compare), projection);
             }
 
-            template<mstd::forward_iterator Iterator, typename Compare>
-            auto operator()(Iterator first, Iterator last, Compare compare, std::identity projection) const
+            template<
+                mstd::forward_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
+                typename Compare>
+            auto operator()(Iterator first, Sentinel last, Compare compare, std::identity projection) const
                 -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
             {
                 // std::identity does nothing, bypass schartz_adapter entirely
