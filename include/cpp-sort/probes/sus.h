@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_SUS_H_
@@ -9,14 +9,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/not_fn.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/longest_non_descending_subsequence.h"
 #include "../detail/type_traits.h"

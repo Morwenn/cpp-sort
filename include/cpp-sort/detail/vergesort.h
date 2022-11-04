@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -20,7 +20,7 @@
 #include "inplace_merge.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
-#include "quick_merge_sort.h"
+#include "merge_sort.h"
 #include "reverse.h"
 #include "rotate.h"
 #include "sized_iterator.h"

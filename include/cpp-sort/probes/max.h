@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MAX_H_
@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -66,7 +65,7 @@ namespace probe
 
             difference_type max_dist = 0;
             difference_type it_pos = 0;
-            for (auto it = first ; it != last ; ++it) {
+            for (auto it = first; it != last; ++it) {
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
                     iterators.begin(), iterators.end(), proj(*it),

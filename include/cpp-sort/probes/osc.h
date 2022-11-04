@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_OSC_H_
@@ -13,7 +13,6 @@
 #include <iterator>
 #include <new>
 #include <numeric>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
