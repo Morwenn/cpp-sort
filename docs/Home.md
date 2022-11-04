@@ -67,7 +67,7 @@ Some old components undergo deprecation before being removed in the following ma
 
 Some algorithms have assertions to guard against accidental logic issues (mostly in algorithms adapted from other projects), but they are disabled by default. You can enable these assertions by defining the preprocessor macro `CPPSORT_ENABLE_ASSERTIONS`. This new macro still honours `NDEBUG`, so assertions won't be enabled anyway if `NDEBUG` is defined.
 
-A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms. When turning on audits, internal calls to `__assume` or equivalent will also be turned into assertions to provided additional checks.
+A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms. When turning on audits, internal calls to `__assume` or equivalent statements will also be turned into assertions to provided additional checks.
 
 ## Miscellaneous
 
@@ -78,6 +78,7 @@ If you ever feel that this wiki is incomplete, that it needs more examples or mo
 *Always keep in mind that even if the library does contain production-ready algorithms, many of them are also experimental algorithms taken straight from research papers and reimplemented from scratch. If you are only interested in usable algorithms, you should look at the ones analyzed in the [benchmarks][benchmarks].*
 
 Hope you have fun!
+
 
   [benchmarks]: Benchmarks.md
   [original-research]: Original-research.md
