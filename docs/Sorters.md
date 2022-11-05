@@ -617,7 +617,7 @@ struct spread_sorter:
   [smoothsort]: https://en.wikipedia.org/wiki/Smoothsort
   [sorter-adapters]: Sorter-adapters.md
   [sorting-functions]: Sorting-functions.md
-  [spinsort]: https://www.boost.org/doc/libs/1_78_0/libs/sort/doc/html/sort/single_thread/spinsort.html
+  [spinsort]: https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/sort/single_thread/spinsort.html
   [spreadsort]: https://en.wikipedia.org/wiki/Spreadsort
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void

@@ -156,7 +156,7 @@ parts of the benchmarks come from there as well.
 of a Timsort](https://github.com/gfx/cpp-TimSort).
 
 * The three algorithms used by `spread_sorter` come from Steven Ross [Boost.Sort
-module](https://www.boost.org/doc/libs/1_71_0/libs/sort/doc/html/index.html).
+module](https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/index.html).
 
 * The algorithm used by `d_ary_spread_sorter` comes from Tim Blechmann's
 [Boost.Heap module](https://www.boost.org/doc/libs/1_80_0/doc/html/heap.html).
