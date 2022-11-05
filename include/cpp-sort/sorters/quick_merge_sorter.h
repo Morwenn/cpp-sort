@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_QUICK_MERGE_SORTER_H_
@@ -76,8 +76,8 @@ namespace cppsort
                 );
 
                 using std::distance; // Hack for sized_iterator
-                quick_merge_sort(std::move(first), std::move(last),
-                                 distance(first, last),
+                auto dist = distance(first, last);
+                quick_merge_sort(std::move(first), std::move(last), dist,
                                  std::move(compare), std::move(projection));
             }
 
