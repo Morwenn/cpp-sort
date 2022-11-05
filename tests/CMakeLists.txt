@@ -227,6 +227,7 @@ add_executable(main-tests
     utility/buffer.cpp
     utility/chainable_projections.cpp
     utility/iter_swap.cpp
+    utility/sorted_indices.cpp
     utility/sorting_networks.cpp
 )
 configure_tests(main-tests)
