@@ -37,21 +37,21 @@ namespace cppsort
             {}
 
             template<
-                typename ForwardIterator,
+                typename BidirectionalIterator,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_iterator_v<Projection, ForwardIterator, Compare>
+                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
                 >
             >
-            auto operator()(ForwardIterator first, ForwardIterator last,
+            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of<
                         iterator_category,
-                        iterator_category_t<ForwardIterator>
+                        iterator_category_t<BidirectionalIterator>
                     >::value,
                     "drop_merge_adapter requires at least bidirectional iterators"
                 );
