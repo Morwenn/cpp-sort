@@ -14,6 +14,7 @@
 TEMPLATE_TEST_CASE( "test sorter with alternating distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
+                    cppsort::d_ary_heap_sorter<3>,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

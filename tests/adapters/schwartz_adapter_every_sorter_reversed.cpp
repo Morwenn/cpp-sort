@@ -26,6 +26,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
                     "[schwartz_adapter][reverse_iterator]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
+                    cppsort::d_ary_heap_sorter<8>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

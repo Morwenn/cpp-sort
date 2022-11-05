@@ -12,6 +12,7 @@
 #include <cpp-sort/sorters/block_sorter.h>
 #include <cpp-sort/sorters/cartesian_tree_sorter.h>
 #include <cpp-sort/sorters/counting_sorter.h>
+#include <cpp-sort/sorters/d_ary_heap_sorter.h>
 #include <cpp-sort/sorters/default_sorter.h>
 #include <cpp-sort/sorters/drop_merge_sorter.h>
 #include <cpp-sort/sorters/grail_sorter.h>

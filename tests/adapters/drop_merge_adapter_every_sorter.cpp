@@ -15,6 +15,7 @@
 TEMPLATE_TEST_CASE( "every random-access sorter with drop_merge_adapter", "[drop_merge_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
+                    cppsort::d_ary_heap_sorter<6>,
                     cppsort::default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,

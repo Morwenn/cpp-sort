@@ -19,6 +19,7 @@ TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]"
                     // that could specifically appear with an ascending distribution,
                     // so here is the dedicated test (see issue #103)
                     cppsort::counting_sorter,
+                    cppsort::d_ary_heap_sorter<5>,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

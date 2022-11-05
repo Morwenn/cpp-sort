@@ -29,6 +29,8 @@ namespace cppsort
     struct block_sorter;
     struct cartesian_tree_sorter;
     struct counting_sorter;
+    template<int D>
+    struct d_ary_heap_sorter;
     struct default_sorter;
     struct drop_merge_sorter;
     struct float_spread_sorter;
