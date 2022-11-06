@@ -263,7 +263,7 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/sorted_indices.h>
 ```
 
-`utility::sorted_indices` is a a function object that takes a sorter and returns a new function object. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]).
+`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]).
 
 ```cpp
 std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
@@ -274,7 +274,32 @@ auto indices = get_sorted_indices_for(vec);
 
 Concretely `sorted_indices` is designed like a [sorter adapter][sorter-adapters] and therefore supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade]. The main reason it does not sit with sorter adapters is that the returned function object is not a sorter per se since it doesn't sort the passed collection directly.
 
-When the collection contains several elements, the order of their indices in the results depend on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of elements that compare equal appear in a stable order in the result.
+When the collection contains several elements that compare equivalent, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of elements that compare equivalent appear in a stable order in the result.
+
+*New in version 1.14.0*
+
+### `sorted_iterators`
+
+```cpp
+#include <cpp-sort/utility/sorted_iterators.h>
+```
+
+`utility::sorted_iterators` is a function object that takes a sorter and returns a new function object. This new function object accepts a collection and returns an `std::vector` containing iterators to the passed collection in a sorted order. It is designed like a [sorter adapter][sorter-adapters] and as such supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade].
+
+```cpp
+std::list<int> li = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
+auto get_sorted_iterators_for = cppsort::utility::sorted_iterators<cppsort::heap_sorter>{};
+const auto iterators = get_sorted_iterators_for(li);
+
+// Displays 0 1 2 3 4 5 6 7 8 9
+for (auto it: iterators) {
+    std::cout << *it << ' ';
+}
+```
+
+It can be thought of as a kind of sorted view of the passed collection - as long as said collection does not change. It can be useful when the order of the original collection must be preserved, but operations have to be performed on the sorted collection.
+
+When the collection contains several elements that compare equivalent, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to elements that compare equivalent appear in a stable order in the result.
 
 *New in version 1.14.0*
 

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
+#include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorters/heap_sorter.h>
