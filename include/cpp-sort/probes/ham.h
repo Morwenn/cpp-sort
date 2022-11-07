@@ -17,7 +17,6 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
@@ -54,8 +53,8 @@ namespace probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(), compare,
-                cppsort::detail::indirect(projection)
+                iterators.begin(), iterators.end(),
+                compare, utility::indirect(projection)
             );
 
             ////////////////////////////////////////////////////////////

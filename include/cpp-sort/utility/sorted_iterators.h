@@ -19,7 +19,6 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
-#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
@@ -50,7 +49,7 @@ namespace utility
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(iterators.begin(), iterators.end(),
                                          std::move(compare),
-                                         cppsort::detail::indirect(std::move(projection)));
+                                         utility::indirect(std::move(projection)));
 
             return iterators;
         }

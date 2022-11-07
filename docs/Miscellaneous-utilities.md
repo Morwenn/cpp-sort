@@ -154,12 +154,45 @@ struct identity:
 
 It is equivalent to the C++20 [`std::identity`][std-identity]. Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
 
+Another simple yet very handy projection available in the header is `indirect_t`, along with its construction function `indirect()`. It takes a projection, and is meant to be called on a dereferenceable value `it`, in which case it will return the result of `proj(*it)`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
+
+```cpp
+template<typename Projection>
+class indirect_t:
+    projection_base
+{
+private:
+    Projection proj_;
+
+public:
+    indirect_t() = default;
+    indirect_t(const indirect_t&) = default;
+    indirect_t(indirect_t&&) = default;
+    indirect_t& operator=(const indirect_t&) = default;
+    indirect_t& operator=(indirect_t&&) = default;
+
+    constexpr explicit indirect_t(Projection proj);
+
+    template<typename T>
+    constexpr auto operator()(T&& indirect_value)
+        -> decltype(utility::as_function(proj_)(*indirect_value));
+
+    template<typename T>
+    constexpr auto operator()(T&& indirect_value) const
+        -> decltype(utility::as_function(proj_)(*indirect_value));
+};
+
+template<typename Projection>
+auto indirect(Projection&& proj)
+    -> indirect_t<std::decay_t<Projection>>;
+```
+
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:
 * `half`: returns the passed value divided by 2.
 * `log`: returns the base 10 logarithm of the passed value.
 * `sqrt`: returns the square root of the passed value.
 
-All of those function objects inherit from `projection_base` and are [*transparent  function objects*][transparent-func].
+All of those function objects inherit from `projection_base` and are [*transparent function objects*][transparent-func].
 
 Since C++17, the following utility is also available when some level of micro-optimization is needed:
 
@@ -191,6 +224,8 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 *Changed in version 1.9.0:* `std::identity` is now also supported wherever the library has special behavior for `utility::identity`.
 
 *Changed in version 1.13.0:* `half`, `log` and `sqrt` are now [*transparent function objects*][transparent-func].
+
+*New in version 1.14.0:* `indirect` and `indirect_t`.
 
 ### `iter_move` and `iter_swap`
 

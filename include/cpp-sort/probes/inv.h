@@ -18,7 +18,6 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/count_inversions.h"
-#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
@@ -51,7 +50,7 @@ namespace probe
             return cppsort::detail::count_inversions<difference_type>(
                 iterators.get(), iterators.get() + size, buffer.get(),
                 std::move(compare),
-                cppsort::detail::indirect(std::move(projection))
+                utility::indirect(std::move(projection))
             );
         }
 

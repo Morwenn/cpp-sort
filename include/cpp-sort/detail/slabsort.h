@@ -14,11 +14,11 @@
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "config.h"
 #include "fixed_size_list.h"
-#include "functional.h"
 #include "immovable_vector.h"
 #include "insertion_sort.h"
 #include "iterator_traits.h"
@@ -85,7 +85,7 @@ namespace detail
 
         return *nth_element(
             iterators_buffer.begin(), iterators_buffer.end(), size / 2, size,
-            std::move(compare), indirect(std::move(projection))
+            std::move(compare), utility::indirect(std::move(projection))
         );
     }
 

@@ -20,7 +20,6 @@
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/indiesort.h"
 #include "../detail/iterator_traits.h"
@@ -56,7 +55,7 @@ namespace cppsort
 #ifdef __cpp_lib_uncaught_exceptions
         -> decltype(std::forward<Sorter>(sorter)(
             (RandomAccessIterator*)0, (RandomAccessIterator*)0,
-            std::move(compare), indirect(projection)
+            std::move(compare), utility::indirect(projection)
         ))
 #else
         -> std::enable_if_t<
@@ -64,7 +63,7 @@ namespace cppsort
                     Sorter,
                     RandomAccessIterator*,
                     Compare,
-                    indirect_t<Projection>
+                    utility::indirect_t<Projection>
                 >::value
             >
 #endif
@@ -83,7 +82,7 @@ namespace cppsort
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(
                 iterators.begin(), iterators.end(),
-                std::move(compare), indirect(projection)
+                std::move(compare), utility::indirect(projection)
             );
 #else
             // Work around the sorters that return void
@@ -132,7 +131,7 @@ namespace cppsort
 
             return std::forward<Sorter>(sorter)(
                 iterators.begin(), iterators.end(),
-                std::move(compare), indirect(projection)
+                std::move(compare), utility::indirect(projection)
             );
 #endif
         }

@@ -19,7 +19,6 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/equal_range.h"
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
@@ -55,8 +54,8 @@ namespace probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(), compare,
-                cppsort::detail::indirect(projection)
+                iterators.begin(), iterators.end(),
+                compare, utility::indirect(projection)
             );
 
             ////////////////////////////////////////////////////////////
@@ -69,7 +68,7 @@ namespace probe
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
                     iterators.begin(), iterators.end(), proj(*it),
-                    compare, cppsort::detail::indirect(projection)
+                    compare, utility::indirect(projection)
                 );
                 auto pos_min = std::distance(iterators.begin(), rng.first);
                 auto pos_max = std::distance(iterators.begin(), rng.second);

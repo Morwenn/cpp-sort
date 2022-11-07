@@ -100,6 +100,52 @@ namespace utility
         std::true_type
     {};
 
+    ////////////////////////////////////////////////////////////
+    // indirect
+
+    template<typename Projection>
+    class indirect_t:
+        projection_base
+    {
+        private:
+
+            Projection projection;
+
+        public:
+
+            indirect_t() = default;
+            indirect_t(const indirect_t&) = default;
+            indirect_t(indirect_t&&) = default;
+            indirect_t& operator=(const indirect_t&) = default;
+            indirect_t& operator=(indirect_t&&) = default;
+
+            constexpr explicit indirect_t(Projection projection):
+                projection(std::move(projection))
+            {}
+
+            template<typename T>
+            constexpr auto operator()(T&& indirect_value)
+                -> decltype(utility::as_function(projection)(*indirect_value))
+            {
+                auto&& proj = utility::as_function(projection);
+                return proj(*indirect_value);
+            }
+
+            template<typename T>
+            constexpr auto operator()(T&& indirect_value) const
+                -> decltype(utility::as_function(projection)(*indirect_value))
+            {
+                auto&& proj = utility::as_function(projection);
+                return proj(*indirect_value);
+            }
+    };
+
+    template<typename Projection>
+    auto indirect(Projection&& proj)
+        -> indirect_t<std::decay_t<Projection>>
+    {
+        return indirect_t<std::decay_t<Projection>>(std::forward<Projection>(proj));
+    }
 
     ////////////////////////////////////////////////////////////
     // Transform overload in unary or binary function
