@@ -198,8 +198,6 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
-*Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
-
 ### *Mono*
 
 ```cpp
@@ -307,7 +305,7 @@ Some additional measures of presortedness how been described in the literature b
 
 The following definition is also given to determine whether a sequence is *p*-sorted:
 
-> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
+> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*.
 
 *Right invariant metrics and measures of presortedness* by V. Estivill-Castro, H. Mannila and D. Wood mentions that:
 

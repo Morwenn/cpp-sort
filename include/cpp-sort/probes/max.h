@@ -70,8 +70,8 @@ namespace probe
                     iterators.begin(), iterators.end(), proj(*it),
                     compare, utility::indirect(projection)
                 );
-                auto pos_min = std::distance(iterators.begin(), rng.first);
-                auto pos_max = std::distance(iterators.begin(), rng.second);
+                auto pos_min = rng.first - iterators.begin();
+                auto pos_max = rng.second - iterators.begin();
 
                 // If *first isn't into one of its sorted positions, computed the closest
                 if (it_pos < pos_min) {
@@ -116,7 +116,8 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return max_probe_algo(first, last, std::distance(first, last),
+                auto dist = std::distance(first, last);
+                return max_probe_algo(std::move(first), std::move(last), dist,
                                       std::move(compare), std::move(projection));
             }
 
