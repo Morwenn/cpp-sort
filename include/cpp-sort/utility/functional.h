@@ -84,6 +84,32 @@ namespace utility
         );
     }
 
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+    template<
+        typename T,
+        typename = cppsort::detail::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+        >
+    >
+    constexpr auto operator|(T&& lhs, std::identity)
+        -> decltype(auto)
+    {
+        return as_function(std::forward<T>(lhs));
+    }
+
+    template<
+        typename T,
+        typename = cppsort::detail::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+        >
+    >
+    constexpr auto operator|(std::identity, T&& rhs)
+        -> decltype(auto)
+    {
+        return as_function(std::forward<T>(rhs));
+    }
+#endif
+
     ////////////////////////////////////////////////////////////
     // Identity (mostly useful for projections)
 
@@ -104,6 +130,30 @@ namespace utility
     struct is_probably_branchless_projection<identity, T>:
         std::true_type
     {};
+
+    template<
+        typename T,
+        typename = cppsort::detail::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+        >
+    >
+    constexpr auto operator|(T&& lhs, utility::identity)
+        -> decltype(auto)
+    {
+        return as_function(std::forward<T>(lhs));
+    }
+
+    template<
+        typename T,
+        typename = cppsort::detail::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+        >
+    >
+    constexpr auto operator|(utility::identity, T&& rhs)
+        -> decltype(auto)
+    {
+        return as_function(std::forward<T>(rhs));
+    }
 
     ////////////////////////////////////////////////////////////
     // indirect
