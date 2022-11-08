@@ -157,8 +157,8 @@ It is equivalent to the C++20 [`std::identity`][std-identity]. Wherever the docu
 Another simple yet very handy projection available in the header is `indirect_t`, along with its construction function `indirect()`. It takes a projection, and is meant to be called on a dereferenceable value `it`, in which case it will return the result of `proj(*it)`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
 
 ```cpp
-template<typename Projection>
-class indirect_t:
+template<typename Projection=utility::identity>
+struct indirect_t:
     projection_base
 {
 private:
@@ -182,8 +182,8 @@ public:
         -> decltype(utility::as_function(proj_)(*indirect_value));
 };
 
-template<typename Projection>
-auto indirect(Projection&& proj)
+template<typename Projection=utility::identity>
+auto indirect(Projection&& proj={})
     -> indirect_t<std::decay_t<Projection>>;
 ```
 

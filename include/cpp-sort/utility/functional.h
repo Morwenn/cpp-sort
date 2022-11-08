@@ -13,8 +13,13 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
+#include "../detail/config.h"
 #include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+#    include <functional>
+#endif
 
 namespace cppsort
 {
@@ -103,8 +108,8 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // indirect
 
-    template<typename Projection>
-    class indirect_t:
+    template<typename Projection=identity>
+    struct indirect_t:
         projection_base
     {
         private:
@@ -140,8 +145,64 @@ namespace utility
             }
     };
 
-    template<typename Projection>
-    auto indirect(Projection&& proj)
+    template<>
+    struct indirect_t<identity>:
+        projection_base
+    {
+        indirect_t() = default;
+        indirect_t(const indirect_t&) = default;
+        indirect_t(indirect_t&&) = default;
+        indirect_t& operator=(const indirect_t&) = default;
+        indirect_t& operator=(indirect_t&&) = default;
+
+        constexpr explicit indirect_t(identity) noexcept {}
+
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value)
+            -> decltype(*indirect_value)
+        {
+            return *indirect_value;
+        }
+
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value) const
+            -> decltype(*indirect_value)
+        {
+            return *indirect_value;
+        }
+    };
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+    template<>
+    struct indirect_t<std::identity>:
+        projection_base
+    {
+        indirect_t() = default;
+        indirect_t(const indirect_t&) = default;
+        indirect_t(indirect_t&&) = default;
+        indirect_t& operator=(const indirect_t&) = default;
+        indirect_t& operator=(indirect_t&&) = default;
+
+        constexpr explicit indirect_t(std::identity) noexcept {}
+
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value)
+            -> decltype(*indirect_value)
+        {
+            return *indirect_value;
+        }
+
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value) const
+            -> decltype(*indirect_value)
+        {
+            return *indirect_value;
+        }
+    };
+#endif
+
+    template<typename Projection=identity>
+    auto indirect(Projection&& proj={})
         -> indirect_t<std::decay_t<Projection>>
     {
         return indirect_t<std::decay_t<Projection>>(std::forward<Projection>(proj));
