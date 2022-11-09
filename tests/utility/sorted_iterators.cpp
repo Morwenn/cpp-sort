@@ -21,7 +21,7 @@ TEST_CASE( "basic sorted_iterators test", "[utility][sorted_iterators]" )
         auto get_sorted_iterators_for = cppsort::utility::sorted_iterators<cppsort::heap_sorter>{};
         const std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
         auto indices = get_sorted_iterators_for(vec.data(), vec.data() + vec.size());
-        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect()) );
+        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect{}) );
 
         std::vector<const int*> expected = {
             vec.data() + 6, vec.data() + 3, vec.data() + 2,
@@ -37,7 +37,7 @@ TEST_CASE( "basic sorted_iterators test", "[utility][sorted_iterators]" )
         auto get_sorted_iterators_for = cppsort::utility::sorted_iterators<cppsort::heap_sorter>{};
         const std::vector<int> vec = {};
         auto indices = get_sorted_iterators_for(vec.data(), vec.data() + vec.size());
-        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect()) );
+        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect{}) );
 
         std::vector<const int*> expected = {};
         CHECK( indices == expected );
@@ -52,7 +52,7 @@ TEST_CASE( "basic sorted_iterators test", "[utility][sorted_iterators]" )
         auto distribution = dist::all_equal{};
         distribution(std::back_inserter(vec), 10);
         auto indices = get_sorted_iterators_for(vec.data(), vec.data() + vec.size());
-        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect()) );
+        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect{}) );
 
         std::vector<int*> expected = {
             vec.data() + 0, vec.data() + 1, vec.data() + 2,
@@ -70,7 +70,7 @@ TEST_CASE( "basic sorted_iterators test", "[utility][sorted_iterators]" )
         auto distribution = dist::ascending{};
         distribution(std::back_inserter(vec), 10);
         auto indices = get_sorted_iterators_for(vec.data(), vec.data() + vec.size());
-        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect()) );
+        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect{}) );
 
         std::vector<int*> expected = {
             vec.data() + 0, vec.data() + 1, vec.data() + 2,
@@ -88,7 +88,7 @@ TEST_CASE( "basic sorted_iterators test", "[utility][sorted_iterators]" )
         auto distribution = dist::descending{};
         distribution(std::back_inserter(vec), 10);
         auto indices = get_sorted_iterators_for(vec.data(), vec.data() + vec.size());
-        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect()) );
+        CHECK( helpers::is_sorted(indices.begin(), indices.end(), {}, indirect{}) );
 
         std::vector<int*> expected = {
             vec.data() + 9, vec.data() + 8, vec.data() + 7,

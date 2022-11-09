@@ -55,7 +55,7 @@ namespace cppsort
 #ifdef __cpp_lib_uncaught_exceptions
         -> decltype(std::forward<Sorter>(sorter)(
             (RandomAccessIterator*)0, (RandomAccessIterator*)0,
-            std::move(compare), utility::indirect(projection)
+            std::move(compare), utility::indirect{} | std::move(projection)
         ))
 #else
         -> std::enable_if_t<
@@ -63,7 +63,7 @@ namespace cppsort
                     Sorter,
                     RandomAccessIterator*,
                     Compare,
-                    utility::indirect_t<Projection>
+                    decltype(utility::indirect{} | std::move(projection))
                 >::value
             >
 #endif
@@ -82,7 +82,8 @@ namespace cppsort
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(
                 iterators.begin(), iterators.end(),
-                std::move(compare), utility::indirect(projection)
+                std::move(compare),
+                utility::indirect{} | std::move(projection)
             );
 #else
             // Work around the sorters that return void
@@ -131,7 +132,8 @@ namespace cppsort
 
             return std::forward<Sorter>(sorter)(
                 iterators.begin(), iterators.end(),
-                std::move(compare), utility::indirect(projection)
+                std::move(compare),
+                utility::indirect{} | std::move(projection)
             );
 #endif
         }

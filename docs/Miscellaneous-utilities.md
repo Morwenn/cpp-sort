@@ -154,37 +154,20 @@ struct identity:
 
 It is equivalent to the C++20 [`std::identity`][std-identity]. Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
 
-Another simple yet very handy projection available in the header is `indirect_t`, along with its construction function `indirect()`. It takes a projection, and is meant to be called on a dereferenceable value `it`, in which case it will return the result of `proj(*it)`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
+Another simple yet very handy projection available in the header is `indirect`: its instances can be called on any dereferenceable value `it`, in which case it returns `*it`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
 
 ```cpp
-template<typename Projection=utility::identity>
-struct indirect_t:
+struct indirect:
     projection_base
 {
-private:
-    Projection proj_;
-
-public:
-    indirect_t() = default;
-    indirect_t(const indirect_t&) = default;
-    indirect_t(indirect_t&&) = default;
-    indirect_t& operator=(const indirect_t&) = default;
-    indirect_t& operator=(indirect_t&&) = default;
-
-    constexpr explicit indirect_t(Projection proj);
-
     template<typename T>
     constexpr auto operator()(T&& indirect_value)
-        -> decltype(utility::as_function(proj_)(*indirect_value));
+        -> decltype(*std::forward<T>(indirect_value));
 
     template<typename T>
     constexpr auto operator()(T&& indirect_value) const
-        -> decltype(utility::as_function(proj_)(*indirect_value));
+        -> decltype(*std::forward<T>(indirect_value));
 };
-
-template<typename Projection=utility::identity>
-auto indirect(Projection&& proj={})
-    -> indirect_t<std::decay_t<Projection>>;
 ```
 
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:

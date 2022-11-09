@@ -50,7 +50,7 @@ namespace probe
             return cppsort::detail::count_inversions<difference_type>(
                 iterators.get(), iterators.get() + size, buffer.get(),
                 std::move(compare),
-                utility::indirect(std::move(projection))
+                utility::indirect{} | std::move(projection)
             );
         }
 

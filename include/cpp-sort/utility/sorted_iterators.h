@@ -49,7 +49,7 @@ namespace utility
             // Sort the iterators on pointed values
             std::forward<Sorter>(sorter)(iterators.begin(), iterators.end(),
                                          std::move(compare),
-                                         utility::indirect(std::move(projection)));
+                                         utility::indirect{} | std::move(projection));
 
             return iterators;
         }

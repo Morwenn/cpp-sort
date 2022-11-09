@@ -45,13 +45,13 @@ namespace probe
                 return cppsort::detail::lower_monobound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),
-                    accessor | utility::indirect(projection)
+                    accessor | utility::indirect{} | std::move(projection)
                 );
             } else {
                 return cppsort::detail::lower_bound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),
-                    accessor | utility::indirect(projection)
+                    accessor | utility::indirect{} | std::move(projection)
                 );
             }
         }

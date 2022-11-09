@@ -94,7 +94,7 @@ namespace probe
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
                 iterators.begin(), iterators.end(),
-                compare, utility::indirect(projection)
+                compare, utility::indirect{} | projection
             );
 
             ////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ namespace probe
 
             auto prev_bounds = cppsort::detail::equal_range(
                 iterators.begin(), iterators.end(), proj(*first),
-                compare, utility::indirect(projection)
+                compare, utility::indirect{} | projection
             );
 
             for (auto prev = first, current = std::next(prev); current != last; ++prev, (void)++current) {
@@ -129,7 +129,7 @@ namespace probe
                     auto current_bounds = cppsort::detail::equal_range(
                         //prev_bounds.second, std::prev(iterators.end()), proj(*current),
                         iterators.begin(), iterators.end(), proj(*current),
-                        compare, utility::indirect(projection)
+                        compare, utility::indirect{} | projection
                     );
                     min_idx = prev_bounds.second - iterators.begin();
                     max_idx = current_bounds.first - iterators.begin();
@@ -138,7 +138,7 @@ namespace probe
                     auto current_bounds = cppsort::detail::equal_range(
                         //iterators.begin(), prev_bounds.first, proj(*current),
                         iterators.begin(), iterators.end(), proj(*current),
-                        compare, utility::indirect(projection)
+                        compare, utility::indirect{} | projection
                     );
                     min_idx = current_bounds.second - iterators.begin();
                     max_idx = prev_bounds.first - iterators.begin();

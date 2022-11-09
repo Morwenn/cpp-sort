@@ -64,7 +64,7 @@ namespace detail
         while (first != last) {
             auto it = detail::upper_bound(
                 stack_tops.begin(), stack_tops.end(),
-                proj(*first), compare, utility::indirect(projection));
+                proj(*first), compare, utility::indirect{} | projection);
 
             if (it == stack_tops.end()) {
                 // The element is bigger than everything else,

@@ -55,7 +55,7 @@ namespace probe
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
                 iterators.begin(), iterators.end(),
-                compare, utility::indirect(projection)
+                compare, utility::indirect{} | projection
             );
 
             ////////////////////////////////////////////////////////////

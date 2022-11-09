@@ -85,7 +85,7 @@ namespace detail
 
         return *nth_element(
             iterators_buffer.begin(), iterators_buffer.end(), size / 2, size,
-            std::move(compare), utility::indirect(std::move(projection))
+            std::move(compare), utility::indirect{} | std::move(projection)
         );
     }
 

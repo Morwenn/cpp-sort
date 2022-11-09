@@ -55,7 +55,7 @@ namespace probe
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
                 iterators.begin(), iterators.end(),
-                compare, utility::indirect(projection)
+                compare, utility::indirect{} | projection
             );
 
             ////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ namespace probe
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
                     iterators.begin(), iterators.end(), proj(*it),
-                    compare, utility::indirect(projection)
+                    compare, utility::indirect{} | projection
                 );
                 auto pos_min = rng.first - iterators.begin();
                 auto pos_max = rng.second - iterators.begin();

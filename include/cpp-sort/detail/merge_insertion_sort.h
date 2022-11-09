@@ -377,7 +377,7 @@ namespace detail
 
                 auto insertion_point = detail::upper_bound(
                     chain.begin(), *pe, proj(*it),
-                    comp, utility::indirect(proj)
+                    compare, utility::indirect{} | projection
                 );
                 chain.insert(insertion_point, it);
 
@@ -396,7 +396,7 @@ namespace detail
             current_it += 2;
             auto insertion_point = detail::upper_bound(
                 chain.begin(), *current_pend, proj(*current_it),
-                comp, utility::indirect(proj)
+                compare, utility::indirect{} | projection
             );
             chain.insert(insertion_point, current_it);
             ++current_pend;
