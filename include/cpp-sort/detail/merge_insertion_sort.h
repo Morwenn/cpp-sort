@@ -276,7 +276,6 @@ namespace detail
         auto size = last - first;
         if (size < 2) return;
 
-        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Whether there is a stray element not in a pair
