@@ -31,7 +31,6 @@ TEST_CASE( "basic sorted_indices test", "[utility][sorted_indices]" )
 
         std::vector<std::ptrdiff_t> expected = {};
         CHECK( indices == expected );
-
     }
 
     SECTION( "all_equal" )

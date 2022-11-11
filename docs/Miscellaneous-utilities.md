@@ -20,6 +20,29 @@ The usual way to use it when implementing a *sorter adapter* is to make said ada
 
 *New in version 1.5.0*
 
+### `apply_permutation`
+
+```cpp
+#include <cpp-sort/utility/apply_permutation.h>
+```
+
+`apply_permutation` is a function template accepting a random-access range of elements and a random-access range of [0, N) indices of the same size. The indices in the second range represent the positions of the elements in the first range that should be moved in the indices positions to bring the collection in sorted order.
+
+The algorithm requires both the elements range and the indices range to be mutable and modifies both.
+
+```cpp
+template<typename RandomAccessIterator1, typename RandomAccessIterator2>
+auto apply_permutation(RandomAccessIterator1 first, RandomAccessIterator1 last,
+                        RandomAccessIterator2 indices_first, RandomAccessIterator2 indices_last)
+    -> void;
+
+template<typename RandomAccessIterable1, typename RandomAccessIterable2>
+auto apply_permutation(RandomAccessIterable1&& iterable, RandomAccessIterable2&& indices)
+    -> void;
+```
+
+*New in version 1.14.0*
+
 ### `as_comparison` and `as_projection`
 
 ```cpp
@@ -281,7 +304,7 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/sorted_indices.h>
 ```
 
-`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]).
+`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]). The resulting indices can be passed [`apply_permutation`][apply-permutation] to sort the original collection.
 
 ```cpp
 std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
@@ -393,6 +416,7 @@ namespace
 You can read more about this instantiation pattern in [this article][eric-niebler-static-const] by Eric Niebler.
 
 
+  [apply-permutation]: Miscellaneous-utilities.md#apply_permutation
   [chainable-projections]: Chainable-projections.md
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo
