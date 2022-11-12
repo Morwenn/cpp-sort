@@ -21,6 +21,7 @@
 
 TEMPLATE_TEST_CASE( "heap exhaustion for random-access sorters", "[sorters][heap_exhaustion]",
                     cppsort::grail_sorter<>,
+                    cppsort::d_ary_heap_sorter<7>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
                     cppsort::merge_sorter,

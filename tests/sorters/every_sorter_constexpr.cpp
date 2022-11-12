@@ -28,6 +28,7 @@ namespace
 
 TEMPLATE_TEST_CASE( "test every constexpr sorter", "[sorters][constexpr]",
                     cppsort::counting_sorter,
+                    cppsort::d_ary_heap_sorter<7>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
                     cppsort::pdq_sorter,

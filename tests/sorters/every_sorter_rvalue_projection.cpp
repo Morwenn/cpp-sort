@@ -16,6 +16,7 @@
 TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue", "[sorters][projection]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
+                    cppsort::d_ary_heap_sorter<8>,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,

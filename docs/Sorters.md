@@ -40,6 +40,20 @@ Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highl
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | No          | Forward       |
 
+### `d_ary_heap_sorter`
+
+```cpp
+#include <cpp-sort/sorters/d_ary_heap_sorter.h>
+```
+
+Implements a heapsort algorithm based on a [*d*-ary heap][d-ary-heap]: the value of *D* is an integer template parameter that can be passed to either `d_ary_heap_sort` or `d_ary_heap_sorter`. That value cannot be smaller than 2.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n log n     | n log n     | n log n     | 1           | No          | Random-access |
+
+*d*-ary heapsorts are more complicated than their binary counterparts, but storing more elements in each node can improve locality of reference and improve the execution speed. This sorter, unlike [`heap_sorter`][heap-sorter], does not implement a [bottom-up node searching strategy][bottom-up-heapsort].
+
 ### `drop_merge_sorter`
 
 ```cpp
@@ -83,7 +97,7 @@ Whether this sorter works with types that are not default-constructible depends 
 #include <cpp-sort/sorters/heap_sorter.h>
 ```
 
-Implements a bottom-up [heapsort][heapsort].
+Implements a [bottom-up heapsort][bottom-up-heapsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -191,7 +205,7 @@ This sorter can't throw `std::bad_alloc`.
 #include <cpp-sort/sorters/poplar_sorter.h>
 ```
 
-Implements a *poplar sort*, which is a heapsort derivate described by Coenraad Bron and Wim H. Hesselink in *Smoothsort revisited*. It builds a forest of perfect max heaps whose roots are stored on the right, then unheaps the elements to sort the collection.
+Implements a *poplar sort*, which is a [heapsort][heapsort] derivate described by Coenraad Bron and Wim H. Hesselink in *Smoothsort revisited*. It builds a forest of perfect max heaps whose roots are stored on the right, then unheaps the elements to sort the collection.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -481,13 +495,16 @@ struct spread_sorter:
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
   [adaptive-shivers-sort]: https://arxiv.org/abs/1809.08411
   [block-sort]: https://en.wikipedia.org/wiki/Block_sort
+  [bottom-up-heapsort]: https://en.wikipedia.org/wiki/Heapsort#Bottom-up_heapsort
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
   [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
   [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
+  [d-ary-heap]: https://en.wikipedia.org/wiki/D-ary_heap
   [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [grailsort]: https://github.com/Mrrl/GrailSort
   [heapsort]: https://en.wikipedia.org/wiki/Heapsort
+  [heap-sorter]: Sorters.md#heap_sorter
   [insertion-sort]: https://en.wikipedia.org/wiki/Insertion_sort
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [issue-168]: https://github.com/Morwenn/cpp-sort/issues/168

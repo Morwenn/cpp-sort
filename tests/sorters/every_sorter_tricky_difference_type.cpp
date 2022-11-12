@@ -16,6 +16,7 @@ TEMPLATE_TEST_CASE( "test every sorter with an int8_t difference_type", "[sorter
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
+                    cppsort::d_ary_heap_sorter<4>,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

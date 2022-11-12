@@ -158,6 +158,9 @@ of a Timsort](https://github.com/gfx/cpp-TimSort).
 * The three algorithms used by `spread_sorter` come from Steven Ross [Boost.Sort
 module](https://www.boost.org/doc/libs/1_71_0/libs/sort/doc/html/index.html).
 
+* The algorithm used by `d_ary_spread_sorter` comes from Tim Blechmann's
+[Boost.Heap module](https://www.boost.org/doc/libs/1_80_0/doc/html/heap.html).
+
 * [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function),
 and several projection-enhanced helper algorithms come from Eric Niebler's [Range
 v3](https://github.com/ericniebler/range-v3) library. Several ideas such as proxy

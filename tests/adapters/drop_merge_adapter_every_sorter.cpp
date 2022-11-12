@@ -14,9 +14,10 @@
 #include <testing-tools/old_default_sorter.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with drop_merge_adapter", "[drop_merge_adapter]",
+                    old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    old_default_sorter,
+                    cppsort::d_ary_heap_sorter<6>,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
