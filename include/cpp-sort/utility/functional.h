@@ -92,9 +92,9 @@ namespace utility
         >
     >
     constexpr auto operator|(T&& lhs, std::identity)
-        -> decltype(auto)
+        -> decltype(std::forward<T>(lhs))
     {
-        return as_function(std::forward<T>(lhs));
+        return std::forward<T>(lhs);
     }
 
     template<
@@ -104,9 +104,9 @@ namespace utility
         >
     >
     constexpr auto operator|(std::identity, T&& rhs)
-        -> decltype(auto)
+        -> decltype(std::forward<T>(rhs))
     {
-        return as_function(std::forward<T>(rhs));
+        return std::forward<T>(rhs);
     }
 #endif
 
@@ -131,28 +131,24 @@ namespace utility
         std::true_type
     {};
 
-    template<
-        typename T,
-        typename = cppsort::detail::enable_if_t<
-            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
-        >
-    >
+    template<typename T>
     constexpr auto operator|(T&& lhs, utility::identity)
-        -> decltype(auto)
+        -> decltype(std::forward<T>(lhs))
     {
-        return as_function(std::forward<T>(lhs));
+        return std::forward<T>(lhs);
     }
 
-    template<
-        typename T,
-        typename = cppsort::detail::enable_if_t<
-            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
-        >
-    >
+    template<typename T>
     constexpr auto operator|(utility::identity, T&& rhs)
-        -> decltype(auto)
+        -> decltype(std::forward<T>(rhs))
     {
-        return as_function(std::forward<T>(rhs));
+        return std::forward<T>(rhs);
+    }
+
+    constexpr auto operator|(utility::identity, utility::identity)
+        -> utility::identity
+    {
+        return {};
     }
 
     ////////////////////////////////////////////////////////////

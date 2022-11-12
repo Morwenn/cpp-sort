@@ -231,7 +231,7 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 
 *Changed in version 1.13.0:* `half`, `log` and `sqrt` are now [*transparent function objects*][transparent-func].
 
-*New in version 1.14.0:* `indirect` and `indirect_t`.
+*New in version 1.14.0:* `indirect`.
 
 ### `iter_move` and `iter_swap`
 
