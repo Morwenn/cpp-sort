@@ -191,6 +191,26 @@ constexpr auto iter_swap(Iterator lhs, Iterator rhs)
 
 *NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
 
+
+### `sorted_indices`
+
+```cpp
+#include <cpp-sort/utility/sorted_indices.h>
+```
+
+`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access ranges (or iterator/sentinel pair) and returns an [`std::vector`][std-vector] containing the indices that would sort that range (similarly to [`numpy.argsort`][numpy-argsort]).
+
+```cpp
+std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
+auto get_sorted_indices_for = cppsort::utility::sorted_indices(cppsort::heap_sort);
+auto indices = get_sorted_indices_for(vec);
+// indices == [6, 3, 2, 9, 1, 8, 0, 5, 4, 7]
+```
+
+Concretely `sorted_indices` is designed like a [sorter adapter][sorter-adapters] and therefore supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade]. The main reason it does not sit with sorter adapters is that the returned function object is not a sorter per se since it doesn't sort the passed collection directly.
+
+When the collection contains several elements that compare equivalent, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of elements that compare equivalent appear in a stable order in the result.
+
 ### Sorting network tools
 
 ```cpp
@@ -245,10 +265,13 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo
   [fixed-size-sorters]: Fixed-size-sorters.md
+  [is-stable]: Sorter-traits.md#is_stable
+  [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [p0022]: https://wg21.link/P0022
   [pdq-sorter]: Sorters.md#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3
   [sorter-adapters]: Sorter-adapters.md
+  [sorter-facade]: Sorter-facade.md
   [sorters]: Sorters.md
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
@@ -267,4 +290,5 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-size]: https://en.cppreference.com/w/cpp/iterator/size
+  [std-vector]: https://en.cppreference.com/w/cpp/container/vector
   [transparent-func]: Comparators-and-projections.md#Transparent-function-objects
