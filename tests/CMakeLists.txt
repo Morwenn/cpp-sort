@@ -200,7 +200,6 @@ add_executable(main-tests
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorters/default_sorter_fptr.cpp>
     sorters/default_sorter_projection.cpp
     sorters/every_instantiated_sorter.cpp
-    sorters/every_sorter.cpp
     sorters/every_sorter_constexpr.cpp
     sorters/every_sorter_internal_compare.cpp
     sorters/every_sorter_long_string.cpp
