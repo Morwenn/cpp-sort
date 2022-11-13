@@ -31,7 +31,7 @@ namespace cppsort::detail
     template<typename... Sorters>
     struct check_iterator_category:
         check_iterator_category_impl<
-            (has_iterator_category<sorter_traits<Sorters>>::value && ...),
+            (has_iterator_category_v<sorter_traits<Sorters>> && ...),
             Sorters...
         >
     {};
@@ -50,7 +50,7 @@ namespace cppsort::detail
     template<typename... Sorters>
     struct check_is_always_stable:
         check_is_always_stable_impl<
-            (has_is_always_stable<sorter_traits<Sorters>>::value && ...),
+            (has_is_always_stable_v<sorter_traits<Sorters>> && ...),
             Sorters...
         >
     {};

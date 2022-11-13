@@ -19,15 +19,10 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // iterator_category
 
-    template<typename T, typename=void>
-    struct has_iterator_category:
-        std::false_type
-    {};
-
     template<typename T>
-    struct has_iterator_category<T, std::void_t<typename T::iterator_category>>:
-        std::true_type
-    {};
+    inline constexpr bool has_iterator_category_v = requires {
+        typename T::iterator_category;
+    };
 
     template<bool, typename...>
     struct raw_check_iterator_category_impl {};
@@ -43,7 +38,7 @@ namespace cppsort::detail
     template<typename... Sorters>
     struct raw_check_iterator_category:
         raw_check_iterator_category_impl<
-            (has_iterator_category<Sorters>::value && ...),
+            (has_iterator_category_v<Sorters> && ...),
             Sorters...
         >
     {};
@@ -51,15 +46,10 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // is_always_stable
 
-    template<typename T, typename=void>
-    struct has_is_always_stable:
-        std::false_type
-    {};
-
     template<typename T>
-    struct has_is_always_stable<T, std::void_t<typename T::is_always_stable>>:
-        std::true_type
-    {};
+    inline constexpr bool has_is_always_stable_v = requires {
+        typename T::is_always_stable;
+    };
 
     template<bool, typename...>
     struct raw_check_is_always_stable_impl {};
@@ -75,7 +65,7 @@ namespace cppsort::detail
     template<typename... Sorters>
     struct raw_check_is_always_stable:
         raw_check_is_always_stable_impl<
-            (has_is_always_stable<Sorters>::value && ...),
+            (has_is_always_stable_v<Sorters> && ...),
             Sorters...
         >
     {};
@@ -83,19 +73,10 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // is_transparent
 
-    template<typename T, typename=void>
-    struct has_is_transparent:
-        std::false_type
-    {};
-
     template<typename T>
-    struct has_is_transparent<T, std::void_t<typename T::is_transparent>>:
-        std::true_type
-    {};
-
-    template<typename T>
-    inline constexpr bool has_is_transparent_v
-        = has_is_transparent<std::remove_cvref_t<T>>::value;
+    inline constexpr bool has_is_transparent_v = requires {
+        typename T::is_transparent;
+    };
 
     template<bool>
     struct raw_check_is_transparent_impl {};
@@ -109,7 +90,7 @@ namespace cppsort::detail
     template<typename... TT>
     struct raw_check_is_transparent:
         raw_check_is_transparent_impl<
-            (has_is_transparent<TT>::value && ...)
+            (has_is_transparent_v<TT> && ...)
         >
     {};
 }
