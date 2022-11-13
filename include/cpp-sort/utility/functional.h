@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+#include <functional>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/type_traits.h>
@@ -33,8 +34,8 @@ namespace cppsort::utility
             projection_base,
             cppsort::detail::raw_check_is_transparent<T, U>
         {
-            T lhs;
-            U rhs;
+            [[no_unique_address]] T lhs;
+            [[no_unique_address]] U rhs;
 
             projection_base_pipe_result(T lhs, U rhs):
                 lhs(std::move(lhs)),
@@ -59,14 +60,11 @@ namespace cppsort::utility
         };
     }
 
-    template<
-        typename T,
-        typename U,
-        typename = mstd::enable_if_t<
+    template<typename T, typename U>
+        requires (
             std::is_base_of_v<projection_base, std::remove_cvref_t<T>> ||
             std::is_base_of_v<projection_base, std::remove_cvref_t<U>>
-        >
-    >
+        )
     constexpr auto operator|(T&& lhs, U&& rhs)
         -> decltype(auto)
     {
@@ -76,6 +74,24 @@ namespace cppsort::utility
             as_function(std::forward<T>(lhs)),
             as_function(std::forward<U>(rhs))
         );
+    }
+
+    template<typename T>
+        requires std::is_base_of_v<projection_base, std::remove_cvref_t<T>>
+    constexpr auto operator|(T&& lhs, std::identity)
+        noexcept(noexcept(std::forward<T>(lhs)))
+        -> decltype(std::forward<T>(lhs))
+    {
+        return std::forward<T>(lhs);
+    }
+
+    template<typename U>
+        requires std::is_base_of_v<projection_base, std::remove_cvref_t<U>>
+    constexpr auto operator|(std::identity, U&& rhs)
+        noexcept(noexcept(std::forward<U>(rhs)))
+        -> decltype(std::forward<U>(rhs))
+    {
+        return std::forward<U>(rhs);
     }
 
     ////////////////////////////////////////////////////////////

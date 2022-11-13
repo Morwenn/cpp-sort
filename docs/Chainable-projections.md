@@ -1,4 +1,4 @@
-Sometimes one might needs to several transformations to the elements of a collection before comparing them. To support this use case, some projection functions in **cpp-sort** can be composed with `operator|`
+Sometimes one might needs to several transformations to the elements of a collection before comparing them. To support this use case, some projection functions in **cpp-sort** can be composed with `operator|`.
 
 ```cpp
 struct my_negate:
@@ -23,7 +23,7 @@ my_negate projection;
 cppsort::poplar_sort(vec, &wrapper::value | projection);
 ```
 
-The object returned by the utility function [`utility::as_projection`][as_projection] also inherits from `utility::projection_base`, making `as_projection` the proper function to turn any suitable projection into a projection composable with `operator|`.
+The object returned by the utility function [`utility::as_projection`][as_projection] also inherits from `utility::projection_base`, making `as_projection` the proper function to turn any suitable projection into a projection composable with `operator|`. If one of the arguments `operator|` arguments is [`std::identity`][std-identity], then the other argument is returned directly.
 
 If both of the projections composed with `operator|` are [*transparent*][transparent-func], then the returned object is also a *transparent* projection.
 
