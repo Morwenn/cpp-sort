@@ -211,6 +211,29 @@ Concretely `sorted_indices` is designed like a [sorter adapter][sorter-adapters]
 
 When the collection contains several elements that compare equivalent, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of elements that compare equivalent appear in a stable order in the result.
 
+### `sorted_iterators`
+
+```cpp
+#include <cpp-sort/utility/sorted_iterators.h>
+```
+
+`utility::sorted_iterators` is a function object that takes a sorter and returns a new function object. This new function object accepts a range and returns an [`std::vector`][std-vector] containing iterators to the passed range in a sorted order. It is designed like a [sorter adapter][sorter-adapters] and as such supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade].
+
+```cpp
+std::list<int> li = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
+auto get_sorted_iterators_for = cppsort::utility::sorted_iterators(cppsort::heap_sort);
+const auto iterators = get_sorted_iterators_for(li);
+
+// Displays 0 1 2 3 4 5 6 7 8 9
+for (auto it: iterators) {
+    std::cout << *it << ' ';
+}
+```
+
+It can be thought of as a kind of sorted view of the passed collection - as long as said collection does not change. It can be useful when the order of the original collection must be preserved, but operations have to be performed on the sorted collection.
+
+When the collection contains several elements that compare equivalent, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to elements that compare equivalent appear in a stable order in the result.
+
 ### Sorting network tools
 
 ```cpp
