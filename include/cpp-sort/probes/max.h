@@ -67,8 +67,8 @@ namespace cppsort::probe
                     iterators.begin(), iterators.end(), proj(*it),
                     compare, cppsort::detail::indirect(projection)
                 );
-                auto pos_min = std::distance(iterators.begin(), rng.first);
-                auto pos_max = std::distance(iterators.begin(), rng.second);
+                auto pos_min = rng.first - iterators.begin();
+                auto pos_max = rng.second - iterators.begin();
 
                 // If *first isn't into one of its sorted positions, computed the closest
                 if (it_pos < pos_min) {
@@ -113,8 +113,8 @@ namespace cppsort::probe
                             Compare compare={}, Projection projection={}) const
                 -> mstd::iter_difference_t<Iterator>
             {
-                return max_probe_algo(first, last,
-                                      mstd::distance(first, last),
+                auto dist = mstd::distance(first, last);
+                return max_probe_algo(std::move(first), std::move(last), dist,
                                       std::move(compare), std::move(projection));
             }
 
