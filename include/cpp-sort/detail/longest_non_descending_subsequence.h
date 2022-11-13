@@ -14,7 +14,7 @@
 #include <vector>
 #include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
-#include "functional.h"
+#include <cpp-sort/utility/functional.h>
 #include "iterator_traits.h"
 #include "upper_bound.h"
 
@@ -64,7 +64,8 @@ namespace cppsort::detail
         while (first != last) {
             auto it = detail::upper_bound(
                 stack_tops.begin(), stack_tops.end(),
-                proj(*first), compare, indirect(projection));
+                proj(*first), compare, utility::indirect{} | projection
+            );
 
             if (it == stack_tops.end()) {
                 // The element is bigger than everything else,

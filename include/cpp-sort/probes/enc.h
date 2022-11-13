@@ -19,7 +19,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include "../detail/functional.h"
+#include <cpp-sort/utility/functional.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
 
@@ -43,13 +43,13 @@ namespace cppsort::probe
                 return cppsort::detail::lower_monobound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),
-                    accessor | cppsort::detail::indirect(projection)
+                    accessor | utility::indirect{} | std::move(projection)
                 );
             } else {
                 return cppsort::detail::lower_bound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),
-                    accessor | cppsort::detail::indirect(projection)
+                    accessor | utility::indirect{} | std::move(projection)
                 );
             }
         }

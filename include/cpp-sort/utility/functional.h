@@ -79,6 +79,27 @@ namespace cppsort::utility
     }
 
     ////////////////////////////////////////////////////////////
+    // indirect
+
+    struct indirect:
+        projection_base
+    {
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value)
+            -> decltype(*std::forward<T>(indirect_value))
+        {
+            return *std::forward<T>(indirect_value);
+        }
+
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value) const
+            -> decltype(*std::forward<T>(indirect_value))
+        {
+            return *std::forward<T>(indirect_value);
+        }
+    };
+
+    ////////////////////////////////////////////////////////////
     // Transform overload in unary or binary function
 
     namespace detail

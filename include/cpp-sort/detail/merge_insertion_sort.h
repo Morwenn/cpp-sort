@@ -11,9 +11,9 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "fixed_size_list.h"
-#include "functional.h"
 #include "immovable_vector.h"
 #include "iterator_traits.h"
 #include "move.h"
@@ -273,7 +273,6 @@ namespace cppsort::detail
         auto size = last - first;
         if (size < 2) return;
 
-        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Whether there is a stray element not in a pair
@@ -374,7 +373,7 @@ namespace cppsort::detail
 
                 auto insertion_point = detail::upper_bound(
                     chain.begin(), *pe, proj(*it),
-                    comp, indirect(proj)
+                    compare, utility::indirect{} | projection
                 );
                 chain.insert(insertion_point, it);
 
@@ -393,7 +392,7 @@ namespace cppsort::detail
             current_it += 2;
             auto insertion_point = detail::upper_bound(
                 chain.begin(), *current_pend, proj(*current_it),
-                comp, indirect(proj)
+                compare, utility::indirect{} | projection
             );
             chain.insert(insertion_point, current_it);
             ++current_pend;

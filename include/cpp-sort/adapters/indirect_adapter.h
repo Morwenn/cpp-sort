@@ -19,9 +19,9 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/indiesort.h"
 #include "../detail/iterator_traits.h"
@@ -63,7 +63,8 @@ namespace cppsort
                              Compare compare, Projection projection)
         -> decltype(std::forward<Sorter>(sorter)(
             (Iterator*)0, (Iterator*)0,
-            std::move(compare), indirect(projection)
+            std::move(compare),
+            utility::indirect{} | std::move(projection)
         ))
         {
             using utility::iter_move;
@@ -121,7 +122,8 @@ namespace cppsort
 
             return std::forward<Sorter>(sorter)(
                 iterators.begin(), iterators.end(),
-                std::move(compare), indirect(projection)
+                std::move(compare),
+                utility::indirect{} | std::move(projection)
             );
         }
 

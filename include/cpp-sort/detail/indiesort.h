@@ -31,6 +31,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/immovable_vector.h"
 #include "iterator_traits.h"
@@ -59,7 +60,7 @@ namespace cppsort::detail
         -> decltype(std::forward<Sorter>(sorter)(
             (it_and_index<ForwardIterator>*)0, (it_and_index<ForwardIterator>*)0,
             std::move(compare),
-            &it_and_index<ForwardIterator>::original_location | indirect(projection)
+            &it_and_index<ForwardIterator>::original_location | utility::indirect{} | std::move(projection)
         ))
     {
         using utility::iter_move;
@@ -106,7 +107,7 @@ namespace cppsort::detail
         // Sort the iterators on pointed values
         return std::forward<Sorter>(sorter)(
             storage.begin(), storage.end(), std::move(compare),
-            &item_index_tuple::original_location | indirect(projection)
+            &item_index_tuple::original_location | utility::indirect{} | std::move(projection)
         );
     }
 }

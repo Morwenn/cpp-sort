@@ -16,8 +16,8 @@
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/functional.h>
 #include "../detail/count_inversions.h"
-#include "../detail/functional.h"
 
 namespace cppsort::probe
 {
@@ -46,7 +46,7 @@ namespace cppsort::probe
             return cppsort::detail::count_inversions<difference_type>(
                 iterators.get(), iterators.get() + size, buffer.get(),
                 std::move(compare),
-                cppsort::detail::indirect(std::move(projection))
+                utility::indirect{} | std::move(projection)
             );
         }
 

@@ -123,12 +123,28 @@ This buffer provider allocates on the heap a number of elements depending on a g
 
 This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
 
+One such simple yet very handy projection available in the header is `indirect`: its instances can be called on any dereferenceable value `it`, in which case it returns `*it`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
+
+```cpp
+struct indirect:
+    projection_base
+{
+    template<typename T>
+    constexpr auto operator()(T&& indirect_value)
+        -> decltype(*std::forward<T>(indirect_value));
+
+    template<typename T>
+    constexpr auto operator()(T&& indirect_value) const
+        -> decltype(*std::forward<T>(indirect_value));
+};
+```
+
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:
 * `half`: returns the passed value divided by 2.
 * `log`: returns the base 10 logarithm of the passed value.
 * `sqrt`: returns the square root of the passed value.
 
-All of those function objects inherit from `projection_base` and are [*transparent  function objects*][transparent-func].
+All of those function objects inherit from `projection_base` and are [*transparent function objects*][transparent-func].
 
 The following utility can be used if extra micro-optimization is needed when calling functions:
 

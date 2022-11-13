@@ -19,8 +19,8 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include "../detail/equal_range.h"
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/pdqsort.h"
 
@@ -53,8 +53,8 @@ namespace cppsort::probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(), compare,
-                cppsort::detail::indirect(projection)
+                iterators.begin(), iterators.end(),
+                compare, utility::indirect{} | projection
             );
 
             ////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ namespace cppsort::probe
 
             auto prev_bounds = cppsort::detail::equal_range(
                 iterators.begin(), iterators.end(), proj(*first),
-                compare, cppsort::detail::indirect(projection)
+                compare, utility::indirect{} | projection
             );
 
             for (auto prev = first, current = std::next(prev); current != last; ++prev, (void)++current) {
@@ -89,7 +89,7 @@ namespace cppsort::probe
                     auto current_bounds = cppsort::detail::equal_range(
                         //prev_bounds.second, std::prev(iterators.end()), proj(*current),
                         iterators.begin(), iterators.end(), proj(*current),
-                        compare, cppsort::detail::indirect(projection)
+                        compare, utility::indirect{} | projection
                     );
                     min_idx = prev_bounds.second - iterators.begin();
                     max_idx = current_bounds.first - iterators.begin();
@@ -98,7 +98,7 @@ namespace cppsort::probe
                     auto current_bounds = cppsort::detail::equal_range(
                         //iterators.begin(), prev_bounds.first, proj(*current),
                         iterators.begin(), iterators.end(), proj(*current),
-                        compare, cppsort::detail::indirect(projection)
+                        compare, utility::indirect{} | projection
                     );
                     min_idx = current_bounds.second - iterators.begin();
                     max_idx = prev_bounds.first - iterators.begin();
