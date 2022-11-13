@@ -18,6 +18,32 @@ struct adapter_storage;
 
 The usual way to use it when implementing a *sorter adapter* is to make said adapter inherit from `adapter_storage<Sorter>` and to feed it a copy of the *original sorter*. Then either `get()` or `operator()` can be used to correctly call the wrapped sorter.
 
+### `apply_permutation`
+
+```cpp
+#include <cpp-sort/utility/apply_permutation.h>
+```
+
+`apply_permutation` is a function template accepting a random-access range of elements and a random-access range of [0, N) indices of the same size. The indices in the second range represent the positions of the elements in the first range that should be moved in the indices positions to bring the collection in sorted order.
+
+The algorithm requires both the elements range and the indices range to be mutable and modifies both.
+
+```cpp
+template<
+    mstd::random_access_iterator Iterator1,
+    mstd::sentinel_for<Iterator1> Sentinel1,
+    mstd::random_access_iterator Iterator2,
+    mstd::sentinel_for<Iterator2> Sentinel2
+>
+auto apply_permutation(Iterator1 first, Sentinel1 last,
+                       Iterator2 indices_first, Sentinel2 indices_last)
+    -> void;
+
+template<mstd::random_access_range Range1, mstd::random_access_range Range2>
+auto apply_permutation(Range1&& range, Range2&& indices)
+    -> void;
+```
+
 ### `as_comparison` and `as_projection`
 
 ```cpp
@@ -198,7 +224,7 @@ constexpr auto iter_swap(Iterator lhs, Iterator rhs)
 #include <cpp-sort/utility/sorted_indices.h>
 ```
 
-`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access ranges (or iterator/sentinel pair) and returns an [`std::vector`][std-vector] containing the indices that would sort that range (similarly to [`numpy.argsort`][numpy-argsort]).
+`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access ranges (or iterator/sentinel pair) and returns an [`std::vector`][std-vector] containing the indices that would sort that range (similarly to [`numpy.argsort`][numpy-argsort]). The resulting indices can be passed [`apply_permutation`][apply-permutation] to sort the original collection.
 
 ```cpp
 std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
@@ -284,6 +310,7 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
 `swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
 
 
+  [apply-permutation]: Miscellaneous-utilities.md#apply_permutation
   [chainable-projections]: Chainable-projections.md
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo

@@ -227,6 +227,7 @@ add_executable(main-tests
 
     # Utilities tests
     utility/adapter_storage.cpp
+    utility/apply_permutation.cpp
     utility/as_comparison.cpp
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
