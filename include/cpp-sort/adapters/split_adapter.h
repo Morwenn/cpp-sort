@@ -79,8 +79,7 @@ namespace cppsort
                     "split_adapter requires a stronger iterator category"
                 );
 
-                auto last_it = mstd::next(first, std::move(last));
-                split_sort(std::move(first), std::move(last_it),
+                split_sort(std::move(first), std::move(last),
                            std::move(compare), std::move(projection),
                            this->get());
             }
