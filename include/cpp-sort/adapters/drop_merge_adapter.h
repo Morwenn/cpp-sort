@@ -49,8 +49,7 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                auto last_it = mstd::next(first, std::move(last));
-                drop_merge_sort(std::move(first), std::move(last_it),
+                drop_merge_sort(std::move(first), std::move(last),
                                 std::move(compare), std::move(projection),
                                 this->get());
             }

@@ -39,11 +39,12 @@ namespace cppsort::detail
 {
     template<
         typename BidirectionalIterator,
+        typename Sentinel,
         typename Compare,
         typename Projection,
         typename Sorter
     >
-    auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
+    auto drop_merge_sort(BidirectionalIterator begin, Sentinel end,
                          Compare compare, Projection projection, Sorter&& sorter)
         -> void
     {
@@ -122,7 +123,7 @@ namespace cppsort::detail
         // Sort the dropped elements
         std::forward<Sorter>(sorter)(dropped.begin(), dropped.end(), compare, projection);
 
-        auto back = end;
+        auto back = read; // read == end
         do {
             auto& last_dropped = dropped.back();
 
