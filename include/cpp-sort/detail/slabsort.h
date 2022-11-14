@@ -12,8 +12,9 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -130,7 +131,6 @@ namespace cppsort::detail
     {
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
         using node_type = slabsort_list_node<BidirectionalIterator>;
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -196,13 +196,13 @@ namespace cppsort::detail
         ////////////////////////////////////////////////////////////
         // Reify encroaching lists
 
-        for (auto& list : lists) {
+        for (auto& list: lists) {
             // TODO: handle destruction when an exception is thrown during the loop
             for (auto it = list.begin(), end = list.end() ; it != end ; ++it) {
                 auto node = it.base();
                 auto value_it = node->it;
                 std::destroy_at(&node->it);
-                std::construct_at(&node->value, iter_move(value_it));
+                std::construct_at(&node->value, mstd::iter_move(value_it));
             }
             list.set_node_destructor(destroy_node_contents<rvalue_type, node_type, &node_type::value>);
         }

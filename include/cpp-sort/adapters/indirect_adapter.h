@@ -20,7 +20,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/indiesort.h"
@@ -67,8 +66,6 @@ namespace cppsort
             utility::indirect{} | std::move(projection)
         ))
         {
-            using utility::iter_move;
-
             ////////////////////////////////////////////////////////////
             // Indirectly sort the iterators
 
@@ -97,9 +94,9 @@ namespace cppsort
 
                     // Process the current cycle
                     if (next != current) {
-                        auto tmp = iter_move(current);
+                        auto tmp = mstd::iter_move(current);
                         while (next != start) {
-                            *current = iter_move(next);
+                            *current = mstd::iter_move(next);
                             current = next;
                             auto next_pos = next - first;
                             next = iterators[next_pos];

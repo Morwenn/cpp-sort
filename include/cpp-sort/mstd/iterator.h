@@ -146,6 +146,19 @@ namespace cppsort::mstd
     }
 
     ////////////////////////////////////////////////////////////
+    // iter_move
+    //
+    // The semantic requirements of iter_move for cpp-sort are
+    // different from those of std::ranges::iter_move, notably
+    // in that cpp-sort imposes no requirement that iter_move(e)
+    // be equal to *e. Those semantic requirements, however, are
+    // not statically checked, so we can get away with reusing
+    // std::ranges::iter_move directly for now.
+
+    using std::ranges::iter_move;
+    using std::iter_rvalue_reference_t;
+
+    ////////////////////////////////////////////////////////////
     // indirectly_readable
     //
     // Compared to std::indirectly_readable, this concept has no
@@ -161,7 +174,7 @@ namespace cppsort::mstd
             requires(const Indirect in) {
                 typename std::iter_value_t<Indirect>;
                 typename std::iter_reference_t<Indirect>;
-                typename std::iter_rvalue_reference_t<Indirect>;
+                typename iter_rvalue_reference_t<Indirect>;
                 { *in } -> std::same_as<std::iter_reference_t<Indirect>>;
             } &&
             std::common_reference_with<

@@ -9,8 +9,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "is_sorted_until.h"
 #include "move.h"
@@ -28,7 +28,6 @@ namespace cppsort::detail
         CPPSORT_AUDIT(detail::is_sorted(first1, last1, compare, projection1));
         CPPSORT_AUDIT(detail::is_sorted(first2, last2, compare, projection2));
 
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj1 = utility::as_function(projection1);
         auto&& proj2 = utility::as_function(projection2);
@@ -46,13 +45,13 @@ namespace cppsort::detail
             CPPSORT_ASSUME(first2 != last2);
 
             if (comp(proj2(*first2), proj1(*first1))) {
-                *result = iter_move(first2);
+                *result = mstd::iter_move(first2);
                 ++first2;
                 if (first2 == last2) {
                     return detail::move(first1, last1, ++result);
                 }
             } else {
-                *result = iter_move(first1);
+                *result = mstd::iter_move(first1);
                 ++first1;
                 if (first1 == last1) {
                     return detail::move(first2, last2, ++result);

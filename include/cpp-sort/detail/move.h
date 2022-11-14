@@ -12,6 +12,7 @@
 #include <iterator>
 #include <memory>
 #include <type_traits>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
@@ -40,8 +41,7 @@ namespace cppsort::detail
         >
     {
         for (; first != last; ++first, (void) ++result) {
-            using utility::iter_move;
-            *result = iter_move(first);
+            *result = mstd::iter_move(first);
         }
         return result;
     }
@@ -67,8 +67,7 @@ namespace cppsort::detail
         >
     {
         while (first != last) {
-            using utility::iter_move;
-            *--result = iter_move(--last);
+            *--result = mstd::iter_move(--last);
         }
         return result;
     }
@@ -90,8 +89,7 @@ namespace cppsort::detail
         -> T*
     {
         for (; first != last; ++first, (void) ++result, ++destroyer) {
-            using utility::iter_move;
-            std::construct_at(result, iter_move(first));
+            std::construct_at(result, mstd::iter_move(first));
         }
         return result;
     }

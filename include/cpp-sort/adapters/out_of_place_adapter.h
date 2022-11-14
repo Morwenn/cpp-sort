@@ -17,7 +17,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -35,7 +34,6 @@ namespace cppsort
                                Size size, const Sorter& sorter, Args&&... args)
             -> decltype(auto)
         {
-            using utility::iter_move;
             using rvalue_type = rvalue_type_t<ForwardIterator>;
 
             // Copy the collection into contiguous memory buffer

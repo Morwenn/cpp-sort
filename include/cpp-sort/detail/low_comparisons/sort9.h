@@ -31,7 +31,6 @@ namespace cppsort::detail
             // space-efficient variant of the Ford-Johnson merge-insertion
             // sort described by Ayala-Rincón1, de Abreu and de Siqueira
 
-            using utility::iter_move;
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
@@ -77,15 +76,15 @@ namespace cppsort::detail
             if (comp(proj(first[5u]), proj(first[1u]))) {
                 if (comp(proj(first[5u]), proj(first[0u]))) {
                     {
-                        auto tmp = iter_move(first + 5u);
-                        first[5u] = iter_move(first + 3u);
-                        first[3u] = iter_move(first + 1u);
+                        auto tmp = mstd::iter_move(first + 5u);
+                        first[5u] = mstd::iter_move(first + 3u);
+                        first[3u] = mstd::iter_move(first + 1u);
                         first[1u] = std::move(tmp);
                     }
                     {
-                        auto tmp = iter_move(first + 4u);
-                        first[4u] = iter_move(first + 2u);
-                        first[2u] = iter_move(first);
+                        auto tmp = mstd::iter_move(first + 4u);
+                        first[4u] = mstd::iter_move(first + 2u);
+                        first[2u] = mstd::iter_move(first);
                         first[0u] = std::move(tmp);
                     }
 
@@ -118,9 +117,9 @@ namespace cppsort::detail
                     {
                         // Reorder G -- H -- I into H -- I -- G in memory
                         // to make subsequent operations easier
-                        auto tmp = iter_move(first + 6u);
-                        first[6u] = iter_move(first + 7u);
-                        first[7u] = iter_move(first + 8u);
+                        auto tmp = mstd::iter_move(first + 6u);
+                        first[6u] = mstd::iter_move(first + 7u);
+                        first[7u] = mstd::iter_move(first + 8u);
                         first[8u] = std::move(tmp);
                     }
 
@@ -155,9 +154,9 @@ namespace cppsort::detail
                                 // have to insert G into the first 6 elements
                                 {
                                     // Reorder H -- I -- G into G -- H -- I
-                                    auto tmp = iter_move(first + 8u);
-                                    first[8u] = iter_move(first + 7u);
-                                    first[7u] = iter_move(first + 6u);
+                                    auto tmp = mstd::iter_move(first + 8u);
+                                    first[8u] = mstd::iter_move(first + 7u);
+                                    first[7u] = mstd::iter_move(first + 6u);
                                     first[6u] = std::move(tmp);
                                 }
 
@@ -222,11 +221,11 @@ namespace cppsort::detail
                         }
                     }
                 } else {
-                    auto tmp = iter_move(first + 5u);
-                    first[5u] = iter_move(first + 3u);
-                    first[3u] = iter_move(first + 1u);
-                    first[1u] = iter_move(first + 4u);
-                    first[4u] = iter_move(first + 2u);
+                    auto tmp = mstd::iter_move(first + 5u);
+                    first[5u] = mstd::iter_move(first + 3u);
+                    first[3u] = mstd::iter_move(first + 1u);
+                    first[1u] = mstd::iter_move(first + 4u);
+                    first[4u] = mstd::iter_move(first + 2u);
                     first[2u] = std::move(tmp);
 
                     // A -- F -- B -- D -- H
@@ -266,9 +265,9 @@ namespace cppsort::detail
                     {
                         // Reorder G -- H -- I into H -- I -- G in memory
                         // to make subsequent operations easier
-                        auto tmp = iter_move(first + 6u);
-                        first[6u] = iter_move(first + 7u);
-                        first[7u] = iter_move(first + 8u);
+                        auto tmp = mstd::iter_move(first + 6u);
+                        first[6u] = mstd::iter_move(first + 7u);
+                        first[7u] = mstd::iter_move(first + 8u);
                         first[8u] = std::move(tmp);
                     }
 
@@ -303,9 +302,9 @@ namespace cppsort::detail
                                 // have to insert G into the first 6 elements
                                 {
                                     // Reorder H -- I -- G into G -- H -- I
-                                    auto tmp = iter_move(first + 8u);
-                                    first[8u] = iter_move(first + 7u);
-                                    first[7u] = iter_move(first + 6u);
+                                    auto tmp = mstd::iter_move(first + 8u);
+                                    first[8u] = mstd::iter_move(first + 7u);
+                                    first[7u] = mstd::iter_move(first + 6u);
                                     first[6u] = std::move(tmp);
                                 }
 
@@ -446,9 +445,9 @@ namespace cppsort::detail
                 {
                     // Reorder G -- H -- I into H -- I -- G in memory
                     // to make subsequent operations easier
-                    auto tmp = iter_move(first + 6u);
-                    first[6u] = iter_move(first + 7u);
-                    first[7u] = iter_move(first + 8u);
+                    auto tmp = mstd::iter_move(first + 6u);
+                    first[6u] = mstd::iter_move(first + 7u);
+                    first[7u] = mstd::iter_move(first + 8u);
                     first[8u] = std::move(tmp);
                 }
 
@@ -483,9 +482,9 @@ namespace cppsort::detail
                             // have to insert G into the first 6 elements
                             {
                                 // Reorder H -- I -- G into G -- H -- I
-                                auto tmp = iter_move(first + 8u);
-                                first[8u] = iter_move(first + 7u);
-                                first[7u] = iter_move(first + 6u);
+                                auto tmp = mstd::iter_move(first + 8u);
+                                first[8u] = mstd::iter_move(first + 7u);
+                                first[7u] = mstd::iter_move(first + 6u);
                                 first[6u] = std::move(tmp);
                             }
 

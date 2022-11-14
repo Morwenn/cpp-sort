@@ -9,8 +9,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "move.h"
 
@@ -28,7 +28,6 @@ namespace cppsort::detail
                                 Compare compare, Projection projection)
         -> ResultType
     {
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -41,17 +40,17 @@ namespace cppsort::detail
 
         auto first2 = middle;
         auto result = cache;
-        for (auto first1 = first ; first1 != middle ; ++result) {
+        for (auto first1 = first; first1 != middle; ++result) {
             if (first2 == last) {
                 detail::move(first1, middle, result);
                 break;
             }
             if (comp(proj(*first2), proj(*first1))) {
-                *result = iter_move(first2);
+                *result = mstd::iter_move(first2);
                 ++first2;
                 inversions += middle - first1;
             } else {
-                *result = iter_move(first1);
+                *result = mstd::iter_move(first1);
                 ++first1;
             }
         }

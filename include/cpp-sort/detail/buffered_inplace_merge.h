@@ -21,8 +21,8 @@
 #include <memory>
 #include <utility>
 #include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "iterator_traits.h"
 #include "memory.h"
@@ -42,7 +42,6 @@ namespace cppsort::detail
                             Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -50,10 +49,10 @@ namespace cppsort::detail
             CPPSORT_ASSUME(first1 != last1);
             CPPSORT_ASSUME(first2 != last2);
             if (comp(proj(*first2), proj(*first1))) {
-                *result = iter_move(first2);
+                *result = mstd::iter_move(first2);
                 ++first2;
             } else {
-                *result = iter_move(first1);
+                *result = mstd::iter_move(first1);
                 ++first1;
             }
             ++result;
@@ -74,14 +73,14 @@ namespace cppsort::detail
             CPPSORT_ASSUME(first2 != last2);
 
             if (comp(proj(*first2), proj(*first1))) {
-                *result = iter_move(first2);
+                *result = mstd::iter_move(first2);
                 ++first2;
                 if (first2 == last2) {
                     detail::move(first1, last1, ++result);
                     return;
                 }
             } else {
-                *result = iter_move(first1);
+                *result = mstd::iter_move(first1);
                 ++first1;
                 if (first1 == last1) {
                     // first2 through last2 are already in the right spot
@@ -105,7 +104,6 @@ namespace cppsort::detail
                                 rvalue_type_t<BidirectionalIterator>* buff)
         -> void
     {
-        using utility::iter_move;
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
         destruct_n<rvalue_type> d(0);
         std::unique_ptr<rvalue_type, destruct_n<rvalue_type>&> h2(buff, d);

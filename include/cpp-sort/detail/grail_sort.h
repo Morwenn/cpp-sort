@@ -22,6 +22,7 @@
 #include <iterator>
 #include <tuple>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "insertion_sort.h"
@@ -256,17 +257,16 @@ namespace cppsort::detail::grail
                                       Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
         auto it = middle;
         while (it != last) {
             if (first == middle || compare(proj(*first), proj(*it)) > 0) {
-                *out = iter_move(it);
+                *out = mstd::iter_move(it);
                 ++out;
                 ++it;
             } else {
-                *out = iter_move(first);
+                *out = mstd::iter_move(first);
                 ++out;
                 ++first;
             }
@@ -283,7 +283,6 @@ namespace cppsort::detail::grail
                                        Compare compare, Projection projection)
         -> std::pair<difference_type_t<RandomAccessIterator>, int>
     {
-        using utility::iter_move;
         auto&& proj = utility::as_function(projection);
 
         auto out = first - block_len;
@@ -292,10 +291,10 @@ namespace cppsort::detail::grail
         int frag_type = 1 - left_over_frag;  // 1 if inverted
         while (first < middle && it < last) {
             if (compare(proj(*first), proj(*it)) - frag_type < 0) {
-                *out = iter_move(first);
+                *out = mstd::iter_move(first);
                 ++first;
             } else {
-                *out = iter_move(it);
+                *out = mstd::iter_move(it);
                 ++it;
             }
             ++out;
@@ -304,7 +303,7 @@ namespace cppsort::detail::grail
         if (first < middle) {
             auto left_over_len = middle - first;
             do {
-                *--last = iter_move(--middle);
+                *--last = mstd::iter_move(--middle);
             } while (first != middle);
             return { left_over_len, left_over_frag };
         }
@@ -460,7 +459,6 @@ namespace cppsort::detail::grail
         -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
-        using utility::iter_move;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
         auto size = last - first;
@@ -478,11 +476,11 @@ namespace cppsort::detail::grail
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
-                first[m-3] = iter_move(first + (m - 1 + u));
-                first[m-2] = iter_move(first + (m - u));
+                first[m-3] = mstd::iter_move(first + (m - 1 + u));
+                first[m-2] = mstd::iter_move(first + (m - u));
             }
             if (size % 2) {
-                first[size-3] = iter_move(first + (size - 1));
+                first[size-3] = mstd::iter_move(first + (size - 1));
             }
             first -= 2;
             last -= 2;
@@ -563,7 +561,6 @@ namespace cppsort::detail::grail
         -> void
     {
         using difference_type = difference_type_t<RandomAccessIterator>;
-        using utility::iter_move;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
@@ -620,7 +617,7 @@ namespace cppsort::detail::grail
         }
         if (usexbuf) {
             for (auto p = len ; --p >= 0;) {
-                arr[p] = iter_move(arr + (p - lblock));
+                arr[p] = mstd::iter_move(arr + (p - lblock));
             }
             detail::move(xbuf, xbuf + lblock, arr - lblock);
         } else if (havebuf) {

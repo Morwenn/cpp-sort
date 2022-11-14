@@ -25,9 +25,9 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/not_fn.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "boost_common/util/merge.h"
 #include "boost_common/range.h"
 #include "bitops.h"
@@ -70,7 +70,6 @@ namespace cppsort::detail
             -> void
         {
             using difference_type = difference_type_t<RandomAccessIterator1>;
-            using utility::iter_move;
 
             CPPSORT_ASSERT(last - mid <= rng_aux.size());
             if (mid == last || first == mid) {
@@ -105,9 +104,9 @@ namespace cppsort::detail
                 auto limit = viter[i - 1];
                 auto dest = src + i;
                 while (src != limit) {
-                    *(--dest) = iter_move(--src);
+                    *(--dest) = mstd::iter_move(--src);
                 }
-                *(viter[i - 1] + (i - 1)) = iter_move(data + (i - 1));
+                *(viter[i - 1] + (i - 1)) = mstd::iter_move(data + (i - 1));
             }
         }
 
@@ -310,8 +309,6 @@ namespace cppsort::detail
                 spinsort(RandomAccessIterator first, RandomAccessIterator last,
                          Compare compare, Projection projection)
                 {
-                    using utility::iter_move;
-
                     range<RandomAccessIterator> range_input(first, last);
                     CPPSORT_ASSERT(range_input.valid());
 

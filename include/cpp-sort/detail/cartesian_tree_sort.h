@@ -13,8 +13,8 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/heapsort.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -68,13 +68,12 @@ namespace cppsort::detail
                 buffer_(size),
                 root_(buffer_.begin()) // Original root is first element
             {
-                using utility::iter_move;
                 auto&& proj = utility::as_function(projection);
 
                 // Pointer to the last node that was inserted
                 node_type* prev_node = buffer_.begin();
                 // Create the first node
-                buffer_.emplace_back(iter_move(first), nullptr, nullptr);
+                buffer_.emplace_back(mstd::iter_move(first), nullptr, nullptr);
 
                 // Advance to the next element
                 ++first;
@@ -83,9 +82,9 @@ namespace cppsort::detail
                     auto&& proj_value = proj(*first);
                     node_type* new_parent = _find_insertion_parent(prev_node, proj_value, compare, projection);
                     if (new_parent == nullptr) {
-                        root_ = buffer_.emplace_back(iter_move(first), nullptr, root_);
+                        root_ = buffer_.emplace_back(mstd::iter_move(first), nullptr, root_);
                     } else {
-                        new_parent->right_child = buffer_.emplace_back(iter_move(first), new_parent,
+                        new_parent->right_child = buffer_.emplace_back(mstd::iter_move(first), new_parent,
                                                                        new_parent->right_child);
                     }
                     prev_node = &buffer_.back();

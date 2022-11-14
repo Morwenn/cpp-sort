@@ -13,7 +13,6 @@
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "fixed_size_list.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -122,7 +121,6 @@ namespace cppsort::detail
                  Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -138,7 +136,7 @@ namespace cppsort::detail
         // always has at least one element, this simplifies the rest
         // of the computations
         lists.emplace_back(node_pool);
-        lists.back().push_back(iter_move(first));
+        lists.back().push_back(mstd::iter_move(first));
 
         ////////////////////////////////////////////////////////////
         // Create encroaching lists
@@ -165,19 +163,19 @@ namespace cppsort::detail
                     lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
                     [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
                 );
-                insertion_point->push_back(iter_move(it));
+                insertion_point->push_back(mstd::iter_move(it));
             } else if (not comp(proj(last_list.front()), value)) {
                 // Element belongs to the heads (smaller elements)
                 auto insertion_point = detail::lower_bound(
                     lists.begin(), std::prev(lists.end()), value, compare,
                     [&proj](auto& list) -> decltype(auto) { return proj(list.front()); }
                 );
-                insertion_point->push_front(iter_move(it));
+                insertion_point->push_front(mstd::iter_move(it));
             } else {
                 // Element does not belong to the existing encroaching lists,
                 // create a new list for it
                 lists.emplace_back(node_pool);
-                lists.back().push_back(iter_move(it));
+                lists.back().push_back(mstd::iter_move(it));
             }
         }
 

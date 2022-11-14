@@ -11,7 +11,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 
 namespace cppsort::detail
 {
@@ -36,13 +36,12 @@ namespace cppsort::detail
     template<typename Iterator>
     using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;
 
-    // Addition used by proxy iterators from P0022
     template<typename Iterator>
-    using rvalue_reference_t = utility::rvalue_reference_t<Iterator>;
+    using rvalue_reference_t = mstd::iter_rvalue_reference_t<Iterator>;
 
     // Additional common type to use instead of value_t
     template<typename Iterator>
-    using rvalue_type_t = std::remove_cvref_t<utility::rvalue_reference_t<Iterator>>;
+    using rvalue_type_t = std::remove_cvref_t<mstd::iter_rvalue_reference_t<Iterator>>;
 
     // Handy addition from time to time
     template<typename Iterator, typename Projection>

@@ -11,7 +11,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/config.h"
 
 namespace cppsort
@@ -28,17 +27,16 @@ namespace utility
                            Iterator2 indices_first, Sentinel2 indices_last)
         -> void
     {
-        using utility::iter_move;
         CPPSORT_ASSERT(mstd::distance(first, last) == mstd::distance(indices_first, indices_last));
 
         auto size = mstd::distance(indices_first, indices_last);
         for (mstd::iter_difference_t<Iterator1> idx = 0; idx < size; ++idx) {
             if (idx != indices_first[idx]) {
                 auto current_idx = idx;
-                auto tmp = iter_move(first + current_idx);
+                auto tmp = mstd::iter_move(first + current_idx);
                 do {
                     auto next_idx = indices_first[current_idx];
-                    first[current_idx] = iter_move(first + next_idx);
+                    first[current_idx] = mstd::iter_move(first + next_idx);
                     indices_first[current_idx] = current_idx;
                     current_idx = next_idx;
                 } while (idx != indices_first[current_idx]);

@@ -27,7 +27,6 @@ namespace cppsort::detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using utility::iter_move;
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
@@ -48,15 +47,15 @@ namespace cppsort::detail
             if (comp(proj(first[5u]), proj(first[3u]))) {
                 if (comp(proj(first[5u]), proj(first[1u]))) {
                     {
-                        auto tmp = iter_move(first + 5u);
-                        first[5u] = iter_move(first + 3u);
-                        first[3u] = iter_move(first + 1u);
+                        auto tmp = mstd::iter_move(first + 5u);
+                        first[5u] = mstd::iter_move(first + 3u);
+                        first[3u] = mstd::iter_move(first + 1u);
                         first[1u] = std::move(tmp);
                     }
                     {
-                        auto tmp = iter_move(first + 4u);
-                        first[4u] = iter_move(first + 2u);
-                        first[2u] = iter_move(first);
+                        auto tmp = mstd::iter_move(first + 4u);
+                        first[4u] = mstd::iter_move(first + 2u);
+                        first[2u] = mstd::iter_move(first);
                         first[0u] = std::move(tmp);
                     }
                 } else {

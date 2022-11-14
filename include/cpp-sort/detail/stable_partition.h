@@ -21,6 +21,7 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
@@ -36,7 +37,6 @@ namespace cppsort::detail
         -> BidirectionalIterator
     {
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
-        using utility::iter_move;
         using utility::iter_swap;
 
         // *first is known to be false
@@ -64,27 +64,27 @@ namespace cppsort::detail
             // Move the falses into the temporary buffer, and the trues to the front of the line
             // Update first to always point to the end of the trues
             auto ptr = buffer.data();
-            std::construct_at(ptr, iter_move(first));
+            std::construct_at(ptr, mstd::iter_move(first));
             ++d;
             ++ptr;
             auto it = first;
             while (++it != last) {
                 if (pred(*it)) {
-                    *first = iter_move(it);
+                    *first = mstd::iter_move(it);
                     ++first;
                 } else {
-                    std::construct_at(ptr, iter_move(it));
+                    std::construct_at(ptr, mstd::iter_move(it));
                     ++d;
                     ++ptr;
                 }
             }
             // move *last, known to be true
-            *first = iter_move(it);
+            *first = mstd::iter_move(it);
             it = ++first;
             // All trues now at start of range, all falses in buffer
             // Move falses back into range, but don't mess up first which points to first false
             for (auto t2 = buffer.data() ; t2 < ptr ; ++t2, (void) ++it)
-                *it = iter_move(t2);
+                *it = mstd::iter_move(t2);
             // h destructs moved-from values out of the temp buffer, but doesn't deallocate buffer
             return first;
         }

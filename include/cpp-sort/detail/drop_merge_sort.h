@@ -31,8 +31,8 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
 namespace cppsort::detail
@@ -49,7 +49,6 @@ namespace cppsort::detail
     {
         using difference_type = difference_type_t<BidirectionalIterator>;
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
-        using utility::iter_move;
 
         // Configuration variables
         constexpr bool double_comparison = true;
@@ -72,14 +71,14 @@ namespace cppsort::detail
 
                 if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
                     not comp(proj(*read), proj(*std::prev(write, 2)))) {
-                    dropped.push_back(iter_move(std::prev(write)));
-                    *std::prev(write) = iter_move(read);
+                    dropped.push_back(mstd::iter_move(std::prev(write)));
+                    *std::prev(write) = mstd::iter_move(read);
                     ++read;
                     continue;
                 }
 
                 if (num_dropped_in_row < recency) {
-                    dropped.push_back(iter_move(read));
+                    dropped.push_back(mstd::iter_move(read));
                     ++read;
                     ++num_dropped_in_row;
                 } else {
@@ -95,7 +94,7 @@ namespace cppsort::detail
                     }
 
                     --write;
-                    dropped.push_back(iter_move(write));
+                    dropped.push_back(mstd::iter_move(write));
 
                     num_dropped_in_row = 0;
                 }
@@ -103,10 +102,10 @@ namespace cppsort::detail
                 if constexpr (std::is_trivially_copyable_v<rvalue_type>) {
                     // If the type is trivially copyable, the potential self-move
                     // should not trigger any issue
-                    *write = iter_move(read);
+                    *write = mstd::iter_move(read);
                 } else {
                     if (read != write) {
-                        *write = iter_move(read);
+                        *write = mstd::iter_move(read);
                     }
                 }
                 ++read;
@@ -130,7 +129,7 @@ namespace cppsort::detail
             while (begin != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
                 --back;
                 --write;
-                *back = iter_move(write);
+                *back = mstd::iter_move(write);
             }
             --back;
             *back = std::move(last_dropped);

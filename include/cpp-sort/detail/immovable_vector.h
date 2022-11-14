@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <memory>
 #include <utility>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "config.h"
 
 namespace cppsort::detail
@@ -129,8 +129,7 @@ namespace cppsort::detail
                 auto writer = end_;
                 try {
                     for (; first != last; ++first) {
-                        using utility::iter_move;
-                        std::construct_at(writer, iter_move(first));
+                        std::construct_at(writer, mstd::iter_move(first));
                         ++writer;
                     }
                 } catch (...) {

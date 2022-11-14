@@ -30,9 +30,9 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/immovable_vector.h"
 #include "iterator_traits.h"
 #include "scope_exit.h"
@@ -63,8 +63,6 @@ namespace cppsort::detail
             &it_and_index<ForwardIterator>::original_location | utility::indirect{} | std::move(projection)
         ))
     {
-        using utility::iter_move;
-
         using item_index_tuple = it_and_index<ForwardIterator>;
         immovable_vector<item_index_tuple> storage(size);
 
@@ -82,13 +80,13 @@ namespace cppsort::detail
             index = 0;
             for (auto current_tuple = storage.begin(); current_tuple != storage.end(); ++current_tuple, ++index) {
                 if (current_tuple->original_index != index) {
-                    auto end_value = iter_move(current_tuple->original_location);
+                    auto end_value = mstd::iter_move(current_tuple->original_location);
 
                     auto destination_index = index;
                     auto source_index = current_tuple->original_index;
 
                     do {
-                        *(storage[destination_index].original_location) = iter_move(storage[source_index].original_location);
+                        *(storage[destination_index].original_location) = mstd::iter_move(storage[source_index].original_location);
 
                         destination_index = source_index;
                         source_index = storage[destination_index].original_index;

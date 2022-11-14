@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <ranges>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/type_traits.h>
@@ -77,13 +78,7 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Generic iter_move and iter_swap
 
-        template<typename Iterator>
-        constexpr auto iter_move(Iterator it)
-            noexcept(noexcept(cppsort::detail::iter_move_t<Iterator>(std::move(*it))))
-            -> cppsort::detail::iter_move_t<Iterator>
-        {
-            return std::move(*it);
-        }
+        using std::ranges::iter_move;
 
         template<
             typename Iterator,
@@ -125,18 +120,6 @@ namespace cppsort
         template<
             typename Iterator,
             typename = mstd::enable_if_t<
-                not cppsort::detail::has_iter_move_v<std::reverse_iterator<Iterator>>
-            >
-        >
-        auto iter_move(const std::reverse_iterator<Iterator>& it)
-            -> decltype(iter_move(it.base()))
-        {
-            return iter_move(std::prev(it.base()));
-        }
-
-        template<
-            typename Iterator,
-            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_swap_v<std::reverse_iterator<Iterator>>
             >
         >
@@ -152,18 +135,6 @@ namespace cppsort
         template<
             typename Iterator,
             typename = mstd::enable_if_t<
-                not cppsort::detail::has_iter_move_v<std::move_iterator<Iterator>>
-            >
-        >
-        auto iter_move(const std::move_iterator<Iterator>& it)
-            -> decltype(iter_move(it.base()))
-        {
-            return iter_move(it.base());
-        }
-
-        template<
-            typename Iterator,
-            typename = mstd::enable_if_t<
                 not cppsort::detail::has_iter_swap_v<std::move_iterator<Iterator>>
             >
         >
@@ -172,12 +143,6 @@ namespace cppsort
         {
             iter_swap(lhs.base(), rhs.base());
         }
-
-        ////////////////////////////////////////////////////////////
-        // rvalue_reference_t type trait
-
-        template<typename Iterator>
-        using rvalue_reference_t = decltype(iter_move(std::declval<Iterator>()));
     }
 }
 

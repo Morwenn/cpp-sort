@@ -41,8 +41,8 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -141,7 +141,6 @@ namespace cppsort::detail
             CPPSORT_ASSERT(lo <= start);
             CPPSORT_ASSERT(start <= hi);
 
-            using utility::iter_move;
             auto&& proj = utility::as_function(projection);
 
             if (start == lo) {
@@ -149,11 +148,11 @@ namespace cppsort::detail
             }
             for (; start < hi; ++start) {
                 CPPSORT_ASSERT(lo <= start);
-                auto pivot = iter_move(start);
+                auto pivot = mstd::iter_move(start);
 
                 iterator const pos = upper_bound(lo, start, proj(pivot), compare, projection);
                 for (iterator p = start; p > pos; --p) {
-                    *p = iter_move(std::prev(p));
+                    *p = mstd::iter_move(std::prev(p));
                 }
                 *pos = std::move(pivot);
             }
@@ -433,7 +432,6 @@ namespace cppsort::detail
             CPPSORT_ASSERT(len2 > 0);
             CPPSORT_ASSERT(base1 + len1 == base2);
 
-            using utility::iter_move;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -455,7 +453,7 @@ namespace cppsort::detail
             auto cursor2 = base2;
             auto dest = base1;
 
-            *dest = iter_move(cursor2);
+            *dest = mstd::iter_move(cursor2);
             ++dest;
             ++cursor2;
             --len2;
@@ -473,7 +471,7 @@ namespace cppsort::detail
                     CPPSORT_ASSERT(len2 > 0);
 
                     if (comp(proj(*cursor2), proj(*cursor1))) {
-                        *dest = iter_move(cursor2);
+                        *dest = mstd::iter_move(cursor2);
                         ++dest;
                         ++cursor2;
                         ++count2;
@@ -484,7 +482,7 @@ namespace cppsort::detail
                         }
                     }
                     else {
-                        *dest = iter_move(cursor1);
+                        *dest = mstd::iter_move(cursor1);
                         ++dest;
                         ++cursor1;
                         ++count1;
@@ -515,7 +513,7 @@ namespace cppsort::detail
                             break;
                         }
                     }
-                    *dest = iter_move(cursor2);
+                    *dest = mstd::iter_move(cursor2);
                     ++dest;
                     ++cursor2;
                     if (--len2 == 0) {
@@ -534,7 +532,7 @@ namespace cppsort::detail
                             break;
                         }
                     }
-                    *dest = iter_move(cursor1);
+                    *dest = mstd::iter_move(cursor1);
                     ++dest;
                     ++cursor1;
                     if (--len1 == 1) {
@@ -559,7 +557,7 @@ namespace cppsort::detail
             if (len1 == 1) {
                 CPPSORT_ASSERT(len2 > 0);
                 detail::move(cursor2, cursor2 + len2, dest);
-                dest[len2] = iter_move(cursor1);
+                dest[len2] = mstd::iter_move(cursor1);
             }
             else {
                 CPPSORT_ASSERT(len1 != 0 && "comparison function violates its general contract");
@@ -577,7 +575,6 @@ namespace cppsort::detail
             CPPSORT_ASSERT(len2 > 0);
             CPPSORT_ASSERT(base1 + len1 == base2);
 
-            using utility::iter_move;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -599,7 +596,7 @@ namespace cppsort::detail
             auto cursor2 = buffer.get() + (len2 - 1);
             auto dest = base2 + (len2 - 1);
 
-            *dest = iter_move(--cursor1);
+            *dest = mstd::iter_move(--cursor1);
             --dest;
             --len1;
 
@@ -622,7 +619,7 @@ namespace cppsort::detail
                     CPPSORT_ASSERT(len2 > 1);
 
                     if (comp(proj(*cursor2), proj(*cursor1))) {
-                        *dest = iter_move(cursor1);
+                        *dest = mstd::iter_move(cursor1);
                         --dest;
                         ++count1;
                         count2 = 0;
@@ -632,7 +629,7 @@ namespace cppsort::detail
                         }
                         --cursor1;
                     } else {
-                        *dest = iter_move(cursor2);
+                        *dest = mstd::iter_move(cursor2);
                         --dest;
                         --cursor2;
                         ++count2;
@@ -666,7 +663,7 @@ namespace cppsort::detail
                             break;
                         }
                     }
-                    *dest = iter_move(cursor2);
+                    *dest = mstd::iter_move(cursor2);
                     --dest;
                     --cursor2;
                     if (--len2 == 1) {
@@ -685,7 +682,7 @@ namespace cppsort::detail
                             break;
                         }
                     }
-                    *dest = iter_move(--cursor1);
+                    *dest = mstd::iter_move(--cursor1);
                     --dest;
                     if (--len1 == 0) {
                         break_outer = true;
@@ -710,7 +707,7 @@ namespace cppsort::detail
                 CPPSORT_ASSERT(len1 > 0);
                 dest -= len1;
                 detail::move_backward(cursor1 - len1, cursor1, dest + (1 + len1));
-                *dest = iter_move(cursor2);
+                *dest = mstd::iter_move(cursor2);
             } else {
                 CPPSORT_ASSERT(len2 != 0 && "comparison function violates its general contract");
                 CPPSORT_ASSERT(len1 == 0);

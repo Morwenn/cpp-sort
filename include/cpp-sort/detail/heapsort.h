@@ -19,8 +19,8 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "iterator_traits.h"
 
@@ -33,7 +33,6 @@ namespace cppsort::detail
                              RandomAccessIterator start)
         -> void
     {
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -60,10 +59,10 @@ namespace cppsort::detail
             return;
         }
 
-        auto top = iter_move(start);
+        auto top = mstd::iter_move(start);
         do {
             // we are not in heap-order, swap the parent with it's largest child
-            *start = iter_move(child_i);
+            *start = mstd::iter_move(child_i);
             start = child_i;
 
             if ((len - 2) / 2 < child) {
@@ -92,7 +91,6 @@ namespace cppsort::detail
     {
         CPPSORT_ASSERT(len >= 2);
 
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         using difference_type = difference_type_t<RandomAccessIterator>;
@@ -112,7 +110,7 @@ namespace cppsort::detail
             }
 
             // swap hole with its largest child
-            *hole = iter_move(child_i);
+            *hole = mstd::iter_move(child_i);
             hole = child_i;
 
             // if hole is now a leaf, we're done
@@ -127,7 +125,6 @@ namespace cppsort::detail
                              Compare compare, Projection projection,
                              difference_type_t<RandomAccessIterator> len)
     {
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -135,10 +132,10 @@ namespace cppsort::detail
             len = (len - 2) / 2;
             auto ptr = first + len;
             if (comp(proj(*ptr), proj(*--last))) {
-                auto t = iter_move(last);
+                auto t = mstd::iter_move(last);
                 auto&& proj_t = proj(t);
                 do {
-                    *last = iter_move(ptr);
+                    *last = mstd::iter_move(ptr);
                     last = ptr;
                     if (len == 0) {
                         break;
@@ -157,15 +154,13 @@ namespace cppsort::detail
                             difference_type_t<RandomAccessIterator> len)
         -> void
     {
-        using utility::iter_move;
-
         if (len > 1) {
-            auto top = iter_move(first);  // create a hole at first
+            auto top = mstd::iter_move(first);  // create a hole at first
             auto hole = detail::floyd_sift_down(first, compare, projection, len);
             if (hole == --last) {
                 *hole = std::move(top);
             } else {
-                *hole = iter_move(last);
+                *hole = mstd::iter_move(last);
                 ++hole;
                 *last = std::move(top);
                 detail::push_heap(first, hole, compare, projection, hole - first);

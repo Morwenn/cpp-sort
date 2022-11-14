@@ -25,7 +25,6 @@
 #include <memory>
 #include <type_traits>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../../buffered_inplace_merge.h"
 #include "../../config.h"
 #include "../../iterator_traits.h"
@@ -55,8 +54,6 @@ namespace cppsort::detail::boost_common::util
                Compare compare, Projection projection)
         -> RandomAccessIterator3
     {
-        using utility::iter_move;
-
         constexpr std::size_t min_size = 1024;
 
         auto&& comp = utility::as_function(compare);
@@ -105,7 +102,6 @@ namespace cppsort::detail::boost_common::util
                     Compare compare, Projection projection)
         -> RandomAccessIterator2
     {
-        using utility::iter_move;
         CPPSORT_ASSERT(buf2 - buf_out == end_buf1 - buf1);
 
         constexpr std::size_t min_size = 1024;

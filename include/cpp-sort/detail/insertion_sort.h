@@ -31,8 +31,8 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 
 namespace cppsort::detail
 {
@@ -48,7 +48,6 @@ namespace cppsort::detail
     {
         if (first == last) return;
 
-        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -59,11 +58,11 @@ namespace cppsort::detail
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
             if (comp(proj(*sift), proj(*sift_1))) {
-                auto tmp = iter_move(sift);
+                auto tmp = mstd::iter_move(sift);
                 auto&& tmp_proj = proj(tmp);
 
                 do {
-                    *sift = iter_move(sift_1);
+                    *sift = mstd::iter_move(sift_1);
                 } while (--sift != first && comp(tmp_proj, proj(*--sift_1)));
                 *sift = std::move(tmp);
             }

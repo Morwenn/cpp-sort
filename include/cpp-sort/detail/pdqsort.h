@@ -33,6 +33,7 @@
 #include <cstddef>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -73,7 +74,6 @@ namespace cppsort::detail
         {
             if (begin == end) return;
 
-            using utility::iter_move;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -83,11 +83,11 @@ namespace cppsort::detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    auto tmp = iter_move(sift);
+                    auto tmp = mstd::iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do {
-                        *sift = iter_move(sift_1);
+                        *sift = mstd::iter_move(sift_1);
                         --sift;
                     } while (comp(tmp_proj, proj(*--sift_1)));
 
@@ -106,7 +106,6 @@ namespace cppsort::detail
         {
             if (begin == end) return true;
 
-            using utility::iter_move;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -117,11 +116,11 @@ namespace cppsort::detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    auto tmp = iter_move(sift);
+                    auto tmp = mstd::iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do {
-                        *sift = iter_move(sift_1);
+                        *sift = mstd::iter_move(sift_1);
                     } while (--sift != begin && comp(tmp_proj, proj(*--sift_1)));
 
                     *sift = std::move(tmp);
@@ -140,7 +139,6 @@ namespace cppsort::detail
                                     std::size_t num, bool use_swaps)
             -> void
         {
-            using utility::iter_move;
             using utility::iter_swap;
 
             if (use_swaps) {
@@ -152,13 +150,13 @@ namespace cppsort::detail
             } else if (num > 0) {
                 RandomAccessIterator l = first + offsets_l[0];
                 RandomAccessIterator r = last - offsets_r[0];
-                auto tmp = iter_move(l);
-                *l = iter_move(r);
+                auto tmp = mstd::iter_move(l);
+                *l = mstd::iter_move(r);
                 for (std::size_t i = 1 ; i < num ; ++i) {
                     l = first + offsets_l[i];
-                    *r = iter_move(l);
+                    *r = mstd::iter_move(l);
                     r = last - offsets_r[i];
-                    *l = iter_move(r);
+                    *l = mstd::iter_move(r);
                 }
                 *r = std::move(tmp);
             }
@@ -174,13 +172,12 @@ namespace cppsort::detail
                                                   Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
-            using utility::iter_move;
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
-            auto pivot = iter_move(begin);
+            auto pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
             RandomAccessIterator first = begin;
@@ -301,7 +298,7 @@ namespace cppsort::detail
 
             // Put the pivot in the right place.
             auto pivot_pos = first - 1;
-            *begin = iter_move(pivot_pos);
+            *begin = mstd::iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
             return std::make_pair(pivot_pos, already_partitioned);
@@ -317,13 +314,12 @@ namespace cppsort::detail
                                        Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
-            using utility::iter_move;
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
-            auto pivot = iter_move(begin);
+            auto pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
             RandomAccessIterator first = begin;
@@ -353,7 +349,7 @@ namespace cppsort::detail
 
             // Put the pivot in the right place.
             RandomAccessIterator pivot_pos = first - 1;
-            *begin = iter_move(pivot_pos);
+            *begin = mstd::iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
             return std::make_pair(pivot_pos, already_partitioned);
@@ -366,12 +362,11 @@ namespace cppsort::detail
                                       Compare compare, Projection projection)
             -> RandomAccessIterator
         {
-            using utility::iter_move;
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            auto pivot = iter_move(begin);
+            auto pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
             RandomAccessIterator first = begin;
             RandomAccessIterator last = end;
@@ -388,7 +383,7 @@ namespace cppsort::detail
             }
 
             RandomAccessIterator pivot_pos = last;
-            *begin = iter_move(pivot_pos);
+            *begin = mstd::iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
             return pivot_pos;

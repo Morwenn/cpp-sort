@@ -30,7 +30,6 @@ Phil Endecott and Frank Gennari
 #include <vector>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
@@ -96,7 +95,6 @@ namespace cppsort::detail::spreadsort::detail
                         std::size_t *bin_sizes, Projection projection)
         -> void
     {
-      using utility::iter_move;
       auto&& proj = utility::as_function(projection);
 
       //This step is roughly 10% of runtime, but it helps avoid worst-case
@@ -149,13 +147,13 @@ namespace cppsort::detail::spreadsort::detail
             if (b_bin != local_bin) {
               RandomAccessIter c = *b_bin;
               ++(*b_bin);
-              auto tmp = iter_move(c);
-              *c = iter_move(b);
-              *b = iter_move(current);
+              auto tmp = mstd::iter_move(c);
+              *c = mstd::iter_move(b);
+              *b = mstd::iter_move(current);
               *current = std::move(tmp);
             } else {
-              auto tmp = iter_move(b);
-              *b = iter_move(current);
+              auto tmp = mstd::iter_move(b);
+              *b = mstd::iter_move(current);
               *current = std::move(tmp);
             }
           }

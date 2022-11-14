@@ -21,6 +21,7 @@
 #include <numeric>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "move.h"
@@ -32,9 +33,7 @@ namespace cppsort::detail
     auto rotate_left(ForwardIterator first, ForwardIterator last)
         -> ForwardIterator
     {
-        using utility::iter_move;
-
-        auto tmp = iter_move(first);
+        auto tmp = mstd::iter_move(first);
         auto lm1 = detail::move(std::next(first), last, first);
         *lm1 = std::move(tmp);
         return lm1;
@@ -44,10 +43,8 @@ namespace cppsort::detail
     auto rotate_right(BidirectionalIterator first, BidirectionalIterator last)
         -> BidirectionalIterator
     {
-        using utility::iter_move;
-
         auto lm1 = std::prev(last);
-        auto tmp = iter_move(lm1);
+        auto tmp = mstd::iter_move(lm1);
         auto fp1 = detail::move_backward(first, lm1, last);
         *first = std::move(tmp);
         return fp1;
@@ -94,8 +91,6 @@ namespace cppsort::detail
                     RandomAccessIterator last)
         -> RandomAccessIterator
     {
-        using utility::iter_move;
-
         auto m1 = middle - first;
         auto m2 = last - middle;
         if (m1 == m2) {
@@ -104,11 +99,11 @@ namespace cppsort::detail
         }
         auto g = std::gcd(m1, m2);
         for (auto p = first + g; p != first;) {
-            auto t = iter_move(--p);
+            auto t = mstd::iter_move(--p);
             auto p1 = p;
             auto p2 = p1 + m1;
             do {
-                *p1 = iter_move(p2);
+                *p1 = mstd::iter_move(p2);
                 p1 = p2;
                 auto d = last - p2;
                 if (m1 < d) {
