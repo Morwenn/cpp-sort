@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
@@ -69,7 +70,7 @@ namespace cppsort::detail
             return *this;
         }
 
-        auto operator=(associated_value<value_type_t<Iterator>, Data>&& other)
+        auto operator=(associated_value<std::iter_value_t<Iterator>, Data>&& other)
             -> association&
         {
             *it = std::move(other.value);
@@ -162,10 +163,10 @@ namespace cppsort::detail
 
             using iterator_category = std::random_access_iterator_tag;
             using iterator_type     = Iterator;
-            using value_type        = value_type_t<Iterator>;
+            using value_type        = std::iter_value_t<Iterator>;
             using difference_type   = difference_type_t<Iterator>;
             using pointer           = pointer_t<Iterator>;
-            using reference         = reference_t<Iterator>;
+            using reference         = std::iter_reference_t<Iterator>;
 
             ////////////////////////////////////////////////////////////
             // Constructors
@@ -355,8 +356,8 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto iter_move(associate_iterator it)
                 -> associated_value<
-                    value_type_t<typename value_type_t<Iterator>::iterator_type>,
-                    typename value_type_t<Iterator>::data_type
+                    std::iter_value_t<typename std::iter_value_t<Iterator>::iterator_type>,
+                    typename std::iter_value_t<Iterator>::data_type
                 >
             {
                 return {

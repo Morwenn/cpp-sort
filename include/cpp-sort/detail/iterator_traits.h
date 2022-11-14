@@ -25,13 +25,7 @@ namespace cppsort::detail
     using difference_type_t = typename std::iterator_traits<Iterator>::difference_type;
 
     template<typename Iterator>
-    using value_type_t = typename std::iterator_traits<Iterator>::value_type;
-
-    template<typename Iterator>
     using pointer_t = typename std::iterator_traits<Iterator>::pointer;
-
-    template<typename Iterator>
-    using reference_t = typename std::iterator_traits<Iterator>::reference;
 
     template<typename Iterator>
     using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;

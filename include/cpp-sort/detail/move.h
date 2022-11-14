@@ -15,7 +15,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "iterator_traits.h"
 #include "memory.h"
 
 namespace cppsort::detail
@@ -99,7 +98,7 @@ namespace cppsort::detail
         -> T*
     {
         using truth_type = std::bool_constant<
-            std::is_trivial_v<value_type_t<InputIterator>> &&
+            std::is_trivial_v<std::iter_value_t<InputIterator>> &&
             std::is_trivial_v<T>
         >;
         return uninitialized_move_impl(truth_type{}, std::move(first), std::move(last),

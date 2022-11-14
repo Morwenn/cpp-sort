@@ -699,7 +699,7 @@ namespace cppsort::detail::grail
         if (havebuf) {
             build_blocks(ptr, last, cbuf, extbuf, LExtBuf, compare, projection);
         } else {
-            using T = value_type_t<BufferIterator>;
+            using T = std::iter_value_t<BufferIterator>;
             build_blocks(ptr, last, cbuf, static_cast<T*>(nullptr), 0, compare, projection);
         }
 

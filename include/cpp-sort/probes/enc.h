@@ -33,7 +33,7 @@ namespace cppsort::probe
                              ForwardIterator std::pair<ForwardIterator, ForwardIterator>::* accessor)
             -> typename std::vector<std::pair<ForwardIterator, ForwardIterator>>::iterator
         {
-            using value_type = cppsort::detail::value_type_t<ForwardIterator>;
+            using value_type = std::iter_value_t<ForwardIterator>;
             using projected_type = cppsort::detail::projected_t<ForwardIterator, Projection>;
             constexpr bool can_optimize =
                 utility::is_probably_branchless_comparison_v<Compare, projected_type> &&

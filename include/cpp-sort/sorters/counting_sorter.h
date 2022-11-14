@@ -16,7 +16,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include "../detail/counting_sort.h"
-#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -28,7 +27,7 @@ namespace cppsort
         struct counting_sorter_impl
         {
             template<mstd::forward_iterator Iterator, mstd::sentinel_for<Iterator> Sentinel>
-                requires mstd::integral<value_type_t<Iterator>>
+                requires mstd::integral<std::iter_value_t<Iterator>>
             constexpr auto operator()(Iterator first, Sentinel last) const
                 -> void
             {
@@ -36,7 +35,7 @@ namespace cppsort
             }
 
             template<mstd::forward_iterator Iterator, mstd::sentinel_for<Iterator> Sentinel>
-                requires mstd::integral<value_type_t<Iterator>>
+                requires mstd::integral<std::iter_value_t<Iterator>>
             constexpr auto operator()(Iterator first, Sentinel last, std::greater<>) const
                 -> void
             {
@@ -44,7 +43,7 @@ namespace cppsort
             }
 
             template<mstd::forward_iterator Iterator, mstd::sentinel_for<Iterator> Sentinel>
-                requires mstd::integral<value_type_t<Iterator>>
+                requires mstd::integral<std::iter_value_t<Iterator>>
             constexpr auto operator()(Iterator first, Sentinel last, std::ranges::greater) const
                 -> void
             {

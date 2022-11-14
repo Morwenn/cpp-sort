@@ -23,7 +23,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "iterator_traits.h"
 #include "move.h"
 #include "swap_ranges.h"
 
@@ -122,7 +121,7 @@ namespace cppsort::detail
                      std::forward_iterator_tag)
         -> ForwardIterator
     {
-        using value_type = value_type_t<ForwardIterator>;
+        using value_type = std::iter_value_t<ForwardIterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
             if (std::next(first) == middle) {
                 return rotate_left(first, last);
@@ -136,7 +135,7 @@ namespace cppsort::detail
                      std::bidirectional_iterator_tag)
         -> BidirectionalIterator
     {
-        using value_type = value_type_t<BidirectionalIterator>;
+        using value_type = std::iter_value_t<BidirectionalIterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
             if (std::next(first) == middle) {
                 return rotate_left(first, last);
@@ -153,7 +152,7 @@ namespace cppsort::detail
                      std::random_access_iterator_tag)
         -> RandomAccessIterator
     {
-        using value_type = value_type_t<RandomAccessIterator>;
+        using value_type = std::iter_value_t<RandomAccessIterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
             if (std::next(first) == middle) {
                 return rotate_left(first, last);

@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <utility>
 #include <cpp-sort/detail/iterator_traits.h> // yay, detail
 #include <cpp-sort/utility/iter_move.h>
@@ -38,10 +39,10 @@ class no_post_iterator
 
         using iterator_category = cppsort::detail::iterator_category_t<Iterator>;
         using iterator_type     = Iterator;
-        using value_type        = cppsort::detail::value_type_t<Iterator>;
+        using value_type        = std::iter_value_t<Iterator>;
         using difference_type   = cppsort::detail::difference_type_t<Iterator>;
         using pointer           = cppsort::detail::pointer_t<Iterator>;
-        using reference         = cppsort::detail::reference_t<Iterator>;
+        using reference         = std::iter_reference_t<Iterator>;
 
         ////////////////////////////////////////////////////////////
         // Constructors

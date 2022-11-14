@@ -398,7 +398,7 @@ namespace cppsort::detail
         {
             using utility::iter_swap;
             using difference_type = difference_type_t<RandomAccessIterator>;
-            using value_type = value_type_t<RandomAccessIterator>;
+            using value_type = std::iter_value_t<RandomAccessIterator>;
             using projected_type = projected_t<RandomAccessIterator, Projection>;
 
             constexpr bool is_branchless =

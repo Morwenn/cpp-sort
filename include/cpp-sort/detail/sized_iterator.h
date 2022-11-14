@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <utility>
-#include <cpp-sort/mstd/iterator.h>
 #include "config.h"
 #include "iterator_traits.h"
 
@@ -36,10 +36,10 @@ namespace cppsort::detail
 
             using iterator_category = iterator_category_t<Iterator>;
             using iterator_type     = Iterator;
-            using value_type        = value_type_t<Iterator>;
+            using value_type        = std::iter_value_t<Iterator>;
             using difference_type   = difference_type_t<Iterator>;
             using pointer           = pointer_t<Iterator>;
-            using reference         = reference_t<Iterator>;
+            using reference         = std::iter_reference_t<Iterator>;
 
             ////////////////////////////////////////////////////////////
             // Constructors
@@ -110,7 +110,7 @@ namespace cppsort::detail
             {
                 return lhs._size - rhs._size;
             }
-            
+
             ////////////////////////////////////////////////////////////
             // Comparison operators
             // Shall not be called
