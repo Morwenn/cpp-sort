@@ -59,12 +59,18 @@ Just like the type traits they are built upon, those concepts take into account 
 
 ### `<cpp-sort/mstd/iterator.h>`
 
+The library provides `mstd::iter_move` and `mstd::iter_rvalue_reference_t` which only differ from their standard counterparts in their semantic requirements. Most notably, the following semantic requirements of [`std::ranges::iter_move`][std-ranges-iter-move] does not apply to `mstd::iter_move`:
+
+> If `ranges::iter_move(e)` is not equal to `*e`, the program is ill-formed, no diagnostic required.
+
+The main reason behind that change is that **cpp-sort** relies on a reimplementation of proxy iterator support that follows a slightly different iterator model where `iter_move(it)` can return a type unrelated to that returned by `*it`, leading to incompatibilities with the stricter standard iterator model. The library's model was conceived while standard ranges were still a work in progress, hence the difference.
+
 ```cpp
 template<typename Indirect>
 concept indirectly_readable = /* implementation-defined */;
 ```
 
-Unlike [`std::indirectly_readable`][std-indirectly-readable], this concept imposes no requirement that `std::ranges::iter_move` be usable at all, and drops the [`std::common_reference_with`][std-common-reference-with] rules too. The main reason behind that change is that **cpp-sort** relies on a slightly different iterator model where `iter_move(it)` can return a type unrelated to that returned by `*it`, leading to incompatibilities with the stricter standard iterator model. The library's model was conceived while standard ranges were still a work in progress, hence the difference.
+This reimplementation of [`std::indirectly_readable`][std-indirectly-readable] imposes fewer requirements that its standard counterpart on the type returned by `mstd::iter_move`: most notably it drops the [`std::common_reference_with`][std-common-reference-with] requirements involving `iter_rvalue_reference_t<Indirect>`.
 
 It is worth nothing that the concept is currently incomplete and might get stricter in the future as the exact rules needed for the **cpp-sort** iterator model to work become clearer.
 
@@ -142,5 +148,6 @@ They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemen
   [std-incrementable]: https://en.cppreference.com/w/cpp/iterator/incrementable
   [std-indirectly-readable]: https://en.cppreference.com/w/cpp/iterator/indirectly_readable
   [std-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move
+  [std-ranges-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move
   [std-sized-sentinel-for]: https://en.cppreference.com/w/cpp/iterator/sized_sentinel_for
   [std-weakly-incrementable]: https://en.cppreference.com/w/cpp/iterator/weakly_incrementable

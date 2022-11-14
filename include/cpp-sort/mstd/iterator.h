@@ -161,11 +161,10 @@ namespace cppsort::mstd
     ////////////////////////////////////////////////////////////
     // indirectly_readable
     //
-    // Compared to std::indirectly_readable, this concept has no
-    // constraint on the type returned by iter_move, and thus no
-    // constraint on the associated rvalue-reference type. Some
-    // parts of cpp-sort are too clever in this regard and go
-    // further than the standard iterator model.
+    // Compared to std::indirectly_readable, this concept has
+    // fewer constraints on the type returned by iter_move. Some
+    // parts of cpp-sort are arguably too clever in this regard
+    // and go further than the standard iterator model.
 
     namespace detail
     {
@@ -176,6 +175,7 @@ namespace cppsort::mstd
                 typename std::iter_reference_t<Indirect>;
                 typename iter_rvalue_reference_t<Indirect>;
                 { *in } -> std::same_as<std::iter_reference_t<Indirect>>;
+                { mstd::iter_move(in) } -> std::same_as<iter_rvalue_reference_t<Indirect>>;
             } &&
             std::common_reference_with<
                 std::iter_reference_t<Indirect>&&, std::iter_value_t<Indirect>&
