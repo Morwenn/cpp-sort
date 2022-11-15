@@ -69,7 +69,7 @@ namespace cppsort::detail
                                  const range<RandomAccessIterator2>& rng_aux)
             -> void
         {
-            using difference_type = difference_type_t<RandomAccessIterator1>;
+            using difference_type = mstd::iter_difference_t<RandomAccessIterator1>;
 
             CPPSORT_ASSERT(last - mid <= rng_aux.size());
             if (mid == last || first == mid) {
@@ -196,7 +196,7 @@ namespace cppsort::detail
         template<typename RandomAccessIterator1, typename RandomAccessIterator2, typename Compare, typename Projection>
         auto range_sort(const range<RandomAccessIterator1>& range1, const range<RandomAccessIterator2>& range2,
                         Compare compare, Projection projection,
-                        mstd::make_unsigned_t<difference_type_t<RandomAccessIterator1>> level)
+                        mstd::make_unsigned_t<mstd::iter_difference_t<RandomAccessIterator1>> level)
             -> void
         {
             using range_it1 = range<RandomAccessIterator1>;
@@ -249,7 +249,7 @@ namespace cppsort::detail
                              Compare compare, Projection projection)
             -> void
         {
-            using difference_type = difference_type_t<RandomAccessIterator1>;
+            using difference_type = mstd::iter_difference_t<RandomAccessIterator1>;
 
             // minimal number of element before to jump to insertionsort
             constexpr difference_type sort_min = 32;
@@ -287,7 +287,7 @@ namespace cppsort::detail
 
                 using range_it = range<RandomAccessIterator>;
                 using rvalue_type = rvalue_type_t<RandomAccessIterator>;
-                using difference_type = difference_type_t<RandomAccessIterator>;
+                using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
                 using range_buf = range<rvalue_type*>;
 
                 // When the number of elements to sort is smaller than Sort_min, are sorted

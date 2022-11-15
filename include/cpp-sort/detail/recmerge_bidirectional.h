@@ -20,10 +20,10 @@
 #include <cstddef>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "buffered_inplace_merge.h"
-#include "iterator_traits.h"
 #include "lower_bound.h"
 #include "rotate.h"
 #include "upper_bound.h"
@@ -38,13 +38,13 @@ namespace cppsort::detail
     auto recmerge(BidirectionalIterator first, BidirectionalIterator middle,
                   BidirectionalIterator last,
                   Compare compare, Projection projection,
-                  difference_type_t<BidirectionalIterator> len1,
-                  difference_type_t<BidirectionalIterator> len2,
+                  mstd::iter_difference_t<BidirectionalIterator> len1,
+                  mstd::iter_difference_t<BidirectionalIterator> len2,
                   RandomAccessIterator buff, std::ptrdiff_t buff_size,
                   std::bidirectional_iterator_tag tag)
         -> void
     {
-        using difference_type = difference_type_t<BidirectionalIterator>;
+        using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 

@@ -10,15 +10,15 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
-#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
-    auto lower_bound_n(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    auto lower_bound_n(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                        T&& value, Compare compare, Projection projection)
         -> ForwardIterator
     {
@@ -50,7 +50,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename T,
         typename Compare, typename Projection>
-    auto lower_monobound_n(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    auto lower_monobound_n(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                            T&& value, Compare compare, Projection projection)
         -> ForwardIterator
     {

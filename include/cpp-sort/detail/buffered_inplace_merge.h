@@ -99,8 +99,8 @@ namespace cppsort::detail
     auto buffered_inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                                 BidirectionalIterator last,
                                 Compare compare, Projection projection,
-                                difference_type_t<BidirectionalIterator> len1,
-                                difference_type_t<BidirectionalIterator> len2,
+                                mstd::iter_difference_t<BidirectionalIterator> len1,
+                                mstd::iter_difference_t<BidirectionalIterator> len2,
                                 rvalue_type_t<BidirectionalIterator>* buff)
         -> void
     {

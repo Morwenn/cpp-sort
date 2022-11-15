@@ -10,23 +10,20 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "buffered_inplace_merge.h"
-#include "iterator_traits.h"
 #include "rotate.h"
 
 namespace cppsort::detail
 {
-    ////////////////////////////////////////////////////////////
-    // Random-access algorithm using symmerge
-
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto symmerge_bsearch(RandomAccessIterator arr,
-                          difference_type_t<RandomAccessIterator> l,
-                          difference_type_t<RandomAccessIterator> r,
-                          difference_type_t<RandomAccessIterator> p,
+                          mstd::iter_difference_t<RandomAccessIterator> l,
+                          mstd::iter_difference_t<RandomAccessIterator> r,
+                          mstd::iter_difference_t<RandomAccessIterator> p,
                           Compare compare, Projection projection)
-        -> difference_type_t<RandomAccessIterator>
+        -> mstd::iter_difference_t<RandomAccessIterator>
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -45,12 +42,12 @@ namespace cppsort::detail
     template<typename RandomAccessIterator1, typename RandomAccessIterator2,
              typename Compare, typename Projection>
     auto symmerge(RandomAccessIterator1 arr,
-                  difference_type_t<RandomAccessIterator1> first,
-                  difference_type_t<RandomAccessIterator1> middle,
-                  difference_type_t<RandomAccessIterator1> last,
+                  mstd::iter_difference_t<RandomAccessIterator1> first,
+                  mstd::iter_difference_t<RandomAccessIterator1> middle,
+                  mstd::iter_difference_t<RandomAccessIterator1> last,
                   Compare compare, Projection projection,
-                  difference_type_t<RandomAccessIterator1> len1,
-                  difference_type_t<RandomAccessIterator1> len2,
+                  mstd::iter_difference_t<RandomAccessIterator1> len1,
+                  mstd::iter_difference_t<RandomAccessIterator1> len2,
                   RandomAccessIterator2 buff, std::ptrdiff_t buff_size)
         -> void
     {

@@ -109,7 +109,7 @@ namespace cppsort::detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            difference_type_t<RandomAccessIterator> limit = 0;
+            mstd::iter_difference_t<RandomAccessIterator> limit = 0;
             for (auto cur = std::next(begin); cur != end; ++cur) {
                 auto sift = cur;
                 auto sift_1 = std::prev(cur);
@@ -397,7 +397,7 @@ namespace cppsort::detail
             -> void
         {
             using utility::iter_swap;
-            using difference_type = difference_type_t<RandomAccessIterator>;
+            using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
             using value_type = std::iter_value_t<RandomAccessIterator>;
             using projected_type = projected_t<RandomAccessIterator, Projection>;
 

@@ -20,6 +20,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
@@ -30,8 +31,8 @@ namespace cppsort::detail
     namespace median_common_detail
     {
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        constexpr auto pivot_partition(RandomAccessIterator r, difference_type_t<RandomAccessIterator> k,
-                                       difference_type_t<RandomAccessIterator> length,
+        constexpr auto pivot_partition(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> k,
+                                       mstd::iter_difference_t<RandomAccessIterator> length,
                                        Compare compare, Projection projection)
             -> RandomAccessIterator
         {
@@ -50,10 +51,10 @@ namespace cppsort::detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        constexpr auto median_index(RandomAccessIterator r, difference_type_t<RandomAccessIterator> a,
-                                    difference_type_t<RandomAccessIterator> b, difference_type_t<RandomAccessIterator> c,
+        constexpr auto median_index(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> a,
+                                    mstd::iter_difference_t<RandomAccessIterator> b, mstd::iter_difference_t<RandomAccessIterator> c,
                                     Compare compare, Projection projection)
-            -> difference_type_t<RandomAccessIterator>
+            -> mstd::iter_difference_t<RandomAccessIterator>
         {
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
@@ -72,10 +73,10 @@ namespace cppsort::detail
 
         template<bool LeanRight, typename RandomAccessIterator, typename Compare, typename Projection>
         constexpr auto median_index(RandomAccessIterator r,
-                                    difference_type_t<RandomAccessIterator> a, difference_type_t<RandomAccessIterator> b,
-                                    difference_type_t<RandomAccessIterator> c, difference_type_t<RandomAccessIterator> d,
+                                    mstd::iter_difference_t<RandomAccessIterator> a, mstd::iter_difference_t<RandomAccessIterator> b,
+                                    mstd::iter_difference_t<RandomAccessIterator> c, mstd::iter_difference_t<RandomAccessIterator> d,
                                     Compare compare, Projection projection)
-            -> difference_type_t<RandomAccessIterator>
+            -> mstd::iter_difference_t<RandomAccessIterator>
         {
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
@@ -106,11 +107,11 @@ namespace cppsort::detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        constexpr auto ninther(RandomAccessIterator r, difference_type_t<RandomAccessIterator> _1, difference_type_t<RandomAccessIterator> _2,
-                               difference_type_t<RandomAccessIterator> _3, difference_type_t<RandomAccessIterator> _4,
-                               difference_type_t<RandomAccessIterator> _5, difference_type_t<RandomAccessIterator> _6,
-                               difference_type_t<RandomAccessIterator> _7, difference_type_t<RandomAccessIterator> _8,
-                               difference_type_t<RandomAccessIterator> _9, Compare compare, Projection projection)
+        constexpr auto ninther(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> _1, mstd::iter_difference_t<RandomAccessIterator> _2,
+                               mstd::iter_difference_t<RandomAccessIterator> _3, mstd::iter_difference_t<RandomAccessIterator> _4,
+                               mstd::iter_difference_t<RandomAccessIterator> _5, mstd::iter_difference_t<RandomAccessIterator> _6,
+                               mstd::iter_difference_t<RandomAccessIterator> _7, mstd::iter_difference_t<RandomAccessIterator> _8,
+                               mstd::iter_difference_t<RandomAccessIterator> _9, Compare compare, Projection projection)
             -> void
         {
             using utility::iter_swap;
@@ -157,17 +158,17 @@ namespace cppsort::detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        constexpr auto expand_partition_left(RandomAccessIterator r, difference_type_t<RandomAccessIterator> lo,
-                                             difference_type_t<RandomAccessIterator> pivot,
+        constexpr auto expand_partition_left(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> lo,
+                                             mstd::iter_difference_t<RandomAccessIterator> pivot,
                                              Compare compare, Projection projection)
-            -> difference_type_t<RandomAccessIterator>
+            -> mstd::iter_difference_t<RandomAccessIterator>
         {
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             CPPSORT_ASSERT(lo > 0 && lo <= pivot);
-            difference_type_t<RandomAccessIterator> left = 0;
+            mstd::iter_difference_t<RandomAccessIterator> left = 0;
             const auto oldPivot = pivot;
             auto&& old_pivot_proj = proj(r[oldPivot]);
             for (; lo < pivot ; ++left) {
@@ -202,16 +203,16 @@ namespace cppsort::detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        constexpr auto expand_partition_right(RandomAccessIterator r, difference_type_t<RandomAccessIterator> hi,
-                                              difference_type_t<RandomAccessIterator> rite,
+        constexpr auto expand_partition_right(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> hi,
+                                              mstd::iter_difference_t<RandomAccessIterator> rite,
                                               Compare compare, Projection projection)
-            -> difference_type_t<RandomAccessIterator>
+            -> mstd::iter_difference_t<RandomAccessIterator>
         {
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            difference_type_t<RandomAccessIterator> pivot = 0;
+            mstd::iter_difference_t<RandomAccessIterator> pivot = 0;
             CPPSORT_ASSERT(pivot <= hi);
             CPPSORT_ASSERT(hi <= rite);
             auto&& pivot_proj = proj(r[0]);
@@ -244,10 +245,10 @@ namespace cppsort::detail
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
-        constexpr auto expand_partition(RandomAccessIterator r, difference_type_t<RandomAccessIterator> lo,
-                                        difference_type_t<RandomAccessIterator> pivot, difference_type_t<RandomAccessIterator> hi,
-                                        difference_type_t<RandomAccessIterator> length, Compare compare, Projection projection)
-            -> difference_type_t<RandomAccessIterator>
+        constexpr auto expand_partition(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> lo,
+                                        mstd::iter_difference_t<RandomAccessIterator> pivot, mstd::iter_difference_t<RandomAccessIterator> hi,
+                                        mstd::iter_difference_t<RandomAccessIterator> length, Compare compare, Projection projection)
+            -> mstd::iter_difference_t<RandomAccessIterator>
         {
             using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
@@ -257,7 +258,7 @@ namespace cppsort::detail
             --hi;
             --length;
 
-            for (difference_type_t<RandomAccessIterator> left = 0 ; ; ++left, --length) {
+            for (mstd::iter_difference_t<RandomAccessIterator> left = 0 ; ; ++left, --length) {
                 for (;; ++left) {
                     if (left == lo) {
                         return pivot + expand_partition_right(r + pivot, hi - pivot, length - pivot,
@@ -278,8 +279,8 @@ namespace cppsort::detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    constexpr auto adaptive_quickselect(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                                        difference_type_t<RandomAccessIterator> length,
+    constexpr auto adaptive_quickselect(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> n,
+                                        mstd::iter_difference_t<RandomAccessIterator> length,
                                         Compare compare, Projection projection)
         -> void;
 
@@ -287,10 +288,10 @@ namespace cppsort::detail
     Median of minima
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    constexpr auto median_of_minima(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                                    difference_type_t<RandomAccessIterator> length,
+    constexpr auto median_of_minima(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> n,
+                                    mstd::iter_difference_t<RandomAccessIterator> length,
                                     Compare compare, Projection projection)
-        -> difference_type_t<RandomAccessIterator>
+        -> mstd::iter_difference_t<RandomAccessIterator>
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -303,7 +304,7 @@ namespace cppsort::detail
         auto computeMinOver = (length - subset) / subset;
         CPPSORT_ASSERT(computeMinOver > 0);
 
-        for (difference_type_t<RandomAccessIterator> i = 0, j = subset ; i < subset ; ++i) {
+        for (mstd::iter_difference_t<RandomAccessIterator> i = 0, j = subset ; i < subset ; ++i) {
             auto limit = j + computeMinOver;
             auto minIndex = j;
             while (++j < limit) {
@@ -327,10 +328,10 @@ namespace cppsort::detail
     Median of maxima
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    constexpr auto median_of_maxima(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                                    difference_type_t<RandomAccessIterator> length,
+    constexpr auto median_of_maxima(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> n,
+                                    mstd::iter_difference_t<RandomAccessIterator> length,
                                     Compare compare, Projection projection)
-        -> difference_type_t<RandomAccessIterator>
+        -> mstd::iter_difference_t<RandomAccessIterator>
     {
         using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
@@ -368,9 +369,9 @@ namespace cppsort::detail
     pivot that approximates the median. Returns the position of the pivot.
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    constexpr auto median_of_ninthers(RandomAccessIterator r, difference_type_t<RandomAccessIterator> length,
+    constexpr auto median_of_ninthers(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> length,
                                       Compare compare, Projection projection)
-        -> difference_type_t<RandomAccessIterator>
+        -> mstd::iter_difference_t<RandomAccessIterator>
     {
         CPPSORT_ASSERT(length >= 12);
         auto frac = length <= 1024 ? length / 12
@@ -408,8 +409,8 @@ namespace cppsort::detail
     sought order statistics) and length.
     */
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    constexpr auto adaptive_quickselect(RandomAccessIterator r, difference_type_t<RandomAccessIterator> n,
-                                        difference_type_t<RandomAccessIterator> length,
+    constexpr auto adaptive_quickselect(RandomAccessIterator r, mstd::iter_difference_t<RandomAccessIterator> n,
+                                        mstd::iter_difference_t<RandomAccessIterator> length,
                                         Compare compare, Projection projection)
         -> void
     {
@@ -422,7 +423,7 @@ namespace cppsort::detail
             // Decide strategy for partitioning
             if (n == 0) {
                 // That would be the max
-                difference_type_t<RandomAccessIterator> pivot = n;
+                mstd::iter_difference_t<RandomAccessIterator> pivot = n;
                 for (++n ; n < length ; ++n) {
                     if (comp(proj(r[n]), proj(r[pivot]))) {
                         pivot = n;
@@ -434,7 +435,7 @@ namespace cppsort::detail
 
             if (n + 1 == length) {
                 // That would be the min
-                difference_type_t<RandomAccessIterator> pivot = 0;
+                mstd::iter_difference_t<RandomAccessIterator> pivot = 0;
                 for (n = 1 ; n < length ; ++n) {
                     if (comp(proj(r[pivot]), proj(r[n]))) {
                         pivot = n;
@@ -445,7 +446,7 @@ namespace cppsort::detail
             }
 
             CPPSORT_ASSERT(n < length);
-            difference_type_t<RandomAccessIterator> pivot;
+            mstd::iter_difference_t<RandomAccessIterator> pivot;
             if (length <= 16) {
                 pivot = median_common_detail::pivot_partition(r, n, length, compare, projection) - r;
             } else if (n <= length / 6) {

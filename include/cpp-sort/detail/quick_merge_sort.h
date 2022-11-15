@@ -11,6 +11,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
@@ -70,7 +71,7 @@ namespace cppsort::detail
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto internal_buffered_inplace_merge(ForwardIterator first, ForwardIterator middle,
                                                    ForwardIterator last,
-                                                   difference_type_t<ForwardIterator> size_left,
+                                                   mstd::iter_difference_t<ForwardIterator> size_left,
                                                    ForwardIterator buffer,
                                                    Compare compare, Projection projection)
         -> void
@@ -82,7 +83,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto internal_mergesort(ForwardIterator first, ForwardIterator last,
-                                      difference_type_t<ForwardIterator> size,
+                                      mstd::iter_difference_t<ForwardIterator> size,
                                       ForwardIterator buffer,
                                       Compare compare, Projection projection)
         -> void
@@ -122,7 +123,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto quick_merge_sort(ForwardIterator first, ForwardIterator last,
-                                    difference_type_t<ForwardIterator> size,
+                                    mstd::iter_difference_t<ForwardIterator> size,
                                     Compare compare, Projection projection)
         -> void
     {
@@ -151,7 +152,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto quick_merge_sort(sized_iterator<ForwardIterator> first, sized_iterator<ForwardIterator> last,
-                                    difference_type_t<ForwardIterator> size,
+                                    mstd::iter_difference_t<ForwardIterator> size,
                                     Compare compare, Projection projection)
         -> void
     {

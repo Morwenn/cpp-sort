@@ -21,7 +21,6 @@
 #include <cpp-sort/utility/sorting_networks.h>
 #include "../detail/bitops.h"
 #include "../detail/empty_sorter.h"
-#include "../detail/iterator_traits.h"
 
 namespace cppsort
 {
@@ -108,7 +107,7 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                using difference_type = difference_type_t<Iterator>;
+                using difference_type = mstd::iter_difference_t<Iterator>;
                 auto pairs = index_pairs<difference_type>();
                 utility::swap_index_pairs(first, pairs, std::move(compare), std::move(projection));
             }

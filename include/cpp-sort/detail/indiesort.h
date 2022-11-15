@@ -34,7 +34,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "../detail/immovable_vector.h"
-#include "iterator_traits.h"
 #include "scope_exit.h"
 
 namespace cppsort::detail
@@ -43,11 +42,11 @@ namespace cppsort::detail
     struct it_and_index
     {
         Iterator original_location;
-        difference_type_t<Iterator> original_index;
+        mstd::iter_difference_t<Iterator> original_index;
 
         it_and_index() = default;
 
-        it_and_index(Iterator item, difference_type_t<Iterator> index) noexcept:
+        it_and_index(Iterator item, mstd::iter_difference_t<Iterator> index) noexcept:
             original_location(item),
             original_index(index)
         {}
@@ -55,7 +54,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Sorter, typename Compare, typename Projection>
     auto indiesort(Sorter&& sorter, ForwardIterator first, ForwardIterator last,
-                   difference_type_t<ForwardIterator> size,
+                   mstd::iter_difference_t<ForwardIterator> size,
                    Compare compare, Projection projection)
         -> decltype(std::forward<Sorter>(sorter)(
             (it_and_index<ForwardIterator>*)0, (it_and_index<ForwardIterator>*)0,
@@ -66,8 +65,8 @@ namespace cppsort::detail
         using item_index_tuple = it_and_index<ForwardIterator>;
         immovable_vector<item_index_tuple> storage(size);
 
-        // Construct pointers to all elements in the sequence
-        difference_type_t<ForwardIterator> index = 0;
+        // Construct iterators to all elements in the sequence
+        mstd::iter_difference_t<ForwardIterator> index = 0;
         for (auto current_element = first; current_element != last; ++current_element) {
             storage.emplace_back(current_element, index);
             ++index;

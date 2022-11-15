@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
@@ -91,7 +92,7 @@ namespace cppsort::detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto iter_median_rest(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    constexpr auto iter_median_rest(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                                     Compare compare, Projection projection)
         -> ForwardIterator
     {
@@ -139,14 +140,14 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto introselect(ForwardIterator first, ForwardIterator last,
-                               difference_type_t<ForwardIterator> nth_pos,
-                               difference_type_t<ForwardIterator> size,
+                               mstd::iter_difference_t<ForwardIterator> nth_pos,
+                               mstd::iter_difference_t<ForwardIterator> size,
                                Compare compare, Projection projection)
         -> ForwardIterator;
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto median_of_medians(ForwardIterator first, ForwardIterator last,
-                                     difference_type_t<ForwardIterator> size,
+                                     mstd::iter_difference_t<ForwardIterator> size,
                                      Compare compare, Projection projection)
         -> ForwardIterator
     {
@@ -166,7 +167,7 @@ namespace cppsort::detail
         auto rounded_size = (size / 5) * 5;
 
         // Handle elements 5 by 5
-        for (difference_type_t<ForwardIterator> i = 0 ; i < rounded_size / 5 ; ++i) {
+        for (mstd::iter_difference_t<ForwardIterator> i = 0 ; i < rounded_size / 5 ; ++i) {
             auto it1 = it;
             auto it2 = ++it;
             auto it3 = ++it;
@@ -199,7 +200,7 @@ namespace cppsort::detail
     // Get iterator to last element
 
     template<typename Iterator>
-    constexpr auto last_it(Iterator first, Iterator, difference_type_t<Iterator> size,
+    constexpr auto last_it(Iterator first, Iterator, mstd::iter_difference_t<Iterator> size,
                            std::forward_iterator_tag)
         -> Iterator
     {
@@ -207,7 +208,7 @@ namespace cppsort::detail
     }
 
     template<typename Iterator>
-    constexpr auto last_it(Iterator, Iterator last, difference_type_t<Iterator>,
+    constexpr auto last_it(Iterator, Iterator last, mstd::iter_difference_t<Iterator>,
                            std::bidirectional_iterator_tag)
         -> Iterator
     {
@@ -215,7 +216,7 @@ namespace cppsort::detail
     }
 
     template<typename Iterator>
-    constexpr auto last_it(Iterator first, Iterator last, difference_type_t<Iterator> size)
+    constexpr auto last_it(Iterator first, Iterator last, mstd::iter_difference_t<Iterator> size)
         -> Iterator
     {
         using category = iterator_category_t<Iterator>;
@@ -227,7 +228,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto pick_pivot(ForwardIterator first, ForwardIterator last,
-                              difference_type_t<ForwardIterator> size, int bad_allowed,
+                              mstd::iter_difference_t<ForwardIterator> size, int bad_allowed,
                               Compare compare, Projection projection)
         -> std::pair<ForwardIterator, ForwardIterator>
     {
@@ -258,8 +259,8 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto introselect(ForwardIterator first, ForwardIterator last,
-                               difference_type_t<ForwardIterator> nth_pos,
-                               difference_type_t<ForwardIterator> size,
+                               mstd::iter_difference_t<ForwardIterator> nth_pos,
+                               mstd::iter_difference_t<ForwardIterator> size,
                                Compare compare, Projection projection)
         -> ForwardIterator
     {

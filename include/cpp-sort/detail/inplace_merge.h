@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
 #include "is_sorted_until.h"
@@ -30,8 +31,8 @@ namespace cppsort::detail
              typename Compare, typename Projection>
     auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
                        Compare compare, Projection projection,
-                       difference_type_t<ForwardIterator> len1,
-                       difference_type_t<ForwardIterator> len2,
+                       mstd::iter_difference_t<ForwardIterator> len1,
+                       mstd::iter_difference_t<ForwardIterator> len2,
                        RandomAccessIterator buff, std::ptrdiff_t buff_size,
                        std::forward_iterator_tag)
         -> void
@@ -52,8 +53,8 @@ namespace cppsort::detail
     auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                        BidirectionalIterator last,
                        Compare compare, Projection projection,
-                       difference_type_t<BidirectionalIterator> len1,
-                       difference_type_t<BidirectionalIterator> len2,
+                       mstd::iter_difference_t<BidirectionalIterator> len1,
+                       mstd::iter_difference_t<BidirectionalIterator> len2,
                        RandomAccessIterator buff, std::ptrdiff_t buff_size,
                        std::bidirectional_iterator_tag tag)
         -> void
@@ -73,8 +74,8 @@ namespace cppsort::detail
     auto inplace_merge(RandomAccessIterator1 first, RandomAccessIterator1 middle,
                        RandomAccessIterator1 last,
                        Compare compare, Projection projection,
-                       difference_type_t<RandomAccessIterator1> len1,
-                       difference_type_t<RandomAccessIterator1> len2,
+                       mstd::iter_difference_t<RandomAccessIterator1> len1,
+                       mstd::iter_difference_t<RandomAccessIterator1> len2,
                        RandomAccessIterator2 buff, std::ptrdiff_t buff_size,
                        std::random_access_iterator_tag)
         -> void
@@ -119,8 +120,8 @@ namespace cppsort::detail
     auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                        BidirectionalIterator last,
                        Compare compare, Projection projection,
-                       difference_type_t<BidirectionalIterator> len1,
-                       difference_type_t<BidirectionalIterator> len2,
+                       mstd::iter_difference_t<BidirectionalIterator> len1,
+                       mstd::iter_difference_t<BidirectionalIterator> len2,
                        std::bidirectional_iterator_tag)
         -> void
     {
@@ -181,8 +182,8 @@ namespace cppsort::detail
     auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
                        BidirectionalIterator last,
                        Compare compare, Projection projection,
-                       difference_type_t<BidirectionalIterator> len1,
-                       difference_type_t<BidirectionalIterator> len2)
+                       mstd::iter_difference_t<BidirectionalIterator> len1,
+                       mstd::iter_difference_t<BidirectionalIterator> len2)
         -> void
     {
         using category = iterator_category_t<BidirectionalIterator>;
@@ -199,8 +200,8 @@ namespace cppsort::detail
              typename Compare, typename Projection>
     auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
                        Compare compare, Projection projection,
-                       difference_type_t<ForwardIterator> len1,
-                       difference_type_t<ForwardIterator> len2,
+                       mstd::iter_difference_t<ForwardIterator> len1,
+                       mstd::iter_difference_t<ForwardIterator> len2,
                        RandomAccessIterator buff, std::ptrdiff_t buff_size)
         -> void
     {

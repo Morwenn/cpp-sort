@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bubble_sort.h"
 #include "inplace_merge.h"
@@ -20,7 +21,7 @@
 namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto merge_sort_impl(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    auto merge_sort_impl(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                          temporary_buffer<rvalue_type_t<ForwardIterator>>&& buffer,
                          Compare compare, Projection projection,
                          std::forward_iterator_tag tag)
@@ -72,7 +73,7 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto merge_sort_impl(BidirectionalIterator first, BidirectionalIterator last,
-                         difference_type_t<BidirectionalIterator> size,
+                         mstd::iter_difference_t<BidirectionalIterator> size,
                          temporary_buffer<rvalue_type_t<BidirectionalIterator>>&& buffer,
                          Compare compare, Projection projection,
                          std::bidirectional_iterator_tag tag)
@@ -125,7 +126,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort(ForwardIterator first, ForwardIterator,
-                    difference_type_t<ForwardIterator> size,
+                    mstd::iter_difference_t<ForwardIterator> size,
                     Compare compare, Projection projection,
                     std::forward_iterator_tag tag)
         -> void
@@ -143,7 +144,7 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto merge_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    difference_type_t<BidirectionalIterator> size,
+                    mstd::iter_difference_t<BidirectionalIterator> size,
                     Compare compare, Projection projection,
                     std::bidirectional_iterator_tag tag)
         -> void
@@ -161,7 +162,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto merge_sort(ForwardIterator first, ForwardIterator last,
-                    difference_type_t<ForwardIterator> size,
+                    mstd::iter_difference_t<ForwardIterator> size,
                     Compare compare, Projection projection)
         -> void
     {

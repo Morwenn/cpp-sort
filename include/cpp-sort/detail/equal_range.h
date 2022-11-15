@@ -19,9 +19,9 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
-#include "iterator_traits.h"
 #include "lower_bound.h"
 #include "upper_bound.h"
 
@@ -36,7 +36,7 @@ namespace cppsort::detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        using difference_type = difference_type_t<ForwardIterator>;
+        using difference_type = mstd::iter_difference_t<ForwardIterator>;
         difference_type len = std::distance(first, last);
         while (len != 0) {
             difference_type l2 = half(len);

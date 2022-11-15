@@ -48,7 +48,7 @@ namespace cppsort::detail
                          Compare compare, Projection projection, Sorter&& sorter)
         -> void
     {
-        using difference_type = difference_type_t<BidirectionalIterator>;
+        using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
 
         // Configuration variables
@@ -83,7 +83,7 @@ namespace cppsort::detail
                     ++read;
                     ++num_dropped_in_row;
                 } else {
-                    for (difference_type i = 0 ; i < num_dropped_in_row ; ++i) {
+                    for (difference_type i = 0; i < num_dropped_in_row; ++i) {
                         --read;
                         if constexpr (not std::is_trivially_copyable_v<rvalue_type>) {
                             // If the value is trivially copyable, then it shouldn't have

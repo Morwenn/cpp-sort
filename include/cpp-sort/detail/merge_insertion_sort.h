@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
@@ -38,7 +39,7 @@ namespace cppsort::detail
             using iterator_category = iterator_category_t<Iterator>;
             using iterator_type     = Iterator;
             using value_type        = std::iter_value_t<Iterator>;
-            using difference_type   = difference_type_t<Iterator>;
+            using difference_type   = mstd::iter_difference_t<Iterator>;
             using pointer           = pointer_t<Iterator>;
             using reference         = std::iter_reference_t<Iterator>;
 
@@ -245,7 +246,7 @@ namespace cppsort::detail
 
     template<typename Iterator>
     [[nodiscard]]
-    auto make_group_iterator(Iterator it, difference_type_t<Iterator> size)
+    auto make_group_iterator(Iterator it, mstd::iter_difference_t<Iterator> size)
         -> group_iterator<Iterator>
     {
         return { it, size };
@@ -253,7 +254,7 @@ namespace cppsort::detail
 
     template<typename Iterator>
     [[nodiscard]]
-    auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<Iterator> size)
+    auto make_group_iterator(group_iterator<Iterator> it, mstd::iter_difference_t<Iterator> size)
         -> group_iterator<Iterator>
     {
         size *= it.size();

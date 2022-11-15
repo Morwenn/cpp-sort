@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include "config.h"
 #include "iterator_traits.h"
 
@@ -37,7 +38,7 @@ namespace cppsort::detail
             using iterator_category = iterator_category_t<Iterator>;
             using iterator_type     = Iterator;
             using value_type        = std::iter_value_t<Iterator>;
-            using difference_type   = difference_type_t<Iterator>;
+            using difference_type   = mstd::iter_difference_t<Iterator>;
             using pointer           = pointer_t<Iterator>;
             using reference         = std::iter_reference_t<Iterator>;
 
@@ -139,7 +140,7 @@ namespace cppsort::detail
 
     template<typename Iterator>
     [[nodiscard]]
-    auto make_sized_iterator(Iterator it, difference_type_t<Iterator> size)
+    auto make_sized_iterator(Iterator it, mstd::iter_difference_t<Iterator> size)
         -> sized_iterator<Iterator>
     {
         return { it, size };

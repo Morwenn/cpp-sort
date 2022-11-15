@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iterator>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
 #include "fixed_size_list.h"
@@ -117,7 +118,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
     auto melsort(ForwardIterator first, Sentinel last,
-                 difference_type_t<ForwardIterator> size,
+                 mstd::iter_difference_t<ForwardIterator> size,
                  Compare compare, Projection projection)
         -> void
     {

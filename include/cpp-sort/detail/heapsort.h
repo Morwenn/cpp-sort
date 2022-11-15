@@ -22,14 +22,13 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
-#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
     template<typename Compare, typename RandomAccessIterator, typename Projection>
     constexpr auto sift_down(RandomAccessIterator first, RandomAccessIterator,
                              Compare compare, Projection projection,
-                             difference_type_t<RandomAccessIterator> len,
+                             mstd::iter_difference_t<RandomAccessIterator> len,
                              RandomAccessIterator start)
         -> void
     {
@@ -86,14 +85,14 @@ namespace cppsort::detail
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     constexpr auto floyd_sift_down(RandomAccessIterator first, Compare compare, Projection projection,
-                                   difference_type_t<RandomAccessIterator> len)
+                                   mstd::iter_difference_t<RandomAccessIterator> len)
         -> RandomAccessIterator
     {
         CPPSORT_ASSERT(len >= 2);
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
         auto hole = first;
         auto child_i = first;
@@ -123,7 +122,7 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     constexpr auto push_heap(RandomAccessIterator first, RandomAccessIterator last,
                              Compare compare, Projection projection,
-                             difference_type_t<RandomAccessIterator> len)
+                             mstd::iter_difference_t<RandomAccessIterator> len)
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -151,7 +150,7 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     constexpr auto pop_heap(RandomAccessIterator first, RandomAccessIterator last,
                             Compare compare, Projection projection,
-                            difference_type_t<RandomAccessIterator> len)
+                            mstd::iter_difference_t<RandomAccessIterator> len)
         -> void
     {
         if (len > 1) {
@@ -173,7 +172,7 @@ namespace cppsort::detail
                              Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
         difference_type n = last - first;
         if (n > 1) {
             // start from the first parent, there is no need to consider children

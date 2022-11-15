@@ -57,7 +57,7 @@ namespace cppsort::detail
     template<typename Iterator>
     struct run
     {
-        using difference_type = difference_type_t<Iterator>;
+        using difference_type = mstd::iter_difference_t<Iterator>;
 
         Iterator base;
         difference_type len;
@@ -78,7 +78,7 @@ namespace cppsort::detail
     {
         using iterator = RandomAccessIterator;
         using rvalue_type = rvalue_type_t<iterator>;
-        using difference_type = difference_type_t<iterator>;
+        using difference_type = mstd::iter_difference_t<iterator>;
 
         static constexpr int min_merge = 32;
         static constexpr int min_gallop = 7;

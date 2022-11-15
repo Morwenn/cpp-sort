@@ -19,6 +19,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
@@ -49,7 +50,7 @@ namespace cppsort::detail
         {}
 
         auto length() const
-            -> difference_type_t<Iterator>
+            -> mstd::iter_difference_t<Iterator>
         {
             return end - start;
         }
@@ -60,10 +61,10 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindFirstForward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                           Compare compare, Projection projection,
-                          difference_type_t<RandomAccessIterator> unique)
+                          mstd::iter_difference_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
         difference_type size = last - first;
         if (size == 0) return first;
@@ -87,10 +88,10 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindLastForward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                          Compare compare, Projection projection,
-                         difference_type_t<RandomAccessIterator> unique)
+                         mstd::iter_difference_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
         difference_type size = last - first;
         if (size == 0) return first;
@@ -114,10 +115,10 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindFirstBackward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                            Compare compare, Projection projection,
-                           difference_type_t<RandomAccessIterator> unique)
+                           mstd::iter_difference_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
         difference_type size = last - first;
         if (size == 0) return first;
@@ -140,10 +141,10 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename T, typename Compare, typename Projection>
     auto FindLastBackward(RandomAccessIterator first, RandomAccessIterator last, T&& value,
                           Compare compare, Projection projection,
-                          difference_type_t<RandomAccessIterator> unique)
+                          mstd::iter_difference_t<RandomAccessIterator> unique)
         -> RandomAccessIterator
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
         difference_type size = last - first;
         if (size == 0) return first;
@@ -259,7 +260,7 @@ namespace cppsort::detail
         class Iterator
         {
             using iterator = Iter;
-            using difference_type = difference_type_t<iterator>;
+            using difference_type = mstd::iter_difference_t<iterator>;
 
             difference_type size, power_of_two;
             difference_type decimal, numerator, denominator;
@@ -328,12 +329,12 @@ namespace cppsort::detail
         template<typename RandomAccessIterator, typename CacheIterator,
                  typename Compare, typename Projection>
         auto sort(RandomAccessIterator first, RandomAccessIterator last,
-                  CacheIterator cache_begin, difference_type_t<CacheIterator> cache_size,
+                  CacheIterator cache_begin, mstd::iter_difference_t<CacheIterator> cache_size,
                   Compare compare, Projection projection)
             -> void
         {
             using utility::iter_swap;
-            using difference_type = difference_type_t<RandomAccessIterator>;
+            using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
             difference_type size = last - first;
             if (size < 15) {

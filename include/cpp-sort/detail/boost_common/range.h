@@ -23,10 +23,9 @@
 #include <iterator>
 #include <memory>
 #include <vector>
-#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "util/merge.h"
 #include "../config.h"
-#include "../iterator_traits.h"
 #include "../move.h"
 
 namespace cppsort::detail::boost_common
@@ -97,7 +96,7 @@ namespace cppsort::detail::boost_common
         /// @return size
         //-----------------------------------------------------------------------
         auto size() const
-            -> difference_type_t<RandomAccessIterator>
+            -> mstd::iter_difference_t<RandomAccessIterator>
         {
             return last - first;
         }

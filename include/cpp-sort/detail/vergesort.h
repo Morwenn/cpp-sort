@@ -12,6 +12,7 @@
 #include <list>
 #include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/utility/as_function.h>
@@ -36,7 +37,7 @@ namespace cppsort::detail::verge
     struct run
     {
         Iterator end;
-        difference_type_t<Iterator> size;
+        mstd::iter_difference_t<Iterator> size;
     };
 
     ////////////////////////////////////////////////////////////
@@ -100,7 +101,7 @@ namespace cppsort::detail::verge
     >
     auto sort(std::bidirectional_iterator_tag,
               BidirectionalIterator first, BidirectionalIterator last,
-              difference_type_t<BidirectionalIterator> size,
+              mstd::iter_difference_t<BidirectionalIterator> size,
               Compare compare, Projection projection, Fallback fallback)
         -> void
     {
@@ -112,7 +113,7 @@ namespace cppsort::detail::verge
             return;
         }
 
-        using difference_type = difference_type_t<BidirectionalIterator>;
+        using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -327,7 +328,7 @@ namespace cppsort::detail::verge
     >
     auto sort(std::random_access_iterator_tag,
               RandomAccessIterator first, RandomAccessIterator last,
-              difference_type_t<RandomAccessIterator> size,
+              mstd::iter_difference_t<RandomAccessIterator> size,
               Compare compare, Projection projection, Fallback fallback)
         -> void
     {
@@ -340,7 +341,7 @@ namespace cppsort::detail::verge
 
         // See the bidirectional overload for the description of
         // the following variables
-        const difference_type_t<RandomAccessIterator> minrun_limit = size / log2(size);
+        const mstd::iter_difference_t<RandomAccessIterator> minrun_limit = size / log2(size);
         std::list<verge::run<RandomAccessIterator>> runs;
         auto begin_unsorted = last;
 
@@ -521,7 +522,7 @@ namespace cppsort::detail::verge
         typename Fallback
     >
     auto sort(BidirectionalIterator first, BidirectionalIterator last,
-              difference_type_t<BidirectionalIterator> size,
+              mstd::iter_difference_t<BidirectionalIterator> size,
               Compare compare, Projection projection, Fallback fallback)
         -> void
     {
@@ -560,7 +561,7 @@ namespace cppsort::detail::verge
         typename Projection
     >
     auto sort(BidirectionalIterator first, BidirectionalIterator last,
-              difference_type_t<BidirectionalIterator> size,
+              mstd::iter_difference_t<BidirectionalIterator> size,
               Compare compare, Projection projection)
         -> void
     {

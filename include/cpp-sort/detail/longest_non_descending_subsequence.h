@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
@@ -32,9 +33,12 @@ namespace cppsort::detail
         typename Projection
     >
     auto longest_non_descending_subsequence(ForwardIterator first, Sentinel last,
-                                            difference_type_t<ForwardIterator> size,
+                                            mstd::iter_difference_t<ForwardIterator> size,
                                             Compare compare, Projection projection)
-        -> std::pair<difference_type_t<ForwardIterator>, difference_type_t<ForwardIterator>>
+        -> std::pair<
+            mstd::iter_difference_t<ForwardIterator>,
+            mstd::iter_difference_t<ForwardIterator>
+        >
     {
         constexpr bool is_random_access = std::is_base_of_v<
             std::random_access_iterator_tag,

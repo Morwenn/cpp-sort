@@ -32,7 +32,7 @@ namespace cppsort::detail
 {
     template<typename BidirectionalIterator, typename Predicate>
     auto stable_partition(BidirectionalIterator first, BidirectionalIterator last, Predicate pred,
-                          difference_type_t<BidirectionalIterator> len,
+                          mstd::iter_difference_t<BidirectionalIterator> len,
                           temporary_buffer<rvalue_type_t<BidirectionalIterator>>& buffer)
         -> BidirectionalIterator
     {
@@ -135,11 +135,11 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Predicate>
     auto stable_partition(BidirectionalIterator first, BidirectionalIterator last,
-                          difference_type_t<BidirectionalIterator> size,
+                          mstd::iter_difference_t<BidirectionalIterator> size,
                           Predicate predicate)
         -> BidirectionalIterator
     {
-        using difference_type = difference_type_t<BidirectionalIterator>;
+        using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
         auto&& pred = utility::as_function(predicate);
 
         // might want to make this a function of trivial assignment

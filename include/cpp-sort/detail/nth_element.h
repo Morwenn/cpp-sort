@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include "adaptive_quickselect.h"
 #include "introselect.h"
 #include "iterator_traits.h"
@@ -22,8 +23,8 @@ namespace cppsort::detail
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto nth_element(std::forward_iterator_tag,
                                ForwardIterator first, ForwardIterator last,
-                               difference_type_t<ForwardIterator> nth_pos,
-                               difference_type_t<ForwardIterator> size,
+                               mstd::iter_difference_t<ForwardIterator> nth_pos,
+                               mstd::iter_difference_t<ForwardIterator> size,
                                Compare compare, Projection projection)
         -> ForwardIterator
     {
@@ -38,8 +39,8 @@ namespace cppsort::detail
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     constexpr auto nth_element(std::random_access_iterator_tag,
                                RandomAccessIterator first, RandomAccessIterator last,
-                               difference_type_t<RandomAccessIterator> nth_pos,
-                               difference_type_t<RandomAccessIterator>, // unused
+                               mstd::iter_difference_t<RandomAccessIterator> nth_pos,
+                               mstd::iter_difference_t<RandomAccessIterator>, // unused
                                Compare compare, Projection projection)
         -> RandomAccessIterator
     {
@@ -56,8 +57,8 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto nth_element(ForwardIterator first, ForwardIterator last,
-                               difference_type_t<ForwardIterator> nth_pos,
-                               difference_type_t<ForwardIterator> size,
+                               mstd::iter_difference_t<ForwardIterator> nth_pos,
+                               mstd::iter_difference_t<ForwardIterator> size,
                                Compare compare, Projection projection)
         -> ForwardIterator
     {

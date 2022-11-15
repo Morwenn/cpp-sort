@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
@@ -26,7 +27,7 @@ namespace cppsort::detail
     // worth it
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto quicksort_fallback(ForwardIterator first, ForwardIterator,
-                                      difference_type_t<ForwardIterator> size,
+                                      mstd::iter_difference_t<ForwardIterator> size,
                                       Compare compare, Projection projection,
                                       std::forward_iterator_tag)
         -> bool
@@ -41,7 +42,7 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     constexpr auto quicksort_fallback(BidirectionalIterator first, BidirectionalIterator last,
-                                      difference_type_t<BidirectionalIterator> size,
+                                      mstd::iter_difference_t<BidirectionalIterator> size,
                                       Compare compare, Projection projection,
                                       std::bidirectional_iterator_tag)
         -> bool
@@ -56,11 +57,11 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto quicksort(ForwardIterator first, ForwardIterator last,
-                             difference_type_t<ForwardIterator> size, int bad_allowed,
+                             mstd::iter_difference_t<ForwardIterator> size, int bad_allowed,
                              Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<ForwardIterator>;
+        using difference_type = mstd::iter_difference_t<ForwardIterator>;
         using utility::iter_swap;
 
         // If the collection is small enough, fall back to
@@ -116,7 +117,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto quicksort(ForwardIterator first, ForwardIterator last,
-                             difference_type_t<ForwardIterator> size,
+                             mstd::iter_difference_t<ForwardIterator> size,
                              Compare compare, Projection projection)
         -> void
     {

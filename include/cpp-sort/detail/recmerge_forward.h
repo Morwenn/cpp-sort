@@ -28,6 +28,7 @@
 #include <iterator>
 #include <memory>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "buffered_inplace_merge.h"
@@ -44,13 +45,13 @@ namespace cppsort::detail
     // recmerge for forward iterators
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto merge_n_step_0(ForwardIterator f0, difference_type_t<ForwardIterator> n0,
-                        ForwardIterator f1, difference_type_t<ForwardIterator> n1,
+    auto merge_n_step_0(ForwardIterator f0, mstd::iter_difference_t<ForwardIterator> n0,
+                        ForwardIterator f1, mstd::iter_difference_t<ForwardIterator> n1,
                         Compare compare, Projection projection,
-                        ForwardIterator& f0_0, difference_type_t<ForwardIterator>& n0_0,
-                        ForwardIterator& f0_1, difference_type_t<ForwardIterator>& n0_1,
-                        ForwardIterator& f1_0, difference_type_t<ForwardIterator>& n1_0,
-                        ForwardIterator& f1_1, difference_type_t<ForwardIterator>& n1_1)
+                        ForwardIterator& f0_0, mstd::iter_difference_t<ForwardIterator>& n0_0,
+                        ForwardIterator& f0_1, mstd::iter_difference_t<ForwardIterator>& n0_1,
+                        ForwardIterator& f1_0, mstd::iter_difference_t<ForwardIterator>& n1_0,
+                        ForwardIterator& f1_1, mstd::iter_difference_t<ForwardIterator>& n1_1)
         -> void
     {
         auto&& proj = utility::as_function(projection);
@@ -67,13 +68,13 @@ namespace cppsort::detail
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    auto merge_n_step_1(ForwardIterator f0, difference_type_t<ForwardIterator> n0,
-                        ForwardIterator f1, difference_type_t<ForwardIterator> n1,
+    auto merge_n_step_1(ForwardIterator f0, mstd::iter_difference_t<ForwardIterator> n0,
+                        ForwardIterator f1, mstd::iter_difference_t<ForwardIterator> n1,
                         Compare compare, Projection projection,
-                        ForwardIterator& f0_0, difference_type_t<ForwardIterator>& n0_0,
-                        ForwardIterator& f0_1, difference_type_t<ForwardIterator>& n0_1,
-                        ForwardIterator& f1_0, difference_type_t<ForwardIterator>& n1_0,
-                        ForwardIterator& f1_1, difference_type_t<ForwardIterator>& n1_1)
+                        ForwardIterator& f0_0, mstd::iter_difference_t<ForwardIterator>& n0_0,
+                        ForwardIterator& f0_1, mstd::iter_difference_t<ForwardIterator>& n0_1,
+                        ForwardIterator& f1_0, mstd::iter_difference_t<ForwardIterator>& n1_0,
+                        ForwardIterator& f1_1, mstd::iter_difference_t<ForwardIterator>& n1_1)
         -> void
     {
         auto&& proj = utility::as_function(projection);
@@ -91,15 +92,15 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename RandomAccessIterator,
              typename Compare, typename Projection>
-    auto recmerge(ForwardIterator f0, difference_type_t<ForwardIterator> n0,
-                  ForwardIterator f1, difference_type_t<ForwardIterator> n1,
+    auto recmerge(ForwardIterator f0, mstd::iter_difference_t<ForwardIterator> n0,
+                  ForwardIterator f1, mstd::iter_difference_t<ForwardIterator> n1,
                   RandomAccessIterator buffer, std::ptrdiff_t buff_size,
                   Compare compare, Projection projection,
                   std::forward_iterator_tag tag)
         -> void
     {
         using rvalue_type = rvalue_type_t<ForwardIterator>;
-        using difference_type = difference_type_t<ForwardIterator>;
+        using difference_type = mstd::iter_difference_t<ForwardIterator>;
 
         if (n0 == 0 || n1 == 0) return;
 

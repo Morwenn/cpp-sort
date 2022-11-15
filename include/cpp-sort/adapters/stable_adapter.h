@@ -25,7 +25,6 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/raw_checkers.h"
 #include "../detail/sized_iterator.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -85,11 +84,11 @@ namespace cppsort
             typename Projection,
             typename Sorter
         >
-        auto make_stable_and_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
+        auto make_stable_and_sort(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                                   Compare&& compare, Projection&& projection, Sorter&& sorter)
             -> decltype(auto)
         {
-            using difference_type = difference_type_t<ForwardIterator>;
+            using difference_type = mstd::iter_difference_t<ForwardIterator>;
             using value_t = association<ForwardIterator, difference_type>;
 
             ////////////////////////////////////////////////////////////
@@ -121,7 +120,7 @@ namespace cppsort
             typename Projection,
             typename Sorter
         >
-        auto make_stable_and_sort(sized_iterator<ForwardIterator> first, difference_type_t<ForwardIterator> size,
+        auto make_stable_and_sort(sized_iterator<ForwardIterator> first, mstd::iter_difference_t<ForwardIterator> size,
                                   Compare&& compare, Projection&& projection, Sorter&& sorter)
             -> decltype(auto)
         {

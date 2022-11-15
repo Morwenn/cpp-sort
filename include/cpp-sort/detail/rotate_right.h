@@ -11,7 +11,6 @@
 #include <cstddef>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
@@ -22,7 +21,7 @@ namespace cppsort::detail
         auto operator()(RandomAccessIterator first) const
             -> void
         {
-            using difference_type = difference_type_t<RandomAccessIterator>;
+            using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
             auto tmp = mstd::iter_move(first + N - 1);
             for (difference_type i = N - 1; i > 0; --i) {

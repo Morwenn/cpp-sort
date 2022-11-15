@@ -39,13 +39,13 @@ namespace cppsort::detail::grail
     // cost: 2 * len + nk^2 / 2
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto find_keys(RandomAccessIterator first, RandomAccessIterator last,
-                   difference_type_t<RandomAccessIterator> key_count,
+                   mstd::iter_difference_t<RandomAccessIterator> key_count,
                    Compare compare, Projection projection)
-        -> difference_type_t<RandomAccessIterator>
+        -> mstd::iter_difference_t<RandomAccessIterator>
     {
         auto&& proj = utility::as_function(projection);
 
-        difference_type_t<RandomAccessIterator> dist = 1;
+        mstd::iter_difference_t<RandomAccessIterator> dist = 1;
         auto h0 = first;
         for (auto u = std::next(first) ; u != last ; ++u) {
             if (dist == key_count) break;
@@ -180,9 +180,9 @@ namespace cppsort::detail::grail
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto smart_merge_with_buffer(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
-                                 difference_type_t<RandomAccessIterator> block_len, int left_over_frag,
+                                 mstd::iter_difference_t<RandomAccessIterator> block_len, int left_over_frag,
                                  Compare compare, Projection projection)
-        -> std::pair<difference_type_t<RandomAccessIterator>, int>
+        -> std::pair<mstd::iter_difference_t<RandomAccessIterator>, int>
     {
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
@@ -204,7 +204,7 @@ namespace cppsort::detail::grail
         }
 
         //auto p1 = left_it, q1 = middle, p2 = right_it, q2 = last;
-        difference_type_t<RandomAccessIterator> len;
+        mstd::iter_difference_t<RandomAccessIterator> len;
         if (left_it < middle) {
             len = middle - left_it;
             do {
@@ -220,7 +220,7 @@ namespace cppsort::detail::grail
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto smart_merge_without_buffer(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
                                     int left_over_frag, Compare compare, Projection projection)
-        -> std::pair<difference_type_t<RandomAccessIterator>, int>
+        -> std::pair<mstd::iter_difference_t<RandomAccessIterator>, int>
     {
         auto&& proj = utility::as_function(projection);
 
@@ -279,9 +279,9 @@ namespace cppsort::detail::grail
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto smart_merge_with_extra_buffer(RandomAccessIterator first, RandomAccessIterator middle,
                                        RandomAccessIterator last,
-                                       int left_over_frag, difference_type_t<RandomAccessIterator> block_len,
+                                       int left_over_frag, mstd::iter_difference_t<RandomAccessIterator> block_len,
                                        Compare compare, Projection projection)
-        -> std::pair<difference_type_t<RandomAccessIterator>, int>
+        -> std::pair<mstd::iter_difference_t<RandomAccessIterator>, int>
     {
         auto&& proj = utility::as_function(projection);
 
@@ -317,14 +317,14 @@ namespace cppsort::detail::grail
     // llast=0 requires nblock2=0 (no irregular blocks). llast>0, nblock2=0 is possible.
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto merge_buffers_left_with_extra_buffer(RandomAccessIterator keys, RandomAccessIterator midkey, RandomAccessIterator arr,
-                                              difference_type_t<RandomAccessIterator> nblock,
-                                              difference_type_t<RandomAccessIterator> lblock,
-                                              difference_type_t<RandomAccessIterator> nblock2,
-                                              difference_type_t<RandomAccessIterator> llast,
+                                              mstd::iter_difference_t<RandomAccessIterator> nblock,
+                                              mstd::iter_difference_t<RandomAccessIterator> lblock,
+                                              mstd::iter_difference_t<RandomAccessIterator> nblock2,
+                                              mstd::iter_difference_t<RandomAccessIterator> llast,
                                               Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
         auto&& proj = utility::as_function(projection);
 
         if (nblock == 0) {
@@ -375,14 +375,14 @@ namespace cppsort::detail::grail
     // llast=0 requires nblock2=0 (no irregular blocks). llast>0, nblock2=0 is possible.
     template<typename RandomAccessIterator, typename Compare, typename Projection>
     auto merge_buffers_left(RandomAccessIterator keys, RandomAccessIterator midkey, RandomAccessIterator arr,
-                            difference_type_t<RandomAccessIterator> nblock,
-                            difference_type_t<RandomAccessIterator> lblock, bool havebuf,
-                            difference_type_t<RandomAccessIterator> nblock2,
-                            difference_type_t<RandomAccessIterator> llast,
+                            mstd::iter_difference_t<RandomAccessIterator> nblock,
+                            mstd::iter_difference_t<RandomAccessIterator> lblock, bool havebuf,
+                            mstd::iter_difference_t<RandomAccessIterator> nblock2,
+                            mstd::iter_difference_t<RandomAccessIterator> llast,
                             Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
         auto&& proj = utility::as_function(projection);
         auto&& midkey_proj = proj(*midkey);
 
@@ -453,12 +453,12 @@ namespace cppsort::detail::grail
     template<typename RandomAccessIterator, typename BufferIterator,
              typename Compare, typename Projection>
     auto build_blocks(RandomAccessIterator first, RandomAccessIterator last,
-                      difference_type_t<RandomAccessIterator> K,
-                      BufferIterator extbuf, difference_type_t<RandomAccessIterator> LExtBuf,
+                      mstd::iter_difference_t<RandomAccessIterator> K,
+                      BufferIterator extbuf, mstd::iter_difference_t<RandomAccessIterator> LExtBuf,
                       Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
         auto size = last - first;
@@ -553,14 +553,14 @@ namespace cppsort::detail::grail
     template<typename RandomAccessIterator, typename BufferIterator,
              typename Compare, typename Projection>
     auto combine_blocks(RandomAccessIterator keys, RandomAccessIterator arr,
-                        difference_type_t<RandomAccessIterator> len,
-                        difference_type_t<RandomAccessIterator> LL,
-                        difference_type_t<RandomAccessIterator> lblock,
+                        mstd::iter_difference_t<RandomAccessIterator> len,
+                        mstd::iter_difference_t<RandomAccessIterator> LL,
+                        mstd::iter_difference_t<RandomAccessIterator> lblock,
                         bool havebuf, BufferIterator xbuf, bool usexbuf,
                         Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
@@ -632,7 +632,7 @@ namespace cppsort::detail::grail
                           Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
         using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
@@ -667,7 +667,7 @@ namespace cppsort::detail::grail
                      Compare compare, Projection projection)
         -> void
     {
-        using difference_type = difference_type_t<RandomAccessIterator>;
+        using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
         auto size = last - first;
         if (size < 16) {

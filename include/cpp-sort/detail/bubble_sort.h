@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cpp-sort/mstd/iterator.h>
 #include <iterator>
-#include "iterator_traits.h"
 #include "swap_if.h"
 
 namespace cppsort::detail
@@ -25,16 +25,16 @@ namespace cppsort::detail
     //
 
     template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto bubble_sort(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    constexpr auto bubble_sort(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                                Compare compare, Projection projection)
         -> void
     {
         if (size < 2) return;
 
         while (--size) {
-            ForwardIterator current = first;
-            ForwardIterator next = std::next(current);
-            for (difference_type_t<ForwardIterator> i = 0; i < size; ++i) {
+            auto current = first;
+            auto next = std::next(current);
+            for (mstd::iter_difference_t<ForwardIterator> i = 0; i < size; ++i) {
                 iter_swap_if(current, next, compare, projection);
                 ++next;
                 ++current;

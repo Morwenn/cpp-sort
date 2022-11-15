@@ -62,12 +62,12 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto slabsort_get_median(BidirectionalIterator first,
-                             difference_type_t<BidirectionalIterator> size,
+                             mstd::iter_difference_t<BidirectionalIterator> size,
                              immovable_vector<BidirectionalIterator>& iterators_buffer,
                              Compare compare, Projection projection)
         -> BidirectionalIterator
     {
-        using difference_type = difference_type_t<BidirectionalIterator>;
+        using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
 
         ////////////////////////////////////////////////////////////
         // Indirectly partition the iterators
@@ -90,7 +90,7 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto slabsort_partition(BidirectionalIterator first, BidirectionalIterator last,
-                            difference_type_t<BidirectionalIterator> size,
+                            mstd::iter_difference_t<BidirectionalIterator> size,
                             immovable_vector<BidirectionalIterator>& iterators_buffer,
                             Compare compare, Projection projection)
         -> BidirectionalIterator
@@ -123,8 +123,8 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto try_melsort(BidirectionalIterator first, BidirectionalIterator last,
-                     difference_type_t<BidirectionalIterator> size,
-                     difference_type_t<BidirectionalIterator> p,
+                     mstd::iter_difference_t<BidirectionalIterator> size,
+                     mstd::iter_difference_t<BidirectionalIterator> p,
                      fixed_size_list_node_pool<slabsort_list_node<BidirectionalIterator>>& node_pool,
                      Compare compare, Projection projection)
         -> bool
@@ -187,7 +187,7 @@ namespace cppsort::detail
             // Too many encroaching lists have been created (Enc > p),
             // give up, the elements of the collection remain in their
             // order of creation
-            using difference_type = difference_type_t<BidirectionalIterator>;
+            using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
             if (difference_type(lists.size()) >= p) {
                 return false;
             }
@@ -219,9 +219,9 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto slabsort_impl(BidirectionalIterator first, BidirectionalIterator last,
-                       difference_type_t<BidirectionalIterator> size,
-                       difference_type_t<BidirectionalIterator> original_p,
-                       difference_type_t<BidirectionalIterator> current_p,
+                       mstd::iter_difference_t<BidirectionalIterator> size,
+                       mstd::iter_difference_t<BidirectionalIterator> original_p,
+                       mstd::iter_difference_t<BidirectionalIterator> current_p,
                        immovable_vector<BidirectionalIterator>& iterators_buffer,
                        fixed_size_list_node_pool<slabsort_list_node<BidirectionalIterator>>& node_pool,
                        Compare compare, Projection projection)
@@ -262,7 +262,7 @@ namespace cppsort::detail
 
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto slabsort(BidirectionalIterator first, BidirectionalIterator last,
-                  difference_type_t<BidirectionalIterator> size,
+                  mstd::iter_difference_t<BidirectionalIterator> size,
                   Compare compare, Projection projection)
         -> void
     {
@@ -286,7 +286,7 @@ namespace cppsort::detail
         // Allocate a buffer that will be used for median finding
         immovable_vector<BidirectionalIterator> iterators_buffer(size);
 
-        difference_type_t<BidirectionalIterator> original_p = 2;
+        mstd::iter_difference_t<BidirectionalIterator> original_p = 2;
         return slabsort_impl(
             first, last, size, original_p, original_p,
             iterators_buffer, node_pool,

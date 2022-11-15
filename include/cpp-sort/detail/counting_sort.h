@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include <cpp-sort/mstd/iterator.h>
 #include "immovable_vector.h"
-#include "iterator_traits.h"
 #include "minmax_element_and_is_sorted.h"
 
 namespace cppsort::detail
@@ -48,7 +48,7 @@ namespace cppsort::detail
     constexpr auto reverse_counting_sort(ForwardIterator first, Sentinel last)
         -> void
     {
-        using difference_type = difference_type_t<ForwardIterator>;
+        using difference_type = mstd::iter_difference_t<ForwardIterator>;
 
         auto info = minmax_element_and_is_sorted(first, last, std::greater{});
         if (info.is_sorted) return;

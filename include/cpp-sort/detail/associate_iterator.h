@@ -11,6 +11,7 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
@@ -164,7 +165,7 @@ namespace cppsort::detail
             using iterator_category = std::random_access_iterator_tag;
             using iterator_type     = Iterator;
             using value_type        = std::iter_value_t<Iterator>;
-            using difference_type   = difference_type_t<Iterator>;
+            using difference_type   = mstd::iter_difference_t<Iterator>;
             using pointer           = pointer_t<Iterator>;
             using reference         = std::iter_reference_t<Iterator>;
 

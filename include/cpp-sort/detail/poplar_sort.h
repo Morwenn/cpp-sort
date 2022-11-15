@@ -12,12 +12,12 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "insertion_sort.h"
-#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
@@ -25,7 +25,7 @@ namespace cppsort::detail
     struct poplar
     {
         RandomAccessIterator begin, end;
-        mstd::make_unsigned_t<difference_type_t<RandomAccessIterator>> size;
+        mstd::make_unsigned_t<mstd::iter_difference_t<RandomAccessIterator>> size;
 
         auto root() const
             -> RandomAccessIterator
@@ -124,7 +124,7 @@ namespace cppsort::detail
                      Compare compare, Projection projection)
         -> void
     {
-        using poplar_size_t = mstd::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
+        using poplar_size_t = mstd::make_unsigned_t<mstd::iter_difference_t<RandomAccessIterator>>;
 
         // Size of the unsorted subsequence
         poplar_size_t size = last - first;

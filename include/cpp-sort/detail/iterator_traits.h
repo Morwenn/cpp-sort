@@ -15,23 +15,14 @@
 
 namespace cppsort::detail
 {
-    //
-    // A few type aliases to make it easier to write
-    // code that uses std::iterator_traits; there are
-    // equivalent aliases in the Ranges TS
-    //
-
-    template<typename Iterator>
-    using difference_type_t = typename std::iterator_traits<Iterator>::difference_type;
+    // A few type aliases to make it easier to get types
+    // associated to indirect and iterator types
 
     template<typename Iterator>
     using pointer_t = typename std::iterator_traits<Iterator>::pointer;
 
     template<typename Iterator>
     using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;
-
-    template<typename Iterator>
-    using rvalue_reference_t = mstd::iter_rvalue_reference_t<Iterator>;
 
     // Additional common type to use instead of value_t
     template<typename Iterator>

@@ -63,7 +63,7 @@ namespace cppsort::detail
 
             template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
             explicit cartesian_tree(ForwardIterator first, Sentinel last,
-                                    difference_type_t<ForwardIterator> size,
+                                    mstd::iter_difference_t<ForwardIterator> size,
                                     Compare compare, Projection projection):
                 buffer_(size),
                 root_(buffer_.begin()) // Original root is first element
@@ -133,7 +133,7 @@ namespace cppsort::detail
 
     template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
     auto cartesian_tree_sort(ForwardIterator first, Sentinel last,
-                             difference_type_t<ForwardIterator> size,
+                             mstd::iter_difference_t<ForwardIterator> size,
                              Compare compare, Projection projection)
         -> void
     {

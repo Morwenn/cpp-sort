@@ -23,7 +23,6 @@
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/indiesort.h"
-#include "../detail/iterator_traits.h"
 #include "../detail/scope_exit.h"
 
 namespace cppsort
@@ -40,7 +39,7 @@ namespace cppsort
             typename Projection
         >
         auto sort_indirectly(Sorter&& sorter, Iterator first, Iterator last,
-                             difference_type_t<Iterator> size,
+                             mstd::iter_difference_t<Iterator> size,
                              Compare compare, Projection projection)
             -> decltype(cppsort::detail::indiesort(std::forward<Sorter>(sorter),
                                                    first, last, size,
@@ -58,7 +57,7 @@ namespace cppsort
             typename Projection
         >
         auto sort_indirectly(Sorter&& sorter, Iterator first, Iterator last,
-                             difference_type_t<Iterator> size,
+                             mstd::iter_difference_t<Iterator> size,
                              Compare compare, Projection projection)
         -> decltype(std::forward<Sorter>(sorter)(
             (Iterator*)0, (Iterator*)0,

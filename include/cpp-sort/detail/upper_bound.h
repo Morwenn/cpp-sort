@@ -10,16 +10,16 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/comparators/not_fn.h>
-#include "iterator_traits.h"
 #include "lower_bound.h"
 
 namespace cppsort::detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
-    auto upper_bound_n(ForwardIterator first, difference_type_t<ForwardIterator> size,
+    auto upper_bound_n(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                        T&& value, Compare compare, Projection projection)
         -> ForwardIterator
     {

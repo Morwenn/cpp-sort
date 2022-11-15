@@ -62,7 +62,7 @@ namespace cppsort
             typename Projection,
             typename Sorter
         >
-        auto sort_with_schwartz(ForwardIterator first, difference_type_t<ForwardIterator> size,
+        auto sort_with_schwartz(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
                                 Compare compare, Projection projection, Sorter&& sorter)
             -> decltype(auto)
         {
@@ -74,7 +74,7 @@ namespace cppsort
             auto&& proj = utility::as_function(projection);
             using proj_t = projected_t<ForwardIterator, Projection>;
             using value_t = association<ForwardIterator, proj_t>;
-            using difference_type = difference_type_t<ForwardIterator>;
+            using difference_type = mstd::iter_difference_t<ForwardIterator>;
 
             // Associate iterator to projected element
             immovable_vector<value_t> projected(size);
