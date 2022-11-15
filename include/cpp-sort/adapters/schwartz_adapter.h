@@ -15,7 +15,6 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -110,11 +109,9 @@ namespace cppsort
             template<
                 mstd::forward_range Range,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_v<Projection, Range, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_v<Projection, Range, Compare>
             auto operator()(Range&& range, Compare compare, Projection projection) const
                 -> decltype(auto)
             {
@@ -127,11 +124,9 @@ namespace cppsort
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare, Projection projection) const
                 -> decltype(auto)
@@ -145,11 +140,9 @@ namespace cppsort
                 mstd::forward_range Range,
                 typename Compare = std::less<>
             >
+                requires (not is_projection_v<Compare, Range>)
             auto operator()(Range&& range, Compare compare={}) const
-                -> mstd::enable_if_t<
-                    not is_projection_v<Compare, Range>,
-                    decltype(this->get()(std::forward<Range>(range), std::move(compare)))
-                >
+                -> decltype(this->get()(std::forward<Range>(range), std::move(compare)))
             {
                 // No projection to handle, forward everything to the adapted sorter
                 return this->get()(std::forward<Range>(range), std::move(compare));
@@ -160,11 +153,9 @@ namespace cppsort
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>
             >
+                requires (not is_projection_iterator_v<Compare, Iterator>)
             auto operator()(Iterator first, Sentinel last, Compare compare={}) const
-                -> mstd::enable_if_t<
-                    not is_projection_iterator_v<Compare, Iterator>,
-                    decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
-                >
+                -> decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
             {
                 // No projection to handle, forward everything to the adapted sorter
                 return this->get()(std::move(first), std::move(last), std::move(compare));
@@ -181,7 +172,8 @@ namespace cppsort
             template<
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
-                typename Compare>
+                typename Compare
+            >
             auto operator()(Iterator first, Sentinel last, Compare compare, std::identity projection) const
                 -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
             {

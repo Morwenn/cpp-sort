@@ -31,11 +31,9 @@ namespace cppsort
                 mstd::random_access_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> void

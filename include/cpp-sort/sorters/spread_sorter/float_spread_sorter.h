@@ -15,7 +15,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../../detail/iterator_traits.h"
@@ -35,14 +34,15 @@ namespace cppsort
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Projection = std::identity
             >
-            auto operator()(Iterator first, Sentinel last, Projection projection={}) const
-                -> mstd::enable_if_t<
+                requires (
                     std::numeric_limits<projected_t<Iterator, Projection>>::is_iec559 && (
                         sizeof(projected_t<Iterator, Projection>) == sizeof(std::uint32_t) ||
                         sizeof(projected_t<Iterator, Projection>) == sizeof(std::uint64_t)
                     ) &&
                     is_projection_iterator_v<Projection, Iterator>
-                >
+                )
+            auto operator()(Iterator first, Sentinel last, Projection projection={}) const
+                -> void
             {
                 auto last_it = mstd::next(first, std::move(last));
                 spreadsort::float_sort(std::move(first), std::move(last_it), std::move(projection));

@@ -15,7 +15,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -97,11 +96,9 @@ namespace cppsort
             }
 
             template<typename... Args>
+                requires std::is_invocable_v<Sorter, Args...>
             static constexpr auto _detail_stability(choice<Ind>, Args&&... args)
-                -> mstd::enable_if_t<
-                    std::is_invocable_v<Sorter, Args...>,
-                    is_stable<Sorter(Args...)>
-                >;
+                -> is_stable<Sorter(Args...)>;
         };
 
         template<typename... Leaves>
@@ -366,21 +363,23 @@ namespace cppsort
             }
 
             template<typename Sorter>
+                requires (not detail::is_specialization_of_v<
+                    std::remove_cvref_t<Sorter>,
+                    cppsort::hybrid_adapter
+                >)
             static constexpr auto get_flat_tuple(Sorter&& value)
-                -> mstd::enable_if_t<
-                    not detail::is_specialization_of_v<std::remove_cvref_t<Sorter>, cppsort::hybrid_adapter>,
-                    std::tuple<std::remove_reference_t<Sorter>&&>
-                >
+                -> std::tuple<std::remove_reference_t<Sorter>&&>
             {
                 return std::forward_as_tuple(std::move(value));
             }
 
             template<typename Sorter>
-            static constexpr auto get_flat_tuple(Sorter&& value)
-                -> mstd::enable_if_t<
-                    detail::is_specialization_of_v<std::remove_cvref_t<Sorter>, cppsort::hybrid_adapter>,
-                    decltype(get_sorters_from_impl(std::move(value)))
+                requires detail::is_specialization_of_v<
+                    std::remove_cvref_t<Sorter>,
+                    cppsort::hybrid_adapter
                 >
+            static constexpr auto get_flat_tuple(Sorter&& value)
+                -> decltype(get_sorters_from_impl(std::move(value)))
             {
                 return get_sorters_from_impl(std::move(value));
             }

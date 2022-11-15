@@ -69,33 +69,31 @@ namespace cppsort
         // Function call operator
 
         template<typename Iterable, typename... Args>
+            requires detail::has_sort_method<Iterable, Args...>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> mstd::enable_if_t<
-                detail::has_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
-            >
+            -> decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
         {
             return std::forward<Iterable>(iterable).sort(utility::as_function(args)...);
         }
 
         template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> mstd::enable_if_t<
+            requires (
                 not detail::has_sort_method<Iterable, Args...> &&
-                detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
-            >
+                detail::has_stable_sort_method<Iterable, Args...>
+            )
+        auto operator()(Iterable&& iterable, Args&&... args) const
+            -> decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
         {
             return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
         }
 
         template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> mstd::enable_if_t<
+            requires (
                 not detail::has_sort_method<Iterable, Args...> &&
-                not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
-            >
+                not detail::has_stable_sort_method<Iterable, Args...>
+            )
+        auto operator()(Iterable&& iterable, Args&&... args) const
+            -> decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
         {
             return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
         }

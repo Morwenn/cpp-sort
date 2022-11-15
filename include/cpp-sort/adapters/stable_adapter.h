@@ -151,11 +151,9 @@ namespace cppsort
             template<
                 mstd::forward_range Range,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_v<Projection, Range, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_v<Projection, Range, Compare>
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
@@ -168,11 +166,9 @@ namespace cppsort
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
@@ -227,21 +223,16 @@ namespace cppsort
             utility::adapter_storage<Sorter>(std::move(sorter))
         {}
 
-        template<
-            typename... Args,
-            typename = mstd::enable_if_t<is_stable_v<Sorter(Args...)>>
-        >
+        template<typename... Args>
+            requires is_stable_v<Sorter(Args...)>
         auto operator()(Args&&... args) const
             -> decltype(this->get()(std::forward<Args>(args)...))
         {
             return this->get()(std::forward<Args>(args)...);
         }
 
-        template<
-            typename... Args,
-            typename = mstd::enable_if_t<not is_stable_v<Sorter(Args...)>>,
-            typename = void
-        >
+        template<typename... Args>
+            requires (not is_stable_v<Sorter(Args...)>)
         auto operator()(Args&&... args) const
             -> decltype(make_stable<Sorter>(this->get())(std::forward<Args>(args)...))
         {

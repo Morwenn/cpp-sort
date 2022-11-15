@@ -14,7 +14,6 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -42,11 +41,9 @@ namespace cppsort
 
             template<
                 mstd::forward_range Range,
-                typename Compare = std::less<>,
-                typename = mstd::enable_if_t<
-                    not is_projection_v<Compare, Range>
-                >
+                typename Compare = std::less<>
             >
+                requires (not is_projection_v<Compare, Range>)
             constexpr auto operator()(Range&& range, Compare compare={}) const
                 -> CountType
             {
@@ -59,11 +56,9 @@ namespace cppsort
             template<
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
-                typename Compare = std::less<>,
-                typename = mstd::enable_if_t<
-                    not is_projection_iterator_v<Compare, Iterator>
-                >
+                typename Compare = std::less<>
             >
+                requires (not is_projection_iterator_v<Compare, Iterator>)
             constexpr auto operator()(Iterator first, Sentinel last, Compare compare={}) const
                 -> CountType
             {
@@ -76,11 +71,9 @@ namespace cppsort
             template<
                 mstd::forward_range Range,
                 typename Compare,
-                typename Projection,
-                typename = mstd::enable_if_t<
-                    is_projection_v<Projection, Range, Compare>
-                >
+                typename Projection
             >
+                requires is_projection_v<Projection, Range, Compare>
             constexpr auto operator()(Range&& range, Compare compare, Projection projection) const
                 -> CountType
             {
@@ -94,11 +87,9 @@ namespace cppsort
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare,
-                typename Projection,
-                typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
-                >
+                typename Projection
             >
+                requires is_projection_iterator_v<Projection, Iterator, Compare>
             constexpr auto operator()(Iterator first, Sentinel last,
                                       Compare compare, Projection projection) const
                 -> CountType

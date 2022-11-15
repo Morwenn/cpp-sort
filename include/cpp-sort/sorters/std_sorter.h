@@ -14,7 +14,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -32,11 +31,9 @@ namespace cppsort
             template<
                 std::random_access_iterator Iterator,
                 std::sentinel_for<Iterator> Sentinel,
-                typename Compare = std::less<>,
-                typename = mstd::enable_if_t<
-                    not is_projection_iterator_v<Compare, Iterator>
-                >
+                typename Compare = std::less<>
             >
+                requires (not is_projection_iterator_v<Compare, Iterator>)
             auto operator()(Iterator first, Sentinel last, Compare compare={}) const
                 -> void
             {
@@ -66,11 +63,9 @@ namespace cppsort
         {
             template<
                 std::random_access_iterator Iterator,
-                typename Compare = std::less<>,
-                typename = mstd::enable_if_t<
-                    not is_projection_iterator_v<Compare, Iterator>
-                >
+                typename Compare = std::less<>
             >
+                requires (not is_projection_iterator_v<Compare, Iterator>)
             auto operator()(Iterator first, Iterator last, Compare compare={}) const
                 -> void
             {

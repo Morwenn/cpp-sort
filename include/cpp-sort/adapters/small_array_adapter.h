@@ -70,11 +70,9 @@ namespace cppsort
             std::size_t N,
             typename... Args
         >
+            requires detail::is_in_pack<N, Indices...>
         auto operator()(std::array<T, N>& array, Args&&... args) const
-            -> mstd::enable_if_t<
-                detail::is_in_pack<N, Indices...>,
-                decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
-            >
+            -> decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
         {
             return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
         }
@@ -82,14 +80,11 @@ namespace cppsort
         template<
             typename T,
             std::size_t N,
-            typename... Args,
-            typename = mstd::enable_if_t<detail::is_in_pack<N, Indices...>>
+            typename... Args
         >
+            requires detail::is_in_pack<N, Indices...>
         auto operator()(T (&array)[N], Args&&... args) const
-            -> mstd::enable_if_t<
-                detail::is_in_pack<N, Indices...>,
-                decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
-            >
+            -> decltype(FixedSizeSorter<N>{}(array, std::forward<Args>(args)...))
         {
             return FixedSizeSorter<N>{}(array, std::forward<Args>(args)...);
         }
