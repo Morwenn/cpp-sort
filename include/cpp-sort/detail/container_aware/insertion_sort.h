@@ -15,7 +15,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -120,31 +119,23 @@ namespace cppsort
         }
 
         template<typename Compare, typename... Args>
+            requires is_projection_v<std::identity, std::list<Args...>, Compare>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
-            -> mstd::enable_if_t<
-                is_projection_v<std::identity, std::list<Args...>, Compare>
-            >
+            -> void
         {
             detail::list_insertion_sort(iterable, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::list<Args...>>
         auto operator()(std::list<Args...>& iterable, Projection projection) const
-            -> mstd::enable_if_t<
-                is_projection_v<Projection, std::list<Args...>>
-            >
+            -> void
         {
             detail::list_insertion_sort(iterable, std::less{}, std::move(projection));
         }
 
-        template<
-            typename Compare,
-            typename Projection,
-            typename... Args,
-            typename = mstd::enable_if_t<
-                is_projection_v<Projection, std::list<Args...>, Compare>
-            >
-        >
+        template<typename Compare, typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::list<Args...>, Compare>
         auto operator()(std::list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
@@ -163,31 +154,23 @@ namespace cppsort
         }
 
         template<typename Compare, typename... Args>
+            requires is_projection_v<std::identity, std::forward_list<Args...>, Compare>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
-            -> mstd::enable_if_t<
-                is_projection_v<std::identity, std::forward_list<Args...>, Compare>
-            >
+            -> void
         {
             detail::flist_insertion_sort(iterable, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::forward_list<Args...>>
         auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
-            -> mstd::enable_if_t<
-                is_projection_v<Projection, std::forward_list<Args...>>
-            >
+            -> void
         {
             detail::flist_insertion_sort(iterable, std::less{}, std::move(projection));
         }
 
-        template<
-            typename Compare,
-            typename Projection,
-            typename... Args,
-            typename = mstd::enable_if_t<
-                is_projection_v<Projection, std::forward_list<Args...>, Compare>
-            >
-        >
+        template<typename Compare, typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::forward_list<Args...>, Compare>
         auto operator()(std::forward_list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
@@ -198,13 +181,11 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Generic overload
 
-        template<
-            typename First, typename... Args,
-            typename = mstd::enable_if_t<
+        template<typename First, typename... Args>
+            requires (
                 not detail::is_specialization_of_v<std::remove_cvref_t<First>, std::list> &&
                 not detail::is_specialization_of_v<std::remove_cvref_t<First>, std::forward_list>
-            >
-        >
+            )
         auto operator()(First&& first, Args&&... args) const
             -> decltype(detail::container_aware_adapter_base<insertion_sorter>::operator()(
                    std::forward<First>(first), std::forward<Args>(args)...

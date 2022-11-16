@@ -13,7 +13,6 @@
 #include <memory>
 #include <type_traits>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "memory.h"
 
@@ -23,21 +22,17 @@ namespace cppsort::detail
     // move
 
     template<typename InputIterator, typename OutputIterator>
+        requires (not cppsort::detail::has_iter_move_v<InputIterator>)
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> mstd::enable_if_t<
-            not cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
+        -> OutputIterator
     {
         return std::move(first, last, result);
     }
 
     template<typename InputIterator, typename OutputIterator>
+        requires cppsort::detail::has_iter_move_v<InputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> mstd::enable_if_t<
-            cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
+        -> OutputIterator
     {
         for (; first != last; ++first, (void) ++result) {
             *result = mstd::iter_move(first);
@@ -49,21 +44,17 @@ namespace cppsort::detail
     // move_backward
 
     template<typename InputIterator, typename OutputIterator>
+        requires (not cppsort::detail::has_iter_move_v<InputIterator>)
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> mstd::enable_if_t<
-            not cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
+        -> OutputIterator
     {
         return std::move_backward(first, last, result);
     }
 
     template<typename InputIterator, typename OutputIterator>
+        requires cppsort::detail::has_iter_move_v<InputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> mstd::enable_if_t<
-            cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
+        -> OutputIterator
     {
         while (first != last) {
             *--result = mstd::iter_move(--last);

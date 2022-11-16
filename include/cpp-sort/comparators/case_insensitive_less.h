@@ -13,7 +13,6 @@
 #include <locale>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -100,10 +99,8 @@ namespace cppsort
                     return case_insensitive_less(std::forward<T>(lhs), std::forward<U>(rhs), loc);
                 }
 
-                template<
-                    typename T,
-                    typename = mstd::enable_if_t<can_be_refined_for<T>>
-                >
+                template<typename T>
+                    requires can_be_refined_for<T>
                 auto refine() const
                     -> adl_barrier::refined_case_insensitive_less_locale_fn<T>
                 {
@@ -123,10 +120,8 @@ namespace cppsort
                 return case_insensitive_less(std::forward<T>(lhs), std::forward<U>(rhs));
             }
 
-            template<
-                typename T,
-                typename = mstd::enable_if_t<can_be_refined_for<T>>
-            >
+            template<typename T>
+                requires can_be_refined_for<T>
             auto refine() const
                 -> adl_barrier::refined_case_insensitive_less_fn<T>
             {
@@ -183,21 +178,17 @@ namespace cppsort
                     {}
 
                     template<typename U=T>
+                        requires (not std::is_invocable_r_v<nope_type, caller, U, U, std::locale>)
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> mstd::enable_if_t<
-                            not std::is_invocable_r_v<nope_type, caller, U, U, std::locale>,
-                            decltype(case_insensitive_less(lhs, rhs, loc))
-                        >
+                        -> decltype(case_insensitive_less(lhs, rhs, loc))
                     {
                         return case_insensitive_less(lhs, rhs, loc);
                     }
 
                     template<typename U=T>
+                        requires std::is_invocable_r_v<nope_type, caller, U, U, std::locale>
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> mstd::enable_if_t<
-                            std::is_invocable_r_v<nope_type, caller, U, U, std::locale>,
-                            bool
-                        >
+                        -> bool
                     {
                         return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
                                                             std::begin(rhs), std::end(rhs),
@@ -223,37 +214,31 @@ namespace cppsort
                     {}
 
                     template<typename U=T>
+                        requires (not std::is_invocable_r_v<nope_type, caller, U, U>)
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> mstd::enable_if_t<
-                            std::negation_v<std::is_invocable_r<nope_type, caller, U, U>>,
-                            decltype(case_insensitive_less(lhs, rhs))
-                        >
+                        -> decltype(case_insensitive_less(lhs, rhs))
                     {
                         return case_insensitive_less(lhs, rhs);
                     }
 
                     template<typename U=T>
+                        requires (
+                            std::is_invocable_r_v<nope_type, caller, U, U> &&
+                            not std::is_invocable_r_v<nope_type, caller, U, U, std::locale>
+                        )
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> mstd::enable_if_t<
-                            std::conjunction_v<
-                                std::is_invocable_r<nope_type, caller, U, U>,
-                                std::negation<std::is_invocable_r<nope_type, caller, U, U, std::locale>>
-                            >,
-                            decltype(case_insensitive_less(lhs, rhs, loc))
-                        >
+                        -> decltype(case_insensitive_less(lhs, rhs, loc))
                     {
                         return case_insensitive_less(lhs, rhs, loc);
                     }
 
                     template<typename U=T>
+                        requires (
+                            std::is_invocable_r_v<nope_type, caller, U, U> &&
+                            std::is_invocable_r_v<nope_type, caller, U, U, std::locale>
+                        )
                     auto operator()(const T& lhs, const T& rhs) const
-                        -> mstd::enable_if_t<
-                            std::conjunction_v<
-                                std::is_invocable_r<nope_type, caller, U, U>,
-                                std::is_invocable_r<nope_type, caller, U, U, std::locale>
-                            >,
-                            bool
-                        >
+                        -> bool
                     {
                         return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
                                                             std::begin(rhs), std::end(rhs),

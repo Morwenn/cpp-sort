@@ -28,7 +28,6 @@ Phil Endecott and Frank Gennari
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include "common.h"
 #include "constants.h"
@@ -194,12 +193,10 @@ namespace cppsort::detail::spreadsort::detail
     //Holds the bin vector and makes the initial recursive call
     //Only use spreadsort if the integer can fit in a std::size_t
     template<typename RandomAccessIter, typename Div_type, typename Projection>
+      requires (sizeof(Div_type) <= sizeof(std::size_t))
     auto integer_sort(RandomAccessIter first, RandomAccessIter last,
                       Div_type, Projection projection)
-        -> mstd::enable_if_t<
-            sizeof(Div_type) <= sizeof(std::size_t),
-            void
-        >
+        -> void
     {
       std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
@@ -210,13 +207,13 @@ namespace cppsort::detail::spreadsort::detail
     //Holds the bin vector and makes the initial recursive call
     //Only use spreadsort if the integer can fit in a std::uintmax_t
     template<typename RandomAccessIter, typename Div_type, typename Projection>
+      requires (
+        sizeof(Div_type) > sizeof(std::size_t) &&
+        sizeof(Div_type) <= sizeof(std::uintmax_t)
+      )
     auto integer_sort(RandomAccessIter first, RandomAccessIter last,
                       Div_type, Projection projection)
-        -> mstd::enable_if_t<
-            (sizeof(Div_type) > sizeof(std::size_t)) &&
-            sizeof(Div_type) <= sizeof(std::uintmax_t),
-            void
-        >
+        -> void
     {
       std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;

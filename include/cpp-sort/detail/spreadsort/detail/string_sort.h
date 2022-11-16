@@ -29,7 +29,6 @@ Phil Endecott and Frank Gennari
 #include <memory>
 #include <type_traits>
 #include <vector>
-#include <cpp-sort/mstd/type_traits.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
@@ -370,9 +369,10 @@ namespace cppsort::detail::spreadsort::detail
 
     //Holds the bin vector and makes the initial recursive call
     template<typename RandomAccessIter, typename Projection, typename Unsigned_char_type>
+      requires (sizeof(Unsigned_char_type) <= 2)
     auto string_sort(RandomAccessIter first, RandomAccessIter last,
                      Projection projection, Unsigned_char_type)
-        -> mstd::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
+        -> void
     {
         std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
         std::vector<RandomAccessIter> bin_cache;
@@ -381,11 +381,11 @@ namespace cppsort::detail::spreadsort::detail
     }
 
     //Holds the bin vector and makes the initial recursive call
-    template<typename RandomAccessIter, typename Projection,
-             typename Unsigned_char_type>
+    template<typename RandomAccessIter, typename Projection, typename Unsigned_char_type>
+      requires (sizeof(Unsigned_char_type) <= 2)
     auto reverse_string_sort(RandomAccessIter first, RandomAccessIter last,
                              Projection projection, Unsigned_char_type)
-        -> mstd::enable_if_t<sizeof(Unsigned_char_type) <= 2, void>
+        -> void
     {
         std::size_t bin_sizes[(1 << (8 * sizeof(Unsigned_char_type))) + 1];
         std::vector<RandomAccessIter> bin_cache;

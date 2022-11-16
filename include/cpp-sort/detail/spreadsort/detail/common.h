@@ -30,10 +30,6 @@ Phil Endecott and Frank Gennari
 
 namespace cppsort::detail::spreadsort::detail
 {
-    //Well, we're not using Boost in the end
-    template<bool Condition, typename T=void>
-    using disable_if_t = mstd::enable_if_t<not Condition, T>;
-
     //This only works on unsigned data types
     template<typename T>
     constexpr auto rough_log_2_size(const T& input)

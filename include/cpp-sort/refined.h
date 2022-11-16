@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 #include "detail/type_traits.h"
 
 namespace cppsort
@@ -33,11 +32,8 @@ namespace cppsort
     // Return a refined comparison function if possible else
     // the original comparison function
 
-    template<
-        typename T,
-        typename Function,
-        typename = mstd::enable_if_t<detail::has_refine_method<Function, T>>
-    >
+    template<typename T, typename Function>
+        requires detail::has_refine_method<Function, T>
     auto refined(Function func)
         noexcept(noexcept(func.template refine<T>()))
         -> decltype(func.template refine<T>())
@@ -45,11 +41,8 @@ namespace cppsort
         return func.template refine<T>();
     }
 
-    template<
-        typename T,
-        typename Function,
-        typename = mstd::enable_if_t<not detail::has_refine_method<Function, T>>
-    >
+    template<typename T, typename Function>
+        requires (not detail::has_refine_method<Function, T>)
     constexpr auto refined(Function&& func) noexcept
         -> Function&&
     {

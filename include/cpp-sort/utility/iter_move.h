@@ -80,13 +80,11 @@ namespace cppsort
 
         using std::ranges::iter_move;
 
-        template<
-            typename Iterator,
-            typename = mstd::enable_if_t<
+        template<typename Iterator>
+            requires (
                 not cppsort::detail::has_iter_swap_v<Iterator> &&
                 cppsort::detail::has_iter_move_v<Iterator>
-            >
-        >
+            )
         constexpr auto iter_swap(Iterator lhs, Iterator rhs)
             -> void
         {
@@ -95,14 +93,11 @@ namespace cppsort
             *rhs = std::move(tmp);
         }
 
-        template<
-            typename Iterator,
-            typename = mstd::enable_if_t<
+        template<typename Iterator>
+            requires (
                 not cppsort::detail::has_iter_swap_v<Iterator> &&
                 not cppsort::detail::has_iter_move_v<Iterator>
-            >,
-            typename = void // dummy parameter for ODR
-        >
+            )
         constexpr auto iter_swap(Iterator lhs, Iterator rhs)
             -> void
         {
@@ -117,12 +112,8 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::reverse_iterator overloads
 
-        template<
-            typename Iterator,
-            typename = mstd::enable_if_t<
-                not cppsort::detail::has_iter_swap_v<std::reverse_iterator<Iterator>>
-            >
-        >
+        template<typename Iterator>
+            requires (not cppsort::detail::has_iter_swap_v<std::reverse_iterator<Iterator>>)
         auto iter_swap(std::reverse_iterator<Iterator> lhs, std::reverse_iterator<Iterator> rhs)
             -> void
         {
@@ -132,12 +123,8 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // std::move_iterator overloads
 
-        template<
-            typename Iterator,
-            typename = mstd::enable_if_t<
-                not cppsort::detail::has_iter_swap_v<std::move_iterator<Iterator>>
-            >
-        >
+        template<typename Iterator>
+            requires (not cppsort::detail::has_iter_swap_v<std::move_iterator<Iterator>>)
         auto iter_swap(std::move_iterator<Iterator> lhs, std::move_iterator<Iterator> rhs)
             -> void
         {

@@ -31,7 +31,6 @@ Phil Endecott and Frank Gennari
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include "common.h"
 #include "constants.h"
@@ -356,12 +355,12 @@ namespace cppsort::detail::spreadsort::detail
 
     //Checking whether the value type is a float, and trying a 32-bit integer
     template<typename RandomAccessIter, typename Projection>
+      requires (
+        sizeof(std::uint32_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
+        std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559
+      )
     auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-        -> mstd::enable_if_t<
-            sizeof(std::uint32_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
-            std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559,
-            void
-        >
+        -> void
     {
       std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;
@@ -371,12 +370,12 @@ namespace cppsort::detail::spreadsort::detail
 
     //Checking whether the value type is a double, and using a 64-bit integer
     template<typename RandomAccessIter, typename Projection>
+      requires (
+        sizeof(std::uint64_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
+        std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559
+      )
     auto float_sort(RandomAccessIter first, RandomAccessIter last, Projection projection)
-        -> mstd::enable_if_t<
-            sizeof(std::uint64_t) == sizeof(projected_t<RandomAccessIter, Projection>) &&
-            std::numeric_limits<projected_t<RandomAccessIter, Projection>>::is_iec559,
-            void
-        >
+        -> void
     {
       std::size_t bin_sizes[1 << max_finishing_splits];
       std::vector<RandomAccessIter> bin_cache;

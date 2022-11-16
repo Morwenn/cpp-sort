@@ -12,7 +12,6 @@
 #include <cstddef>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../detail/type_traits.h"
@@ -32,32 +31,19 @@ namespace cppsort
             (std::is_empty_v<FixedSizeSorter<Indices>> && ...)
         >
     {
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args
-        >
+        template<typename T, std::size_t N, typename... Args>
+            requires detail::is_in_pack<N, Indices...>
         auto operator()(std::array<T, N>& array, Args&&... args) const
-            -> mstd::enable_if_t<
-                detail::is_in_pack<N, Indices...>,
-                decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
-            >
+            -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {
             using sorter = schwartz_adapter<FixedSizeSorter<N>>;
             return sorter{}(array, std::forward<Args>(args)...);
         }
 
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args,
-            typename = mstd::enable_if_t<detail::is_in_pack<N, Indices...>>
-        >
+        template<typename T, std::size_t N, typename... Args>
+            requires detail::is_in_pack<N, Indices...>
         auto operator()(T (&array)[N], Args&&... args) const
-            -> mstd::enable_if_t<
-                detail::is_in_pack<N, Indices...>,
-                decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
-            >
+            -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {
             using sorter = schwartz_adapter<FixedSizeSorter<N>>;
             return sorter{}(array, std::forward<Args>(args)...);
@@ -72,11 +58,7 @@ namespace cppsort
             true // TODO: not sure how to specify that one
         >
     {
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args
-        >
+        template<typename T, std::size_t N, typename... Args>
         auto operator()(std::array<T, N>& array, Args&&... args) const
             -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {
@@ -84,11 +66,7 @@ namespace cppsort
             return sorter{}(array, std::forward<Args>(args)...);
         }
 
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args
-        >
+        template<typename T, std::size_t N, typename... Args>
         auto operator()(T (&array)[N], Args&&... args) const
             -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {

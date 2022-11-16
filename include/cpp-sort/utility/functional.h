@@ -12,7 +12,6 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include "../detail/raw_checkers.h"
@@ -135,12 +134,8 @@ namespace cppsort::utility
                 as_projection_fn(const as_projection_fn&) = default;
                 as_projection_fn(as_projection_fn&&) = default;
 
-                template<
-                    typename Func,
-                    typename = mstd::enable_if_t<
-                        not std::is_same_v<std::remove_cvref_t<Func>, as_projection_fn>
-                    >
-                >
+                template<typename Func>
+                    requires (not std::is_same_v<std::remove_cvref_t<Func>, as_projection_fn>)
                 constexpr explicit as_projection_fn(Func&& func):
                     _func(std::forward<Func>(func))
                 {}
@@ -192,12 +187,8 @@ namespace cppsort::utility
                 as_comparison_fn(const as_comparison_fn&) = default;
                 as_comparison_fn(as_comparison_fn&&) = default;
 
-                template<
-                    typename Func,
-                    typename = mstd::enable_if_t<
-                        not std::is_same_v<std::remove_cvref_t<Func>, as_comparison_fn>
-                    >
-                >
+                template<typename Func>
+                    requires (not std::is_same_v<std::remove_cvref_t<Func>, as_comparison_fn>)
                 constexpr explicit as_comparison_fn(Func&& func):
                     _func(std::forward<Func>(func))
                 {}
@@ -237,41 +228,45 @@ namespace cppsort::utility
     }
 
     template<typename Function>
+        requires (not cppsort::detail::is_specialization_of_v<
+            std::remove_cvref_t<Function>,
+            detail::as_projection_fn
+        >)
     constexpr auto as_projection(Function&& func)
-        -> mstd::enable_if_t<
-            not cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_projection_fn>,
-            detail::as_projection_fn<std::remove_cvref_t<Function>>
-        >
+        -> detail::as_projection_fn<std::remove_cvref_t<Function>>
     {
         return detail::as_projection_fn<std::remove_cvref_t<Function>>(std::forward<Function>(func));
     }
 
     template<typename Function>
-    constexpr auto as_projection(Function&& func)
-        -> mstd::enable_if_t<
-            cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_projection_fn>,
-            decltype(std::forward<Function>(func))
+        requires cppsort::detail::is_specialization_of_v<
+            std::remove_cvref_t<Function>,
+            detail::as_projection_fn
         >
+    constexpr auto as_projection(Function&& func)
+        -> decltype(std::forward<Function>(func))
     {
         return std::forward<Function>(func);
     }
 
     template<typename Function>
+        requires (not cppsort::detail::is_specialization_of_v<
+            std::remove_cvref_t<Function>,
+            detail::as_comparison_fn
+        >)
     constexpr auto as_comparison(Function&& func)
-        -> mstd::enable_if_t<
-            not cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_comparison_fn>,
-            detail::as_comparison_fn<std::remove_cvref_t<Function>>
-        >
+        -> detail::as_comparison_fn<std::remove_cvref_t<Function>>
     {
         return detail::as_comparison_fn<std::remove_cvref_t<Function>>(std::forward<Function>(func));
     }
 
     template<typename Function>
-    constexpr auto as_comparison(Function&& func)
-        -> mstd::enable_if_t<
-            cppsort::detail::is_specialization_of_v<std::remove_cvref_t<Function>, detail::as_comparison_fn>,
-            decltype(std::forward<Function>(func))
+        requires cppsort::detail::is_specialization_of_v<
+            std::remove_cvref_t<Function>,
+            detail::as_comparison_fn
         >
+    constexpr auto as_comparison(Function&& func)
+        -> decltype(std::forward<Function>(func))
     {
         return std::forward<Function>(func);
     }

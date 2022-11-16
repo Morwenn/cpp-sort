@@ -23,7 +23,6 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 
 namespace cppsort::utility
 {
@@ -32,23 +31,19 @@ namespace cppsort::utility
         struct as_function_fn
         {
             template<typename T>
+                requires std::is_member_pointer_v<std::remove_cvref_t<T>>
             constexpr auto operator()(T&& t) const
                 noexcept(noexcept(std::mem_fn(t)))
-                -> mstd::enable_if_t<
-                    std::is_member_pointer_v<std::remove_cvref_t<T>>,
-                    decltype(std::mem_fn(t))
-                >
+                -> decltype(std::mem_fn(t))
             {
                 return std::mem_fn(t);
             }
 
             template<typename T>
+                requires (not std::is_member_pointer_v<std::remove_cvref_t<T>>)
             constexpr auto operator()(T&& t) const
                 noexcept(std::is_nothrow_constructible_v<T, T>)
-                -> mstd::enable_if_t<
-                    not std::is_member_pointer_v<std::remove_cvref_t<T>>,
-                    T
-                >
+                -> T
             {
                 return std::forward<T>(t);
             }

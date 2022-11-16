@@ -14,7 +14,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/concepts.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 
@@ -111,15 +110,11 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // iter_swap_if
 
-    template<
-        typename Iterator,
-        typename Compare,
-        typename Projection,
-        typename = mstd::enable_if_t<
+    template<typename Iterator, typename Compare, typename Projection>
+        requires (
             cppsort::detail::has_iter_move_v<Iterator> ||
             cppsort::detail::has_iter_swap_v<Iterator>
-        >
-    >
+        )
     constexpr auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
         -> void
     {
@@ -132,16 +127,11 @@ namespace cppsort::detail
         }
     }
 
-    template<
-        typename Iterator,
-        typename Compare,
-        typename Projection,
-        typename = mstd::enable_if_t<
+    template<typename Iterator, typename Compare, typename Projection>
+        requires (
             not cppsort::detail::has_iter_move_v<Iterator> &&
             not cppsort::detail::has_iter_swap_v<Iterator>
-        >,
-        typename = void // dummy parameter for ODR
-    >
+        )
     constexpr auto iter_swap_if(Iterator lhs, Iterator rhs, Compare compare, Projection projection)
         noexcept(noexcept(swap_if(*lhs, *rhs, std::move(compare), std::move(projection))))
         -> void

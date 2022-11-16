@@ -18,7 +18,6 @@
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/fwd.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include "../lower_bound.h"
@@ -214,31 +213,23 @@ namespace cppsort
         }
 
         template<typename Compare, typename... Args>
+            requires is_projection_v<std::identity, std::list<Args...>, Compare>
         auto operator()(std::list<Args...>& iterable, Compare compare) const
-            -> mstd::enable_if_t<
-                is_projection_v<std::identity, std::list<Args...>, Compare>
-            >
+            -> void
         {
             detail::list_mel_sort(iterable, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::list<Args...>>
         auto operator()(std::list<Args...>& iterable, Projection projection) const
-            -> mstd::enable_if_t<
-                is_projection_v<Projection, std::list<Args...>>
-            >
+            -> void
         {
             detail::list_mel_sort(iterable, std::less{}, std::move(projection));
         }
 
-        template<
-            typename Compare,
-            typename Projection,
-            typename... Args,
-            typename = mstd::enable_if_t<
-                is_projection_v<Projection, std::list<Args...>, Compare>
-            >
-        >
+        template<typename Compare, typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::list<Args...>, Compare>
         auto operator()(std::list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void
@@ -257,31 +248,23 @@ namespace cppsort
         }
 
         template<typename Compare, typename... Args>
+            requires is_projection_v<std::identity, std::forward_list<Args...>, Compare>
         auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
-            -> mstd::enable_if_t<
-                is_projection_v<std::identity, std::forward_list<Args...>, Compare>
-            >
+            -> void
         {
             detail::flist_mel_sort(iterable, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::forward_list<Args...>>
         auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
-            -> mstd::enable_if_t<
-                is_projection_v<Projection, std::forward_list<Args...>>
-            >
+            -> void
         {
             detail::flist_mel_sort(iterable, std::less{}, std::move(projection));
         }
 
-        template<
-            typename Compare,
-            typename Projection,
-            typename... Args,
-            typename = mstd::enable_if_t<
-                is_projection_v<Projection, std::forward_list<Args...>, Compare>
-            >
-        >
+        template<typename Compare, typename Projection, typename... Args>
+            requires is_projection_v<Projection, std::forward_list<Args...>, Compare>
         auto operator()(std::forward_list<Args...>& iterable,
                         Compare compare, Projection projection) const
             -> void

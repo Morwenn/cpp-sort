@@ -12,7 +12,6 @@
 #include <list>
 #include <type_traits>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -45,21 +44,17 @@ namespace cppsort
         // Generic cases
 
         template<typename Iterable, typename... Args>
+            requires detail::has_stable_sort_method<Iterable, Args...>
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> mstd::enable_if_t<
-                detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
-            >
+            -> decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
         {
             return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
         }
 
         template<typename Iterable, typename... Args>
+            requires (not detail::has_stable_sort_method<Iterable, Args...>)
         auto operator()(Iterable&& iterable, Args&&... args) const
-            -> mstd::enable_if_t<
-                not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
-            >
+            -> decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
         {
             return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
         }
@@ -82,11 +77,8 @@ namespace cppsort
             iterable.sort();
         }
 
-        template<
-            typename T,
-            typename Compare,
-            typename = mstd::enable_if_t<not is_projection_v<Compare, std::forward_list<T>&>>
-        >
+        template<typename T, typename Compare>
+            requires (not is_projection_v<Compare, std::forward_list<T>&>)
         auto operator()(std::forward_list<T>& iterable, Compare compare) const
             -> void
         {
@@ -100,11 +92,8 @@ namespace cppsort
             iterable.sort();
         }
 
-        template<
-            typename T,
-            typename Compare,
-            typename = mstd::enable_if_t<not is_projection_v<Compare, std::list<T>&>>
-        >
+        template<typename T, typename Compare>
+            requires (not is_projection_v<Compare, std::list<T>&>)
         auto operator()(std::list<T>& iterable, Compare compare) const
             -> void
         {

@@ -20,7 +20,6 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "move.h"
@@ -43,31 +42,25 @@ namespace cppsort::detail
 
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
     template<typename RandomAccessIterator>
+        requires (not detail::has_iter_move_v<RandomAccessIterator>)
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
-        -> mstd::enable_if_t<
-            not detail::has_iter_move_v<RandomAccessIterator>,
-            void
-        >
+        -> void
     {
         std::reverse(first, last);
     }
 #endif
 
     template<typename RandomAccessIterator>
+#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
+        requires detail::has_iter_move_v<RandomAccessIterator>
+#endif
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
-#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        -> mstd::enable_if_t<
-            detail::has_iter_move_v<RandomAccessIterator>,
-            void
-        >
-#else
         -> void
-#endif
     {
         if (first != last) {
-            for (; first < --last ; ++first) {
+            for (; first < --last; ++first) {
                 using utility::iter_swap;
                 iter_swap(first, last);
             }
