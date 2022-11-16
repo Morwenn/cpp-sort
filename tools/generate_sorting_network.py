@@ -56,11 +56,9 @@ def generate_cxx(network: list[list[tuple]]):
                 template<
                     mstd::random_access_iterator Iterator,
                     typename Compare = std::less<>,
-                    typename Projection = std::identity,
-                    typename = mstd::enable_if_t<is_projection_iterator_v<
-                        Projection, Iterator, Compare
-                    >>
+                    typename Projection = std::identity
                 >
+                    requires is_projection_iterator_v<Projection, Iterator, Compare>
                 auto operator()(Iterator first, Iterator,
                                 Compare compare={{}}, Projection projection={{}}) const
                     -> void
@@ -79,7 +77,7 @@ def generate_cxx(network: list[list[tuple]]):
             }};
         }}
     """)
-    
+
     pairs = sum(network, [])
 
     # Find highest index in pairs
@@ -94,12 +92,12 @@ def generate_cxx(network: list[list[tuple]]):
         lhs = "first" if pair[0] == 0 else f"first + {pair[0]}"
         rhs = "first" if pair[1] == 0 else f"first + {pair[1]}"
         swaps.append(f"iter_swap_if({lhs}, {rhs}, compare, projection);")
-    
+
     # Generate list of indices
     indices = []
     for line in network:
         indices.append(", ".join(f"{{{pair[0]}, {pair[1]}}}" for pair in line) + ",")
-    
+
     return template.format(
         nb_inputs=highest_index + 1,
         swaps="\n            ".join(swaps),
