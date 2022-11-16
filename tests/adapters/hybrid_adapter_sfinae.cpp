@@ -2,9 +2,9 @@
  * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <concepts>
 #include <iterator>
 #include <string>
-#include <type_traits>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
@@ -24,13 +24,9 @@ namespace
     struct integer_sorter_impl
     {
         template<typename RandomAccessIterator>
+            requires std::integral<std::iter_value_t<RandomAccessIterator>>
         auto operator()(RandomAccessIterator, RandomAccessIterator) const
-            -> std::enable_if_t<
-                std::is_integral<
-                    typename std::iterator_traits<RandomAccessIterator>::value_type
-                >::value,
-                sorter_type
-            >
+            -> sorter_type
         {
             return sorter_type::integer;
         }
@@ -41,13 +37,9 @@ namespace
     struct float_sorter_impl
     {
         template<typename RandomAccessIterator>
+            requires std::floating_point<std::iter_value_t<RandomAccessIterator>>
         auto operator()(RandomAccessIterator, RandomAccessIterator) const
-            -> std::enable_if_t<
-                std::is_floating_point<
-                    typename std::iterator_traits<RandomAccessIterator>::value_type
-                >::value,
-                sorter_type
-            >
+            -> sorter_type
         {
             return sorter_type::floating_point;
         }

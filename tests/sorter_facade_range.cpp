@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
-#include <type_traits>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/mstd/iterator.h>
@@ -75,11 +74,9 @@ namespace
             cppsort::mstd::forward_iterator Iterator,
             cppsort::mstd::sentinel_for<Iterator> Sentinel,
             typename Compare = std::less<>,
-            typename Projection = std::identity,
-            typename = std::enable_if_t<cppsort::is_projection_iterator_v<
-                Projection, Iterator, Compare
-            >>
+            typename Projection = std::identity
         >
+            requires cppsort::is_projection_iterator_v<Projection, Iterator, Compare>
         auto operator()(Iterator, Sentinel, Compare={}, Projection={}) const
             -> call
         {
@@ -89,11 +86,9 @@ namespace
         template<
             cppsort::mstd::forward_range Range,
             typename Compare = std::less<>,
-            typename Projection = std::identity,
-            typename = std::enable_if_t<cppsort::is_projection_v<
-                Projection, Range, Compare
-            >>
+            typename Projection = std::identity
         >
+            requires cppsort::is_projection_v<Projection, Range, Compare>
         auto operator()(Range&, Compare={}, Projection={}) const
             -> call
         {

@@ -4,7 +4,6 @@
  */
 #include <functional>
 #include <list>
-#include <type_traits>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/container_aware_adapter.h>
 #include <cpp-sort/sorters/merge_sorter.h>
@@ -19,13 +18,8 @@ namespace foobar
         using std::list<T>::list;
     };
 
-    template<
-        typename T,
-        typename Compare,
-        typename = std::enable_if_t<
-            not cppsort::is_projection<Compare, T>::value
-        >
-    >
+    template<typename T, typename Compare>
+        requires (not cppsort::is_projection_v<Compare, T>)
     auto sort(cppsort::merge_sorter, cool_list<T>&, Compare)
         -> bool
     {

@@ -31,11 +31,9 @@ namespace
 
         template<
             typename Iterator,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<
-                not cppsort::is_projection_iterator_v<Compare, Iterator>
-            >
+            typename Compare = std::less<>
         >
+            requires (not cppsort::is_projection_iterator_v<Compare, Iterator>)
         auto operator()(Iterator first, Iterator last, Compare compare={}) const
             -> int
         {

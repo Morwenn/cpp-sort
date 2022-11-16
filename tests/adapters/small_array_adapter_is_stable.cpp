@@ -36,11 +36,9 @@ namespace
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = std::identity,
-            typename = std::enable_if_t<cppsort::is_projection_iterator_v<
-                Projection, RandomAccessIterator, Compare
-            >>
+            typename Projection = std::identity
         >
+            requires cppsort::is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
         auto operator()(RandomAccessIterator, RandomAccessIterator,
                         Compare={}, Projection={}) const
             -> void

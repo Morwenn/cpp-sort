@@ -5,7 +5,6 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorter_facade.h>
@@ -21,11 +20,9 @@ namespace
         template<
             typename RandomAccessIterator,
             typename Compare = std::less<>,
-            typename Projection = std::identity,
-            typename = std::enable_if_t<
-                cppsort::is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
-            >
+            typename Projection = std::identity
         >
+            requires cppsort::is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
         constexpr auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                                   Compare compare={}, Projection projection={}) const
             -> void

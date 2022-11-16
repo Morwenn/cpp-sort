@@ -33,11 +33,10 @@ namespace
             typename Compare = std::less<>,
             typename Projection = std::identity
         >
+            requires cppsort::is_projection_iterator_v<Projection, ForwardIterator, Compare>
         auto operator()(ForwardIterator first, ForwardIterator last,
                         Compare compare={}, Projection projection={}) const
-            -> std::enable_if_t<cppsort::is_projection_iterator_v<
-                Projection, ForwardIterator, Compare
-            >>
+            -> void
         {
             this->get()(first, last, compare, projection);
         }
@@ -68,11 +67,9 @@ namespace
 
         template<
             typename Iterator,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<
-                not cppsort::is_projection_iterator_v<Compare, Iterator>
-            >
+            typename Compare = std::less<>
         >
+            requires (not cppsort::is_projection_iterator_v<Compare, Iterator>)
         auto operator()(Iterator first, Iterator last, Compare compare={}) const
             -> void
         {
