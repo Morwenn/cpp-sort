@@ -14,7 +14,6 @@
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -60,11 +59,9 @@ namespace cppsort::probe
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> mstd::iter_difference_t<Iterator>

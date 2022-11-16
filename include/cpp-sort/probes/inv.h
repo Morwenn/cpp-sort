@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
-#include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
@@ -55,11 +54,9 @@ namespace cppsort::probe
             template<
                 mstd::forward_range Range,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_v<Projection, Range, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_v<Projection, Range, Compare>
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> mstd::range_difference_t<Range>
             {
@@ -72,11 +69,9 @@ namespace cppsort::probe
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
-                typename Projection = std::identity,
-                typename = mstd::enable_if_t<
-                    is_projection_iterator_v<Projection, Iterator, Compare>
-                >
+                typename Projection = std::identity
             >
+                requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
                 -> mstd::iter_difference_t<Iterator>
