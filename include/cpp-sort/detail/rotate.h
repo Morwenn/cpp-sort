@@ -22,7 +22,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "move.h"
 #include "swap_ranges.h"
 
@@ -53,11 +52,9 @@ namespace cppsort::detail
     auto rotate_forward(ForwardIterator first, ForwardIterator middle, ForwardIterator last)
         -> ForwardIterator
     {
-        using utility::iter_swap;
-
         auto i = middle;
         while (true) {
-            iter_swap(first, i);
+            mstd::iter_swap(first, i);
             ++first;
             if (++i == last) {
                 break;
@@ -70,7 +67,7 @@ namespace cppsort::detail
         if (first != middle) {
             i = middle;
             while (true) {
-                iter_swap(first, i);
+                mstd::iter_swap(first, i);
                 ++first;
                 if (++i == last) {
                     if (first == middle) {

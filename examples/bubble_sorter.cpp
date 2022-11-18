@@ -11,7 +11,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 
 namespace detail
 {
@@ -28,8 +27,7 @@ namespace detail
             auto next = std::next(current);
             for (std::size_t i = 0; i < size; ++i) {
                 if (comp(*next, *current)) {
-                    using cppsort::utility::iter_swap;
-                    iter_swap(current, next);
+                    cppsort::mstd::iter_swap(current, next);
                 }
                 ++next;
                 ++current;

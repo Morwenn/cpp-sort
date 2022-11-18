@@ -13,7 +13,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "fixed_size_list.h"
 #include "immovable_vector.h"
 #include "iterator_traits.h"

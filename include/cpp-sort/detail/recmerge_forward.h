@@ -30,7 +30,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "buffered_inplace_merge.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"

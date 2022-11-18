@@ -22,7 +22,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "partition.h"
 
@@ -36,17 +35,16 @@ namespace cppsort::detail
                                        Compare compare, Projection projection)
             -> RandomAccessIterator
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             CPPSORT_ASSERT(k < length);
-            iter_swap(r, r + k); // Move pivot out of the way
+            mstd::iter_swap(r, r + k); // Move pivot out of the way
             auto&& pivot_proj = proj(*r);
             auto pivot_pos = detail::partition(r, r + length, [&](auto&& elem) {
                 return not comp(pivot_proj, proj(elem));
             });
-            iter_swap(r, --pivot_pos); // Put pivot back in its place
+            mstd::iter_swap(r, --pivot_pos); // Put pivot back in its place
             return pivot_pos;
         }
 
@@ -114,7 +112,6 @@ namespace cppsort::detail
                                mstd::iter_difference_t<RandomAccessIterator> _9, Compare compare, Projection projection)
             -> void
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -137,11 +134,11 @@ namespace cppsort::detail
             } else {
                 // Here we know r[_5] is the median of r[_4], r[_5], r[_6]
                 if (comp(proj(r[_5]), proj(r[_2]))) {
-                    iter_swap(r + _5, r + _2);
+                    mstd::iter_swap(r + _5, r + _2);
                     return;
                 }
                 if (comp(proj(r[_8]), proj(r[_5]))) {
-                    iter_swap(r + _5, r + _8);
+                    mstd::iter_swap(r + _5, r + _8);
                     return;
                 }
                 // This is the only path that returns with no swap
@@ -154,7 +151,7 @@ namespace cppsort::detail
             } else if (comp(proj(r[_8]), proj(r[_4]))) {
                 _4 = _8;
             }
-            iter_swap(r + _5, r + _4);
+            mstd::iter_swap(r + _5, r + _4);
         }
 
         template<typename RandomAccessIterator, typename Compare, typename Projection>
@@ -163,7 +160,6 @@ namespace cppsort::detail
                                              Compare compare, Projection projection)
             -> mstd::iter_difference_t<RandomAccessIterator>
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -173,12 +169,12 @@ namespace cppsort::detail
             auto&& old_pivot_proj = proj(r[oldPivot]);
             for (; lo < pivot ; ++left) {
                 if (left == lo) {
-                    iter_swap(r + oldPivot, r + pivot);
+                    mstd::iter_swap(r + oldPivot, r + pivot);
                     return pivot;
                 }
                 if (not comp(old_pivot_proj, proj(r[left]))) continue;
                 --pivot;
-                iter_swap(r + left, r + pivot);
+                mstd::iter_swap(r + left, r + pivot);
             }
 
             // Second loop: make left and pivot meet
@@ -187,18 +183,18 @@ namespace cppsort::detail
                 if (not comp(old_pivot_proj, proj(r[left]))) continue;
                 for (;;) {
                     if (left == pivot) {
-                        iter_swap(r + oldPivot, r + pivot);
+                        mstd::iter_swap(r + oldPivot, r + pivot);
                         return pivot;
                     }
                     --pivot;
                     if (comp(proj(r[pivot]), old_pivot_proj)) {
-                        iter_swap(r + left, r + pivot);
+                        mstd::iter_swap(r + left, r + pivot);
                         break;
                     }
                 }
             }
 
-            iter_swap(r + oldPivot, r + pivot);
+            mstd::iter_swap(r + oldPivot, r + pivot);
             return pivot;
         }
 
@@ -208,7 +204,6 @@ namespace cppsort::detail
                                               Compare compare, Projection projection)
             -> mstd::iter_difference_t<RandomAccessIterator>
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -220,12 +215,12 @@ namespace cppsort::detail
             // First loop: spend r[pivot .. hi]
             for (; pivot < hi ; --rite) {
                 if (rite == hi) {
-                    iter_swap(r, r + pivot);
+                    mstd::iter_swap(r, r + pivot);
                     return pivot;
                 }
                 if (not comp(proj(r[rite]), pivot_proj)) continue;
                 ++pivot;
-                iter_swap(r + rite, r + pivot);
+                mstd::iter_swap(r + rite, r + pivot);
             }
 
             // Second loop: make left and pivot meet
@@ -234,13 +229,13 @@ namespace cppsort::detail
                 while (rite > pivot) {
                     ++pivot;
                     if (comp(pivot_proj, proj(r[pivot]))) {
-                        iter_swap(r + rite, r + pivot);
+                        mstd::iter_swap(r + rite, r + pivot);
                         break;
                     }
                 }
             }
 
-            iter_swap(r, r + pivot);
+            mstd::iter_swap(r, r + pivot);
             return pivot;
         }
 
@@ -250,7 +245,6 @@ namespace cppsort::detail
                                         mstd::iter_difference_t<RandomAccessIterator> length, Compare compare, Projection projection)
             -> mstd::iter_difference_t<RandomAccessIterator>
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -273,7 +267,7 @@ namespace cppsort::detail
                     }
                     if (not comp(proj(r[pivot]), proj(r[length]))) break;
                 }
-                iter_swap(r + left, r + length);
+                mstd::iter_swap(r + left, r + length);
             }
         }
     }
@@ -313,8 +307,7 @@ namespace cppsort::detail
                 }
             }
             if (comp(proj(r[minIndex]), proj(r[i]))) {
-                using utility::iter_swap;
-                iter_swap(r + i, r + minIndex);
+                mstd::iter_swap(r + i, r + minIndex);
             }
             CPPSORT_ASSERT(j < length || i + 1 == subset);
         }
@@ -333,7 +326,6 @@ namespace cppsort::detail
                                     Compare compare, Projection projection)
         -> mstd::iter_difference_t<RandomAccessIterator>
     {
-        using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -354,7 +346,7 @@ namespace cppsort::detail
                 }
             }
             if (comp(proj(r[i]), proj(r[maxIndex]))) {
-                iter_swap(r + i, r + maxIndex);
+                mstd::iter_swap(r + i, r + maxIndex);
             }
             CPPSORT_ASSERT(j != 0 || i + 1 == length);
         }
@@ -414,7 +406,6 @@ namespace cppsort::detail
                                         Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -429,7 +420,7 @@ namespace cppsort::detail
                         pivot = n;
                     }
                 }
-                iter_swap(r, r + pivot);
+                mstd::iter_swap(r, r + pivot);
                 return;
             }
 
@@ -441,7 +432,7 @@ namespace cppsort::detail
                         pivot = n;
                     }
                 }
-                iter_swap(r + pivot, r + (length - 1));
+                mstd::iter_swap(r + pivot, r + (length - 1));
                 return;
             }
 

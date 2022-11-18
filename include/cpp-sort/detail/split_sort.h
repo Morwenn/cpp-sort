@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "inplace_merge.h"
 
 namespace cppsort::detail
@@ -51,8 +51,7 @@ namespace cppsort::detail
             } else {
                 // Everything is fine, add the new element to the subsequence
                 ++middle;
-                using utility::iter_swap;
-                iter_swap(middle, reader_it);
+                mstd::iter_swap(middle, reader_it);
             }
         }
 

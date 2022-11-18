@@ -24,7 +24,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
@@ -109,7 +108,6 @@ namespace cppsort::detail::grail
                     Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         auto left_it = first;
@@ -117,10 +115,10 @@ namespace cppsort::detail::grail
 
         while (right_it != last) {
             if (left_it == middle || compare(proj(*left_it), proj(*right_it)) > 0) {
-                iter_swap(M, right_it);
+                mstd::iter_swap(M, right_it);
                 ++right_it;
             } else {
-                iter_swap(M, left_it);
+                mstd::iter_swap(M, left_it);
                 ++left_it;
             }
             ++M;
@@ -136,7 +134,6 @@ namespace cppsort::detail::grail
                      Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         auto p0 = std::prev(M),
@@ -145,10 +142,10 @@ namespace cppsort::detail::grail
 
         while (p1 > first) {
             if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
-                iter_swap(p0, p1);
+                mstd::iter_swap(p0, p1);
                 --p1;
             } else {
-                iter_swap(p0, p2);
+                mstd::iter_swap(p0, p2);
                 --p2;
             }
             --p0;
@@ -158,22 +155,22 @@ namespace cppsort::detail::grail
         // issues with some kinds of iterators
         if (p1 == first) {
             while (not (p2 < middle || compare(proj(*p1), proj(*p2)) > 0)) {
-                iter_swap(p0, p2);
+                mstd::iter_swap(p0, p2);
                 --p2;
                 --p0;
             }
-            iter_swap(p0, p1);
+            mstd::iter_swap(p0, p1);
             --p0;
         }
 
         if (p2 != p0) {
             while (p2 > middle) {
-                iter_swap(p0, p2);
+                mstd::iter_swap(p0, p2);
                 --p0;
                 --p2;
             }
             if (p2 == middle){
-                iter_swap(p0, p2);
+                mstd::iter_swap(p0, p2);
             }
         }
     }
@@ -184,7 +181,6 @@ namespace cppsort::detail::grail
                                  Compare compare, Projection projection)
         -> std::pair<mstd::iter_difference_t<RandomAccessIterator>, int>
     {
-        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         auto out_it = first - block_len,
@@ -194,10 +190,10 @@ namespace cppsort::detail::grail
 
         while (left_it != middle && right_it != last) {
             if (compare(proj(*left_it), proj(*right_it)) - frag_type  < 0) {
-                iter_swap(out_it, left_it);
+                mstd::iter_swap(out_it, left_it);
                 ++left_it;
             } else {
-                iter_swap(out_it, right_it);
+                mstd::iter_swap(out_it, right_it);
                 ++right_it;
             }
             ++out_it;
@@ -208,7 +204,7 @@ namespace cppsort::detail::grail
         if (left_it < middle) {
             len = middle - left_it;
             do {
-                iter_swap(--middle, --last);
+                mstd::iter_swap(--middle, --last);
             } while (left_it != middle);
         } else {
             len = last - right_it;
@@ -459,7 +455,6 @@ namespace cppsort::detail::grail
         -> void
     {
         using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
-        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
         auto size = last - first;
 
@@ -507,11 +502,11 @@ namespace cppsort::detail::grail
                 if (compare(proj(first[m-1]), proj(first[m])) > 0) {
                     u = 1;
                 }
-                iter_swap(first + (m-3), first + (m-1+u));
-                iter_swap(first + (m-2), first + (m-u));
+                mstd::iter_swap(first + (m-3), first + (m-1+u));
+                mstd::iter_swap(first + (m-2), first + (m-u));
             }
             if (size % 2) {
-                iter_swap(last - 1, last - 3);
+                mstd::iter_swap(last - 1, last - 3);
             }
             first -= 2;
             last -= 2;
@@ -561,7 +556,6 @@ namespace cppsort::detail::grail
         -> void
     {
         using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
-        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         auto M = len / (2 * LL);
@@ -590,7 +584,7 @@ namespace cppsort::detail::grail
                 }
                 if (p != u - 1) {
                     detail::swap_ranges_overlap(arr1+(u-1)*lblock, arr1+u*lblock, arr1+p*lblock);
-                    iter_swap(keys+(u-1), keys+p);
+                    mstd::iter_swap(keys+(u-1), keys+p);
                     if (midkey == u - 1 || midkey == p) {
                         midkey ^= (u - 1) ^ p;
                     }
@@ -622,7 +616,7 @@ namespace cppsort::detail::grail
             detail::move(xbuf, xbuf + lblock, arr - lblock);
         } else if (havebuf) {
             while (--len >= 0) {
-                iter_swap(arr + len, arr + (len - lblock));
+                mstd::iter_swap(arr + len, arr + (len - lblock));
             }
         }
     }
@@ -633,14 +627,13 @@ namespace cppsort::detail::grail
         -> void
     {
         using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
-        using utility::iter_swap;
         auto&& proj = utility::as_function(projection);
 
         auto size = last - first;
         auto end_loop = size % 2 == 0 ? last : std::prev(last);
         for (auto it = first ; it != end_loop ; it += 2) {
             if (compare(proj(*it), proj(*std::next(it))) > 0) {
-                iter_swap(it, std::next(it));
+                mstd::iter_swap(it, std::next(it));
             }
         }
 

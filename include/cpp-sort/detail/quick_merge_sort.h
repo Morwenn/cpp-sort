@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "iterator_traits.h"
 #include "nth_element.h"
@@ -33,8 +32,6 @@ namespace cppsort::detail
                                                Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
-
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -42,10 +39,10 @@ namespace cppsort::detail
             CPPSORT_ASSUME(first1 != last1);
             CPPSORT_ASSUME(first2 != last2);
             if (comp(proj(*first2), proj(*first1))) {
-                iter_swap(result, first2);
+                mstd::iter_swap(result, first2);
                 ++first2;
             } else {
-                iter_swap(result, first1);
+                mstd::iter_swap(result, first1);
                 ++first1;
             }
             ++result;
@@ -58,10 +55,10 @@ namespace cppsort::detail
             }
 
             if (comp(proj(*first2), proj(*first1))) {
-                iter_swap(result, first2);
+                mstd::iter_swap(result, first2);
                 ++first2;
             } else {
-                iter_swap(result, first1);
+                mstd::iter_swap(result, first1);
                 ++first1;
             }
         }

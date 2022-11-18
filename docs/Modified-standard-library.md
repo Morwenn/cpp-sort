@@ -59,7 +59,7 @@ Just like the type traits they are built upon, those concepts take into account 
 
 ### `<cpp-sort/mstd/iterator.h>`
 
-The library provides `mstd::iter_move` and `mstd::iter_rvalue_reference_t` which only differ from their standard counterparts in their semantic requirements. Most notably, the following semantic requirements of [`std::ranges::iter_move`][std-ranges-iter-move] does not apply to `mstd::iter_move`:
+The library provides `mstd::iter_move`, `mstd::iter_swap` and `mstd::iter_rvalue_reference_t` which only differ from their standard counterparts in their semantic requirements. Most notably, the following semantic requirements of [`std::ranges::iter_move`][std-ranges-iter-move] does not apply to `mstd::iter_move`:
 
 > If `ranges::iter_move(e)` is not equal to `*e`, the program is ill-formed, no diagnostic required.
 

@@ -7,15 +7,6 @@ While **cpp-sort** theoretically requires a fully C++14-compliant compiler, a fe
 **Performance improvements:**
 * Sized deallocation: this C++14 feature is not always available (Clang requires `-fsized-deallocation` for example) and standard allocation functions typically don't take advantage of it. However, if `__cpp_sized_deallocation` is defined and the global deallocations functions are replaced with overloads that take advantage of sized deallocation, then several sorters will explicitly try to take advantage of it.
 
-## C++20 features
-
-When compiled with C++20, **cpp-sort** might gain a few additional features depending on the level of C++20 support provided by the compiler. The availability of those features depends on the presence of corresponding [feature-testing macros][feature-test-macros] when possible, even though some checks are more granular. Don't hesitate to open an issue if your compiler and standard library supports one of those features but it doesn't seem to work in **cpp-sort**.
-
-**New features:**
-* [`utility::iter_swap`][utility-iter-move] can now be used in more `constexpr` functions thanks to [`std::swap`][std-swap] begin `constexpr`.
-
-    The feature-test macro `__cpp_lib_constexpr_algorithms` can be used to check whether `std::swap` is `constexpr`.
-
 ## Other features
 
 **cpp-sort** tries to take advantage of more than just standard features when possible by using implementation-specific tweaks to improve the user experience. The following improvements might be available depending on the your standard implementation:
@@ -42,4 +33,3 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [ska-sorter]: Sorters.md#ska_sorter
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-swap]: https://en.cppreference.com/w/cpp/algorithm/swap
-  [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap

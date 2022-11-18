@@ -23,7 +23,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "memory.h"
 #include "rotate.h"
@@ -37,24 +36,23 @@ namespace cppsort::detail
         -> BidirectionalIterator
     {
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
-        using utility::iter_swap;
 
         // *first is known to be false
         // *last is known to be true
         // len >= 2
         if (len == 2) {
-            iter_swap(first, last);
+            mstd::iter_swap(first, last);
             return last;
         }
         if (len == 3) {
             auto m = first;
             if (pred(*++m)) {
-                iter_swap(first, m);
-                iter_swap(m, last);
+                mstd::iter_swap(first, m);
+                mstd::iter_swap(m, last);
                 return last;
             }
-            iter_swap(m, last);
-            iter_swap(first, m);
+            mstd::iter_swap(m, last);
+            mstd::iter_swap(first, m);
             return m;
         }
         if (len <= buffer.size()) {

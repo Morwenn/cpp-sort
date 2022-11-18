@@ -14,8 +14,8 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/concepts.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 
 namespace cppsort::detail
 {
@@ -122,8 +122,7 @@ namespace cppsort::detail
         auto&& proj = utility::as_function(projection);
 
         if (comp(proj(*rhs), proj(*lhs))) {
-            using utility::iter_swap;
-            iter_swap(lhs, rhs);
+            mstd::iter_swap(lhs, rhs);
         }
     }
 

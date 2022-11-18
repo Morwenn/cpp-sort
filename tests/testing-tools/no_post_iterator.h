@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/detail/iterator_traits.h> // yay, detail
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/utility/iter_move.h>
 
 ////////////////////////////////////////////////////////////
 // Collection without post-inc/decrement iterators
@@ -210,8 +209,7 @@ class no_post_iterator
         friend auto iter_swap(no_post_iterator lhs, no_post_iterator rhs)
             -> void
         {
-            using cppsort::utility::iter_swap;
-            iter_swap(lhs.base(), rhs.base());
+            cppsort::mstd::iter_swap(lhs.base(), rhs.base());
         }
 
     private:

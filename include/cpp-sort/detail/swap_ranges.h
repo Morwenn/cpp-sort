@@ -12,7 +12,7 @@
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "config.h"
 #include "move.h"
 
@@ -31,9 +31,7 @@ namespace cppsort::detail
         -> ForwardIterator2
     {
         while (first1 != last1) {
-            using utility::iter_swap;
-            iter_swap(first1, first2);
-
+            mstd::iter_swap(first1, first2);
             ++first1;
             ++first2;
         }

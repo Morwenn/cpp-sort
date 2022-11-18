@@ -29,6 +29,7 @@ Phil Endecott and Frank Gennari
 #include <memory>
 #include <type_traits>
 #include <vector>
+#include <cpp-sort/mstd/iterator.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
@@ -206,7 +207,7 @@ namespace cppsort::detail::spreadsort::detail
         //empties belong in this bin
         while (proj(*current).size() > char_offset) {
           target_bin = bins + static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
-          iter_swap(current, *target_bin);
+          mstd::iter_swap(current, *target_bin);
           ++(*target_bin);
         }
       }
@@ -227,7 +228,7 @@ namespace cppsort::detail::spreadsort::detail
                (proj(*current)[char_offset]); target_bin != local_bin;
                target_bin = bins + static_cast<Unsigned_char_type>
                (proj(*current)[char_offset])) {
-            iter_swap(current, *target_bin);
+            mstd::iter_swap(current, *target_bin);
             ++(*target_bin);
           }
         }
@@ -317,7 +318,7 @@ namespace cppsort::detail::spreadsort::detail
         //empties belong in this bin
         while (proj(*current).size() > char_offset) {
           target_bin = end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
-          iter_swap(current, *target_bin);
+          mstd::iter_swap(current, *target_bin);
           ++(*target_bin);
         }
       }
@@ -340,7 +341,7 @@ namespace cppsort::detail::spreadsort::detail
                target_bin != local_bin;
                target_bin =
                end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset])) {
-            iter_swap(current, *target_bin);
+            mstd::iter_swap(current, *target_bin);
             ++(*target_bin);
           }
         }

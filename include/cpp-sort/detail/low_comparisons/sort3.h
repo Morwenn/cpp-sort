@@ -26,26 +26,25 @@ namespace cppsort::detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             if (comp(proj(first[1u]), proj(first[0u]))) {
                 if (comp(proj(first[2u]), proj(first[0u]))) {
                     if (comp(proj(first[2u]), proj(first[1u]))) {
-                        iter_swap(first, first + 2u);
+                        mstd::iter_swap(first, first + 2u);
                     } else {
                         rotate_left<3u>(first);
                     }
                 } else {
-                    iter_swap(first, first + 1u);
+                    mstd::iter_swap(first, first + 1u);
                 }
             } else {
                 if (comp(proj(first[2u]), proj(first[1u]))) {
                     if (comp(proj(first[2u]), proj(first[0u]))) {
                         rotate_right<3u>(first);
                     } else {
-                        iter_swap(first + 1u, first + 2u);
+                        mstd::iter_swap(first + 1u, first + 2u);
                     }
                 }
             }

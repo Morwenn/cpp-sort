@@ -77,7 +77,6 @@ namespace cppsort
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/front_insert.h"
 #include "../detail/swap_if.h"
 

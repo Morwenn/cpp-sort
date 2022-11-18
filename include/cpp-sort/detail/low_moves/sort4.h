@@ -13,7 +13,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../min_element.h"
 
 namespace cppsort::detail
@@ -31,11 +30,9 @@ namespace cppsort::detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using utility::iter_swap;
-
             auto min = min_element(first, last, compare, projection);
             if (min != first) {
-                iter_swap(min, first);
+                mstd::iter_swap(min, first);
             }
             low_moves_sorter<3u>{}(first+1u, last, std::move(compare), std::move(projection));
         }

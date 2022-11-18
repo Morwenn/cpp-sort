@@ -195,29 +195,6 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 
 `is_probably_branchless_comparison` and `is_probably_branchless_projection` will correspond to `std::true_type` if the wrapped `Function` also gives `std::true_type`. Moreover, you can even specialize these traits for specific `function_constant` instanciations if you need even more performance.
 
-### `iter_move` and `iter_swap`
-
-```cpp
-#include <cpp-sort/utility/iter_move.h>
-```
-
-The functions `iter_move` and `iter_swap` are equivalent to the same functions as proposed by [P0022][p0022]: utility functions intended to be used with ADL to handle proxy iterators among other things. An algorithm can use them instead of `std::move` and possibly ADL-found `swap` to handle tricky classes such as `std::vector<bool>`.
-
-The default implementation of `iter_move` simply move-returns the dereferenced iterator. `iter_swap` is a bit more tricky: if the iterators to be swapped have a custom `iter_move`, then `iter_swap` will use it, otherwise it will call an ADL-found `swap` or `std::swap` on the dereferenced iterators.
-
-```cpp
-template<typename Iterator>
-constexpr auto iter_move(Iterator it)
-    -> decltype(std::move(*it));
-
-template<typename Iterator>
-constexpr auto iter_swap(Iterator lhs, Iterator rhs)
-    -> void;
-```
-
-*NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
-
-
 ### `sorted_indices`
 
 ```cpp

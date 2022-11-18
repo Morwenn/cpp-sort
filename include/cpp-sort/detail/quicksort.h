@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "bubble_sort.h"
 #include "insertion_sort.h"
@@ -62,7 +61,6 @@ namespace cppsort::detail
         -> void
     {
         using difference_type = mstd::iter_difference_t<ForwardIterator>;
-        using utility::iter_swap;
 
         // If the collection is small enough, fall back to
         // another sorting algorithm
@@ -79,7 +77,7 @@ namespace cppsort::detail
         auto last_1 = temp.second;
 
         // Put the pivot at position std::prev(last) and partition
-        iter_swap(median_it, last_1);
+        mstd::iter_swap(median_it, last_1);
         auto&& pivot1 = proj(*last_1);
         auto middle1 = detail::partition(
             first, last_1,
@@ -87,7 +85,7 @@ namespace cppsort::detail
         );
 
         // Put the pivot in its final position and partition
-        iter_swap(middle1, last_1);
+        mstd::iter_swap(middle1, last_1);
         auto&& pivot2 = proj(*middle1);
         auto middle2 = detail::partition(
             std::next(middle1), last,

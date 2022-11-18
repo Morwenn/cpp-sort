@@ -20,7 +20,7 @@
 #include <algorithm>
 #include <iterator>
 #include <utility>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "iterator_traits.h"
 #include "move.h"
 
@@ -31,11 +31,9 @@ namespace cppsort::detail
                       std::bidirectional_iterator_tag)
         -> void
     {
-        using utility::iter_swap;
-
         while (first != last) {
             if (first == --last) break;
-            iter_swap(first, last);
+            mstd::iter_swap(first, last);
             ++first;
         }
     }
@@ -61,8 +59,7 @@ namespace cppsort::detail
     {
         if (first != last) {
             for (; first < --last; ++first) {
-                using utility::iter_swap;
-                iter_swap(first, last);
+                mstd::iter_swap(first, last);
             }
         }
     }

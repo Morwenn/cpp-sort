@@ -19,7 +19,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "iterator_traits.h"
 
 namespace cppsort::detail
@@ -40,8 +40,7 @@ namespace cppsort::detail
         }
         for (auto p = first; ++p != last;) {
             if (pred(*p)) {
-                using utility::iter_swap;
-                iter_swap(first, p);
+                mstd::iter_swap(first, p);
                 ++first;
             }
         }
@@ -68,8 +67,7 @@ namespace cppsort::detail
                     return first;
                 }
             } while (not pred(*last));
-            using utility::iter_swap;
-            iter_swap(first, last);
+            mstd::iter_swap(first, last);
             ++first;
         }
     }

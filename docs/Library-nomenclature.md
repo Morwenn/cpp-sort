@@ -34,7 +34,7 @@
 
     Every *comparison sorter* is also a *projection sorter*, but there are also projection-only sorters, such as  [`spread_sorter`][spread-sorter].
 
-* *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however there are [standard proposals][p0022] to solve the problem by introducing a function named `iter_move` and making it as well as `iter_swap` customization points. No proposal has been accepted yet, so standard libraries don't handle proxy iterators; however every sorter in **cpp-sort** can actually handle such iterators (except `std_sorter` and `std_stable_sorter`). The library exposes the functions [`utility::iter_move` and `utility::iter_swap`][utility-iter-move] in case you also need to make your own algorithms handle proxy iterators.
+* *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however C++20 ranges solved the problem by introducing a function named [`iter_move`][std-ranges-iter-move] and making it as well as [`iter_swap`][std-ranges-iter-swap] customization points. The library uses a slightly different iterator model, and as a result exposes the functions `mstd::iter_move` and `mstd::iter_swap` in [modified standard library components][modified-std].
 
 * *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions.
 
@@ -70,14 +70,15 @@
   [iterator-category]: Sorter-traits.md#iterator_category
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [measures-of-presortedness]: Measures-of-presortedness.md
-  [p0022]: https://wg21.link/P0022
+  [modified-std]: Modified-standard-library.md
   [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
   [sorter-adapters]: Sorter-adapters.md
   [sorters]: Sorters.md
   [spread-sorter]: Sorters.md#spread_sorter
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
+  [std-ranges-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move
+  [std-ranges-iter-swap]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_swap
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-ranges]: https://en.cppreference.com/w/cpp/algorithm/ranges
   [stlab]: https://stlab.adobe.com/
-  [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap

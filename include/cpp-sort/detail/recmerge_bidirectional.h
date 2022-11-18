@@ -22,7 +22,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "buffered_inplace_merge.h"
 #include "lower_bound.h"
 #include "rotate.h"
@@ -89,8 +88,7 @@ namespace cppsort::detail
                 if (len1 == 1) {
                     // len1 >= len2 && len2 > 0, therefore len2 == 1
                     // It is known *first > *middle
-                    using utility::iter_swap;
-                    iter_swap(first, middle);
+                    mstd::iter_swap(first, middle);
                     return;
                 }
                 // len1 >= 2, len2 >= 1

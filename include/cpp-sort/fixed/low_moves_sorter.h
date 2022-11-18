@@ -17,7 +17,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "../detail/empty_sorter.h"
 #include "../detail/minmax_element.h"
 
@@ -44,8 +43,6 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
-                using utility::iter_swap;
-
                 // There are specializations for N < 5, so unchecked_minmax_element
                 // will always be passed at least 2 elements
                 Iterator min, max;
@@ -54,20 +51,20 @@ namespace cppsort
 
                 if (max == first && min == last) {
                     if (min == max) return;
-                    iter_swap(min, max);
+                    mstd::iter_swap(min, max);
                 } else if (max == first) {
                     if (last != max) {
-                        iter_swap(last, max);
+                        mstd::iter_swap(last, max);
                     }
                     if (first != min) {
-                        iter_swap(first, min);
+                        mstd::iter_swap(first, min);
                     }
                 } else {
                     if (first != min) {
-                        iter_swap(first, min);
+                        mstd::iter_swap(first, min);
                     }
                     if (last != max) {
-                        iter_swap(last, max);
+                        mstd::iter_swap(last, max);
                     }
                 }
 

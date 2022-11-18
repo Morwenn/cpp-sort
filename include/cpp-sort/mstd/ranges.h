@@ -28,17 +28,6 @@ namespace cppsort::mstd
         concept can_borrow =
             std::is_lvalue_reference_v<T> ||
             std::ranges::enable_borrowed_range<std::remove_cvref_t<T>>;
-
-        template<typename T>
-        concept class_or_union =
-            std::is_class_v<T> ||
-            std::is_union_v<T>;
-
-        template<typename T>
-        concept class_or_union_or_enum =
-            std::is_class_v<T> ||
-            std::is_union_v<T> ||
-            std::is_enum_v<T>;
     }
 
     ////////////////////////////////////////////////////////////

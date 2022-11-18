@@ -15,7 +15,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "insertion_sort.h"
 
@@ -60,8 +59,7 @@ namespace cppsort::detail
             }
             if (max_root == root) return;
 
-            using utility::iter_swap;
-            iter_swap(root, max_root);
+            mstd::iter_swap(root, max_root);
 
             size /= 2;
             if (size < 2) return;
@@ -91,8 +89,7 @@ namespace cppsort::detail
         }
 
         if (bigger != last) {
-            using utility::iter_swap;
-            iter_swap(bigger->root(), last->root());
+            mstd::iter_swap(bigger->root(), last->root());
             sift(bigger->begin, bigger->size,
                  std::move(compare), std::move(projection));
         }

@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 #include "min_element.h"
 
 namespace cppsort::detail
@@ -19,8 +19,7 @@ namespace cppsort::detail
         -> void
     {
         for (auto it = first; it != last; ++it) {
-            using utility::iter_swap;
-            iter_swap(it, unchecked_min_element(it, last, compare, projection));
+            mstd::iter_swap(it, unchecked_min_element(it, last, compare, projection));
         }
     }
 }

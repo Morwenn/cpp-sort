@@ -19,8 +19,8 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "min_element.h"
 
 namespace cppsort::detail
@@ -72,15 +72,13 @@ namespace cppsort::detail
                             Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
-
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         while (not_leaf<D>(first, last, it)) {
             auto max_child = top_child_it<D>(first, last, it, compare, projection);
             if (not comp(proj(*max_child), proj(*it))) {
-                iter_swap(max_child, it);
+                mstd::iter_swap(max_child, it);
                 it = max_child;
             } else {
                 return;
@@ -93,8 +91,6 @@ namespace cppsort::detail
                           Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
-
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -102,7 +98,7 @@ namespace cppsort::detail
             auto parent = parent_it<D>(first, it);
 
             if (comp(proj(*parent), proj(*it))) {
-                iter_swap(parent, it);
+                mstd::iter_swap(parent, it);
                 it = parent;
             } else {
                 return;
@@ -123,8 +119,7 @@ namespace cppsort::detail
                                   Compare compare, Projection projection)
         -> void
     {
-        using utility::iter_swap;
-        iter_swap(first, --last);
+        mstd::iter_swap(first, --last);
         if (first == last) return;
 
         siftdown<D>(first, last, first, std::move(compare), std::move(projection));

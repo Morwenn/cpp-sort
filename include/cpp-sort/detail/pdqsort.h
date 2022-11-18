@@ -36,7 +36,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "heapsort.h"
 #include "insertion_sort.h"
@@ -139,20 +138,19 @@ namespace cppsort::detail
                                     std::size_t num, bool use_swaps)
             -> void
         {
-            using utility::iter_swap;
 
             if (use_swaps) {
                 // This case is needed for the descending distribution, where we need
                 // to have proper swapping for pdqsort to remain O(n).
-                for (std::size_t i = 0 ; i < num ; ++i) {
-                    iter_swap(first + offsets_l[i], last - offsets_r[i]);
+                for (std::size_t i = 0; i < num; ++i) {
+                    mstd::iter_swap(first + offsets_l[i], last - offsets_r[i]);
                 }
             } else if (num > 0) {
                 RandomAccessIterator l = first + offsets_l[0];
                 RandomAccessIterator r = last - offsets_r[0];
                 auto tmp = mstd::iter_move(l);
                 *l = mstd::iter_move(r);
-                for (std::size_t i = 1 ; i < num ; ++i) {
+                for (std::size_t i = 1; i < num; ++i) {
                     l = first + offsets_l[i];
                     *r = mstd::iter_move(l);
                     r = last - offsets_r[i];
@@ -172,7 +170,6 @@ namespace cppsort::detail
                                                   Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -180,8 +177,8 @@ namespace cppsort::detail
             auto pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
-            RandomAccessIterator first = begin;
-            RandomAccessIterator last = end;
+            auto first = begin;
+            auto last = end;
 
             // Find the first element greater than or equal than the pivot (the median of 3 guarantees
             // this exists).
@@ -196,7 +193,7 @@ namespace cppsort::detail
             // the passed in sequence already was correctly partitioned.
             bool already_partitioned = first >= last;
             if (!already_partitioned) {
-                iter_swap(first, last);
+                mstd::iter_swap(first, last);
                 ++first;
 
                 // The following branchless partitioning is derived from "BlockQuicksort: How Branch
@@ -221,7 +218,7 @@ namespace cppsort::detail
 
                     // Fill the offset blocks.
                     if (left_split >= block_size) {
-                        for (std::size_t i = 0 ; i < block_size ;) {
+                        for (std::size_t i = 0; i < block_size;) {
                             offsets_l[num_l] = i++; num_l += not comp(proj(*first), pivot_proj); ++first;
                             offsets_l[num_l] = i++; num_l += not comp(proj(*first), pivot_proj); ++first;
                             offsets_l[num_l] = i++; num_l += not comp(proj(*first), pivot_proj); ++first;
@@ -232,7 +229,7 @@ namespace cppsort::detail
                             offsets_l[num_l] = i++; num_l += not comp(proj(*first), pivot_proj); ++first;
                         }
                     } else {
-                        for (std::size_t i = 0 ; i < left_split ;) {
+                        for (std::size_t i = 0; i < left_split;) {
                             offsets_l[num_l] = i++;
                             num_l += not comp(proj(*first), pivot_proj);
                             ++first;
@@ -240,7 +237,7 @@ namespace cppsort::detail
                     }
 
                     if (right_split >= block_size) {
-                        for (std::size_t i = 0 ; i < block_size ;) {
+                        for (std::size_t i = 0; i < block_size;) {
                             offsets_r[num_r] = ++i; num_r += comp(proj(*--last), pivot_proj);
                             offsets_r[num_r] = ++i; num_r += comp(proj(*--last), pivot_proj);
                             offsets_r[num_r] = ++i; num_r += comp(proj(*--last), pivot_proj);
@@ -251,7 +248,7 @@ namespace cppsort::detail
                             offsets_r[num_r] = ++i; num_r += comp(proj(*--last), pivot_proj);
                         }
                     } else {
-                        for (std::size_t i = 0 ; i < right_split ;) {
+                        for (std::size_t i = 0; i < right_split;) {
                             offsets_r[num_r] = ++i;
                             num_r += comp(proj(*--last), pivot_proj);
                         }
@@ -282,14 +279,14 @@ namespace cppsort::detail
                 if (num_l) {
                     offsets_l += start_l;
                     while (num_l--) {
-                        iter_swap(offsets_l_base + offsets_l[num_l], --last);
+                        mstd::iter_swap(offsets_l_base + offsets_l[num_l], --last);
                     }
                     first = last;
                 }
                 if (num_r) {
                     offsets_r += start_r;
                     while (num_r--) {
-                        iter_swap(offsets_r_base - offsets_r[num_r], first);
+                        mstd::iter_swap(offsets_r_base - offsets_r[num_r], first);
                         ++first;
                     }
                     last = first;
@@ -314,7 +311,6 @@ namespace cppsort::detail
                                        Compare compare, Projection projection)
             -> std::pair<RandomAccessIterator, bool>
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -322,8 +318,8 @@ namespace cppsort::detail
             auto pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
-            RandomAccessIterator first = begin;
-            RandomAccessIterator last = end;
+            auto first = begin;
+            auto last = end;
 
             // Find the first element greater than or equal than the pivot (the median of 3 guarantees
             // this exists).
@@ -342,13 +338,13 @@ namespace cppsort::detail
             // swapped pairs guard the searches, which is why the first iteration is special-cased
             // above.
             while (first < last) {
-                iter_swap(first, last);
+                mstd::iter_swap(first, last);
                 while (comp(proj(*++first), pivot_proj));
                 while (!comp(proj(*--last), pivot_proj));
             }
 
             // Put the pivot in the right place.
-            RandomAccessIterator pivot_pos = first - 1;
+            auto pivot_pos = first - 1;
             *begin = mstd::iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
@@ -362,14 +358,13 @@ namespace cppsort::detail
                                       Compare compare, Projection projection)
             -> RandomAccessIterator
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
             auto pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
-            RandomAccessIterator first = begin;
-            RandomAccessIterator last = end;
+            auto first = begin;
+            auto last = end;
 
             while (comp(pivot_proj, proj(*--last)));
 
@@ -377,12 +372,12 @@ namespace cppsort::detail
             else                 while (                !comp(pivot_proj, proj(*++first)));
 
             while (first < last) {
-                iter_swap(first, last);
+                mstd::iter_swap(first, last);
                 while (comp(pivot_proj, proj(*--last)));
                 while (!comp(pivot_proj, proj(*++first)));
             }
 
-            RandomAccessIterator pivot_pos = last;
+            auto pivot_pos = last;
             *begin = mstd::iter_move(pivot_pos);
             *pivot_pos = std::move(pivot);
 
@@ -396,7 +391,6 @@ namespace cppsort::detail
                                     int bad_allowed, bool leftmost=true)
             -> void
         {
-            using utility::iter_swap;
             using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
             using value_type = std::iter_value_t<RandomAccessIterator>;
             using projected_type = projected_t<RandomAccessIterator, Projection>;
@@ -429,7 +423,7 @@ namespace cppsort::detail
                     iter_sort3(begin + 1, begin + (s2 - 1), end - 2, compare, projection);
                     iter_sort3(begin + 2, begin + (s2 + 1), end - 3, compare, projection);
                     iter_sort3(begin + (s2 - 1), begin + s2, begin + (s2 + 1), compare, projection);
-                    iter_swap(begin, begin + s2);
+                    mstd::iter_swap(begin, begin + s2);
                 } else {
                     iter_sort3(begin + s2, begin, end - 1, compare, projection);
                 }
@@ -448,7 +442,7 @@ namespace cppsort::detail
                 std::pair<RandomAccessIterator, bool> part_result = is_branchless ?
                     partition_right_branchless(begin, end, compare, projection) :
                     partition_right(begin, end, compare, projection);
-                RandomAccessIterator pivot_pos = part_result.first;
+                auto pivot_pos = part_result.first;
                 bool already_partitioned = part_result.second;
 
                 // Check for a highly unbalanced partition.
@@ -466,26 +460,26 @@ namespace cppsort::detail
                     }
 
                     if (l_size >= insertion_sort_threshold) {
-                        iter_swap(begin,             begin + l_size / 4);
-                        iter_swap(pivot_pos - 1, pivot_pos - l_size / 4);
+                        mstd::iter_swap(begin,             begin + l_size / 4);
+                        mstd::iter_swap(pivot_pos - 1, pivot_pos - l_size / 4);
 
                         if (l_size > ninther_threshold) {
-                            iter_swap(begin + 1,         begin + (l_size / 4 + 1));
-                            iter_swap(begin + 2,         begin + (l_size / 4 + 2));
-                            iter_swap(pivot_pos - 2, pivot_pos - (l_size / 4 + 1));
-                            iter_swap(pivot_pos - 3, pivot_pos - (l_size / 4 + 2));
+                            mstd::iter_swap(begin + 1,         begin + (l_size / 4 + 1));
+                            mstd::iter_swap(begin + 2,         begin + (l_size / 4 + 2));
+                            mstd::iter_swap(pivot_pos - 2, pivot_pos - (l_size / 4 + 1));
+                            mstd::iter_swap(pivot_pos - 3, pivot_pos - (l_size / 4 + 2));
                         }
                     }
 
                     if (r_size >= insertion_sort_threshold) {
-                        iter_swap(pivot_pos + 1, pivot_pos + (1 + r_size / 4));
-                        iter_swap(end - 1,                   end - r_size / 4);
+                        mstd::iter_swap(pivot_pos + 1, pivot_pos + (1 + r_size / 4));
+                        mstd::iter_swap(end - 1,                   end - r_size / 4);
 
                         if (r_size > ninther_threshold) {
-                            iter_swap(pivot_pos + 2, pivot_pos + (2 + r_size / 4));
-                            iter_swap(pivot_pos + 3, pivot_pos + (3 + r_size / 4));
-                            iter_swap(end - 2,             end - (1 + r_size / 4));
-                            iter_swap(end - 3,             end - (2 + r_size / 4));
+                            mstd::iter_swap(pivot_pos + 2, pivot_pos + (2 + r_size / 4));
+                            mstd::iter_swap(pivot_pos + 3, pivot_pos + (3 + r_size / 4));
+                            mstd::iter_swap(end - 2,             end - (1 + r_size / 4));
+                            mstd::iter_swap(end - 3,             end - (2 + r_size / 4));
                         }
                     }
                 } else {

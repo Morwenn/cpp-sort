@@ -26,8 +26,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 
 namespace cppsort::detail
@@ -172,8 +172,7 @@ namespace cppsort::detail
             return;
 
           /* Otherwise, swap down and update our order. */
-          using utility::iter_swap;
-          iter_swap(root, largerChild);
+          mstd::iter_swap(root, largerChild);
           root = largerChild;
           size = childSize;
         }
@@ -257,8 +256,7 @@ namespace cppsort::detail
             break;
 
           /* Otherwise, do the swap and adjust our location. */
-          using utility::iter_swap;
-          iter_swap(itr, priorHeap);
+          mstd::iter_swap(itr, priorHeap);
           itr = priorHeap;
 
           /* Scan down until we find the heap before this one.  We do this by

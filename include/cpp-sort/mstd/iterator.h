@@ -30,6 +30,17 @@ namespace cppsort::mstd
 {
     namespace detail
     {
+        template<typename T>
+        concept class_or_union =
+            std::is_class_v<T> ||
+            std::is_union_v<T>;
+
+        template<typename T>
+        concept class_or_union_or_enum =
+            std::is_class_v<T> ||
+            std::is_union_v<T> ||
+            std::is_enum_v<T>;
+
         ////////////////////////////////////////////////////////////
         // is_primary_template
         //
@@ -155,6 +166,19 @@ namespace cppsort::mstd
     // not statically checked, so we can get away with reusing
     // std::ranges::iter_move directly for now.
 
+    namespace detail_iter_move
+    {
+        template<typename Iterator>
+        void iter_move(Iterator) = delete;
+
+        template<typename T>
+        concept unqualified_iter_move =
+            detail::class_or_union_or_enum<std::remove_cvref_t<T>> &&
+            requires (T&& x) {
+                iter_move(std::forward<T>(x));
+            };
+    }
+
     using std::ranges::iter_move;
     using std::iter_rvalue_reference_t;
 
@@ -185,6 +209,29 @@ namespace cppsort::mstd
     template<typename Indirect>
     concept indirectly_readable =
         detail::indirectly_readable_impl<std::remove_cvref_t<Indirect>>;
+
+    template<typename Out, typename T>
+    concept indirectly_writable =
+        requires(Out&& o, T&& t) {
+            // None of the operations below are required to be equality-preserving
+            *o = std::forward<T>(t);
+            *std::forward<Out>(o) = std::forward<T>(t);
+            const_cast<const std::iter_reference_t<Out>&&>(*o) = std::forward<T>(t);
+            const_cast<const std::iter_reference_t<Out>&&>(*std::forward<Out>(o)) = std::forward<T>(t);
+        };
+
+    template<typename In, typename Out>
+    concept indirectly_movable =
+        indirectly_readable<In> &&
+        indirectly_writable<Out, iter_rvalue_reference_t<In>>;
+
+    template<typename In, typename Out>
+    concept indirectly_movable_storable =
+        indirectly_movable<In, Out> &&
+        indirectly_writable<Out, std::iter_value_t<In>> &&
+        std::movable<std::iter_value_t<In>> &&
+        std::constructible_from<std::iter_value_t<In>, iter_rvalue_reference_t<In>> &&
+        std::assignable_from<std::iter_value_t<In>&, iter_rvalue_reference_t<In>>;
 
     ////////////////////////////////////////////////////////////
     // Note: the following types do not rely of components whose
@@ -521,6 +568,83 @@ namespace cppsort::mstd
     {
         inline constexpr auto next = detail_next::next_fn{};
     }
+
+    ////////////////////////////////////////////////////////////
+    // iter_swap
+
+    namespace detail_iter_swap
+    {
+        template<typename Iterator1, typename Iterator2>
+        void iter_swap(Iterator1, Iterator2) = delete;
+
+        template<typename T1, typename T2=T1>
+        concept unqualified_iter_swap =
+            (
+                detail::class_or_union_or_enum<std::remove_cvref_t<T1>> ||
+                detail::class_or_union_or_enum<std::remove_cvref_t<T2>>
+            ) &&
+            requires (T1&& x, T2&& y) {
+                iter_swap(std::forward<T1>(x), std::forward<T2>(y));
+            };
+
+        template<typename T1, typename T2>
+        concept readable_swappable =
+            indirectly_readable<T1> &&
+            indirectly_readable<T2> &&
+            std::swappable_with<std::iter_reference_t<T1>, std::iter_reference_t<T2>>;
+
+        struct iter_swap_fn
+        {
+            template<typename T1, typename T2>
+                requires unqualified_iter_swap<T1, T2>
+            constexpr void operator()(T1&& x, T2&& y) const
+                noexcept(noexcept(iter_swap(std::forward<T1>(x), std::forward<T2>(y))))
+            {
+                (void)iter_swap(std::forward<T1>(x), std::forward<T2>(y));
+            }
+
+            template<typename T1, typename T2>
+                requires (not unqualified_iter_swap<T1, T2>) &&
+                readable_swappable<T1, T2>
+            constexpr void operator()(T1&& x, T2&& y) const
+                noexcept(noexcept(std::ranges::swap(*std::forward<T1>(x), *std::forward<T2>(y))))
+            {
+                std::ranges::swap(*std::forward<T1>(x), *std::forward<T2>(y));
+            }
+
+            template<typename T1, typename T2>
+                requires (
+                    not unqualified_iter_swap<T1, T2> &&
+                    not readable_swappable<T1, T2>
+                ) &&
+                indirectly_movable_storable<T1, T2> &&
+                indirectly_movable_storable<T2, T1>
+            constexpr void operator()(T1&& x, T2&& y) const
+                // TODO: noexcept
+            {
+                auto old = mstd::iter_move(y);
+                *y = mstd::iter_move(x);
+                *std::forward<T1>(x) = std::move(old);
+            }
+        };
+    }
+
+    inline namespace cpo
+    {
+        inline constexpr auto iter_swap = detail_iter_swap::iter_swap_fn{};
+    }
+}
+
+namespace cppsort::detail
+{
+    // Old cpp-sort utilities
+    template<typename Iterator>
+    inline constexpr bool has_iter_move_v
+        = mstd::detail_iter_move::unqualified_iter_move<Iterator>;
+
+    template<typename Iterator>
+    inline constexpr bool has_iter_swap_v
+        = mstd::detail_iter_swap::unqualified_iter_swap<Iterator>;
 }
 
 #endif // CPPSORT_MSTD_ITERATOR_H_

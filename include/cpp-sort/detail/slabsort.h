@@ -17,7 +17,6 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "config.h"
 #include "fixed_size_list.h"
@@ -95,7 +94,6 @@ namespace cppsort::detail
                             Compare compare, Projection projection)
         -> BidirectionalIterator
     {
-        using utility::iter_swap;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -110,14 +108,14 @@ namespace cppsort::detail
         auto last_1 = std::prev(last);
 
         // Put the pivot at position std::prev(last) and partition
-        iter_swap(median_it, last_1);
+        mstd::iter_swap(median_it, last_1);
         auto&& pivot = proj(*last_1);
         auto middle = detail::stable_partition(
             first, last_1, size - 1,
             [&](auto&& elem) { return comp(proj(elem), pivot); }
         );
         // Put the pivot back in its final position
-        iter_swap(middle, last_1);
+        mstd::iter_swap(middle, last_1);
         return middle;
     }
 

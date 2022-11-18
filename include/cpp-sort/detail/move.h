@@ -13,7 +13,6 @@
 #include <memory>
 #include <type_traits>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "memory.h"
 
 namespace cppsort::detail

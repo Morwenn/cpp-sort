@@ -29,7 +29,6 @@ namespace cppsort::detail
             // space-efficient variant of the Ford-Johnson merge-insertion
             // sort described by Ayala-Rincón1, de Abreu and de Siqueira
 
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -43,19 +42,19 @@ namespace cppsort::detail
             // Make quadruplets and order them by max value
 
             if (comp(proj(first[3u]), proj(first[1u]))) {
-                iter_swap(first, first + 2u);
-                iter_swap(first + 1u, first + 3u);
+                mstd::iter_swap(first, first + 2u);
+                mstd::iter_swap(first + 1u, first + 3u);
             }
             if (comp(proj(first[7u]), proj(first[5u]))) {
-                iter_swap(first + 4u, first + 6u);
-                iter_swap(first + 5u, first + 7u);
+                mstd::iter_swap(first + 4u, first + 6u);
+                mstd::iter_swap(first + 5u, first + 7u);
             }
 
             if (comp(proj(first[7u]), proj(first[3u]))) {
-                iter_swap(first, first + 4u);
-                iter_swap(first + 1u, first + 5u);
-                iter_swap(first + 2u, first + 6u);
-                iter_swap(first + 3u, first + 7u);
+                mstd::iter_swap(first, first + 4u);
+                mstd::iter_swap(first + 1u, first + 5u);
+                mstd::iter_swap(first + 2u, first + 6u);
+                mstd::iter_swap(first + 3u, first + 7u);
             }
 
             // Merge insertion, initial state of the collection;
@@ -189,7 +188,7 @@ namespace cppsort::detail
 
                     // No special case: insert G into the first 7 elements,
                     // swap it with H first to correctly order them again
-                    iter_swap(first + 7u, first + 8u);
+                    mstd::iter_swap(first + 7u, first + 8u);
 
                     if (comp(proj(first[7u]), proj(first[3u]))) {
                         if (comp(proj(first[7u]), proj(first[1u]))) {
@@ -337,7 +336,7 @@ namespace cppsort::detail
 
                     // No special case: insert G into the first 7 elements,
                     // swap it with H first to correctly order them again
-                    iter_swap(first + 7u, first + 8u);
+                    mstd::iter_swap(first + 7u, first + 8u);
 
                     if (comp(proj(first[7u]), proj(first[3u]))) {
                         if (comp(proj(first[7u]), proj(first[1u]))) {
@@ -369,8 +368,8 @@ namespace cppsort::detail
                 }
             } else {
                 if (comp(proj(first[5u]), proj(first[3u]))) {
-                    iter_swap(first + 2u, first + 4u);
-                    iter_swap(first + 3u, first + 5u);
+                    mstd::iter_swap(first + 2u, first + 4u);
+                    mstd::iter_swap(first + 3u, first + 5u);
 
                     // A -- B -- F -- D -- H
                     //           |    |    |
@@ -517,7 +516,7 @@ namespace cppsort::detail
 
                 // No special case: insert G into the first 7 elements,
                 // swap it with H first to correctly order them again
-                iter_swap(first + 7u, first + 8u);
+                mstd::iter_swap(first + 7u, first + 8u);
 
                 if (comp(proj(first[7u]), proj(first[3u]))) {
                     if (comp(proj(first[7u]), proj(first[1u]))) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <iostream>
 #include <iterator>
-#include <cpp-sort/utility/iter_move.h>
+#include <cpp-sort/mstd/iterator.h>
 
 ////////////////////////////////////////////////////////////
 // Helper function
@@ -17,8 +17,7 @@ auto iter_swap_if(Iterator lhs, Iterator rhs)
     -> void
 {
     if (*rhs < *lhs) {
-        using cppsort::utility::iter_swap;
-        iter_swap(lhs, rhs);
+        mstd::iter_swap(lhs, rhs);
     }
 }
 

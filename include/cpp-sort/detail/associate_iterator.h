@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
 namespace cppsort::detail
@@ -99,8 +98,7 @@ namespace cppsort::detail
         -> void
     {
         using std::swap;
-        using utility::iter_swap;
-        iter_swap(lhs.it, rhs.it);
+        mstd::iter_swap(lhs.it, rhs.it);
         swap(lhs.data, rhs.data);
     }
 
@@ -350,8 +348,7 @@ namespace cppsort::detail
             friend auto iter_swap(associate_iterator lhs, associate_iterator rhs)
                 -> void
             {
-                using utility::iter_swap;
-                iter_swap(lhs.base(), rhs.base());
+                mstd::iter_swap(lhs.base(), rhs.base());
             }
 
             [[nodiscard]]

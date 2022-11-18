@@ -23,9 +23,9 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/concepts.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h" // projected_t
 #include "partition.h"
 #include "pdqsort.h"
@@ -591,8 +591,7 @@ namespace cppsort::detail
                         }
                     } else {
                         std::size_t offset = block->offset++;
-                        using utility::iter_swap;
-                        iter_swap(it, begin + offset);
+                        mstd::iter_swap(it, begin + offset);
                     }
                 }
             }
@@ -653,8 +652,7 @@ namespace cppsort::detail
                                            [partitions=partitions, begin, &proj, sort_data](RandomAccessIterator it) {
                         std::uint8_t this_partition = current_byte(proj(*it), sort_data);
                         std::size_t offset = partitions[this_partition].offset++;
-                        using utility::iter_swap;
-                        iter_swap(it, begin + offset);
+                        mstd::iter_swap(it, begin + offset);
                     });
                     return begin_offset != end_offset;
                 });

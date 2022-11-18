@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "config.h"
 #include "insertion_sort.h"
@@ -62,8 +61,6 @@ namespace cppsort::detail
     {
         // Median of 5, adapted from https://stackoverflow.com/a/481398/1364752
 
-        using utility::iter_swap;
-
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -71,10 +68,10 @@ namespace cppsort::detail
         iter_swap_if(it3, it4, compare, projection);
 
         if (comp(proj(*it1), proj(*it3))) {
-            iter_swap(it1, it5);
+            mstd::iter_swap(it1, it5);
             iter_swap_if(it1, it2, compare, projection);
         } else {
-            iter_swap(it3, it5);
+            mstd::iter_swap(it3, it5);
             iter_swap_if(it3, it4, compare, projection);
         }
 
@@ -96,8 +93,6 @@ namespace cppsort::detail
                                     Compare compare, Projection projection)
         -> ForwardIterator
     {
-        using utility::iter_swap;
-
         switch (size) {
             case 0:
             case 1:
@@ -151,8 +146,6 @@ namespace cppsort::detail
                                      Compare compare, Projection projection)
         -> ForwardIterator
     {
-        using utility::iter_swap;
-
         if (size <= 5) {
             return iter_median_rest(first, size, std::move(compare), std::move(projection));
         }
@@ -175,7 +168,7 @@ namespace cppsort::detail
             auto it5 = ++it;
 
             auto median = iter_median_5(it1, it2, it3, it4, it5, compare, projection);
-            iter_swap(medians_it, median);
+            mstd::iter_swap(medians_it, median);
             ++medians_it;
             ++it;
         }
@@ -183,7 +176,7 @@ namespace cppsort::detail
         // Handle remaining elements
         if (rounded_size != size) {
             auto last_median = iter_median_rest(it, size - rounded_size, compare, projection);
-            iter_swap(last_median, medians_it);
+            mstd::iter_swap(last_median, medians_it);
             ++medians_it;
         }
 
@@ -264,8 +257,6 @@ namespace cppsort::detail
                                Compare compare, Projection projection)
         -> ForwardIterator
     {
-        using utility::iter_swap;
-
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         int bad_allowed = detail::log2(size);
@@ -277,7 +268,7 @@ namespace cppsort::detail
             auto last_1 = temp.second;
 
             // Put the pivot at position std::prev(last) and partition
-            iter_swap(median_it, last_1);
+            mstd::iter_swap(median_it, last_1);
             auto&& pivot1 = proj(*last_1);
             auto middle1 = detail::partition(
                 first, last_1,
@@ -285,7 +276,7 @@ namespace cppsort::detail
             );
 
             // Put the pivot in its final position and partition
-            iter_swap(middle1, last_1);
+            mstd::iter_swap(middle1, last_1);
             auto&& pivot2 = proj(*middle1);
             auto middle2 = detail::partition(
                 std::next(middle1), last,

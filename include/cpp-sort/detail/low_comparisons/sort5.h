@@ -25,7 +25,6 @@ namespace cppsort::detail
                         Compare compare={}, Projection projection={}) const
             -> void
         {
-            using utility::iter_swap;
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
@@ -37,8 +36,8 @@ namespace cppsort::detail
             // Order pairs of elements by max value
 
             if (comp(proj(first[3u]), proj(first[1u]))) {
-                iter_swap(first, first + 2u);
-                iter_swap(first + 1u, first + 3u);
+                mstd::iter_swap(first, first + 2u);
+                mstd::iter_swap(first + 1u, first + 3u);
             }
 
             // Merge-insert minimal elements

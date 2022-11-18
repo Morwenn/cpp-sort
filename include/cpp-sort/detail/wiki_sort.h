@@ -21,7 +21,6 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/iter_move.h>
 #include "bitops.h"
 #include "buffered_inplace_merge.h"
 #include "config.h"
@@ -174,8 +173,6 @@ namespace cppsort::detail
                            Compare compare, Projection projection)
             -> void
         {
-            using utility::iter_swap;
-
             // whenever we find a value to add to the final array, swap it with the value that's already in that spot
             // when this algorithm is finished, 'buffer' will contain its original contents, but in a different order
             RandomAccessIterator A_index = buffer;
@@ -190,12 +187,12 @@ namespace cppsort::detail
             if (first1 != last1 && first2 != last2) {
                 while (true) {
                     if (not comp(proj(*B_index), proj(*A_index))) {
-                        iter_swap(insert_index, A_index);
+                        mstd::iter_swap(insert_index, A_index);
                         ++A_index;
                         ++insert_index;
                         if (A_index == A_last) break;
                     } else {
-                        iter_swap(insert_index, B_index);
+                        mstd::iter_swap(insert_index, B_index);
                         ++B_index;
                         ++insert_index;
                         if (B_index == B_last) break;
@@ -333,7 +330,6 @@ namespace cppsort::detail
                   Compare compare, Projection projection)
             -> void
         {
-            using utility::iter_swap;
             using difference_type = mstd::iter_difference_t<RandomAccessIterator>;
 
             difference_type size = last - first;
@@ -358,8 +354,8 @@ namespace cppsort::detail
                     if (comp(proj(range.start[y]), proj(range.start[x])) ||
                         (order[x] > order[y] && not comp(proj(range.start[x]), proj(range.start[y])))
                     ) {
-                        iter_swap(range.start + x, range.start + y);
-                        iter_swap(order + x, order + y);
+                        mstd::iter_swap(range.start + x, range.start + y);
+                        mstd::iter_swap(order + x, order + y);
                     }
                 };
 
@@ -737,7 +733,7 @@ namespace cppsort::detail
 
                             // swap the first value of each A block with the values in buffer1
                             for (auto indexA = buffer1.start, index = firstA.end ; index < blockA.end ; ++indexA) {
-                                iter_swap(indexA, index);
+                                mstd::iter_swap(indexA, index);
                                 index += block_size;
                             }
 
@@ -778,7 +774,7 @@ namespace cppsort::detail
                                         detail::swap_ranges_overlap(blockA.start, blockA.start + block_size, minA);
 
                                         // swap the first item of the previous A block back with its original value, which is stored in buffer1
-                                        iter_swap(blockA.start, indexA);
+                                        mstd::iter_swap(blockA.start, indexA);
                                         ++indexA;
 
                                         // locally merge the previous A block with the B values that follow it
