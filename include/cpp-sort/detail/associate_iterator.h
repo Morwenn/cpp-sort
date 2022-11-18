@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include "iterator_traits.h"
@@ -97,9 +97,8 @@ namespace cppsort::detail
     auto swap(association<Iterator, Data>& lhs, association<Iterator, Data>& rhs)
         -> void
     {
-        using std::swap;
         mstd::iter_swap(lhs.it, rhs.it);
-        swap(lhs.data, rhs.data);
+        std::ranges::swap(lhs.data, rhs.data);
     }
 
     template<typename Value, typename Data>

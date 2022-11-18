@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
@@ -102,9 +103,9 @@ namespace cppsort::detail
         // Recurse in the smallest partition first to limit the call
         // stack overhead
         if (size_left > size_right) {
-            std::swap(first, middle2);
-            std::swap(middle1, last);
-            std::swap(size_left, size_right);
+            std::ranges::swap(first, middle2);
+            std::ranges::swap(middle1, last);
+            std::ranges::swap(size_left, size_right);
         }
 
         --bad_allowed;

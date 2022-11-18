@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <stdexcept>
 #include <unordered_set>
 #include <utility>
@@ -149,8 +150,7 @@ inline namespace i_need_a_namespace_for_proper_adl
         }
 
         // Swapping the values is enough to preserve the preconditions
-        using std::swap;
-        swap(lhs.value, rhs.value);
+        std::ranges::swap(lhs.value, rhs.value);
     }
 }
 

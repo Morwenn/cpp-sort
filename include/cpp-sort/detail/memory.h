@@ -17,8 +17,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <cstddef>
 #include <limits>
+#include <memory>
 #include <new>
 #include <type_traits>
 #include <utility>
@@ -202,9 +204,8 @@ namespace cppsort::detail
             auto operator=(temporary_buffer&& other) noexcept
                 -> temporary_buffer&
             {
-                using std::swap;
-                swap(buffer, other.buffer);
-                swap(buffer_size, other.buffer_size);
+                std::ranges::swap(buffer, other.buffer);
+                std::ranges::swap(buffer_size, other.buffer_size);
                 return *this;
             }
 

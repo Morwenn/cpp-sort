@@ -24,10 +24,9 @@ If the library throws any other exception, it will likely come from user code. T
 
 **cpp-sort** strives to follow the standard library guidance when it comes to self-move and self-swap operations: when sorting a collection of `T`, the expectations are as follows:
 * The algorithms in the library should never perform a blind self-move operation since there is no guarantee about the result of such an operation.
-* However the different algorithms expect `T` to satisfy the C++20 [`swappable` concept][swappable]. This concepts requires that, for any value `x` of type `T`, the following code doesn't change the value of `x`:
+* However the different algorithms expect `T` to satisfy the [`swappable` concept][swappable]. This concepts requires that, for any value `x` of type `T`, the following code doesn't change the value of `x`:
     ```cpp
-    using std::swap;
-    swap(x, x);
+    std::ranges::swap(x, x);
     ```
     This means that some of the library's algorithms can actually perform self-swap operations, and it is the responsibility of the author of class `T` to make sure that such code works as expected.
 

@@ -19,6 +19,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -58,7 +59,7 @@ namespace cppsort::detail
             auto&& proj = utility::as_function(projection);
 
             if (comp(proj(r[c]), proj(r[a]))) {
-                std::swap(a, c);
+                std::ranges::swap(a, c);
             }
             if (comp(proj(r[c]), proj(r[b]))) {
                 return c;
@@ -80,7 +81,7 @@ namespace cppsort::detail
             auto&& proj = utility::as_function(projection);
 
             if (comp(proj(r[d]), proj(r[c]))) {
-                std::swap(c, d);
+                std::ranges::swap(c, d);
             }
 
             if constexpr (LeanRight) {
@@ -118,10 +119,10 @@ namespace cppsort::detail
             _2 = median_index(r, _1, _2, _3, compare, projection);
             _8 = median_index(r, _7, _8, _9, compare, projection);
             if (comp(proj(r[_8]), proj(r[_2]))) {
-                std::swap(_2, _8);
+                std::ranges::swap(_2, _8);
             }
             if (comp(proj(r[_6]), proj(r[_4]))) {
-                std::swap(_4, _6);
+                std::ranges::swap(_4, _6);
             }
 
             // Here we know that r[_2] and r[_8] are the other two medians and that

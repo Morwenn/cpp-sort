@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <concepts>
 #include <functional>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/mstd/iterator.h>
@@ -30,8 +29,7 @@ namespace cppsort::detail
         auto&& proj = utility::as_function(projection);
 
         if (comp(proj(rhs), proj(lhs))) {
-            using std::swap;
-            swap(lhs, rhs);
+            std::ranges::swap(lhs, rhs);
         }
     }
 
