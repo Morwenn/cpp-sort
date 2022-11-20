@@ -35,11 +35,11 @@ namespace cppsort
             >
                 requires (not is_projection_iterator_v<Compare, Iterator>)
             auto operator()(Iterator first, Sentinel last, Compare compare={}) const
-                -> void
+                -> Iterator
             {
                 auto last_it = mstd::next(first, std::move(last));
-                std::sort(std::move(first), std::move(last_it),
-                          utility::as_function(compare));
+                std::sort(std::move(first), last_it, utility::as_function(compare));
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////

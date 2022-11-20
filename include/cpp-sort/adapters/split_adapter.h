@@ -67,7 +67,7 @@ namespace cppsort
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 static_assert(
                     std::is_base_of_v<
@@ -77,9 +77,9 @@ namespace cppsort
                     "split_adapter requires a stronger iterator category"
                 );
 
-                split_sort(std::move(first), std::move(last),
-                           std::move(compare), std::move(projection),
-                           this->get());
+                return split_sort(std::move(first), std::move(last),
+                                  std::move(compare), std::move(projection),
+                                  this->get());
             }
 
             ////////////////////////////////////////////////////////////

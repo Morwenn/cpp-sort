@@ -44,14 +44,17 @@ namespace cppsort::detail
     >
     constexpr auto insertion_sort(BidirectionalIterator first, Sentinel last,
                                   Compare compare, Projection projection)
-        -> void
+        -> BidirectionalIterator
     {
-        if (first == last) return;
+        if (first == last) {
+            return first;
+        }
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        for (auto cur = std::next(first); cur != last; ++cur) {
+        auto cur = std::next(first);
+        for (; cur != last; ++cur) {
             auto sift = cur;
             auto sift_1 = std::prev(cur);
 
@@ -67,6 +70,7 @@ namespace cppsort::detail
                 *sift = std::move(tmp);
             }
         }
+        return cur; // == last
     }
 }
 

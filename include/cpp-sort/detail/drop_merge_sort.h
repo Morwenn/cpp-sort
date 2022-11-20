@@ -44,9 +44,9 @@ namespace cppsort::detail
         typename Projection,
         typename Sorter
     >
-    auto drop_merge_sort(BidirectionalIterator begin, Sentinel end,
+    auto drop_merge_sort(BidirectionalIterator first, Sentinel last,
                          Compare compare, Projection projection, Sorter&& sorter)
-        -> void
+        -> BidirectionalIterator
     {
         using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
         using rvalue_type = rvalue_type_t<BidirectionalIterator>;
@@ -55,8 +55,12 @@ namespace cppsort::detail
         constexpr bool double_comparison = true;
         constexpr difference_type recency = 8;
 
-        if (begin == end || std::next(begin) == end) {
-            return;
+        if (first == last) {
+            return first;
+        }
+        auto second = std::next(first);
+        if (second == last) {
+            return second;
         }
 
         auto&& comp = utility::as_function(compare);
@@ -64,13 +68,13 @@ namespace cppsort::detail
 
         std::vector<rvalue_type> dropped;
         difference_type num_dropped_in_row = 0;
-        auto write = begin;
-        auto read = begin;
+        auto write = first;
+        auto read = first;
 
         do {
-            if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
+            if (first != write && comp(proj(*read), proj(*std::prev(write)))) {
 
-                if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
+                if (double_comparison && num_dropped_in_row == 0 && write != second &&
                     not comp(proj(*read), proj(*std::prev(write, 2)))) {
                     dropped.push_back(mstd::iter_move(std::prev(write)));
                     *std::prev(write) = mstd::iter_move(read);
@@ -113,21 +117,21 @@ namespace cppsort::detail
                 ++write;
                 num_dropped_in_row = 0;
             }
-        } while (read != end);
+        } while (read != last);
 
         // Don't bother with merging if there is nothing to merge
         if (dropped.empty()) {
-            return;
+            return read; // == last
         }
 
         // Sort the dropped elements
         std::forward<Sorter>(sorter)(dropped.begin(), dropped.end(), compare, projection);
 
-        auto back = read; // read == end
+        auto back = read;
         do {
             auto& last_dropped = dropped.back();
 
-            while (begin != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
+            while (first != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
                 --back;
                 --write;
                 *back = mstd::iter_move(write);
@@ -136,6 +140,8 @@ namespace cppsort::detail
             *back = std::move(last_dropped);
             dropped.pop_back();
         } while (not dropped.empty());
+
+        return read; // == last
     }
 }
 

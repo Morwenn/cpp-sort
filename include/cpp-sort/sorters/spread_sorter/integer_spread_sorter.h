@@ -42,10 +42,11 @@ namespace cppsort
                     is_projection_iterator_v<Projection, Iterator>
                 )
             auto operator()(Iterator first, Sentinel last, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::integer_sort(std::move(first), std::move(last_it), std::move(projection));
+                spreadsort::integer_sort(std::move(first), last_it, std::move(projection));
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////

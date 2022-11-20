@@ -42,12 +42,13 @@ namespace cppsort
                     std::is_same_v<projected_t<Iterator, Projection>, std::string_view>
                 )
             auto operator()(Iterator first, Sentinel last, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 unsigned char unused = '\0';
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::string_sort(std::move(first), std::move(last_it),
+                spreadsort::string_sort(std::move(first), last_it,
                                         std::move(projection), unused);
+                return last_it;
             }
 
             template<
@@ -62,12 +63,13 @@ namespace cppsort
                     ) && (sizeof(wchar_t) == 2)
                 )
             auto operator()(Iterator first, Sentinel last, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 std::uint16_t unused = 0;
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::string_sort(std::move(first), std::move(last_it),
+                spreadsort::string_sort(std::move(first), last_it,
                                         std::move(projection), unused);
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////
@@ -84,13 +86,14 @@ namespace cppsort
                 )
             auto operator()(Iterator first, Sentinel last,
                             std::greater<> compare, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 unsigned char unused = '\0';
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::reverse_string_sort(std::move(first), std::move(last_it),
+                spreadsort::reverse_string_sort(std::move(first), last_it,
                                                 std::move(compare), std::move(projection),
                                                 unused);
+                return last_it;
             }
 
             template<
@@ -106,13 +109,14 @@ namespace cppsort
                 )
             auto operator()(Iterator first, Sentinel last,
                             std::greater<> compare, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 std::uint16_t unused = 0;
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::reverse_string_sort(std::move(first), std::move(last_it),
+                spreadsort::reverse_string_sort(std::move(first), last_it,
                                                 std::move(compare), std::move(projection),
                                                 unused);
+                return last_it;
             }
 
             template<
@@ -126,13 +130,14 @@ namespace cppsort
                 )
             auto operator()(Iterator first, Sentinel last,
                             std::ranges::greater compare, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 unsigned char unused = '\0';
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::reverse_string_sort(std::move(first), std::move(last_it),
+                spreadsort::reverse_string_sort(std::move(first), last_it,
                                                 std::move(compare), std::move(projection),
                                                 unused);
+                return last_it;
             }
 
             template<
@@ -148,13 +153,14 @@ namespace cppsort
                 )
             auto operator()(Iterator first, Sentinel last,
                             std::ranges::greater compare, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 std::uint16_t unused = 0;
                 auto last_it = mstd::next(first, std::move(last));
-                spreadsort::reverse_string_sort(std::move(first), std::move(last_it),
+                spreadsort::reverse_string_sort(std::move(first), last_it,
                                                 std::move(compare), std::move(projection),
                                                 unused);
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////

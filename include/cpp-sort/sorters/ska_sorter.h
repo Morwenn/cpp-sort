@@ -37,10 +37,11 @@ namespace cppsort
                     detail::is_ska_sortable_v<projected_t<Iterator, Projection>>
                 )
             auto operator()(Iterator first, Sentinel last, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 auto last_it = mstd::next(first, std::move(last));
-                ska_sort(std::move(first), std::move(last_it), std::move(projection));
+                ska_sort(std::move(first), last_it, std::move(projection));
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////

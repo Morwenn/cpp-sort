@@ -16,11 +16,13 @@ namespace cppsort::detail
     template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
     constexpr auto selection_sort(ForwardIterator first, Sentinel last,
                                   Compare compare, Projection projection)
-        -> void
+        -> ForwardIterator
     {
-        for (auto it = first; it != last; ++it) {
+        auto it = first;
+        for (; it != last; ++it) {
             mstd::iter_swap(it, unchecked_min_element(it, last, compare, projection));
         }
+        return it;
     }
 }
 

@@ -34,13 +34,19 @@ namespace cppsort::detail
         {
             ForwardIterator min;
             ForwardIterator max;
+            ForwardIterator last;
             bool is_sorted;
-        } result = { first, first, true };
+        } result = { first, first, first, true };
 
         // 0 or 1 elements
-        if (first == last) return result;
+        if (first == last) {
+            return result;
+        }
         auto next = std::next(first);
-        if (next == last) return result;
+        if (next == last) {
+            result.last = next;
+            return result;
+        }
 
         // While it is sorted, the min and max are obvious
         auto current = first;
@@ -51,6 +57,7 @@ namespace cppsort::detail
             // The range is fully sorted
             if (next == last) {
                 result.max = current;
+                result.last = next;
                 return result;
             }
         }
@@ -61,12 +68,13 @@ namespace cppsort::detail
         result.max = current;
 
         auto tmp = minmax_element(next, last, compare, projection);
-        if (comp(proj(*tmp.first), proj(*result.min))) {
-            result.min = tmp.first;
+        if (comp(proj(*tmp.min), proj(*result.min))) {
+            result.min = tmp.min;
         }
-        if (not comp(proj(*tmp.second), proj(*result.max))) {
-            result.max = tmp.second;
+        if (not comp(proj(*tmp.max), proj(*result.max))) {
+            result.max = tmp.max;
         }
+        result.last = tmp.last;
         return result;
     }
 }

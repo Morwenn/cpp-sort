@@ -11,7 +11,6 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
-#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
@@ -35,26 +34,28 @@ namespace cppsort
         {
             template<
                 mstd::random_access_iterator Iterator,
+                mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Iterator last,
+            auto operator()(Iterator first, Sentinel sentinel,
                             Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 // There are specializations for N < 5, so unchecked_minmax_element
                 // will always be passed at least 2 elements
-                Iterator min, max;
-                std::tie(min, max) = unchecked_minmax_element(first, last, compare, projection);
-                --last;
+                auto [min, max, last] = unchecked_minmax_element(first, sentinel, compare, projection);
+                auto last_1 = std::prev(last);
 
-                if (max == first && min == last) {
-                    if (min == max) return;
+                if (max == first && min == last_1) {
+                    if (min == max) {
+                        return last;
+                    };
                     mstd::iter_swap(min, max);
                 } else if (max == first) {
-                    if (last != max) {
-                        mstd::iter_swap(last, max);
+                    if (last_1 != max) {
+                        mstd::iter_swap(last_1, max);
                     }
                     if (first != min) {
                         mstd::iter_swap(first, min);
@@ -63,14 +64,15 @@ namespace cppsort
                     if (first != min) {
                         mstd::iter_swap(first, min);
                     }
-                    if (last != max) {
-                        mstd::iter_swap(last, max);
+                    if (last_1 != max) {
+                        mstd::iter_swap(last_1, max);
                     }
                 }
 
                 ++first;
-                low_moves_sorter<N-2u>{}(std::move(first), std::move(last),
+                low_moves_sorter<N-2u>{}(std::move(first), std::move(last_1),
                                          std::move(compare), std::move(projection));
+                return last;
             }
         };
 

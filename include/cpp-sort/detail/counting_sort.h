@@ -19,12 +19,14 @@ namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Sentinel>
     constexpr auto counting_sort(ForwardIterator first, Sentinel last)
-        -> void
+        -> ForwardIterator
     {
         using difference_type = mstd::iter_difference_t<ForwardIterator>;
 
         auto info = minmax_element_and_is_sorted(first, last);
-        if (info.is_sorted) return;
+        if (info.is_sorted) {
+            return info.last;
+        }
 
         auto min = *info.min;
         auto max = *info.max;
@@ -42,16 +44,20 @@ namespace cppsort::detail
         for (auto count: counts) {
             first = std::fill_n(first, count, min++);
         }
+
+        return info.last;
     }
 
     template<typename ForwardIterator, typename Sentinel>
     constexpr auto reverse_counting_sort(ForwardIterator first, Sentinel last)
-        -> void
+        -> ForwardIterator
     {
         using difference_type = mstd::iter_difference_t<ForwardIterator>;
 
         auto info = minmax_element_and_is_sorted(first, last, std::greater{});
-        if (info.is_sorted) return;
+        if (info.is_sorted) {
+            return info.last;
+        }
 
         auto min = *info.max;
         auto max = *info.min;
@@ -70,6 +76,8 @@ namespace cppsort::detail
             auto count = *std::prev(rit);
             first = std::fill_n(first, count, max--);
         }
+
+        return info.last;
     }
 }
 

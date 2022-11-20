@@ -29,25 +29,25 @@ namespace cppsort
             template<mstd::forward_iterator Iterator, mstd::sentinel_for<Iterator> Sentinel>
                 requires mstd::integral<std::iter_value_t<Iterator>>
             constexpr auto operator()(Iterator first, Sentinel last) const
-                -> void
+                -> Iterator
             {
-                counting_sort(std::move(first), std::move(last));
+                return counting_sort(std::move(first), std::move(last));
             }
 
             template<mstd::forward_iterator Iterator, mstd::sentinel_for<Iterator> Sentinel>
                 requires mstd::integral<std::iter_value_t<Iterator>>
             constexpr auto operator()(Iterator first, Sentinel last, std::greater<>) const
-                -> void
+                -> Iterator
             {
-                reverse_counting_sort(std::move(first), std::move(last));
+                return reverse_counting_sort(std::move(first), std::move(last));
             }
 
             template<mstd::forward_iterator Iterator, mstd::sentinel_for<Iterator> Sentinel>
                 requires mstd::integral<std::iter_value_t<Iterator>>
             constexpr auto operator()(Iterator first, Sentinel last, std::ranges::greater) const
-                -> void
+                -> Iterator
             {
-                reverse_counting_sort(std::move(first), std::move(last));
+                return reverse_counting_sort(std::move(first), std::move(last));
             }
 
             ////////////////////////////////////////////////////////////

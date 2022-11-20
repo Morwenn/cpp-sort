@@ -30,10 +30,16 @@
 
 namespace cppsort::detail
 {
+    template<typename Iterator>
+    struct minmax_result_type
+    {
+        Iterator min, max, last;
+    };
+
     template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
     constexpr auto unchecked_minmax_element(ForwardIterator first, Sentinel last,
                                             Compare compare, Projection projection)
-        -> std::pair<ForwardIterator, ForwardIterator>
+        -> minmax_result_type<ForwardIterator>
     {
         // Same as minmax_element, except that it assumes that the collection
         // contains at least two elements
@@ -42,49 +48,56 @@ namespace cppsort::detail
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
-        std::pair<ForwardIterator, ForwardIterator> result{first, first};
+        minmax_result_type<ForwardIterator> result = {first, first, {}};
 
-        if (comp(proj(*first), proj(*result.first))) {
-            result.first = first;
+        if (comp(proj(*first), proj(*result.min))) {
+            result.min = first;
         } else {
-            result.second = first;
+            result.max = first;
         }
 
         while (++first != last) {
             auto tmp = first;
             if (++first == last) {
-                if (comp(proj(*tmp), proj(*result.first))) {
-                    result.first = tmp;
-                } else if(not comp(proj(*tmp), proj(*result.second))) {
-                    result.second = tmp;
+                if (comp(proj(*tmp), proj(*result.min))) {
+                    result.min = tmp;
+                } else if(not comp(proj(*tmp), proj(*result.max))) {
+                    result.max = tmp;
                 }
                 break;
             } else {
                 if (comp(proj(*first), proj(*tmp))) {
-                    if (comp(proj(*first), proj(*result.first))) {
-                        result.first = first;
-                    } if (not comp(proj(*tmp), proj(*result.second))) {
-                        result.second = tmp;
+                    if (comp(proj(*first), proj(*result.min))) {
+                        result.min = first;
+                    } if (not comp(proj(*tmp), proj(*result.max))) {
+                        result.max = tmp;
                     }
                 } else {
-                    if (comp(proj(*tmp), proj(*result.first))) {
-                        result.first = tmp;
-                    } if(not comp(proj(*first), proj(*result.second))) {
-                        result.second = first;
+                    if (comp(proj(*tmp), proj(*result.min))) {
+                        result.min = tmp;
+                    } if(not comp(proj(*first), proj(*result.max))) {
+                        result.max = first;
                     }
                 }
             }
         }
+
+        result.last = first;
         return result;
     }
 
     template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
     constexpr auto minmax_element(ForwardIterator first, Sentinel last,
                                   Compare compare, Projection projection)
-        -> std::pair<ForwardIterator, ForwardIterator>
+        -> minmax_result_type<ForwardIterator>
     {
-        std::pair<ForwardIterator, ForwardIterator> result{first, first};
-        if (first == last || std::next(first) == last) {
+        minmax_result_type<ForwardIterator> result{first, first, first};
+        if (first == last) {
+            return result;
+        }
+        auto next = std::next(first);
+        if (next == last) {
+            result.last = next;
             return result;
         }
         return unchecked_minmax_element(std::move(first), std::move(last),

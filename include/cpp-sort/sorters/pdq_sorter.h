@@ -35,11 +35,12 @@ namespace cppsort
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
             constexpr auto operator()(Iterator first, Sentinel last,
                                       Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 auto last_it = mstd::next(first, std::move(last));
-                pdqsort(std::move(first), std::move(last_it),
+                pdqsort(std::move(first), last_it,
                         std::move(compare), std::move(projection));
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////

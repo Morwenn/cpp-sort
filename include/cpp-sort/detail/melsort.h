@@ -116,8 +116,8 @@ namespace cppsort::detail
         }
     }
 
-    template<typename ForwardIterator, typename Sentinel, typename Compare, typename Projection>
-    auto melsort(ForwardIterator first, Sentinel last,
+    template<typename ForwardIterator, typename Compare, typename Projection>
+    auto melsort(ForwardIterator first, ForwardIterator last,
                  mstd::iter_difference_t<ForwardIterator> size,
                  Compare compare, Projection projection)
         -> void

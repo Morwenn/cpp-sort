@@ -44,11 +44,11 @@ namespace cppsort
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
-                drop_merge_sort(std::move(first), std::move(last),
-                                std::move(compare), std::move(projection),
-                                this->get());
+                return drop_merge_sort(std::move(first), std::move(last),
+                                       std::move(compare), std::move(projection),
+                                       this->get());
             }
 
             ////////////////////////////////////////////////////////////

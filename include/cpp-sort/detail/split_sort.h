@@ -24,7 +24,7 @@ namespace cppsort::detail
     >
     auto split_sort(BidirectionalIterator first, Sentinel last,
                     Compare compare, Projection projection, Sorter&& sorter)
-        -> void
+        -> BidirectionalIterator
     {
         // This algorithm tries to isolate an approximate longest
         // non-decreasing subsequence (LNDS) in the left portion
@@ -32,8 +32,11 @@ namespace cppsort::detail
         // portion of the collection, then to sort the remaining
         // elements and to merge both portions
 
-        if (first == last || std::next(first) == last) {
-            return;
+        if (first == last) {
+            return first;
+        }
+        if (std::next(first) == last) {
+            return std::next(first);
         }
 
         auto&& comp = utility::as_function(compare);
@@ -58,6 +61,7 @@ namespace cppsort::detail
         // Sort the second part of the collection and merge
         std::forward<Sorter>(sorter)(middle, reader_it, compare, projection);
         inplace_merge(first, middle, reader_it, std::move(compare), std::move(projection));
+        return reader_it; // == last
     }
 }
 

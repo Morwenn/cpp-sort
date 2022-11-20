@@ -35,11 +35,15 @@ namespace cppsort
             >
                 requires is_projection_v<Projection, Range, Compare>
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
-                -> void
+                -> mstd::iterator_t<Range>
             {
-                melsort(mstd::begin(range), mstd::end(range),
+                auto first = mstd::begin(range);
+                auto last = mstd::end(range);
+                auto last_it = mstd::next(first, std::move(last));
+                melsort(std::move(first), last_it,
                         mstd::distance(range),
                         std::move(compare), std::move(projection));
+                return last_it;
             }
 
             template<
@@ -51,11 +55,13 @@ namespace cppsort
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 auto dist = mstd::distance(first, last);
-                melsort(std::move(first), std::move(last), dist,
+                auto last_it = mstd::next(first, std::move(last));
+                melsort(std::move(first), last_it, dist,
                         std::move(compare), std::move(projection));
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////

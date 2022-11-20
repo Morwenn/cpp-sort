@@ -35,10 +35,10 @@ namespace cppsort
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
             constexpr auto operator()(Iterator first, Sentinel last,
                                       Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
-                insertion_sort(std::move(first), std::move(last),
-                               std::move(compare), std::move(projection));
+                return insertion_sort(std::move(first), std::move(last),
+                                      std::move(compare), std::move(projection));
             }
 
             ////////////////////////////////////////////////////////////
