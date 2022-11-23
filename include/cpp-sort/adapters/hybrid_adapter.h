@@ -236,13 +236,13 @@ namespace cppsort
                 template<mstd::forward_range Range, typename... Args>
                 constexpr auto operator()(Range&& range, Args&&... args) const
                     -> decltype(base_class::operator()(
-                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ))
                 {
                     return base_class::operator()(
-                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
                     );
@@ -273,7 +273,7 @@ namespace cppsort
                 template<mstd::forward_range Range, typename... Args>
                 static constexpr auto _detail_stability(Range&& range, Args&&... args)
                     -> decltype(base_class::_detail_stability(
-                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ));

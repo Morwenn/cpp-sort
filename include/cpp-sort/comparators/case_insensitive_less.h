@@ -13,6 +13,7 @@
 #include <locale>
 #include <type_traits>
 #include <utility>
+#include <cpp-sort/mstd/ranges.h>
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -42,11 +43,11 @@ namespace cppsort
         auto case_insensitive_less(const T& lhs, const T& rhs, const std::locale& loc)
             -> bool
         {
-            using char_type = std::remove_cvref_t<decltype(*std::begin(lhs))>;
+            using char_type = std::remove_cvref_t<mstd::range_reference_t<T>>;
             const auto& ct = std::use_facet<std::ctype<char_type>>(loc);
 
-            return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
-                                                std::begin(rhs), std::end(rhs),
+            return std::lexicographical_compare(mstd::begin(lhs), mstd::end(lhs),
+                                                mstd::begin(rhs), mstd::end(rhs),
                                                 char_less<char_type>(ct));
         }
 
@@ -72,12 +73,10 @@ namespace cppsort
         }
 
         template<typename T>
-        using can_be_refined_for_t
-            = decltype(*std::begin(std::declval<T&>()));
-
-        template<typename T>
         inline constexpr bool can_be_refined_for
-            = is_detected_v<can_be_refined_for_t, T>;
+            = requires (T& range) {
+                typename mstd::range_reference_t<T>;
+            };
 
         struct case_insensitive_less_locale_fn
         {
@@ -165,7 +164,7 @@ namespace cppsort
             {
                 private:
 
-                    using char_type = std::remove_cvref_t<decltype(*std::begin(std::declval<T&>()))>;
+                    using char_type = std::remove_cvref_t<mstd::range_reference_t<T>>;
 
                     std::locale loc;
                     const std::ctype<char_type>& ct;
@@ -190,8 +189,8 @@ namespace cppsort
                     auto operator()(const T& lhs, const T& rhs) const
                         -> bool
                     {
-                        return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
-                                                            std::begin(rhs), std::end(rhs),
+                        return std::lexicographical_compare(mstd::begin(lhs), mstd::end(lhs),
+                                                            mstd::begin(rhs), mstd::end(rhs),
                                                             char_less<char_type>(ct));
                     }
             };
@@ -201,7 +200,7 @@ namespace cppsort
             {
                 private:
 
-                    using char_type = std::remove_cvref_t<decltype(*std::begin(std::declval<T&>()))>;
+                    using char_type = std::remove_cvref_t<mstd::range_reference_t<T>>;
 
                     std::locale loc;
                     const std::ctype<char_type>& ct;
@@ -240,8 +239,8 @@ namespace cppsort
                     auto operator()(const T& lhs, const T& rhs) const
                         -> bool
                     {
-                        return std::lexicographical_compare(std::begin(lhs), std::end(lhs),
-                                                            std::begin(rhs), std::end(rhs),
+                        return std::lexicographical_compare(mstd::begin(lhs), mstd::end(lhs),
+                                                            mstd::begin(rhs), mstd::end(rhs),
                                                             char_less<char_type>(ct));
                     }
 

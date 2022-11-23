@@ -11,6 +11,8 @@
 #include <cctype>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 
 namespace cppsort
 {
@@ -19,9 +21,12 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Natural order for char sequences
 
-        template<typename ForwardIterator1, typename ForwardIterator2>
-        auto natural_less_impl(ForwardIterator1 begin1, ForwardIterator1 end1,
-                               ForwardIterator2 begin2, ForwardIterator2 end2)
+        template<
+            typename ForwardIterator1, typename Sentinel1,
+            typename ForwardIterator2, typename Sentinel2
+        >
+        auto natural_less_impl(ForwardIterator1 begin1, Sentinel1 end1,
+                               ForwardIterator2 begin2, Sentinel2 end2)
             -> bool
         {
             while (begin1 != end1 && begin2 != end2) {
@@ -89,8 +94,8 @@ namespace cppsort
         auto natural_less(const T& lhs, const U& rhs)
             -> bool
         {
-            return natural_less_impl(std::begin(lhs), std::end(lhs),
-                                     std::begin(rhs), std::end(rhs));
+            return natural_less_impl(mstd::begin(lhs), mstd::end(lhs),
+                                     mstd::begin(rhs), mstd::end(rhs));
         }
 
         ////////////////////////////////////////////////////////////
@@ -98,7 +103,7 @@ namespace cppsort
 
         struct natural_less_fn
         {
-            template<typename T, typename U>
+            template<mstd::input_range T, mstd::input_range U>
             constexpr auto operator()(T&& lhs, U&& rhs) const
                 noexcept(noexcept(natural_less(std::forward<T>(lhs), std::forward<U>(rhs))))
                 -> decltype(natural_less(std::forward<T>(lhs), std::forward<U>(rhs)))
