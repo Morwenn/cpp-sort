@@ -420,12 +420,12 @@ namespace cppsort::mstd
             >
             [[nodiscard]]
             constexpr auto operator()(Iterator&& first, Sentinel last) const
-                -> iter_difference_t<Iterator>
+                -> iter_difference_t<std::decay_t<Iterator>>
             {
                 if constexpr (sized_sentinel_for<Sentinel, std::remove_cvref_t<Iterator>>) {
                     return last - first;
                 } else {
-                    return last - std::decay_t<Iterator>(first);
+                    return last - static_cast<const std::decay_t<Iterator>&>(first);
                 }
             }
 
