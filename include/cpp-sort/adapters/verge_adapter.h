@@ -45,13 +45,14 @@ namespace cppsort
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
             auto operator()(Iterator first, Sentinel last,
                             Compare compare={}, Projection projection={}) const
-                -> void
+                -> Iterator
             {
                 auto dist = mstd::distance(first, last);
                 auto last_it = mstd::next(first, std::move(last));
-                verge::sort<Stable>(std::move(first), std::move(last_it), dist,
+                verge::sort<Stable>(std::move(first), last_it, dist,
                                     std::move(compare), std::move(projection),
                                     this->get());
+                return last_it;
             }
 
             ////////////////////////////////////////////////////////////
