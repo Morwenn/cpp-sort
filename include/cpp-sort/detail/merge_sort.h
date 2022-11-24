@@ -20,12 +20,15 @@
 
 namespace cppsort::detail
 {
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto merge_sort_impl(ForwardIterator first, mstd::iter_difference_t<ForwardIterator> size,
-                         temporary_buffer<rvalue_type_t<ForwardIterator>>&& buffer,
-                         Compare compare, Projection projection,
-                         std::forward_iterator_tag tag)
-        -> temporary_buffer<rvalue_type_t<ForwardIterator>>
+    template<
+        mstd::forward_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto merge_sort_impl(Iterator first, mstd::iter_difference_t<Iterator> size,
+                         temporary_buffer<rvalue_type_t<Iterator>>&& buffer,
+                         Compare compare, Projection projection)
+        -> temporary_buffer<rvalue_type_t<Iterator>>
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -43,11 +46,11 @@ namespace cppsort::detail
         // Recursively sort the partitions
         buffer = std::move(merge_sort_impl(
             first, size_left, std::move(buffer),
-            compare, projection, tag
+            compare, projection
         ));
         buffer = std::move(merge_sort_impl(
             middle, size - size_left, std::move(buffer),
-            compare, projection, tag
+            compare, projection
         ));
 
         // Shrink the left partition to merge
@@ -66,18 +69,21 @@ namespace cppsort::detail
         // Merge the sorted partitions in-place
         recmerge(first, size_left, middle, size - (size / 2),
                  buffer.data(), buffer.size(),
-                 std::move(compare), std::move(projection), tag);
+                 std::move(compare), std::move(projection));
 
         return std::move(buffer);
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto merge_sort_impl(BidirectionalIterator first, BidirectionalIterator last,
-                         mstd::iter_difference_t<BidirectionalIterator> size,
-                         temporary_buffer<rvalue_type_t<BidirectionalIterator>>&& buffer,
-                         Compare compare, Projection projection,
-                         std::bidirectional_iterator_tag tag)
-        -> temporary_buffer<rvalue_type_t<BidirectionalIterator>>
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto merge_sort_impl(Iterator first, Iterator last,
+                         mstd::iter_difference_t<Iterator> size,
+                         temporary_buffer<rvalue_type_t<Iterator>>&& buffer,
+                         Compare compare, Projection projection)
+        -> temporary_buffer<rvalue_type_t<Iterator>>
     {
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -95,11 +101,11 @@ namespace cppsort::detail
         // Recursively sort the partitions
         buffer = std::move(merge_sort_impl(
             first, middle, size_left, std::move(buffer),
-            compare, projection, tag
+            compare, projection
         ));
         buffer = std::move(merge_sort_impl(
             middle, last, size - size_left, std::move(buffer),
-            compare, projection, tag
+            compare, projection
         ));
 
         // Shrink the left partition to merge
@@ -124,11 +130,14 @@ namespace cppsort::detail
         return std::move(buffer);
     }
 
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto merge_sort(ForwardIterator first, ForwardIterator,
-                    mstd::iter_difference_t<ForwardIterator> size,
-                    Compare compare, Projection projection,
-                    std::forward_iterator_tag tag)
+    template<
+        mstd::forward_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto merge_sort(Iterator first, Iterator,
+                    mstd::iter_difference_t<Iterator> size,
+                    Compare compare, Projection projection)
         -> void
     {
         if (size < 14) {
@@ -137,16 +146,19 @@ namespace cppsort::detail
             return;
         }
 
-        temporary_buffer<rvalue_type_t<ForwardIterator>> buffer(nullptr);
+        auto buffer = temporary_buffer<rvalue_type_t<Iterator>>(nullptr);
         merge_sort_impl(std::move(first), size, std::move(buffer),
-                        std::move(compare), std::move(projection), tag);
+                        std::move(compare), std::move(projection));
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto merge_sort(BidirectionalIterator first, BidirectionalIterator last,
-                    mstd::iter_difference_t<BidirectionalIterator> size,
-                    Compare compare, Projection projection,
-                    std::bidirectional_iterator_tag tag)
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto merge_sort(Iterator first, Iterator last,
+                    mstd::iter_difference_t<Iterator> size,
+                    Compare compare, Projection projection)
         -> void
     {
         if (size < 40) {
@@ -155,21 +167,9 @@ namespace cppsort::detail
             return;
         }
 
-        temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer(nullptr);
+        auto buffer = temporary_buffer<rvalue_type_t<Iterator>>(nullptr);
         merge_sort_impl(std::move(first), std::move(last), size, std::move(buffer),
-                        std::move(compare), std::move(projection), tag);
-    }
-
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto merge_sort(ForwardIterator first, ForwardIterator last,
-                    mstd::iter_difference_t<ForwardIterator> size,
-                    Compare compare, Projection projection)
-        -> void
-    {
-        using category = iterator_category_t<ForwardIterator>;
-        merge_sort(std::move(first), std::move(last), size,
-                   std::move(compare), std::move(projection),
-                   category{});
+                        std::move(compare), std::move(projection));
     }
 }
 

@@ -17,7 +17,6 @@
 #include "bubble_sort.h"
 #include "insertion_sort.h"
 #include "introselect.h"
-#include "iterator_traits.h"
 #include "partition.h"
 
 namespace cppsort::detail
@@ -25,11 +24,14 @@ namespace cppsort::detail
     // Function that dispatches the sort to another algorithm
     // when the collection is too small for quicksort to be
     // worth it
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto quicksort_fallback(ForwardIterator first, ForwardIterator,
-                                      mstd::iter_difference_t<ForwardIterator> size,
-                                      Compare compare, Projection projection,
-                                      std::forward_iterator_tag)
+    template<
+        mstd::forward_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    constexpr auto quicksort_fallback(Iterator first, Iterator,
+                                      mstd::iter_difference_t<Iterator> size,
+                                      Compare compare, Projection projection)
         -> bool
     {
         if (size < 10) {
@@ -40,11 +42,14 @@ namespace cppsort::detail
         return false;
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    constexpr auto quicksort_fallback(BidirectionalIterator first, BidirectionalIterator last,
-                                      mstd::iter_difference_t<BidirectionalIterator> size,
-                                      Compare compare, Projection projection,
-                                      std::bidirectional_iterator_tag)
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    constexpr auto quicksort_fallback(Iterator first, Iterator last,
+                                      mstd::iter_difference_t<Iterator> size,
+                                      Compare compare, Projection projection)
         -> bool
     {
         if (size < 42) {
@@ -65,8 +70,7 @@ namespace cppsort::detail
 
         // If the collection is small enough, fall back to
         // another sorting algorithm
-        using category = iterator_category_t<ForwardIterator>;
-        bool sorted = quicksort_fallback(first, last, size, compare, projection, category{});
+        bool sorted = quicksort_fallback(first, last, size, compare, projection);
         if (sorted) return;
 
         auto&& comp = utility::as_function(compare);

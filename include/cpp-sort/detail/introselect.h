@@ -16,41 +16,36 @@
 #include "config.h"
 #include "insertion_sort.h"
 #include "iter_sort3.h"
-#include "iterator_traits.h"
 #include "partition.h"
 #include "selection_sort.h"
 #include "swap_if.h"
 
 namespace cppsort::detail
 {
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto small_sort(ForwardIterator first, ForwardIterator last,
-                              Compare compare, Projection projection,
-                              std::forward_iterator_tag)
+    template<
+        mstd::forward_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    constexpr auto small_sort(Iterator first, Iterator last,
+                              Compare compare, Projection projection)
         -> void
     {
         selection_sort(std::move(first), std::move(last),
                        std::move(compare), std::move(projection));
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    constexpr auto small_sort(BidirectionalIterator first, BidirectionalIterator last,
-                              Compare compare, Projection projection,
-                              std::bidirectional_iterator_tag)
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    constexpr auto small_sort(Iterator first, Iterator last,
+                              Compare compare, Projection projection)
         -> void
     {
         insertion_sort(std::move(first), std::move(last),
                        std::move(compare), std::move(projection));
-    }
-
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    constexpr auto small_sort(ForwardIterator first, ForwardIterator last,
-                              Compare compare, Projection projection)
-        -> void
-    {
-        using category = iterator_category_t<ForwardIterator>;
-        small_sort(first, last, std::move(compare), std::move(projection),
-                   category{});
     }
 
     template<typename ForwardIterator, typename Compare, typename Projection>
@@ -192,28 +187,18 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // Get iterator to last element
 
-    template<typename Iterator>
-    constexpr auto last_it(Iterator first, Iterator, mstd::iter_difference_t<Iterator> size,
-                           std::forward_iterator_tag)
+    template<mstd::forward_iterator Iterator>
+    constexpr auto last_it(Iterator first, Iterator, mstd::iter_difference_t<Iterator> size)
         -> Iterator
     {
         return std::next(first, size - 1);
     }
 
-    template<typename Iterator>
-    constexpr auto last_it(Iterator, Iterator last, mstd::iter_difference_t<Iterator>,
-                           std::bidirectional_iterator_tag)
+    template<mstd::bidirectional_iterator Iterator>
+    constexpr auto last_it(Iterator, Iterator last, mstd::iter_difference_t<Iterator>)
         -> Iterator
     {
         return std::prev(last);
-    }
-
-    template<typename Iterator>
-    constexpr auto last_it(Iterator first, Iterator last, mstd::iter_difference_t<Iterator> size)
-        -> Iterator
-    {
-        using category = iterator_category_t<Iterator>;
-        return last_it(first, last, size, category{});
     }
 
     ////////////////////////////////////////////////////////////

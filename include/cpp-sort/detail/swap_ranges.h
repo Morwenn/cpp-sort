@@ -45,11 +45,9 @@ namespace cppsort::detail
     // same collection but can not overlap, might also provide
     // additional diagnostics when the precondition is violated
 
-    template<typename ForwardIterator>
-    constexpr auto swap_ranges_inner_impl(std::forward_iterator_tag,
-                                          ForwardIterator first1, ForwardIterator last1,
-                                          ForwardIterator first2)
-        -> ForwardIterator
+    template<mstd::forward_iterator Iterator>
+    constexpr auto swap_ranges_inner(Iterator first1, Iterator last1, Iterator first2)
+        -> Iterator
     {
 #ifdef CPPSORT_ENABLE_AUDITS
         bool ranges_overlap = false;
@@ -69,12 +67,10 @@ namespace cppsort::detail
     }
 
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-    template<typename RandomAccessIterator>
-        requires (not detail::has_iter_move_v<RandomAccessIterator>)
-    constexpr auto swap_ranges_inner_impl(std::random_access_iterator_tag,
-                                          RandomAccessIterator first1, RandomAccessIterator last1,
-                                          RandomAccessIterator first2)
-        -> RandomAccessIterator
+    template<mstd::random_access_iterator Iterator>
+        requires (not detail::has_iter_move_v<Iterator>)
+    constexpr auto swap_ranges_inner(Iterator first1, Iterator last1, Iterator first2)
+        -> Iterator
     {
         CPPSORT_ASSERT(first1 <= last1);
 
@@ -86,14 +82,12 @@ namespace cppsort::detail
     }
 #endif
 
-    template<typename RandomAccessIterator>
+    template<mstd::random_access_iterator Iterator>
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        requires detail::has_iter_move_v<RandomAccessIterator>
+        requires detail::has_iter_move_v<Iterator>
 #endif
-    constexpr auto swap_ranges_inner_impl(std::random_access_iterator_tag,
-                                          RandomAccessIterator first1, RandomAccessIterator last1,
-                                          RandomAccessIterator first2)
-        -> RandomAccessIterator
+    constexpr auto swap_ranges_inner(Iterator first1, Iterator last1, Iterator first2)
+        -> Iterator
     {
         CPPSORT_ASSERT(first1 <= last1);
 
@@ -102,15 +96,6 @@ namespace cppsort::detail
         CPPSORT_ASSERT(not (last2 > first1 && last2 <= last1));
 
         return detail::swap_ranges_overlap(first1, last1, first2);
-    }
-
-    template<typename ForwardIterator>
-    constexpr auto swap_ranges_inner(ForwardIterator first1, ForwardIterator last1,
-                                     ForwardIterator first2)
-        -> ForwardIterator
-    {
-        using category = iterator_category_t<ForwardIterator>;
-        return swap_ranges_inner_impl(category{}, first1, last1, first2);
     }
 }
 

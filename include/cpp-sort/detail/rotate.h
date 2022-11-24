@@ -113,12 +113,11 @@ namespace cppsort::detail
         return first + m2;
     }
 
-    template<typename ForwardIterator>
-    auto rotate_impl(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
-                     std::forward_iterator_tag)
-        -> ForwardIterator
+    template<mstd::forward_iterator Iterator>
+    auto rotate_impl(Iterator first, Iterator middle, Iterator last)
+        -> Iterator
     {
-        using value_type = std::iter_value_t<ForwardIterator>;
+        using value_type = std::iter_value_t<Iterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
             if (std::next(first) == middle) {
                 return rotate_left(first, last);
@@ -127,12 +126,11 @@ namespace cppsort::detail
         return rotate_forward(first, middle, last);
     }
 
-    template<typename BidirectionalIterator>
-    auto rotate_impl(BidirectionalIterator first, BidirectionalIterator middle, BidirectionalIterator last,
-                     std::bidirectional_iterator_tag)
-        -> BidirectionalIterator
+    template<mstd::bidirectional_iterator Iterator>
+    auto rotate_impl(Iterator first, Iterator middle, Iterator last)
+        -> Iterator
     {
-        using value_type = std::iter_value_t<BidirectionalIterator>;
+        using value_type = std::iter_value_t<Iterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
             if (std::next(first) == middle) {
                 return rotate_left(first, last);
@@ -144,12 +142,11 @@ namespace cppsort::detail
         return rotate_forward(first, middle, last);
     }
 
-    template<typename RandomAccessIterator>
-    auto rotate_impl(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last,
-                     std::random_access_iterator_tag)
-        -> RandomAccessIterator
+    template<mstd::random_access_iterator Iterator>
+    auto rotate_impl(Iterator first, Iterator middle, Iterator last)
+        -> Iterator
     {
-        using value_type = std::iter_value_t<RandomAccessIterator>;
+        using value_type = std::iter_value_t<Iterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
             if (std::next(first) == middle) {
                 return rotate_left(first, last);
@@ -166,11 +163,13 @@ namespace cppsort::detail
     auto rotate(ForwardIterator first, ForwardIterator middle, ForwardIterator last)
         -> ForwardIterator
     {
-        if (first == middle)
+        if (first == middle) {
             return last;
-        if (middle == last)
+        }
+        if (middle == last) {
             return first;
-        return rotate_impl(first, middle, last, iterator_category_t<ForwardIterator>{});
+        }
+        return rotate_impl(first, middle, last);
     }
 }
 

@@ -17,17 +17,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
-#include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
-    template<typename Predicate, typename ForwardIterator>
-    constexpr auto partition_impl(ForwardIterator first, ForwardIterator last, Predicate pred,
-                                  std::forward_iterator_tag)
-        -> ForwardIterator
+    template<mstd::forward_iterator Iterator, typename Predicate>
+    constexpr auto partition(Iterator first, Iterator last, Predicate pred)
+        -> Iterator
     {
         while (true) {
             if (first == last) {
@@ -47,10 +43,9 @@ namespace cppsort::detail
         return first;
     }
 
-    template<typename Predicate, typename BidirectionalIterator>
-    constexpr auto partition_impl(BidirectionalIterator first, BidirectionalIterator last, Predicate pred,
-                                  std::bidirectional_iterator_tag)
-        -> BidirectionalIterator
+    template<mstd::bidirectional_iterator Iterator, typename Predicate>
+    constexpr auto partition(Iterator first, Iterator last, Predicate pred)
+        -> Iterator
     {
         while (true) {
             while (true) {
@@ -70,16 +65,6 @@ namespace cppsort::detail
             mstd::iter_swap(first, last);
             ++first;
         }
-    }
-
-    template<typename ForwardIterator, typename Predicate>
-    constexpr auto partition(ForwardIterator first, ForwardIterator last, Predicate pred)
-        -> ForwardIterator
-    {
-        return partition_impl<Predicate&>(
-            std::move(first), std::move(last), pred,
-            iterator_category_t<ForwardIterator>{}
-        );
     }
 }
 

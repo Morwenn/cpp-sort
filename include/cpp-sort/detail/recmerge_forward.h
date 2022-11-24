@@ -89,17 +89,20 @@ namespace cppsort::detail
         n1_1 = n1 - n0_1 - 1;
     }
 
-    template<typename ForwardIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
-    auto recmerge(ForwardIterator f0, mstd::iter_difference_t<ForwardIterator> n0,
-                  ForwardIterator f1, mstd::iter_difference_t<ForwardIterator> n1,
-                  RandomAccessIterator buffer, std::ptrdiff_t buff_size,
-                  Compare compare, Projection projection,
-                  std::forward_iterator_tag tag)
+    template<
+        mstd::forward_iterator Iterator,
+        typename T,
+        typename Compare,
+        typename Projection
+    >
+    auto recmerge(Iterator f0, mstd::iter_difference_t<Iterator> n0,
+                  Iterator f1, mstd::iter_difference_t<Iterator> n1,
+                  T* buffer, std::ptrdiff_t buff_size,
+                  Compare compare, Projection projection)
         -> void
     {
-        using rvalue_type = rvalue_type_t<ForwardIterator>;
-        using difference_type = mstd::iter_difference_t<ForwardIterator>;
+        using rvalue_type = rvalue_type_t<Iterator>;
+        using difference_type = mstd::iter_difference_t<Iterator>;
 
         if (n0 == 0 || n1 == 0) return;
 
@@ -118,7 +121,7 @@ namespace cppsort::detail
             return;
         }
 
-        ForwardIterator f0_0, f0_1, f1_0, f1_1;
+        Iterator f0_0, f0_1, f1_0, f1_1;
         difference_type n0_0, n0_1, n1_0, n1_1;
 
         if (n0 < n1) {
@@ -138,9 +141,9 @@ namespace cppsort::detail
         }
 
         recmerge(f0_0, n0_0, f0_1, n0_1, buffer, buff_size,
-                 compare, projection, tag);
+                 compare, projection);
         recmerge(f1_0, n1_0, f1_1, n1_1, buffer, buff_size,
-                 std::move(compare), std::move(projection), tag);
+                 std::move(compare), std::move(projection));
     }
 }
 

@@ -32,18 +32,20 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // recmerge for bidirectional iterators
 
-    template<typename BidirectionalIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
-    auto recmerge(BidirectionalIterator first, BidirectionalIterator middle,
-                  BidirectionalIterator last,
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename T,
+        typename Compare,
+        typename Projection
+    >
+    auto recmerge(Iterator first, Iterator middle, Iterator last,
                   Compare compare, Projection projection,
-                  mstd::iter_difference_t<BidirectionalIterator> len1,
-                  mstd::iter_difference_t<BidirectionalIterator> len2,
-                  RandomAccessIterator buff, std::ptrdiff_t buff_size,
-                  std::bidirectional_iterator_tag tag)
+                  mstd::iter_difference_t<Iterator> len1,
+                  mstd::iter_difference_t<Iterator> len2,
+                  T* buff, std::ptrdiff_t buff_size)
         -> void
     {
-        using difference_type = mstd::iter_difference_t<BidirectionalIterator>;
+        using difference_type = mstd::iter_difference_t<Iterator>;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -72,8 +74,8 @@ namespace cppsort::detail
             //         [middle, m2) <  [m1, middle)
             //         [m1, middle) <= [m2, last)
             //     and m1 or m2 is in the middle of its range
-            BidirectionalIterator m1;  // "median" of [first, middle)
-            BidirectionalIterator m2;  // "median" of [middle, last)
+            Iterator m1;  // "median" of [first, middle)
+            Iterator m2;  // "median" of [middle, last)
             difference_type len11;      // distance(first, m1)
             difference_type len21;      // distance(middle, m2)
             // binary search smaller range
@@ -107,7 +109,7 @@ namespace cppsort::detail
             // merge smaller range with recursive call and larger with tail recursion elimination
             if (len11 + len21 < len12 + len22) {
                 recmerge(first, m1, middle, compare, projection,
-                         len11, len21, buff, buff_size, tag);
+                         len11, len21, buff, buff_size);
 //              recmerge_impl(middle, m2, last, compare, projection,
 //                            len12, len22, buff, buff_size);
                 first = middle;
@@ -116,7 +118,7 @@ namespace cppsort::detail
                 len2 = len22;
             } else {
                 recmerge(middle, m2, last, compare, projection,
-                         len12, len22, buff, buff_size, tag);
+                         len12, len22, buff, buff_size);
 //              recmerge_impl(first, m1, middle, compare, projection,
 //                            len11, len21, buff, buff_size);
                 last = middle;

@@ -21,14 +21,11 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include "iterator_traits.h"
-#include "move.h"
 
 namespace cppsort::detail
 {
-    template<typename BidirectionalIterator>
-    auto reverse_impl(BidirectionalIterator first, BidirectionalIterator last,
-                      std::bidirectional_iterator_tag)
+    template<mstd::bidirectional_iterator Iterator>
+    auto reverse(Iterator first, Iterator last)
         -> void
     {
         while (first != last) {
@@ -39,22 +36,20 @@ namespace cppsort::detail
     }
 
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-    template<typename RandomAccessIterator>
-        requires (not detail::has_iter_move_v<RandomAccessIterator>)
-    auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
-                      std::random_access_iterator_tag)
+    template<mstd::random_access_iterator Iterator>
+        requires (not detail::has_iter_move_v<Iterator>)
+    auto reverse(Iterator first, Iterator last)
         -> void
     {
         std::reverse(first, last);
     }
 #endif
 
-    template<typename RandomAccessIterator>
+    template<mstd::random_access_iterator Iterator>
 #if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        requires detail::has_iter_move_v<RandomAccessIterator>
+        requires detail::has_iter_move_v<Iterator>
 #endif
-    auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
-                      std::random_access_iterator_tag)
+    auto reverse_impl(Iterator first, Iterator last)
         -> void
     {
         if (first != last) {
@@ -62,14 +57,6 @@ namespace cppsort::detail
                 mstd::iter_swap(first, last);
             }
         }
-    }
-
-    template<typename BidirectionalIterator>
-    auto reverse(BidirectionalIterator first, BidirectionalIterator last)
-        -> void
-    {
-        reverse_impl(std::move(first), std::move(last),
-                     iterator_category_t<BidirectionalIterator>{});
     }
 }
 

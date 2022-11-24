@@ -27,74 +27,83 @@ namespace cppsort::detail
     ////////////////////////////////////////////////////////////
     // Forward algorithm using recmerge
 
-    template<typename ForwardIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
-    auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
+    template<
+        mstd::forward_iterator Iterator,
+        typename T,
+        typename Compare,
+        typename Projection
+    >
+    auto inplace_merge(Iterator first, Iterator middle, Iterator last,
                        Compare compare, Projection projection,
-                       mstd::iter_difference_t<ForwardIterator> len1,
-                       mstd::iter_difference_t<ForwardIterator> len2,
-                       RandomAccessIterator buff, std::ptrdiff_t buff_size,
-                       std::forward_iterator_tag)
+                       mstd::iter_difference_t<Iterator> len1,
+                       mstd::iter_difference_t<Iterator> len2,
+                       T* buffer, std::ptrdiff_t buffer_size)
         -> void
     {
         CPPSORT_AUDIT(detail::is_sorted(first, middle, compare, projection));
         CPPSORT_AUDIT(detail::is_sorted(middle, last, compare, projection));
         (void)last;
         recmerge(std::move(first), len1, std::move(middle), len2,
-                 buff, buff_size,
+                 buffer, buffer_size,
                  std::move(compare), std::move(projection));
     }
 
     ////////////////////////////////////////////////////////////
     // Bidirectional algorithm using recmerge
 
-    template<typename BidirectionalIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
-    auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                       BidirectionalIterator last,
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename T,
+        typename Compare,
+        typename Projection
+    >
+    auto inplace_merge(Iterator first, Iterator middle, Iterator last,
                        Compare compare, Projection projection,
-                       mstd::iter_difference_t<BidirectionalIterator> len1,
-                       mstd::iter_difference_t<BidirectionalIterator> len2,
-                       RandomAccessIterator buff, std::ptrdiff_t buff_size,
-                       std::bidirectional_iterator_tag tag)
+                       mstd::iter_difference_t<Iterator> len1,
+                       mstd::iter_difference_t<Iterator> len2,
+                       T* buffer, std::ptrdiff_t buffer_size)
         -> void
     {
         CPPSORT_AUDIT(detail::is_sorted(first, middle, compare, projection));
         CPPSORT_AUDIT(detail::is_sorted(middle, last, compare, projection));
         recmerge(std::move(first), std::move(middle), std::move(last),
                  std::move(compare), std::move(projection),
-                 len1, len2, buff, buff_size, tag);
+                 len1, len2, buffer, buffer_size);
     }
 
     ////////////////////////////////////////////////////////////
     // Random-access algorithm using symmerge
 
-    template<typename RandomAccessIterator1, typename RandomAccessIterator2,
-             typename Compare, typename Projection>
-    auto inplace_merge(RandomAccessIterator1 first, RandomAccessIterator1 middle,
-                       RandomAccessIterator1 last,
+    template<
+        mstd::random_access_iterator Iterator,
+        typename T,
+        typename Compare,
+        typename Projection
+    >
+    auto inplace_merge(Iterator first, Iterator middle, Iterator last,
                        Compare compare, Projection projection,
-                       mstd::iter_difference_t<RandomAccessIterator1> len1,
-                       mstd::iter_difference_t<RandomAccessIterator1> len2,
-                       RandomAccessIterator2 buff, std::ptrdiff_t buff_size,
-                       std::random_access_iterator_tag)
+                       mstd::iter_difference_t<Iterator> len1,
+                       mstd::iter_difference_t<Iterator> len2,
+                       T* buffer, std::ptrdiff_t buffer_size)
         -> void
     {
         CPPSORT_AUDIT(detail::is_sorted(first, middle, compare, projection));
         CPPSORT_AUDIT(detail::is_sorted(middle, last, compare, projection));
         symmerge(first, 0, middle - first, last - first,
                  std::move(compare), std::move(projection),
-                 len1, len2, buff, buff_size);
+                 len1, len2, buffer, buffer_size);
     }
 
     ////////////////////////////////////////////////////////////
-    // Intermediate functions allocating the memory buffer if
-    // one wasn't passed
+    // Overloads allocating a memory buffer if none was passed
 
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto inplace_merge(ForwardIterator first, ForwardIterator middle,
-                       ForwardIterator last, Compare compare, Projection projection,
-                       std::forward_iterator_tag)
+    template<
+        mstd::forward_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto inplace_merge(Iterator first, Iterator middle, Iterator last,
+                       Compare compare, Projection projection)
         -> void
     {
         auto&& comp = utility::as_function(compare);
@@ -110,37 +119,38 @@ namespace cppsort::detail
         auto n0 = std::distance(first, middle);
         auto n1 = std::distance(middle, last);
 
-        auto buffer = temporary_buffer<rvalue_type_t<ForwardIterator>>((std::max)(n0, n1));
+        auto buffer = temporary_buffer<rvalue_type_t<Iterator>>((std::max)(n0, n1));
         recmerge(std::move(first), n0, std::move(middle), n1,
                  buffer.data(), buffer.size(),
                  std::move(compare), std::move(projection));
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                       BidirectionalIterator last,
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto inplace_merge(Iterator first, Iterator middle, Iterator last,
                        Compare compare, Projection projection,
-                       mstd::iter_difference_t<BidirectionalIterator> len1,
-                       mstd::iter_difference_t<BidirectionalIterator> len2,
-                       std::bidirectional_iterator_tag)
+                       mstd::iter_difference_t<Iterator> len1,
+                       mstd::iter_difference_t<Iterator> len2)
         -> void
     {
-        temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer((std::min)(len1, len2));
-
-        using category = iterator_category_t<BidirectionalIterator>;
+        auto buffer = temporary_buffer<rvalue_type_t<Iterator>>((std::min)(len1, len2));
         inplace_merge(std::move(first), std::move(middle), std::move(last),
                       std::move(compare), std::move(projection),
-                      len1, len2, buffer.data(), buffer.size(),
-                      category{});
+                      len1, len2, buffer.data(), buffer.size());
     }
 
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                       BidirectionalIterator last, Compare compare, Projection projection,
-                       std::bidirectional_iterator_tag)
+    template<
+        mstd::bidirectional_iterator Iterator,
+        typename Compare,
+        typename Projection
+    >
+    auto inplace_merge(Iterator first, Iterator middle, Iterator last,
+                       Compare compare, Projection projection)
         -> void
     {
-        using category = iterator_category_t<BidirectionalIterator>;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
@@ -154,62 +164,10 @@ namespace cppsort::detail
         auto len1 = std::distance(first, middle);
         auto len2 = std::distance(middle, last);
 
-        temporary_buffer<rvalue_type_t<BidirectionalIterator>> buffer((std::min)(len1, len2));
+        auto buffer = temporary_buffer<rvalue_type_t<Iterator>>((std::min)(len1, len2));
         inplace_merge(std::move(first), std::move(middle), std::move(last),
                       std::move(compare), std::move(projection),
-                      len1, len2, buffer.data(), buffer.size(),
-                      category{});
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Generic inplace_merge interfaces
-
-    // Unbuffered overload, defers the buffer allocation to a specific
-    // function depending on the iterator category
-
-    template<typename ForwardIterator, typename Compare, typename Projection>
-    auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
-                       Compare compare, Projection projection)
-        -> void
-    {
-        using category = iterator_category_t<ForwardIterator>;
-        inplace_merge(std::move(first), std::move(middle), std::move(last),
-                      std::move(compare), std::move(projection),
-                      category{});
-    }
-
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
-    auto inplace_merge(BidirectionalIterator first, BidirectionalIterator middle,
-                       BidirectionalIterator last,
-                       Compare compare, Projection projection,
-                       mstd::iter_difference_t<BidirectionalIterator> len1,
-                       mstd::iter_difference_t<BidirectionalIterator> len2)
-        -> void
-    {
-        using category = iterator_category_t<BidirectionalIterator>;
-        inplace_merge(std::move(first), std::move(middle), std::move(last),
-                      std::move(compare), std::move(projection),
-                      len1, len2, category{});
-    }
-
-    // Buffered overload, which also happens to take the length of the
-    // subranges, allowing not to cross the whole range to compute them
-    // from time to time
-
-    template<typename ForwardIterator, typename RandomAccessIterator,
-             typename Compare, typename Projection>
-    auto inplace_merge(ForwardIterator first, ForwardIterator middle, ForwardIterator last,
-                       Compare compare, Projection projection,
-                       mstd::iter_difference_t<ForwardIterator> len1,
-                       mstd::iter_difference_t<ForwardIterator> len2,
-                       RandomAccessIterator buff, std::ptrdiff_t buff_size)
-        -> void
-    {
-        using category = iterator_category_t<ForwardIterator>;
-        inplace_merge(std::move(first), std::move(middle), std::move(last),
-                      std::move(compare), std::move(projection),
-                      len1, len2, buff, buff_size,
-                      category{});
+                      len1, len2, buffer.data(), buffer.size());
     }
 }
 
