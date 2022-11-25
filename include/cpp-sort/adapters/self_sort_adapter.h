@@ -18,7 +18,6 @@
 #include <cpp-sort/utility/adapter_storage.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../detail/checkers.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -27,21 +26,17 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Whether a class has a member sort method
 
-        template<typename Iterable, typename... Args>
-        using has_sort_method_t
-            = decltype(std::declval<Iterable&>().sort(utility::as_function(std::declval<Args&>())...));
+        template<typename Collection, typename... Args>
+        concept has_sort_method =
+            requires (Collection& collection, Args&&... args) {
+                collection.sort(std::forward<Args>(args)...);
+            };
 
-        template<typename Iterable, typename... Args>
-        inline constexpr bool has_sort_method
-            = is_detected_v<has_sort_method_t, Iterable, Args...>;
-
-        template<typename Iterable, typename... Args>
-        using has_stable_sort_method_t
-            = decltype(std::declval<Iterable&>().stable_sort(utility::as_function(std::declval<Args&>())...));
-
-        template<typename Iterable, typename... Args>
-        inline constexpr bool has_stable_sort_method
-            = is_detected_v<has_stable_sort_method_t, Iterable, Args...>;
+        template<typename Collection, typename... Args>
+        concept has_stable_sort_method =
+            requires (Collection& collection, Args&&... args) {
+                collection.stable_sort(std::forward<Args>(args)...);
+            };
     }
 
     ////////////////////////////////////////////////////////////
@@ -68,34 +63,34 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Function call operator
 
-        template<typename Iterable, typename... Args>
-            requires detail::has_sort_method<Iterable, Args...>
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
+        template<typename Collection, typename... Args>
+            requires detail::has_sort_method<Collection, Args...>
+        auto operator()(Collection&& collection, Args&&... args) const
+            -> decltype(std::forward<Collection>(collection).sort(utility::as_function(args)...))
         {
-            return std::forward<Iterable>(iterable).sort(utility::as_function(args)...);
+            return std::forward<Collection>(collection).sort(utility::as_function(args)...);
         }
 
-        template<typename Iterable, typename... Args>
+        template<typename Collection, typename... Args>
             requires (
-                not detail::has_sort_method<Iterable, Args...> &&
-                detail::has_stable_sort_method<Iterable, Args...>
+                not detail::has_sort_method<Collection, Args...> &&
+                detail::has_stable_sort_method<Collection, Args...>
             )
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
+        auto operator()(Collection&& collection, Args&&... args) const
+            -> decltype(std::forward<Collection>(collection).stable_sort(utility::as_function(args)...))
         {
-            return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
+            return std::forward<Collection>(collection).stable_sort(utility::as_function(args)...);
         }
 
-        template<typename Iterable, typename... Args>
+        template<typename Collection, typename... Args>
             requires (
-                not detail::has_sort_method<Iterable, Args...> &&
-                not detail::has_stable_sort_method<Iterable, Args...>
+                not detail::has_sort_method<Collection, Args...> &&
+                not detail::has_stable_sort_method<Collection, Args...>
             )
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+        auto operator()(Collection&& collection, Args&&... args) const
+            -> decltype(this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...))
         {
-            return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+            return this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>
@@ -121,15 +116,15 @@ namespace cppsort
         is_stable<Sorter(Iterator, Iterator, Args...)>
     {};
 
-    template<typename Sorter, typename... Args>
-    struct is_stable<self_sort_adapter<Sorter>(Args...)>:
+    template<typename Sorter, typename Collection, typename... Args>
+    struct is_stable<self_sort_adapter<Sorter>(Collection, Args...)>:
         mstd::conditional_t<
-            detail::has_sort_method<Args...>,
+            detail::has_sort_method<Collection, Args...>,
             std::false_type,
             mstd::conditional_t<
-                detail::has_stable_sort_method<Args...>,
+                detail::has_stable_sort_method<Collection, Args...>,
                 std::true_type,
-                is_stable<Sorter(Args...)>
+                is_stable<Sorter(Collection, Args...)>
             >
         >
     {};
