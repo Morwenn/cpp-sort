@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
@@ -40,10 +39,9 @@ namespace cppsort::detail
             mstd::iter_difference_t<ForwardIterator>
         >
     {
-        constexpr bool is_random_access = std::is_base_of_v<
-            std::random_access_iterator_tag,
-            iterator_category_t<ForwardIterator>
-        >;
+        constexpr bool constant_time_size =
+            mstd::random_access_iterator<ForwardIterator> &&
+            mstd::sized_sentinel_for<Sentinel, ForwardIterator>;
 
         if (first == last) {
             return { 0, 0 };
@@ -52,11 +50,12 @@ namespace cppsort::detail
             return { 1, 1 };
         }
 
-        // The size is only needed at the end to actually compute Rem, but
-        // we can compute it as-we-go when it is not known in order to avoid
-        // making two passes over the sequence - when the sequence is made
-        // of random-access iterators, we only compute it once
-        if constexpr (RecomputeSize && is_random_access) {
+        // The size is only needed at the end to actually compute Rem. When
+        // we do need it, we either:
+        // - Retrieve it from parameters if passed explicitly
+        // - Call mstd::distance when it is known to run in O(1)
+        // - Compute it as we go otherwise, avoiding an extra (n) pass
+        if constexpr (RecomputeSize && constant_time_size) {
             size = mstd::distance(first, last);
         }
 
@@ -82,8 +81,8 @@ namespace cppsort::detail
             }
             ++first;
 
-            if constexpr (RecomputeSize && not is_random_access) {
-                // Compute the size as-we-go if iterators are not random-access
+            if constexpr (RecomputeSize && not constant_time_size) {
+                // Compute the size as-we-go if it can't be retrieved in O(1)
                 ++size;
             }
         }
