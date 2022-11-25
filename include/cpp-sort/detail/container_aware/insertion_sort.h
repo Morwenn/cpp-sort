@@ -112,70 +112,70 @@ namespace cppsort
         // std::list
 
         template<typename... Args>
-        auto operator()(std::list<Args...>& iterable) const
+        auto operator()(std::list<Args...>& collection) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::less{}, std::identity{});
+            detail::list_insertion_sort(collection, std::less{}, std::identity{});
         }
 
         template<typename Compare, typename... Args>
             requires is_projection_v<std::identity, std::list<Args...>, Compare>
-        auto operator()(std::list<Args...>& iterable, Compare compare) const
+        auto operator()(std::list<Args...>& collection, Compare compare) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::move(compare), std::identity{});
+            detail::list_insertion_sort(collection, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
             requires is_projection_v<Projection, std::list<Args...>>
-        auto operator()(std::list<Args...>& iterable, Projection projection) const
+        auto operator()(std::list<Args...>& collection, Projection projection) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::less{}, std::move(projection));
+            detail::list_insertion_sort(collection, std::less{}, std::move(projection));
         }
 
         template<typename Compare, typename Projection, typename... Args>
             requires is_projection_v<Projection, std::list<Args...>, Compare>
-        auto operator()(std::list<Args...>& iterable,
+        auto operator()(std::list<Args...>& collection,
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::move(compare), std::move(projection));
+            detail::list_insertion_sort(collection, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////
         // std::forward_list
 
         template<typename... Args>
-        auto operator()(std::forward_list<Args...>& iterable) const
+        auto operator()(std::forward_list<Args...>& collection) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::less{}, std::identity{});
+            detail::flist_insertion_sort(collection, std::less{}, std::identity{});
         }
 
         template<typename Compare, typename... Args>
             requires is_projection_v<std::identity, std::forward_list<Args...>, Compare>
-        auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
+        auto operator()(std::forward_list<Args...>& collection, Compare compare) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::move(compare), std::identity{});
+            detail::flist_insertion_sort(collection, std::move(compare), std::identity{});
         }
 
         template<typename Projection, typename... Args>
             requires is_projection_v<Projection, std::forward_list<Args...>>
-        auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
+        auto operator()(std::forward_list<Args...>& collection, Projection projection) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::less{}, std::move(projection));
+            detail::flist_insertion_sort(collection, std::less{}, std::move(projection));
         }
 
         template<typename Compare, typename Projection, typename... Args>
             requires is_projection_v<Projection, std::forward_list<Args...>, Compare>
-        auto operator()(std::forward_list<Args...>& iterable,
+        auto operator()(std::forward_list<Args...>& collection,
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::move(compare), std::move(projection));
+            detail::flist_insertion_sort(collection, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////

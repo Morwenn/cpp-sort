@@ -43,20 +43,20 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Generic cases
 
-        template<typename Iterable, typename... Args>
-            requires detail::has_stable_sort_method<Iterable, Args...>
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
+        template<typename Collection, typename... Args>
+            requires detail::has_stable_sort_method<Collection, Args...>
+        auto operator()(Collection&& collection, Args&&... args) const
+            -> decltype(std::forward<Collection>(collection).stable_sort(utility::as_function(args)...))
         {
-            return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
+            return std::forward<Collection>(collection).stable_sort(utility::as_function(args)...);
         }
 
-        template<typename Iterable, typename... Args>
-            requires (not detail::has_stable_sort_method<Iterable, Args...>)
-        auto operator()(Iterable&& iterable, Args&&... args) const
-            -> decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+        template<typename Collection, typename... Args>
+            requires (not detail::has_stable_sort_method<Collection, Args...>)
+        auto operator()(Collection&& collection, Args&&... args) const
+            -> decltype(this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...))
         {
-            return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+            return this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>
@@ -71,33 +71,33 @@ namespace cppsort
         // method implements a stable sort
 
         template<typename T>
-        auto operator()(std::forward_list<T>& iterable) const
+        auto operator()(std::forward_list<T>& collection) const
             -> void
         {
-            iterable.sort();
+            collection.sort();
         }
 
         template<typename T, typename Compare>
             requires (not is_projection_v<Compare, std::forward_list<T>&>)
-        auto operator()(std::forward_list<T>& iterable, Compare compare) const
+        auto operator()(std::forward_list<T>& collection, Compare compare) const
             -> void
         {
-            iterable.sort(utility::as_function(compare));
+            collection.sort(utility::as_function(compare));
         }
 
         template<typename T>
-        auto operator()(std::list<T>& iterable) const
+        auto operator()(std::list<T>& collection) const
             -> void
         {
-            iterable.sort();
+            collection.sort();
         }
 
         template<typename T, typename Compare>
             requires (not is_projection_v<Compare, std::list<T>&>)
-        auto operator()(std::list<T>& iterable, Compare compare) const
+        auto operator()(std::list<T>& collection, Compare compare) const
             -> void
         {
-            iterable.sort(utility::as_function(compare));
+            collection.sort(utility::as_function(compare));
         }
 
         ////////////////////////////////////////////////////////////
