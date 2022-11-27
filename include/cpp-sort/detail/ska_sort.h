@@ -29,7 +29,6 @@
 #include "iterator_traits.h" // projected_t
 #include "partition.h"
 #include "pdqsort.h"
-#include "type_traits.h"
 
 namespace cppsort::detail
 {
@@ -927,23 +926,16 @@ namespace cppsort::detail
     struct is_ska_sortable;
 
     template<typename T>
-    using has_indexing_operator_t
-        = std::remove_cvref_t<decltype(std::declval<T&>()[0])>;
-
-    template<template<typename...> typename Op, typename... Args>
-    using is_index_ska_sortable = is_ska_sortable<detected_t<Op, Args...>>;
-
-    // A bit hackish, but I'm bad at workarounds...
-    template<>
-    struct is_ska_sortable<nonesuch>:
-        std::false_type
-    {};
+    concept is_index_ska_sortable =
+        requires (const T& value) {
+            value[0];
+            requires is_ska_sortable<std::remove_cvref_t<decltype(value[0])>>::value;
+        };
 
     template<typename T>
     struct is_ska_sortable:
-        std::disjunction<
-            mstd::is_integral<T>,
-            is_index_ska_sortable<has_indexing_operator_t, T>
+        std::bool_constant<
+            mstd::is_integral_v<T> || is_index_ska_sortable<T>
         >
     {};
 
