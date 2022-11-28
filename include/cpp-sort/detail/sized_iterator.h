@@ -80,8 +80,9 @@ namespace cppsort::detail
             }
 
             [[nodiscard]]
-            auto operator->() const
+            auto operator->() const noexcept
                 -> pointer
+                requires mstd::contiguous_iterator<Iterator>
             {
                 return &(operator*());
             }
@@ -91,12 +92,14 @@ namespace cppsort::detail
 
             auto operator++()
                 -> sized_iterator&
+                requires mstd::forward_iterator<Iterator>
             {
                 CPPSORT_UNREACHABLE;
                 return *this;
             }
             auto operator--()
                 -> sized_iterator&
+                requires mstd::bidirectional_iterator<Iterator>
             {
                 CPPSORT_UNREACHABLE;
                 return *this;

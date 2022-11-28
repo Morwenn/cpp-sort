@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <concepts>
 #include <iterator>
+#include <memory>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include "iterator_traits.h"
@@ -196,10 +197,11 @@ namespace cppsort::detail
             }
 
             [[nodiscard]]
-            auto operator->() const
+            auto operator->() const noexcept
                 -> pointer
+                requires mstd::contiguous_iterator<Iterator>
             {
-                return &(operator*());
+                return std::to_address(_it);
             }
 
             ////////////////////////////////////////////////////////////
@@ -207,36 +209,23 @@ namespace cppsort::detail
 
             auto operator++()
                 -> associate_iterator&
+                requires mstd::forward_iterator<Iterator>
             {
                 ++_it;
                 return *this;
             }
 
-            auto operator++(int)
-                -> associate_iterator
-            {
-                auto tmp = *this;
-                operator++();
-                return tmp;
-            }
-
             auto operator--()
                 -> associate_iterator&
+                requires mstd::bidirectional_iterator<Iterator>
             {
                 --_it;
                 return *this;
             }
 
-            auto operator--(int)
-                -> associate_iterator
-            {
-                auto tmp = *this;
-                operator--();
-                return tmp;
-            }
-
             auto operator+=(difference_type increment)
                 -> associate_iterator&
+                requires mstd::random_access_iterator<Iterator>
             {
                 _it += increment;
                 return *this;
@@ -244,6 +233,7 @@ namespace cppsort::detail
 
             auto operator-=(difference_type increment)
                 -> associate_iterator&
+                requires mstd::random_access_iterator<Iterator>
             {
                 _it -= increment;
                 return *this;
@@ -255,6 +245,7 @@ namespace cppsort::detail
             [[nodiscard]]
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
+                requires mstd::random_access_iterator<Iterator>
             {
                 return _it[pos];
             }
@@ -282,6 +273,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator<(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() < rhs.base();
             }
@@ -289,6 +281,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator<=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() <= rhs.base();
             }
@@ -296,6 +289,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator>(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() > rhs.base();
             }
@@ -303,6 +297,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator>=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() >= rhs.base();
             }
@@ -313,6 +308,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator+(associate_iterator it, difference_type size)
                 -> associate_iterator
+                requires mstd::random_access_iterator<Iterator>
             {
                 it += size;
                 return it;
@@ -321,6 +317,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator+(difference_type size, associate_iterator it)
                 -> associate_iterator
+                requires mstd::random_access_iterator<Iterator>
             {
                 it += size;
                 return it;
@@ -329,6 +326,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator-(associate_iterator it, difference_type size)
                 -> associate_iterator
+                requires mstd::random_access_iterator<Iterator>
             {
                 it -= size;
                 return it;
@@ -337,6 +335,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator-(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> difference_type
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() - rhs.base();
             }

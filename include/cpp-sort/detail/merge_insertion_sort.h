@@ -91,36 +91,23 @@ namespace cppsort::detail
 
             auto operator++()
                 -> group_iterator&
+                requires mstd::forward_iterator<Iterator>
             {
                 std::advance(_it, _size);
                 return *this;
             }
 
-            auto operator++(int)
-                -> group_iterator
-            {
-                auto tmp = *this;
-                operator++();
-                return tmp;
-            }
-
             auto operator--()
                 -> group_iterator&
+                requires mstd::bidirectional_iterator<Iterator>
             {
                 std::advance(_it, -_size);
                 return *this;
             }
 
-            auto operator--(int)
-                -> group_iterator
-            {
-                auto tmp = *this;
-                operator--();
-                return tmp;
-            }
-
             auto operator+=(difference_type increment)
                 -> group_iterator&
+                requires mstd::random_access_iterator<Iterator>
             {
                 _it += _size * increment;
                 return *this;
@@ -128,6 +115,7 @@ namespace cppsort::detail
 
             auto operator-=(difference_type increment)
                 -> group_iterator&
+                requires mstd::random_access_iterator<Iterator>
             {
                 _it -= _size * increment;
                 return *this;
@@ -139,6 +127,7 @@ namespace cppsort::detail
             [[nodiscard]]
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
+                requires mstd::random_access_iterator<Iterator>
             {
                 return _it[pos * _size + _size - 1];
             }
@@ -166,6 +155,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator<(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() < rhs.base();
             }
@@ -173,6 +163,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator<=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() <= rhs.base();
             }
@@ -180,6 +171,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator>(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() > rhs.base();
             }
@@ -187,6 +179,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator>=(const group_iterator& lhs, const group_iterator& rhs)
                 -> bool
+                requires mstd::random_access_iterator<Iterator>
             {
                 return lhs.base() >= rhs.base();
             }
@@ -197,6 +190,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator+(group_iterator it, difference_type size)
                 -> group_iterator
+                requires mstd::random_access_iterator<Iterator>
             {
                 it += size;
                 return it;
@@ -205,6 +199,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator+(difference_type size, group_iterator it)
                 -> group_iterator
+                requires mstd::random_access_iterator<Iterator>
             {
                 it += size;
                 return it;
@@ -213,6 +208,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator-(group_iterator it, difference_type size)
                 -> group_iterator
+                requires mstd::random_access_iterator<Iterator>
             {
                 it -= size;
                 return it;
@@ -221,6 +217,7 @@ namespace cppsort::detail
             [[nodiscard]]
             friend auto operator-(const group_iterator& lhs, const group_iterator& rhs)
                 -> difference_type
+                requires mstd::random_access_iterator<Iterator>
             {
                 return (lhs.base() - rhs.base()) / lhs.size();
             }
