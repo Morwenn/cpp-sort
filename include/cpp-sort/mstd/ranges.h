@@ -43,8 +43,7 @@ namespace cppsort::mstd
                 { CPPSORT_AUTO_CAST(rng.begin()) } -> input_or_output_iterator;
             };
 
-        void begin(auto&) = delete;
-        void begin(const auto&) = delete;
+        void begin() = delete;
 
         template<class T>
         concept unqualified_begin =
@@ -118,8 +117,7 @@ namespace cppsort::mstd
                 { CPPSORT_AUTO_CAST(rng.end()) } -> sentinel_for<iterator_t<T>>;
             };
 
-        void end(auto&) = delete;
-        void end(const auto&) = delete;
+        void end() = delete;
 
         template<typename T>
         concept unqualified_end =
@@ -293,8 +291,7 @@ namespace cppsort::mstd
 
     namespace detail_size
     {
-        void size(auto&) = delete;
-        void size(const auto&) = delete;
+        void size() = delete;
 
         template<typename T>
         concept size_enabled = not std::ranges::disable_sized_range<std::remove_cvref_t<T>>;

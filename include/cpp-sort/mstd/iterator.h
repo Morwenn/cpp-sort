@@ -169,7 +169,7 @@ namespace cppsort::mstd
     namespace detail_iter_move
     {
         template<typename Iterator>
-        void iter_move(Iterator) = delete;
+        void iter_move() = delete;
 
         template<typename T>
         concept unqualified_iter_move =
