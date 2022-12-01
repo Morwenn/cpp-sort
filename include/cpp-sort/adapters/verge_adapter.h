@@ -26,18 +26,37 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename FallbackSorter, bool Stable>
+        template<typename Sorter, bool Stable>
         struct verge_adapter_impl:
-            utility::adapter_storage<FallbackSorter>
+            utility::adapter_storage<Sorter>
         {
             verge_adapter_impl() = default;
 
-            constexpr explicit verge_adapter_impl(FallbackSorter&& sorter):
-                utility::adapter_storage<FallbackSorter>(std::move(sorter))
+            constexpr explicit verge_adapter_impl(Sorter&& sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
             {}
 
             template<
-                mstd::random_access_iterator Iterator,
+                mstd::bidirectional_range Range,
+                typename Compare = std::less<>,
+                typename Projection = std::identity
+            >
+                requires is_projection_v<Projection, Range, Compare>
+            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
+                -> mstd::iterator_t<Range>
+            {
+                auto first = mstd::begin(range);
+                auto last = mstd::end(range);
+                auto last_it = mstd::next(first, std::move(last));
+                verge::sort<Stable>(std::move(first), last_it,
+                                    mstd::distance(range),
+                                    std::move(compare), std::move(projection),
+                                    this->get());
+                return last_it;
+            }
+
+            template<
+                mstd::bidirectional_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
@@ -58,30 +77,33 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category = std::random_access_iterator_tag;
+            using iterator_category = cppsort::iterator_category<
+                Sorter,
+                std::bidirectional_iterator_tag
+            >;
             using is_always_stable = std::bool_constant<Stable>;
         };
     }
 
-    template<typename FallbackSorter>
+    template<typename Sorter>
     struct verge_adapter:
-        sorter_facade<detail::verge_adapter_impl<FallbackSorter, false>>
+        sorter_facade<detail::verge_adapter_impl<Sorter, false>>
     {
         verge_adapter() = default;
 
-        constexpr explicit verge_adapter(FallbackSorter sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter, false>>(std::move(sorter))
+        constexpr explicit verge_adapter(Sorter sorter):
+            sorter_facade<detail::verge_adapter_impl<Sorter, false>>(std::move(sorter))
         {}
     };
 
-    template<typename FallbackSorter>
-    struct stable_adapter<verge_adapter<FallbackSorter>>:
-        sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>
+    template<typename Sorter>
+    struct stable_adapter<verge_adapter<Sorter>>:
+        sorter_facade<detail::verge_adapter_impl<Sorter, true>>
     {
         stable_adapter() = default;
 
-        constexpr explicit stable_adapter(verge_adapter<FallbackSorter> sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>(std::move(sorter).get())
+        constexpr explicit stable_adapter(verge_adapter<Sorter> sorter):
+            sorter_facade<detail::verge_adapter_impl<Sorter, true>>(std::move(sorter).get())
         {}
     };
 }

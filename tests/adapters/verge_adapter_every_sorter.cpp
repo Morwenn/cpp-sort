@@ -15,7 +15,7 @@
 #include <testing-tools/old_default_sorter.h>
 #include <testing-tools/wrapper.h>
 
-TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
+TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_adapter]",
                     old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
-TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][stable_adapter]",
+TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter", "[verge_adapter][stable_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::drop_merge_sorter,
@@ -82,5 +82,26 @@ TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][s
 
     cppsort::stable_adapter<cppsort::verge_adapter<TestType>> sorter;
     sorter(collection, &wrapper::value);
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+}
+
+TEMPLATE_TEST_CASE( "every bidirectional sorter with verge_adapter", "[verge_adapter]",
+                    cppsort::cartesian_tree_sorter,
+                    old_default_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::slab_sorter )
+{
+    std::list<double> collection;
+    auto distribution = dist::shuffled{};
+    distribution.call<double>(std::back_inserter(collection), 412);
+
+    cppsort::verge_adapter<TestType> sorter;
+    sorter(collection);
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

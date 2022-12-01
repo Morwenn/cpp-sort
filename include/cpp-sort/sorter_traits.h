@@ -214,8 +214,65 @@ namespace cppsort
         detail::raw_check_is_always_stable<Sorter>
     {};
 
-    template<typename Sorter>
-    using iterator_category = typename sorter_traits<Sorter>::iterator_category;
+    namespace detail
+    {
+        template<typename Sorter>
+        concept has_iterator_category = requires {
+            typename sorter_traits<Sorter>::iterator_category;
+        };
+
+        template<typename Sorter, typename MergeWithCategory>
+        struct iterator_category_impl;
+
+        template<typename Sorter>
+            requires has_iterator_category<Sorter>
+        struct iterator_category_impl<Sorter, void>
+        {
+            using type = typename sorter_traits<Sorter>::iterator_category;
+        };
+
+        template<typename Sorter>
+            requires (not has_iterator_category<Sorter>)
+        struct iterator_category_impl<Sorter, void>
+        {};
+
+        template<typename Sorter, typename MergeWithCategory>
+            requires has_iterator_category<Sorter>
+        struct iterator_category_impl<Sorter, MergeWithCategory>
+        {
+            static_assert(
+                std::is_base_of_v<
+                    std::input_iterator_tag,
+                    MergeWithCategory
+                >,
+            "When explicit, MergeWithCategory must be an iterator tag");
+            using type = mstd::conditional_t<
+                std::is_base_of_v<
+                    MergeWithCategory,
+                    typename sorter_traits<Sorter>::iterator_category
+                >,
+                typename sorter_traits<Sorter>::iterator_category,
+                MergeWithCategory
+            >;
+        };
+
+        template<typename Sorter, typename MergeWithCategory>
+            requires (not has_iterator_category<Sorter>)
+        struct iterator_category_impl<Sorter, MergeWithCategory>
+        {
+            static_assert(
+                std::is_base_of_v<
+                    std::input_iterator_tag,
+                    MergeWithCategory
+                >,
+            "When explicit, MergeWithCategory must be an iterator tag");
+            using type = MergeWithCategory;
+        };
+    }
+
+    template<typename Sorter, typename MergeWithCategory=void>
+    using iterator_category
+        = typename detail::iterator_category_impl<Sorter, MergeWithCategory>::type;
 
     template<typename Sorter>
     using is_always_stable = typename sorter_traits<Sorter>::is_always_stable;

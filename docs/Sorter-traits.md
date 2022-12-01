@@ -124,13 +124,18 @@ Its behaviour is however a bit different from that of the trait classes in the s
 ### `iterator_category`
 
 ```cpp
-template<typename Sorter>
-using iterator_category = typename sorter_traits<Sorter>::iterator_category;
+template<typename Sorter, typename MergeWithCategory=void>
+using iterator_category = /* see below */;
 ```
 
-Some tools need to know which category of iterators a sorting algorithm can work with. A sorter that intends to work with those tools must document its iterator category by aliasing one of the standard library [iterator tags][iterator-tags].
+This trait is expect to alias a standard [iterator tag][iterator-tags], working as follows:
+* When `MergeWithCategory` is `void`, it aliases `typename sorter_traits<Sorter>::iterator_category`.
+* When `typename sorter_traits<Sorter>::iterator_category` is not valid, it aliases `MergeWithCategory`.
+* When both are valid and non-`void`, it aliases the stronger category of the two (for example when given `std::random_access_iterator_tag` and `std::bidirectional_iterator_tag`, then it aliases `std::random_access_iterator_tag`).
 
-The iterator category of the *resulting sorter* of a [*sorter adapter*][sorter-adapters] doesn't always match that of the *adapted sorter*: for example [`heap_sorter`][heap-sorter] only accepts random-access iterators, but it accepts forward iterators when wrapped into [`out_of_place_adapter`][out-of-place-adapter].
+If `MergeWithCategory` is a type than `void` or an iterator type, then the program is ill-formed and triggers a hard compile time error.
+
+This trait is meant to be used to define the `iterator_category` that the *resulting sorter* of a [sorter adapter][sorter-adapters] works on. The second parameter is useful when the sorter adapter runs the *adapted sorter* directly on [parts of] the passed collection, in which case the *resulting sorter* only works on the stronger iterator category of the two.
 
 ### `is_always_stable`
 
@@ -153,7 +158,7 @@ When a sorter adapter is used, the *resulting sorter* is considered always stabl
 template<typename>
 struct is_stable;
 
-template<typename Sorter, typename Args> 
+template<typename Sorter, typename Args>
 struct is_stable<Sorter(Args...)>:
     sorter_traits<Sorter>::is_always_stable
 {};

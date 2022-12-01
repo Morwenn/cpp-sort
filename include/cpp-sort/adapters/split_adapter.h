@@ -26,28 +26,6 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename Sorter, typename=void>
-        struct split_adapter_iterator_category
-        {
-            using type = std::bidirectional_iterator_tag;
-        };
-
-        template<typename Sorter>
-        struct split_adapter_iterator_category<
-            Sorter,
-            std::void_t<typename sorter_traits<Sorter>::iterator_category>
-        >
-        {
-            using type = mstd::conditional_t<
-                std::is_base_of_v<
-                    std::bidirectional_iterator_tag,
-                    typename sorter_traits<Sorter>::iterator_category
-                >,
-                typename sorter_traits<Sorter>::iterator_category,
-                std::bidirectional_iterator_tag
-            >;
-        };
-
         template<typename Sorter>
         struct split_adapter_impl:
             utility::adapter_storage<Sorter>
@@ -85,8 +63,10 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category
-                = typename split_adapter_iterator_category<Sorter>::type;
+            using iterator_category = cppsort::iterator_category<
+                Sorter,
+                std::bidirectional_iterator_tag
+            >;
             using is_always_stable = std::false_type;
         };
     }
