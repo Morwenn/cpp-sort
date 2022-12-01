@@ -24,7 +24,6 @@
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/raw_checkers.h"
-#include "../detail/sized_iterator.h"
 
 namespace cppsort
 {
@@ -111,26 +110,6 @@ namespace cppsort
                     std::forward<Compare>(compare),
                     std::forward<Projection>(projection)
                 )
-            );
-        }
-
-        template<
-            typename ForwardIterator,
-            typename Compare,
-            typename Projection,
-            typename Sorter
-        >
-        auto make_stable_and_sort(sized_iterator<ForwardIterator> first, mstd::iter_difference_t<ForwardIterator> size,
-                                  Compare&& compare, Projection&& projection, Sorter&& sorter)
-            -> decltype(auto)
-        {
-            // Hack to get the stable bidirectional version of vergesort
-            // to work correctly without duplicating tons of code
-            return make_stable_and_sort(
-                first.base(), size,
-                std::forward<Compare>(compare),
-                std::forward<Projection>(projection),
-                std::forward<Sorter>(sorter)
             );
         }
 

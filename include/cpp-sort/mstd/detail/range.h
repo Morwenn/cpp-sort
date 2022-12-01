@@ -18,6 +18,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <concepts>
+#include <ranges>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
@@ -81,6 +82,16 @@ namespace cppsort::mstd
                     decltype(*std::declval<iterator_t<R>&>())
                 >>;
         };
+
+    ////////////////////////////////////////////////////////////
+    // borrowed_range
+
+    template<typename R>
+    concept borrowed_range =
+        range<R> && (
+            std::is_lvalue_reference_v<R> ||
+            std::ranges::enable_borrowed_range<std::remove_cvref_t<R>>
+        );
 }
 
 #endif // CPPSORT_MSTD_DETAIL_RANGE_H_

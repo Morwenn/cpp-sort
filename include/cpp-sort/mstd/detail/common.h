@@ -25,6 +25,12 @@
 namespace cppsort::mstd::detail
 {
     ////////////////////////////////////////////////////////////
+    // different_from
+
+    template<typename T, typename U>
+    concept different_from = not std::same_as<T, U>;
+
+    ////////////////////////////////////////////////////////////
     // class_or_union[_or_enum]
 
     template<typename T>

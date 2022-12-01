@@ -16,6 +16,7 @@
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/utility/as_function.h>
+#include "../mstd/detail/subrange.h"
 #include "bitops.h"
 #include "config.h"
 #include "inplace_merge.h"
@@ -24,7 +25,6 @@
 #include "quick_merge_sort.h"
 #include "reverse.h"
 #include "rotate.h"
-#include "sized_iterator.h"
 #include "upper_bound.h"
 
 namespace cppsort::detail::verge
@@ -107,9 +107,9 @@ namespace cppsort::detail::verge
     {
         if (size < 128) {
             // vergesort is inefficient for small collections
-            fallback(make_sized_iterator(first, 0),
-                     make_sized_iterator(last, size),
-                     std::move(compare), std::move(projection));
+            fallback(mstd::subrange(first, last, size),
+                     std::move(compare), std::move(projection)
+            );
             return;
         }
 
@@ -201,8 +201,7 @@ namespace cppsort::detail::verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_iterator(begin_unsorted, 0),
-                                 make_sized_iterator(begin_rng, size_unsorted),
+                        fallback(mstd::subrange(begin_unsorted, begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted} );
                         runs.push_back({ next, run_size });
@@ -264,8 +263,7 @@ namespace cppsort::detail::verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_iterator(begin_unsorted, 0),
-                                 make_sized_iterator(begin_rng, size_unsorted),
+                        fallback(mstd::subrange(begin_unsorted, begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted });
                         detail::reverse(begin_rng, next);
@@ -308,8 +306,7 @@ namespace cppsort::detail::verge
             // next run, so we add one back here to compensate
             ++size_unsorted;
             if (size_unsorted > 1) {
-                fallback(make_sized_iterator(begin_unsorted, 0),
-                         make_sized_iterator(last, size_unsorted),
+                fallback(mstd::subrange(begin_unsorted, last, size_unsorted),
                          compare, projection);
             }
             runs.push_back({ last, size_unsorted });

@@ -135,6 +135,7 @@ This header provides the following reimplementations of standard library compone
 * `mstd::bidirectional_range`
 * `mstd::random_access_range`
 * `mstd::contiguous_range`
+* `mstd::borrowed_range` *(relies on [`std::ranges::enable_borrowed_range`][std-borrowed-range])*
 * `mstd::iterator_t`
 * `mstd::sentinel_t`
 * `mstd::range_difference_t`
@@ -144,6 +145,7 @@ They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemen
 
 
   [kvasir-conditional]: https://odinthenerd.blogspot.com/2017/03/start-simple-with-conditional-why.html
+  [std-borrowed-range]: https://en.cppreference.com/w/cpp/ranges/borrowed_range
   [std-common-reference-with]: https://en.cppreference.com/w/cpp/concepts/common_reference_with
   [std-incrementable]: https://en.cppreference.com/w/cpp/iterator/incrementable
   [std-indirectly-readable]: https://en.cppreference.com/w/cpp/iterator/indirectly_readable
