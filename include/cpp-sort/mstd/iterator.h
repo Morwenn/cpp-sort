@@ -25,22 +25,12 @@
 #include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/mstd/type_traits.h>
 #include "../detail/config.h"
+#include "detail/common.h"
 
 namespace cppsort::mstd
 {
     namespace detail
     {
-        template<typename T>
-        concept class_or_union =
-            std::is_class_v<T> ||
-            std::is_union_v<T>;
-
-        template<typename T>
-        concept class_or_union_or_enum =
-            std::is_class_v<T> ||
-            std::is_union_v<T> ||
-            std::is_enum_v<T>;
-
         ////////////////////////////////////////////////////////////
         // is_primary_template
         //
@@ -91,31 +81,6 @@ namespace cppsort::mstd
 #endif
 
         ////////////////////////////////////////////////////////////
-        // can_reference
-
-        template<typename T>
-        using with_reference = T&;
-
-        template<typename T>
-        concept can_reference = requires {
-            typename with_reference<T>;
-        };
-
-        ////////////////////////////////////////////////////////////
-        // boolean_testable
-
-        template<typename T>
-        concept boolean_testable_impl =
-            std::convertible_to<T, bool>;
-
-        template<typename T>
-        concept boolean_testable =
-            boolean_testable_impl<T> &&
-            requires(T&& value) {
-                { not std::forward<T>(value) } -> boolean_testable_impl;
-            };
-
-        ////////////////////////////////////////////////////////////
         // weakly_equality_comparable_with
 
         template<typename T, typename U>
@@ -126,34 +91,6 @@ namespace cppsort::mstd
                 { u == t } -> boolean_testable;
                 { u != t } -> boolean_testable;
             };
-
-        ////////////////////////////////////////////////////////////
-        // integer_like
-
-#ifdef _MSC_VER
-        template<typename T>
-        concept integer_like =
-            std::_Integer_like<T>;
-
-        template<typename T>
-        concept signed_integer_like =
-            std::_Signed_integer_like<T>;
-#else
-        template<typename T>
-        concept integer_like =
-            integral<T> &&
-            not std::is_same_v<std::remove_cv_t<T>, bool>;
-
-        template<typename T>
-        concept signed_integer_like =
-            signed_integral<T> &&
-            not std::is_same_v<std::remove_cv_t<T>, bool>;
-#endif
-
-        template<typename T>
-        concept unsigned_integer_like =
-            integer_like<T> &&
-            not signed_integer_like<T>;
     }
 
     ////////////////////////////////////////////////////////////
