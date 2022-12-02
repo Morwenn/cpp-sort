@@ -18,13 +18,13 @@ TEST_CASE( "std_sorter tests", "[std_sorter]" )
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80);
 
-    SECTION( "sort with iterable" )
+    SECTION( "sort with range" )
     {
         cppsort::std_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with iterable and compare" )
+    SECTION( "sort with range and compare" )
     {
         cppsort::std_sort(vec, std::greater<>{});
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
@@ -53,13 +53,13 @@ TEST_CASE( "std_sorter tests with projections",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80);
 
-    SECTION( "sort with iterable" )
+    SECTION( "sort with range" )
     {
         cppsort::std_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
     }
 
-    SECTION( "sort with iterable and compare" )
+    SECTION( "sort with range and compare" )
     {
         cppsort::std_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );

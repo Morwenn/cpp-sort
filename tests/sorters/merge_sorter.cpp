@@ -19,13 +19,13 @@ TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80, 0);
 
-    SECTION( "sort with random-access iterable" )
+    SECTION( "sort with random-access range" )
     {
         cppsort::merge_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with random-access iterable and compare" )
+    SECTION( "sort with random-access range and compare" )
     {
         cppsort::merge_sort(vec, std::greater<>{});
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );

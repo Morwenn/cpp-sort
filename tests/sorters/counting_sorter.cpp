@@ -19,7 +19,7 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
     // Size of the collections to sort
     auto size = 100'000;
 
-    SECTION( "sort with int iterable" )
+    SECTION( "sort with range of int" )
     {
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
@@ -27,7 +27,7 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "reverse sort with int iterable" )
+    SECTION( "reverse sort with a range of int" )
     {
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
@@ -43,7 +43,7 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
         CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
-    SECTION( "reverse sort with long long iterable" )
+    SECTION( "reverse sort with a range of long long" )
     {
         std::vector<long long> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, 1568);

@@ -14,7 +14,7 @@ constexpr auto sort = indirect_adapter(quick_sort);
 ```
 
 Most of the library's *sorter adapters* can store the passed *sorters* in their internals, allowing them to use adapt *stateful sorters*. Unless explicitly mentioned otherwise in an adapter's description, it is safe to assume that the *sorter adapters* in the library have the following properties:
-* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible. 
+* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible.
 * If the *sorter adapter* adapts a single *sorter*, then it has a member function called `get()` which returns a reference to the internal *sorter* whose reference and `const` qualifications match those of the *sorter adapter* instance. If the *sorter adapter* is empty and default-constructible, then a default-constructed instance of the type of the *original sorter* is returned instead.
 * If the *sorter adapter* is empty and default-constructible, then it can be converted to any function pointer whose signature matches that of its `operator()`.
 
@@ -51,9 +51,9 @@ An interesting property of dedicated sorting algorithms is that one can craft an
 #include <cpp-sort/adapters/counting_adapter.h>
 ```
 
-Unlike usual sorters, `counting_adapter::operator()` does not return `void` but the number of comparisons that have been needed to sort the iterable. It will adapt the comparison function so that it can count the number of comparisons made by any other sorter with a reasonable implementation. The actual number of comparisons needed to sort an iterable can be used as a heuristic in hybrid sorts and may constitute interesting information nevertheless.
+`counting_adapter::operator()` returns the number of comparisons that have been needed by the *adapted sorter* to sort a collection. It adapts the comparison function so that it can count the number of comparisons made by any other sorter with a reasonable implementation. The actual number of comparisons needed to sort a collection can be used as a heuristic in hybrid sorts and may constitute interesting information nevertheless.
 
-The actual counter type can be configured with the template parameter `CountType`, which defaults to `std::size_t` if not specified.
+The counter type can be configured with the template parameter `CountType`, which defaults to `std::size_t`.
 
 ```cpp
 template<
@@ -182,7 +182,7 @@ template<typename Sorter>
 struct self_sort_adapter;
 ```
 
-Since it is impossible to guarantee the stability of the `sort` method of a given iterable, the *resulting sorter*'s `is_always_stable` is `std::false_type`. However, [`is_stable`][is-stable] will be `std::true_type` if a container's `stable_sort` is called or if a call to the *adapted sorter* is stable. A special case considers valid calls to `std::list::sort` and `std::forward_list::sort` to be stable.
+Since it is impossible to guarantee the stability of the `sort` method of a given container, the *resulting sorter*'s `is_always_stable` is `std::false_type`. However, [`is_stable`][is-stable] is `std::true_type` when a container's `stable_sort` is called or if a call to the *adapted sorter* is stable. It is special-cased to consider calls to `std::list::sort` and `std::forward_list::sort` to be stable.
 
 ### `small_array_adapter`
 
@@ -301,7 +301,7 @@ This little dance sometimes allows to reduce the nesting of function calls and t
 
 While the library already provides a `verge_sorter` built on top of `pdq_sorter`, the true power of vergesort is to add a fast *Runs*-adaptive layer on top of any sorting algorithm to make it handle data with big runs better while not being noticeably slower for the distributions that the vergesort layer can't handle. [This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
 
-`verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It only accepts random-access iterables.
+`verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional ranges.
 
 ```cpp
 template<typename Sorter>

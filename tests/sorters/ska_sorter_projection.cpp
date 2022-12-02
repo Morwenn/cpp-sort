@@ -16,7 +16,7 @@
 TEST_CASE( "ska_sorter tests with projections",
            "[ska_sorter][projection]" )
 {
-    SECTION( "sort with int iterable" )
+    SECTION( "sort with range of int" )
     {
         std::vector<std::pair<int, float>> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {
@@ -40,7 +40,7 @@ TEST_CASE( "ska_sorter tests with projections",
                                   std::less<>{}, &std::pair<unsigned, float>::second) );
     }
 
-    SECTION( "sort with float iterable" )
+    SECTION( "sort with range of float" )
     {
         std::vector<std::pair<int, float>> vec;
         for (int i = 0 ; i < 100'000 ; ++i) {

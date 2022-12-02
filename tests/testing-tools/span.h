@@ -27,10 +27,10 @@ class span
 {
     public:
 
-        template<typename Iterable>
-        explicit span(Iterable& iterable):
-            _begin(std::begin(iterable)),
-            _end(std::end(iterable))
+        template<typename Range>
+        explicit span(Range& range):
+            _begin(std::begin(range)),
+            _end(std::end(range))
         {}
 
         auto begin() const { return _begin; }
@@ -41,11 +41,11 @@ class span
         Iterator _begin, _end;
 };
 
-template<typename Iterable>
-auto make_span(Iterable& iterable)
-    -> span<decltype(std::begin(iterable))>
+template<typename Range>
+auto make_span(Range& range)
+    -> span<decltype(std::begin(range))>
 {
-    return span<decltype(std::begin(iterable))>(iterable);
+    return span<decltype(std::begin(range))>(range);
 }
 
 #endif // CPPSORT_TESTSUITE_SPAN_H_

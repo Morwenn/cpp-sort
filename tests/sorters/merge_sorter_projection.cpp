@@ -24,13 +24,13 @@ TEST_CASE( "merge_sorter tests with projections",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80);
 
-    SECTION( "sort with random-access iterable" )
+    SECTION( "sort with random-access range" )
     {
         cppsort::merge_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
     }
 
-    SECTION( "sort with random-access iterable and compare" )
+    SECTION( "sort with random-access range and compare" )
     {
         cppsort::merge_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );

@@ -23,7 +23,7 @@ TEST_CASE( "default sorter function pointer tests",
     // Projection to sort in descending order
     auto projection = [](int n) { return -n; };
 
-    SECTION( "sort with random-access iterable" )
+    SECTION( "sort with random-access range" )
     {
         constexpr void(*sorter)(std::vector<int>&) = old_default_sorter();
 
@@ -31,7 +31,7 @@ TEST_CASE( "default sorter function pointer tests",
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with random-access iterable and compare" )
+    SECTION( "sort with random-access range and compare" )
     {
         constexpr void(*sorter)(std::vector<int>&, std::greater<>) = old_default_sorter();
 
@@ -39,7 +39,7 @@ TEST_CASE( "default sorter function pointer tests",
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
-    SECTION( "sort with random-access iterable and projection" )
+    SECTION( "sort with random-access range and projection" )
     {
         constexpr void(*sorter)(std::vector<int>&, decltype(projection)) = old_default_sorter();
 
@@ -47,7 +47,7 @@ TEST_CASE( "default sorter function pointer tests",
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
-    SECTION( "sort with random-access iterable, compare and projection" )
+    SECTION( "sort with random-access range, compare and projection" )
     {
         constexpr void(*sorter)(std::vector<int>&,
                                 std::greater<>,
@@ -198,7 +198,7 @@ TEST_CASE( "default sorter function pointer tests",
         CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
-    SECTION( "sort with self-sortable iterable" )
+    SECTION( "sort with self-sortable collection" )
     {
         constexpr void(*sorter)(std::list<int>&) = old_default_sorter();
 
@@ -207,7 +207,7 @@ TEST_CASE( "default sorter function pointer tests",
         CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
-    SECTION( "sort with self-sortable iterable and compare" )
+    SECTION( "sort with self-sortable collection and compare" )
     {
         constexpr void(*sorter)(std::forward_list<int>&, std::greater<>) = old_default_sorter();
 

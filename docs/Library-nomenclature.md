@@ -36,7 +36,7 @@
 
 * *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however C++20 ranges solved the problem by introducing a function named [`iter_move`][std-ranges-iter-move] and making it as well as [`iter_swap`][std-ranges-iter-swap] customization points. The library uses a slightly different iterator model, and as a result exposes the functions `mstd::iter_move` and `mstd::iter_swap` in [modified standard library components][modified-std].
 
-* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions.
+* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle ranges or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions.
 
         cppsort::pdq_sorter{}(std::begin(collection), std::end(collection),
                               std::greater<>{}, &wrapper::value);

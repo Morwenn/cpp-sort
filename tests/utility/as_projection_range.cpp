@@ -39,7 +39,7 @@ namespace
     enum struct call
     {
         iterator,
-        iterable
+        range
     };
 
     struct comparison_sorter_impl
@@ -57,15 +57,15 @@ namespace
         }
 
         template<
-            typename Iterable,
+            typename Range,
             typename Compare = std::less<>
         >
-            requires cppsort::is_projection_v<std::identity, Iterable, Compare>
-        auto operator()(Iterable& iterable, Compare compare={}) const
+            requires cppsort::is_projection_v<std::identity, Range, Compare>
+        auto operator()(Range& range, Compare compare={}) const
             -> call
         {
-            cppsort::selection_sort(iterable, compare);
-            return call::iterable;
+            cppsort::selection_sort(range, compare);
+            return call::range;
         }
     };
 
@@ -85,16 +85,16 @@ namespace
         }
 
         template<
-            typename Iterable,
+            typename Range,
             typename Projection = std::identity
         >
-            requires cppsort::is_projection_v<Projection, Iterable>
-        auto operator()(Iterable& iterable, Projection projection={}) const
+            requires cppsort::is_projection_v<Projection, Range>
+        auto operator()(Range& range, Projection projection={}) const
             -> call
         {
             // Use as_projection to make an actual projection-only sorter
-            cppsort::selection_sort(iterable, cppsort::utility::as_projection(projection));
-            return call::iterable;
+            cppsort::selection_sort(range, cppsort::utility::as_projection(projection));
+            return call::range;
         }
     };
 
@@ -107,7 +107,7 @@ namespace
     {};
 }
 
-TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed comparison/projection",
+TEST_CASE( "sorter_facade with sorters overloaded for ranges and mixed comparison/projection",
            "[sorter_facade][comparison][projection][as_projection]" )
 {
     // Test the intersection between mixed comparison/projection functions,
@@ -126,7 +126,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
     SECTION( "comparison_sorter" )
     {
         auto res1 = comp_sort(vec, func);
-        CHECK( res1 == call::iterable );
+        CHECK( res1 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
 
         vec = collection;
@@ -136,7 +136,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
         vec = collection;
         auto res3 = comp_sort(vec, cppsort::utility::as_comparison(func));
-        CHECK( res3 == call::iterable );
+        CHECK( res3 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
 
         vec = collection;
@@ -146,7 +146,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
         vec = collection;
         auto res5 = comp_sort(vec, cppsort::utility::as_projection(func));
-        CHECK( res5 == call::iterable );
+        CHECK( res5 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         vec = collection;
@@ -156,7 +156,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
         vec = collection;
         auto res7 = comp_sort(vec, func, cppsort::utility::as_projection(func));
-        CHECK( res7 == call::iterable );
+        CHECK( res7 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
 
         vec = collection;
@@ -168,7 +168,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
         vec = collection;
         auto res9 = comp_sort(vec, cppsort::utility::as_comparison(func),
                               cppsort::utility::as_projection(func));
-        CHECK( res9 == call::iterable );
+        CHECK( res9 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
 
         vec = collection;
@@ -182,7 +182,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
     SECTION( "projection_sorter" )
     {
         auto res1 = proj_sort(vec, cppsort::utility::as_projection(func));
-        CHECK( res1 == call::iterable );
+        CHECK( res1 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         vec = collection;
@@ -192,7 +192,7 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
 
         vec = collection;
         auto res3 = proj_sort(vec, func);
-        CHECK( res3 == call::iterable );
+        CHECK( res3 == call::range );
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         vec = collection;

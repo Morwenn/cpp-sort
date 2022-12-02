@@ -20,7 +20,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
 {
     auto distribution = dist::shuffled{};
 
-    SECTION( "sort with int iterable" )
+    SECTION( "sort with range of int" )
     {
         std::vector<int> vec;
         distribution(std::back_inserter(vec), 100'000);
@@ -37,7 +37,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     }
 
 #ifdef __SIZEOF_INT128__
-    SECTION( "sort with int128 iterable" )
+    SECTION( "sort with range of int128" )
     {
         std::vector<__int128_t> vec;
         distribution(std::back_inserter(vec), 100'000, -10'000);
@@ -45,7 +45,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with unsigned int128 iterable" )
+    SECTION( "sort with range of unsigned int128" )
     {
         std::vector<__uint128_t> vec;
         distribution(std::back_inserter(vec), 100'000);
@@ -54,7 +54,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     }
 #endif
 
-    SECTION( "sort with float iterable" )
+    SECTION( "sort with range of float" )
     {
         std::vector<float> vec;
         distribution.call<float>(std::back_inserter(vec), 100'000);

@@ -10,7 +10,7 @@ All of the graphs on this page have been generated with slightly modified versio
 
 *The benchmarks were run on Windows 10 with 64-bit MinGW-w64 g++10.1, with the flags -O3 -march=native -std=c++2a.*
 
-# Random-access iterables
+# Random-access collections
 
 Most sorting algorithms are designed to work with random-access iterators, so this section is deemed to be bigger than the other ones. Note that many of the algorithms work better with contiguous iterators; the results for `std::vector` and `std::deque` are probably different.
 
@@ -66,12 +66,12 @@ I decided to include a dedicated category for slow O(n log n) sorts, because I f
 ![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/Viu13nj.png)
 
 The analysis is pretty simple here:
-* Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting. 
+* Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting.
 * `poplar_sort` is slower for `std::vector` than for `std::deque`, which makes me suspect a codegen issue somewhere.
 * As a result `smooth_sort` and `poplar_sort` beat each other depending on the type of the collection to sort.
 * Slabsort has an unusual graph: it seems that even for shuffled data it might end up beating `heap_sort` when the collection grows big enough.
 
-# Bidirectional iterables
+# Bidirectional collections
 
 Sorting algorithms that handle non-random-access iterators are often second class citizens, but **cpp-sort** still provides a few ones. The most interesting part is that we can see how generic sorting algorithms perform compared to algorithms such as [`std::list::sort`][std-list-sort] which are aware of the data structure they are sorting.
 
@@ -87,14 +87,14 @@ For elements as small as `double`, there are two clear winners here: `drop_merge
 * `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.
 * `mel_sort` is bad.
 
-# Forward iterables
+# Forward collections
 
 Even fewer sorters can handle forward iterators. `out_of_place_adapter(pdq_sort)` was not included in the patterns benchmark, because it adapts to patterns the same way `pdq_sort` does.
 
 ![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/SMTKhqG.png)
 ![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/XLndRbU.png)
 
-The results are roughly the same than with bidirectional iterables:
+The results are roughly the same than with bidirectional collections:
 * Sorting out-of-place is faster than anything else.
 * [`std::forward_list::sort`][std-forward-list-sort] doesn't scale well unless moves are expensive.
 * `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.

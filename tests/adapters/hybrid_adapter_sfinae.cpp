@@ -102,7 +102,7 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
         CHECK( res3 == sorter_type::generic );
     }
 
-    SECTION( "with iterables" )
+    SECTION( "with ranges" )
     {
         sorter_type res1 = sorter(vec1);
         CHECK( res1 == sorter_type::integer );
@@ -159,7 +159,7 @@ TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
         CHECK( res3 == sorter_type::generic );
     }
 
-    SECTION( "with iterables" )
+    SECTION( "with ranges" )
     {
         sorter_type res1 = sorter(vec1);
         CHECK( res1 == sorter_type::integer );

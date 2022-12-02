@@ -6,23 +6,23 @@
 
 // Simple statistics functions
 
-template<typename Iterable>
-auto average(const Iterable& values)
+template<typename Range>
+auto average(const Range& values)
     -> double
 {
     double avg = 0.0;
-    for (auto value : values) {
+    for (auto value: values) {
         avg += value / double(values.size());
     }
     return avg;
 }
 
-template<typename Iterable>
-auto standard_deviation(const Iterable& values, double avg)
+template<typename Range>
+auto standard_deviation(const Range& values, double avg)
     -> double
 {
     double stddev = 0.0;
-    for (auto value : values) {
+    for (auto value: values) {
         stddev += (value - avg) * (value - avg) / double(values.size());
     }
     return std::sqrt(stddev);

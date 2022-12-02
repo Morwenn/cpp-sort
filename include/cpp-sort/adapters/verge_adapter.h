@@ -45,6 +45,14 @@ namespace cppsort
             auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
                 -> mstd::iterator_t<Range>
             {
+                static_assert(
+                    std::is_base_of_v<
+                        iterator_category,
+                        iterator_category_t<mstd::iterator_t<Range>>
+                    >,
+                    "split_adapter requires a stronger iterator category"
+                );
+
                 auto first = mstd::begin(range);
                 auto last = mstd::end(range);
                 auto last_it = mstd::next(first, std::move(last));
@@ -66,6 +74,14 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> Iterator
             {
+                static_assert(
+                    std::is_base_of_v<
+                        iterator_category,
+                        iterator_category_t<Iterator>
+                    >,
+                    "verge_adapter requires a stronger iterator category"
+                );
+
                 auto dist = mstd::distance(first, last);
                 auto last_it = mstd::next(first, std::move(last));
                 verge::sort<Stable>(std::move(first), last_it, dist,

@@ -25,13 +25,13 @@ TEST_CASE( "default sorter tests with projections",
     distribution(std::back_inserter(vec), 80);
     old_default_sorter do_sort;
 
-    SECTION( "sort with random-access iterable" )
+    SECTION( "sort with random-access range" )
     {
         do_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
     }
 
-    SECTION( "sort with random-access iterable and compare" )
+    SECTION( "sort with random-access range and compare" )
     {
         do_sort(vec, std::greater<>{}, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );

@@ -230,7 +230,7 @@ add_executable(main-tests
     utility/apply_permutation.cpp
     utility/as_comparison.cpp
     utility/as_projection.cpp
-    utility/as_projection_iterable.cpp
+    utility/as_projection_range.cpp
     utility/branchless_traits.cpp
     utility/buffer.cpp
     utility/chainable_projections.cpp
