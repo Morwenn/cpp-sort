@@ -1,4 +1,4 @@
-**cpp-sort** deals with many concepts related to sorting and algorithms in general. This section tries to briefly explain the many things that you may encounter while using it, in alphabetical order:
+**cpp-sort** deals with many concepts related to sorting and algorithms in general. This section tries to briefly explain the many things that you may encounter while using it. When a term or an expression appears in *italics* in the rest of the documentation, it is generally a reference to one of the following entries:
 
 * *Buffered sorter*: some sorting algorithms optionally use a buffer where they store elements to improve the performance of the sort. Some of them, such as block sort, will manage to sort the collection regardless of the actual size of the buffer, which will only have on influence on the performance of the sort. A buffered sorter is a sorter that takes a *buffer provider* template parameter that tells how the temporary buffer should be allocated, and uses this provider to create the buffer. A *buffer provider* is a class that has a nested `buffer` class which implements a set of basic operations (construction with a size, `begin`, `end` and `size`). Implementing a buffer provider is a bit tricky, but using them should be easy enough:
 
@@ -13,6 +13,8 @@
     Some algorithms don't accept such an additional parameter. It may be because they implement a non-comparison sort instead, a sorting algorithm that uses other properties of the elements to perform the sort rather than a comparison function (for example a [radix sort][radix-sort]).
 
     The library provides a set of additional [comparators][comparators] generally corresponding to common ways to compare common types.
+
+* *Equivalent elements*: this notion appears in the context of comparing elements with a predicate. Two elements `a` and `b` are equivalent with regard to a predicate `comp` when `not comp(a, b) && not comp(b, a)`. Predicates in comparison sorts only require to model a [weak order][weak-order], so elements satifying the previous expressions do not have to be strictly equal - we call them *equivalent elements* in the rest of the documentation.
 
 * *Fixed-size sorter*: [fixed-size sorters][fixed-size-sorters] are a special breed of sorters designed to sort a fixed number of values. While they try their best to be full-fledge sorters, they are definitely not full-fledge sorters and probably don't blend as well as one would like into the library. Their main advantage is that they can be more performant than regular sorters in some specific scenarios.
 
@@ -43,7 +45,7 @@
 
 * *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section in the documentation.
 
-* *Stability*: a sorting algorithm is *stable* if it preserves the relative order of equivalent elements. While it does not matter when the equivalence relationship is also an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`][is-always-stable] sorter trait.
+* *Stability*: a sorting algorithm is *stable* if it preserves the relative order of *equivalent elements*. While it does not matter when the equivalence relationship also happens to be an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`][is-always-stable] sorter trait.
 
         using stability = cppsort::is_stable<cppsort::tim_sorter>;
 
@@ -81,3 +83,4 @@
   [std-ranges]: https://en.cppreference.com/w/cpp/algorithm/ranges
   [stlab]: https://stlab.adobe.com/
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
+  [weak-order]: https://en.wikipedia.org/wiki/Weak_ordering

@@ -18,7 +18,7 @@ constexpr auto sort = indirect_adapter(quick_sort);
 ```
 
 Most of the library's *sorter adapters* can store the passed *sorters* in their internals, allowing them to use adapt *stateful sorters*. Unless explicitly mentioned otherwise in an adapter's description, it is safe to assume that the *sorter adapters* in the library have the following properties:
-* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible. 
+* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible.
 * If the *sorter adapter* adapts a single *sorter*, then it has a member function called `get()` which returns a reference to the internal *sorter* whose reference and `const` qualifications match those of the *sorter adapter* instance. If the *sorter adapter* is empty and default-constructible, then a default-constructed instance of the type of the *original sorter* is returned instead.
 * If the *sorter adapter* is empty and default-constructible, then it can be converted to any function pointer whose signature matches that of its `operator()`.
 
@@ -278,7 +278,7 @@ template<typename Sorter>
 struct make_stable;
 ```
 
-`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements compare equivalent, it compares the starting positions of the elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
+`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements are *equivalent*, it compares the starting positions of the elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
 
 ```cpp
 template<typename Sorter>

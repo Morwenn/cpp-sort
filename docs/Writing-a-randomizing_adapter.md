@@ -29,9 +29,9 @@ An arguably more useful use for a `randomizing_adapter` would be to avoid becomi
 > all observable behaviors of your system
 > will be depended on by somebody.
 
-Danila Kutenin rightfully mentions that [changing `std::sort` is harder than meets the eye][changing-std-sort], the main reason being that pieces of code accidentally rely on the observable yet not guaranteed properties of [`std::sort`][std-sort], namely the order of elements that compare equivalent. The article gives [golden tests][golden-tests] as an example of things that might break when changing a sorting algorithm.
+Danila Kutenin rightfully mentions that [changing `std::sort` is harder than meets the eye][changing-std-sort], the main reason being that pieces of code accidentally rely on the observable yet not guaranteed properties of [`std::sort`][std-sort], namely the order of *equivalent elements*. The article gives [golden tests][golden-tests] as an example of things that might break when changing a sorting algorithm.
 
-In order to make it less likely for users to rely on the order of elements that compare equivalent, the author proposes to shuffle the collection prior to sorting it debug mode. This makes the order of equivalent elements non deterministic, which in turns can purposefuly break code accidentally relying on this order.
+In order to make it less likely for users to rely on the order of *equivalent elements*, the author proposes to shuffle the collection prior to sorting it debug mode. This makes the order of *equivalent elements* non deterministic, which in turns can purposefuly break code accidentally relying on this order.
 
 It might seem at first that **cpp-sort**'s algorithms are not vulnerable to such changes since the name of the algorithm is part of sorter's name, but the truth is that their implementation still changes, and a user of the library might still want to swap a sorter for another one and suffer the same fate.
 
@@ -105,7 +105,7 @@ struct randomizing_adapter:
     constexpr explicit randomizing_adapter(Sorter sorter):
         cppsort::utility::adapter_storage<Sorter>(std::move(sorter))
     {}
-    
+
     template<typename RandomAccessIterator, typename... Args>
     auto operator()(RandomAccessIterator begin, RandomAccessIterator end, Args&&... args) const
         -> decltype(this->get()(begin, end, std::forward<Args>(args)...))
