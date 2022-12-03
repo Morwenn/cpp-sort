@@ -99,27 +99,11 @@ namespace detail
                 return *this;
             }
 
-            auto operator++(int)
-                -> group_iterator
-            {
-                auto tmp = *this;
-                operator++();
-                return tmp;
-            }
-
             auto operator--()
                 -> group_iterator&
             {
                 std::advance(_it, -_size);
                 return *this;
-            }
-
-            auto operator--(int)
-                -> group_iterator
-            {
-                auto tmp = *this;
-                operator--();
-                return tmp;
             }
 
             auto operator+=(difference_type increment)

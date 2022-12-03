@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_
@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <type_traits>
+#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "attributes.h"
@@ -216,27 +216,11 @@ namespace detail
                 return *this;
             }
 
-            auto operator++(int)
-                -> associate_iterator
-            {
-                auto tmp = *this;
-                operator++();
-                return tmp;
-            }
-
             auto operator--()
                 -> associate_iterator&
             {
                 --_it;
                 return *this;
-            }
-
-            auto operator--(int)
-                -> associate_iterator
-            {
-                auto tmp = *this;
-                operator--();
-                return tmp;
             }
 
             auto operator+=(difference_type increment)

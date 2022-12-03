@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <iterator>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/config.h"
@@ -33,7 +34,6 @@ namespace utility
                 auto tmp = iter_move(first + current_idx);
                 do {
                     auto next_idx = indices_first[current_idx];
-                    using std::iter_swap;
                     first[current_idx] = iter_move(first + next_idx);
                     indices_first[current_idx] = current_idx;
                     current_idx = next_idx;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SCHWARTZ_SMALL_ARRAY_H_
@@ -32,11 +32,7 @@ namespace cppsort
             detail::all(std::is_empty<FixedSizeSorter<Indices>>::value...)
         >
     {
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args
-        >
+        template<typename T, std::size_t N, typename... Args>
         auto operator()(std::array<T, N>& array, Args&&... args) const
             -> detail::enable_if_t<
                 detail::is_in_pack<N, Indices...>,
@@ -47,12 +43,7 @@ namespace cppsort
             return sorter{}(array, std::forward<Args>(args)...);
         }
 
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args,
-            typename = detail::enable_if_t<detail::is_in_pack<N, Indices...>>
-        >
+        template<typename T, std::size_t N, typename... Args>
         auto operator()(T (&array)[N], Args&&... args) const
             -> detail::enable_if_t<
                 detail::is_in_pack<N, Indices...>,
@@ -72,11 +63,7 @@ namespace cppsort
             true // TODO: not sure how to specify that one
         >
     {
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args
-        >
+        template<typename T, std::size_t N, typename... Args>
         auto operator()(std::array<T, N>& array, Args&&... args) const
             -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {
@@ -84,11 +71,7 @@ namespace cppsort
             return sorter{}(array, std::forward<Args>(args)...);
         }
 
-        template<
-            typename T,
-            std::size_t N,
-            typename... Args
-        >
+        template<typename T, std::size_t N, typename... Args>
         auto operator()(T (&array)[N], Args&&... args) const
             -> decltype(schwartz_adapter<FixedSizeSorter<N>>{}(array, std::forward<Args>(args)...))
         {

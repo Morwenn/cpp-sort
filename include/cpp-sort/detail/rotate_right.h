@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ROTATE_RIGHT_H_
@@ -40,7 +40,7 @@ namespace detail
     struct rotate_right_n<0u>
     {
         template<typename RandomAccessIterator>
-        auto operator()(RandomAccessIterator) const
+        auto operator()(RandomAccessIterator) const noexcept
             -> void
         {}
     };

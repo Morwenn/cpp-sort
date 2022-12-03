@@ -23,6 +23,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "iterator_traits.h"
 #include "partition.h"
 #include "type_traits.h"
 
