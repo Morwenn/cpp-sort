@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -45,12 +45,6 @@ namespace detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
         std::pair<ForwardIterator, ForwardIterator> result{begin, begin};
-
-        if (comp(proj(*begin), proj(*result.first))) {
-            result.first = begin;
-        } else {
-            result.second = begin;
-        }
 
         while (++begin != end) {
             ForwardIterator tmp = begin;
