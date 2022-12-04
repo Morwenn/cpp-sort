@@ -1,18 +1,18 @@
-**cpp-sort** uses function objects called *sorters* instead of regular function templates in order to implement sorting algorithms. The library provides two categories of sorters: generic sorters that will sort a collection with any given comparison function, and type-specific sorters which will be optimized to sort collections of a given type, and generally don't allow to use custom comparison functions due to the way they work. Every comparison sorter as well as some type-specific sorters may also take an additional projection parameter, allowing the algorithm to "view" the data to sort through an on-the-fly transformation.
+**cpp-sort** uses function objects called *sorters* instead of regular function templates in order to implement sorting algorithms. The library provides two categories of sorters: comparison sorters, that sort a collection with using a weak order comparator, and type-specific sorters that use other strategies to sort collections, generally restricting their domain to specific types. Every comparison sorter as well as some type-specific sorters may also take an additional projection parameter, allowing the algorithm to "view" the data to sort through an on-the-fly transformation. (see *unified sorting interface*)
 
-While these function objects offer little more than regular sorting functions by themselves, they can be used together with *[sorter adapters][sorter-adapters]* to craft more elaborate sorters effortlessly. Every sorter is available in its own file. However, all the available sorters can be included at once with the following line:
+While these function objects offer little more than regular sorting functions by themselves, they can be used together with *[sorter adapters][sorter-adapters]* to craft more elaborate sorters. Every sorter is available in its own file. However, all the available sorters can be included at once with the following line:
 
 ```cpp
 #include <cpp-sort/sorters.h>
 ```
 
-Note that for every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`][default-sorter] since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`][sorting-functions] when they are called without an explicit sorter.
+For every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`][default-sorter] since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`][sorting-functions] when they are called without an explicit sorter.
 
 If you want to read more about sorters and/or write your own one, then you should have a look at [the dedicated page][writing-a-sorter] or at [a specific example][writing-a-bubble-sorter].
 
 ## Comparison sorters
 
-The following sorters are available and will work with any type for which `std::less` works and should accept any well-formed comparison function:
+The following sorters are available and should work with any type for which `std::less` works and should accept any weak order comparison function:
 
 ### `adaptive_shivers_sorter`
 

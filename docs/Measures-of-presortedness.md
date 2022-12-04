@@ -37,7 +37,7 @@ The measures of presortedness in bold in the graph are available in **cpp-sort**
 
 ## Measures of presortedness in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
+In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Measures of presortedness follow the *unified sorting interface*, allowing a certain degree a freedom in the parameters they accept:
 
 ```cpp
 using namespace cppsort;
@@ -47,7 +47,7 @@ auto c = probe::ham(li, std::greater<>{});
 auto d = probe::runs(integers, std::negate<>{});
 ```
 
-Note however that these algorithms can be expensive. Using them before an actual sorting algorithm has no interest at all; they are meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
+Note however that these algorithms can be expensive. Using them before an actual sorting algorithm little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
 Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 

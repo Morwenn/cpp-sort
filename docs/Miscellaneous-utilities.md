@@ -304,7 +304,7 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/sorted_indices.h>
 ```
 
-`utility::sorted_indices` is a function object that takes a sorter and returns a new function object. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]). The resulting indices can be passed [`apply_permutation`][apply-permutation] to sort the original collection.
+`utility::sorted_indices` is a function object that takes a sorter and returns a new function object that follows the *unified sorting interface*. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]). The resulting indices can be passed [`apply_permutation`][apply-permutation] to sort the original collection.
 
 ```cpp
 std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
@@ -313,9 +313,7 @@ auto indices = get_sorted_indices_for(vec);
 // indices == [6, 3, 2, 9, 1, 8, 0, 5, 4, 7]
 ```
 
-Concretely `sorted_indices` is designed like a [sorter adapter][sorter-adapters] and therefore supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade]. The main reason it does not sit with sorter adapters is that the returned function object is not a sorter per se since it doesn't sort the passed collection directly.
-
-When the collection contains several *equivalent elements*, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of *equivalent elements* appear in a stable order in the result.
+When the collection contains *equivalent elements*, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of *equivalent elements* appear in a stable order in the result.
 
 *New in version 1.14.0*
 
@@ -325,7 +323,7 @@ When the collection contains several *equivalent elements*, the order of their i
 #include <cpp-sort/utility/sorted_iterators.h>
 ```
 
-`utility::sorted_iterators` is a function object that takes a sorter and returns a new function object. This new function object accepts a collection and returns an `std::vector` containing iterators to the passed collection in a sorted order. It is designed like a [sorter adapter][sorter-adapters] and as such supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade].
+`utility::sorted_iterators` is a function object that takes a sorter and returns a new function object that follows the *unified sorting interface*. This new function object accepts a collection and returns an `std::vector` containing iterators to the passed collection in a sorted order.
 
 ```cpp
 std::list<int> li = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
@@ -340,7 +338,7 @@ for (auto it: iterators) {
 
 It can be thought of as a kind of sorted view of the passed collection - as long as said collection does not change. It can be useful when the order of the original collection must be preserved, but operations have to be performed on the sorted collection.
 
-When the collection contains several *equivalent elements*, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to *equivalent elements* appear in a stable order in the result.
+When the collection contains *equivalent elements*, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to *equivalent elements* appear in a stable order in the result.
 
 *New in version 1.14.0*
 
@@ -429,7 +427,6 @@ You can read more about this instantiation pattern in [this article][eric-nieble
   [pdq-sorter]: Sorters.md#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3
   [sorter-adapters]: Sorter-adapters.md
-  [sorter-facade]: Sorter-facade.md
   [sorters]: Sorters.md
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
