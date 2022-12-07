@@ -2,7 +2,9 @@
 
 Welcome to the **cpp-sort 1.13.2** documentation!
 
-You probably read the introduction in the README, so I won't repeat it here. This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library and even some detailed tutorials if you ever want to write your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
+This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library, as well as a few tutorials about writing your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
+
+For the simpler use cases, a good place to start is the [quickstart page][quickstart].
 
 If you find a library feature which isn't documented, don't hesitate to open an issue. It generally means that we either need to hide it in a subnamespace or to let it available and document it.
 
@@ -89,4 +91,5 @@ Hope you have fun!
 
   [benchmarks]: Benchmarks.md
   [original-research]: Original-research.md
+  [quickstart]: Quickstart.md
   [swappable]: https://en.cppreference.com/w/cpp/concepts/swappable
