@@ -239,6 +239,8 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 #include <cpp-sort/utility/iter_move.h>
 ```
 
+***WARNING:** this header is removed in version 2.0.0, use `mstd::iter_move` and `mstd::iter_swap` instead.*
+
 The functions `iter_move` and `iter_swap` are equivalent to the same functions as proposed by [P0022][p0022]: utility functions intended to be used with ADL to handle proxy iterators among other things. An algorithm can use them instead of `std::move` and possibly ADL-found `swap` to handle tricky classes such as `std::vector<bool>`.
 
 The default implementation of `iter_move` simply move-returns the dereferenced iterator. `iter_swap` is a bit more tricky: if the iterators to be swapped have a custom `iter_move`, then `iter_swap` will use it, otherwise it will call an ADL-found `swap` or `std::swap` on the dereferenced iterators.
@@ -293,6 +295,8 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 ```cpp
 #include <cpp-sort/utility/size.h>
 ```
+
+***WARNING:** this header is removed in version 2.0.0, use `mstd::distance` instead.*
 
 `size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
 
