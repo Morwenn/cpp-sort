@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -69,12 +69,12 @@ auto time_it(Sorter sorter, DistributionFunction distribution)
         total_end = clock_type::now();
     }
 
-    // Return the average number of cycles it took to sort the arrays
-    std::uint64_t avg = 0;
+    // Return the average number of cycles it took to sort an array
+    std::uint64_t total = 0;
     for (auto value: cycles) {
-        avg += value;
+        total += value;
     }
-    return avg / double(cycles.size());
+    return total / double(cycles.size());
 }
 
 template<
@@ -109,9 +109,9 @@ auto time_distribution(std::index_sequence<Ind...>)
     // Output the results to their respective files
     std::ofstream output(Distribution::output);
     for (auto&& sort_result: results) {
-        output << std::get<0>(sort_result) << ' ';
+        output << std::get<0>(sort_result) << ',';
         for (auto&& nb_cycles: std::get<1>(sort_result)) {
-            output << nb_cycles << ' ';
+            output << nb_cycles << ',';
         }
         output << '\n';
     }
@@ -138,7 +138,7 @@ int main()
 {
     std::cout << "SEED: " << seed << '\n';
 
-    time_distributions<int, 13u,
+    time_distributions<int, 30u,
         dist::shuffled,
         dist::all_equal,
         dist::ascending,
