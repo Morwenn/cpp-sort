@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Morwenn
+ * Copyright (c) 2020-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cassert>
@@ -17,7 +17,6 @@
 #include "../benchmarking-tools/distributions.h"
 #include "../benchmarking-tools/filesystem.h"
 #include "../benchmarking-tools/rdtsc.h"
-#include "../benchmarking-tools/statistics.h"
 
 using namespace std::chrono_literals;
 
@@ -34,14 +33,14 @@ using sort_f = void (*)(collection_t&);
 std::pair<std::string, sort_f> sorts[] = {
     { "drop_merge_sort",    cppsort::drop_merge_sort    },
     { "pdq_sort",           cppsort::pdq_sort           },
-    { "split_sort",         cppsort::split_sort         }
+    { "split_sort",         cppsort::split_sort         },
 };
 
 // Size of the collections to sort
 constexpr std::size_t size = 1'000'000;
 
 // Maximum time to let the benchmark run for a given size before giving up
-auto max_run_time = 3s;
+auto max_run_time = 5s;
 // Maximum number of benchmark runs per size
 std::size_t max_runs_per_size = 25;
 
@@ -68,10 +67,16 @@ int main(int argc, char* argv[])
     std::uint_fast32_t seed = std::time(nullptr);
     std::cout << "SEED: " << seed << '\n';
 
+    int sort_number = 0;
     for (auto& sort: sorts) {
         // Create a file to store the results
-        std::string output_filename = output_directory + '/' + safe_file_name(sort.first) + ".csv";
-        std::ofstream output_file(output_filename);
+        auto sort_number_str = std::to_string(sort_number);
+        auto output_filename =
+            std::string(3 - sort_number_str.size(), '0') +
+            std::move(sort_number_str) +
+            '-' + safe_file_name(sort.first) + ".csv";
+        std::string output_path = output_directory + '/' + output_filename;
+        std::ofstream output_file(output_path);
         output_file << sort.first << '\n';
         std::cout << sort.first << '\n';
 
@@ -79,7 +84,7 @@ int main(int argc, char* argv[])
         // sort the same collections when there is randomness
         distributions_prng.seed(seed);
 
-        for (int idx = 0 ; idx <= 100 ; ++idx) {
+        for (int idx = 0; idx <= 100; ++idx) {
             double factor = 0.01 * idx;
             auto distribution = dist::inversions(factor);
 
@@ -100,9 +105,18 @@ int main(int argc, char* argv[])
             }
 
             // Compute and display stats & numbers
-            double avg = average(cycles);
-            output_file << idx << ", " << avg << '\n';
-            std::cout << idx << ", " << avg << std::endl;
+            output_file << idx << ",";
+            std::cout << idx << ",";
+            auto it = cycles.begin();
+            output_file << *it;
+            std::cout << *it;
+            while (++it != cycles.end()) {
+                output_file << "," << *it;
+                std::cout << "," << *it;
+            }
+            output_file << '\n';
+            std::cout << std::endl;
         }
+        ++sort_number;
     }
 }
