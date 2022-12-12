@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020-2021 Morwenn
+# Copyright (c) 2020-2022 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
 import pathlib
+import sys
 
 import numpy
 from matplotlib import pyplot
@@ -15,7 +16,7 @@ def fetch_results(fresults):
     results.pop()
     return [float(elem) for elem in results]
 
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plot the results of the errorbar-plot benchmark.")
     parser.add_argument('root', help="directory with the result files to plot")
@@ -26,6 +27,7 @@ if __name__ == '__main__':
 
     root = pathlib.Path(args.root)
     result_files = list(root.glob('*.csv'))
+    result_files.sort()
     if len(result_files) == 0:
         print(f"There are no files to plot in {root}")
         sys.exit(1)
@@ -42,22 +44,27 @@ if __name__ == '__main__':
     colors = iter(palette)
 
     for result_file in result_files:
+        percent_inversions = []
+        averages = []
         with result_file.open() as fd:
             # Read the first line
             algo_name = fd.readline().strip()
             # Read the rest of the file
-            data = numpy.genfromtxt(fd, delimiter=',').transpose()
-            percent_inversions, avg = data
+            for line in fd:
+                pct, *data = line.strip().split(',')
+                data = list(map(int, data))
+                percent_inversions.append(pct)
+                averages.append(numpy.average(data))
 
         # Plot the results
-        pyplot.plot(percent_inversions,
-                    avg,
+        pyplot.plot(list(map(int, percent_inversions)),
+                    averages,
                     label=algo_name,
                     color=next(colors))
 
     # Add a legend
-    pyplot.legend(loc='best')
-    pyplot.title('Sorting std::vector<int> with $10^6$ elements')
-    pyplot.xlabel('Percentage of inversions')
-    pyplot.ylabel('Cycles (lower is better)')
+    pyplot.legend()
+    pyplot.title("Sorting std::vector<int> with $10^6$ elements")
+    pyplot.xlabel("Percentage of inversions")
+    pyplot.ylabel("Cycles (lower is better)")
     pyplot.show()
