@@ -1,6 +1,7 @@
 *Note: this page only benchmarks sorting algorithms under specific conditions. It can be used as a quick guide but if you really need a fast algorithm for a specific use case, you better run your own benchmarks.*
 
 *Last meaningful updates:*
+* *1.14.0 for small array sorts*
 * *1.13.1 for unstable random-access sorts, slow O(n log n) sorts, forward sorts, and the expensive move/cheap comparison benchmark*
 * *1.12.0 for measures of presortedness*
 * *1.9.0 otherwise*
@@ -69,7 +70,7 @@ I decided to include a dedicated category for slow O(n log n) sorts, because I f
 ![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/Z9O4I6p.png)
 
 The analysis is pretty simple here:
-* Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting. 
+* Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting.
 * `poplar_sort` is a bit slower for `std::vector` than for `std::deque`, which makes me suspect a weird issue somewhere.
 * As a result `smooth_sort` and `poplar_sort` beat each other depending on the type of the collection to sort.
 * Slabsort has an unusual graph: even for shuffled data it might end up beating `heap_sort` when the collection becomes big enough.
@@ -157,16 +158,16 @@ Here `merge_sort` still loses the battle, but it also displays an impressive eno
 
 ## Small array sorters
 
-Some sorting algorithms are particularly suited to sort very small collections: the ones provided by `<cpp-sort/fixed_sorters.h>`, but also the very simple ones such as `insertion_sort` or `selection_sort`. Most other sorting algorithms fallback to one of these when sorting a small collection.
+Some sorting algorithms are particularly suited to sort very small collections: [*fixed-size sorters*][fixed-size-sorters] of course, but also very simple regular sorters such as [`insertion_sorter`][insertion-sorter] or [`selection_sorter`][selection-sorter]. Most other sorting algorithms fallback to one of these when sorting a small collection.
 
-![Benchmark speed of small sorts with increasing size for std::array<int>](https://i.imgur.com/dOa3vyl.png)
-![Benchmark speed of small sorts with increasing size for std::array<long double>](https://i.imgur.com/4WRtPYP.png)
+![Benchmark speed of small sorts with increasing size for std::array<int>](https://i.imgur.com/ABfEmJe.png)
+![Benchmark speed of small sorts with increasing size for std::array<long double>](https://i.imgur.com/wqz1q3R.png)
 
-As far as only speed matters, sorting networks tend to win in these artificial benchmarks, but in a real world scenario the cost of loading the network code for a specific size again and again tends to make them slower. A sorting network can be fast when it is used over and over again.
-
-The spikes in the otherwise smooth sorting networks curve when sorting arrays of integers are weird: they don't exist for the `long double` benchmark but are consistent across runs for the `int` scenario. Interestingly enough those spikes seem to follow the `insertion_sort` curve.
-
-`low_moves_sorter` uses a modified selection sort above a small threshold, which might explain why the artefacts in the two curves have similar shapes.
+We can see several trends in these benchmarks, rather consistant across `int` and `long double`:
+* As far as only speed matters, the size-optimal hand-unrolled sorting networks of [`sorting_network_sorter`][sorting-network-sorter] tend to win in these artificial microbenchmarks, but in a real world scenario the cost of loading the network code for a specific size again and again tends to make them slower. A sorting network can be fast when it is used over and over again.
+* [`insertion_sorter`][insertion-sorter] and [`merge_exchange_network_sorter`][merge-exchange-network-sorter] are both good enough with a similar profile, despite having very different implementations.
+* [`low_comparisons_sorter`][low-comparisons-sorter] is second-best here but has a very limited range.
+* [`selection_sorter`][selection-sorter] and [`low_moves_sorter`][low-moves-sorter] are the worst contenders here. They are both different flavours of selection sorts, and as a results are pretty similar.
 
 # Measures of presortedness
 
@@ -180,6 +181,13 @@ It makes rather easy to see the different groups of complexities:
 * All of the other measures of presortedness run in O(n log n) time.
 
 
+  [fixed-size-sorters]: Fixed-size-sorters.md
+  [insertion-sorter]: Sorters.md#insertion_sorter
+  [low-comparisons-sorter]: Fixed-size-sorters.md#low_comparisons_sorter
+  [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [measures-of-presortedness]: Measures-of-presortedness.md
+  [merge-exchange-network-sorter]: Fixed-size-sorters.md#merge_exchange_network_sorter
+  [selection-sorter]: Sorters.md#selection_sorter
+  [sorting-network-sorter]: Fixed-size-sorters.md#sorting_network_sorter
   [std-forward-list-sort]: https://en.cppreference.com/w/cpp/container/list/sort
   [std-list-sort]: https://en.cppreference.com/w/cpp/container/list/sort
