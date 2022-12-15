@@ -26,6 +26,7 @@ namespace utility
         using difference_type = cppsort::detail::difference_type_t<RandomAccessIterator1>;
         using utility::iter_move;
         CPPSORT_ASSERT( (last - first) == (indices_last - indices_first) );
+        (void)last;
 
         auto size = indices_last - indices_first;
         for (difference_type idx = 0; idx < size; ++idx) {
