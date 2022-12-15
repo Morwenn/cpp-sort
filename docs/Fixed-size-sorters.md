@@ -120,6 +120,8 @@ template<std::size_t N>
 struct odd_even_merge_network_sorter;
 ```
 
+`odd_even_merge_network_sorter` only accepts power of 2 for `N`.
+
 All specializations of `odd_even_merge_network_sorter` provide a `index_pairs() static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be passed manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated of the index/difference type, which must be constructible from `int`.
 
 ```cpp
