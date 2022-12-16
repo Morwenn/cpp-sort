@@ -1,6 +1,6 @@
 ![cpp-sort logo](images/cpp-sort-logo.svg)
 
-Welcome to the **cpp-sort 1.13.2** documentation!
+Welcome to the **cpp-sort 1.14.0** documentation!
 
 This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library, as well as a few tutorials about writing your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
 
