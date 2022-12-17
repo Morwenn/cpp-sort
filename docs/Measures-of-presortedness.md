@@ -37,7 +37,7 @@ The measures of presortedness in bold in the graph are available in **cpp-sort**
 
 ## Measures of presortedness in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They accept either a range or an iterator/sentinel pair, and return how much disorder there is in the sequence according to the measure. The type of the returned variable is the *difference type* of the passed iterator. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
+In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They accept either a range or an iterator/sentinel pair, and return how much disorder there is in the sequence according to the measure. The type of the returned variable is the *difference type* of the passed iterator. Measures of presortedness follow the *unified sorting interface*, allowing a certain degree a freedom in the parameters they accept:
 
 ```cpp
 using namespace cppsort;
@@ -47,7 +47,7 @@ auto c = probe::ham(li, std::greater<>{});
 auto d = probe::runs(integers, std::negate<>{});
 ```
 
-Note however that these algorithms can be expensive; calling them before an actual sorting algorithm generally has no interest at all. They are first and foremost meant to be profiling tools: when sorting is a critical part of an application, these measures can be used on typical data and check whether said data is mostly sorted according to one measure or another. Then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
+Note however that these algorithms can be expensive; calling them before an actual sorting algorithm generally has little interest if any. They are first and foremost meant to be profiling tools: when sorting is a critical part of an application, these measures can be used on typical data and check whether said data is mostly sorted according to one measure or another. Then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
 Measures of presortedness can be used with the library's *sorter adapters*. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 

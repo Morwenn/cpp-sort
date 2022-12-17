@@ -1,9 +1,9 @@
-To write a full-fledged sorter, implementers have to implement a variety of `operator()` overloads with a rather high redundancy factor. To make the task simpler, **cpp-sort** provides a wrapper class which generates most of the boilerplate for the required operations in the simplest cases. To benefit from it, one needs to create a *sorter implementation* and to wrap it into `sorter_facade`:
+To write a full-fledged sorter, implementers have to implement what we call the *unified sorting interface*: a variety of `operator()` overloads with a rather high redundancy factor. To make the task simpler, **cpp-sort** provides `sorter_facade`, a wrapper class template which wraps a user-provided *sorter implementation* with a minimal interface and generates most of the boilerplate for the required operations:
 
 ```cpp
 struct frob_sorter_impl
 {
-    // Regular sorter code
+    // Minimal algorithm interface here
 };
 
 struct frob_sorter:

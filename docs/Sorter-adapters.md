@@ -1,10 +1,10 @@
-Sorter adapters are the main reason for using sorter function objects instead of regular functions. A *sorter adapter* is a class template that takes another `Sorter` template parameter and alters its behavior. The resulting class can be used as a regular sorter, and be adapted in turn. Note that some of the adapters are actually *[fixed-size sorter][fixed-size-sorters] adapters* instead of regular *sorter adapters*. It is possible to include all of the available adapters at once with the following directive:
+Sorter adapters are the main reason for using sorter function objects instead of regular functions. A *sorter adapter* is a class template that takes a `Sorter` template parameter and alters its behavior. The resulting class can be used as a regular sorter, and be adapted in turn. Some of the adapters below are actually *[fixed-size sorter][fixed-size-sorters] adapters* instead of regular *sorter adapters*. It is possible to include all of the available adapters at once with the following directive:
 
 ```cpp
 #include <cpp-sort/adapters.h>
 ```
 
-In this documentation, we will call *adapted sorters* the sorters passed to the adapters and *resulting sorter* the sorter class that results from the adaption of a sorter by an adapter. If not specified, the stability and the iterator category of the *resulting sorter* is that of the *adapted sorter* provided there is a single *adapted sorter*.
+In this documentation, we call *adapted sorters* the sorters passed to the adapters and *resulting sorter* the sorter class that results from the adaption of a sorter by an adapter. If not specified, the stability and the iterator category of the *resulting sorter* is that of the *adapted sorter* provided there is a single *adapted sorter*. The *resulting sorter* is expected to follow the *unified sorting interface*.
 
 For convenience, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides][ctad]:
 

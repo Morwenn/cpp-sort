@@ -38,12 +38,12 @@
 
 * *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however C++20 ranges solved the problem by introducing a function named [`iter_move`][std-ranges-iter-move] and making it as well as [`iter_swap`][std-ranges-iter-swap] customization points. The library uses a slightly different iterator model, and as a result exposes the functions `mstd::iter_move` and `mstd::iter_swap` in [modified standard library components][modified-std].
 
-* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle ranges or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions.
+* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle ranges or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
 
         cppsort::pdq_sorter{}(std::begin(collection), std::end(collection),
                               std::greater<>{}, &wrapper::value);
 
-* *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section in the documentation.
+* *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section of the documentation.
 
 * *Stability*: a sorting algorithm is *stable* if it preserves the relative order of *equivalent elements*. While it does not matter when the equivalence relationship also happens to be an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`][is-always-stable] sorter trait.
 
@@ -63,6 +63,8 @@
 
 * *Type-specific sorter*: some non-comparison sorters such as the [`spread_sorter`][spread-sorter] implement specific sorting algorithms which only work with some specific types (for example integers or strings).
 
+* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept an iterable or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
+
 
   [comparators]: Comparators.md
   [fixed-size-sorters]: Fixed-size-sorters.md
@@ -78,6 +80,7 @@
   [sorters]: Sorters.md
   [spread-sorter]: Sorters.md#spread_sorter
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
+  [sorter-facade]: Sorter-facade.md
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
   [std-ranges-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move
   [std-ranges-iter-swap]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_swap
