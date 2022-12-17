@@ -70,7 +70,7 @@ namespace
     {
         constexpr std::size_t size = 13;
         int collection[size] = { 15, 6, 0, 2, 2, 3, 8, 12, 10, 5, 9, 7, 10 };
-        Sorter sorter;
+        Sorter sorter{};
         sorter(collection, collection + size);
         return helpers::is_sorted(collection, collection + size);
     }
