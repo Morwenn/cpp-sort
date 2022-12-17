@@ -50,12 +50,6 @@ namespace cppsort::detail
         auto&& proj = utility::as_function(projection);
         minmax_result_type<ForwardIterator> result = {first, first, {}};
 
-        if (comp(proj(*first), proj(*result.min))) {
-            result.min = first;
-        } else {
-            result.max = first;
-        }
-
         while (++first != last) {
             auto tmp = first;
             if (++first == last) {
