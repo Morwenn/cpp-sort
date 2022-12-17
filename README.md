@@ -122,11 +122,11 @@ page][benchmarks].
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
 **cpp-sort** requires C++14 support, and should work with the following compilers:
-* g++5.5 or more recent. It is known not to work with some older g++5 versions.
-* clang++6.0 or more recent. It should work with clang++ versions all the way back to 3.8, but the CI pipeline doesn't have test for those anymore.
-* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are still unavailable.
+* g++7 or more recent.
+* clang++6.0 or more recent (with both libstdc++ and libc++).
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
-* Clang is notably tested with both libstdc++ and libc++.
+* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
+* clang-cl corresponding the the Visual Studio version above.
 
 The compilers listed above are the ones used by the CI pipeline, and the library is also tested
 with the most recent versions of those compilers on a regular basis. All the other compiler
@@ -134,11 +134,10 @@ versions in-between are untested, but should also work. Feel free to open an iss
 case.
 
 The features in the library might differ depending on the C++ version used and on the compiler
-extensions enabled. Those changes [are documented](https://github.com/Morwenn/cpp-sort/wiki/Changelog)
-in the wiki.
+extensions enabled. Those changes are documented [in the wiki][changelog].
 
 The main repository contains additional support for standard tooling such as CMake or Conan.
-You can read more about those [in the wiki](https://github.com/Morwenn/cpp-sort/wiki/Tooling).
+You can read more about those [in the wiki][tooling].
 
 # Thanks
 
@@ -244,6 +243,8 @@ developed by Thøger Rivera-Thorsen.
 
   [adaptive-sort]: https://en.wikipedia.org/wiki/Adaptive_sort
   [benchmarks]: https://github.com/Morwenn/cpp-sort/wiki/Benchmarks
+  [changelog]: https://github.com/Morwenn/cpp-sort/wiki/Changelog
   [drop-merge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#drop_merge_adapter
   [heap-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
   [split-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#split_adapter
+  [tooling]: https://github.com/Morwenn/cpp-sort/wiki/Tooling
