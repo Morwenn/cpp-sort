@@ -89,7 +89,7 @@ Computes the number of elements in a sequence that aren't followed by the same e
 
 Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
 * It doesn't add 1 to the general result, thus returning 0 when *X* is sorted - therefore respecting the Mannila definition of a MOP.
-* It explicitly handles elements that compare equivalent, while the original formal definition makes it difficult.
+* It explicitly handles *equivalent elements*, while the original formal definition makes it difficult.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |

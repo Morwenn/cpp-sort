@@ -256,7 +256,7 @@ template<typename Sorter>
 struct make_stable;
 ```
 
-`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements compare equivalent, it compares the starting positions of the elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
+`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements are *equivalent*, it compares the starting positions of those elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
 
 ```cpp
 template<typename Sorter>

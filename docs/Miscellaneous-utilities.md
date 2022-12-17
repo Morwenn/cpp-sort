@@ -212,7 +212,7 @@ auto indices = get_sorted_indices_for(vec);
 
 Concretely `sorted_indices` is designed like a [sorter adapter][sorter-adapters] and therefore supports the whole gamut of parameters provided by [`sorter_facade`][sorter-facade]. The main reason it does not sit with sorter adapters is that the returned function object is not a sorter per se since it doesn't sort the passed collection directly.
 
-When the collection contains several elements that compare equivalent, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of elements that compare equivalent appear in a stable order in the result.
+When the collection contains *equivalent elements*, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of *equivalent elements* appear in a stable order in the result.
 
 ### `sorted_iterators`
 
@@ -235,7 +235,7 @@ for (auto it: iterators) {
 
 It can be thought of as a kind of sorted view of the passed collection - as long as said collection does not change. It can be useful when the order of the original collection must be preserved, but operations have to be performed on the sorted collection.
 
-When the collection contains several elements that compare equivalent, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stabe sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to elements that compare equivalent appear in a stable order in the result.
+When the collection contains *equivalent elements*, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to *equivalent elements* appear in a stable order in the result.
 
 ### Sorting network tools
 
