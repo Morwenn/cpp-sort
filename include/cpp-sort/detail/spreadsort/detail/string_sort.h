@@ -32,6 +32,7 @@ Phil Endecott and Frank Gennari
 #include <vector>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
+#include <cpp-sort/utility/iter_move.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"
@@ -213,6 +214,7 @@ namespace spreadsort
         //empties belong in this bin
         while (proj(*current).size() > char_offset) {
           target_bin = bins + static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
+          using utility::iter_swap;
           iter_swap(current, *target_bin);
           ++(*target_bin);
         }
@@ -234,6 +236,7 @@ namespace spreadsort
                (proj(*current)[char_offset]); target_bin != local_bin;
                target_bin = bins + static_cast<Unsigned_char_type>
                (proj(*current)[char_offset])) {
+            using utility::iter_swap;
             iter_swap(current, *target_bin);
             ++(*target_bin);
           }
@@ -325,6 +328,7 @@ namespace spreadsort
         //empties belong in this bin
         while (proj(*current).size() > char_offset) {
           target_bin = end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset]);
+          using utility::iter_swap;
           iter_swap(current, *target_bin);
           ++(*target_bin);
         }
@@ -348,6 +352,7 @@ namespace spreadsort
                target_bin != local_bin;
                target_bin =
                end_bin - static_cast<Unsigned_char_type>(proj(*current)[char_offset])) {
+            using utility::iter_swap;
             iter_swap(current, *target_bin);
             ++(*target_bin);
           }

@@ -37,7 +37,7 @@ The measures of presortedness in bold in the graph are available in **cpp-sort**
 
 ## Measures of presortedness in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Just like sorters, measures of presortedness can handle custom comparison and projection functions, and with the same degree of freedom when it comes to how they can be called:
+In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take an iterable or a pair of iterators and return how much disorder there is in the sequence according to the measure. Measures of presortedness follow the *unified sorting interface*, allowing a certain degree a freedom in the parameters they accept:
 
 ```cpp
 using namespace cppsort;
@@ -47,7 +47,7 @@ auto c = probe::ham(li, std::greater<>{});
 auto d = probe::runs(integers, std::negate<>{});
 ```
 
-Note however that these algorithms can be expensive. Using them before an actual sorting algorithm has no interest at all; they are meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
+Note however that these algorithms can be expensive. Using them before an actual sorting algorithm little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
 Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 
@@ -95,7 +95,7 @@ Computes the number of elements in a sequence that aren't followed by the same e
 
 Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
 * It doesn't add 1 to the general result, thus returning 0 when *X* is sorted - therefore respecting the Mannila definition of a MOP.
-* It explicitly handles elements that compare equivalent, while the original formal definition makes it difficult.
+* It explicitly handles *equivalent elements*, while the original formal definition makes it difficult.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -197,8 +197,6 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 | n log n     | n           | Forward       |
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
-
-*Warning: this algorithm might be noticeably slower when the passed iterable is not random-access.*
 
 ### *Mono*
 
@@ -307,7 +305,7 @@ Some additional measures of presortedness how been described in the literature b
 
 The following definition is also given to determine whether a sequence is *p*-sorted:
 
-> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*. 
+> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*.
 
 *Right invariant metrics and measures of presortedness* by V. Estivill-Castro, H. Mannila and D. Wood mentions that:
 

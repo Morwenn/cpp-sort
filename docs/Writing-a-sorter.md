@@ -28,7 +28,7 @@ auto selection_sort(ForwardIterator first, ForwardIterator last)
     for (auto it = first ; it != last ; ++it) {
         auto selection = std::min_element(it, last);
         using std::iter_swap;
-        iter_swap(selection, it); 
+        iter_swap(selection, it);
     }
 }
 ```
@@ -172,7 +172,7 @@ The rules for *comparison sorters* are but an extension to the rules defined for
 
 ## Handling projections
 
-C++20 introduces the notion of callable *projections*, borrowed from the [Adobe Source Libraries][stlab]. A projection is a callable object that can be passed to an algorithm so that it "views" the values to be compared differently. For example, [`std::negate<>`][std-negate-void] could be used to sort a collection of integers in descending order. Let's assume that our `selection_sort` algorithm from a while has been given a fourth parameter to handle projections; here is the corresponding *sorter implementation*: 
+C++20 introduces the notion of callable *projections*, borrowed from the [Adobe Source Libraries][stlab]. A projection is a callable object that can be passed to an algorithm so that it "views" the values to be compared differently. For example, [`std::negate<>`][std-negate-void] could be used to sort a collection of integers in descending order. Let's assume that our `selection_sort` algorithm from a while has been given a fourth parameter to handle projections; here is the corresponding *sorter implementation*:
 
 ```cpp
 struct selection_sorter_impl
@@ -368,7 +368,7 @@ While type-specific sorters are, by their very nature, unable to generically han
 
 ## Stability
 
-A sorting algorithm is said to be [stable][stability] if it preserves the relative order of equivalent elements. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a boolean specialization of `std::integer_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
+A sorting algorithm is said to be [stable][stability] if it preserves the relative order of *equivalent elements*. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a boolean specialization of `std::integer_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
 
 ```cpp
 using stability = cppsort::is_always_stable<cppsort::tim_sorter>;

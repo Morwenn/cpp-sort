@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MAX_H_
@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -20,7 +19,6 @@
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
 #include "../detail/equal_range.h"
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
@@ -56,8 +54,8 @@ namespace probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(), compare,
-                cppsort::detail::indirect(projection)
+                iterators.begin(), iterators.end(),
+                compare, utility::indirect{} | projection
             );
 
             ////////////////////////////////////////////////////////////
@@ -66,14 +64,14 @@ namespace probe
 
             difference_type max_dist = 0;
             difference_type it_pos = 0;
-            for (auto it = first ; it != last ; ++it) {
+            for (auto it = first; it != last; ++it) {
                 // Find the range where *first belongs once sorted
                 auto rng = cppsort::detail::equal_range(
                     iterators.begin(), iterators.end(), proj(*it),
-                    compare, cppsort::detail::indirect(projection)
+                    compare, utility::indirect{} | projection
                 );
-                auto pos_min = std::distance(iterators.begin(), rng.first);
-                auto pos_max = std::distance(iterators.begin(), rng.second);
+                auto pos_min = rng.first - iterators.begin();
+                auto pos_max = rng.second - iterators.begin();
 
                 // If *first isn't into one of its sorted positions, computed the closest
                 if (it_pos < pos_min) {
@@ -118,7 +116,8 @@ namespace probe
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return max_probe_algo(first, last, std::distance(first, last),
+                auto dist = std::distance(first, last);
+                return max_probe_algo(std::move(first), std::move(last), dist,
                                       std::move(compare), std::move(projection));
             }
 

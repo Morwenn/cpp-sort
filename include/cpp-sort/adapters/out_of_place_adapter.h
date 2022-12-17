@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_OUT_OF_PLACE_ADAPTER_H_
@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
-#include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
 #include "../detail/immovable_vector.h"
@@ -35,7 +34,6 @@ namespace cppsort
                                Size size, const Sorter& sorter, Args&&... args)
             -> decltype(auto)
         {
-            using utility::iter_move;
             using rvalue_type = rvalue_type_t<ForwardIterator>;
 
             // Copy the collection into contiguous memory buffer

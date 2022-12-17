@@ -1,8 +1,10 @@
 ![cpp-sort logo](images/cpp-sort-logo.svg)
 
-Welcome to the **cpp-sort 1.13.2** documentation!
+Welcome to the **cpp-sort 1.14.0** documentation!
 
-You probably read the introduction in the README, so I won't repeat it here. This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library and even some detailed tutorials if you ever want to write your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
+This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library, as well as a few tutorials about writing your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
+
+For the simpler use cases, a good place to start is the [quickstart page][quickstart].
 
 If you find a library feature which isn't documented, don't hesitate to open an issue. It generally means that we either need to hide it in a subnamespace or to let it available and document it.
 
@@ -71,7 +73,7 @@ Some old components undergo deprecation before being removed in the following ma
 
 Some algorithms have assertions to guard against accidental logic issues (mostly in algorithms adapted from other projects), but they are disabled by default. You can enable these assertions by defining the preprocessor macro `CPPSORT_ENABLE_ASSERTIONS`. This new macro still honours `NDEBUG`, so assertions won't be enabled anyway if `NDEBUG` is defined.
 
-A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms.
+A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms. When turning on audits, internal calls to `__assume` and equivalent statements will also be turned into assertions to provide additional checks.
 
 *New in version 1.6.0*
 
@@ -89,4 +91,5 @@ Hope you have fun!
 
   [benchmarks]: Benchmarks.md
   [original-research]: Original-research.md
+  [quickstart]: Quickstart.md
   [swappable]: https://en.cppreference.com/w/cpp/concepts/swappable

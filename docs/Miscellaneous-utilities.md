@@ -20,6 +20,29 @@ The usual way to use it when implementing a *sorter adapter* is to make said ada
 
 *New in version 1.5.0*
 
+### `apply_permutation`
+
+```cpp
+#include <cpp-sort/utility/apply_permutation.h>
+```
+
+`apply_permutation` is a function template accepting a random-access range of elements and a random-access range of [0, N) indices of the same size. The indices in the second range represent the positions of the elements in the first range that should be moved in the indices positions to bring the collection in sorted order.
+
+The algorithm requires both the elements range and the indices range to be mutable and modifies both.
+
+```cpp
+template<typename RandomAccessIterator1, typename RandomAccessIterator2>
+auto apply_permutation(RandomAccessIterator1 first, RandomAccessIterator1 last,
+                        RandomAccessIterator2 indices_first, RandomAccessIterator2 indices_last)
+    -> void;
+
+template<typename RandomAccessIterable1, typename RandomAccessIterable2>
+auto apply_permutation(RandomAccessIterable1&& iterable, RandomAccessIterable2&& indices)
+    -> void;
+```
+
+*New in version 1.14.0*
+
 ### `as_comparison` and `as_projection`
 
 ```cpp
@@ -154,12 +177,28 @@ struct identity:
 
 It is equivalent to the C++20 [`std::identity`][std-identity]. Wherever the documentation mentions special handling of `utility::identity`, the same support is provided for `std::identity` when it is available.
 
+Another simple yet very handy projection available in the header is `indirect`: its instances can be called on any dereferenceable value `it`, in which case it returns `*it`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
+
+```cpp
+struct indirect:
+    projection_base
+{
+    template<typename T>
+    constexpr auto operator()(T&& indirect_value)
+        -> decltype(*std::forward<T>(indirect_value));
+
+    template<typename T>
+    constexpr auto operator()(T&& indirect_value) const
+        -> decltype(*std::forward<T>(indirect_value));
+};
+```
+
 This header also provides additional function objects implementing basic unary operations. These functions objects are designed to be used as *size policies* with `dynamic_buffer` and similar classes. The following function objects are available:
 * `half`: returns the passed value divided by 2.
 * `log`: returns the base 10 logarithm of the passed value.
 * `sqrt`: returns the square root of the passed value.
 
-All of those function objects inherit from `projection_base` and are [*transparent  function objects*][transparent-func].
+All of those function objects inherit from `projection_base` and are [*transparent function objects*][transparent-func].
 
 Since C++17, the following utility is also available when some level of micro-optimization is needed:
 
@@ -192,11 +231,15 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 
 *Changed in version 1.13.0:* `half`, `log` and `sqrt` are now [*transparent function objects*][transparent-func].
 
+*New in version 1.14.0:* `indirect`.
+
 ### `iter_move` and `iter_swap`
 
 ```cpp
 #include <cpp-sort/utility/iter_move.h>
 ```
+
+***WARNING:** this header is removed in version 2.0.0, use `mstd::iter_move` and `mstd::iter_swap` instead.*
 
 The functions `iter_move` and `iter_swap` are equivalent to the same functions as proposed by [P0022][p0022]: utility functions intended to be used with ADL to handle proxy iterators among other things. An algorithm can use them instead of `std::move` and possibly ADL-found `swap` to handle tricky classes such as `std::vector<bool>`.
 
@@ -253,9 +296,55 @@ using make_index_range = make_integer_range<std::size_t, Begin, End, Step>;
 #include <cpp-sort/utility/size.h>
 ```
 
+***WARNING:** this header is removed in version 2.0.0, use `mstd::distance` instead.*
+
 `size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
 
 *Changed in version 1.12.1:* `utility::size()` now also works for collections that only provide non-`const` `begin()` and `end()`.
+
+### `sorted_indices`
+
+```cpp
+#include <cpp-sort/utility/sorted_indices.h>
+```
+
+`utility::sorted_indices` is a function object that takes a sorter and returns a new function object that follows the *unified sorting interface*. This new function object accepts a random-access collection and returns an `std::vector` containing the indices that would sort that collection (similarly to [`numpy.argsort`][numpy-argsort]). The resulting indices can be passed [`apply_permutation`][apply-permutation] to sort the original collection.
+
+```cpp
+std::vector<int> vec = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
+auto get_sorted_indices_for = cppsort::utility::sorted_indices<cppsort::heap_sorter>{};
+auto indices = get_sorted_indices_for(vec);
+// indices == [6, 3, 2, 9, 1, 8, 0, 5, 4, 7]
+```
+
+When the collection contains *equivalent elements*, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of *equivalent elements* appear in a stable order in the result.
+
+*New in version 1.14.0*
+
+### `sorted_iterators`
+
+```cpp
+#include <cpp-sort/utility/sorted_iterators.h>
+```
+
+`utility::sorted_iterators` is a function object that takes a sorter and returns a new function object that follows the *unified sorting interface*. This new function object accepts a collection and returns an `std::vector` containing iterators to the passed collection in a sorted order.
+
+```cpp
+std::list<int> li = { 6, 4, 2, 1, 8, 7, 0, 9, 5, 3 };
+auto get_sorted_iterators_for = cppsort::utility::sorted_iterators<cppsort::heap_sorter>{};
+const auto iterators = get_sorted_iterators_for(li);
+
+// Displays 0 1 2 3 4 5 6 7 8 9
+for (auto it: iterators) {
+    std::cout << *it << ' ';
+}
+```
+
+It can be thought of as a kind of sorted view of the passed collection - as long as said collection does not change. It can be useful when the order of the original collection must be preserved, but operations have to be performed on the sorted collection.
+
+When the collection contains *equivalent elements*, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to *equivalent elements* appear in a stable order in the result.
+
+*New in version 1.14.0*
 
 ### Sorting network tools
 
@@ -329,12 +418,15 @@ namespace
 You can read more about this instantiation pattern in [this article][eric-niebler-static-const] by Eric Niebler.
 
 
+  [apply-permutation]: Miscellaneous-utilities.md#apply_permutation
   [chainable-projections]: Chainable-projections.md
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo
   [eric-niebler-static-const]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
   [fixed-size-sorters]: Fixed-size-sorters.md
   [inline-variables]: https://en.cppreference.com/w/cpp/language/inline
+  [is-stable]: Sorter-traits.md#is_stable
+  [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [p0022]: https://wg21.link/P0022
   [pdq-sorter]: Sorters.md#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3

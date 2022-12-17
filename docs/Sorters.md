@@ -1,18 +1,18 @@
-**cpp-sort** uses function objects called *sorters* instead of regular function templates in order to implement sorting algorithms. The library provides two categories of sorters: generic sorters that will sort a collection with any given comparison function, and type-specific sorters which will be optimized to sort collections of a given type, and generally don't allow to use custom comparison functions due to the way they work. Every comparison sorter as well as some type-specific sorters may also take an additional projection parameter, allowing the algorithm to "view" the data to sort through an on-the-fly transformation.
+**cpp-sort** uses function objects called *sorters* instead of regular function templates in order to implement sorting algorithms. The library provides two categories of sorters: comparison sorters, that sort a collection with using a weak order comparator, and type-specific sorters that use other strategies to sort collections, generally restricting their domain to specific types. Every comparison sorter as well as some type-specific sorters may also take an additional projection parameter, allowing the algorithm to "view" the data to sort through an on-the-fly transformation. (see *unified sorting interface*)
 
-While these function objects offer little more than regular sorting functions by themselves, they can be used together with *[sorter adapters][sorter-adapters]* to craft more elaborate sorters effortlessly. Every sorter is available in its own file. However, all the available sorters can be included at once with the following line:
+While these function objects offer little more than regular sorting functions by themselves, they can be used together with *[sorter adapters][sorter-adapters]* to craft more elaborate sorters. Every sorter is available in its own file. However, all the available sorters can be included at once with the following line:
 
 ```cpp
 #include <cpp-sort/sorters.h>
 ```
 
-Note that for every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`][default-sorter] since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`][sorting-functions] when they are called without an explicit sorter.
+For every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`][default-sorter] since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`][sorting-functions] when they are called without an explicit sorter.
 
 If you want to read more about sorters and/or write your own one, then you should have a look at [the dedicated page][writing-a-sorter] or at [a specific example][writing-a-bubble-sorter].
 
 ## Comparison sorters
 
-The following sorters are available and will work with any type for which `std::less` works and should accept any well-formed comparison function:
+The following sorters are available and should work with any type for which `std::less` works and should accept any weak order comparison function:
 
 ### `adaptive_shivers_sorter`
 
@@ -53,6 +53,22 @@ Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highl
 *New in version 1.10.0*
 
 *Changed in version 1.11.0:* `cartesian_tree_sorter` now works with forward iterators. It used to only work with random-access iterators.
+
+### `d_ary_heap_sorter`
+
+```cpp
+#include <cpp-sort/sorters/d_ary_heap_sorter.h>
+```
+
+Implements a heapsort algorithm based on a [*d*-ary heap][d-ary-heap]: the value of *D* is an integer template parameter that can be passed to either `d_ary_heap_sort` or `d_ary_heap_sorter`. That value cannot be smaller than 2.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n log n     | n log n     | n log n     | 1           | No          | Random-access |
+
+*d*-ary heapsorts are more complicated than their binary counterparts, but storing more elements in each node can improve locality of reference and improve the execution speed. This sorter, unlike [`heap_sorter`][heap-sorter], does not implement a [bottom-up node searching strategy][bottom-up-heapsort].
+
+*New in version 1.14.0*
 
 ### `default_sorter`
 
@@ -137,7 +153,7 @@ Whether this sorter works with types that are not default-constructible depends 
 #include <cpp-sort/sorters/heap_sorter.h>
 ```
 
-Implements a bottom-up [heapsort][heapsort].
+Implements a [bottom-up heapsort][bottom-up-heapsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -251,7 +267,7 @@ This sorter can't throw `std::bad_alloc`.
 #include <cpp-sort/sorters/poplar_sorter.h>
 ```
 
-Implements a *poplar sort*, which is a heapsort derivate described by Coenraad Bron and Wim H. Hesselink in *Smoothsort revisited*. It builds a forest of perfect max heaps whose roots are stored on the right, then unheaps the elements to sort the collection.
+Implements a *poplar sort*, which is a [heapsort][heapsort] derivate described by Coenraad Bron and Wim H. Hesselink in *Smoothsort revisited*. It builds a forest of perfect max heaps whose roots are stored on the right, then unheaps the elements to sort the collection.
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -572,15 +588,18 @@ struct spread_sorter:
   [adaptive-shivers-sort]: https://arxiv.org/abs/1809.08411
   [bitmap-allocator]: https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html
   [block-sort]: https://en.wikipedia.org/wiki/Block_sort
+  [bottom-up-heapsort]: https://en.wikipedia.org/wiki/Heapsort#Bottom-up_heapsort
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
   [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
   [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
   [cppsort-sort]: Sorting-functions.md#cppsortsort
+  [d-ary-heap]: https://en.wikipedia.org/wiki/D-ary_heap
   [default-sorter]: Sorters.md#default_sorter
   [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [grailsort]: https://github.com/Mrrl/GrailSort
   [heapsort]: https://en.wikipedia.org/wiki/Heapsort
+  [heap-sorter]: Sorters.md#heap_sorter
   [insertion-sort]: https://en.wikipedia.org/wiki/Insertion_sort
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [issue-168]: https://github.com/Morwenn/cpp-sort/issues/168
@@ -598,7 +617,7 @@ struct spread_sorter:
   [smoothsort]: https://en.wikipedia.org/wiki/Smoothsort
   [sorter-adapters]: Sorter-adapters.md
   [sorting-functions]: Sorting-functions.md
-  [spinsort]: https://www.boost.org/doc/libs/1_78_0/libs/sort/doc/html/sort/single_thread/spinsort.html
+  [spinsort]: https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/sort/single_thread/spinsort.html
   [spreadsort]: https://en.wikipedia.org/wiki/Spreadsort
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void

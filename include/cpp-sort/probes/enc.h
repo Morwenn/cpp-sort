@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/comparators/flip.h>
@@ -20,7 +19,6 @@
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/functional.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
 #include "../detail/type_traits.h"
@@ -47,13 +45,13 @@ namespace probe
                 return cppsort::detail::lower_monobound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),
-                    accessor | cppsort::detail::indirect(projection)
+                    accessor | utility::indirect{} | std::move(projection)
                 );
             } else {
                 return cppsort::detail::lower_bound_n(
                     lists.begin(), lists.size() - 1, value,
                     std::move(compare),
-                    accessor | cppsort::detail::indirect(projection)
+                    accessor | utility::indirect{} | std::move(projection)
                 );
             }
         }

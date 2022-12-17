@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_DISTRIBUTIONS_H_
@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <random>
 #include <cpp-sort/detail/bitops.h>
 #include "random.h"
 
@@ -237,6 +238,37 @@ namespace dist
             while (i > 0) {
                 *out++ = static_cast<T>(i);
                 --i;
+            }
+        }
+    };
+
+    struct inversions:
+        distribution<inversions>
+    {
+        // Percentage of chances that an "out-of-place" value
+        // is produced for each position, the goal is to test
+        // Inv-adaptive algorithms
+        double factor;
+
+        constexpr explicit inversions(double factor) noexcept:
+            factor(factor)
+        {}
+
+        template<typename T=long long int, typename OutputIterator>
+        auto operator()(OutputIterator out, long long int size) const
+            -> void
+        {
+            // Generate a percentage of error
+            std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
+            // Generate a random value
+            std::uniform_int_distribution<long long int> value_dis(0, size - 1);
+
+            for (long long int i = 0; i < size; ++i) {
+                if (percent_dis(hasard::engine()) < factor) {
+                    *out++ = static_cast<T>(value_dis(hasard::engine()));
+                } else {
+                    *out++ = static_cast<T>(i);
+                }
             }
         }
     };

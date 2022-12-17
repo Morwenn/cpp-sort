@@ -1,10 +1,10 @@
-Sorter adapters are the main reason for using sorter function objects instead of regular functions. A *sorter adapter* is a class template that takes another `Sorter` template parameter and alters its behavior. The resulting class can be used as a regular sorter, and be adapted in turn. Note that some of the adapters are actually *[fixed-size sorter][fixed-size-sorters] adapters* instead of regular *sorter adapters*. It is possible to include all of the available adapters at once with the following directive:
+Sorter adapters are the main reason for using sorter function objects instead of regular functions. A *sorter adapter* is a class template that takes a `Sorter` template parameter and alters its behavior. The resulting class can be used as a regular sorter, and be adapted in turn. Some of the adapters below are actually *[fixed-size sorter][fixed-size-sorters] adapters* instead of regular *sorter adapters*. It is possible to include all of the available adapters at once with the following directive:
 
 ```cpp
 #include <cpp-sort/adapters.h>
 ```
 
-In this documentation, we will call *adapted sorters* the sorters passed to the adapters and *resulting sorter* the sorter class that results from the adaption of a sorter by an adapter. If not specified, the stability and the iterator category of the *resulting sorter* is that of the *adapted sorter* provided there is a single *adapted sorter*.
+In this documentation, we call *adapted sorters* the sorters passed to the adapters and *resulting sorter* the sorter class that results from the adaption of a sorter by an adapter. If not specified, the stability and the iterator category of the *resulting sorter* is that of the *adapted sorter* provided there is a single *adapted sorter*. The *resulting sorter* is expected to follow the *unified sorting interface*.
 
 In C++17, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides][ctad]. The following example illustrates how it simplifies their use:
 
@@ -18,7 +18,7 @@ constexpr auto sort = indirect_adapter(quick_sort);
 ```
 
 Most of the library's *sorter adapters* can store the passed *sorters* in their internals, allowing them to use adapt *stateful sorters*. Unless explicitly mentioned otherwise in an adapter's description, it is safe to assume that the *sorter adapters* in the library have the following properties:
-* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible. 
+* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible.
 * If the *sorter adapter* adapts a single *sorter*, then it has a member function called `get()` which returns a reference to the internal *sorter* whose reference and `const` qualifications match those of the *sorter adapter* instance. If the *sorter adapter* is empty and default-constructible, then a default-constructed instance of the type of the *original sorter* is returned instead.
 * If the *sorter adapter* is empty and default-constructible, then it can be converted to any function pointer whose signature matches that of its `operator()`.
 
@@ -70,6 +70,25 @@ struct counting_adapter;
 ```
 
 Note that this adapter only works with sorters that satisfy the `ComparisonSorter` concept since it needs to adapt a comparison function.
+
+### `drop_merge_adapter`
+
+```cpp
+#include <cpp-sort/adapters/drop_merge_adapter.h>
+```
+
+[Drop-merge sort][drop-merge-sort] is a [*Rem*-adaptive][probe-rem] sorting algorithm that isolates some of the elements to sort in a buffer in O(n) time in order to leave a single sorted run in the original collection, then it uses another algorithm to sort the elements isolated in a buffer, and merges the two resulting runs back into the original collection. `drop_merge_adapter` uses the *adapted sorter* to sort the (contiguous) buffer of isolated elements.
+
+The *resulting sorter* always requires at least bidirectional iterators, no matter the iterator category of the *adapted sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
+
+```cpp
+template<typename Sorter>
+struct drop_merge_adapter;
+```
+
+Adapting any *sorter* with `drop_merge_adapter` effectively makes it [*Rem*-adaptive][probe-rem], making it a valuable tool to add adaptiveness to existing sorters.
+
+*New in version 1.14.0*
 
 ### `hybrid_adapter`
 
@@ -219,6 +238,28 @@ using sorter = cppsort::hybrid_adapter<
 
 *Warning: this adapter only supports default-constructible stateless sorters.*
 
+### `split_adapter`
+
+```cpp
+#include <cpp-sort/adapters/split_adapter.h>
+```
+
+The adapter implements the "in-place" version of the *SplitSort* algorithm described in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. The algorithm works as follows:
+1. It performs a O(n) pass on the collection to isolate an approximation of a longest non-decreasing subsequence in the left part of the collection, and places the removed elements in the right part of the collection.
+2. It uses the *adapted sorter* to sort the right part of the collection.
+3. It merges the two parts of the collection in O(n) time O(n) space if possible, otherwise it merges them in O(n log n) time O(1) space.
+
+The core algorithm behind `split_adapter` requires at least bidirectional iterators to work, as such the *resulting sorter* requires bidirectional iterators if the *adapted sorter* supports them, otherwise it requires the same category of iterators at that accepted by the *adapter sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
+
+```cpp
+template<typename Sorter>
+struct split_adapter;
+```
+
+Adapting any *sorter* with `split_adapter` effectively makes it [*Rem*-adaptive][probe-rem], making it a valuable tool to add adaptiveness to existing sorters.
+
+*New in version 1.14.0*
+
 ### `stable_adapter`, `make_stable` and `stable_t`
 
 ```cpp
@@ -237,7 +278,7 @@ template<typename Sorter>
 struct make_stable;
 ```
 
-`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements compare equivalent, it compares the starting positions of the elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
+`make_stable` takes a sorter and artificially alters its behavior to produce a stable sorter. It does so by associating every element of the collection to sort to its starting position and then uses the *adapted sorter* to sort the collection with a special comparator: whenever two elements are *equivalent*, it compares the starting positions of the elements to ensure that their relative starting positions are preserved. Storing the starting positions requires O(n) additional space.
 
 ```cpp
 template<typename Sorter>
@@ -300,6 +341,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [default-sorter]: Sorters.md#default_sorter
+  [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [fixed-size-sorters]: Fixed-size-sorters.md
   [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
   [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
@@ -308,6 +350,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
+  [probe-rem]: Measures-of-presortedness.md#rem
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [self-sort-adapter]: Sorter-adapters.md#self_sort_adapter

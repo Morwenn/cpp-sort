@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
@@ -27,14 +27,14 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename FallbackSorter, bool Stable>
+        template<typename Sorter, bool Stable>
         struct verge_adapter_impl:
-            utility::adapter_storage<FallbackSorter>
+            utility::adapter_storage<Sorter>
         {
             verge_adapter_impl() = default;
 
-            constexpr explicit verge_adapter_impl(FallbackSorter&& sorter):
-                utility::adapter_storage<FallbackSorter>(std::move(sorter))
+            constexpr explicit verge_adapter_impl(Sorter&& sorter):
+                utility::adapter_storage<Sorter>(std::move(sorter))
             {}
 
             template<
@@ -70,25 +70,25 @@ namespace cppsort
         };
     }
 
-    template<typename FallbackSorter>
+    template<typename Sorter>
     struct verge_adapter:
-        sorter_facade<detail::verge_adapter_impl<FallbackSorter, false>>
+        sorter_facade<detail::verge_adapter_impl<Sorter, false>>
     {
         verge_adapter() = default;
 
-        constexpr explicit verge_adapter(FallbackSorter sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter, false>>(std::move(sorter))
+        constexpr explicit verge_adapter(Sorter sorter):
+            sorter_facade<detail::verge_adapter_impl<Sorter, false>>(std::move(sorter))
         {}
     };
 
-    template<typename FallbackSorter>
-    struct stable_adapter<verge_adapter<FallbackSorter>>:
-        sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>
+    template<typename Sorter>
+    struct stable_adapter<verge_adapter<Sorter>>:
+        sorter_facade<detail::verge_adapter_impl<Sorter, true>>
     {
         stable_adapter() = default;
 
-        constexpr explicit stable_adapter(verge_adapter<FallbackSorter> sorter):
-            sorter_facade<detail::verge_adapter_impl<FallbackSorter, true>>(std::move(sorter).get())
+        constexpr explicit stable_adapter(verge_adapter<Sorter> sorter):
+            sorter_facade<detail::verge_adapter_impl<Sorter, true>>(std::move(sorter).get())
         {}
     };
 }

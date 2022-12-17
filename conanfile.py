@@ -6,18 +6,18 @@
 import os.path
 
 from conan import ConanFile
+from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
 from conan.tools.files import copy
-from conans import tools
 
 required_conan_version = ">=1.50.0"
 
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.13.2"
+    version = "1.14.0"
     description = "Additional sorting algorithms & related tools"
-    topics = "conan", "cpp-sort", "sorting", "algorithms"
+    topics = "sorting", "algorithms"
     url = "https://github.com/Morwenn/cpp-sort"
     homepage = url
     license = "MIT"
@@ -34,8 +34,8 @@ class CppSortConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     def validate(self):
-        if self.info.settings.get_safe("compiler.cppstd"):
-            tools.check_min_cppstd(self, 14)
+        if self.settings.get_safe("compiler.cppstd"):
+            check_min_cppstd(self, 14)
 
     def layout(self):
         cmake_layout(self)

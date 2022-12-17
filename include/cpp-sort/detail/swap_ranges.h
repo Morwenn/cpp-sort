@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
+#include "iterator_traits.h"
 #include "move.h"
 #include "type_traits.h"
 

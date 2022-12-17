@@ -59,13 +59,54 @@
 #endif
 
 ////////////////////////////////////////////////////////////
+// General: assertions
+
+#if defined(CPPSORT_ENABLE_ASSERTIONS) || defined(CPPSORT_ENABLE_AUDITS)
+#   include <cassert>
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_ASSERT
+
+// We want a slightly finer-grain control over assertions
+// than just relying on NDEBUG, so assertions have to be
+// explicitly enabled in cpp-sort
+
+#ifndef CPPSORT_ASSERT
+#   ifdef CPPSORT_ENABLE_ASSERTIONS
+#       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
+#   else
+#       define CPPSORT_ASSERT(...)
+#   endif
+#endif
+
+////////////////////////////////////////////////////////////
+// CPPSORT_AUDIT
+
+// Some debug checks might be way too expensive for most
+// scenarios, but still of great help when debugging tough
+// problems, hence this audit feature
+
+#ifndef CPPSORT_AUDIT
+#   ifdef CPPSORT_ENABLE_AUDITS
+#       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
+#   else
+#       define CPPSORT_AUDIT(...)
+#   endif
+#endif
+
+////////////////////////////////////////////////////////////
 // CPPSORT_ASSUME
 
 // Assumptions may help the compiler to remove unnecessary code;
 // some parts of the library may be significantly slower if this
-// assumption mechanism isn't supported
+// assumption mechanism isn't supported. In audit mode, we want
+// to turn them into assertions to make sure the assumptions are
+// actually correct.
 
-#if defined(__GNUC__)
+#if defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_ASSUME(...) assert((__VA_ARGS__))
+#elif defined(__GNUC__)
 #   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
 #elif defined(__clang__)
 #   define CPPSORT_ASSUME(expression) __builtin_assume(expression)
@@ -82,44 +123,14 @@
 // clause of a switch when we know the default can never be
 // reached
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_UNREACHABLE CPPSORT_ASSERT("unreachable", false);
+#elif defined(__GNUC__) || defined(__clang__)
 #   define CPPSORT_UNREACHABLE __builtin_unreachable()
 #elif defined(_MSC_VER)
 #   define CPPSORT_UNREACHABLE __assume(false)
 #else
 #   define CPPSORT_UNREACHABLE
-#endif
-
-////////////////////////////////////////////////////////////
-// CPPSORT_ASSERT
-
-// We want a slightly finer-grain control over assertions
-// than just relying on NDEBUG, so assertions have to be
-// explicitly enabled in cpp-sort
-
-#ifndef CPPSORT_ASSERT
-#   ifdef CPPSORT_ENABLE_ASSERTIONS
-#       include <cassert>
-#       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
-#   else
-#       define CPPSORT_ASSERT(...)
-#   endif
-#endif
-
-////////////////////////////////////////////////////////////
-// CPPSORT_AUDIT
-
-// Some debug checks might be way too expensive for most
-// scenarios, but still of great help when debugging tough
-// problems, hence this audit feature
-
-#ifndef CPPSORT_AUDIT
-#   ifdef CPPSORT_ENABLE_AUDITS
-#       include <cassert>
-#       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
-#   else
-#       define CPPSORT_AUDIT(...)
-#   endif
 #endif
 
 ////////////////////////////////////////////////////////////

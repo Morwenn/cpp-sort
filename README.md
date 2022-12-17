@@ -1,7 +1,7 @@
 ![cpp-sort logo](docs/images/cpp-sort-logo.svg)
 
-[![Latest Release](https://img.shields.io/badge/release-1.13.2-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.13.2)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.13.2-blue.svg)](https://conan.io/center/cpp-sort?version=1.13.2)
+[![Latest Release](https://img.shields.io/badge/release-1.14.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.14.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.14.0-blue.svg)](https://conan.io/center/cpp-sort?version=1.14.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 [![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
 
@@ -98,16 +98,22 @@ and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wik
 # Benchmarks
 
 The following graph has been generated with a script found in the benchmarks
-directory. It shows the time needed for a sorting algorithm to sort one million
-shuffled `std::array<int, N>` of sizes 0 to 32. It compares the sorters generally
-used to sort small arrays:
+directory. It shows the time needed for [`heap_sort`][heap-sorter] to sort one
+million elements without being adapted, then when it is adapted with either
+[`drop_merge_adapter`][drop-merge-adapter] or [`split_adapter`][split-adapter].
 
-![Benchmark speed of small sorts with increasing size for std::array<int>](https://i.imgur.com/dOa3vyl.png)
+![Graph showing the speed difference between heap_sort raw, then adapted with
+split_adapter and drop_merge_adapter, when the number of inversions in the
+std::vector<int> to sort increases](https://i.imgur.com/IcjUkYF.png)
 
-These results were generated with MinGW-w64 g++ 10.1 with the compiler options
-`-std=c++2a -O3 -march=native`. That benchmark is merely an example to make this
-introduction look good. You can find more commented benchmarks in the [dedicated
-wiki page](https://github.com/Morwenn/cpp-sort/wiki/Benchmarks).
+As can be seen above, wrapping `heap_sort` with either of the adapters makes it
+[*adaptive*][adaptive-sort] to the number of inversions in a non-intrusive
+manner. The algorithms used to adapt it have different pros and cons, it is up
+to you to use either.
+
+This benchmark is mostly there to show the possibilities offered by the
+library. You can find more such commented benchmarks in the [dedicated wiki
+page][benchmarks].
 
 # Compiler support & tooling
 
@@ -156,7 +162,14 @@ parts of the benchmarks come from there as well.
 of a Timsort](https://github.com/gfx/cpp-TimSort).
 
 * The three algorithms used by `spread_sorter` come from Steven Ross [Boost.Sort
-module](https://www.boost.org/doc/libs/1_71_0/libs/sort/doc/html/index.html).
+module](https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/index.html).
+
+* The algorithm used by `d_ary_spread_sorter` comes from Tim Blechmann's
+[Boost.Heap module](https://www.boost.org/doc/libs/1_80_0/doc/html/heap.html).
+
+* The algorithm used by `spin_sorter` comes from the eponymous algorithm implemented
+in [Boost.Sort](https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/index.html).
+by Francisco Jose Tapia.
 
 * [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function),
 [`utility::static_const`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#static_const),
@@ -227,3 +240,10 @@ and [Crascit/DownloadProject](https://github.com/Crascit/DownloadProject).
 
 * Some of the benchmarks use a [colorblind-friendly palette](https://gist.github.com/thriveth/8560036)
 developed by Thøger Rivera-Thorsen.
+
+
+  [adaptive-sort]: https://en.wikipedia.org/wiki/Adaptive_sort
+  [benchmarks]: https://github.com/Morwenn/cpp-sort/wiki/Benchmarks
+  [drop-merge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#drop_merge_adapter
+  [heap-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
+  [split-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#split_adapter

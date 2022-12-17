@@ -46,6 +46,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
+    SECTION( "d_ary_heap_sort" )
+    {
+        cppsort::d_ary_heap_sort<5>(collection);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
+
     SECTION( "drop_merge_sort" )
     {
         cppsort::drop_merge_sort(collection);

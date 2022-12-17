@@ -23,7 +23,7 @@ The comparators `total_less` and `total_order` are [customization points][custom
 * negative signaling NaNs
 * negative quiet NaNs
 
-That said, the comparators are currently unable to discriminate between quiet and signaling NaNs, so they compare equivalent. When it doesn't handle a type natively and ADL doesn't find any suitable `total_less` function in a class namespace, `cppsort::total_less` does *not* fall back to `operator<`; see [P0100][P0100] for the rationale (it applies to the whole `total_*` family of customization points).
+That said, the comparators are currently unable to discriminate between quiet and signaling NaNs, so they are considered to be *equivalent*. When it doesn't handle a type natively and ADL doesn't find any suitable `total_less` function in a class namespace, `cppsort::total_less` does *not* fall back to `operator<`; see [P0100][P0100] for the rationale (it applies to the whole `total_*` family of customization points).
 
 Total order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_integral`][std-is-integral].
 

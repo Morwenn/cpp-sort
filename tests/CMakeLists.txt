@@ -27,7 +27,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.1.0
+                     GIT_TAG v3.2.1
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
@@ -124,6 +124,7 @@ add_executable(main-tests
     adapters/container_aware_adapter_forward_list.cpp
     adapters/container_aware_adapter_list.cpp
     adapters/counting_adapter.cpp
+    adapters/drop_merge_adapter_every_sorter.cpp
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:adapters/every_adapter_fptr.cpp>
     adapters/every_adapter_internal_compare.cpp
     adapters/every_adapter_non_const_compare.cpp
@@ -145,6 +146,7 @@ add_executable(main-tests
     adapters/self_sort_adapter_no_compare.cpp
     adapters/small_array_adapter.cpp
     adapters/small_array_adapter_is_stable.cpp
+    adapters/split_adapter_every_sorter.cpp
     adapters/stable_adapter_every_sorter.cpp
     adapters/verge_adapter_every_sorter.cpp
 
@@ -193,7 +195,6 @@ add_executable(main-tests
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorters/default_sorter_fptr.cpp>
     sorters/default_sorter_projection.cpp
     sorters/every_instantiated_sorter.cpp
-    sorters/every_sorter.cpp
     sorters/every_sorter_internal_compare.cpp
     sorters/every_sorter_long_string.cpp
     sorters/every_sorter_move_compare_projection.cpp
@@ -219,6 +220,7 @@ add_executable(main-tests
 
     # Utilities tests
     utility/adapter_storage.cpp
+    utility/apply_permutation.cpp
     utility/as_comparison.cpp
     utility/as_projection.cpp
     utility/as_projection_iterable.cpp
@@ -226,6 +228,8 @@ add_executable(main-tests
     utility/buffer.cpp
     utility/chainable_projections.cpp
     utility/iter_swap.cpp
+    utility/sorted_indices.cpp
+    utility/sorted_iterators.cpp
     utility/sorting_networks.cpp
 )
 configure_tests(main-tests)

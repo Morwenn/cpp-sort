@@ -1,9 +1,9 @@
-To write a full-fledged sorter, implementers have to implement a variety of `operator()` overloads with a rather high redundancy factor. To make the task simpler, **cpp-sort** provides a wrapper class which generates most of the boilerplate for the required operations in the simplest cases. To benefit from it, one needs to create a *sorter implementation* and to wrap it into `sorter_facade`:
+To write a full-fledged sorter, implementers have to implement what we call the *unified sorting interface*: a variety of `operator()` overloads with a rather high redundancy factor. To make the task simpler, **cpp-sort** provides `sorter_facade`, a class template which wraps a user-provided *sorter implementation* with a minimal interface and generates most of the boilerplate for the required operations:
 
 ```cpp
 struct frob_sorter_impl
 {
-    // Regular sorter code
+    // Minimal algorithm interface here
 };
 
 struct frob_sorter:
@@ -127,7 +127,7 @@ constexpr auto operator()(Iterable&& iterable, Compare compare, Projection proje
     -> /* implementation-defined */;
 ```
 
-These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using `utility::begin` and `utility::end` on the iterable to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`][std-less-void] and/or [`utility::identity`][utility-identity] when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
+These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking a pair of iterators in the wrapped sorter by using `std::begin` and `std::end` on the iterable to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`][std-less-void] and/or [`utility::identity`][utility-identity] when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking a pair of iterators, a comparison function and a projection function.
 
 It will always call the most suitable iterable `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking a pair of iterators when it cannot do otherwise.
 
@@ -137,7 +137,7 @@ It will always call the most suitable iterable `operator()` overload in the wrap
 
 ### Projection support for comparison-only sorters
 
-Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking a pair of iterators and a comparison function can take any iterable, pair of iterators, comparison and/or projection function once it wrapped into `sorter_facade`.
+Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking a pair of iterators and a comparison function can take any iterable, pair of iterators, comparison and/or projection function once it is wrapped into `sorter_facade`.
 
 The reverse operation (baking a comparison function into a projection function) is not doable and simply does not make sense most of the time, so `sorter_facade` does not provide it for projection-only *sorter implementations*.
 

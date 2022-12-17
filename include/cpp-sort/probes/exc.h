@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_EXC_H_
@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorter_facade.h>
@@ -19,7 +18,6 @@
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/functional.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
@@ -56,8 +54,8 @@ namespace probe
 
             // Sort the iterators on pointed values
             cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(), compare,
-                cppsort::detail::indirect(projection)
+                iterators.begin(), iterators.end(),
+                compare, utility::indirect{} | projection
             );
 
             ////////////////////////////////////////////////////////////

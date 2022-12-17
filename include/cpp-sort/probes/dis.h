@@ -12,7 +12,6 @@
 #include <functional>
 #include <iterator>
 #include <new>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -77,7 +76,7 @@ namespace probe
             // Algorithm LR: cumulative max from left to right
             cppsort::detail::immovable_vector<BidirectionalIterator> lr_cummax(size);
             lr_cummax.emplace_back(first);
-            for (auto it = std::next(first) ; it != last ; ++it) {
+            for (auto it = std::next(first); it != last; ++it) {
                 if (comp(proj(*lr_cummax.back()), proj(*it))) {
                     lr_cummax.emplace_back(it);
                 } else {
@@ -92,7 +91,7 @@ namespace probe
             difference_type i = size;
             auto rl_it = std::prev(last); // Iterator to the current RL element
             auto rl_min_it = rl_it; // Iterator to the current minimum of RL
-            for (auto j = i ; j > 0 ; --j) {
+            for (auto j = i; j > 0; --j) {
                 while (j <= i && not comp(proj(*lr_cummax[j - 1]), proj(*rl_min_it))
                        && (j == 1 || not comp(proj(*rl_min_it), proj(*lr_cummax[j - 2])))) {
                     // Compute the next value of DM

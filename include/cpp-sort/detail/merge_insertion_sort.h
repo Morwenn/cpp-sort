@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
@@ -11,10 +11,10 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "attributes.h"
 #include "fixed_size_list.h"
-#include "functional.h"
 #include "immovable_vector.h"
 #include "iterator_traits.h"
 #include "move.h"
@@ -99,27 +99,11 @@ namespace detail
                 return *this;
             }
 
-            auto operator++(int)
-                -> group_iterator
-            {
-                auto tmp = *this;
-                operator++();
-                return tmp;
-            }
-
             auto operator--()
                 -> group_iterator&
             {
                 std::advance(_it, -_size);
                 return *this;
-            }
-
-            auto operator--(int)
-                -> group_iterator
-            {
-                auto tmp = *this;
-                operator--();
-                return tmp;
             }
 
             auto operator+=(difference_type increment)
@@ -276,7 +260,6 @@ namespace detail
         auto size = last - first;
         if (size < 2) return;
 
-        auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
         // Whether there is a stray element not in a pair
@@ -377,7 +360,7 @@ namespace detail
 
                 auto insertion_point = detail::upper_bound(
                     chain.begin(), *pe, proj(*it),
-                    comp, indirect(proj)
+                    compare, utility::indirect{} | projection
                 );
                 chain.insert(insertion_point, it);
 
@@ -396,7 +379,7 @@ namespace detail
             current_it += 2;
             auto insertion_point = detail::upper_bound(
                 chain.begin(), *current_pend, proj(*current_it),
-                comp, indirect(proj)
+                compare, utility::indirect{} | projection
             );
             chain.insert(insertion_point, current_it);
             ++current_pend;

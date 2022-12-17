@@ -13,8 +13,13 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
+#include "../detail/config.h"
 #include "../detail/raw_checkers.h"
 #include "../detail/type_traits.h"
+
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+#    include <functional>
+#endif
 
 namespace cppsort
 {
@@ -79,6 +84,32 @@ namespace utility
         );
     }
 
+#if CPPSORT_STD_IDENTITY_AVAILABLE
+    template<
+        typename T,
+        typename = cppsort::detail::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+        >
+    >
+    constexpr auto operator|(T&& lhs, std::identity)
+        -> decltype(std::forward<T>(lhs))
+    {
+        return std::forward<T>(lhs);
+    }
+
+    template<
+        typename T,
+        typename = cppsort::detail::enable_if_t<
+            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+        >
+    >
+    constexpr auto operator|(std::identity, T&& rhs)
+        -> decltype(std::forward<T>(rhs))
+    {
+        return std::forward<T>(rhs);
+    }
+#endif
+
     ////////////////////////////////////////////////////////////
     // Identity (mostly useful for projections)
 
@@ -100,6 +131,46 @@ namespace utility
         std::true_type
     {};
 
+    template<typename T>
+    constexpr auto operator|(T&& lhs, utility::identity)
+        -> decltype(std::forward<T>(lhs))
+    {
+        return std::forward<T>(lhs);
+    }
+
+    template<typename T>
+    constexpr auto operator|(utility::identity, T&& rhs)
+        -> decltype(std::forward<T>(rhs))
+    {
+        return std::forward<T>(rhs);
+    }
+
+    constexpr auto operator|(utility::identity, utility::identity)
+        -> utility::identity
+    {
+        return {};
+    }
+
+    ////////////////////////////////////////////////////////////
+    // indirect
+
+    struct indirect:
+        projection_base
+    {
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value)
+            -> decltype(*std::forward<T>(indirect_value))
+        {
+            return *std::forward<T>(indirect_value);
+        }
+
+        template<typename T>
+        constexpr auto operator()(T&& indirect_value) const
+            -> decltype(*std::forward<T>(indirect_value))
+        {
+            return *std::forward<T>(indirect_value);
+        }
+    };
 
     ////////////////////////////////////////////////////////////
     // Transform overload in unary or binary function

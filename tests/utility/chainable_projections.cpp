@@ -105,3 +105,10 @@ TEST_CASE( "Pipe a projection with as_projection",
     CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );
 }
 
+TEST_CASE( "Pipe utility::identity with utility::identity",
+           "[utility][projection_base]" )
+{
+    std::vector<int> vec(15, 42);
+    cppsort::spin_sort(vec, cppsort::utility::identity{} | cppsort::utility::identity{});
+    CHECK( true );
+}

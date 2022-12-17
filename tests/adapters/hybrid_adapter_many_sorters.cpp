@@ -8,7 +8,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sorter_facade.h>
-#include <testing-tools/span.h>
 
 namespace
 {

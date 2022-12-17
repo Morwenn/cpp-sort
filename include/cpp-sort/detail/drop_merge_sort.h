@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2021 Morwenn
+ * Copyright (c) 2017-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -34,7 +34,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
-#include "pdqsort.h"
 #include "type_traits.h"
 
 namespace cppsort
@@ -43,10 +42,14 @@ namespace detail
 {
     constexpr static bool double_comparison = true;
 
-    // move-only version
-    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    template<
+        typename BidirectionalIterator,
+        typename Compare,
+        typename Projection,
+        typename Sorter
+    >
     auto drop_merge_sort(BidirectionalIterator begin, BidirectionalIterator end,
-                         Compare compare, Projection projection)
+                         Compare compare, Projection projection, Sorter&& sorter)
         -> void
     {
         using utility::iter_move;
@@ -122,10 +125,10 @@ namespace detail
         }
 
         // Sort the dropped elements
-        pdqsort(dropped.begin(), dropped.end(), compare, projection);
+        std::forward<Sorter>(sorter)(dropped.begin(), dropped.end(),
+                                     compare, projection);
 
         auto back = end;
-
         do {
             auto& last_dropped = dropped.back();
 

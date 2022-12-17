@@ -29,6 +29,8 @@ namespace cppsort
     struct block_sorter;
     struct cartesian_tree_sorter;
     struct counting_sorter;
+    template<int D>
+    struct d_ary_heap_sorter;
     struct default_sorter;
     struct drop_merge_sorter;
     struct float_spread_sorter;
@@ -79,6 +81,8 @@ namespace cppsort
     struct container_aware_adapter;
     template<typename Sorter, typename CountType=std::size_t>
     struct counting_adapter;
+    template<typename Sorter>
+    struct drop_merge_adapter;
     template<typename... Sorters>
     struct hybrid_adapter;
     template<typename Sorter>
@@ -91,6 +95,8 @@ namespace cppsort
     struct self_sort_adapter;
     template<template<std::size_t> class FixedSizeSorter, typename Indices>
     struct small_array_adapter;
+    template<typename Sorter>
+    struct split_adapter;
     template<typename Sorter>
     struct stable_adapter;
     template<typename Sorter>

@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <utility>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
 #include "../detail/immovable_vector.h"
 #include "iterator_traits.h"
@@ -61,7 +62,7 @@ namespace detail
         -> decltype(std::forward<Sorter>(sorter)(
             (it_and_index<ForwardIterator>*)0, (it_and_index<ForwardIterator>*)0,
             std::move(compare),
-            &it_and_index<ForwardIterator>::original_location | indirect(projection)
+            &it_and_index<ForwardIterator>::original_location | utility::indirect{} | std::move(projection)
         ))
 #else
         -> std::enable_if_t<
@@ -69,7 +70,7 @@ namespace detail
                     Sorter,
                     it_and_index<ForwardIterator>*,
                     Compare,
-                    decltype(&it_and_index<ForwardIterator>::original_location | indirect(projection))
+                    decltype(&it_and_index<ForwardIterator>::original_location | utility::indirect{} | std::move(projection))
                 >::value
             >
 #endif
@@ -90,7 +91,7 @@ namespace detail
         // Sort the iterators on pointed values
         std::forward<Sorter>(sorter)(
             storage.begin(), storage.end(), std::move(compare),
-            &item_index_tuple::original_location | indirect(projection)
+            &item_index_tuple::original_location | utility::indirect{} | std::move(projection)
         );
 #else
         // Work around the sorters that return void
@@ -127,7 +128,7 @@ namespace detail
         // Sort the iterators on pointed values
         return std::forward<Sorter>(sorter)(
             storage.begin(), storage.end(), std::move(compare),
-            &item_index_tuple::original_location | indirect(projection)
+            &item_index_tuple::original_location | utility::indirect{} | std::move(projection)
         );
 #endif
     }

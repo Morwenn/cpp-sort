@@ -1,4 +1,4 @@
-**cpp-sort** deals with many concepts related to sorting and algorithms in general. This section tries to briefly explain the many things that you may encounter while using it, in alphabetical order:
+**cpp-sort** deals with many concepts related to sorting and algorithms in general. This section tries to briefly explain the many things that you may encounter while using it. When a term or an expression appears in *italics* in the rest of the documentation, it is generally a reference to one of the following entries:
 
 * *Buffered sorter*: some sorting algorithms optionally use a buffer where they store elements to improve the performance of the sort. Some of them, such as block sort, will manage to sort the collection regardless of the actual size of the buffer, which will only have on influence on the performance of the sort. A buffered sorter is a sorter that takes a *buffer provider* template parameter that tells how the temporary buffer should be allocated, and uses this provider to create the buffer. A *buffer provider* is a class that has a nested `buffer` class which implements a set of basic operations (construction with a size, `begin`, `end` and `size`). Implementing a buffer provider is a bit tricky, but using them should be easy enough:
 
@@ -13,6 +13,8 @@
     Some algorithms don't accept such an additional parameter. It may be because they implement a non-comparison sort instead, a sorting algorithm that uses other properties of the elements to perform the sort rather than a comparison function (for example a [radix sort][radix-sort]).
 
     The library provides a set of additional [comparators][comparators] generally corresponding to common ways to compare common types.
+
+* *Equivalent elements*: this notion appears in the context of comparing elements with a predicate. Two elements `a` and `b` are equivalent with regard to a predicate `comp` when `not comp(a, b) && not comp(b, a)`. Predicates in comparison sorts only require to model a [weak order][weak-order], so elements satifying the previous expressions do not have to be strictly equal - we call them *equivalent elements* in the rest of the documentation.
 
 * *Fixed-size sorter*: [fixed-size sorters][fixed-size-sorters] are a special breed of sorters designed to sort a fixed number of values. While they try their best to be full-fledge sorters, they are definitely not full-fledge sorters and probably don't blend as well as one would like into the library. Their main advantage is that they can be more performant than regular sorters in some specific scenarios.
 
@@ -36,14 +38,14 @@
 
 * *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however there are [standard proposals][p0022] to solve the problem by introducing a function named `iter_move` and making it as well as `iter_swap` customization points. No proposal has been accepted yet, so standard libraries don't handle proxy iterators; however every sorter in **cpp-sort** can actually handle such iterators (except `std_sorter` and `std_stable_sorter`). The library exposes the functions [`utility::iter_move` and `utility::iter_swap`][utility-iter-move] in case you also need to make your own algorithms handle proxy iterators.
 
-* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions.
+* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
 
         cppsort::pdq_sorter{}(std::begin(collection), std::end(collection),
                               std::greater<>{}, &wrapper::value);
 
-* *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section in the documentation.
+* *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section of the documentation.
 
-* *Stability*: a sorting algorithm is *stable* if it preserves the relative order of equivalent elements. While it does not matter when the equivalence relationship is also an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`][is-always-stable] sorter trait.
+* *Stability*: a sorting algorithm is *stable* if it preserves the relative order of *equivalent elements*. While it does not matter when the equivalence relationship also happens to be an equality relationship, it may have its importance in other situations. It is possible to query whether a sorter is guaranteed to always use a stable sorting algorithm with the [`is_always_stable`][is-always-stable] sorter trait.
 
         using stability = cppsort::is_stable<cppsort::tim_sorter>;
 
@@ -61,6 +63,8 @@
 
 * *Type-specific sorter*: some non-comparison sorters such as the [`spread_sorter`][spread-sorter] implement specific sorting algorithms which only work with some specific types (for example integers or strings).
 
+* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept an iterable or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
+
 
   [comparators]: Comparators.md
   [fixed-size-sorters]: Fixed-size-sorters.md
@@ -73,6 +77,7 @@
   [p0022]: https://wg21.link/P0022
   [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
   [sorter-adapters]: Sorter-adapters.md
+  [sorter-facade]: Sorter-facade.md
   [sorters]: Sorters.md
   [spread-sorter]: Sorters.md#spread_sorter
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
@@ -81,3 +86,4 @@
   [std-ranges]: https://en.cppreference.com/w/cpp/algorithm/ranges
   [stlab]: https://stlab.adobe.com/
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
+  [weak-order]: https://en.wikipedia.org/wiki/Weak_ordering
