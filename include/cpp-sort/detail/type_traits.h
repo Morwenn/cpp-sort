@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
+#include <tuple>
 #include <type_traits>
 #include <cpp-sort/mstd/type_traits.h>
 
@@ -80,6 +81,13 @@ namespace cppsort::detail
     template<typename T, template<typename...> typename Template>
     inline constexpr bool is_specialization_of_v
         = is_specialization_of<T, Template>::value;
+
+    ////////////////////////////////////////////////////////////
+    // pack_element: retrieve the nth elements of a parameter
+    // pack
+
+    template<std::size_t N, typename... Types>
+    using pack_element = std::tuple_element_t<N, std::tuple<Types...>>;
 
     ////////////////////////////////////////////////////////////
     // is_in_pack: check whether a given std::size_t value

@@ -143,7 +143,7 @@ namespace cppsort
             constexpr auto get() &
                 -> decltype(auto)
             {
-                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+                using sorter_t = pack_element<N, Sorters...>;
 
                 return hybrid_adapter_storage_leaf<
                     sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
@@ -156,7 +156,7 @@ namespace cppsort
             constexpr auto get() const&
                 -> decltype(auto)
             {
-                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+                using sorter_t = pack_element<N, Sorters...>;
 
                 return hybrid_adapter_storage_leaf<
                     sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
@@ -169,7 +169,7 @@ namespace cppsort
             constexpr auto get() &&
                 -> decltype(auto)
             {
-                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+                using sorter_t = pack_element<N, Sorters...>;
 
                 return hybrid_adapter_storage_leaf<
                     sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
@@ -182,7 +182,7 @@ namespace cppsort
             constexpr auto get() const&&
                 -> decltype(auto)
             {
-                using sorter_t = std::tuple_element_t<N, std::tuple<Sorters...>>;
+                using sorter_t = pack_element<N, Sorters...>;
 
                 return hybrid_adapter_storage_leaf<
                     sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
