@@ -1,4 +1,5 @@
 * [Home](Home.md)
+* [Quickstart](Quickstart.md)
 * Sorting library
     * [Library nomenclature](Library-nomenclature.md)
     * [Sorters](Sorters.md)
