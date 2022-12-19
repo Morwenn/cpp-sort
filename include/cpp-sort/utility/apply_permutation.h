@@ -23,7 +23,7 @@ namespace utility
         mstd::random_access_iterator Iterator2,
         mstd::sentinel_for<Iterator2> Sentinel2
     >
-    auto apply_permutation(Iterator1 first, Sentinel1 last,
+    auto apply_permutation(Iterator1 first, [[maybe_unused]] Sentinel1 last,
                            Iterator2 indices_first, Sentinel2 indices_last)
         -> void
     {
