@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2022 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -43,11 +43,13 @@ template<
     typename T,
     std::size_t N,
     typename Sorter,
-    typename DistributionFunction
+    typename DistFunction
 >
-auto time_it(Sorter sorter, DistributionFunction distribution)
-    -> double
+auto time_it(Sorter sorter, DistFunction distribution)
+    -> std::uint64_t
 {
+    static_assert(N > 0, "this benchmark does not support zero-sized arrays");
+
     // Seed the distribution manually to ensure that all algorithms
     // sort the same collections when there is randomness
     distributions_prng.seed(seed);
@@ -65,53 +67,53 @@ auto time_it(Sorter sorter, DistributionFunction distribution)
         sorter(arr);
         std::uint64_t end = rdtsc();
         assert(std::is_sorted(arr.begin(), arr.end()));
-        cycles.push_back(end - start);
+        cycles.push_back(double(end - start) / N);
         total_end = clock_type::now();
     }
 
-    // Return the average number of cycles it took to sort the arrays
-    std::uint64_t avg = 0;
-    for (auto value: cycles) {
-        avg += value;
-    }
-    return avg / double(cycles.size());
+    // Return the median number of cycles per element
+    auto cycles_median = cycles.begin() + cycles.size() / 2;
+    std::nth_element(cycles.begin(), cycles_median, cycles.end());
+    return *cycles_median;
 }
 
 template<
     typename T,
-    typename Distribution,
+    typename Dist,
     std::size_t... Ind
 >
 auto time_distribution(std::index_sequence<Ind...>)
     -> void
 {
+    using low_comparisons_sorter = cppsort::small_array_adapter<
+        cppsort::low_comparisons_sorter
+    >;
+    using low_moves_sorter = cppsort::small_array_adapter<
+        cppsort::low_moves_sorter
+    >;
+    using merge_exchange_network_sorter = cppsort::small_array_adapter<
+        cppsort::merge_exchange_network_sorter
+    >;
     using sorting_network_sorter = cppsort::small_array_adapter<
         cppsort::sorting_network_sorter
     >;
 
-    using low_comparisons_sorter = cppsort::small_array_adapter<
-        cppsort::low_comparisons_sorter
-    >;
-
-    using low_moves_sorter = cppsort::small_array_adapter<
-        cppsort::low_moves_sorter
-    >;
-
     // Compute results for the different sorting algorithms
-    std::pair<const char*, std::array<double, sizeof...(Ind)>> results[] = {
-        { "insertion_sorter",       { time_it<T, Ind>(cppsort::insertion_sort,  Distribution{})... } },
-        { "selection_sorter",       { time_it<T, Ind>(cppsort::selection_sort,  Distribution{})... } },
-        { "low_moves_sorter",       { time_it<T, Ind>(low_moves_sorter{},       Distribution{})... } },
-        { "low_comparisons_sorter", { time_it<T, Ind>(low_comparisons_sorter{}, Distribution{})... } },
-        { "sorting_network_sorter", { time_it<T, Ind>(sorting_network_sorter{}, Distribution{})... } },
+    std::pair<const char*, std::array<std::uint64_t, sizeof...(Ind)>> results[] = {
+        { "selection_sorter",               { time_it<T, Ind + 1>(cppsort::selection_sort,          Dist{})... } },
+        { "insertion_sorter",               { time_it<T, Ind + 1>(cppsort::insertion_sort,          Dist{})... } },
+        { "low_comparisons_sorter",         { time_it<T, Ind + 1>(low_comparisons_sorter{},         Dist{})... } },
+        { "low_moves_sorter",               { time_it<T, Ind + 1>(low_moves_sorter{},               Dist{})... } },
+        { "merge_exchange_network_sorter",  { time_it<T, Ind + 1>(merge_exchange_network_sorter{},  Dist{})... } },
+        { "sorting_network_sorter",         { time_it<T, Ind + 1>(sorting_network_sorter{},         Dist{})... } },
     };
 
     // Output the results to their respective files
-    std::ofstream output(Distribution::output);
+    std::ofstream output(Dist::output);
     for (auto&& sort_result: results) {
-        output << std::get<0>(sort_result) << ' ';
+        output << std::get<0>(sort_result) << ',';
         for (auto&& nb_cycles: std::get<1>(sort_result)) {
-            output << nb_cycles << ' ';
+            output << nb_cycles << ',';
         }
         output << '\n';
     }
@@ -120,16 +122,16 @@ auto time_distribution(std::index_sequence<Ind...>)
 template<
     typename T,
     std::size_t N,
-    typename... Distributions
+    typename... Dists
 >
 auto time_distributions()
     -> void
 {
-    using indices = std::make_index_sequence<N>;
+    using indices = std::make_index_sequence<N - 1>;
 
     // Variadic dispatch only works with expressions
     int dummy[] = {
-        (time_distribution<T, Distributions>(indices{}), 0)...
+        (time_distribution<T, Dists>(indices{}), 0)...
     };
     (void) dummy;
 }
