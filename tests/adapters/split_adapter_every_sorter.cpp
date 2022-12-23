@@ -33,6 +33,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with split_adapter", "[split_ada
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -59,7 +60,8 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with split_adapter", "[split_ada
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
-                    cppsort::slab_sorter )
+                    cppsort::slab_sorter,
+                    cppsort::splay_sorter )
 {
     std::list<double> collection;
     auto distribution = dist::inversions(0.2); // Big enough merges

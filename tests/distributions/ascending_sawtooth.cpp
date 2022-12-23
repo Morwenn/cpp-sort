@@ -32,6 +32,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with ascending_sawtooth distribu
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -59,6 +60,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with ascending_sawtooth distribu
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     std::list<int> collection;

@@ -46,6 +46,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -53,7 +54,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     cppsort::stable_t<TestType> sorter;
-    std::vector<wrapper> collection(412);
+    std::vector<wrapper> collection(1000);
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
     SECTION( "shuffled_16_values" )
@@ -82,11 +83,12 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_a
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
+                    cppsort::splay_sorter,
                     cppsort::slab_sorter,
                     cppsort::verge_sorter )
 {
     cppsort::stable_t<TestType> sorter;
-    std::list<wrapper> collection(412);
+    std::list<wrapper> collection(1000);
     helpers::iota(collection.begin(), collection.end(), 0, &wrapper::order);
 
     SECTION( "shuffled_16_values" )
@@ -112,7 +114,8 @@ TEMPLATE_TEST_CASE( "every forward sorter with with stable_adapter", "[stable_ad
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     cppsort::stable_t<TestType> sorter;
     const int size = 412;

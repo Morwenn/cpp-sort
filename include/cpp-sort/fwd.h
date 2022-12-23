@@ -51,6 +51,7 @@ namespace cppsort
     struct slab_sorter;
     struct smooth_sorter;
     struct spin_sorter;
+    struct splay_sorter;
     struct split_sorter;
     struct spread_sorter;
     struct std_sorter;

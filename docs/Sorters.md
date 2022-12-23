@@ -379,13 +379,27 @@ While the complexity guarantees of this algorithm are optimal, this smoothsort i
 #include <cpp-sort/sorters/spin_sorter.h>
 ```
 
-Implements a [spinsort][spinsort]
+Implements a [spinsort][spinsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | Yes         | Random-Access |
 
 *New in version 1.6.0*
+
+### `splay_sorter`
+
+```cpp
+#include <cpp-sort/sorters/splay_sorter.h>
+```
+
+Implements a [splaysort][splaysort].
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | Yes         | Forward       |
+
+*New in version 1.15.0*
 
 ### `split_sorter`
 
@@ -618,6 +632,7 @@ struct spread_sorter:
   [sorter-adapters]: Sorter-adapters.md
   [sorting-functions]: Sorting-functions.md
   [spinsort]: https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/sort/single_thread/spinsort.html
+  [splaysort]: https://en.wikipedia.org/wiki/Splaysort
   [spreadsort]: https://en.wikipedia.org/wiki/Spreadsort
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
