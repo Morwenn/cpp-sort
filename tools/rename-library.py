@@ -15,7 +15,6 @@ import fileinput
 import fnmatch
 import os
 import shutil
-import sys
 
 import pygit2
 
@@ -36,9 +35,9 @@ def main():
     repo = pygit2.Repository(repo_root)
     os.chdir(repo_root)
 
-    ##################################################    
+    ##################################################
     # Rename the library mentions in code
-    
+
     # Files we are interested into match one of these patterns
     filename_patterns = [
         "*.h",
@@ -58,7 +57,7 @@ def main():
                        for pattern in filename_patterns):
                 continue
             print("Modifying:", os.path.join(root, file))
-            
+
             # Replace references to cpp-sort
             with fileinput.FileInput(os.path.join(root, file), inplace=True) as fd:
                 for line in fd:
@@ -68,7 +67,7 @@ def main():
 
     ##################################################
     # Rename the main include directory
-    
+
     # Directory is removed after the files have been modified to make
     # sure that the .gitignore is valid when modifying said files
     old_dirname = os.path.join(repo_root, 'include', 'cpp-sort')
