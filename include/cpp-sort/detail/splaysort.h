@@ -21,29 +21,53 @@ namespace cppsort
 {
 namespace detail
 {
-    template<typename T>
-    struct splay_tree_node
+    struct splay_tree_node_base
     {
-        constexpr splay_tree_node(T&& value, splay_tree_node* parent)
-            noexcept(std::is_nothrow_move_constructible<T>::value):
-            value(std::move(value)),
+        explicit splay_tree_node_base(splay_tree_node_base* parent) noexcept:
             parent(parent)
         {}
 
+        explicit splay_tree_node_base(splay_tree_node_base* parent,
+                                      splay_tree_node_base* left_child,
+                                      splay_tree_node_base* right_child) noexcept:
+            parent(parent),
+            left_child(left_child),
+            right_child(right_child)
+        {}
+
         // Make tree nodes immovable
-        splay_tree_node(const splay_tree_node&) = delete;
-        splay_tree_node(splay_tree_node&&) = delete;
-        splay_tree_node& operator=(const splay_tree_node&) = delete;
-        splay_tree_node& operator=(splay_tree_node&&) = delete;
+        splay_tree_node_base(const splay_tree_node_base&) = delete;
+        splay_tree_node_base(splay_tree_node_base&&) = delete;
+        splay_tree_node_base& operator=(const splay_tree_node_base&) = delete;
+        splay_tree_node_base& operator=(splay_tree_node_base&&) = delete;
+
+        // Parent node
+        splay_tree_node_base* parent = nullptr;
+        // Children nodes
+        splay_tree_node_base* left_child = nullptr;
+        splay_tree_node_base* right_child = nullptr;
+    };
+
+    template<typename T>
+    struct splay_tree_node:
+        splay_tree_node_base
+    {
+        constexpr splay_tree_node(T&& value, splay_tree_node_base* parent)
+            noexcept(std::is_nothrow_move_constructible<T>::value):
+            splay_tree_node_base(parent),
+            value(std::move(value))
+        {}
+
+        constexpr splay_tree_node(T&& value, splay_tree_node_base* parent,
+                                  splay_tree_node_base* left_child,
+                                  splay_tree_node_base* right_child)
+            noexcept(std::is_nothrow_move_constructible<T>::value):
+            splay_tree_node_base(parent, left_child, right_child),
+            value(std::move(value))
+        {}
 
         // Stored value
         T value;
-
-        // Parent node
-        splay_tree_node* parent = nullptr;
-        // Children nodes
-        splay_tree_node* left_child = nullptr;
-        splay_tree_node* right_child = nullptr;
     };
 
     template<typename T>
@@ -64,13 +88,14 @@ namespace detail
             explicit splay_tree(ForwardIterator first, ForwardIterator last,
                                 difference_type_t<ForwardIterator> size,
                                 Compare compare, Projection projection):
+                sentinel_node_(nullptr),
                 buffer_(size),
                 root_(buffer_.begin()) // Original root is first element
             {
                 using utility::iter_move;
 
                 // Create the first node
-                buffer_.emplace_back(iter_move(first), nullptr);
+                buffer_.emplace_back(iter_move(first), &sentinel_node_, &sentinel_node_, &sentinel_node_);
                 // Advance to the next element
                 ++first;
 
@@ -95,33 +120,33 @@ namespace detail
             auto move_to(OutputIterator out)
                 -> void
             {
-                node_type* prev = root();
-                node_type* curr = nullptr;
-                if (prev->left_child) {
+                splay_tree_node_base* prev = root();
+                splay_tree_node_base* curr = nullptr;
+                if (prev->left_child != &sentinel_node_) {
                     curr = prev->left_child;
                 } else {
-                    *out = std::move(prev->value);
+                    *out = std::move(static_cast<node_type*>(prev)->value);
                     ++out;
                     curr = prev->right_child;
-                    curr->parent = nullptr;
+                    curr->parent = &sentinel_node_;
                 }
 
                 bool from_parent = true;
                 while (true) {
-                    if (from_parent && curr->left_child) {
+                    if (from_parent && curr->left_child != &sentinel_node_) {
                         prev = std::exchange(curr, curr->left_child);
                         continue;
                     }
 
-                    *out = std::move(curr->value);
+                    *out = std::move(static_cast<node_type*>(curr)->value);
                     ++out;
 
-                    if (curr->right_child) {
+                    if (curr->right_child != &sentinel_node_) {
                         from_parent = true;
                         prev = std::exchange(curr, curr->right_child);
                         curr->parent = prev->parent;
-                        prev->right_child = nullptr;
-                    } else if (curr->parent) {
+                        prev->right_child = &sentinel_node_;
+                    } else if (curr->parent != &sentinel_node_) {
                         from_parent = false;
                         prev = std::exchange(curr, curr->parent);
                     } else {
@@ -145,19 +170,19 @@ namespace detail
 
                 auto&& value_proj = proj(*it);
 
-                auto node = root();
-                CPPSORT_ASSERT(node != nullptr);
+                splay_tree_node_base* node = root();
+                CPPSORT_ASSERT(node != &sentinel_node_);
                 while (true) {
-                    if (comp(value_proj, proj(node->value))) {
-                        if (not node->left_child) {
-                            node->left_child = buffer_.emplace_back(iter_move(it), node);
+                    if (comp(value_proj, proj(static_cast<node_type*>(node)->value))) {
+                        if (node->left_child == &sentinel_node_) {
+                            node->left_child = buffer_.emplace_back(iter_move(it), node, &sentinel_node_, &sentinel_node_);
                             splay(node->left_child);
                             break;
                         }
                         node = node->left_child;
                     } else {
-                        if (not node->right_child) {
-                            node->right_child = buffer_.emplace_back(iter_move(it), node);
+                        if (node->right_child == &sentinel_node_) {
+                            node->right_child = buffer_.emplace_back(iter_move(it), node, &sentinel_node_, &sentinel_node_);
                             splay(node->right_child);
                             break;
                         }
@@ -166,54 +191,52 @@ namespace detail
                 }
             }
 
-            auto rotate_left(node_type* node)
+            auto rotate_left(splay_tree_node_base* node)
                 -> void
             {
                 auto parent = node->parent;
                 auto grand_parent = parent->parent;
                 parent->right_child = std::exchange(node->left_child, parent);
-                if (parent->right_child) {
-                    parent->right_child->parent = parent;
-                }
+                // Unconditional backlink thanks to the sentinel node
+                parent->right_child->parent = parent;
                 node->parent = std::exchange(parent->parent, node);
 
-                if (grand_parent) {
-                    if (grand_parent->left_child == parent) {
-                        grand_parent->left_child = node;
-                    } else {
-                        grand_parent->right_child = node;
-                    }
+                if (grand_parent->left_child == parent) {
+                    grand_parent->left_child = node;
+                } else {
+                    // This branch should always be taken when grand_parent
+                    // is the sentinel node
+                    grand_parent->right_child = node;
                 }
             }
 
-            auto rotate_right(node_type* node)
+            auto rotate_right(splay_tree_node_base* node)
                 -> void
             {
                 auto parent = node->parent;
                 auto grand_parent = parent->parent;
                 parent->left_child = std::exchange(node->right_child, parent);
-                if (parent->left_child) {
-                    parent->left_child->parent = parent;
-                }
+                // Unconditional backlink thanks to the sentinel node
+                parent->left_child->parent = parent;
                 node->parent = std::exchange(parent->parent, node);
 
-                if (grand_parent) {
-                    if (grand_parent->left_child == parent) {
-                        grand_parent->left_child = node;
-                    } else {
-                        grand_parent->right_child = node;
-                    }
+                if (grand_parent->left_child == parent) {
+                    grand_parent->left_child = node;
+                } else {
+                    // This branch should always be taken when grand_parent
+                    // is the sentinel node
+                    grand_parent->right_child = node;
                 }
             }
 
-            auto splay(node_type* node)
+            auto splay(splay_tree_node_base* node)
                 -> void
             {
                 auto parent = node->parent;
-                CPPSORT_ASSERT(parent != nullptr);
+                CPPSORT_ASSERT(parent != &sentinel_node_);
                 do {
                     auto grand_parent = parent->parent;
-                    if (not grand_parent) {
+                    if (grand_parent == &sentinel_node_) {
                         if (node == parent->left_child) {
                             // zig
                             rotate_right(node);
@@ -245,15 +268,20 @@ namespace detail
                         }
                     }
                     parent = node->parent;
-                } while (parent != nullptr);
-                root_ = node;
+                } while (parent != &sentinel_node_);
+                root_ = static_cast<node_type*>(node);
             }
 
             ////////////////////////////////////////////////////////////
             // Data members
 
+            // Sentinel node: it doesn't matter where it point to, this
+            // node only exists to reduce branching in some operations
+            splay_tree_node_base sentinel_node_;
+
             // Backing storage
             immovable_vector<node_type> buffer_;
+
             // Root of the splay tree
             node_type* root_;
     };
