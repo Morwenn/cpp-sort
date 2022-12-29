@@ -70,8 +70,107 @@ namespace detail
         T value;
     };
 
+    struct splay_tree_base
+    {
+        public:
+
+            splay_tree_base() noexcept:
+                sentinel_node_(nullptr)
+            {}
+
+            auto rotate_left(splay_tree_node_base* node) noexcept
+                -> void
+            {
+                auto parent = node->parent;
+                auto grand_parent = parent->parent;
+                parent->right_child = std::exchange(node->left_child, parent);
+                // Unconditional backlink thanks to the sentinel node
+                parent->right_child->parent = parent;
+                node->parent = std::exchange(parent->parent, node);
+
+                if (grand_parent->left_child == parent) {
+                    grand_parent->left_child = node;
+                } else {
+                    // This branch should always be taken when grand_parent
+                    // is the sentinel node
+                    grand_parent->right_child = node;
+                }
+            }
+
+            auto rotate_right(splay_tree_node_base* node) noexcept
+                -> void
+            {
+                auto parent = node->parent;
+                auto grand_parent = parent->parent;
+                parent->left_child = std::exchange(node->right_child, parent);
+                // Unconditional backlink thanks to the sentinel node
+                parent->left_child->parent = parent;
+                node->parent = std::exchange(parent->parent, node);
+
+                if (grand_parent->left_child == parent) {
+                    grand_parent->left_child = node;
+                } else {
+                    // This branch should always be taken when grand_parent
+                    // is the sentinel node
+                    grand_parent->right_child = node;
+                }
+            }
+
+            auto splay(splay_tree_node_base* node) noexcept
+                -> void
+            {
+                // Note: we don't store a root here, so this splay
+                //       operation does not reassign the root
+
+                auto parent = node->parent;
+                CPPSORT_ASSERT(parent != &sentinel_node_);
+                do {
+                    auto grand_parent = parent->parent;
+                    if (grand_parent == &sentinel_node_) {
+                        if (node == parent->left_child) {
+                            // zig
+                            rotate_right(node);
+                        } else {
+                            // zag
+                            rotate_left(node);
+                        }
+                    } else {
+                        if (parent == grand_parent->left_child) {
+                            if (node == parent->left_child) {
+                                // zig-zig
+                                rotate_right(parent);
+                                rotate_right(node);
+                            } else {
+                                // zig-zag
+                                rotate_left(node);
+                                rotate_right(node);
+                            }
+                        } else {
+                            if (node == parent->left_child) {
+                                // zag-zig
+                                rotate_right(node);
+                                rotate_left(node);
+                            } else {
+                                // zag-zag
+                                rotate_left(parent);
+                                rotate_left(node);
+                            }
+                        }
+                    }
+                    parent = node->parent;
+                } while (parent != &sentinel_node_);
+            }
+
+        protected:
+
+            // Sentinel node: it doesn't matter where it point to, this
+            // node only exists to reduce branching in some operations
+            splay_tree_node_base sentinel_node_;
+    };
+
     template<typename T>
-    struct splay_tree
+    struct splay_tree:
+        splay_tree_base
     {
         public:
 
@@ -88,7 +187,7 @@ namespace detail
             explicit splay_tree(ForwardIterator first, ForwardIterator last,
                                 difference_type_t<ForwardIterator> size,
                                 Compare compare, Projection projection):
-                sentinel_node_(nullptr),
+                splay_tree_base(),
                 buffer_(size),
                 root_(buffer_.begin()) // Original root is first element
             {
@@ -107,7 +206,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Accessors
 
-            auto root() const
+            auto root() const noexcept
                 -> node_type*
             {
                 return root_;
@@ -182,93 +281,15 @@ namespace detail
                 }
             }
 
-            auto rotate_left(splay_tree_node_base* node)
+            auto splay(splay_tree_node_base* node) noexcept
                 -> void
             {
-                auto parent = node->parent;
-                auto grand_parent = parent->parent;
-                parent->right_child = std::exchange(node->left_child, parent);
-                // Unconditional backlink thanks to the sentinel node
-                parent->right_child->parent = parent;
-                node->parent = std::exchange(parent->parent, node);
-
-                if (grand_parent->left_child == parent) {
-                    grand_parent->left_child = node;
-                } else {
-                    // This branch should always be taken when grand_parent
-                    // is the sentinel node
-                    grand_parent->right_child = node;
-                }
-            }
-
-            auto rotate_right(splay_tree_node_base* node)
-                -> void
-            {
-                auto parent = node->parent;
-                auto grand_parent = parent->parent;
-                parent->left_child = std::exchange(node->right_child, parent);
-                // Unconditional backlink thanks to the sentinel node
-                parent->left_child->parent = parent;
-                node->parent = std::exchange(parent->parent, node);
-
-                if (grand_parent->left_child == parent) {
-                    grand_parent->left_child = node;
-                } else {
-                    // This branch should always be taken when grand_parent
-                    // is the sentinel node
-                    grand_parent->right_child = node;
-                }
-            }
-
-            auto splay(splay_tree_node_base* node)
-                -> void
-            {
-                auto parent = node->parent;
-                CPPSORT_ASSERT(parent != &sentinel_node_);
-                do {
-                    auto grand_parent = parent->parent;
-                    if (grand_parent == &sentinel_node_) {
-                        if (node == parent->left_child) {
-                            // zig
-                            rotate_right(node);
-                        } else {
-                            // zag
-                            rotate_left(node);
-                        }
-                    } else {
-                        if (parent == grand_parent->left_child) {
-                            if (node == parent->left_child) {
-                                // zig-zig
-                                rotate_right(parent);
-                                rotate_right(node);
-                            } else {
-                                // zig-zag
-                                rotate_left(node);
-                                rotate_right(node);
-                            }
-                        } else {
-                            if (node == parent->left_child) {
-                                // zag-zig
-                                rotate_right(node);
-                                rotate_left(node);
-                            } else {
-                                // zag-zag
-                                rotate_left(parent);
-                                rotate_left(node);
-                            }
-                        }
-                    }
-                    parent = node->parent;
-                } while (parent != &sentinel_node_);
+                splay_tree_base::splay(node);
                 root_ = static_cast<node_type*>(node);
             }
 
             ////////////////////////////////////////////////////////////
             // Data members
-
-            // Sentinel node: it doesn't matter where it point to, this
-            // node only exists to reduce branching in some operations
-            splay_tree_node_base sentinel_node_;
 
             // Backing storage
             immovable_vector<node_type> buffer_;
