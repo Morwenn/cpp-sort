@@ -120,38 +120,29 @@ namespace detail
             auto move_to(OutputIterator out)
                 -> void
             {
-                splay_tree_node_base* prev = root();
-                splay_tree_node_base* curr = nullptr;
-                if (prev->left_child != &sentinel_node_) {
-                    curr = prev->left_child;
-                } else {
-                    *out = std::move(static_cast<node_type*>(prev)->value);
-                    ++out;
-                    curr = prev->right_child;
-                    curr->parent = &sentinel_node_;
+                splay_tree_node_base* curr = root();
+                while (curr->left_child != &sentinel_node_) {
+                    curr = curr->left_child;
                 }
+                *out = std::move(static_cast<node_type*>(curr)->value);
+                ++out;
 
-                bool from_parent = true;
                 while (true) {
-                    if (from_parent && curr->left_child != &sentinel_node_) {
-                        prev = std::exchange(curr, curr->left_child);
-                        continue;
+                    if (curr->right_child != &sentinel_node_) {
+                        auto prev = std::exchange(curr, curr->right_child);
+                        curr->parent = prev->parent;
+                        prev->right_child = &sentinel_node_;
+                        while (curr->left_child != &sentinel_node_) {
+                            curr = curr->left_child;
+                        }
+                    } else if (curr->parent != &sentinel_node_) {
+                        curr = curr->parent;
+                    } else {
+                        return;
                     }
 
                     *out = std::move(static_cast<node_type*>(curr)->value);
                     ++out;
-
-                    if (curr->right_child != &sentinel_node_) {
-                        from_parent = true;
-                        prev = std::exchange(curr, curr->right_child);
-                        curr->parent = prev->parent;
-                        prev->right_child = &sentinel_node_;
-                    } else if (curr->parent != &sentinel_node_) {
-                        from_parent = false;
-                        prev = std::exchange(curr, curr->parent);
-                    } else {
-                        return;
-                    }
                 }
             }
 
