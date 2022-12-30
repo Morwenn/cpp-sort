@@ -15,41 +15,16 @@
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "../detail/heapsort.h"
-#include "../detail/immovable_vector.h"
-#include "../detail/iterator_traits.h"
-#include "../detail/type_traits.h"
+#include "binary_tree.h"
+#include "heapsort.h"
+#include "immovable_vector.h"
+#include "iterator_traits.h"
+#include "type_traits.h"
 
 namespace cppsort
 {
 namespace detail
 {
-    template<typename T>
-    struct cartesian_tree_node
-    {
-        constexpr cartesian_tree_node(T&& value, cartesian_tree_node* parent, cartesian_tree_node* left_child)
-            noexcept(std::is_nothrow_move_constructible<T>::value):
-            value(std::move(value)),
-            parent(parent),
-            left_child(left_child)
-        {}
-
-        // Make tree nodes immovable
-        cartesian_tree_node(const cartesian_tree_node&) = delete;
-        cartesian_tree_node(cartesian_tree_node&&) = delete;
-        cartesian_tree_node& operator=(const cartesian_tree_node&) = delete;
-        cartesian_tree_node& operator=(cartesian_tree_node&&) = delete;
-
-        // Stored value
-        T value;
-
-        // Parent node
-        cartesian_tree_node* parent = nullptr;
-        // Children nodes
-        cartesian_tree_node* left_child = nullptr;
-        cartesian_tree_node* right_child = nullptr;
-    };
-
     template<typename T>
     struct cartesian_tree
     {
@@ -59,7 +34,7 @@ namespace detail
             // Public types
 
             using difference_type = std::ptrdiff_t;
-            using node_type = cartesian_tree_node<T>;
+            using node_type = binary_tree_node<T>;
 
             ////////////////////////////////////////////////////////////
             // Constructor
@@ -121,7 +96,7 @@ namespace detail
                     if (prev_node == root_) {
                         return nullptr;
                     }
-                    prev_node = prev_node->parent;
+                    prev_node = static_cast<node_type*>(prev_node->parent);
                 }
                 return prev_node;
             }
@@ -149,20 +124,20 @@ namespace detail
         }
 
         tree_type tree(first, last, size, compare, projection);
-        std::vector<node_type*> pq; // Priority queue
+        std::vector<binary_tree_node_base*> pq; // Priority queue
         pq.push_back(tree.root());
 
         auto&& comp = cppsort::flip(compare);
         auto proj_value = [proj=utility::as_function(projection)](auto* node) -> decltype(auto) {
-            return proj(node->value);
+            return proj(static_cast<node_type*>(node)->value);
         };
 
         while (not pq.empty()) {
             // Retrieve biggest element
-            node_type* node = pq.front();
+            auto* node = pq.front();
 
             // Add the element back to the original collection
-            *first = std::move(node->value);
+            *first = std::move(static_cast<node_type*>(node)->value);
             ++first;
 
             // Add the node's children to the priority queue
