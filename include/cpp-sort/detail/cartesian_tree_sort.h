@@ -98,7 +98,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Accessors
 
-            auto root() const
+            auto root() const noexcept
                 -> node_type*
             {
                 return root_;

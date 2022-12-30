@@ -72,21 +72,21 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            auto operator[](std::ptrdiff_t pos)
+            auto operator[](std::ptrdiff_t pos) noexcept
                 -> T&
             {
                 CPPSORT_ASSERT(pos <= end_ - memory_);
                 return memory_[pos];
             }
 
-            auto front()
+            auto front() noexcept
                 -> T&
             {
                 CPPSORT_ASSERT(memory_ != end_);
                 return *memory_;
             }
 
-            auto back()
+            auto back() noexcept
                 -> T&
             {
                 CPPSORT_ASSERT(end_ - memory_ > 0);
@@ -96,13 +96,13 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Iterators
 
-            auto begin()
+            auto begin() noexcept
                 -> T*
             {
                 return memory_;
             }
 
-            auto end()
+            auto end() noexcept
                 -> T*
             {
                 return end_;
