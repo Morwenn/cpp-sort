@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_SORTING_NETWORK_SORTER_H_
@@ -33,12 +33,12 @@ namespace cppsort
         };
 
         template<>
-        struct sorting_network_sorter_impl<0u>:
+        struct sorting_network_sorter_impl<0>:
             cppsort::detail::empty_network_sorter_impl
         {};
 
         template<>
-        struct sorting_network_sorter_impl<1u>:
+        struct sorting_network_sorter_impl<1>:
             cppsort::detail::empty_network_sorter_impl
         {};
     }
@@ -49,19 +49,31 @@ namespace cppsort
     {};
 
     ////////////////////////////////////////////////////////////
-    // Sorter traits
+    // sorter_traits
 
     template<std::size_t N>
     struct sorter_traits<sorting_network_sorter<N>>
     {
         using iterator_category = std::random_access_iterator_tag;
-
-        // Some of the algorithms are stable, others are not,
-        // the stability *could* be documented depending on which
-        // fixed-size algorithms are used, but it would be lots of
-        // work...
         using is_always_stable = std::false_type;
     };
+
+    template<>
+    struct sorter_traits<sorting_network_sorter<0>>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        using is_always_stable = std::true_type;
+    };
+
+    template<>
+    struct sorter_traits<sorting_network_sorter<1>>
+    {
+        using iterator_category = std::random_access_iterator_tag;
+        using is_always_stable = std::true_type;
+    };
+
+    ////////////////////////////////////////////////////////////
+    // fixed_sorter_traits
 
     template<>
     struct fixed_sorter_traits<sorting_network_sorter>
@@ -81,7 +93,7 @@ namespace cppsort
 #include "../detail/swap_if.h"
 #include "../detail/type_traits.h"
 
-// Specializations of sorting_network_sorter for some values of N
+// Explicit specializations of sorting_network_sorter
 #include "../detail/sorting_network/sort2.h"
 #include "../detail/sorting_network/sort3.h"
 #include "../detail/sorting_network/sort4.h"
