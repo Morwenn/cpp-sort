@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
@@ -38,23 +38,49 @@ namespace cppsort
             {}
 
             template<
-                typename RandomAccessIterator,
+                typename BidirectionalIterable,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_iterator_v<Projection, RandomAccessIterator, Compare>
+                    is_projection_v<Projection, BidirectionalIterable, Compare>
                 >
             >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+            auto operator()(BidirectionalIterable&& iterable,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of<
                         iterator_category,
-                        iterator_category_t<RandomAccessIterator>
+                        iterator_category_t<decltype(std::begin(iterable))>
                     >::value,
-                    "verge_adapter requires at least random-access iterators"
+                    "verge_adapter requires a stronger iterator category"
+                );
+
+                verge::sort<Stable>(std::begin(iterable), std::end(iterable),
+                                    utility::size(iterable),
+                                    std::move(compare), std::move(projection),
+                                    this->get());
+            }
+
+            template<
+                typename BidirectionalIterator,
+                typename Compare = std::less<>,
+                typename Projection = utility::identity,
+                typename = detail::enable_if_t<
+                    is_projection_iterator_v<Projection, BidirectionalIterator, Compare>
+                >
+            >
+            auto operator()(BidirectionalIterator first, BidirectionalIterator last,
+                            Compare compare={}, Projection projection={}) const
+                -> void
+            {
+                static_assert(
+                    std::is_base_of<
+                        iterator_category,
+                        iterator_category_t<BidirectionalIterator>
+                    >::value,
+                    "verge_adapter requires a stronger iterator category"
                 );
 
                 verge::sort<Stable>(std::move(first), std::move(last), last - first,
@@ -65,7 +91,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category = std::random_access_iterator_tag;
+            using iterator_category = typename bidir_at_best_tag<Sorter>::type;
             using is_always_stable = std::integral_constant<bool, Stable>;
         };
     }
