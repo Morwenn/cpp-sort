@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_STABLE_ADAPTER_H_
@@ -24,7 +24,6 @@
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/raw_checkers.h"
-#include "../detail/sized_iterator.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -115,26 +114,6 @@ namespace cppsort
             );
         }
 
-        template<
-            typename ForwardIterator,
-            typename Compare,
-            typename Projection,
-            typename Sorter
-        >
-        auto make_stable_and_sort(sized_iterator<ForwardIterator> first, difference_type_t<ForwardIterator> size,
-                                  Compare&& compare, Projection&& projection, Sorter&& sorter)
-            -> decltype(auto)
-        {
-            // Hack to get the stable bidirectional version of vergesort
-            // to work correctly without duplicating tons of code
-            return make_stable_and_sort(
-                first.base(), size,
-                std::forward<Compare>(compare),
-                std::forward<Projection>(projection),
-                std::forward<Sorter>(sorter)
-            );
-        }
-
         ////////////////////////////////////////////////////////////
         // make_stable_impl
 
@@ -178,8 +157,7 @@ namespace cppsort
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                using std::distance; // Hack for sized_iterator
-                return make_stable_and_sort(first, distance(first, last),
+                return make_stable_and_sort(first, std::distance(first, last),
                                             std::move(compare), std::move(projection),
                                             this->get());
             }

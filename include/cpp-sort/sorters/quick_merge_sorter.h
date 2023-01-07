@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_QUICK_MERGE_SORTER_H_
@@ -75,8 +75,7 @@ namespace cppsort
                     "quick_merge_sorter requires at least forward iterators"
                 );
 
-                using std::distance; // Hack for sized_iterator
-                auto dist = distance(first, last);
+                auto dist = std::distance(first, last);
                 quick_merge_sort(std::move(first), std::move(last), dist,
                                  std::move(compare), std::move(projection));
             }
