@@ -15,26 +15,34 @@
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/config.h"
 
 namespace cppsort
 {
-    ////////////////////////////////////////////////////////////
-    // Sorters
+    struct verge_sorter;
 
-    struct verge_sorter:
-        sorter_facade<
-            detail::verge_adapter_impl<
-                hybrid_adapter<
-                    pdq_sorter,
-                    quick_merge_sorter
-                >,
-                false
-            >
-        >
+    namespace deprecated
     {
-        verge_sorter() = default;
-    };
+        struct verge_sorter:
+            sorter_facade<
+                detail::verge_adapter_impl<
+                    hybrid_adapter<
+                        pdq_sorter,
+                        quick_merge_sorter
+                    >,
+                    false
+                >
+            >
+        {
+            verge_sorter() = default;
+        };
+    }
 
+    ////////////////////////////////////////////////////////////
+    // Stable sorter
+
+    // Declare the specialization first to avoid deprecation
+    // warning at definition time
     template<>
     struct stable_adapter<verge_sorter>:
         sorter_facade<
@@ -49,7 +57,34 @@ namespace cppsort
     {
         stable_adapter() = default;
 
-        constexpr explicit stable_adapter(verge_sorter):
+        constexpr explicit stable_adapter(const verge_sorter&):
+            sorter_facade<
+                detail::verge_adapter_impl<
+                    hybrid_adapter<
+                        pdq_sorter,
+                        quick_merge_sorter
+                    >,
+                    true
+                >
+            >()
+        {}
+    };
+
+    template<>
+    struct stable_adapter<deprecated::verge_sorter>:
+        sorter_facade<
+            detail::verge_adapter_impl<
+                hybrid_adapter<
+                    pdq_sorter,
+                    quick_merge_sorter
+                >,
+                true
+            >
+        >
+    {
+        stable_adapter() = default;
+
+        constexpr explicit stable_adapter(deprecated::verge_sorter):
             sorter_facade<
                 detail::verge_adapter_impl<
                     hybrid_adapter<
@@ -63,12 +98,31 @@ namespace cppsort
     };
 
     ////////////////////////////////////////////////////////////
+    // Sorters
+
+    struct CPPSORT_DEPRECATED("verge_sorter is deprecated and will be removed in version 2.0.0, use verge_adapter instead")
+    verge_sorter:
+        sorter_facade<
+            detail::verge_adapter_impl<
+                hybrid_adapter<
+                    pdq_sorter,
+                    quick_merge_sorter
+                >,
+                false
+            >
+        >
+    {
+        verge_sorter() = default;
+    };
+
+    ////////////////////////////////////////////////////////////
     // Sort function
 
     namespace
     {
+        CPPSORT_DEPRECATED("verge_sort is deprecated and will be removed in version 2.0.0, use verge_adapter instead")
         constexpr auto&& verge_sort
-            = utility::static_const<verge_sorter>::value;
+            = utility::static_const<deprecated::verge_sorter>::value;
     }
 }
 
