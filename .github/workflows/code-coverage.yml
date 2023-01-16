@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Morwenn
+# Copyright (c) 2020-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Coverage Upload to Codecov
@@ -32,7 +32,7 @@ jobs:
         shell: bash
         working-directory: ${{runner.workspace}}
         env:
-          CXX: g++-11
+          CXX: g++-12
         run: >
           cmake -H${{github.event.repository.name}} -Bbuild
           -DCMAKE_BUILD_TYPE=Debug

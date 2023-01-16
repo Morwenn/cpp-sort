@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Morwenn
+# Copyright (c) 2021-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Ubuntu Builds
@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         cxx:
-          - g++-11
+          - g++-12
           - clang++-14
         config:
           # Release build
