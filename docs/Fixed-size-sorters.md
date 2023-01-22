@@ -136,14 +136,14 @@ template<typename DifferenceType=std::ptrdiff_t>
 #include <cpp-sort/fixed/sorting_network_sorter.h>
 ```
 
-This sorter provides size-optimal [sorting networks][sorting-network] for 0 thru 32 inputs. While using a generic algorithm for the task such as a Batcher's odd-even mergesort may be too slow to be usable, the resulting unrolled sorting networks may be fast enough and even tend to be faster than everything else when it comes to sorting small arrays of integers without requiring additional memory.
+This sorter provides size-optimal [sorting networks][sorting-network] for 0 thru 32 inputs. Those networks are manually unrolled *sequential* series of *compare-exchange* operations (CEs) which can be fast enough for certain operations, and do tend to be faster than everything else when it comes to sorting small arrays of integers without requiring additional memory.
 
 ```cpp
 template<std::size_t N>
 struct sorting_network_sorter;
 ```
 
-The following table gives the number of *compare-exchange* operations (CEs) used to sort a fixed collection of a given size. These numbers should correspond to the best-known size-optimal sorting networks at the time of writing (as opposed to depth-optimal sorting networks). If you ever find a sorting network using fewer CEs for one of these sizes, don't hesitate to open an issue (but you might as well write a research paper about it).
+The following table gives the number of *compare-exchange* operations used to sort a fixed collection of a given size. These numbers should correspond to the best-known size-optimal sorting networks at the time of writing (as opposed to depth-optimal sorting networks). If you ever find a sorting network using fewer CEs for one of these sizes, don't hesitate to open an issue, though you might as well write a research paper about it.
 
 Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-:
@@ -151,11 +151,11 @@ Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 **Size** | **17** | **18** | **19** | **20** | **21** | **22** | **23** | **24** | **25** | **26** | **27** | **28** | **29** | **30** | **31** | **32**
 **CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 130 | 139 | 147 | 155 | 164 | 172 | 180 | 185
 
-One of the main advantages of sorting networks is the fixed number of CEs required to sort a collection: this means that sorting networks are far more resistant to time and cache attacks since the number of performed comparisons does not depend on the contents of the collection. However, additional care (not provided by the library) is required to ensure that the algorithms always perform the same amount of memory loads and stores. For example, one could create a `constant_time_iterator` with a dedicated `iter_swap` tuned to perform a constant-time compare-exchange operation.
+Networks 0, 1, 2 and 3 are stable. All other networks are unstable.
 
-*Note:* don't be fooled by the name; none of the algorithms in this fixed-size sorter explicitly perform any operation in parallel. Everything is sequential. The algorithms are but long sequences of compare-exchange operations.
+One of the main advantages of sorting networks is the fixed number of CEs required to sort a collection: this means that sorting networks are far more resilient to time and cache attacks since the number of performed comparisons does not depend on the contents of the collection. However, additional care (not provided by the library) is required to ensure that the algorithms always perform the same amount of memory loads and stores. For example, one could create a `constant_time_iterator` with a dedicated `iter_swap` tuned to perform a constant-time compare-exchange operation.
 
-All specializations of `sorting_network_sorter` provide a `index_pairs() static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be passed manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated of the index/difference type, which must be constructible from `int`.
+All specializations of `sorting_network_sorter` provide a `index_pairs()` `static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated on the index/difference type, which must be constructible from `int`.
 
 ```cpp
 template<typename DifferenceType=std::ptrdiff_t>
