@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FIXED_SIZE_LIST_H_
@@ -179,7 +179,7 @@ namespace cppsort::detail
             // Node providing/retrieval
 
             [[nodiscard]]
-            auto next_free_node()
+            auto next_free_node() noexcept
                 -> node_type*
             {
                 // Retrieve next free node
@@ -189,7 +189,7 @@ namespace cppsort::detail
                 return static_cast<node_type*>(new_node);
             }
 
-            auto retrieve_nodes(list_node_base* first, list_node_base* last)
+            auto retrieve_nodes(list_node_base* first, list_node_base* last) noexcept
                 -> void
             {
                 // Get back a range of nodes linked together, this function
@@ -217,11 +217,11 @@ namespace cppsort::detail
             // Using this function incorrectly *will* fuck everything
             // and its invariants up.
 
-            auto reset_nodes(std::ptrdiff_t until_n)
+            auto reset_nodes(std::ptrdiff_t until_n) noexcept
                 -> void
             {
                 auto ptr = buffer_;
-                for (std::ptrdiff_t n = 0 ; n < until_n - 1 ; ++n, ++ptr) {
+                for (std::ptrdiff_t n = 0; n < until_n - 1; ++n, ++ptr) {
                     ptr->next = ptr + 1;
                 }
                 if (until_n == capacity_) {
@@ -286,7 +286,7 @@ namespace cppsort::detail
             // Members access
 
             [[nodiscard]]
-            constexpr auto base() const
+            constexpr auto base() const noexcept
                 -> node_type*
             {
                 return static_cast<node_type*>(ptr_);
@@ -296,14 +296,14 @@ namespace cppsort::detail
             // Element access
 
             [[nodiscard]]
-            auto operator*() const
+            auto operator*() const noexcept
                 -> reference
             {
                 return static_cast<node_type*>(ptr_)->value;
             }
 
             [[nodiscard]]
-            auto operator->() const
+            auto operator->() const noexcept
                 -> pointer
             {
                 return &(operator*());
@@ -312,14 +312,14 @@ namespace cppsort::detail
             ////////////////////////////////////////////////////////////
             // Increment/decrement operators
 
-            auto operator++()
+            auto operator++() noexcept
                 -> fixed_size_list_iterator&
             {
                 ptr_ = ptr_->next;
                 return *this;
             }
 
-            auto operator++(int)
+            auto operator++(int) noexcept
                 -> fixed_size_list_iterator
             {
                 auto tmp = *this;
@@ -327,14 +327,14 @@ namespace cppsort::detail
                 return tmp;
             }
 
-            auto operator--()
+            auto operator--() noexcept
                 -> fixed_size_list_iterator&
             {
                 ptr_ = ptr_->prev;
                 return *this;
             }
 
-            auto operator--(int)
+            auto operator--(int) noexcept
                 -> fixed_size_list_iterator
             {
                 auto tmp = *this;
@@ -346,7 +346,7 @@ namespace cppsort::detail
             // Comparison operators
 
             [[nodiscard]]
-            friend constexpr auto operator==(const fixed_size_list_iterator& lhs, const fixed_size_list_iterator& rhs)
+            friend constexpr auto operator==(const fixed_size_list_iterator& lhs, const fixed_size_list_iterator& rhs) noexcept
                 -> bool
             {
                 return lhs.base() == rhs.base();
@@ -485,21 +485,21 @@ namespace cppsort::detail
             // Element access
 
             [[nodiscard]]
-            auto front()
+            auto front() noexcept
                 -> reference
             {
                 return static_cast<node_type*>(sentinel_node_.next)->value;
             }
 
             [[nodiscard]]
-            auto back()
+            auto back() noexcept
                 -> reference
             {
                 return static_cast<node_type*>(sentinel_node_.prev)->value;
             }
 
             [[nodiscard]]
-            auto node_pool()
+            auto node_pool() noexcept
                 -> fixed_size_list_node_pool<node_type>&
             {
                 return *node_pool_;
@@ -509,14 +509,14 @@ namespace cppsort::detail
             // Iterators
 
             [[nodiscard]]
-            auto begin()
+            auto begin() noexcept
                 -> iterator
             {
                 return iterator(sentinel_node_.next);
             }
 
             [[nodiscard]]
-            auto end()
+            auto end() noexcept
                 -> iterator
             {
                 return iterator(&sentinel_node_);
@@ -586,7 +586,7 @@ namespace cppsort::detail
             }
 
             [[nodiscard]]
-            auto extract(list_node_base* node)
+            auto extract(list_node_base* node) noexcept
                 -> node_type*
             {
                 CPPSORT_ASSERT(node != &sentinel_node_);
@@ -597,27 +597,27 @@ namespace cppsort::detail
             }
 
             [[nodiscard]]
-            auto extract(iterator pos)
+            auto extract(iterator pos) noexcept
                 -> node_type*
             {
                 return extract(pos.base());
             }
 
             [[nodiscard]]
-            auto extract_back()
+            auto extract_back() noexcept
                 -> node_type*
             {
                 return extract(sentinel_node_.prev);
             }
 
             [[nodiscard]]
-            auto extract_front()
+            auto extract_front() noexcept
                 -> node_type*
             {
                 return extract(sentinel_node_.next);
             }
 
-            auto set_node_destructor(node_value_destructor_t node_destructor)
+            auto set_node_destructor(node_value_destructor_t node_destructor) noexcept
                 -> void
             {
                 node_destructor_ = std::move(node_destructor);
@@ -747,7 +747,7 @@ namespace cppsort::detail
                 other.sentinel_node_.prev = &other.sentinel_node_;
             }
 
-            auto splice(iterator pos, fixed_size_list& other)
+            auto splice(iterator pos, fixed_size_list& other) noexcept
                 -> void
             {
                 if (other.is_empty()) {
@@ -756,7 +756,7 @@ namespace cppsort::detail
                 splice(pos, other, other.begin(), other.end());
             }
 
-            auto splice(iterator pos, fixed_size_list&, iterator first, iterator last)
+            auto splice(iterator pos, fixed_size_list&, iterator first, iterator last) noexcept
                 -> void
             {
                 CPPSORT_ASSERT(first.base() != last.base());
@@ -807,7 +807,7 @@ namespace cppsort::detail
                 return new_node;
             }
 
-            auto link_node_before_(list_node_base* node, list_node_base* pos)
+            auto link_node_before_(list_node_base* node, list_node_base* pos) noexcept
                 -> void
             {
                 // Relink pointers to a new node
@@ -817,7 +817,7 @@ namespace cppsort::detail
                 node->next->prev = node;
             }
 
-            auto fast_splice_(iterator pos, iterator first, iterator last)
+            auto fast_splice_(iterator pos, iterator first, iterator last) noexcept
                 -> void
             {
                 CPPSORT_ASSERT(first.base() != last.base());

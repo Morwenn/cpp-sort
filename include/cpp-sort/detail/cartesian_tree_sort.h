@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CARTESIAN_TREE_SORT_H_
@@ -94,7 +94,7 @@ namespace cppsort::detail
             ////////////////////////////////////////////////////////////
             // Accessors
 
-            auto root() const
+            auto root() const noexcept
                 -> node_type*
             {
                 return root_;

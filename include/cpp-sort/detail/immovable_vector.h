@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_IMMOVABLE_VECTOR_H_
@@ -64,21 +64,21 @@ namespace cppsort::detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            constexpr auto operator[](std::ptrdiff_t pos)
+            constexpr auto operator[](std::ptrdiff_t pos) noexcept
                 -> T&
             {
                 CPPSORT_ASSERT(pos <= end_ - memory_);
                 return memory_[pos];
             }
 
-            auto front()
+            auto front() noexcept
                 -> T&
             {
                 CPPSORT_ASSERT(memory_ != end_);
                 return *memory_;
             }
 
-            auto back()
+            auto back() noexcept
                 -> T&
             {
                 CPPSORT_ASSERT(end_ - memory_ > 0);
@@ -88,13 +88,13 @@ namespace cppsort::detail
             ////////////////////////////////////////////////////////////
             // Iterators
 
-            constexpr auto begin()
+            constexpr auto begin() noexcept
                 -> T*
             {
                 return memory_;
             }
 
-            constexpr auto end()
+            constexpr auto end() noexcept
                 -> T*
             {
                 return end_;
