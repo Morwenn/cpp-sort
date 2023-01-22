@@ -149,7 +149,7 @@ Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-:
 **CEs** | 0 | 1 | 3 | 5 | 9 | 12 | 16 | 19 | 25 | 29 | 35 | 39 | 45 | 51 | 56 | 60
 **Size** | **17** | **18** | **19** | **20** | **21** | **22** | **23** | **24** | **25** | **26** | **27** | **28** | **29** | **30** | **31** | **32**
-**CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 130 | 139 | 148 | 155 | 164 | 172 | 180 | 185
+**CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 130 | 139 | 147 | 155 | 164 | 172 | 180 | 185
 
 One of the main advantages of sorting networks is the fixed number of CEs required to sort a collection: this means that sorting networks are far more resistant to time and cache attacks since the number of performed comparisons does not depend on the contents of the collection. However, additional care (not provided by the library) is required to ensure that the algorithms always perform the same amount of memory loads and stores. For example, one could create a `constant_time_iterator` with a dedicated `iter_swap` tuned to perform a constant-time compare-exchange operation.
 
