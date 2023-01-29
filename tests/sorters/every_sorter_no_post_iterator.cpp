@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -36,6 +36,7 @@ TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::tim_sorter,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -37,6 +37,7 @@ TEMPLATE_TEST_CASE( "test every random-access sorter with a sentinel", "[sorters
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -68,6 +69,7 @@ TEMPLATE_TEST_CASE( "test every bidirectional sorter with a sentinel", "[sorters
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_adapter<cppsort::quick_merge_sorter> )
 {
     std::vector<int> vec;
@@ -88,7 +90,8 @@ TEMPLATE_TEST_CASE( "test every forward sorter with a sentinel", "[sorters][sent
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     std::vector<int> vec;
     auto distribution = dist::shuffled{};

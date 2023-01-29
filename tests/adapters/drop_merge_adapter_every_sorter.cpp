@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -34,6 +34,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with drop_merge_adapter", "[drop
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -70,6 +71,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with drop_merge_adapter", "[drop
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,

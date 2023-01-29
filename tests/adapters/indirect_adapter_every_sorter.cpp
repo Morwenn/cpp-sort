@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -33,6 +33,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -61,6 +62,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indire
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     std::list<double> collection;
@@ -79,7 +81,8 @@ TEMPLATE_TEST_CASE( "every forward sorter with with indirect_adapter", "[indirec
                     cppsort::pdq_sorter, // Check extended support
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     std::forward_list<double> collection;
     auto distribution = dist::shuffled{};

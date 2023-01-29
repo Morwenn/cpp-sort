@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -151,6 +151,12 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
     SECTION( "spin_sorter" )
     {
         cppsort::spin_sort(collection);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    }
+
+    SECTION( "splay_sorter" )
+    {
+        cppsort::splay_sort(collection);
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 

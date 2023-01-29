@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -45,6 +45,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -82,6 +83,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_a
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     cppsort::stable_t<TestType> sorter;
@@ -111,7 +113,8 @@ TEMPLATE_TEST_CASE( "every forward sorter with with stable_adapter", "[stable_ad
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     cppsort::stable_t<TestType> sorter;
     const int size = 412;

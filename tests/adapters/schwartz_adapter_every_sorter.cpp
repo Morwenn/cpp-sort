@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -44,6 +44,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter,
@@ -70,6 +71,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapt
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     std::list<wrapper<>> collection;
@@ -89,7 +91,8 @@ TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     std::forward_list<wrapper<>> collection;
     auto distribution = dist::shuffled{};

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -31,6 +31,7 @@ TEMPLATE_TEST_CASE( "test extended compatibility with LWG 3031", "[sorters]",
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,

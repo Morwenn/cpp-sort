@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -34,6 +34,7 @@ TEMPLATE_TEST_CASE( "every sorter with comparison function altered by move", "[s
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -74,6 +75,7 @@ TEMPLATE_TEST_CASE( "every sorter with projection function altered by move", "[s
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,

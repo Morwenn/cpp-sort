@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -98,6 +98,7 @@ TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -156,6 +157,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     auto distribution = dist::shuffled{};
@@ -184,7 +186,8 @@ TEMPLATE_TEST_CASE( "forward sorters against throwing move operations", "[sorter
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     auto distribution = dist::shuffled{};
     // Initialize counters

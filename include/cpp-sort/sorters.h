@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_H_
@@ -28,6 +28,7 @@
 #include <cpp-sort/sorters/slab_sorter.h>
 #include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/sorters/spin_sorter.h>
+#include <cpp-sort/sorters/splay_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <cpp-sort/sorters/split_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>

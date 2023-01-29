@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -45,6 +45,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[d
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -90,6 +91,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with shuffled distribution", "[d
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     std::list<int> collection;
@@ -108,7 +110,8 @@ TEMPLATE_TEST_CASE( "test forward sorters with shuffled distribution", "[distrib
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     std::forward_list<int> collection;
     auto distribution = dist::shuffled{};

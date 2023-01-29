@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FWD_H_
@@ -48,6 +48,7 @@ namespace cppsort
     struct slab_sorter;
     struct smooth_sorter;
     struct spin_sorter;
+    struct splay_sorter;
     struct split_sorter;
     struct spread_sorter;
     struct std_sorter;

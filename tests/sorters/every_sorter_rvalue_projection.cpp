@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -33,6 +33,7 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -76,6 +77,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue
                     cppsort::quick_sorter,
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     std::list<int> collection;
@@ -93,7 +95,8 @@ TEMPLATE_TEST_CASE( "forward sorters with a projection returning an rvalue", "[s
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
-                    cppsort::selection_sorter )
+                    cppsort::selection_sorter,
+                    cppsort::splay_sorter )
 {
     std::forward_list<int> collection;
     auto distribution = dist::shuffled{};
