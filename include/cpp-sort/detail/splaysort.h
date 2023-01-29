@@ -17,68 +17,17 @@
 #include "immovable_vector.h"
 #include "iterator_traits.h"
 
-namespace cppsort
+namespace cppsort::detail
 {
-namespace detail
-{
-    struct splay_tree_node_base
-    {
-        explicit splay_tree_node_base(splay_tree_node_base* parent) noexcept:
-            parent(parent)
-        {}
-
-        explicit splay_tree_node_base(splay_tree_node_base* parent,
-                                      splay_tree_node_base* left_child,
-                                      splay_tree_node_base* right_child) noexcept:
-            parent(parent),
-            left_child(left_child),
-            right_child(right_child)
-        {}
-
-        // Make tree nodes immovable
-        splay_tree_node_base(const splay_tree_node_base&) = delete;
-        splay_tree_node_base(splay_tree_node_base&&) = delete;
-        splay_tree_node_base& operator=(const splay_tree_node_base&) = delete;
-        splay_tree_node_base& operator=(splay_tree_node_base&&) = delete;
-
-        // Parent node
-        splay_tree_node_base* parent = nullptr;
-        // Children nodes
-        splay_tree_node_base* left_child = nullptr;
-        splay_tree_node_base* right_child = nullptr;
-    };
-
-    template<typename T>
-    struct splay_tree_node:
-        splay_tree_node_base
-    {
-        constexpr splay_tree_node(T&& value, splay_tree_node_base* parent)
-            noexcept(std::is_nothrow_move_constructible<T>::value):
-            splay_tree_node_base(parent),
-            value(std::move(value))
-        {}
-
-        constexpr splay_tree_node(T&& value, splay_tree_node_base* parent,
-                                  splay_tree_node_base* left_child,
-                                  splay_tree_node_base* right_child)
-            noexcept(std::is_nothrow_move_constructible<T>::value):
-            splay_tree_node_base(parent, left_child, right_child),
-            value(std::move(value))
-        {}
-
-        // Stored value
-        T value;
-    };
-
     struct splay_tree_base
     {
         public:
 
-            splay_tree_base() noexcept:
-                sentinel_node_(nullptr)
+            constexpr splay_tree_base() noexcept:
+                sentinel_node_(nullptr, nullptr, nullptr)
             {}
 
-            auto rotate_left(splay_tree_node_base* node) noexcept
+            auto rotate_left(binary_tree_node_base* node) noexcept
                 -> void
             {
                 auto parent = node->parent;
@@ -97,7 +46,7 @@ namespace detail
                 }
             }
 
-            auto rotate_right(splay_tree_node_base* node) noexcept
+            auto rotate_right(binary_tree_node_base* node) noexcept
                 -> void
             {
                 auto parent = node->parent;
@@ -116,7 +65,7 @@ namespace detail
                 }
             }
 
-            auto splay(splay_tree_node_base* node) noexcept
+            auto splay(binary_tree_node_base* node) noexcept
                 -> void
             {
                 // Note: we don't store a root here, so this splay
@@ -165,7 +114,7 @@ namespace detail
 
             // Sentinel node: it doesn't matter where it point to, this
             // node only exists to reduce branching in some operations
-            splay_tree_node_base sentinel_node_;
+            binary_tree_node_base sentinel_node_;
     };
 
     template<typename T>
@@ -178,7 +127,7 @@ namespace detail
             // Public types
 
             using difference_type = std::ptrdiff_t;
-            using node_type = splay_tree_node<T>;
+            using node_type = binary_tree_node<T>;
 
             ////////////////////////////////////////////////////////////
             // Constructor
@@ -217,7 +166,7 @@ namespace detail
             auto move_to(OutputIterator out)
                 -> void
             {
-                splay_tree_node_base* curr = root();
+                binary_tree_node_base* curr = root();
                 while (curr->left_child != &sentinel_node_) {
                     curr = curr->left_child;
                 }
@@ -257,7 +206,7 @@ namespace detail
 
                 auto&& value_proj = proj(*it);
 
-                splay_tree_node_base* node = root();
+                binary_tree_node_base* node = root();
                 CPPSORT_ASSERT(node != &sentinel_node_);
                 while (true) {
                     if (comp(value_proj, proj(static_cast<node_type*>(node)->value))) {
@@ -278,7 +227,7 @@ namespace detail
                 }
             }
 
-            auto splay(splay_tree_node_base* node) noexcept
+            auto splay(binary_tree_node_base* node) noexcept
                 -> void
             {
                 splay_tree_base::splay(node);
@@ -313,6 +262,6 @@ namespace detail
 
         tree.move_to(first);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SPLAYSORT_H_
