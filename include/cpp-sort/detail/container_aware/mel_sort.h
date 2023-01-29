@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MEL_SORT_H_
@@ -20,6 +20,7 @@
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include "../lower_bound.h"
 
 namespace cppsort

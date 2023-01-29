@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SPLIT_SORT_H_
@@ -11,6 +11,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/utility/as_function.h>
 #include "inplace_merge.h"
 
 namespace cppsort::detail

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -30,6 +30,7 @@ Phil Endecott and Frank Gennari
 #include <type_traits>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/utility/as_function.h>
 #include "common.h"
 #include "constants.h"
 #include "../../pdqsort.h"

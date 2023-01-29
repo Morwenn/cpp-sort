@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_DIS_H_
@@ -17,6 +17,7 @@
 #include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include "../detail/immovable_vector.h"
 #include "../detail/is_p_sorted.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -28,12 +28,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
-#include "../detail/immovable_vector.h"
+#include "immovable_vector.h"
 #include "scope_exit.h"
 
 namespace cppsort::detail

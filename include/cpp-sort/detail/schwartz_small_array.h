@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SCHWARTZ_SMALL_ARRAY_H_
@@ -14,7 +14,7 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include "../detail/type_traits.h"
+#include "type_traits.h"
 
 namespace cppsort
 {

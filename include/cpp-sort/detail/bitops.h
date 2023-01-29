@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BITOPS_H_
@@ -10,10 +10,9 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <limits>
-#include <type_traits>
 #include <cpp-sort/mstd/concepts.h>
 #include <cpp-sort/mstd/type_traits.h>
-#include "../detail/config.h"
+#include "config.h"
 
 namespace cppsort::detail
 {
