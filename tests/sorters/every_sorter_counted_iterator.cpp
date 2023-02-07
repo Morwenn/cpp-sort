@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Morwenn
+ * Copyright (c) 2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,11 +12,11 @@
 #include <cpp-sort/adapters/verge_adapter.h>
 #include <cpp-sort/sorters.h>
 #include <testing-tools/distributions.h>
-#include <testing-tools/end_sentinel.h>
 #include <testing-tools/old_sorters.h>
 #include <testing-tools/random.h>
 
-TEMPLATE_TEST_CASE( "test every random-access sorter with a sentinel", "[sorters][sentinel]",
+TEMPLATE_TEST_CASE( "test every random-access sorter with counted_iterator",
+                    "[sorters][sentinel][counted_iterator]",
                     old_default_sorter,
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
@@ -51,14 +51,15 @@ TEMPLATE_TEST_CASE( "test every random-access sorter with a sentinel", "[sorters
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 1000, -100);
 
-    using iter_t = std::vector<int>::iterator;
     TestType sorter;
-    iter_t end = sorter(collection.begin(), end_sentinel(collection.end()));
-    CHECK( end == collection.end() );
+    auto begin = std::counted_iterator(collection.begin(), 1000);
+    auto end = sorter(begin, std::default_sentinel);
+    CHECK( end.base() == collection.end() );
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
-TEMPLATE_TEST_CASE( "test every bidirectional sorter with a sentinel", "[sorters][sentinel]",
+TEMPLATE_TEST_CASE( "test every bidirectional sorter with counted_iterator",
+                    "[sorters][sentinel][counted_iterator]",
                     old_default_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
@@ -78,14 +79,15 @@ TEMPLATE_TEST_CASE( "test every bidirectional sorter with a sentinel", "[sorters
     distribution(std::back_inserter(vec), 1000, -100);
     std::list<int> collection(vec.begin(), vec.end());
 
-    using iter_t = std::list<int>::iterator;
     TestType sorter;
-    iter_t end = sorter(collection.begin(), end_sentinel(collection.end()));
-    CHECK( end == collection.end() );
+    auto begin = std::counted_iterator(collection.begin(), 1000);
+    auto end = sorter(begin, std::default_sentinel);
+    CHECK( end.base() == collection.end() );
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
-TEMPLATE_TEST_CASE( "test every forward sorter with a sentinel", "[sorters][sentinel]",
+TEMPLATE_TEST_CASE( "test every forward sorter with counted_iterator",
+                    "[sorters][sentinel][counted_iterator]",
                     old_default_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
@@ -101,9 +103,9 @@ TEMPLATE_TEST_CASE( "test every forward sorter with a sentinel", "[sorters][sent
     distribution(std::back_inserter(vec), 1000, -100);
     std::forward_list<int> collection(vec.begin(), vec.end());
 
-    using iter_t = std::forward_list<int>::iterator;
     TestType sorter;
-    iter_t end = sorter(collection.begin(), end_sentinel(collection.end()));
-    CHECK( end == collection.end() );
+    auto begin = std::counted_iterator(collection.begin(), 1000);
+    auto end = sorter(begin, std::default_sentinel);
+    CHECK( end.base() == collection.end() );
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
