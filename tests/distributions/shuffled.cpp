@@ -13,6 +13,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 
 TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
@@ -26,7 +27,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[d
                     cppsort::d_ary_heap_sorter<7>,
                     cppsort::d_ary_heap_sorter<8>,
                     cppsort::d_ary_heap_sorter<9>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
@@ -46,11 +47,11 @@ TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[d
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<>,
                     cppsort::wiki_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -83,7 +84,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[d
 TEMPLATE_TEST_CASE( "test bidirectional sorters with shuffled distribution", "[distributions]",
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,
@@ -92,7 +93,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with shuffled distribution", "[d
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
                     cppsort::splay_sorter,
-                    cppsort::verge_sorter )
+                    old_verge_sorter )
 {
     std::list<int> collection;
     auto distribution = dist::shuffled{};

@@ -17,7 +17,7 @@ int main()
 }
 ```
 
-The library provides dozens of sorting algorithms described in [this page][sorters]. Their space and time complexities are all documented there, as well as their stability and the kind of iterators they work on. The [`pdq_sort`][pdq-sorter] algorithm used above only handles collections that provide random-access iterators, but other algorithms such as [`drop_merge_sort`][drop-merge-sorter] or [`merge_sort`][merge-sorter] work with bidirectional iterators and forward iterators.
+The library provides dozens of sorting algorithms described in [this page][sorters]. Their space and time complexities are all documented there, as well as their stability and the kind of iterators they work on. The [`pdq_sort`][pdq-sorter] algorithm used above only handles collections that provide random-access iterators, but other algorithms such as [`quick_sort`][quick-sorter] or [`merge_sort`][merge-sorter] work with bidirectional iterators and forward iterators.
 
 The algorithms are designed after [`std::sort`][std-sort] with extensions borrowed from later standards, and as such accept the following arguments:
 * A collection, which is represented by either a range or a pair of iterators.
@@ -212,13 +212,13 @@ The previous sections describe some of the main tools provided by **cpp-sort** b
 
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/
-  [drop-merge-sorter]: Sorters.md#drop_merge_sorter
   [merge-sorter]: Sorters.md#merge_sorter
   [mops]: Measures-of-presortedness.md
   [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [parallel-arrays]: https://en.wikipedia.org/wiki/Parallel_array
   [pdq-sorter]: Sorters.md#pdq_sorter
   [probe-rem]: Measures-of-presortedness.md#rem
+  [quick-sorter]: Sorters.md#quick_sorter
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [ska-sorter]: Sorters.md#ska_sorter
   [sorter-adapters]: Sorter-adapters.md

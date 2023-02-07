@@ -73,6 +73,12 @@ Note that this adapter only works with sorters that satisfy the `ComparisonSorte
 
 [Drop-merge sort][drop-merge-sort] is a [*Rem*-adaptive][probe-rem] sorting algorithm that isolates some of the elements to sort in a buffer in O(n) time in order to leave a single sorted run in the original collection, then it uses another algorithm to sort the elements isolated in a buffer, and merges the two resulting runs back into the original collection. `drop_merge_adapter` uses the *adapted sorter* to sort the (contiguous) buffer of isolated elements.
 
+In the following table, let *n* be the number of elements to sort, *f* be a function representing the *adapted sorter*, and *k* be the number of elements removed by drop-merge sort that *f* has to sort (*k* is an approximation of *Rem(X)*, *k ≤ n*). Depending on the context, *f(k)* either represents the space or time complexity of the *adapted sorter*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n + f(k)    | n + f(k)    | k + f(k)    | No          | Bidirectional |
+
 The *resulting sorter* always requires at least bidirectional iterators, no matter the iterator category of the *adapted sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
 
 ```cpp
@@ -229,7 +235,16 @@ The adapter implements the "in-place" version of the *SplitSort* algorithm descr
 2. It uses the *adapted sorter* to sort the right part of the collection.
 3. It merges the two parts of the collection in O(n) time O(n) space if possible, otherwise it merges them in O(n log n) time O(1) space.
 
+In the following table, let *n* be the number of elements to sort, *f* be a function representing the *adapted sorter*, and *k* be the number of elements removed by splitsort that *f* has to sort (*k* is an approximation of *Rem(X)*, *k ≤ n*). Depending on the context, *f(k)* either represents the space or time complexity of the *adapted sorter*.
+
+| Best        | Average        | Worst          | Memory      | Stable      | Iterators     |
+| ----------- | -------------- | -------------- | ----------- | ----------- | ------------- |
+| n           | n + f(k)       | n + f(k)       | n + f(k)    | No          | Bidirectional |
+| n           | n log n + f(k) | n log n + f(k) | f(k)        | No          | Bidirectional |
+
 The core algorithm behind `split_adapter` requires at least bidirectional iterators to work, as such the *resulting sorter* requires bidirectional iterators if the *adapted sorter* supports them, otherwise it requires the same category of iterators at that accepted by the *adapter sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
+
+The *resulting sorter* does not throw `std::bad_alloc` unless the *adapted sorter* does.
 
 ```cpp
 template<typename Sorter>
@@ -266,7 +281,6 @@ struct stable_adapter;
 `stable_adapter` is the main customization point of those stable sorting facilities, and as such can be specialized to provide stable versions of your own unstable sorters or adapters. **cpp-sort** itself provides `stable_adapter` specializations for the following components:
 
 * [`std_sorter`][std-sorter] (calls [`std::stable_sort`][std-stable-sort] instead of [`std::sort`][std-sort])
-* [`verge_sorter`][verge-sorter]
 * [`hybrid_adapter`][hybrid-adapter]
 * [`self_sort_adapter`][self-sort-adapter]
 * `stable_adapter` itself (automatic unnesting)
@@ -299,16 +313,25 @@ This little dance sometimes allows to reduce the nesting of function calls and t
 #include <cpp-sort/adapters/verge_adapter.h>
 ```
 
-While the library already provides a `verge_sorter` built on top of `pdq_sorter`, the true power of vergesort is to add a fast *Runs*-adaptive layer on top of any sorting algorithm to make it handle data with big runs better while not being noticeably slower for the distributions that the vergesort layer can't handle. [This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
+This sorter builds upon [vergesort][vergesort]: a [*Mono*-adaptive][probe-mono] adaptive presorting algorithm that looks for ascending and descending runs of size *n / log n* or greater in the collection. It uses the *adapted sorter* to sort smaller runs, then merges them all together to produce a sorted collection.
 
-`verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional ranges.
+The complexity analysis is a bit too complicated to be included in this documentation. Additionally, the space and time complexity changes depending on whether the merging algorithm has enough space to run in O(n) time or whether it needs to fall back to an O(n log n) algorithm. Assuming that the *adapted sorter* works in O(n log n) time and O(1) space, the complexity of the *resulting sorter* is as follows:
+
+| Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n log log n | n           | No          | Bidirectional |
+| n           | n log n     | n log n           | log n       | No          | Bidirectional |
+
+The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional ranges.
 
 ```cpp
 template<typename Sorter>
 struct verge_adapter;
 ```
 
-When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and faster than just using `make_stable`.
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and can be faster than simply using `make_stable`.
+
+[This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
 
 
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
@@ -321,6 +344,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
+  [probe-mono]: Measures-of-presortedness.md#mono
   [probe-rem]: Measures-of-presortedness.md#rem
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
@@ -331,5 +355,4 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
   [std-true-type]: https://en.cppreference.com/w/cpp/types/integral_constant
   [verge-adapter]: Sorter-adapters.md#verge_adapter
-  [verge-sorter]: Sorters.md#verge_sorter
   [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/master/fallbacks.md

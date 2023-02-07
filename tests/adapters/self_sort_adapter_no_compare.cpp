@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -10,9 +10,9 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/self_sort_adapter.h>
-#include <cpp-sort/sorters/verge_sorter.h>
 #include <cpp-sort/sorter_facade.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 
 namespace
 {
@@ -28,7 +28,7 @@ namespace
         auto operator()(Args&&... args) const
             -> sorter_type
         {
-            cppsort::verge_sorter{}(std::forward<Args>(args)...);
+            old_verge_sorter{}(std::forward<Args>(args)...);
             return sorter_type::dummy_sorter;
         }
     };

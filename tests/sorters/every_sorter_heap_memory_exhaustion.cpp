@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -11,6 +11,7 @@
 #include <cpp-sort/sorters.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/memory_exhaustion.h>
+#include <testing-tools/old_sorters.h>
 
 //
 // Specific tests to check that a selection of sorters still run fine
@@ -31,7 +32,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for random-access sorters", "[sorters][heap
                     cppsort::selection_sorter,
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::wiki_sorter<> )
 {

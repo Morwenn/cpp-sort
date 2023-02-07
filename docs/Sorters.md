@@ -54,20 +54,6 @@ Implements a heapsort algorithm based on a [*d*-ary heap][d-ary-heap]: the value
 
 *d*-ary heapsorts are more complicated than their binary counterparts, but storing more elements in each node can improve locality of reference and improve the execution speed. This sorter, unlike [`heap_sorter`][heap-sorter], does not implement a [bottom-up node searching strategy][bottom-up-heapsort].
 
-### `drop_merge_sorter`
-
-```cpp
-#include <cpp-sort/sorters/drop_merge_sorter.h>
-```
-
-Implements a [drop-merge sort][drop-merge-sort].
-
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Bidirectional |
-
-Drop-merge sort is a [*Rem*-adaptive][probe-rem] sorting algorithm. While it is not as good as other sorting algorithms to sort shuffled data, it is excellent when more than 80% of the data is already ordered according to *Rem*.
-
 ### `grail_sorter<>`
 
 ```cpp
@@ -297,9 +283,9 @@ Implements a [smoothsort][smoothsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | 1           | No          | Random-Access |
+| n           | n log n     | n log n     | 1           | No          | Random-access |
 
-While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter`, `pdq_sorter` or `verge_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
+While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter` or `pdq_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
 
 ### `spin_sorter`
 
@@ -311,7 +297,7 @@ Implements a [spinsort][spinsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | Yes         | Random-Access |
+| n           | n log n     | n log n     | n           | Yes         | Random-access |
 
 ### `splay_sorter`
 
@@ -324,25 +310,6 @@ Implements a [splaysort][splaysort].
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | Yes         | Forward       |
-
-### `split_sorter`
-
-```cpp
-#include <cpp-sort/sorters/split_sorter.h>
-```
-
-Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
-
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-Access |
-
-SplitSort is a [*Rem*-adaptive][probe-rem] sorting algorithm and shares many similarities with drop-merge sort but has the following differences:
-* It only works with random-access iterators.
-* While it uses O(n) extra memory to merge some elements, it can run perfectly fine with O(1) extra memory.
-* Benchmarks shows that drop-merge sort is better when few elements aren't in place, but SplitSort has a lower overhead on random data while still performing better than most general-purpose sorting algorithms when the data is already somewhat sorted.
-
-This sorter can't throw `std::bad_alloc`.
 
 ### `std_sorter`
 
@@ -382,29 +349,6 @@ Implements a [timsort][timsort].
 | n           | n log n     | n log n     | n           | Yes         | Random-access |
 
 While the sorting algorithm is stable and the complexity guarantees are good enough, this sorter is rather slow compared to the some other ones when the data distribution is random. That said, it would probably be a good choice when comparing data is expensive, but moving it is inexpensive (this is the use case for which it was designed).
-
-### `verge_sorter`
-
-```cpp
-#include <cpp-sort/sorters/verge_sorter.h>
-```
-
-Implements a [vergesort][vergesort] algorithm backed by a quicksort derivative.
-
-| Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n log log n | n           | No          | Random-access |
-| n           | n log n     | n log n           | log n       | No          | Random-access |
-| n           | n log n     | n log n log log n | n           | No          | Bidirectional |
-| n           | n log n     | n log n           | log² n      | No          | Bidirectional |
-
-Vergesort is a [*Runs*-adaptive][probe-runs] algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergesort otherwise).
-
-Vergesort's complexity is bound either by its optimization layer or by the fallback sorter's complexity:
-* When it doesn't find big runs, the complexity is bound by the fallback sorter: depending on the category of iterators you can refer to the tables of either `pdq_sorter` or `quick_merge_sorter`.
-* When it does find big runs, vergesort's complexity is bound by the merging phase of its optimization layer. In such a case, `inplace_merge` is used to merge the runs: it will use additional memory if any is available, in which case vergesort is O(n log n). If there isn't much extra memory available, it may still require O(log n) extra memory (and thus raise an `std::bad_alloc` if there isn't that much memory available) in which case the complexity falls to O(n log n log log n). It should not happen that much, and the additional *log log n* factor is likely irrelevant for most real-world applications.
-
-When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. This make the specialization stable, and faster than just using `make_stable`.
 
 ### `wiki_sorter<>`
 
@@ -513,7 +457,6 @@ struct spread_sorter:
   [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
   [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
   [d-ary-heap]: https://en.wikipedia.org/wiki/D-ary_heap
-  [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [grailsort]: https://github.com/Mrrl/GrailSort
   [heapsort]: https://en.wikipedia.org/wiki/Heapsort
   [heap-sorter]: Sorters.md#heap_sorter
@@ -524,7 +467,6 @@ struct spread_sorter:
   [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort
   [pdqsort]: https://github.com/orlp/pdqsort
   [probe-rem]: Measures-of-presortedness.md#rem
-  [probe-runs]: Measures-of-presortedness.md#runs
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [quicksort]: https://en.wikipedia.org/wiki/Quicksort
   [schwartz-adapter]: Sorter-adapters.md#schwartz_adapter
@@ -543,7 +485,6 @@ struct spread_sorter:
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
   [timsort]: https://en.wikipedia.org/wiki/Timsort
-  [vergesort]: https://github.com/Morwenn/vergesort
   [wiki-sort]: https://github.com/BonzaiThePenguin/WikiSort
   [wiki-sorter]: Sorters.md#wiki_sorter
   [writing-a-sorter]: Writing-a-sorter.md

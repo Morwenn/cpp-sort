@@ -12,7 +12,6 @@
 #include <cpp-sort/sorters/cartesian_tree_sorter.h>
 #include <cpp-sort/sorters/counting_sorter.h>
 #include <cpp-sort/sorters/d_ary_heap_sorter.h>
-#include <cpp-sort/sorters/drop_merge_sorter.h>
 #include <cpp-sort/sorters/grail_sorter.h>
 #include <cpp-sort/sorters/heap_sorter.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
@@ -30,10 +29,8 @@
 #include <cpp-sort/sorters/spin_sorter.h>
 #include <cpp-sort/sorters/splay_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sorters/split_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>
-#include <cpp-sort/sorters/verge_sorter.h>
 #include <cpp-sort/sorters/wiki_sorter.h>
 
 #endif // CPPSORT_SORTERS_H_

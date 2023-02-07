@@ -11,7 +11,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/no_post_iterator.h>
-#include <testing-tools/old_default_sorter.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/random.h>
 
 TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
@@ -20,7 +20,7 @@ TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<6>,
                     cppsort::counting_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -37,10 +37,10 @@ TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     std::vector<int> collection;

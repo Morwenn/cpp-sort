@@ -16,16 +16,19 @@ Now, those observations/claims are there to be challenged: if you know of any st
 
 ### Vergesort
 
-The vergesort is a new sorting algorithm which combines merge operations on almost sorted data, and falls back to another sorting algorithm when the data is not sorted enough. Somehow it can be considered as a cheap preprocessing step to take advantage of almost-sorted data when possible. Just like TimSort, it achieves linear time on some patterns, generally for almost sorted data, and should never be worse than O(n log n) in the worst case. This last statement has not been proven, but the many benchmarks show that it is only slightly slower than a pattern-defeating quicksort for shuffled data, which is its worst case, so...
+The vergesort is a new sorting algorithm which combines merge operations on almost sorted data, and falls back to another sorting algorithm when the data is not sorted enough. Somehow it can be considered as a cheap preprocessing step to take advantage of almost-sorted data when possible. Just like TimSort, it achieves linear time on some patterns, generally for almost sorted data, and should never be worse than O(n log n log log n) in the worst case - though no in-depth formal analysis has been performed.
 
-    Best        Average     Worst       Memory      Stable
-    n           n log n     n log n     n           No
+    Best        Average     Worst                 Memory      Stable
+    n           n log n     n log n log log n     n           No
+    n           n log n     n log n               log n       No
+
+The two variations in space and time complexity depend on whether enough memory is available for the merging operation to work in O(n) time, or whether it falls back on another algorithm that works in O(n log n) time and O(1) space.
 
 While vergesort has been designed to work with random-access iterators, there also exists a version that works with bidirectional iterators. The algorithm is slightly different and a bit slower because it can't as easily jump through the collection. The complexity of that bidirectional iterators algorithm can get down to the same time as the random-access one when `quick_merge_sort` is used as the fallback algorithm.
 
 The actual cmplexity of the algorithm is O(n log n log log n), but interestingly it is only reached in one of its paths that is among the fastest in practice. It is also possible to make vergesort stable but tweaking its reverse runs detection algorithm and making it fallback to a stable sorting algorithm.
 
-This sorting algorithm has been split as a separate project. You can read more about in the [dedicated repository][vergesort].
+This sorting algorithm also exists as a [standalone repository][vergesort].
 
 ### Double insertion sort
 

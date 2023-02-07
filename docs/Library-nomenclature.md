@@ -51,7 +51,7 @@
 
     It is possible have have more fine-grained information about the stability of a sorter with the [`is_stable`][is-stable] type trait, which tells whether a sorter is stable when called with a specific set of parameters.
 
-        using sorter = cppsort::self_sort_adapter<cppsort::verge_sorter>;
+        using sorter = cppsort::self_sort_adapter<cppsort::quick_sorter>;
         using stability1 = cppsort::is_stable<sorter(std::list<int>&)>; // stable
         using stability2 = cppsort::is_stable<sorter(std::vector<int>&)>; // unstable
 

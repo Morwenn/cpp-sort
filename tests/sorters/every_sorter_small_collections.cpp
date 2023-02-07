@@ -6,13 +6,14 @@
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
 #include <cpp-sort/sorters.h>
+#include <testing-tools/old_sorters.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with small collections", "[sorters]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::d_ary_heap_sorter<9>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -29,11 +30,11 @@ TEMPLATE_TEST_CASE( "test every sorter with small collections", "[sorters]",
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<> )
 {
     // Test that all sorters are able to sort empty collections or

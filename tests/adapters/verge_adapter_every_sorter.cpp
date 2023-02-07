@@ -13,7 +13,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
-#include <testing-tools/old_default_sorter.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/wrapper.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_adapter]",
@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_ada
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<4>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -38,7 +38,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_ada
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_ada
 TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter", "[verge_adapter][stable_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -72,7 +72,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter", "[ve
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
@@ -91,7 +91,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter", "[ve
 TEMPLATE_TEST_CASE( "every bidirectional sorter with verge_adapter", "[verge_adapter]",
                     cppsort::cartesian_tree_sorter,
                     old_default_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,

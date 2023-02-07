@@ -10,7 +10,7 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <testing-tools/distributions.h>
-#include <testing-tools/old_default_sorter.h>
+#include <testing-tools/old_sorters.h>
 
 TEST_CASE( "default sorter function pointer tests",
            "[default_sorter][function_pointer]" )

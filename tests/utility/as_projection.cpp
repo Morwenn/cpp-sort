@@ -12,7 +12,7 @@
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
-#include <testing-tools/old_default_sorter.h>
+#include <testing-tools/old_sorters.h>
 
 namespace
 {

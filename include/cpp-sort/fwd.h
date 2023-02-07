@@ -29,7 +29,6 @@ namespace cppsort
     struct counting_sorter;
     template<int D>
     struct d_ary_heap_sorter;
-    struct drop_merge_sorter;
     struct float_spread_sorter;
     template<typename BufferProvider>
     struct grail_sorter;
@@ -49,12 +48,10 @@ namespace cppsort
     struct smooth_sorter;
     struct spin_sorter;
     struct splay_sorter;
-    struct split_sorter;
     struct spread_sorter;
     struct std_sorter;
     struct string_spread_sorter;
     struct tim_sorter;
-    struct verge_sorter;
     template<typename BufferProvider>
     struct wiki_sorter;
 

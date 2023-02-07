@@ -10,7 +10,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
-#include <testing-tools/old_default_sorter.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/wrapper.h>
 
 TEST_CASE( "default sorter tests with projections",
