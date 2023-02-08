@@ -216,7 +216,7 @@ slightly modified version of Matthew Bentley's [indiesort](https://github.com/ma
 comes from Danila Kutenin's [miniselect library](https://github.com/danlark1/miniselect) and uses
 Andrei Alexandrescu's [*AdaptiveQuickselect*](https://arxiv.org/abs/1606.00484) algorithm.
 
-* The sorting networks used by `sorting_network_sorter` all come [from this list](http://users.telenet.be/bertdobbelaere/SorterHunter/sorting_networks.html)
+* The sorting networks used by `sorting_network_sorter` all come [from this list](https://bertdobbelaere.github.io/sorting_networks_extended.html)
 maintained by Bert Dobbelaere. The page has references to the sources of all of the sorting networks
 it lists.
 
