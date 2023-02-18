@@ -53,6 +53,7 @@ macro(configure_tests target)
         # Somewhat speed up Catch2 compile times
         CATCH_CONFIG_FAST_COMPILE
         # Enable assertions for more thorough tests
+        _GLIBCXX_ASSERTIONS
         CPPSORT_ENABLE_ASSERTIONS
         # We test deprecated code but we don't want it to warn
         CPPSORT_DISABLE_DEPRECATION_WARNINGS
