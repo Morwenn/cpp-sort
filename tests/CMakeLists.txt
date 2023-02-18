@@ -54,6 +54,7 @@ macro(configure_tests target)
         CATCH_CONFIG_FAST_COMPILE
         # Enable assertions for more thorough tests
         _GLIBCXX_ASSERTIONS
+        _LIBCPP_ENABLE_ASSERTIONS=1
         CPPSORT_ENABLE_ASSERTIONS
         # We test deprecated code but we don't want it to warn
         CPPSORT_DISABLE_DEPRECATION_WARNINGS
