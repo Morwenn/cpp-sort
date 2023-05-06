@@ -16,8 +16,8 @@
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters.h>
+#include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
-#include "../benchmarking-tools/rdtsc.h"
 
 using namespace std::chrono_literals;
 
@@ -59,15 +59,13 @@ auto time_it(Sorter sorter, Dist distribution)
     // Generate and sort arrays of size N thanks to distribution
     auto total_start = clock_type::now();
     auto total_end = clock_type::now();
-    while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
-           cycles.size() < max_runs_per_size) {
+    while (total_end - total_start < max_run_time && cycles.size() < max_runs_per_size) {
         std::array<T, N> arr;
         distribution(arr.begin(), N);
-        std::uint64_t start = rdtsc();
-        sorter(arr);
-        std::uint64_t end = rdtsc();
+        auto do_sort = cpu_cycles<Sorter>(sorter);
+        auto nb_cycles = do_sort(arr);
         assert(std::is_sorted(arr.begin(), arr.end()));
-        cycles.push_back(double(end - start) / N);
+        cycles.push_back(double(nb_cycles.value()) / N);
         total_end = clock_type::now();
     }
 

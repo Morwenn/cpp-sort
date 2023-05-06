@@ -26,7 +26,9 @@
 
 #ifdef _WIN32
     #include <intrin.h>
-    #define rdtsc __rdtsc
+    inline unsigned long long rdtsc() {
+        return __rdtsc();
+    }
 #else
     #ifdef __i586__
         static __inline__ unsigned long long rdtsc() {

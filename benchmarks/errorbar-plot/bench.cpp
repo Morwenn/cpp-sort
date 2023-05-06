@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -16,6 +16,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cpp-sort/metrics/running_time.h>
 #include <cpp-sort/sorters.h>
 #include "../benchmarking-tools/distributions.h"
 #include "../benchmarking-tools/filesystem.h"
@@ -36,7 +37,7 @@ using sort_f = void (*)(collection_t&);
 std::pair<std::string, sort_f> sorts[] = {
     { "heap_sort",      cppsort::heap_sort      },
     { "poplar_sort",    cppsort::poplar_sort    },
-    { "smooth_sort",    cppsort::smooth_sort    }
+    { "smooth_sort",    cppsort::smooth_sort    },
 };
 
 // Distribution to benchmark against
@@ -95,11 +96,10 @@ int main(int argc, char** argv)
             while (total_end - total_start < max_run_time && times.size() < max_runs_per_size) {
                 collection_t collection;
                 distribution(std::back_inserter(collection), size);
-                auto start = clock_type::now();
-                sort.second(collection);
-                auto end = clock_type::now();
+                auto do_sort = cppsort::metrics::running_time<sort_f>(sort.second);
+                auto duration = do_sort(collection);
                 assert(std::is_sorted(std::begin(collection), std::end(collection)));
-                times.push_back(std::chrono::duration<double, std::milli>(end - start).count());
+                times.push_back(duration.value().count());
                 total_end = clock_type::now();
             }
 

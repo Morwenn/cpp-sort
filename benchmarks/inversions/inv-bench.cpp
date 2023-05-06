@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cassert>
@@ -13,10 +13,11 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cpp-sort/adapters.h>
 #include <cpp-sort/sorters.h>
+#include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
 #include "../benchmarking-tools/filesystem.h"
-#include "../benchmarking-tools/rdtsc.h"
 
 using namespace std::chrono_literals;
 
@@ -31,9 +32,9 @@ using collection_t = std::vector<value_t>;
 // Sorting algorithms to benchmark
 using sort_f = void (*)(collection_t&);
 std::pair<std::string, sort_f> sorts[] = {
-    { "drop_merge_sort",    cppsort::drop_merge_sort    },
-    { "pdq_sort",           cppsort::pdq_sort           },
-    { "split_sort",         cppsort::split_sort         },
+    { "heap_sort",                      cppsort::heap_sort                                  },
+    { "drop_merge_adapter(heap_sort)",  cppsort::drop_merge_adapter<cppsort::heap_sorter>{} },
+    { "split_adapter(heap_sort)",       cppsort::split_adapter<cppsort::heap_sorter>{}      },
 };
 
 // Size of the collections to sort
@@ -92,15 +93,13 @@ int main(int argc, char* argv[])
 
             auto total_start = clock_type::now();
             auto total_end = clock_type::now();
-            while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
-                   cycles.size() < max_runs_per_size) {
+            while (total_end - total_start < max_run_time && cycles.size() < max_runs_per_size) {
                 collection_t collection;
                 distribution(std::back_inserter(collection), size);
-                std::uint64_t start = rdtsc();
-                sort.second(collection);
-                std::uint64_t end = rdtsc();
+                auto do_sort = cpu_cycles<sort_f>(sort.second);
+                auto nb_cycles = do_sort(collection);
                 assert(std::is_sorted(std::begin(collection), std::end(collection)));
-                cycles.push_back(double(end - start) / size + 0.5);
+                cycles.push_back(double(nb_cycles.value()) / size + 0.5);
                 total_end = clock_type::now();
             }
 
