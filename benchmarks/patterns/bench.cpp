@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -77,8 +77,8 @@ int main()
         { "pdq_sort",   cppsort::pdq_sort   },
         { "quick_sort", cppsort::quick_sort },
         { "ska_sort",   cppsort::ska_sort   },
+        { "spin_sort",   cppsort::spin_sort   },
         { "std_sort",   cppsort::std_sort   },
-        { "verge_sort", cppsort::verge_sort },
     };
 
     std::size_t sizes[] = { 1'000'000 };
