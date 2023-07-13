@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -43,9 +43,9 @@ template<
     typename T,
     std::size_t N,
     typename Sorter,
-    typename DistributionFunction
+    typename Dist
 >
-auto time_it(Sorter sorter, DistributionFunction distribution)
+auto time_it(Sorter sorter, Dist distribution)
     -> std::uint64_t
 {
     static_assert(N > 0, "this benchmark does not support zero-sized arrays");
@@ -109,7 +109,7 @@ auto time_distribution(std::index_sequence<Ind...>)
     };
 
     // Output the results to their respective files
-    std::ofstream output(Distribution::output);
+    std::ofstream output(Dist::output);
     for (auto&& sort_result: results) {
         output << std::get<0>(sort_result) << ',';
         for (auto&& nb_cycles: std::get<1>(sort_result)) {
