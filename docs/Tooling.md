@@ -33,6 +33,7 @@ The project's CMake files offers some options, though they are mainly used to co
 * `CPPSORT_STATIC_TESTS`: when `ON`, some tests are executed at compile time instead of runtime, defaults to `OFF`.
 * `CPPSORT_ENABLE_ASSERTIONS`: when `ON`, defines the eponymous macro which enables debug assertions from the library's internals, defaults to the value of `CPPSORT_ENABLE_AUDITS`.
 * `CPPSORT_ENABLE_AUDITS`: when `ON`, defines the eponymous macro which enables expensive debug assertions from the library's internals, defaults to `OFF`.
+* `CPPSORT_USE_LIBASSERT` (experimental): when `ON`, internal assertions use [libassert][libassert] instead of the standard `assert` macro, providing additional information about the errors. Defaults to `OFF`.
 
 Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
 
@@ -44,7 +45,7 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 
 *New in version 1.13.0:* added the option `CPPSORT_STATIC_TESTS`.
 
-*New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS` and `CPPSORT_ENABLE_AUDITS`.
+*New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS`, `CPPSORT_ENABLE_AUDITS` and `CPPSORT_USE_LIBASSERT`.
 
 ***WARNING:** options without a `CPPSORT_` prefixed are deprecated in version 1.9.0 and removed in version 2.0.0.*
 
@@ -89,3 +90,4 @@ Due to slight markup differences, some pages might not fully render correctly bu
   [conan]: https://conan.io/
   [conan-center]: https://conan.io/center/cpp-sort
   [gollum]: https://github.com/gollum/gollum
+  [libassert]: https://github.com/jeremy-rifkin/libassert

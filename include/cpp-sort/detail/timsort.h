@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Copyright (c) 2015-2022 Morwenn.
+ * Copyright (c) 2015-2023 Morwenn.
  * Copyright (c) 2021 Igor Kushnir <igorkuo@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -565,7 +565,7 @@ namespace detail
                 dest[len2] = iter_move(cursor1);
             }
             else {
-                CPPSORT_ASSERT(len1 != 0 && "comparison function violates its general contract");
+                CPPSORT_ASSERT(len1 != 0, "comparison function violates its general contract");
                 CPPSORT_ASSERT(len2 == 0);
                 CPPSORT_ASSERT(len1 > 1);
                 detail::move(cursor1, cursor1 + len1, dest);
@@ -715,7 +715,7 @@ namespace detail
                 detail::move_backward(cursor1 - len1, cursor1, dest + (1 + len1));
                 *dest = iter_move(cursor2);
             } else {
-                CPPSORT_ASSERT(len2 != 0 && "comparison function violates its general contract");
+                CPPSORT_ASSERT(len2 != 0, "comparison function violates its general contract");
                 CPPSORT_ASSERT(len1 == 0);
                 CPPSORT_ASSERT(len2 > 1);
                 detail::move(buffer.get(), buffer.get() + len2, dest - (len2 - 1));
