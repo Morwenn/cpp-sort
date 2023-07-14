@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
@@ -61,7 +61,12 @@
 ////////////////////////////////////////////////////////////
 // General: assertions
 
-#if defined(CPPSORT_ENABLE_ASSERTIONS) || defined(CPPSORT_ENABLE_AUDITS)
+// Ensure that enabling audits always enables assertions
+#if defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_ENABLE_ASSERTIONS
+#endif
+
+#if defined(CPPSORT_ENABLE_ASSERTIONS)
 #   include <cassert>
 #endif
 
@@ -72,12 +77,12 @@
 // than just relying on NDEBUG, so assertions have to be
 // explicitly enabled in cpp-sort
 
-#ifndef CPPSORT_ASSERT
-#   ifdef CPPSORT_ENABLE_ASSERTIONS
+#if !defined(NDEBUG) && defined(CPPSORT_ENABLE_ASSERTIONS)
+#   ifndef CPPSORT_ASSERT
 #       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
-#   else
-#       define CPPSORT_ASSERT(...)
 #   endif
+#else
+#   define CPPSORT_ASSERT(...)
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -87,12 +92,12 @@
 // scenarios, but still of great help when debugging tough
 // problems, hence this audit feature
 
-#ifndef CPPSORT_AUDIT
-#   ifdef CPPSORT_ENABLE_AUDITS
-#       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
-#   else
-#       define CPPSORT_AUDIT(...)
+#if !defined(NDEBUG) && defined(CPPSORT_ENABLE_AUDITS)
+#   ifndef CPPSORT_AUDIT
+#       define CPPSORT_AUDIT(...) CPPSORT_ASSERT(__VA_ARGS__)
 #   endif
+#else
+#   define CPPSORT_AUDIT(...)
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -105,7 +110,7 @@
 // actually correct.
 
 #if defined(CPPSORT_ENABLE_AUDITS)
-#   define CPPSORT_ASSUME(...) assert((__VA_ARGS__))
+#   define CPPSORT_ASSUME(...) CPPSORT_ASSERT(__VA_ARGS__)
 #elif defined(__GNUC__)
 #   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
 #elif defined(__clang__)
@@ -123,8 +128,8 @@
 // clause of a switch when we know the default can never be
 // reached
 
-#if defined(CPPSORT_ENABLE_AUDITS)
-#   define CPPSORT_UNREACHABLE CPPSORT_ASSERT("unreachable", false);
+#if !defined(NDEBUG) && defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_UNREACHABLE CPPSORT_ASSERT(false && "unreachable");
 #elif defined(__GNUC__) || defined(__clang__)
 #   define CPPSORT_UNREACHABLE __builtin_unreachable()
 #elif defined(_MSC_VER)

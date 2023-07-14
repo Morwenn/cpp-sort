@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2022 Morwenn
+# Copyright (c) 2015-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
@@ -15,11 +15,13 @@ option(BUILD_TESTING "Build the cpp-sort test suite (deprecated, use CPPSORT_BUI
 option(BUILD_EXAMPLES "Build the cpp-sort examples (deprecated, use CPPSORT_BUILD_EXAMPLES)" OFF)
 option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ${BUILD_TESTING})
 option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" ${BUILD_EXAMPLES})
+option(CPPSORT_ENABLE_AUDITS "Enable assertions in the library" OFF)
+option(CPPSORT_ENABLE_ASSERTIONS "Enable assertions in the library" ${CPPSORT_ENABLE_AUDITS})
 
 # Create cpp-sort library and configure it
 add_library(cpp-sort INTERFACE)
 target_include_directories(cpp-sort INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -28,6 +30,14 @@ target_compile_features(cpp-sort INTERFACE cxx_std_14)
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
     target_compile_options(cpp-sort INTERFACE /permissive-)
+endif()
+
+# Handle diagnostic options
+if (CPPSORT_ENABLE_ASSERTIONS)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_ENABLE_ASSERTIONS)
+endif()
+if (CPPSORT_ENABLE_AUDITS)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_ENABLE_AUDITS)
 endif()
 
 add_library(cpp-sort::cpp-sort ALIAS cpp-sort)
