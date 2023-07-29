@@ -110,7 +110,7 @@ Computes the maximum distance determined by an inversion.
 | n           | n           | Bidirectional |
 | n log n     | 1           | Forward       |
 
-When enough memory is available, `probe::dis` runs in O(n), otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
+When enough memory is available `probe::dis` runs in O(n) using an algorithm described by T. Altman and Y. Igarashi in *Roughly Sorting: Sequential and Parallel Approach*, otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
 `max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
 
@@ -210,7 +210,7 @@ The measure of presortedness is slightly different from its original description
 #include <cpp-sort/probes/osc.h>
 ```
 
-Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson in *Adaptive Heapsort*.
+Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson in *Adaptive Heapsort*, using an algorithm devised by J. Nehring.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
