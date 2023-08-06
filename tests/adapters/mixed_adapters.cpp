@@ -245,6 +245,7 @@ TEST_CASE( "stable_t<hybrid_adapter>", "[stable_adapter][hybrid_adapter]" )
 
     sorter_t sorter;
     stable_sorter_t stable_sorter(std::move(sorter));
+    (void)stable_sorter;
 
     CHECK( true );
 }
