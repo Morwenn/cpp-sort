@@ -4,8 +4,8 @@ List of actions to perform when releasing a new cpp-sort version.
 
 - [ ] Update the documentation.
 - [ ] Update the releases notes.
-- [ ] Udate `NOTICE.txt` and `README.md` when stealing code.
-- [ ] Keep track of the things that will be changed in 2.0.0.
+- [ ] Update `NOTICE.txt` and `README.md` when stealing code.
+- [ ] Keep track of the things that will change in 2.0.0.
 
 ### Before the release
 
