@@ -60,16 +60,18 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 **cpp-sort** is available directly on [Conan Center][conan-center]. You can find the different versions available with the following command:
 
 ```sh
-conan search cpp-sort --remote=conan-center
+conan search cpp-sort --remote=conancenter
 ```
 
 And then install any version to your local cache as follows (here with version 1.15.0):
 
 ```sh
-conan install cpp-sort/1.15.0
+conan install --requires=cpp-sort/1.15.0
 ```
 
-The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to build your own package with the `conanfile.py` available in this repository.
+The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to create your own package with the `conanfile.py` available in this repository.
+
+*Changed in version 1.15.0:* the recipes now only target conan 2.X.
 
 ## Gollum
 
@@ -88,6 +90,6 @@ Due to slight markup differences, some pages might not fully render correctly bu
   [catch2]: https://github.com/catchorg/Catch2
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/
-  [conan-center]: https://conan.io/center/cpp-sort
+  [conan-center]: https://conan.io/center/recipes/cpp-sort
   [gollum]: https://github.com/gollum/gollum
   [libassert]: https://github.com/jeremy-rifkin/libassert
