@@ -30,6 +30,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with median_of_3_killer distribu
                     cppsort::ska_sorter,
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
+                    cppsort::splay_sorter,
                     cppsort::spin_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
@@ -58,6 +59,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with median_of_3_killer distribu
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,
                     cppsort::slab_sorter,
+                    cppsort::splay_sorter,
                     cppsort::verge_sorter )
 {
     std::list<int> collection;

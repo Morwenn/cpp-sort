@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -15,6 +15,7 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
 #include <cpp-sort/sorters/poplar_sorter.h>
+#include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/algorithm.h>
@@ -235,4 +236,19 @@ TEST_CASE( "stable_adapter over stable_adapter", "[stable_adapter]" )
         STATIC_CHECK( std::is_same<cppsort::stable_t<nested2>, sorter>::value );
         STATIC_CHECK( std::is_same<cppsort::stable_t<nested3>, sorter>::value );
     }
+}
+
+TEST_CASE( "stable_t<hybrid_adapter>", "[stable_adapter][hybrid_adapter]" )
+{
+    using sorter_t = cppsort::hybrid_adapter<
+        cppsort::poplar_sorter,
+        cppsort::quick_merge_sorter
+    >;
+    using stable_sorter_t = cppsort::stable_t<sorter_t>;
+
+    sorter_t sorter;
+    stable_sorter_t stable_sorter(std::move(sorter));
+    (void)stable_sorter;
+
+    CHECK( true );
 }

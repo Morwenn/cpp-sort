@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SPLIT_ADAPTER_H_
@@ -26,28 +26,6 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename Sorter, typename=void>
-        struct split_adapter_iterator_category
-        {
-            using type = std::bidirectional_iterator_tag;
-        };
-
-        template<typename Sorter>
-        struct split_adapter_iterator_category<
-            Sorter,
-            void_t<typename sorter_traits<Sorter>::iterator_category>
-        >
-        {
-            using type = detail::conditional_t<
-                std::is_base_of<
-                    std::bidirectional_iterator_tag,
-                    typename sorter_traits<Sorter>::iterator_category
-                >::value,
-                typename sorter_traits<Sorter>::iterator_category,
-                std::bidirectional_iterator_tag
-            >;
-        };
-
         template<typename Sorter>
         struct split_adapter_impl:
             utility::adapter_storage<Sorter>
@@ -86,8 +64,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Sorter traits
 
-            using iterator_category
-                = typename split_adapter_iterator_category<Sorter>::type;
+            using iterator_category = typename bidir_at_best_tag<Sorter>::type;
             using is_always_stable = std::false_type;
         };
     }

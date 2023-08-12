@@ -28,6 +28,8 @@
 
         auto max_inversion = cppsort::probe::dis(collection);
 
+* *Metric*: as special kind of *sorter adapter* that returns information about sorted collections. See [the corresponding page][metrics] for additional information.
+
 * *Projection*: some sorters accept a projection as an additional parameter. A projection is a unary function that allows to "view" the values of a collection differently. For example it may allow to sort a collection of values on a specific field. The available sorting algorithms transform projections on the fly so that pointers to member data can also be used as projections. Projections were pioneered by the [Adobe Source Libraries][stlab] and appear in the C++20 [constrained algorithms][std-ranges].
 
         struct wrapper { int value; };
@@ -74,6 +76,7 @@
   [iterator-category]: Sorter-traits.md#iterator_category
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [measures-of-presortedness]: Measures-of-presortedness.md
+  [metrics]: Metrics.md
   [p0022]: https://wg21.link/P0022
   [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
   [sorter-adapters]: Sorter-adapters.md

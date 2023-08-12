@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -36,8 +36,8 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
+#include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
-#include "../benchmarking-tools/rdtsc.h"
 
 // Type of data to sort during the benchmark
 using value_t = double;
@@ -77,8 +77,8 @@ int main()
         { "pdq_sort",   cppsort::pdq_sort   },
         { "quick_sort", cppsort::quick_sort },
         { "ska_sort",   cppsort::ska_sort   },
+        { "spin_sort",   cppsort::spin_sort   },
         { "std_sort",   cppsort::std_sort   },
-        { "verge_sort", cppsort::verge_sort },
     };
 
     std::size_t sizes[] = { 1'000'000 };
@@ -94,26 +94,25 @@ int main()
             distributions_prng.seed(seed);
 
             for (auto size: sizes) {
-                std::vector<std::uint64_t> cycles;
+                std::vector<std::uint64_t> cycles_per_element;
 
                 auto total_start = clock_type::now();
                 auto total_end = clock_type::now();
                 while (total_end - total_start < 5s) {
                     collection_t collection;
                     distribution.second(std::back_inserter(collection), size);
-                    std::uint64_t start = rdtsc();
-                    sort.second(collection);
-                    std::uint64_t end = rdtsc();
+                    auto do_sort = cpu_cycles<sort_f>(sort.second);
+                    auto nb_cycles = do_sort(collection);
                     assert(std::is_sorted(std::begin(collection), std::end(collection)));
-                    cycles.push_back(double(end - start) / size + 0.5);
+                    cycles_per_element.push_back(double(nb_cycles.value()) / size + 0.5);
                     total_end = clock_type::now();
                 }
 
                 for (std::ostream* stream: {&std::cout, &std::cerr}) {
                     (*stream) << size << ", " << distribution.first << ", " << sort.first << ", ";
-                    auto it = cycles.begin();
+                    auto it = cycles_per_element.begin();
                     (*stream) << *it;
-                    while (++it != cycles.end()) {
+                    while (++it != cycles_per_element.end()) {
                         (*stream) << ", " << *it;
                     }
                     (*stream) << std::endl;

@@ -121,16 +121,6 @@ namespace detail
             }
 
             ////////////////////////////////////////////////////////////
-            // Elements access operators
-
-            CPPSORT_ATTRIBUTE_NODISCARD
-            auto operator[](difference_type pos) const
-                -> decltype(base()[pos])
-            {
-                return _it[pos * _size + _size - 1];
-            }
-
-            ////////////////////////////////////////////////////////////
             // Comparison operators
 
             CPPSORT_ATTRIBUTE_NODISCARD

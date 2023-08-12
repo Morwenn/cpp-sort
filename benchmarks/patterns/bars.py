@@ -62,8 +62,8 @@ def main():
         "pdq_sort",
         "quick_sort",
         "ska_sort",
+        "spin_sort",
         "std_sort",
-        "verge_sort",
     ]
 
     root = pathlib.Path(args.root)

@@ -26,19 +26,26 @@ target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 
 The project's CMake files offers some options, though they are mainly used to configure the test suite and examples:
 * `CPPSORT_BUILD_TESTING`: whether to build the test suite, defaults to `ON`.
-* `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`. 
+* `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`.
 * `CPPSORT_ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
 * `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
 * `CPPSORT_SANITIZE`: comma-separated list of values to pass to the `-fsanitize` flag of compilers that support it, defaults to an empty string.
 * `CPPSORT_STATIC_TESTS`: when `ON`, some tests are executed at compile time instead of runtime, defaults to `OFF`.
+* `CPPSORT_ENABLE_ASSERTIONS`: when `ON`, defines the eponymous macro which enables debug assertions from the library's internals, defaults to the value of `CPPSORT_ENABLE_AUDITS`.
+* `CPPSORT_ENABLE_AUDITS`: when `ON`, defines the eponymous macro which enables expensive debug assertions from the library's internals, defaults to `OFF`.
+* `CPPSORT_USE_LIBASSERT` (experimental): when `ON`, internal assertions use [libassert][libassert] instead of the standard `assert` macro, providing additional information about the errors. Defaults to `OFF`.
 
 Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
+
+Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enabled even if `CPPSORT_ENABLE_ASSERTIONS` is `OFF`. See [the relevant page][assertions-and-audits] for more information.
 
 *New in version 1.6.0:* added the option `BUILD_EXAMPLES`.
 
 *New in version 1.9.0:* options with the `CPPSORT_` prefix.
 
 *New in version 1.13.0:* added the option `CPPSORT_STATIC_TESTS`.
+
+*New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS`, `CPPSORT_ENABLE_AUDITS` and `CPPSORT_USE_LIBASSERT`.
 
 ***WARNING:** options without a `CPPSORT_` prefixed are deprecated in version 1.9.0 and removed in version 2.0.0.*
 
@@ -53,16 +60,18 @@ Some of those options also exist without the `CPPSORT_` prefix, but they are dep
 **cpp-sort** is available directly on [Conan Center][conan-center]. You can find the different versions available with the following command:
 
 ```sh
-conan search cpp-sort --remote=conan-center
+conan search cpp-sort --remote=conancenter
 ```
 
-And then install any version to your local cache as follows (here with version 1.14.0):
+And then install any version to your local cache as follows (here with version 1.15.0):
 
 ```sh
-conan install cpp-sort/1.14.0
+conan install --requires=cpp-sort/1.15.0
 ```
 
-The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to build your own package with the `conanfile.py` available in this repository.
+The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to create your own package with the `conanfile.py` available in this repository.
+
+*Changed in version 1.15.0:* the recipes now only target conan 2.X.
 
 ## Gollum
 
@@ -77,8 +86,10 @@ This can notably used to browse old versions of the documentation. It seems howe
 Due to slight markup differences, some pages might not fully render correctly but it should nonetheless be a better experience than navigaitng the Markdown files by hand.
 
 
+  [assertions-and-audits]: Home.md#assertions--audits
   [catch2]: https://github.com/catchorg/Catch2
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/
-  [conan-center]: https://conan.io/center/cpp-sort
+  [conan-center]: https://conan.io/center/recipes/cpp-sort
   [gollum]: https://github.com/gollum/gollum
+  [libassert]: https://github.com/jeremy-rifkin/libassert

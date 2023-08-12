@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -16,8 +16,8 @@
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters.h>
+#include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
-#include "../benchmarking-tools/rdtsc.h"
 
 using namespace std::chrono_literals;
 
@@ -43,9 +43,9 @@ template<
     typename T,
     std::size_t N,
     typename Sorter,
-    typename DistributionFunction
+    typename Dist
 >
-auto time_it(Sorter sorter, DistributionFunction distribution)
+auto time_it(Sorter sorter, Dist distribution)
     -> std::uint64_t
 {
     static_assert(N > 0, "this benchmark does not support zero-sized arrays");
@@ -59,15 +59,13 @@ auto time_it(Sorter sorter, DistributionFunction distribution)
     // Generate and sort arrays of size N thanks to distribution
     auto total_start = clock_type::now();
     auto total_end = clock_type::now();
-    while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
-           cycles.size() < max_runs_per_size) {
+    while (total_end - total_start < max_run_time && cycles.size() < max_runs_per_size) {
         std::array<T, N> arr;
         distribution(arr.begin(), N);
-        std::uint64_t start = rdtsc();
-        sorter(arr);
-        std::uint64_t end = rdtsc();
+        auto do_sort = cpu_cycles<Sorter>(sorter);
+        auto nb_cycles = do_sort(arr);
         assert(std::is_sorted(arr.begin(), arr.end()));
-        cycles.push_back(double(end - start) / N);
+        cycles.push_back(double(nb_cycles.value()) / N);
         total_end = clock_type::now();
     }
 
@@ -109,7 +107,7 @@ auto time_distribution(std::index_sequence<Ind...>)
     };
 
     // Output the results to their respective files
-    std::ofstream output(Distribution::output);
+    std::ofstream output(Dist::output);
     for (auto&& sort_result: results) {
         output << std::get<0>(sort_result) << ',';
         for (auto&& nb_cycles: std::get<1>(sort_result)) {

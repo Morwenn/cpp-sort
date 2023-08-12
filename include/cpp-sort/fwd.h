@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FWD_H_
@@ -8,18 +8,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <chrono>
 #include <cstddef>
 
 namespace cppsort
 {
-    //
-    // This header contains forward declarations for
-    // every sorter and sorter adapter in the library,
-    // which helps to specialize some of the adapters
-    // or to provide information about some sorters
-    // without actually having to include the whole
-    // thing
-    //
+    // This header contains forward declarations for every
+    // sorter and sorter adapter in the library, which helps
+    // to specialize some of the adapters or to provide
+    // information about some sorters without actually having
+    // to include the whole thing
 
     ////////////////////////////////////////////////////////////
     // Sorters
@@ -51,6 +49,7 @@ namespace cppsort
     struct slab_sorter;
     struct smooth_sorter;
     struct spin_sorter;
+    struct splay_sorter;
     struct split_sorter;
     struct spread_sorter;
     struct std_sorter;
@@ -101,6 +100,22 @@ namespace cppsort
     struct stable_adapter;
     template<typename Sorter>
     struct verge_adapter;
+
+    ////////////////////////////////////////////////////////////
+    // Metrics
+
+    namespace metrics
+    {
+        template<typename Sorter, typename CountType=std::size_t>
+        struct comparisons;
+        template<typename Sorter, typename CountType=std::size_t>
+        struct projections;
+        template<
+            typename Sorter,
+            typename DurationType = typename std::chrono::steady_clock::duration
+        >
+        struct running_time;
+    }
 }
 
 #endif // CPPSORT_FWD_H_

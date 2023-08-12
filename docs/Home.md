@@ -1,6 +1,6 @@
 ![cpp-sort logo](images/cpp-sort-logo.svg)
 
-Welcome to the **cpp-sort 1.14.0** documentation!
+Welcome to the **cpp-sort 1.15.0** documentation!
 
 This wiki contains documentation about the library: basic documentation about the many sorting tools and how to use them, documentation about the additional utilities provided by the library, as well as a few tutorials about writing your own sorters or sorter adapters. This main page explains a few general things that didn't quite fit in other parts of the documentation.
 
@@ -73,11 +73,27 @@ Some old components undergo deprecation before being removed in the following ma
 
 Some algorithms have assertions to guard against accidental logic issues (mostly in algorithms adapted from other projects), but they are disabled by default. You can enable these assertions by defining the preprocessor macro `CPPSORT_ENABLE_ASSERTIONS`. This new macro still honours `NDEBUG`, so assertions won't be enabled anyway if `NDEBUG` is defined.
 
-A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms. When turning on audits, internal calls to `__assume` and equivalent statements will also be turned into assertions to provide additional checks.
+A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms. When turning on audits, assertions are automatically enabled too, and internal uses of [`[[assume(...)]]`][assume] and equivalent statements are turned into assertions. This macro also honours `NDEBUG`.
+
+The macros `CPPSORT_ENABLE_ASSERTIONS` and `CPPSORT_ENABLE_AUDITS` can be configured directly from CMake by setting the eponymous options to `ON`. See [the Tooling page][tooling-cmake] for more information.
 
 *New in version 1.6.0*
 
 *New in version 1.9.0*: `CPPSORT_ENABLE_AUDITS`
+
+*New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS` and `CPPSORT_ENABLE_AUDITS` can be defined with CMake options.
+
+*Changed in version 1.15.0*: defining `CPPSORT_ENABLE_AUDITS` now automatically defines `CPPSORT_ENABLE_ASSERTIONS`.
+
+#### Rich assertions with libassert (experimental)
+
+When defined, the macro `CPPSORT_USE_LIBASSERT` makes internal assertions use [libassert][libassert] instead of the standard `assert` macro. This allows assertions to provide additional information when an assertion fires, notably by displaying a full stack trace, and optionally to decompose the asserted expressions. See the library's README for more information.
+
+This option can be enabled from CMake by setting the `CPPSORT_USE_LIBASSERT` to `ON`. See [the Tooling page][tooling-cmake] for more information.
+
+*Note: the support for libassert is still experimental and has not been tested on all supported platforms. Errors are to be expected.*
+
+*New in version 1.15.0*
 
 ## Miscellaneous
 
@@ -89,7 +105,10 @@ If you ever feel that this wiki is incomplete, that it needs more examples or mo
 
 Hope you have fun!
 
+  [assume]: https://en.cppreference.com/w/cpp/language/attributes/assume
   [benchmarks]: Benchmarks.md
+  [libassert]: https://github.com/jeremy-rifkin/libassert
   [original-research]: Original-research.md
   [quickstart]: Quickstart.md
   [swappable]: https://en.cppreference.com/w/cpp/concepts/swappable
+  [tooling-cmake]: Tooling.md#cmake

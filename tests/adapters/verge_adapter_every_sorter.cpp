@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <iterator>
+#include <list>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
 #include <cpp-sort/adapters/stable_adapter.h>
@@ -14,7 +15,7 @@
 #include <testing-tools/distributions.h>
 #include <testing-tools/wrapper.h>
 
-TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
+TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<4>,
@@ -35,6 +36,7 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
                     cppsort::ska_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
@@ -50,7 +52,8 @@ TEMPLATE_TEST_CASE( "every sorter with verge_adapter", "[verge_adapter]",
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }
 
-TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][stable_adapter]",
+TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter",
+                    "[verge_adapter][stable_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::default_sorter,
@@ -69,6 +72,7 @@ TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][s
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
@@ -82,5 +86,27 @@ TEMPLATE_TEST_CASE( "every sorter with stable verge_adapter", "[verge_adapter][s
 
     cppsort::stable_adapter<cppsort::verge_adapter<TestType>> sorter;
     sorter(collection, &wrapper::value);
+    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+}
+
+TEMPLATE_TEST_CASE( "every bidirectiona sorter with verge_adapter", "[verge_adapter]",
+                    cppsort::cartesian_tree_sorter,
+                    cppsort::default_sorter,
+                    cppsort::drop_merge_sorter,
+                    cppsort::insertion_sorter,
+                    cppsort::mel_sorter,
+                    cppsort::merge_sorter,
+                    cppsort::quick_merge_sorter,
+                    cppsort::quick_sorter,
+                    cppsort::selection_sorter,
+                    cppsort::slab_sorter,
+                    cppsort::splay_sorter )
+{
+    std::list<double> collection;
+    auto distribution = dist::shuffled{};
+    distribution.call<double>(std::back_inserter(collection), 412);
+
+    cppsort::verge_adapter<TestType> sorter;
+    sorter(collection);
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

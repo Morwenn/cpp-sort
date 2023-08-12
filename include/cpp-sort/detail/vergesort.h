@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -12,8 +12,6 @@
 #include <list>
 #include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 #include "config.h"
@@ -23,7 +21,7 @@
 #include "merge_sort.h"
 #include "reverse.h"
 #include "rotate.h"
-#include "sized_iterator.h"
+#include "sized_range.h"
 #include "upper_bound.h"
 
 namespace cppsort
@@ -110,8 +108,7 @@ namespace verge
     {
         if (size < 128) {
             // vergesort is inefficient for small collections
-            fallback(make_sized_iterator(first, size),
-                     make_sized_iterator(last, size),
+            fallback(make_sized_range(first, last, size),
                      std::move(compare), std::move(projection));
             return;
         }
@@ -204,8 +201,7 @@ namespace verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_iterator(begin_unsorted, size_unsorted),
-                                 make_sized_iterator(begin_rng, size_unsorted),
+                        fallback(make_sized_range(begin_unsorted, begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted} );
                         runs.push_back({ next, run_size });
@@ -267,8 +263,7 @@ namespace verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_iterator(begin_unsorted, size_unsorted),
-                                 make_sized_iterator(begin_rng, size_unsorted),
+                        fallback(make_sized_range(begin_unsorted, begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted });
                         detail::reverse(begin_rng, next);
@@ -311,8 +306,7 @@ namespace verge
             // next run, so we add one back here to compensate
             ++size_unsorted;
             if (size_unsorted > 1) {
-                fallback(make_sized_iterator(begin_unsorted, size_unsorted),
-                         make_sized_iterator(last, size_unsorted),
+                fallback(make_sized_range(begin_unsorted, last, size_unsorted),
                          compare, projection);
             }
             runs.push_back({ last, size_unsorted });
@@ -535,44 +529,6 @@ namespace verge
                             std::move(first), std::move(last), size,
                             std::move(compare), std::move(projection),
                             get_maybe_stable(std::integral_constant<bool, Stable>{}, std::move(fallback)));
-    }
-
-    constexpr auto default_sorter_for_impl(std::bidirectional_iterator_tag)
-        -> cppsort::quick_merge_sorter
-    {
-        return {};
-    }
-
-    constexpr auto default_sorter_for_impl(std::random_access_iterator_tag)
-        -> cppsort::pdq_sorter
-    {
-        return {};
-    }
-
-    template<typename Iterator>
-    constexpr auto default_sorter_for(Iterator)
-        -> decltype(auto)
-    {
-        iterator_category_t<Iterator> category;
-        return default_sorter_for_impl(category);
-    }
-
-    template<
-        bool Stable,
-        typename BidirectionalIterator,
-        typename Compare,
-        typename Projection
-    >
-    auto sort(BidirectionalIterator first, BidirectionalIterator last,
-              difference_type_t<BidirectionalIterator> size,
-              Compare compare, Projection projection)
-        -> void
-    {
-        // Pick a default sorter based on the iterator category when
-        // none is provided
-        verge::sort<Stable>(first, last, size,
-                            std::move(compare), std::move(projection),
-                            default_sorter_for(first));
     }
 }}}
 

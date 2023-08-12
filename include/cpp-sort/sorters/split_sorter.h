@@ -13,13 +13,25 @@
 #include <cpp-sort/adapters/split_adapter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/utility/static_const.h>
+#include "../detail/config.h"
 
 namespace cppsort
 {
+    namespace deprecated
+    {
+        struct split_sorter:
+            split_adapter<pdq_sorter>
+        {
+            split_sorter() = default;
+            using iterator_category = std::random_access_iterator_tag;
+        };
+    }
+
     ////////////////////////////////////////////////////////////
     // Sorter
 
-    struct split_sorter:
+    struct CPPSORT_DEPRECATED("split_sorter is deprecated and will be removed in version 2.0.0, use split_adapter(pdq_sort) instead")
+    split_sorter:
         split_adapter<pdq_sorter>
     {
         ////////////////////////////////////////////////////////////
@@ -39,8 +51,9 @@ namespace cppsort
 
     namespace
     {
+        CPPSORT_DEPRECATED("split_sort is deprecated and will be removed in version 2.0.0, use split_adapter(pdq_sort) instead")
         constexpr auto&& split_sort
-            = utility::static_const<split_sorter>::value;
+            = utility::static_const<deprecated::split_sorter>::value;
     }
 }
 

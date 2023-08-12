@@ -114,6 +114,8 @@ struct stable_adapter<default_sorter>:
 #include <cpp-sort/sorters/drop_merge_sorter.h>
 ```
 
+***WARNING:** `drop_merge_sorter` is deprecated in version 1.15.0 and removed in version 2.0.0, use [`drop_merge_adapter`][drop-merge-adapter]`(`[`pdq_sort`][pdq-sorter]`)` instead.*
+
 Implements a [drop-merge sort][drop-merge-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
@@ -121,6 +123,10 @@ Implements a [drop-merge sort][drop-merge-sort].
 | n           | n log n     | n log n     | n           | No          | Bidirectional |
 
 Drop-merge sort is a [*Rem*-adaptive][probe-rem] sorting algorithm. While it is not as good as other sorting algorithms to sort shuffled data, it is excellent when more than 80% of the data is already ordered according to *Rem*.
+
+*Deprecated in version 1.15.0*
+
+*Removed in version 2.0.0*
 
 ### `grail_sorter<>`
 
@@ -379,7 +385,7 @@ While the complexity guarantees of this algorithm are optimal, this smoothsort i
 #include <cpp-sort/sorters/spin_sorter.h>
 ```
 
-Implements a [spinsort][spinsort]
+Implements a [spinsort][spinsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -387,11 +393,27 @@ Implements a [spinsort][spinsort]
 
 *New in version 1.6.0*
 
+### `splay_sorter`
+
+```cpp
+#include <cpp-sort/sorters/splay_sorter.h>
+```
+
+Implements a [splaysort][splaysort].
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n     | n           | Yes         | Forward       |
+
+*New in version 1.15.0*
+
 ### `split_sorter`
 
 ```cpp
 #include <cpp-sort/sorters/split_sorter.h>
 ```
+
+***WARNING:** `split_sorter` is deprecated in version 1.15.0 and removed in version 2.0.0, use [`split_adapter`][split-adapter]`(`[`pdq_sort`][pdq-sorter]`)` instead.*
 
 Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
 
@@ -407,6 +429,10 @@ SplitSort is a [*Rem*-adaptive][probe-rem] sorting algorithm and shares many sim
 This sorter can't throw `std::bad_alloc`.
 
 *New in version 1.4.0*
+
+*Deprecated in version 1.15.0*
+
+*Removed in version 2.0.0*
 
 ### `std_sorter`
 
@@ -596,6 +622,7 @@ struct spread_sorter:
   [cppsort-sort]: Sorting-functions.md#cppsortsort
   [d-ary-heap]: https://en.wikipedia.org/wiki/D-ary_heap
   [default-sorter]: Sorters.md#default_sorter
+  [drop-merge-adapter]: Sorter-adapters.md#drop_merge_adapter
   [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [grailsort]: https://github.com/Mrrl/GrailSort
   [heapsort]: https://en.wikipedia.org/wiki/Heapsort
@@ -605,6 +632,7 @@ struct spread_sorter:
   [issue-168]: https://github.com/Morwenn/cpp-sort/issues/168
   [median-of-medians]: https://en.wikipedia.org/wiki/Median_of_medians
   [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort
+  [pdq-sorter]: Sorters.md#pdq_sorter
   [pdqsort]: https://github.com/orlp/pdqsort
   [probe-rem]: Measures-of-presortedness.md#rem
   [probe-runs]: Measures-of-presortedness.md#runs
@@ -618,6 +646,8 @@ struct spread_sorter:
   [sorter-adapters]: Sorter-adapters.md
   [sorting-functions]: Sorting-functions.md
   [spinsort]: https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/sort/single_thread/spinsort.html
+  [splaysort]: https://en.wikipedia.org/wiki/Splaysort
+  [split-adapter]: Sorter-adapters.md#split_adapter
   [spreadsort]: https://en.wikipedia.org/wiki/Spreadsort
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void

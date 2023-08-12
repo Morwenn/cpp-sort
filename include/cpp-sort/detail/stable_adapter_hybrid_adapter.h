@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Morwenn
+ * Copyright (c) 2018-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_STABLE_ADAPTER_HYBRID_ADAPTER_H_
@@ -23,7 +23,7 @@ namespace cppsort
             template<std::size_t... Indices>
             constexpr explicit stable_adapter(std::index_sequence<Indices...>, hybrid_adapter<Sorters...>&& sorters):
                 hybrid_adapter<stable_t<Sorters>...>(
-                    (stable_t<Sorters>(std::move(sorters).template get<Indices, Sorters>()))...
+                    (stable_t<Sorters>(std::move(sorters).template get<Indices>()))...
                 )
             {}
 
@@ -42,7 +42,6 @@ namespace cppsort
             // Sorter traits
 
             using is_always_stable = std::true_type;
-            using type = hybrid_adapter<stable_t<Sorters>...>;
     };
 }
 

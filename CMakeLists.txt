@@ -1,11 +1,11 @@
-# Copyright (c) 2015-2022 Morwenn
+# Copyright (c) 2015-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.14.0 LANGUAGES CXX)
+project(cpp-sort VERSION 1.15.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -15,11 +15,25 @@ option(BUILD_TESTING "Build the cpp-sort test suite (deprecated, use CPPSORT_BUI
 option(BUILD_EXAMPLES "Build the cpp-sort examples (deprecated, use CPPSORT_BUILD_EXAMPLES)" OFF)
 option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ${BUILD_TESTING})
 option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" ${BUILD_EXAMPLES})
+option(CPPSORT_ENABLE_AUDITS "Enable assertions in the library" OFF)
+option(CPPSORT_ENABLE_ASSERTIONS "Enable assertions in the library" ${CPPSORT_ENABLE_AUDITS})
+option(CPPSORT_USE_LIBASSERT "Use libassert for assertions (experimental)" OFF)
+
+# Optionally use libassert for assertions
+if (CPPSORT_USE_LIBASSERT)
+    include(DownloadProject)
+    download_project(PROJ libassert
+                     GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
+                     GIT_TAG v1.2
+                     UPDATE_DISCONNECTED 1
+    )
+    add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
+endif()
 
 # Create cpp-sort library and configure it
 add_library(cpp-sort INTERFACE)
 target_include_directories(cpp-sort INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -27,7 +41,24 @@ target_compile_features(cpp-sort INTERFACE cxx_std_14)
 
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
-    target_compile_options(cpp-sort INTERFACE /permissive-)
+    target_compile_options(cpp-sort INTERFACE
+        /permissive-
+        /Zc:preprocessor
+    )
+endif()
+
+# Handle diagnostic options
+if (CPPSORT_ENABLE_ASSERTIONS)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_ENABLE_ASSERTIONS)
+endif()
+if (CPPSORT_ENABLE_AUDITS)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_ENABLE_AUDITS)
+endif()
+
+# Optionally link to libassert
+if (CPPSORT_USE_LIBASSERT)
+    target_link_libraries(cpp-sort INTERFACE assert)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_USE_LIBASSERT)
 endif()
 
 add_library(cpp-sort::cpp-sort ALIAS cpp-sort)

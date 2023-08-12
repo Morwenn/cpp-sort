@@ -326,16 +326,18 @@ This little dance sometimes allows to reduce the nesting of function calls and t
 
 While the library already provides a `verge_sorter` built on top of `pdq_sorter`, the true power of vergesort is to add a fast *Runs*-adaptive layer on top of any sorting algorithm to make it handle data with big runs better while not being noticeably slower for the distributions that the vergesort layer can't handle. [This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
 
-`verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It only accepts random-access iterables.
+`verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional iterators.
 
 ```cpp
 template<typename Sorter>
 struct verge_adapter;
 ```
 
-When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and faster than just using `make_stable`.
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and can be faster than just using `make_stable`.
 
 *New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
+
+*Changed in version 1.15.0:* `verge_adapter` now supports bidirectional iterators.
 
 
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction

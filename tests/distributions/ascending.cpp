@@ -36,6 +36,7 @@ TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]"
                     cppsort::slab_sorter,
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
+                    cppsort::splay_sorter,
                     cppsort::split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,

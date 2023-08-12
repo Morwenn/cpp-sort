@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_TYPE_TRAITS_H_
@@ -357,6 +357,35 @@ namespace detail
 
     template<std::size_t Value>
     constexpr bool is_in_pack<Value> = false;
+
+    ////////////////////////////////////////////////////////////
+    // index_of: return the index of the first occurence of a
+    // type in a list of type, or -1 if the type is not in the
+    // list
+
+    template<typename Needle, typename... Haystack>
+    struct index_of_impl;
+
+    template<typename Needle>
+    struct index_of_impl<Needle>
+    {
+        static constexpr int value = -1;
+    };
+
+    template<typename Needle, typename... Tail>
+    struct index_of_impl<Needle, Needle, Tail...>
+    {
+        static constexpr int value = 0;
+    };
+
+    template<typename Needle, typename Head, typename... Tail>
+    struct index_of_impl<Needle, Head, Tail...>
+    {
+        static constexpr int value = index_of_impl<Needle, Tail...>::value + 1;
+    };
+
+    template<typename Needle, typename... Haystack>
+    constexpr int index_of = index_of_impl<Needle, Haystack...>::value;
 }}
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_

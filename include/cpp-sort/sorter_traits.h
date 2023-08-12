@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTER_TRAITS_H_
@@ -264,6 +264,36 @@ namespace cppsort
         // New category
         using iterator_category = Category;
     };
+
+    ////////////////////////////////////////////////////////////
+    // Half-baked utility for split_adapter and verge_adapter,
+    // aliases std::bidirectional_iterator_tag when possible,
+    // and a stricter iterator tag otherwise
+
+    namespace detail
+    {
+        template<typename Sorter, typename=void>
+        struct bidir_at_best_tag
+        {
+            using type = std::bidirectional_iterator_tag;
+        };
+
+        template<typename Sorter>
+        struct bidir_at_best_tag<
+            Sorter,
+            void_t<typename sorter_traits<Sorter>::iterator_category>
+        >
+        {
+            using type = conditional_t<
+                std::is_base_of<
+                    std::bidirectional_iterator_tag,
+                    typename sorter_traits<Sorter>::iterator_category
+                >::value,
+                typename sorter_traits<Sorter>::iterator_category,
+                std::bidirectional_iterator_tag
+            >;
+        };
+    }
 }
 
 #endif // CPPSORT_SORTER_TRAITS_H_

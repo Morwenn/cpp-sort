@@ -1,21 +1,42 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import ast
-import sys
 import textwrap
+from pathlib import Path
 
 import z3
 
 
-def parse_network(path) -> list[list[tuple]]:
+def find_sorter_hunter_file(path: Path, size: int):
     """
-    Reads a file and returns for each line of list of tuples representing the indices
-    of elements on which to perform compare-and-swap operations.
+    Given the SorterHunter directory containing the network files, find the
+    one corresponding for sorting a network of the given size, pereferring
+    the ones that minimize the number of compare-exchanges.
+    """
+    return sorted(
+        path.glob(f"Sort_{size}_*.json"),
+        key=lambda x: int(x.name.split('_')[2])
+    )[0]
+
+
+def parse_sorter_hunter_network(path: Path) -> list[list[tuple]]:
+    """
+    Read a SorterHunter network file and return for each line a list of
+    tuples representing the indices of elements on which to perform
+    compare-and-swap operations.
+
+    The SorterHunter files are JSON, but some information is still encoded
+    in the way indices of a same network are split across lines, so we read
+    it as a simple text file instead.
     """
     res: list[list[tuple]] = []
-    with open(path) as fd:
+    with path.open() as fd:
         for line in fd:
-            res.append(ast.literal_eval(line))
+            line = line.strip()
+            if line.startswith("["):
+                line = line.rstrip(',') + ','  # Ensure it will always be a tuple
+                res.append(list(ast.literal_eval(line)))
     return res
 
 
@@ -72,7 +93,7 @@ def generate_cxx(network: list[list[tuple]]):
 
                 template<typename DifferenceType=std::ptrdiff_t>
                 CPPSORT_ATTRIBUTE_NODISCARD
-                static constexpr auto index_pairs()
+                static constexpr auto index_pairs() noexcept
                     -> std::array<utility::index_pair<DifferenceType>, {nb_indices}>
                 {{
                     return {{{{
@@ -82,7 +103,7 @@ def generate_cxx(network: list[list[tuple]]):
             }};
         }}}}
     """)
-    
+
     pairs = sum(network, [])
 
     # Find highest index in pairs
@@ -97,12 +118,12 @@ def generate_cxx(network: list[list[tuple]]):
         lhs = "first" if pair[0] == 0 else f"first + {pair[0]}"
         rhs = "first" if pair[1] == 0 else f"first + {pair[1]}"
         swaps.append(f"iter_swap_if({lhs}, {rhs}, compare, projection);")
-    
+
     # Generate list of indices
     indices = []
     for line in network:
         indices.append(", ".join(f"{{{pair[0]}, {pair[1]}}}" for pair in line) + ",")
-    
+
     return template.format(
         nb_inputs=highest_index + 1,
         swaps="\n            ".join(swaps),
@@ -112,7 +133,16 @@ def generate_cxx(network: list[list[tuple]]):
 
 
 def main():
-    network = parse_network(sys.argv[1])
+    parser = argparse.ArgumentParser(description="Turn a SorterHunter network into a cpp-sort one")
+    parser.add_argument('-s', '--size', type=int,
+                        help="Number of inputs the network should sort")
+    parser.add_argument('directory', help="Directory containing the SorterHunter networks")
+    args = parser.parse_args()
+
+    path = find_sorter_hunter_file(Path(args.directory), args.size)
+    print(f"Using file {path}")
+
+    network = parse_sorter_hunter_network(path)
     pairs = sum(network, [])
     print(f"Number of pairs: {len(pairs)}")
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_NOT_FN_H_
@@ -163,15 +163,6 @@ namespace cppsort
                 return type(
                     detail::not_fn_impl<F1>::construct(func.comparison()),
                     func.projection()
-                );
-            }
-
-            static constexpr auto construct(projection_compare<F1, F2>&& func)
-                -> type
-            {
-                return type(
-                    detail::not_fn_impl<F1>::construct(std::move(func.comparison())),
-                    std::move(func.projection())
                 );
             }
         };

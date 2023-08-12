@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2022 Morwenn
+# Copyright (c) 2015-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -27,7 +27,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.2.1
+                     GIT_TAG v3.4.0
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
@@ -61,6 +61,8 @@ macro(configure_tests target)
         # Somewhat speed up Catch2 compile times
         CATCH_CONFIG_FAST_COMPILE
         # Enable assertions for more thorough tests
+        _GLIBCXX_ASSERTIONS
+        _LIBCPP_ENABLE_ASSERTIONS=1
         CPPSORT_ENABLE_ASSERTIONS
         # We test deprecated code but we don't want it to warn
         CPPSORT_DISABLE_DEPRECATION_WARNINGS
@@ -150,6 +152,11 @@ add_executable(main-tests
     adapters/stable_adapter_every_sorter.cpp
     adapters/verge_adapter_every_sorter.cpp
 
+    # Metrics tests
+    metrics/comparisons.cpp
+    metrics/projections.cpp
+    metrics/running_time.cpp
+
     # Comparators tests
     comparators/case_insensitive_less.cpp
     comparators/flip_not.cpp
@@ -228,6 +235,7 @@ add_executable(main-tests
     utility/buffer.cpp
     utility/chainable_projections.cpp
     utility/iter_swap.cpp
+    utility/metric_tools.cpp
     utility/sorted_indices.cpp
     utility/sorted_iterators.cpp
     utility/sorting_networks.cpp
