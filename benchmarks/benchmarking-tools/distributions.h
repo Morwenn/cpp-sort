@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -95,7 +95,7 @@ namespace dist
             std::transform(vec.begin(), vec.end(), out, proj);
         }
 
-        static constexpr const char* output = "shuffled.txt";
+        static constexpr const char* output = "shuffled_16_values.txt";
     };
 
     struct all_equal:
@@ -236,7 +236,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "ascending_sawtooth.txt";
+        static constexpr const char* output = "ascending_sawtooth_bad.txt";
     };
 
     struct descending_sawtooth:
@@ -270,7 +270,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_sawtooth.txt";
+        static constexpr const char* output = "descending_sawtooth_bad.txt";
     };
 
     struct alternating:
