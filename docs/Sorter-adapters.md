@@ -57,6 +57,8 @@ An interesting property of dedicated sorting algorithms is that one can craft an
 #include <cpp-sort/adapters/counting_adapter.h>
 ```
 
+***WARNING:** `counting_adapter` is deprecated in version 1.16.0 and removed in version 2.0.0, use [`metrics::comparisons`][metrics-comparisons] instead.*
+
 Unlike usual sorters, `counting_adapter::operator()` does not return `void` but the number of comparisons that have been needed to sort the iterable. It will adapt the comparison function so that it can count the number of comparisons made by any other sorter with a reasonable implementation. The actual number of comparisons needed to sort an iterable can be used as a heuristic in hybrid sorts and may constitute interesting information nevertheless.
 
 The actual counter type can be configured with the template parameter `CountType`, which defaults to `std::size_t` if not specified.
@@ -70,6 +72,10 @@ struct counting_adapter;
 ```
 
 Note that this adapter only works with sorters that satisfy the `ComparisonSorter` concept since it needs to adapt a comparison function.
+
+*Deprecated in version 1.16.0*
+
+*Removed in version 2.0.0*
 
 ### `drop_merge_adapter`
 
@@ -351,6 +357,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [is-stable]: Sorter-traits.md#is_stable
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
+  [metrics-comparisons]: Metrics.md#comparisons
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
   [probe-rem]: Measures-of-presortedness.md#rem
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
