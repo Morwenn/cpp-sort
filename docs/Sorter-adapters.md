@@ -363,4 +363,4 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [std-true-type]: https://en.cppreference.com/w/cpp/types/integral_constant
   [verge-adapter]: Sorter-adapters.md#verge_adapter
   [verge-sorter]: Sorters.md#verge_sorter
-  [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/master/fallbacks.md
+  [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/trunk/fallbacks.md

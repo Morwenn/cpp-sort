@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Morwenn
+# Copyright (c) 2020-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Coverage Upload to Codecov
@@ -6,9 +6,9 @@ name: Coverage Upload to Codecov
 on:
   push:
     branches:
-      - master
-      - develop
-      - 2.0.0-develop
+      - 1.x.y-develop
+      - 1.x.y-stable
+      - 2.x.y-develop
     paths:
       - '.github/workflows/code-coverage.yml'
       - '.github/.codecov.yml'
