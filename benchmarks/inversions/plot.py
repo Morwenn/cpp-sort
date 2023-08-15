@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020-2022 Morwenn
+# Copyright (c) 2020-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
@@ -9,12 +9,6 @@ import sys
 
 import numpy
 from matplotlib import pyplot
-
-
-def fetch_results(fresults):
-    results = fresults.readline().split(' ')
-    results.pop()
-    return [float(elem) for elem in results]
 
 
 if __name__ == '__main__':
@@ -44,27 +38,38 @@ if __name__ == '__main__':
     colors = iter(palette)
 
     for result_file in result_files:
-        percent_inversions = []
         averages = []
+        disorders = []
         with result_file.open() as fd:
-            # Read the first line
-            algo_name = fd.readline().strip()
+            # Read metadata from the first line
+            algo_name, mop_name = fd.readline().strip().split(',')
+
             # Read the rest of the file
             for line in fd:
-                pct, *data = line.strip().split(',')
+                disorder, *data = line.strip().split(',')
                 data = list(map(int, data))
-                percent_inversions.append(pct)
-                averages.append(numpy.average(data))
+                averages.append(numpy.median(data))
+                disorders.append(int(disorder))
+
+        # Reorder the results
+        disorders = numpy.asarray(disorders)
+        averages = numpy.asarray(averages)
+        sorted_indices = numpy.argsort(disorders)
+        disorders = disorders[sorted_indices]
+        averages = averages[sorted_indices]
 
         # Plot the results
-        pyplot.plot(list(map(int, percent_inversions)),
+        pyplot.plot(list(map(int, disorders)),
                     averages,
                     label=algo_name,
                     color=next(colors))
 
-    # Add a legend
-    pyplot.legend()
+    # Add global information
+    pyplot.xlim(left=0)
+    pyplot.ylim(bottom=0)
     pyplot.title("Sorting std::vector<int> with $10^6$ elements")
-    pyplot.xlabel("Percentage of inversions")
+    pyplot.xlabel(f"${mop_name}$")
     pyplot.ylabel("Cycles (lower is better)")
+    pyplot.legend()
+
     pyplot.show()

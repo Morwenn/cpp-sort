@@ -400,11 +400,21 @@ namespace dist
             // Generate a random value
             std::uniform_int_distribution<long long int> value_dis(0, size - 1);
 
-            for (long long int i = 0; i < size; ++i) {
-                if (percent_dis(distributions_prng) < factor) {
-                    *out++ = proj(value_dis(distributions_prng));
-                } else {
-                    *out++ = proj(i);
+            if (factor <= 0.5) {
+                for (long long int i = 0; i < size; ++i) {
+                    if (percent_dis(distributions_prng) < factor * 2) {
+                        *out++ = proj(value_dis(distributions_prng));
+                    } else {
+                        *out++ = proj(i);
+                    }
+                }
+            } else {
+                for (long long int i = size; i > 0; --i) {
+                    if (percent_dis(distributions_prng) > (factor - 0.5) * 2) {
+                        *out++ = proj(value_dis(distributions_prng));
+                    } else {
+                        *out++ = proj(i);
+                    }
                 }
             }
         }
