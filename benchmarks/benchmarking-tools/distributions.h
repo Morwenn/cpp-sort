@@ -82,7 +82,7 @@ namespace dist
             std::transform(vec.begin(), vec.end(), out, proj);
         }
 
-        static constexpr const char* output = "shuffled.txt";
+        static constexpr const char* name = "shuffled";
     };
 
     struct shuffled_16_values:
@@ -103,7 +103,7 @@ namespace dist
             std::transform(vec.begin(), vec.end(), out, proj);
         }
 
-        static constexpr const char* output = "shuffled_16_values.txt";
+        static constexpr const char* name = "shuffled_16_values";
     };
 
     struct all_equal:
@@ -119,7 +119,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "all_equal.txt";
+        static constexpr const char* name = "all_equal";
     };
 
     struct ascending:
@@ -135,7 +135,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "ascending.txt";
+        static constexpr const char* name = "ascending";
     };
 
     struct descending:
@@ -151,7 +151,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending.txt";
+        static constexpr const char* name = "descending";
     };
 
     struct pipe_organ:
@@ -170,7 +170,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "pipe_organ.txt";
+        static constexpr const char* name = "pipe_organ";
     };
 
     struct push_front:
@@ -189,7 +189,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "push_front.txt";
+        static constexpr const char* name = "push_front";
     };
 
     struct push_middle:
@@ -210,7 +210,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "push_middle.txt";
+        static constexpr const char* name = "push_middle";
     };
 
     struct ascending_sawtooth:
@@ -227,7 +227,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "ascending_sawtooth.txt";
+        static constexpr const char* name = "ascending_sawtooth";
     };
 
     struct ascending_sawtooth_bad:
@@ -244,7 +244,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "ascending_sawtooth_bad.txt";
+        static constexpr const char* name = "ascending_sawtooth_bad";
     };
 
     struct descending_sawtooth:
@@ -261,7 +261,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_sawtooth.txt";
+        static constexpr const char* name = "descending_sawtooth";
     };
 
     struct descending_sawtooth_bad:
@@ -278,7 +278,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_sawtooth_bad.txt";
+        static constexpr const char* name = "descending_sawtooth_bad";
     };
 
     struct alternating:
@@ -294,7 +294,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "alternating.txt";
+        static constexpr const char* name = "alternating";
     };
 
     struct reversed_alternating:
@@ -312,7 +312,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "reversed_alternating.txt";
+        static constexpr const char* name = "reversed_alternating";
     };
 
     struct descending_plateau:
@@ -339,7 +339,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_plateau.txt";
+        static constexpr const char* name = "descending_plateau";
     };
 
     struct vergesort_killer:
@@ -371,7 +371,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "vergesort_killer.txt";
+        static constexpr const char* name = "vergesort_killer";
     };
 
     ////////////////////////////////////////////////////////////
@@ -419,7 +419,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "inv.txt";
+        static constexpr const char* name = "inv";
     };
 
     ////////////////////////////////////////////////////////////
