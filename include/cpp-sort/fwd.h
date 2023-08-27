@@ -109,6 +109,8 @@ namespace cppsort
         template<typename Sorter, typename CountType=std::size_t>
         struct comparisons;
         template<typename Sorter, typename CountType=std::size_t>
+        struct moves;
+        template<typename Sorter, typename CountType=std::size_t>
         struct projections;
         template<
             typename Sorter,

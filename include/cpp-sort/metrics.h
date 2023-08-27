@@ -8,6 +8,7 @@
 #include <cpp-sort/utility/metrics_tools.h>
 
 #include <cpp-sort/metrics/comparisons.h>
+#include <cpp-sort/metrics/moves.h>
 #include <cpp-sort/metrics/running_time.h>
 #include <cpp-sort/metrics/projections.h>
 

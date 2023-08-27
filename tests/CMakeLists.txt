@@ -154,6 +154,7 @@ add_executable(main-tests
 
     # Metrics tests
     metrics/comparisons.cpp
+    metrics/moves.cpp
     metrics/projections.cpp
     metrics/running_time.cpp
 

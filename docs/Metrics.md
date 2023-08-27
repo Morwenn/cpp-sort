@@ -19,6 +19,8 @@ All available metrics live in the subnamespace `cppsort::metrics`. Even though a
 
 All of the metrics headers also includes `<cpp-sort/utility/metrics_tools.h>`.
 
+*Warning: none of these metrics are thread-safe.*
+
 ### `comparisons`
 
 ```cpp
@@ -38,6 +40,31 @@ struct comparisons;
 ```
 
 Returns an instance of `utility::metric<CountType, comparisons_tag>`.
+
+### `moves`
+
+```cpp
+#include <cpp-sort/metrics/moves.h>
+```
+
+Computes the number of moves performed by the *adapted sorter*: it takes both the number of calls to the move constructor and to the move assignment operator of an object into account. A swap operation is considered equivalent to three moves.
+
+The tool currently works by creating a vector of a wrapper type which counts its moves, and moving the sorted contents back to the original collections, which the following implications:
+* Sorters that behave differently depending on the iterator type always return the number of moves they perform when sorting random-access iterators.
+* Sorters that call operations specific to some types might return a result that is not representative of how they actually perform: this is due to the wrapper not benefiting from the specializations.
+* Projection support is mandatory: `metrics::moves` passes a projection to the sorter in order to convert the wrapper type to its underlying type.
+
+```cpp
+template<
+    typename Sorter,
+    typename CountType = std::size_t
+>
+struct moves;
+```
+
+Returns an instance of `utility::metric<CountType, moves_tag>`.
+
+*New in version 1.16.0*
 
 ### `projections`
 
