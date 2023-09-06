@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BITOPS_H_
@@ -11,9 +11,9 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
-#include "../detail/attributes.h"
-#include "../detail/config.h"
-#include "../detail/type_traits.h"
+#include "attributes.h"
+#include "config.h"
+#include "type_traits.h"
 
 namespace cppsort
 {

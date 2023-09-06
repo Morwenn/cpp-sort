@@ -1,9 +1,15 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BINARY_TREE_H_
 #define CPPSORT_DETAIL_BINARY_TREE_H_
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <type_traits>
+#include <utility>
 
 namespace cppsort
 {

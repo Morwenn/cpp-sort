@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -32,7 +32,7 @@
 #include <utility>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "../detail/immovable_vector.h"
+#include "immovable_vector.h"
 #include "iterator_traits.h"
 #include "scope_exit.h"
 

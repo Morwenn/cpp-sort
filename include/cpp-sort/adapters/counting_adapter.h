@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>

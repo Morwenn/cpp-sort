@@ -11,7 +11,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/metrics/projections.h>
 #include <cpp-sort/sorters/selection_sorter.h>
-#include <cpp-sort/sorters/std_sorter.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/span.h>
