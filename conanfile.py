@@ -32,6 +32,7 @@ class CppSortConan(ConanFile):
         "cmake/cpp-sort-config.cmake.in"
     ]
     settings = "os", "compiler", "build_type", "arch"
+    package_type = "header-library"
     no_copy_source = True
 
     def validate(self):
