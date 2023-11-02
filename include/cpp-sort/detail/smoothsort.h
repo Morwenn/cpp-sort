@@ -146,37 +146,53 @@ namespace detail
                                Compare compare, Projection projection)
           -> void
       {
+        if (size < 2) return;
+
+        using utility::iter_move;
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        /* Loop until the current node has no children, which happens when the order
-         * of the tree is 0 or 1.
-         */
-        while (size > 1) {
-          /* Get pointers to the first and second child. */
-          RandomIterator first  = FirstChild(root, size);
-          RandomIterator second = SecondChild(root);
+        auto left_child = FirstChild(root, size);
+        auto right_child = SecondChild(root);
 
-          /* Determine which child is larger and remember the order of its tree. */
-          RandomIterator largerChild;
-          std::size_t childSize;
-          if (comp(proj(*first), proj(*second))) {
-            largerChild = second; // Second child is larger...
-            childSize = size - 2; // ... and has order k - 2.
-          } else {
-            largerChild = first;  // First child is larger...
-            childSize = size - 1; // ... and has order k - 1.
-          }
+        auto max_root = root;
+        auto child_size = size;
+        if (comp(proj(*max_root), proj(*right_child))) {
+            max_root = right_child;
+            child_size = size - 2;
+        }
+        if (comp(proj(*max_root), proj(*left_child))) {
+            max_root = left_child;
+            child_size = size - 1;
+        }
+        if (max_root != root) {
+            auto value = iter_move(root);
+            auto&& value_proj = proj(value);
+            do {
+              *root = iter_move(max_root);
 
-          /* If the root is bigger than this child, we're done. */
-          if (not comp(proj(*root), proj(*largerChild)))
-            return;
+              size = child_size;
+              if (size < 2) {
+                break;
+              };
 
-          /* Otherwise, swap down and update our order. */
-          using utility::iter_swap;
-          iter_swap(root, largerChild);
-          root = largerChild;
-          size = childSize;
+              root = max_root;
+              auto left_child = FirstChild(root, size);
+              auto right_child = SecondChild(root);
+
+              RandomIterator max_child_it;
+              if (comp(proj(*right_child), proj(*left_child))) {
+                  max_child_it = left_child;
+                  child_size = size - 1;
+              } else {
+                max_child_it = right_child;
+                child_size = size - 2;
+              }
+              if (comp(value_proj, proj(*max_child_it))) {
+                  max_root = max_child_it;
+              }
+            } while (max_root != root);
+            *max_root = std::move(value);
         }
       }
 
