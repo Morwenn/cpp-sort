@@ -32,6 +32,10 @@ else()
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
+
+    # Make Catch2::Catch2 a SYSTEM target
+    get_target_property(Catch2_INCLUDE_DIRECTORY Catch2 INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORY}")
 endif()
 include(Catch)
 

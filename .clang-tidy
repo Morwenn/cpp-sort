@@ -1,0 +1,13 @@
+# Copyright (c) 2023 Morwenn
+# SPDX-License-Identifier: MIT
+
+# Disabled:
+#  -modernize-avoid-c-arrays: C arrays are cool enough
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  -modernize-avoid-c-arrays
