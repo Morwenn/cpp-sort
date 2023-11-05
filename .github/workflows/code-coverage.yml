@@ -59,6 +59,7 @@ jobs:
       - name: Upload coverage info
         uses: codecov/codecov-action@v3
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           directory: ${{runner.workspace}}/build/lcov/data
           files: '*.info'
           fail_ci_if_error: true
