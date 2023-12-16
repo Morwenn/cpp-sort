@@ -1,6 +1,8 @@
 # Copyright (c) 2015-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
+cmake_minimum_required(VERSION 3.24.0)
+
 include(cpp-sort-utils)
 include(FetchContent)
 
@@ -15,28 +17,14 @@ option(CPPSORT_STATIC_TESTS "Whether to turn some tests into static assertions" 
 ########################################
 # Find or download Catch2
 
-message(STATUS "Looking for Catch2 3.5.0+")
-find_package(Catch2 3.5.0 QUIET)
-if (TARGET Catch2::Catch2)
-    get_target_property(Catch2_INCLUDE_DIRECTORY Catch2::Catch2 INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "Catch2 found: ${Catch2_INCLUDE_DIRECTORY}")
-else()
-    message(STATUS "Catch2 not found")
-    message(STATUS "Downloading Catch2")
-    FetchContent_Declare(
-        catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2
-        GIT_TAG v3.5.0
-    )
-
-    FetchContent_GetProperties(catch2)
-    if (NOT catch2_POPULATED)
-        FetchContent_Populate(catch2)
-        add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
-        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-        include(Catch)
-    endif()
-endif()
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2
+    GIT_TAG v3.5.0
+    FIND_PACKAGE_ARGS 3.5.0
+)
+FetchContent_MakeAvailable(Catch2)
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(Catch)
 
 ########################################
