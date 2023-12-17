@@ -24,7 +24,7 @@ if (CPPSORT_USE_LIBASSERT)
     include(DownloadProject)
     download_project(PROJ libassert
                      GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-                     GIT_TAG v1.2
+                     GIT_TAG v1.2.2
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
