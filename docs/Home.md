@@ -70,6 +70,14 @@ Some algorithms have assertions to guard against accidental logic issues (mostly
 
 A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those are expensive assertions which are not enabled by `CPPSORT_ENABLE_ASSERTIONS` because they are too expensive, to the point that they might even change the complexity of some algorithms. When turning on audits, internal calls to `__assume` or equivalent statements will also be turned into assertions to provided additional checks.
 
+#### Rich assertions with libassert (experimental)
+
+When defined, the macro `CPPSORT_USE_LIBASSERT` makes internal assertions use [libassert][libassert] instead of the standard `assert` macro. This allows assertions to provide additional information when an assertion fires, notably by displaying a full stack trace, and optionally to decompose the asserted expressions. See the library's README for more information.
+
+This option can be enabled from CMake by setting the `CPPSORT_USE_LIBASSERT` to `ON`. See [the Tooling page][tooling-cmake] for more information.
+
+*Note: the support for libassert is still experimental and has not been tested on all supported platforms. Errors are to be expected.*
+
 ## Miscellaneous
 
 This wiki also includes a small section about the [original research][original-research] that happened during the conception of the library and the results of this research. While it is not needed to understand how the library works or how to use it, it may be of interest if you want to discover new things about sorting.
@@ -82,6 +90,7 @@ Hope you have fun!
 
 
   [benchmarks]: Benchmarks.md
+  [libassert]: https://github.com/jeremy-rifkin/libassert
   [original-research]: Original-research.md
   [quickstart]: Quickstart.md
   [swappable]: https://en.cppreference.com/w/cpp/concepts/swappable

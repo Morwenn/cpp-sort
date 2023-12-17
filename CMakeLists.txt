@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2022 Morwenn
+# Copyright (c) 2015-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.14.5)
@@ -13,11 +13,24 @@ include(GNUInstallDirs)
 # Project options
 option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ON)
 option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
+option(CPPSORT_USE_LIBASSERT "Use libassert for assertions (experimental)" OFF)
+
+# Optionally use libassert for assertions
+if (CPPSORT_USE_LIBASSERT)
+    include(FetchContent)
+    FetchContent_Declare(
+        assert
+        GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
+        GIT_TAG v1.2.2
+        FIND_PACKAGE_ARGS 1.2
+    )
+    FetchContent_MakeAvailable(assert)
+endif()
 
 # Create cpp-sort library and configure it
 add_library(cpp-sort INTERFACE)
 target_include_directories(cpp-sort INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -25,7 +38,13 @@ target_compile_features(cpp-sort INTERFACE cxx_std_20)
 
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
-    target_compile_options(cpp-sort INTERFACE /permissive-)
+    target_compile_options(cpp-sort INTERFACE /permissive- /Zc:preprocessor)
+endif()
+
+# Optionally link to libassert
+if (CPPSORT_USE_LIBASSERT)
+    target_link_libraries(cpp-sort INTERFACE assert)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_USE_LIBASSERT)
 endif()
 
 add_library(cpp-sort::cpp-sort ALIAS cpp-sort)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
@@ -10,6 +10,9 @@
 
 #if defined(CPPSORT_ENABLE_ASSERTIONS) || defined(CPPSORT_ENABLE_AUDITS)
 #   include <cassert>
+#   if defined(CPPSORT_USE_LIBASSERT)
+#       include <assert.hpp>
+#   endif
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -19,12 +22,22 @@
 // than just relying on NDEBUG, so assertions have to be
 // explicitly enabled in cpp-sort
 
-#ifndef CPPSORT_ASSERT
-#   ifdef CPPSORT_ENABLE_ASSERTIONS
-#       define CPPSORT_ASSERT(...) assert((__VA_ARGS__))
-#   else
-#       define CPPSORT_ASSERT(...)
+#if !defined(NDEBUG) && defined(CPPSORT_ENABLE_ASSERTIONS)
+#   if !defined(CPPSORT_ASSERT)
+#       if defined(CPPSORT_USE_LIBASSERT)
+#           define CPPSORT_ASSERT(...) ASSERT(__VA_ARGS__)
+#       else
+#           define CPPSORT_ARG2(_0, _1, _2, ...) _2
+#           define CPPSORT_NARG2(...) CPPSORT_ARG2(__VA_ARGS__, 2, 1, 0)
+#           define CPPSORT_ONE_OR_TWO_ARGS_1(condition) assert(condition)
+#           define CPPSORT_ONE_OR_TWO_ARGS_2(condition, message) assert(condition && message)
+#           define CPPSORT_ONE_OR_TWO_ARGS_N(N, ...) CPPSORT_ONE_OR_TWO_ARGS_##N(__VA_ARGS__)
+#           define CPPSORT_ONE_OR_TWO_ARGS(N, ...) CPPSORT_ONE_OR_TWO_ARGS_N(N, __VA_ARGS__)
+#           define CPPSORT_ASSERT(...) CPPSORT_ONE_OR_TWO_ARGS(CPPSORT_NARG2(__VA_ARGS__), __VA_ARGS__)
+#       endif
 #   endif
+#else
+#   define CPPSORT_ASSERT(...) ((void)0)
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -38,7 +51,7 @@
 #   ifdef CPPSORT_ENABLE_AUDITS
 #       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
 #   else
-#       define CPPSORT_AUDIT(...)
+#       define CPPSORT_AUDIT(...) ((void)0)
 #   endif
 #endif
 
@@ -60,7 +73,7 @@
 #elif defined(_MSC_VER)
 #   define CPPSORT_ASSUME(expression) __assume(expression)
 #else
-#   define CPPSORT_ASSUME(cond)
+#   define CPPSORT_ASSUME(cond) ((void)0)
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -71,13 +84,13 @@
 // reached
 
 #if defined(CPPSORT_ENABLE_AUDITS)
-#   define CPPSORT_UNREACHABLE CPPSORT_ASSERT("unreachable", false);
+#   define CPPSORT_UNREACHABLE CPPSORT_ASSERT(false, "unreachable");
 #elif defined(__GNUC__) || defined(__clang__)
 #   define CPPSORT_UNREACHABLE __builtin_unreachable()
 #elif defined(_MSC_VER)
 #   define CPPSORT_UNREACHABLE __assume(false)
 #else
-#   define CPPSORT_UNREACHABLE
+#   define CPPSORT_UNREACHABLE ((void)0)
 #endif
 
 ////////////////////////////////////////////////////////////

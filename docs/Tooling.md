@@ -24,11 +24,12 @@ target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 
 The project's CMake files offers some options, though they are mainly used to configure the test suite and examples:
 * `CPPSORT_BUILD_TESTING`: whether to build the test suite, defaults to `ON`.
-* `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`. 
+* `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`.
 * `CPPSORT_ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
 * `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
 * `CPPSORT_SANITIZE`: values to pass to the `-fsanitize` flags of compilers that supports them, default to empty string.
 * `CPPSORT_STATIC_TESTS`: when `ON`, some tests are executed at compile time instead of runtime, defaults to `OFF`.
+* `CPPSORT_USE_LIBASSERT` (experimental): when `ON`, internal assertions use [libassert][libassert] instead of the standard `assert` macro, providing additional information about the errors. Defaults to `OFF`.
 
 Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
 
@@ -68,3 +69,4 @@ Due to slight markup differences, some pages might not fully render correctly bu
   [conan]: https://conan.io/
   [conan-center]: https://conan.io/center/cpp-sort
   [gollum]: https://github.com/gollum/gollum
+  [libassert]: https://github.com/jeremy-rifkin/libassert
