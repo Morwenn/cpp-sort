@@ -84,4 +84,4 @@ jobs:
       - name: Show Valgrind logs
         if: ${{failure() && matrix.config.valgrind == 'ON'}}
         working-directory: ${{runner.workspace}}/build
-        run: find ./Testing/Temporary -name "MemoryChecker.*.log" -size +1300c | xargs cat
+        run: find ./Testing/Temporary -name "MemoryChecker.*.log" -size | xargs cat
