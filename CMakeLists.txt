@@ -38,7 +38,7 @@ target_compile_features(cpp-sort INTERFACE cxx_std_20)
 
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
-    target_compile_options(cpp-sort INTERFACE /permissive- /Zc:preprocessor)
+    target_compile_options(cpp-sort INTERFACE /Zc:preprocessor)
 endif()
 
 # Optionally link to libassert
