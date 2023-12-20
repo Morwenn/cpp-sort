@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_FLIP_H_
@@ -164,15 +164,6 @@ namespace cppsort
                 return type(
                     detail::flip_impl<F1>::construct(func.comparison()),
                     func.projection()
-                );
-            }
-
-            static constexpr auto construct(projection_compare_t<F1, F2>&& func)
-                -> type
-            {
-                return type(
-                    detail::flip_impl<F1>::construct(std::move(func.comparison())),
-                    std::move(func.projection())
                 );
             }
         };
