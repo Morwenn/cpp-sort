@@ -22,6 +22,7 @@ if (CPPSORT_USE_LIBASSERT)
         assert
         GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
         GIT_TAG v1.2.2
+        SYSTEM
         FIND_PACKAGE_ARGS 1.2
     )
     FetchContent_MakeAvailable(assert)
