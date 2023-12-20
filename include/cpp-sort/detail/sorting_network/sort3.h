@@ -28,7 +28,7 @@ namespace cppsort
             }
 
             template<typename DifferenceType=std::ptrdiff_t>
-            [[nodiscard]] static constexpr auto index_pairs()
+            [[nodiscard]] static constexpr auto index_pairs() noexcept
                 -> std::array<utility::index_pair<DifferenceType>, 3>
             {
                 return {{

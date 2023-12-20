@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT16_H_
@@ -83,7 +83,7 @@ namespace cppsort::detail
         }
 
         template<typename DifferenceType=std::ptrdiff_t>
-        [[nodiscard]] static constexpr auto index_pairs()
+        [[nodiscard]] static constexpr auto index_pairs() noexcept
             -> std::array<utility::index_pair<DifferenceType>, 60>
         {
             return {{

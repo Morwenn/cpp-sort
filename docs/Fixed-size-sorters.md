@@ -101,7 +101,7 @@ All specializations of `merge_exchange_network_sorter` provide a `index_pairs() 
 
 ```cpp
 template<typename DifferenceType=std::ptrdiff_t>
-[[nodiscard]] static constexpr auto index_pairs()
+[[nodiscard]] static constexpr auto index_pairs() noexcept
     -> std::array<utility::index_pair<DifferenceType>, /* Number of CEs in the network */>;
 ```
 
