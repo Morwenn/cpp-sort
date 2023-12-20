@@ -1,6 +1,6 @@
 #  -*- coding: utf-8 -*-
 
-# Copyright (c) 2015-2021 Morwenn
+# Copyright (c) 2015-2023 Morwenn
 # SPDX-License-Identifier: MIT
 
 # Copyright (c) 2015 Orson Peters <orsonpeters@gmail.com>
@@ -58,8 +58,12 @@ def main():
 
     # Algorithm results will be displayed in this order
     algos = [
-        "poplar sort (old)",
-        "poplar sort (new)",
+        "heap_sort",
+        "pdq_sort",
+        "quick_sort",
+        "ska_sort",
+        "spin_sort",
+        "std_sort",
     ]
 
     root = pathlib.Path(args.root)

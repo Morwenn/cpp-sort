@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -39,8 +39,6 @@
 #include "../benchmarking-tools/distributions.h"
 #include "../benchmarking-tools/rdtsc.h"
 
-#include <poplar.h>
-
 // Type of data to sort during the benchmark
 using value_t = double;
 // Type of collection to sort
@@ -49,20 +47,6 @@ using collection_t = std::vector<value_t>;
 // Handy function pointer aliases
 using distr_f = void (*)(std::back_insert_iterator<collection_t>, long long int);
 using sort_f = void (*)(collection_t::iterator, collection_t::iterator);
-
-template<typename Iterator>
-void poplar_sort(Iterator begin, Iterator end)
-{
-    poplar::make_heap(begin, end);
-    poplar::sort_heap(begin, end);
-}
-
-template<typename Iterator>
-void poplar_sort2(Iterator begin, Iterator end)
-{
-    poplar::make_heap(begin, end);
-    poplar::sort_heap2(begin, end);
-}
 
 int main()
 {
@@ -89,8 +73,12 @@ int main()
     };
 
     std::pair<std::string, sort_f> sorts[] = {
-        { "poplar sort (old)", poplar_sort<collection_t::iterator> },
-        { "poplar sort (new)", poplar_sort2<collection_t::iterator> },
+        { "heap_sort", cppsort::heap_sort },
+        { "pdq_sort", cppsort::pdq_sort },
+        { "quick_sort", cppsort::quick_sort },
+        { "ska_sort", cppsort::ska_sort },
+        { "spin_sort", cppsort::spin_sort },
+        { "std_sort", cppsort::std_sort },
     };
 
     std::size_t sizes[] = { 1'000'000 };
