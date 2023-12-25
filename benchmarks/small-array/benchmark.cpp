@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -43,9 +43,9 @@ template<
     typename T,
     std::size_t N,
     typename Sorter,
-    typename DistFunction
+    typename Dist
 >
-auto time_it(Sorter sorter, DistFunction distribution)
+auto time_it(Sorter sorter, Dist distribution)
     -> std::uint64_t
 {
     static_assert(N > 0, "this benchmark does not support zero-sized arrays");
