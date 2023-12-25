@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
@@ -119,17 +119,6 @@ namespace cppsort::detail
             {
                 _it -= _size * increment;
                 return *this;
-            }
-
-            ////////////////////////////////////////////////////////////
-            // Elements access operators
-
-            [[nodiscard]]
-            auto operator[](difference_type pos) const
-                -> decltype(base()[pos])
-                requires mstd::random_access_iterator<Iterator>
-            {
-                return _it[pos * _size + _size - 1];
             }
 
             ////////////////////////////////////////////////////////////
