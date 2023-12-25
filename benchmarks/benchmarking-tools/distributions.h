@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <ctime>
+#include <functional>
 #include <random>
 #include <string>
 #include <utility>
@@ -29,6 +30,9 @@ thread_local std::mt19937_64 distributions_prng(std::time(nullptr));
 
 namespace dist
 {
+    ////////////////////////////////////////////////////////////
+    // Distributions CRTP base class
+
     template<typename Derived>
     struct base_distribution
     {
@@ -57,6 +61,9 @@ namespace dist
         }
     };
 
+    ////////////////////////////////////////////////////////////
+    // Distributions: testing patterns
+
     struct shuffled:
         base_distribution<shuffled>
     {
@@ -65,7 +72,8 @@ namespace dist
             -> void
         {
             std::vector<int> vec;
-            for (long long int i = 0 ; i < size ; ++i) {
+            vec.reserve(size);
+            for (long long int i = 0; i < size; ++i) {
                 vec.emplace_back(i);
             }
             std::shuffle(vec.begin(), vec.end(), distributions_prng);
@@ -85,7 +93,8 @@ namespace dist
             -> void
         {
             std::vector<int> vec;
-            for (long long int i = 0 ; i < size ; ++i) {
+            vec.reserve(size);
+            for (long long int i = 0; i < size; ++i) {
                 vec.emplace_back(i % 16);
             }
             std::shuffle(vec.begin(), vec.end(), distributions_prng);
@@ -105,7 +114,7 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(0);
             }
         }
@@ -121,7 +130,7 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(i);
             }
         }
@@ -153,10 +162,10 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size / 2 ; ++i) {
+            for (long long int i = 0; i < size / 2; ++i) {
                 *out++ = proj(i);
             }
-            for (long long int i = size / 2 ; i < size ; ++i) {
+            for (long long int i = size / 2; i < size; ++i) {
                 *out++ = proj(size - i);
             }
         }
@@ -173,7 +182,7 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             if (size > 0) {
-                for (long long int i = 0 ; i < size - 1 ; ++i) {
+                for (long long int i = 0; i < size - 1; ++i) {
                     *out++ = proj(i);
                 }
                 *out = proj(0);
@@ -192,7 +201,7 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             if (size > 0) {
-                for (long long int i = 0 ; i < size ; ++i) {
+                for (long long int i = 0; i < size; ++i) {
                     if (i != size / 2) {
                         *out++ = proj(i);
                     }
@@ -213,7 +222,7 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             long long int limit = size / cppsort::detail::log2(size) + 50;
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(i % limit);
             }
         }
@@ -230,7 +239,7 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             long long int limit = size / cppsort::detail::log2(size) - 50;
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(i % limit);
             }
         }
@@ -280,7 +289,7 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj((i % 2) ? i : -i);
             }
         }
@@ -298,7 +307,7 @@ namespace dist
             // Especially interesting for a special case of melsort
 
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = size ; i > 0 ; --i) {
+            for (long long int i = size; i > 0; --i) {
                 *out++ = proj((i % 2) ? i : -i);
             }
         }
@@ -333,41 +342,6 @@ namespace dist
         static constexpr const char* output = "descending_plateau.txt";
     };
 
-    struct inversions:
-        base_distribution<inversions>
-    {
-        // Percentage of chances that an "out-of-place" value
-        // is produced for each position, the goal is to test
-        // Inv-adaptive algorithms
-        double factor;
-
-        constexpr explicit inversions(double factor) noexcept:
-            factor(factor)
-        {}
-
-        template<typename OutputIterator, typename Projection=std::identity>
-        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
-            -> void
-        {
-            auto&& proj = cppsort::utility::as_function(projection);
-
-            // Generate a percentage of error
-            std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
-            // Generate a random value
-            std::uniform_int_distribution<long long int> value_dis(0, size - 1);
-
-            for (long long int i = 0 ; i < size ; ++i) {
-                if (percent_dis(distributions_prng) < factor) {
-                    *out++ = proj(value_dis(distributions_prng));
-                } else {
-                    *out++ = proj(i);
-                }
-            }
-        }
-
-        static constexpr const char* output = "inversions.txt";
-    };
-
     struct vergesort_killer:
         base_distribution<vergesort_killer>
     {
@@ -399,6 +373,47 @@ namespace dist
 
         static constexpr const char* output = "vergesort_killer.txt";
     };
+
+    ////////////////////////////////////////////////////////////
+    // Distributions: testing measures of presortedness
+
+    struct inv:
+        base_distribution<inv>
+    {
+        // Percentage of chances that an "out-of-place" value
+        // is produced for each position, the goal is to test
+        // Inv-adaptive algorithms
+        double factor;
+
+        constexpr explicit inv(double factor) noexcept:
+            factor(factor)
+        {}
+
+        template<typename OutputIterator, typename Projection=std::identity>
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
+            -> void
+        {
+            auto&& proj = cppsort::utility::as_function(projection);
+
+            // Generate a percentage of error
+            std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
+            // Generate a random value
+            std::uniform_int_distribution<long long int> value_dis(0, size - 1);
+
+            for (long long int i = 0; i < size; ++i) {
+                if (percent_dis(distributions_prng) < factor) {
+                    *out++ = proj(value_dis(distributions_prng));
+                } else {
+                    *out++ = proj(i);
+                }
+            }
+        }
+
+        static constexpr const char* output = "inv.txt";
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Miscellaneous related tools
 
     struct as_long_string:
         cppsort::utility::projection_base
