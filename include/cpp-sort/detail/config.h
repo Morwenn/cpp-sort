@@ -8,6 +8,11 @@
 ////////////////////////////////////////////////////////////
 // General: assertions
 
+// Ensure that enabling audits always enables assertions
+#if defined(CPPSORT_ENABLE_AUDITS)
+#   define CPPSORT_ENABLE_ASSERTIONS
+#endif
+
 #if defined(CPPSORT_ENABLE_ASSERTIONS) || defined(CPPSORT_ENABLE_AUDITS)
 #   include <cassert>
 #   if defined(CPPSORT_USE_LIBASSERT)
@@ -47,12 +52,12 @@
 // scenarios, but still of great help when debugging tough
 // problems, hence this audit feature
 
-#ifndef CPPSORT_AUDIT
-#   ifdef CPPSORT_ENABLE_AUDITS
-#       define CPPSORT_AUDIT(...) assert((__VA_ARGS__))
-#   else
-#       define CPPSORT_AUDIT(...) ((void)0)
+#if !defined(NDEBUG) && defined(CPPSORT_ENABLE_AUDITS)
+#   ifndef CPPSORT_AUDIT
+#       define CPPSORT_AUDIT(...) CPPSORT_ASSERT(__VA_ARGS__)
 #   endif
+#else
+#   define CPPSORT_AUDIT(...) ((void)0)
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -65,7 +70,7 @@
 // actually correct.
 
 #if defined(CPPSORT_ENABLE_AUDITS)
-#   define CPPSORT_ASSUME(...) assert((__VA_ARGS__))
+#   define CPPSORT_ASSUME(...) CPPSORT_ASSERT(__VA_ARGS__)
 #elif defined(__GNUC__)
 #   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
 #elif defined(__clang__)

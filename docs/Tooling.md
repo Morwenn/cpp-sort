@@ -29,9 +29,13 @@ The project's CMake files offers some options, though they are mainly used to co
 * `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
 * `CPPSORT_SANITIZE`: values to pass to the `-fsanitize` flags of compilers that supports them, default to empty string.
 * `CPPSORT_STATIC_TESTS`: when `ON`, some tests are executed at compile time instead of runtime, defaults to `OFF`.
+* `CPPSORT_ENABLE_ASSERTIONS`: when `ON`, defines the eponymous macro which enables debug assertions from the library's internals, defaults to the value of `CPPSORT_ENABLE_AUDITS`.
+* `CPPSORT_ENABLE_AUDITS`: when `ON`, defines the eponymous macro which enables expensive debug assertions from the library's internals, defaults to `OFF`.
 * `CPPSORT_USE_LIBASSERT` (experimental): when `ON`, internal assertions use [libassert][libassert] instead of the standard `assert` macro, providing additional information about the errors. Defaults to `OFF`.
 
 Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
+
+Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enabled even if `CPPSORT_ENABLE_ASSERTIONS` is `OFF`. See [the relevant page][assertions-and-audits] for more information.
 
 [Catch2][catch2] 3.0.0-preview4 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
 
@@ -64,6 +68,7 @@ This can notably used to browse old versions of the documentation. It seems howe
 Due to slight markup differences, some pages might not fully render correctly but it should nonetheless be a better experience than navigaitng the Markdown files by hand.
 
 
+  [assertions-and-audits]: Home.md#assertions--audits
   [catch2]: https://github.com/catchorg/Catch2
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/

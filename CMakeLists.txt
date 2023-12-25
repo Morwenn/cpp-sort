@@ -13,6 +13,8 @@ include(GNUInstallDirs)
 # Project options
 option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ON)
 option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
+option(CPPSORT_ENABLE_AUDITS "Enable assertions in the library" OFF)
+option(CPPSORT_ENABLE_ASSERTIONS "Enable assertions in the library" ${CPPSORT_ENABLE_AUDITS})
 option(CPPSORT_USE_LIBASSERT "Use libassert for assertions (experimental)" OFF)
 
 # Optionally use libassert for assertions
@@ -40,6 +42,14 @@ target_compile_features(cpp-sort INTERFACE cxx_std_20)
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
     target_compile_options(cpp-sort INTERFACE /Zc:preprocessor)
+endif()
+
+# Handle diagnostic options
+if (CPPSORT_ENABLE_ASSERTIONS)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_ENABLE_ASSERTIONS)
+endif()
+if (CPPSORT_ENABLE_AUDITS)
+    target_compile_definitions(cpp-sort INTERFACE CPPSORT_ENABLE_AUDITS)
 endif()
 
 # Optionally link to libassert
