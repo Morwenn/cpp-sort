@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
@@ -49,24 +49,37 @@ namespace cppsort::detail
         auto child_root1 = root - 1;
         auto child_root2 = first + (size / 2 - 1);
 
-        while (true) {
-            auto max_root = root;
-            if (comp(proj(*max_root), proj(*child_root1))) {
-                max_root = child_root1;
-            }
-            if (comp(proj(*max_root), proj(*child_root2))) {
-                max_root = child_root2;
-            }
-            if (max_root == root) return;
+        auto max_root = root;
+        if (comp(proj(*max_root), proj(*child_root1))) {
+            max_root = child_root1;
+        }
+        if (comp(proj(*max_root), proj(*child_root2))) {
+            max_root = child_root2;
+        }
+        if (max_root != root) {
+            auto value = mstd::iter_move(root);
+            auto&& value_proj = proj(value);
+            do {
+                *root = mstd::iter_move(max_root);
 
-            mstd::iter_swap(root, max_root);
+                size /= 2;
+                if (size < 2) {
+                    break;
+                };
 
-            size /= 2;
-            if (size < 2) return;
+                root = max_root;
+                child_root1 = std::prev(root);
+                child_root2 = root - (size - size / 2);
 
-            root = max_root;
-            child_root1 = root - 1;
-            child_root2 = max_root - (size - size / 2);
+                auto max_child_it = child_root2;
+                if (comp(proj(*child_root2), proj(*child_root1))) {
+                    max_child_it = child_root1;
+                }
+                if (comp(value_proj, proj(*max_child_it))) {
+                    max_root = max_child_it;
+                }
+            } while (max_root != root);
+            *max_root = std::move(value);
         }
     }
 
