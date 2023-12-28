@@ -136,7 +136,7 @@ template<typename DifferenceType=std::ptrdiff_t>
 #include <cpp-sort/fixed/sorting_network_sorter.h>
 ```
 
-This sorter provides size-optimal [sorting networks][sorting-network] for 0 thru 32 inputs. Those networks are manually unrolled *sequential* series of *compare-exchange* operations (CEs) which can be fast enough for certain operations, and do tend to be faster than everything else when it comes to sorting small arrays of integers without requiring additional memory.
+This sorter provides size-optimal [sorting networks][sorting-network] for 0 thru 64 inputs. Those networks are manually unrolled *sequential* series of *compare-exchange* operations (CEs) which can be fast enough for certain operations, and do tend to be faster than everything else when it comes to sorting small arrays of integers without requiring additional memory.
 
 ```cpp
 template<std::size_t N>
@@ -150,6 +150,10 @@ Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 **CEs** | 0 | 1 | 3 | 5 | 9 | 12 | 16 | 19 | 25 | 29 | 35 | 39 | 45 | 51 | 56 | 60
 **Size** | **17** | **18** | **19** | **20** | **21** | **22** | **23** | **24** | **25** | **26** | **27** | **28** | **29** | **30** | **31** | **32**
 **CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 130 | 139 | 147 | 155 | 164 | 172 | 180 | 185
+**Size** | **33** | **34** | **35** | **36** | **37** | **38** | **39** | **40** | **41** | **42** | **43** | **44** | **45** | **46** | **47** | **48**
+**CEs** | 199 | 209 | 220 | 227 | 241 | 250 | 259 | 265 | 282 | 292 | 303 | 309 | 324 | 332 | 340 | 346
+**Size** | **49** | **50** | **51** | **52** | **53** | **54** | **55** | **56** | **57** | **58** | **59** | **60** | **61** | **62** | **63** | **64**
+**CEs** | 365 | 376 | 387 | 395 | 411 | 421 | 432 | 438 | 454 | 465 | 476 | 483 | 497 | 506 | 515 | 521
 
 Networks 0, 1, 2 and 3 are stable. All other networks are unstable.
 
