@@ -32,12 +32,11 @@
 #include <iostream>
 #include <iterator>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/sorters.h>
+#include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
-#include "../benchmarking-tools/rdtsc.h"
 
 // Type of data to sort during the benchmark
 using value_t = double;
@@ -46,18 +45,11 @@ using collection_t = std::vector<value_t>;
 
 // Handy function pointer aliases
 using distr_f = void (*)(std::back_insert_iterator<collection_t>, long long int);
-using sort_f = void (*)(collection_t::iterator, collection_t::iterator);
+using sort_f = void (*)(collection_t&);
 
 int main()
 {
     using namespace std::chrono_literals;
-
-    // Always use a steady clock
-    using clock_type = std::conditional_t<
-        std::chrono::high_resolution_clock::is_steady,
-        std::chrono::high_resolution_clock,
-        std::chrono::steady_clock
-    >;
 
     std::pair<std::string, distr_f> distributions[] = {
         { "shuffled",               dist::shuffled()            },
@@ -94,26 +86,25 @@ int main()
             distributions_prng.seed(seed);
 
             for (auto size: sizes) {
-                std::vector<std::uint64_t> cycles;
+                std::vector<std::uint64_t> cycles_per_element;
 
-                auto total_start = clock_type::now();
-                auto total_end = clock_type::now();
+                auto total_start = std::chrono::steady_clock::now();
+                auto total_end = std::chrono::steady_clock::now();
                 while (total_end - total_start < 5s) {
                     collection_t collection;
                     distribution.second(std::back_inserter(collection), size);
-                    std::uint64_t start = rdtsc();
-                    sort.second(collection.begin(), collection.end());
-                    std::uint64_t end = rdtsc();
+                    auto do_sort = cpu_cycles<sort_f>(sort.second);
+                    auto nb_cycles = do_sort(collection);
                     assert(std::is_sorted(std::begin(collection), std::end(collection)));
-                    cycles.push_back(double(end - start) / size + 0.5);
-                    total_end = clock_type::now();
+                    cycles_per_element.push_back(double(nb_cycles.value()) / size + 0.5);
+                    total_end = std::chrono::steady_clock::now();
                 }
 
                 for (std::ostream* stream: {&std::cout, &std::cerr}) {
                     (*stream) << size << ", " << distribution.first << ", " << sort.first << ", ";
-                    auto it = cycles.begin();
+                    auto it = cycles_per_element.begin();
                     (*stream) << *it;
-                    while (++it != cycles.end()) {
+                    while (++it != cycles_per_element.end()) {
                         (*stream) << ", " << *it;
                     }
                     (*stream) << std::endl;

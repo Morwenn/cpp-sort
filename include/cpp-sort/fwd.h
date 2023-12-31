@@ -8,18 +8,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <chrono>
 #include <cstddef>
 
 namespace cppsort
 {
-    //
-    // This header contains forward declarations for
-    // every sorter and sorter adapter in the library,
-    // which helps to specialize some of the adapters
-    // or to provide information about some sorters
-    // without actually having to include the whole
-    // thing
-    //
+    // This header contains forward declarations for every
+    // sorter and sorter adapter in the library, which helps
+    // to specialize some of the adapters or to provide
+    // information about some sorters without actually having
+    // to include the whole thing
 
     ////////////////////////////////////////////////////////////
     // Sorters
@@ -96,6 +94,24 @@ namespace cppsort
     struct stable_adapter;
     template<typename Sorter>
     struct verge_adapter;
+
+    ////////////////////////////////////////////////////////////
+    // Metrics
+
+    namespace metrics
+    {
+        template<typename Sorter, typename CountType=std::size_t>
+        struct comparisons;
+        template<typename Sorter, typename CountType=std::size_t>
+        struct moves;
+        template<typename Sorter, typename CountType=std::size_t>
+        struct projections;
+        template<
+            typename Sorter,
+            typename DurationType = typename std::chrono::steady_clock::duration
+        >
+        struct running_time;
+    }
 }
 
 #endif // CPPSORT_FWD_H_

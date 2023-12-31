@@ -11,23 +11,15 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters.h>
+#include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
-#include "../benchmarking-tools/rdtsc.h"
 
 using namespace std::chrono_literals;
-
-// Choose the best clock type (always steady)
-using clock_type = std::conditional_t<
-    std::chrono::high_resolution_clock::is_steady,
-    std::chrono::high_resolution_clock,
-    std::chrono::steady_clock
->;
 
 // Maximum time to let the benchmark run for a given size before giving up
 auto max_run_time = 5s;
@@ -58,18 +50,16 @@ auto time_it(Sorter sorter, Dist distribution)
     std::vector<std::uint64_t> cycles;
 
     // Generate and sort arrays of size N thanks to distribution
-    auto total_start = clock_type::now();
-    auto total_end = clock_type::now();
-    while (std::chrono::duration_cast<std::chrono::seconds>(total_end - total_start) < max_run_time &&
-           cycles.size() < max_runs_per_size) {
+    auto total_start = std::chrono::steady_clock::now();
+    auto total_end = std::chrono::steady_clock::now();
+    while (total_end - total_start < max_run_time && cycles.size() < max_runs_per_size) {
         std::array<T, N> arr;
         distribution(arr.begin(), N);
-        std::uint64_t start = rdtsc();
-        sorter(arr);
-        std::uint64_t end = rdtsc();
+        auto do_sort = cpu_cycles<Sorter>(sorter);
+        auto nb_cycles = do_sort(arr);
         assert(std::is_sorted(arr.begin(), arr.end()));
-        cycles.push_back(double(end - start) / N);
-        total_end = clock_type::now();
+        cycles.push_back(double(nb_cycles.value()) / N);
+        total_end = std::chrono::steady_clock::now();
     }
 
     // Return the median number of cycles per element

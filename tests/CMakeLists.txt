@@ -144,6 +144,12 @@ add_executable(main-tests
     adapters/stable_adapter_every_sorter.cpp
     adapters/verge_adapter_every_sorter.cpp
 
+    # Metrics tests
+    metrics/comparisons.cpp
+    metrics/moves.cpp
+    metrics/projections.cpp
+    metrics/running_time.cpp
+
     # Comparators tests
     comparators/case_insensitive_less.cpp
     comparators/flip_not.cpp
@@ -227,6 +233,7 @@ add_executable(main-tests
     utility/buffer.cpp
     utility/chainable_projections.cpp
     utility/iter_swap.cpp
+    utility/metrics_tools.cpp
     utility/sorted_indices.cpp
     utility/sorted_iterators.cpp
     utility/sorting_networks.cpp

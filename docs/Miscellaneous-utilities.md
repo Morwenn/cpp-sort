@@ -195,6 +195,136 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 
 `is_probably_branchless_comparison` and `is_probably_branchless_projection` will correspond to `std::true_type` if the wrapped `Function` also gives `std::true_type`. Moreover, you can even specialize these traits for specific `function_constant` instanciations if you need even more performance.
 
+### Metrics tools
+
+```cpp
+#include <cpp-sort/utility/metrics_tools.h>
+```
+
+This header contains utility classes used to implement or manipulate [metrics][metrics].
+
+The most fundamental such type is `utility::metrics`, a small tagged wrapper for a value type. The idea is to give some stronger typing to value types to add additional mening to them. For example the number of comparisons performed by a sorting operation would be represented with `utility::metric<std::size_t, comparisons_tag>`. The idea is to allow operations between metrics with the same tag type while disallowing those that have different tags.
+
+The tag type can be any type, generally ending with the `_tag` suffix, and can be either empty or contain freeform static metadata about the kind of metric that uses it. Future versions of **cpp-sort** might standardize some tag fields.
+
+The `metric` type itself is rather barebones, implementing construction, assignment, value type access, comparison and relational operators. Any other operation can be performed by retrieving the wrapped value and wrapping it again as needed.
+
+```cpp
+template<typename T, typename Tag>
+class metric
+{
+public:
+    ////////////////////////////////////////////////////////////
+    // Construction
+
+    metric() = default;
+    metric(const metric&) = default;
+    metric(metric&&) = default;
+
+    constexpr explicit metric(const T& value)
+        noexcept(std::is_nothrow_copy_constructible<T>::value);
+    constexpr explicit metric(T&& value)
+        noexcept(std::is_nothrow_move_constructible<T>::value);
+
+    ////////////////////////////////////////////////////////////
+    // Accessors
+
+    constexpr explicit operator T() const;
+
+    constexpr auto value() const
+        -> T;
+
+    ////////////////////////////////////////////////////////////
+    // Assignment
+
+    metric& operator=(const metric&) = default;
+    metric& operator=(metric&&) = default;
+
+    constexpr auto operator=(const T& other)
+        noexcept(std::is_nothrow_copy_assignable<T>::value)
+        -> metric&;
+    constexpr auto operator=(T&& other)
+        noexcept(std::is_nothrow_move_assignable<T>::value)
+        -> metric&;
+
+    template<typename U>
+    constexpr auto operator=(const metric<U, Tag>& other)
+        noexcept(std::is_nothrow_assignable<T&, const U&>::value)
+        -> metric&;
+    template<typename U>
+    constexpr auto operator=(metric<U, Tag>&& other)
+        noexcept(std::is_nothrow_assignable<T&, U>::value)
+        -> metric&;
+
+    ////////////////////////////////////////////////////////////
+    // Comparison operators
+
+    template<typename U>
+    friend constexpr auto operator==(const metric& lhs, const metric<U, Tag>& rhs)
+        -> bool;
+    friend constexpr auto operator==(const metric& lhs, const T& rhs)
+        -> bool:
+    friend constexpr auto operator==(const T& lhs, const metric& rhs)
+        -> bool;
+
+    template<typename U>
+    friend constexpr auto operator!=(const metric& lhs, const metric<U, Tag>& rhs)
+        -> bool;
+    friend constexpr auto operator!=(const metric& lhs, const T& rhs)
+        -> bool;
+    friend constexpr auto operator!=(const T& lhs, const metric& rhs)
+        -> bool;
+
+    ////////////////////////////////////////////////////////////
+    // Relational operators
+
+    template<typename U>
+    friend constexpr auto operator<(const metric& lhs, const metric<U, Tag>& rhs)
+        -> bool;
+    friend constexpr auto operator<(const metric& lhs, const T& rhs)
+        -> bool;
+    friend constexpr auto operator<(const T& lhs, const metric& rhs)
+        -> bool;
+
+    template<typename U>
+    friend constexpr auto operator<=(const metric& lhs, const metric<U, Tag>& rhs)
+        -> bool;
+    friend constexpr auto operator<=(const metric& lhs, const T& rhs)
+        -> bool;
+    friend constexpr auto operator<=(const T& lhs, const metric& rhs)
+        -> bool;
+
+    template<typename U>
+    friend constexpr auto operator>(const metric& lhs, const metric<U, Tag>& rhs)
+        -> bool;
+    friend constexpr auto operator>(const metric& lhs, const T& rhs)
+        -> bool;
+    friend constexpr auto operator>(const T& lhs, const metric& rhs)
+        -> bool;
+
+    template<typename U>
+    friend constexpr auto operator>=(const metric& lhs, const metric<U, Tag>& rhs)
+        -> bool;
+    friend constexpr auto operator>=(const metric& lhs, const T& rhs)
+        -> bool;
+    friend constexpr auto operator>=(const T& lhs, const metric& rhs)
+        -> bool;
+};
+```
+Individual metrics can be grouped together using the `utility::metrics` tag, which is basically a barebones tuple type. It main difference compared to `std::tuple` is that it can only be contructed with `utility::metric` instances and has an overloaded `get<Tag>(metrics)` function that can be used to retrieve a member it holds with the given tag:
+```cpp
+struct foo_tag {};
+struct bar_tag {};
+cppsort::utility::metric<int, foo_tag> m1(5);
+cppsort::utility::metric<double, bar_tag> m2(6.0);
+cppsort::utility::metrics mm(m1, m2);
+// Retrieve the metric<int, foo_tag> member
+using std::get;
+auto m = get<foo_tag>(mm);
+```
+
+`utility::metrics` is still mostly experimental and unused in the rest of the library. As such this documentation is voluntarily thin.
+
 ### `sorted_indices`
 
 ```cpp
@@ -291,12 +421,14 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
   [ebo]: https://en.cppreference.com/w/cpp/language/ebo
   [fixed-size-sorters]: Fixed-size-sorters.md
   [is-stable]: Sorter-traits.md#is_stable
+  [metrics]: Metrics.md
   [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [p0022]: https://wg21.link/P0022
   [pdq-sorter]: Sorters.md#pdq_sorter
   [range-v3]: https://github.com/ericniebler/range-v3
   [sorter-adapters]: Sorter-adapters.md
   [sorters]: Sorters.md
+  [lmao]: Sorters.md
   [sorting-network]: https://en.wikipedia.org/wiki/Sorting_network
   [std-array]: https://en.cppreference.com/w/cpp/container/array
   [std-bad-alloc]: https://en.cppreference.com/w/cpp/memory/new/bad_alloc
