@@ -14,6 +14,8 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/metrics_tools.h>
 #include "../detail/checkers.h"
 #include "../detail/iterator_traits.h"
@@ -21,8 +23,11 @@
 
 namespace cppsort
 {
-namespace metrics
-{
+    ////////////////////////////////////////////////////////////
+    // Projections counter
+
+    namespace metrics
+    {
     namespace detail
     {
         template<typename Projection, typename CountType>
@@ -54,8 +59,27 @@ namespace metrics
                 // in order to increment it
                 CountType& count;
         };
-    }
+    }}
 
+    namespace utility
+    {
+        template<typename Projection, typename CountType, typename T>
+        struct is_probably_branchless_projection<
+            cppsort::metrics::detail::projection_counter<Projection, CountType>,
+            T
+        >:
+            // Lie about being branchless if needed: what matters is to get
+            // an accurate count of the number of projections performed by
+            // algorithms even when not under analysis
+            is_probably_branchless_projection<Projection, T>
+        {};
+    }
+}
+
+namespace cppsort
+{
+namespace metrics
+{
     ////////////////////////////////////////////////////////////
     // Tag
 

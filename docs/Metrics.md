@@ -29,7 +29,7 @@ All of the metrics headers also includes `<cpp-sort/utility/metrics_tools.h>`.
 
 Computes the number of comparisons performed by the *adapted sorter*.
 
-This is done by wrapping the passed comparison function. As such it only works with sorters that accept a comparison, and bypasses components that special-case specific comparison objects.
+This is done by wrapping the passed comparison function. As such it only works with sorters that accept a comparison, and bypasses components that special-case specific comparison objects, though it does pretend [to be branchless][branchless-traits] when the wrapped comparison function is.
 
 ```cpp
 template<
@@ -40,6 +40,8 @@ struct comparisons;
 ```
 
 Returns an instance of `utility::metric<CountType, comparisons_tag>`.
+
+*Changed in version 1.16.0:* `comparisons` now honours [`is_probably_branchless_comparison`][branchless-traits] to better represent the branches taken by the analyzed comparison function.
 
 ### `moves`
 
@@ -74,7 +76,7 @@ Returns an instance of `utility::metric<CountType, moves_tag>`.
 
 Computes the number of projections performed by the *adapted sorter*.
 
-This is done by wrapping the passed projection function. As such it only works with sorters that accept a projection, and bypasses components that special-case specific projection objects.
+This is done by wrapping the passed projection function. As such it only works with sorters that accept a projection, and bypasses components that special-case specific projection objects, though it does pretend [to be branchless][branchless-traits] when the wrapped projection function is.
 
 ```cpp
 template<
@@ -85,6 +87,8 @@ struct projections;
 ```
 
 Returns an instance of `utility::metric<CountType, projections_tag>`.
+
+*Changed in version 1.16.0:* `projections` now honours [`is_probably_branchless_projection`][branchless-traits] to better represent the branches taken by the analyzed projection function.
 
 ### `running_time`
 
@@ -105,5 +109,6 @@ struct running_time;
 Returns an instance of `utility::metric<DurationType, running_type_tag>`.
 
 
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [sorter-adapters]: Sorter-adapters.md
   [utility-metrics-tools]: Miscellaneous-utilities.md#metrics-tools

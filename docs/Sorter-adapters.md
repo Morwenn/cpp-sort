@@ -73,6 +73,8 @@ struct counting_adapter;
 
 Note that this adapter only works with sorters that satisfy the `ComparisonSorter` concept since it needs to adapt a comparison function.
 
+*Changed in version 1.16.0:* `counting_adapter` now honours [`is_probably_branchless_comparison`][branchless-traits] to better represent the branches taken by the analyzed comparison function.
+
 *Deprecated in version 1.16.0*
 
 *Removed in version 2.0.0*
@@ -346,6 +348,7 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
 *Changed in version 1.15.0:* `verge_adapter` now supports bidirectional iterators.
 
 
+  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [default-sorter]: Sorters.md#default_sorter
