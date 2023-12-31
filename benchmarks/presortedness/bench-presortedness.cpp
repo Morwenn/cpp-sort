@@ -2,6 +2,7 @@
  * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
@@ -14,6 +15,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/adapters.h>
+#include <cpp-sort/probes.h>
 #include <cpp-sort/sorters.h>
 #include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
@@ -71,8 +73,10 @@ int main(int argc, char* argv[])
             '-' + safe_file_name(sort.first) + ".csv";
         std::string output_path = output_directory + '/' + output_filename;
         std::ofstream output_file(output_path);
-        output_file << sort.first << '\n';
-        std::cout << sort.first << '\n';
+
+        // Add metadata about the benchmark
+        output_file << sort.first << ',' << "Inv" << '\n';
+        std::cout << sort.first << ',' << "Inv" << '\n';
 
         // Seed the distribution manually to ensure that all algorithms
         // sort the same collections when there is randomness
@@ -82,8 +86,13 @@ int main(int argc, char* argv[])
             double factor = 0.01 * idx;
             auto distribution = dist::inv(factor);
 
-            std::vector<std::uint64_t> cycles;
+            // Compute presortedness
+            collection_t collection;
+            distribution(std::back_inserter(collection), size);
+            auto presortedness = cppsort::probe::inv(collection);
 
+            // Compute the time it took
+            std::vector<std::uint64_t> cycles;
             auto total_start = std::chrono::steady_clock::now();
             auto total_end = std::chrono::steady_clock::now();
             while (total_end - total_start < max_run_time && cycles.size() < max_runs_per_size) {
@@ -97,8 +106,8 @@ int main(int argc, char* argv[])
             }
 
             // Compute and display stats & numbers
-            output_file << idx << ",";
-            std::cout << idx << ",";
+            output_file << presortedness << ",";
+            std::cout << presortedness << ",";
             auto it = cycles.begin();
             output_file << *it;
             std::cout << *it;
