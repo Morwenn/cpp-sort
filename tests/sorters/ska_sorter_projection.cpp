@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -19,6 +19,7 @@ TEST_CASE( "ska_sorter tests with projections",
     SECTION( "sort with range of int" )
     {
         std::vector<std::pair<int, float>> vec;
+        vec.reserve(100'000);
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
@@ -31,6 +32,7 @@ TEST_CASE( "ska_sorter tests with projections",
     SECTION( "sort with unsigned int iterators" )
     {
         std::vector<std::pair<unsigned, float>> vec;
+        vec.reserve(100'000);
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
@@ -43,6 +45,7 @@ TEST_CASE( "ska_sorter tests with projections",
     SECTION( "sort with range of float" )
     {
         std::vector<std::pair<int, float>> vec;
+        vec.reserve(100'000);
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, float(i));
         }
@@ -55,6 +58,7 @@ TEST_CASE( "ska_sorter tests with projections",
     SECTION( "sort with double iterators" )
     {
         std::vector<std::pair<int, double>> vec;
+        vec.reserve(100'000);
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(i, double(i));
         }
@@ -69,6 +73,7 @@ TEST_CASE( "ska_sorter tests with projections",
         using wrapper = generic_wrapper<std::string>;
 
         std::vector<wrapper> vec;
+        vec.reserve(100'000);
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.emplace_back(std::to_string(i));
         }

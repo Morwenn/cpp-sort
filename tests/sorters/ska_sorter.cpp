@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -23,6 +23,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with range of int" )
     {
         std::vector<int> vec;
+        vec.reserve(100'000);
         distribution(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
@@ -31,6 +32,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with unsigned int iterators" )
     {
         std::vector<unsigned> vec;
+        vec.reserve(100'000);
         distribution(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
@@ -40,6 +42,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with range of int128" )
     {
         std::vector<__int128_t> vec;
+        vec.reserve(100'000);
         distribution(std::back_inserter(vec), 100'000, -10'000);
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
@@ -48,6 +51,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with range of unsigned int128" )
     {
         std::vector<__uint128_t> vec;
+        vec.reserve(100'000);
         distribution(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
@@ -57,6 +61,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with range of float" )
     {
         std::vector<float> vec;
+        vec.reserve(100'000);
         distribution.call<float>(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
@@ -65,6 +70,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with double iterators" )
     {
         std::vector<double> vec;
+        vec.reserve(100'000);
         distribution.call<double>(std::back_inserter(vec), 100'000);
         cppsort::ska_sort(vec.begin(), vec.end());
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
@@ -73,6 +79,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     SECTION( "sort with std::string" )
     {
         std::vector<std::string> vec;
+        vec.reserve(100'000);
         for (int i = 0 ; i < 100'000 ; ++i) {
             vec.push_back(std::to_string(i));
         }

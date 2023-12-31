@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_APPLY_PERMUTATION_H_
@@ -13,9 +13,7 @@
 #include <cpp-sort/mstd/ranges.h>
 #include "../detail/config.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     template<
         mstd::random_access_iterator Iterator1,
@@ -53,6 +51,6 @@ namespace utility
         apply_permutation(mstd::begin(range), mstd::end(range),
                           mstd::begin(indices), mstd::end(indices));
     }
-}}
+}
 
 #endif // CPPSORT_UTILITY_APPLY_PERMUTATION_H_

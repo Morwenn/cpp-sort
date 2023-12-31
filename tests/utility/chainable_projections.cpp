@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -20,7 +20,8 @@ namespace
     struct proj1:
         cppsort::utility::projection_base
     {
-        int operator()(int value) const
+        auto operator()(int value) const
+            -> int
         {
             return -value;
         }
@@ -29,7 +30,8 @@ namespace
     struct proj2:
         cppsort::utility::projection_base
     {
-        int operator()(int value)
+        auto operator()(int value)
+            -> int
         {
             return -value;
         }
