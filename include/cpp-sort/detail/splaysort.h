@@ -13,6 +13,7 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
+#include "binary_tree.h"
 #include "config.h"
 #include "immovable_vector.h"
 #include "iterator_traits.h"
