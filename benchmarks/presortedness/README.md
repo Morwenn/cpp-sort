@@ -1,0 +1,1 @@
+This directory contains scripts related to testing the presortedness of algorithms.
