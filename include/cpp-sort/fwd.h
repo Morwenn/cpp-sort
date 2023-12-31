@@ -72,8 +72,6 @@ namespace cppsort
 
     template<typename Sorter>
     struct container_aware_adapter;
-    template<typename Sorter, typename CountType=std::size_t>
-    struct counting_adapter;
     template<typename Sorter>
     struct drop_merge_adapter;
     template<typename... Sorters>

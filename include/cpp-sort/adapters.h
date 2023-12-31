@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/adapters/container_aware_adapter.h>
-#include <cpp-sort/adapters/counting_adapter.h>
 #include <cpp-sort/adapters/drop_merge_adapter.h>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/indirect_adapter.h>

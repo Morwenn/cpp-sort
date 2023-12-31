@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -49,14 +49,6 @@ TEST_CASE( "test sentinel support for every adapter",
 
         sort_it(fli_begin, fli_end, std::greater<>{});
         CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater<>{}) );
-    }
-
-    SECTION( "counting_adapter" )
-    {
-        cppsort::counting_adapter sort_it(cppsort::mel_sort);
-
-        sort_it(vec_begin, vec_end, std::greater<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
     }
 
     SECTION( "drop_merge_adapter" )

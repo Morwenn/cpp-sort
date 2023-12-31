@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,6 +12,7 @@
 #include <numeric>
 #include <cpp-sort/adapters.h>
 #include <cpp-sort/fixed_sorters.h>
+#include <cpp-sort/metrics.h>
 #include <cpp-sort/sorters.h>
 
 using namespace cppsort;
@@ -65,7 +66,7 @@ template<std::size_t N, typename Sorter, std::size_t... Ind>
 auto count_comparisons(std::index_sequence<Ind...>)
     -> void
 {
-    cppsort::counting_adapter<Sorter, unsigned long long> sorter;
+    cppsort::metrics::comparisons<Sorter, unsigned long long> sorter;
 
     // Fill an array of size N
     std::array<int, N> collection;
@@ -79,7 +80,7 @@ auto count_comparisons(std::index_sequence<Ind...>)
     {
         std::array<int, N> to_sort = { std::get<Ind>(collection)... };
         // Sort collection, get the number of comparisons made
-        count += sorter(to_sort);
+        count += sorter(to_sort).value();
 
         // Double counts as sorter tests
         assert(std::is_sorted(std::begin(to_sort), std::end(to_sort)));

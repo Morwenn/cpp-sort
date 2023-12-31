@@ -45,26 +45,6 @@ Some sorters in the library already have dedicated algorithms for `std::list` an
 
 An interesting property of dedicated sorting algorithms is that one can craft an algorithm for a structure that holds forward iterators even if the *adapted sorter* is only able to handle bidirectional iterators (*e.g.* `container_aware_adapter<insertion_sorter>` can handle an `std::forward_list` while it default implementation only handles bidirectional iterators).
 
-### `counting_adapter`
-
-```cpp
-#include <cpp-sort/adapters/counting_adapter.h>
-```
-
-`counting_adapter::operator()` returns the number of comparisons that have been needed by the *adapted sorter* to sort a collection. It adapts the comparison function so that it can count the number of comparisons made by any other sorter with a reasonable implementation. The actual number of comparisons needed to sort a collection can be used as a heuristic in hybrid sorts and may constitute interesting information nevertheless.
-
-The counter type can be configured with the template parameter `CountType`, which defaults to `std::size_t`.
-
-```cpp
-template<
-    typename ComparisonSorter,
-    typename CountType = std::size_t
->
-struct counting_adapter;
-```
-
-Note that this adapter only works with sorters that satisfy the `ComparisonSorter` concept since it needs to adapt a comparison function.
-
 ### `drop_merge_adapter`
 
 ```cpp

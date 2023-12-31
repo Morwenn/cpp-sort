@@ -25,18 +25,6 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 65, 0);
 
-    SECTION( "counting_adapter" )
-    {
-        using sorter = cppsort::counting_adapter<
-            cppsort::selection_sorter
-        >;
-
-        // Sort and check it's sorted
-        std::size_t res = sorter{}(collection, &internal_compare<int>::compare_to);
-        CHECK( res == 2080 );
-        CHECK( std::is_sorted(collection.begin(), collection.end()) );
-    }
-
     SECTION( "hybrid_adapter" )
     {
         using sorter = cppsort::hybrid_adapter<

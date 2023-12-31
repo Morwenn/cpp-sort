@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -85,15 +85,6 @@ TEST_CASE( "test stateful sorters with every adapter",
 
         sort_it(li, std::greater<>{});
         CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
-    }
-
-    SECTION( "counting_adapter" )
-    {
-        stateful_sorter<> sorter(42);
-        cppsort::counting_adapter<stateful_sorter<>> sort_it(sorter);
-
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
     }
 
     SECTION( "hybrid_adapter" )

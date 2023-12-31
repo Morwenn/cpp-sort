@@ -11,6 +11,7 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters.h>
+#include <cpp-sort/metrics.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/sorters/insertion_sorter.h>
@@ -147,18 +148,18 @@ TEST_CASE( "indirect sort with Schwartzian transform",
     }
 }
 
-TEST_CASE( "stability of counting_adapter over self_sort_adapter",
-           "[counting_adapter][self_sort_adapter][is_stable]" )
+TEST_CASE( "stability of metrics::comparisons over self_sort_adapter",
+           "[metrics][self_sort_adapter][is_stable]" )
 {
-    // Big checks to ensure that mixed sorters have a valid stability
+    // Big checks to ensure that mixed adapters have a valid stability
 
-    using sorter1 = cppsort::counting_adapter<
+    using sorter1 = cppsort::metrics::comparisons<
         cppsort::self_sort_adapter<
             cppsort::selection_sorter
         >
     >;
 
-    using sorter2 = cppsort::counting_adapter<
+    using sorter2 = cppsort::metrics::comparisons<
         cppsort::self_sort_adapter<
             cppsort::insertion_sorter
         >

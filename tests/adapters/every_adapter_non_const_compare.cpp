@@ -41,18 +41,6 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
 
     auto non_const_compare = [](int& lhs, int& rhs) { return lhs < rhs; };
 
-    SECTION( "counting_adapter" )
-    {
-        using sorter = cppsort::counting_adapter<
-            cppsort::selection_sorter
-        >;
-
-        // Sort and check it's sorted
-        std::size_t res = sorter{}(vec, non_const_compare);
-        CHECK( res == 2080 );
-        CHECK( std::is_sorted(vec.begin(), vec.end()) );
-    }
-
     SECTION( "hybrid_adapter" )
     {
         using sorter = cppsort::hybrid_adapter<

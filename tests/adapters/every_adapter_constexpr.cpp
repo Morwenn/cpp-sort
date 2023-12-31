@@ -28,7 +28,6 @@ namespace
 }
 
 TEMPLATE_TEST_CASE( "test most adapters in a constexpr context", "[adapters][constexpr]",
-                    cppsort::counting_adapter<cppsort::insertion_sorter>,
                     cppsort::hybrid_adapter<cppsort::insertion_sorter> )
 {
     constexpr bool is_sorted = test_constexpr_sorter<TestType>();
