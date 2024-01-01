@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Morwenn
+# Copyright (c) 2021-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MacOS Builds
@@ -41,7 +41,7 @@ jobs:
             sanitize: undefined
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
