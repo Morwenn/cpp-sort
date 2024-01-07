@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_POPLAR_SORTER_H_
@@ -33,8 +33,8 @@ namespace cppsort
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Sentinel last,
-                            Compare compare={}, Projection projection={}) const
+            constexpr auto operator()(Iterator first, Sentinel last,
+                                      Compare compare={}, Projection projection={}) const
                 -> Iterator
             {
                 auto last_it = mstd::next(first, std::move(last));

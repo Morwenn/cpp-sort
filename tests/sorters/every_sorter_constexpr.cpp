@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -31,6 +31,7 @@ TEMPLATE_TEST_CASE( "test every constexpr sorter", "[sorters][constexpr]",
                     cppsort::d_ary_heap_sorter<7>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
+                    cppsort::poplar_sorter,
                     cppsort::pdq_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
@@ -26,7 +26,7 @@ namespace cppsort::detail
         RandomAccessIterator begin, end;
         mstd::make_unsigned_t<mstd::iter_difference_t<RandomAccessIterator>> size;
 
-        auto root() const
+        constexpr auto root() const
             -> RandomAccessIterator
         {
             auto res = end;
@@ -36,8 +36,8 @@ namespace cppsort::detail
 
     template<typename RandomAccessIterator, typename Size,
              typename Compare, typename Projection>
-    auto sift(RandomAccessIterator first, Size size,
-              Compare compare, Projection projection)
+    constexpr auto sift(RandomAccessIterator first, Size size,
+                        Compare compare, Projection projection)
         -> void
     {
         if (size < 2) return;
@@ -84,8 +84,8 @@ namespace cppsort::detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto relocate(const std::vector<poplar<RandomAccessIterator>>& poplars,
-                  Compare compare, Projection projection)
+    constexpr auto relocate(const std::vector<poplar<RandomAccessIterator>>& poplars,
+                            Compare compare, Projection projection)
         -> void
     {
         auto&& comp = utility::as_function(compare);
@@ -109,8 +109,8 @@ namespace cppsort::detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto make_poplar(RandomAccessIterator first, RandomAccessIterator last,
-                     Compare compare, Projection projection)
+    constexpr auto make_poplar(RandomAccessIterator first, RandomAccessIterator last,
+                               Compare compare, Projection projection)
         -> void
     {
         auto size = as_unsigned(last - first);
@@ -130,8 +130,8 @@ namespace cppsort::detail
     }
 
     template<typename RandomAccessIterator, typename Compare, typename Projection>
-    auto poplar_sort(RandomAccessIterator first, RandomAccessIterator last,
-                     Compare compare, Projection projection)
+    constexpr auto poplar_sort(RandomAccessIterator first, RandomAccessIterator last,
+                               Compare compare, Projection projection)
         -> void
     {
         using poplar_size_t = mstd::make_unsigned_t<mstd::iter_difference_t<RandomAccessIterator>>;
