@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_
@@ -49,6 +49,9 @@ namespace cppsort
         std::size_t iterator_category_value;
 
         template<>
+        inline constexpr std::size_t iterator_category_value<std::contiguous_iterator_tag> = 3;
+
+        template<>
         inline constexpr std::size_t iterator_category_value<std::random_access_iterator_tag> = 2;
 
         template<>
@@ -61,7 +64,7 @@ namespace cppsort
         template<typename Iterator, std::size_t N>
         using choice_for_it = choice<
             (iterator_category_value<
-                iterator_category_t<Iterator>
+                iterator_concept_t<Iterator>
             > + 1) * N - 1
         >;
 

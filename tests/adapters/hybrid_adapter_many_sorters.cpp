@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -14,10 +14,23 @@ namespace
     enum class sorter_type
     {
         bidirectional,
-        random_access
+        random_access,
+        contiguous
     };
 
     template<int N>
+    struct contiguous_sorter_impl
+    {
+        template<typename Iterator>
+        auto operator()(Iterator, Iterator) const
+            -> sorter_type
+        {
+            return sorter_type::contiguous;
+        }
+
+        using iterator_category = std::contiguous_iterator_tag;
+    };
+
     struct random_access_sorter_impl
     {
         template<typename Iterator>
@@ -43,8 +56,12 @@ namespace
     };
 
     template<int N>
+    struct contiguous_sorter:
+        cppsort::sorter_facade<contiguous_sorter_impl<N>>
+    {};
+
     struct random_access_sorter:
-        cppsort::sorter_facade<random_access_sorter_impl<N>>
+        cppsort::sorter_facade<random_access_sorter_impl>
     {};
 
     struct bidirectional_sorter:
@@ -61,17 +78,18 @@ TEST_CASE( "hybrid_adapter with many sorters",
 
     cppsort::hybrid_adapter<
         bidirectional_sorter,
-        random_access_sorter<0>,
-        random_access_sorter<1>,
-        random_access_sorter<2>,
-        random_access_sorter<3>,
-        random_access_sorter<4>,
-        random_access_sorter<5>
+        random_access_sorter,
+        contiguous_sorter<0>,
+        contiguous_sorter<1>,
+        contiguous_sorter<2>,
+        contiguous_sorter<3>,
+        contiguous_sorter<4>,
+        contiguous_sorter<5>
     > sorter;
 
     std::vector<int> vec;
     auto res1 = sorter(vec);
-    CHECK( res1 == sorter_type::random_access );
+    CHECK( res1 == sorter_type::contiguous );
 
     std::list<int> li;
     auto res2 = sorter(li);

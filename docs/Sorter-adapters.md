@@ -74,27 +74,27 @@ Adapting any *sorter* with `drop_merge_adapter` effectively makes it [*Rem*-adap
 #include <cpp-sort/adapters/hybrid_adapter.h>
 ```
 
-The goal of this sorter adapter is to aggregate several sorters into one unique sorter. The new sorter will call the appropriate sorting algorithm based on the iterator category of the collection to sort. If several of the aggregated sorters have the same iterator category, the first to appear in the template parameter list will be chosen, unless some SFINAE condition prevents it from being used. As long as the iterator categories are different, the order of the sorters in the parameter pack does not matter.
+The goal of this sorter adapter is to aggregate several *adapted sorters* into a unique *resulting sorter*, which dispatches calls to the appropriate *adapted sorter* based on its iterator category and that of the collection to sort. If several of the *adapted sorters* that would be picked have the same iterator category, the first to appear in the template parameter list is chosen, unless some SFINAE condition prevents it from being picked by overload resolution. As long as the iterator categories are different, the order of the sorters in the parameter pack does not matter.
 
-For example, the following sorter should call a pattern-defeating quicksort to sort a random-access collection, a vergesort to sort a bidirectional collection and a bubble sort to sort a forward collection:
+For example, the following sorter calls a pattern-defeating quicksort to sort random-access collections, an insertion sort to sort bidirectional collections, and a bubble sort to sort forward collections:
 
 ```cpp
 using general_purpose_sorter = hybrid_adapter<
     bubble_sorter,
-    verge_sorter,
+    insertion_sorter,
     pdq_sorter
 >;
 ```
 
-This adapter uses `cppsort::iterator_category` to check the iterator category of the sorters to aggregate. Therefore, if you write a sorter and want it to be usable with `hybrid_adapter`, you will need your sorter to provide an `iterator_category` type alias corresponding to one of the standard iterator tags. If you write specific sorters that only work with some specific types, you might want to SFINAE out the overloads of `operator()` when they are not valid instead of triggering a hard error. Doing so will allow to use them with fallback sorters in `hybrid_adapter` to handle the cases where the type to sort cannot be handled by your sorter.
+This adapter uses [`cppsort::iterator_category`][iterator-category] to check the iterator category of the sorters to aggregate. Therefore, if you write a sorter and want it to be usable with `hybrid_adapter`, you need your sorter to provide an `iterator_category` type alias corresponding to one of the [standard iterator tags][iterator-tags]. If you write specific sorters that only work with some specific types, you might want to SFINAE out the overloads of `operator()` when they are not valid instead of triggering a hard error: doing so will allow to use them with fallback sorters in `hybrid_adapter` to handle the cases where the type to sort cannot be handled by your sorter.
 
 `hybrid_adapter` returns the result of the *adapted sorter* called if any.
 
-If `hybrid_adapter` is nested in another `hybrid_adapter`, those are flattened: for example `hybrid_adapter<A, hybrid_adapter<B, C>, D>` is flattened to `hybrid_adapter<A, B, C, D>`. This unwrapping exists so that the iterator categories of the sorters in the inner `hybrid_adapter` are seen by the outer one, and not only the fused iterator category of the inner `hybrid_adapter`.
+If `hybrid_adapter` is nested in another `hybrid_adapter`, those are automatically flattened: for example `hybrid_adapter<A, hybrid_adapter<B, C>, D>` is flattened to `hybrid_adapter<A, B, C, D>`. This unwrapping exists so that the iterator categories of the sorters in the inner `hybrid_adapter` are seen by the outer one, and not only the fused iterator category of the inner `hybrid_adapter`.
 
-If `hybrid_adapter` is wrapped into [`stable_adapter`][stable-adapter], it wraps every *adapted sorter* into `stable_adapter`, forwarding it to better get the specific behaviour f some sorters or adapters when wrapped into it.
+If `hybrid_adapter` is wrapped into [`stable_adapter`][stable-adapter], it wraps every *adapted sorter* into `stable_adapter`, forwarding it to better get the specific behaviour of some sorters or adapters when wrapped into it.
 
-The *resulting sorter*'s `is_always_stable` is `std::true_type` if and only if every *adapted sorter*'s `is_always_stable` is `std::true_type`. `is_stable` is specialized so that it will return the stability of the called *adapted sorter* with the given parameters. The iterator category of the *resulting sorter* is the most permissive iterator category among the *adapted sorters*.
+The *resulting sorter*'s `is_always_stable` is `std::true_type` if and only if every *adapted sorter*'s `is_always_stable` is `std::true_type`. `is_stable` is specialized so that it returns the stability of the called *adapted sorter* with the given parameters. The iterator category of the *resulting sorter* is the most permissive iterator category among the *adapted sorters*.
 
 ### `indirect_adapter`
 
@@ -322,6 +322,8 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [is-always-stable]: Sorter-traits.md#is_always_stable
   [is-stable]: Sorter-traits.md#is_stable
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
+  [iterator-category]: Sorter-traits.md#iterator_category
+  [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
   [probe-mono]: Measures-of-presortedness.md#mono

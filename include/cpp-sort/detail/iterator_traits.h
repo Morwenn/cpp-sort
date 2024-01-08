@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ITERATOR_TRAITS_H_
@@ -23,6 +23,9 @@ namespace cppsort::detail
 
     template<typename Iterator>
     using iterator_category_t = typename std::iterator_traits<Iterator>::iterator_category;
+
+    template<typename Iterator>
+    using iterator_concept_t = typename mstd::detail::iter_concept<Iterator>;
 
     // Additional common type to use instead of value_t
     template<typename Iterator>
