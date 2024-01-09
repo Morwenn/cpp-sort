@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -10,11 +10,10 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <list>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/mstd/iterator.h>
-#include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../mstd/detail/subrange.h"
 #include "bitops.h"
@@ -22,7 +21,6 @@
 #include "inplace_merge.h"
 #include "iterator_traits.h"
 #include "lower_bound.h"
-#include "quick_merge_sort.h"
 #include "reverse.h"
 #include "rotate.h"
 #include "upper_bound.h"
@@ -94,15 +92,14 @@ namespace cppsort::detail::verge
 
     template<
         bool Stable,
-        typename BidirectionalIterator,
+        mstd::bidirectional_iterator BidirectionalIterator,
         typename Compare,
         typename Projection,
         typename Fallback
     >
-    auto sort(std::bidirectional_iterator_tag,
-              BidirectionalIterator first, BidirectionalIterator last,
-              mstd::iter_difference_t<BidirectionalIterator> size,
-              Compare compare, Projection projection, Fallback fallback)
+    auto sort_impl(BidirectionalIterator first, BidirectionalIterator last,
+                   mstd::iter_difference_t<BidirectionalIterator> size,
+                   Compare compare, Projection projection, Fallback fallback)
         -> void
     {
         if (size < 128) {
@@ -318,15 +315,14 @@ namespace cppsort::detail::verge
 
     template<
         bool Stable,
-        typename RandomAccessIterator,
+        mstd::random_access_iterator RandomAccessIterator,
         typename Compare,
         typename Projection,
         typename Fallback
     >
-    auto sort(std::random_access_iterator_tag,
-              RandomAccessIterator first, RandomAccessIterator last,
-              mstd::iter_difference_t<RandomAccessIterator> size,
-              Compare compare, Projection projection, Fallback fallback)
+    auto sort_impl(RandomAccessIterator first, RandomAccessIterator last,
+                   mstd::iter_difference_t<RandomAccessIterator> size,
+                   Compare compare, Projection projection, Fallback fallback)
         -> void
     {
         if (size < 128) {
@@ -498,14 +494,14 @@ namespace cppsort::detail::verge
     // Vergesort main interface
 
     template<typename Sorter>
-    auto get_maybe_stable(std::true_type, Sorter&& sorter)
+    constexpr auto get_maybe_stable(std::true_type, Sorter&& sorter)
         -> cppsort::stable_t<Sorter>
     {
         return cppsort::stable_t<Sorter>(std::move(sorter));
     }
 
     template<typename Sorter>
-    auto get_maybe_stable(std::false_type, Sorter&& sorter)
+    constexpr auto get_maybe_stable(std::false_type, Sorter&& sorter)
         -> Sorter
     {
         return std::move(sorter);
@@ -525,48 +521,11 @@ namespace cppsort::detail::verge
     {
         // Adapt the fallback sorter depending on whether a stable
         // or an unstable sort is wanted
-        verge::sort<Stable>(iterator_category_t<BidirectionalIterator>{},
-                            std::move(first), std::move(last), size,
-                            std::move(compare), std::move(projection),
-                            get_maybe_stable(std::bool_constant<Stable>{}, std::move(fallback)));
-    }
-
-    constexpr auto default_sorter_for_impl(std::bidirectional_iterator_tag)
-        -> cppsort::quick_merge_sorter
-    {
-        return {};
-    }
-
-    constexpr auto default_sorter_for_impl(std::random_access_iterator_tag)
-        -> cppsort::pdq_sorter
-    {
-        return {};
-    }
-
-    template<typename Iterator>
-    constexpr auto default_sorter_for(Iterator)
-        -> decltype(auto)
-    {
-        iterator_category_t<Iterator> category;
-        return default_sorter_for_impl(category);
-    }
-
-    template<
-        bool Stable,
-        typename BidirectionalIterator,
-        typename Compare,
-        typename Projection
-    >
-    auto sort(BidirectionalIterator first, BidirectionalIterator last,
-              mstd::iter_difference_t<BidirectionalIterator> size,
-              Compare compare, Projection projection)
-        -> void
-    {
-        // Pick a default sorter based on the iterator category when
-        // none is provided
-        verge::sort<Stable>(first, last, size,
-                            std::move(compare), std::move(projection),
-                            default_sorter_for(first));
+        verge::sort_impl<Stable>(
+            std::move(first), std::move(last), size,
+            std::move(compare), std::move(projection),
+            get_maybe_stable(std::bool_constant<Stable>{}, std::move(fallback))
+        );
     }
 }
 
