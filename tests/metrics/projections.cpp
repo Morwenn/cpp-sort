@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -7,14 +7,13 @@
 #include <functional>
 #include <iterator>
 #include <list>
-#include <vector>
+#include <ranges>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/metrics/projections.h>
 #include <cpp-sort/sorters/selection_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
-#include <testing-tools/span.h>
 #include <testing-tools/wrapper.h>
 
 using wrapper = generic_wrapper<int>;
@@ -66,7 +65,7 @@ TEST_CASE( "metrics::projections with span",
         auto distribution = dist::shuffled{};
         distribution(std::back_inserter(collection), 65, 0);
 
-        auto res = sorter(make_span(collection));
+        auto res = sorter(std::ranges::subrange(collection));
         CHECK( res == 4160 );
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
@@ -77,7 +76,7 @@ TEST_CASE( "metrics::projections with span",
         auto distribution = dist::shuffled{};
         distribution(std::back_inserter(collection), 80, 0);
 
-        auto res = sorter(make_span(collection), &wrapper::value);
+        auto res = sorter(std::ranges::subrange(collection), &wrapper::value);
         CHECK( res == 6320 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );

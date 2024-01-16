@@ -1,9 +1,10 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <iterator>
+#include <span>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
 #include <cpp-sort/sorters.h>
@@ -11,7 +12,6 @@
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/old_sorters.h>
-#include <testing-tools/span.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     old_default_sorter,
@@ -58,6 +58,6 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
     distribution(std::back_inserter(collection), 491, -125);
 
     TestType sorter;
-    sorter(make_span(collection));
+    sorter(std::span(collection));
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

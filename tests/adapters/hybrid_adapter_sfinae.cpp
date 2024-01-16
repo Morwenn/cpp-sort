@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <concepts>
 #include <iterator>
+#include <span>
 #include <string>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/sorter_facade.h>
-#include <testing-tools/span.h>
 
 namespace
 {
@@ -116,13 +116,13 @@ TEST_CASE( "sfinae forwarding in hybrid_adapter",
 
     SECTION( "with span" )
     {
-        sorter_type res1 = sorter(make_span(vec1));
+        sorter_type res1 = sorter(std::span(vec1));
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = sorter(make_span(vec2));
+        sorter_type res2 = sorter(std::span(vec2));
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = sorter(make_span(vec3));
+        sorter_type res3 = sorter(std::span(vec3));
         CHECK( res3 == sorter_type::generic );
     }
 }
@@ -173,13 +173,13 @@ TEST_CASE( "sfinae forwarding in nested hybrid_adapter",
 
     SECTION( "with span" )
     {
-        sorter_type res1 = sorter(make_span(vec1));
+        sorter_type res1 = sorter(std::span(vec1));
         CHECK( res1 == sorter_type::integer );
 
-        sorter_type res2 = sorter(make_span(vec2));
+        sorter_type res2 = sorter(std::span(vec2));
         CHECK( res2 == sorter_type::floating_point );
 
-        sorter_type res3 = sorter(make_span(vec3));
+        sorter_type res3 = sorter(std::span(vec3));
         CHECK( res3 == sorter_type::generic );
     }
 }

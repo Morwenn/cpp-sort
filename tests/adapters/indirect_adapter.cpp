@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <functional>
 #include <iterator>
+#include <span>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters/indirect_adapter.h>
@@ -12,7 +13,6 @@
 #include <cpp-sort/sorters/spread_sorter.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
-#include <testing-tools/span.h>
 
 TEST_CASE( "basic tests with indirect_adapter",
            "[indirect_adapter]" )
@@ -74,20 +74,20 @@ TEST_CASE( "indirect_adapter with temporary span",
 
     SECTION( "with comparison" )
     {
-        sorter(make_span(collection), std::greater<>{});
+        sorter(std::span(collection), std::greater<>{});
         CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
     }
 
     SECTION( "with projection" )
     {
-        sorter(make_span(collection), std::negate<>{});
+        sorter(std::span(collection), std::negate<>{});
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, std::negate<>{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
-        sorter(make_span(collection), std::greater<>{}, std::negate<>{});
+        sorter(std::span(collection), std::greater<>{}, std::negate<>{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }
