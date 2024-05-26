@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_VERGESORT_H_
@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <list>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/utility/as_function.h>

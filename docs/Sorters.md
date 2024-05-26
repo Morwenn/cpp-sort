@@ -373,9 +373,9 @@ Implements a [smoothsort][smoothsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | 1           | No          | Random-Access |
+| n           | n log n     | n log n     | 1           | No          | Random-access |
 
-While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter`, `pdq_sorter` or `verge_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
+While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter` or `pdq_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
 
 ### `spin_sorter`
 
@@ -387,7 +387,7 @@ Implements a [spinsort][spinsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | Yes         | Random-Access |
+| n           | n log n     | n log n     | n           | Yes         | Random-access |
 
 *New in version 1.6.0*
 
@@ -417,7 +417,7 @@ Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive so
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-Access |
+| n           | n log n     | n log n     | n           | No          | Random-access |
 
 SplitSort is a [*Rem*-adaptive][probe-rem] sorting algorithm and shares many similarities with drop-merge sort but has the following differences:
 * It only works with random-access iterators.

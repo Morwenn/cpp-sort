@@ -87,6 +87,12 @@ Note that this adapter only works with sorters that satisfy the `ComparisonSorte
 
 [Drop-merge sort][drop-merge-sort] is a [*Rem*-adaptive][probe-rem] sorting algorithm that isolates some of the elements to sort in a buffer in O(n) time in order to leave a single sorted run in the original collection, then it uses another algorithm to sort the elements isolated in a buffer, and merges the two resulting runs back into the original collection. `drop_merge_adapter` uses the *adapted sorter* to sort the (contiguous) buffer of isolated elements.
 
+In the following table, let *n* be the number of elements to sort, *f* be a function representing the *adapted sorter*, and *k* be the number of elements removed by drop-merge sort that *f* has to sort (*k* is an approximation of *Rem(X)*, *k ≤ n*). Depending on the context, *f(k)* either represents the space or time complexity of the *adapted sorter*.
+
+| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n + f(k)    | n + f(k)    | k + f(k)    | No          | Bidirectional |
+
 The *resulting sorter* always requires at least bidirectional iterators, no matter the iterator category of the *adapted sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
 
 ```cpp
@@ -104,25 +110,25 @@ Adapting any *sorter* with `drop_merge_adapter` effectively makes it [*Rem*-adap
 #include <cpp-sort/adapters/hybrid_adapter.h>
 ```
 
-The goal of this sorter adapter is to aggregate several sorters into one unique sorter. The new sorter will call the appropriate sorting algorithm based on the iterator category of the collection to sort. If several of the aggregated sorters have the same iterator category, the first to appear in the template parameter list will be chosen, unless some SFINAE condition prevents it from being used. As long as the iterator categories are different, the order of the sorters in the parameter pack does not matter.
+The goal of this sorter adapter is to aggregate several *adapted sorters* into a unique *resulting sorter*, which dispatches calls to the appropriate *adapted sorter* based on its iterator category and that of the collection to sort. If several of the *adapted sorters* that would be picked have the same iterator category, the first to appear in the template parameter list is chosen, unless some SFINAE condition prevents it from being picked by overload resolution. As long as the iterator categories are different, the order of the sorters in the parameter pack does not matter.
 
-For example, the following sorter should call a pattern-defeating quicksort to sort a random-access collection, a vergesort to sort a bidirectional collection and a bubble sort to sort a forward collection:
+For example, the following sorter calls a pattern-defeating quicksort to sort random-access collections, an insertion sort to sort bidirectional collections, and a bubble sort to sort forward collections:
 
 ```cpp
 using general_purpose_sorter = hybrid_adapter<
     bubble_sorter,
-    verge_sorter,
+    insertion_sorter,
     pdq_sorter
 >;
 ```
 
-This adapter uses `cppsort::iterator_category` to check the iterator category of the sorters to aggregate. Therefore, if you write a sorter and want it to be usable with `hybrid_adapter`, you will need your sorter to provide an `iterator_category` type alias corresponding to one of the standard iterator tags. If you write specific sorters that only work with some specific types, you might want to SFINAE out the overloads of `operator()` when they are not valid instead of triggering a hard error. Doing so will allow to use them with fallback sorters in `hybrid_adapter` to handle the cases where the type to sort cannot be handled by your sorter.
+This adapter uses [`cppsort::iterator_category`][iterator-category] to check the iterator category of the sorters to aggregate. Therefore, if you write a sorter and want it to be usable with `hybrid_adapter`, you will need your sorter to provide an `iterator_category` type alias corresponding to one of the [standard iterator tags][iterator-tags]. If you write specific sorters that only work with some specific types, you might want to SFINAE out the overloads of `operator()` when they are not valid instead of triggering a hard error: doing so will allow to use them with fallback sorters in `hybrid_adapter` to handle the cases where the type to sort cannot be handled by your sorter.
 
 `hybrid_adapter` returns the result of the *adapted sorter* called if any.
 
-If `hybrid_adapter` is nested in another `hybrid_adapter`, those are flattened: for example `hybrid_adapter<A, hybrid_adapter<B, C>, D>` is flattened to `hybrid_adapter<A, B, C, D>`. This unwrapping exists so that the iterator categories of the sorters in the inner `hybrid_adapter` are seen by the outer one, and not only the fused iterator category of the inner `hybrid_adapter`.
+If `hybrid_adapter` is nested in another `hybrid_adapter`, those are flattened: for example `hybrid_adapter<A, hybrid_adapter<B, C>, D>` is automatically flattened to `hybrid_adapter<A, B, C, D>`. This unwrapping exists so that the iterator categories of the sorters in the inner `hybrid_adapter` are seen by the outer one, and not only the fused iterator category of the inner `hybrid_adapter`.
 
-If `hybrid_adapter` is wrapped into [`stable_adapter`][stable-adapter], it wraps every *adapted sorter* into `stable_adapter`, forwarding it to better get the specific behaviour f some sorters or adapters when wrapped into it.
+If `hybrid_adapter` is wrapped into [`stable_adapter`][stable-adapter], it wraps every *adapted sorter* into `stable_adapter`, forwarding it to better get the specific behaviour of some sorters or adapters when wrapped into it.
 
 The *resulting sorter*'s `is_always_stable` is `std::true_type` if and only if every *adapted sorter*'s `is_always_stable` is `std::true_type`. `is_stable` is specialized so that it will return the stability of the called *adapted sorter* with the given parameters. The iterator category of the *resulting sorter* is the most permissive iterator category among the *adapted sorters*.
 
@@ -257,7 +263,16 @@ The adapter implements the "in-place" version of the *SplitSort* algorithm descr
 2. It uses the *adapted sorter* to sort the right part of the collection.
 3. It merges the two parts of the collection in O(n) time O(n) space if possible, otherwise it merges them in O(n log n) time O(1) space.
 
+In the following table, let *n* be the number of elements to sort, *f* be a function representing the *adapted sorter*, and *k* be the number of elements removed by splitsort that *f* has to sort (*k* is an approximation of *Rem(X)*, *k ≤ n*). Depending on the context, *f(k)* either represents the space or time complexity of the *adapted sorter*.
+
+| Best        | Average        | Worst          | Memory      | Stable      | Iterators     |
+| ----------- | -------------- | -------------- | ----------- | ----------- | ------------- |
+| n           | n + f(k)       | n + f(k)       | n + f(k)    | No          | Bidirectional |
+| n           | n log n + f(k) | n log n + f(k) | f(k)        | No          | Bidirectional |
+
 The core algorithm behind `split_adapter` requires at least bidirectional iterators to work, as such the *resulting sorter* requires bidirectional iterators if the *adapted sorter* supports them, otherwise it requires the same category of iterators at that accepted by the *adapter sorter*. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*.
+
+The *resulting sorter* does not throw `std::bad_alloc` unless the *adapted sorter* does.
 
 ```cpp
 template<typename Sorter>
@@ -332,16 +347,23 @@ This little dance sometimes allows to reduce the nesting of function calls and t
 #include <cpp-sort/adapters/verge_adapter.h>
 ```
 
-While the library already provides a `verge_sorter` built on top of `pdq_sorter`, the true power of vergesort is to add a fast *Runs*-adaptive layer on top of any sorting algorithm to make it handle data with big runs better while not being noticeably slower for the distributions that the vergesort layer can't handle. [This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
+The complexity analysis is a bit too complicated to be included in this documentation. Additionally, the space and time complexity changes depending on whether the merging algorithm has enough space to run in O(n) time or whether it needs to fall back to an O(n log n) algorithm. Assuming that the *adapted sorter* works in O(n log n) time and O(1) space, the complexity of the *resulting sorter* is as follows:
 
-`verge_adapter` takes any sorter and uses it as a fallback sorting algorithm when it can't sort a collection on its own. The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional iterators.
+| Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
+| n           | n log n     | n log n log log n | n           | No          | Bidirectional |
+| n           | n log n     | n log n           | log n       | No          | Bidirectional |
+
+The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional ranges.
 
 ```cpp
 template<typename Sorter>
 struct verge_adapter;
 ```
 
-When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and can be faster than just using `make_stable`.
+When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. The *resulting sorter* is stable, and can be faster than simply using `make_stable`.
+
+[This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
 
 *New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
 
@@ -359,9 +381,12 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [is-always-stable]: Sorter-traits.md#is_always_stable
   [is-stable]: Sorter-traits.md#is_stable
   [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
+  [iterator-category]: Sorter-traits.md#iterator_category
+  [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [metrics-comparisons]: Metrics.md#comparisons
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
+  [probe-mono]: Measures-of-presortedness.md#mono
   [probe-rem]: Measures-of-presortedness.md#rem
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t

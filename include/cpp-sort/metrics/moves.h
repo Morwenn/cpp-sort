@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_MOVES_H_
@@ -14,6 +14,7 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
+#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/metrics_tools.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
