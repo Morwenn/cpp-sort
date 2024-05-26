@@ -109,6 +109,8 @@ I tried to apply the same technique to create a 40-sorter, but the resulting 20-
 
 ### Sorting network for 29 inputs
 
+_Note: the following has since been improved upon: [SorterHunter][sorter-hunter] found a network that sorts 29 inputs with 164 *compare-exchange* operations._
+
 The following sorting network for 29 inputs has 165 *compare-exchange* operations (CEs), which is one less that the most size-optimal 29-input sorting networks that I could find in the literature. Here is how I generated it: first it sorts the first 16 inputs and the last 13 inputs independently. Then it merges the two sorted subarrays using a size 32 Batcher odd-even merge network (the version that does not need the inputs to be interleaved), where all compare-exchange operations working on indexes greater than 28 have been dropped. Dropping comparators in such a way is ok: consider that the values at the indexes [29, 32) are greater than every other value in the array to sort, and it will become intuitive that dropping them generates a correct merging network of a smaller size.
 
 That said, even though I have been unable to find a 29-input sorting network with as few compare-exchange operations as 165 in the literature, I can't claim that I found the technique used to generate it: the 1971 paper [*A Generalization of the Divide-Sort-Merge Strategy for Sorting Networks*][divide-sort-merge-strategy] by David C. Van Voorhis already describes the as follows:
@@ -177,8 +179,6 @@ The paper does not mention a better result than 166 CEs for the 29-input sorting
     [[3, 5],[7, 9],[11, 13],[15, 17],[19, 21],[23, 25]]
     [[1, 2],[3, 4],[5, 6],[7, 8],[9, 10],[11, 12],[13, 14],[15, 16],[17, 18],[19, 20],[21, 22],[23, 24],[25, 26],[27, 28]]
 
-*Note: I have yet to optimize the pairs above to display the network with as few steps as possible.*
-
 ### Mountain sort
 
 The mountain sort is a new indirect sorting algorithm designed to perform a minimal number of move operations on the elements of the collection to sort. It derives from [cycle sort][cycle-sort] and [Exact-Sort][exact-sort] but is still slightly different: the goal of cycle sort is to perform a minimal number of writes to the original array, and while Exact-Sort indeed performs the same number of moves and writes to the original array than cycle sort, the description says that it's the best algorithm to sort fridges by price, so its goal would actually be closer to that of mountain sort. However, both have a rather similar implementation: find cycles of values to rotate, swap the first value into a temporary variable, find where it goes, swap the contents of the temporary variable with the value in the location, find where the new value goes, etc... Exact-Sort is a bit more optimized but the lookup still makes it a O(n²) algorithm. Mountain sort chooses to consume more memory and to store the iterators and to sort them beforehand so that the move part can be done with only one write to a temporary variable per cycle. I don't think that any sorting algorithm can perform less moves than mountain sort. Its basic implementation relies on `std::sort` to sort the iterators, more or less leading to the following complexity:
@@ -238,4 +238,5 @@ The following relations have yet to be analyzed:
   [quick-merge-sort]: https://github.com/Morwenn/quick_merge_sort
   [quick-merge-sort-arxiv]: https://arxiv.org/pdf/1804.10062.pdf
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
+  [sorter-hunter]: https://github.com/bertdobbelaere/SorterHunter/tree/master
   [vergesort]: https://github.com/Morwenn/vergesort

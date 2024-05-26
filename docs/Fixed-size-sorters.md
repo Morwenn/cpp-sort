@@ -155,7 +155,7 @@ Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 **Size** | **17** | **18** | **19** | **20** | **21** | **22** | **23** | **24** | **25** | **26** | **27** | **28** | **29** | **30** | **31** | **32**
 **CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 130 | 139 | 147 | 155 | 164 | 172 | 180 | 185
 **Size** | **33** | **34** | **35** | **36** | **37** | **38** | **39** | **40** | **41** | **42** | **43** | **44** | **45** | **46** | **47** | **48**
-**CEs** | 199 | 209 | 220 | 227 | 241 | 250 | 259 | 265 | 282 | 292 | 303 | 309 | 324 | 332 | 340 | 346
+**CEs** | 199 | 209 | 220 | 227 | 240 | 250 | 259 | 265 | 282 | 291 | 303 | 309 | 324 | 332 | 340 | 346
 **Size** | **49** | **50** | **51** | **52** | **53** | **54** | **55** | **56** | **57** | **58** | **59** | **60** | **61** | **62** | **63** | **64**
 **CEs** | 365 | 376 | 387 | 395 | 411 | 421 | 432 | 438 | 454 | 465 | 476 | 483 | 497 | 506 | 515 | 521
 
@@ -190,6 +190,9 @@ template<typename DifferenceType=std::ptrdiff_t>
 *Changed in version 1.15.0:* sorting 27 inputs requires 174 CEs instead of 148.
 
 *Changed in version 1.15.0:* sorting 3 inputs is now stable. Specializations 0, 1, 2 and 3 are marked as stable.
+
+*Changed in version 1.16.0:* sorting 37 and 42 inputs respectively require 240 and 291 CEs instead of 241 and 292.
+
 
   [double-insertion-sort]: Original-research.md#double-insertion-sort
   [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits
