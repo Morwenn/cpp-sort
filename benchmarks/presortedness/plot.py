@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020-2023 Morwenn
+# Copyright (c) 2020-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
+import math
 import pathlib
 import sys
 
@@ -42,7 +43,7 @@ if __name__ == '__main__':
         disorders = []
         with result_file.open() as fd:
             # Read metadata from the first line
-            algo_name, mop_name = fd.readline().strip().split(',')
+            algo_name, mop_name, size = fd.readline().strip().split(',')
 
             # Read the rest of the file
             for line in fd:
@@ -67,7 +68,9 @@ if __name__ == '__main__':
     # Add global information
     pyplot.xlim(left=0)
     pyplot.ylim(bottom=0)
-    pyplot.title("Sorting std::vector<int> with $10^6$ elements")
+    pyplot.title("Sorting std::vector<int> with $10^{}$ elements".format(
+        round(math.log(int(size), 10)))
+    )
     pyplot.xlabel(f"${mop_name}$")
     pyplot.ylabel("Cycles (lower is better)")
     pyplot.legend()
