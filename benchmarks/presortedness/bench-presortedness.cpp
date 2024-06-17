@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Morwenn
+ * Copyright (c) 2020-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -75,8 +75,8 @@ int main(int argc, char* argv[])
         std::ofstream output_file(output_path);
 
         // Add metadata about the benchmark
-        output_file << sort.first << ',' << "Inv" << '\n';
-        std::cout << sort.first << ',' << "Inv" << '\n';
+        output_file << sort.first << ",Inv," << size << '\n';
+        std::cout << sort.first << ",Inv," << size << '\n';
 
         // Seed the distribution manually to ensure that all algorithms
         // sort the same collections when there is randomness
