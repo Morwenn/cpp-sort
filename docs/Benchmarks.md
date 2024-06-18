@@ -1,8 +1,9 @@
 *Note: this page only benchmarks sorting algorithms under specific conditions. It can be used as a quick guide but if you really need a fast algorithm for a specific use case, you better run your own benchmarks.*
 
 *Last meaningful updates:*
+* *1.16.0 for slow O(n log n) sorts*
 * *1.14.0 for small array sorts*
-* *1.13.1 for unstable random-access sorts, slow O(n log n) sorts, forward sorts, and the expensive move/cheap comparison benchmark*
+* *1.13.1 for unstable random-access sorts, forward sorts, and the expensive move/cheap comparison benchmark*
 * *1.12.0 for measures of presortedness*
 * *1.9.0 otherwise*
 
@@ -65,9 +66,9 @@ These plots highlight a few important things:
 
 I decided to include a dedicated category for slow O(n log n) sorts, because I find this class of algorithms interesting. This category contains experimental algorithms, often taken from rather old research papers. `heap_sort` is used as the "fast" algorithm in this category, despite it being consistently the slowest in the previous category.
 
-![Benchmark speed of slow O(n log n) sorts with increasing size for std::vector<double>](https://i.imgur.com/2sx8Hk7.png)
-![Benchmark slow O(n log n) sorts over different patterns for std::vector<double>](https://i.imgur.com/RkiYdy8.png)
-![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/Z9O4I6p.png)
+![Benchmark speed of slow O(n log n) sorts with increasing size for std::vector<double>](https://i.imgur.com/SUbyqKV.png)
+![Benchmark slow O(n log n) sorts over different patterns for std::vector<double>](https://i.imgur.com/Dli1xrp.png)
+![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/WxBmipj.png)
 
 The analysis is pretty simple here:
 * Most of the algorithms in this category are slow, but exhibit a good adaptiveness with most kinds of patterns. It isn't all that surprising since I specifically found them in literature about adaptive sorting.
