@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_COUNTING_ADAPTER_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
 #include <cpp-sort/sorter_facade.h>
@@ -21,6 +20,15 @@
 
 namespace cppsort
 {
+    ////////////////////////////////////////////////////////////
+    // is_stable specialization
+
+    // Declared first to avoid deprecation warning
+    template<typename Sorter, typename CountType, typename... Args>
+    struct is_stable<counting_adapter<Sorter, CountType>(Args...)>:
+        is_stable<Sorter(Args...)>
+    {};
+
     ////////////////////////////////////////////////////////////
     // Adapter
 
@@ -108,7 +116,8 @@ namespace cppsort
     }
 
     template<typename Sorter, typename CountType>
-    struct counting_adapter:
+    struct CPPSORT_DEPRECATED("counting_adapter is deprecated and will be removed in version 2.0.0, use metrics::comparisons instead")
+    counting_adapter:
         sorter_facade<detail::counting_adapter_impl<
             Sorter,
             CountType
@@ -120,14 +129,6 @@ namespace cppsort
             sorter_facade<detail::counting_adapter_impl<Sorter, CountType>>(std::move(sorter))
         {}
     };
-
-    ////////////////////////////////////////////////////////////
-    // is_stable specialization
-
-    template<typename Sorter, typename CountType, typename... Args>
-    struct is_stable<counting_adapter<Sorter, CountType>(Args...)>:
-        is_stable<Sorter(Args...)>
-    {};
 }
 
 #endif // CPPSORT_ADAPTERS_COUNTING_ADAPTER_H_

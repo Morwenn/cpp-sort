@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Morwenn
+# Copyright (c) 2020-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Wiki Deployment
@@ -6,7 +6,7 @@ name: Wiki Deployment
 on:
   push:
     branches:
-      - master
+      - 1.x.y-stable
     paths:
       - 'docs/**'
 
@@ -18,13 +18,13 @@ jobs:
 
     steps:
       - name: Checkout /docs
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{github.repository}}
           path: main
 
       - name: Checkout wiki
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{github.repository}}.wiki
           path: wiki

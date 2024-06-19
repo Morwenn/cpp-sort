@@ -19,8 +19,8 @@ List of actions to perform when releasing a new cpp-sort version.
 - [ ] Try to open `docs` with the latest version of Gollum.
 - [ ] Find a name for the new version.
 - [ ] Open a merge request, let the CI do its job.
-- [ ] Merge `develop` into `master`.
-- [ ] Publish the release, don't forget to target `master`.
+- [ ] Merge `-develop` into `-stable`.
+- [ ] Publish the release, don't forget to target `-stable`.
 
 ### After the release
 

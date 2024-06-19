@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Morwenn
+# Copyright (c) 2020-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Coverage Upload to Codecov
@@ -6,9 +6,9 @@ name: Coverage Upload to Codecov
 on:
   push:
     branches:
-      - master
-      - develop
-      - 2.0.0-develop
+      - 1.x.y-develop
+      - 1.x.y-stable
+      - 2.x.y-develop
     paths:
       - '.github/workflows/code-coverage.yml'
       - '.github/.codecov.yml'
@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install LCOV
         run: sudo apt-get install -y lcov
@@ -57,6 +57,7 @@ jobs:
       - name: Upload coverage info
         uses: codecov/codecov-action@v3
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           directory: ${{runner.workspace}}/build/lcov/data
           files: '*.info'
           fail_ci_if_error: true

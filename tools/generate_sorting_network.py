@@ -14,10 +14,10 @@ def find_sorter_hunter_file(path: Path, size: int):
     one corresponding for sorting a network of the given size, pereferring
     the ones that minimize the number of compare-exchanges.
     """
-    return sorted(
+    return min(
         path.glob(f"Sort_{size}_*.json"),
         key=lambda x: int(x.name.split('_')[2])
-    )[0]
+    )
 
 
 def parse_sorter_hunter_network(path: Path) -> list[list[tuple]]:

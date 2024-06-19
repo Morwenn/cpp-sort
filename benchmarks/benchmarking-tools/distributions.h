@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -30,6 +30,9 @@ thread_local std::mt19937_64 distributions_prng(std::time(nullptr));
 
 namespace dist
 {
+    ////////////////////////////////////////////////////////////
+    // Distributions CRTP base class
+
     template<typename Derived>
     struct base_distribution
     {
@@ -58,6 +61,9 @@ namespace dist
         }
     };
 
+    ////////////////////////////////////////////////////////////
+    // Distributions: testing patterns
+
     struct shuffled:
         base_distribution<shuffled>
     {
@@ -66,7 +72,8 @@ namespace dist
             -> void
         {
             std::vector<int> vec;
-            for (long long int i = 0 ; i < size ; ++i) {
+            vec.reserve(size);
+            for (long long int i = 0; i < size; ++i) {
                 vec.emplace_back(i);
             }
             std::shuffle(vec.begin(), vec.end(), distributions_prng);
@@ -75,7 +82,7 @@ namespace dist
             std::transform(vec.begin(), vec.end(), out, proj);
         }
 
-        static constexpr const char* output = "shuffled.txt";
+        static constexpr const char* name = "shuffled";
     };
 
     struct shuffled_16_values:
@@ -86,7 +93,8 @@ namespace dist
             -> void
         {
             std::vector<int> vec;
-            for (long long int i = 0 ; i < size ; ++i) {
+            vec.reserve(size);
+            for (long long int i = 0; i < size; ++i) {
                 vec.emplace_back(i % 16);
             }
             std::shuffle(vec.begin(), vec.end(), distributions_prng);
@@ -95,7 +103,7 @@ namespace dist
             std::transform(vec.begin(), vec.end(), out, proj);
         }
 
-        static constexpr const char* output = "shuffled.txt";
+        static constexpr const char* name = "shuffled_16_values";
     };
 
     struct all_equal:
@@ -106,12 +114,12 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(0);
             }
         }
 
-        static constexpr const char* output = "all_equal.txt";
+        static constexpr const char* name = "all_equal";
     };
 
     struct ascending:
@@ -122,12 +130,12 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(i);
             }
         }
 
-        static constexpr const char* output = "ascending.txt";
+        static constexpr const char* name = "ascending";
     };
 
     struct descending:
@@ -143,7 +151,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending.txt";
+        static constexpr const char* name = "descending";
     };
 
     struct pipe_organ:
@@ -154,15 +162,15 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size / 2 ; ++i) {
+            for (long long int i = 0; i < size / 2; ++i) {
                 *out++ = proj(i);
             }
-            for (long long int i = size / 2 ; i < size ; ++i) {
+            for (long long int i = size / 2; i < size; ++i) {
                 *out++ = proj(size - i);
             }
         }
 
-        static constexpr const char* output = "pipe_organ.txt";
+        static constexpr const char* name = "pipe_organ";
     };
 
     struct push_front:
@@ -174,14 +182,14 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             if (size > 0) {
-                for (long long int i = 0 ; i < size - 1 ; ++i) {
+                for (long long int i = 0; i < size - 1; ++i) {
                     *out++ = proj(i);
                 }
                 *out = proj(0);
             }
         }
 
-        static constexpr const char* output = "push_front.txt";
+        static constexpr const char* name = "push_front";
     };
 
     struct push_middle:
@@ -193,7 +201,7 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             if (size > 0) {
-                for (long long int i = 0 ; i < size ; ++i) {
+                for (long long int i = 0; i < size; ++i) {
                     if (i != size / 2) {
                         *out++ = proj(i);
                     }
@@ -202,7 +210,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "push_middle.txt";
+        static constexpr const char* name = "push_middle";
     };
 
     struct ascending_sawtooth:
@@ -214,12 +222,12 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             long long int limit = size / cppsort::detail::log2(size) + 50;
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(i % limit);
             }
         }
 
-        static constexpr const char* output = "ascending_sawtooth.txt";
+        static constexpr const char* name = "ascending_sawtooth";
     };
 
     struct ascending_sawtooth_bad:
@@ -231,12 +239,12 @@ namespace dist
         {
             auto&& proj = cppsort::utility::as_function(projection);
             long long int limit = size / cppsort::detail::log2(size) - 50;
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj(i % limit);
             }
         }
 
-        static constexpr const char* output = "ascending_sawtooth.txt";
+        static constexpr const char* name = "ascending_sawtooth_bad";
     };
 
     struct descending_sawtooth:
@@ -253,7 +261,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_sawtooth.txt";
+        static constexpr const char* name = "descending_sawtooth";
     };
 
     struct descending_sawtooth_bad:
@@ -270,7 +278,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_sawtooth.txt";
+        static constexpr const char* name = "descending_sawtooth_bad";
     };
 
     struct alternating:
@@ -281,12 +289,12 @@ namespace dist
             -> void
         {
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = 0 ; i < size ; ++i) {
+            for (long long int i = 0; i < size; ++i) {
                 *out++ = proj((i % 2) ? i : -i);
             }
         }
 
-        static constexpr const char* output = "alternating.txt";
+        static constexpr const char* name = "alternating";
     };
 
     struct reversed_alternating:
@@ -299,12 +307,12 @@ namespace dist
             // Especially interesting for a special case of melsort
 
             auto&& proj = cppsort::utility::as_function(projection);
-            for (long long int i = size ; i > 0 ; --i) {
+            for (long long int i = size; i > 0; --i) {
                 *out++ = proj((i % 2) ? i : -i);
             }
         }
 
-        static constexpr const char* output = "reversed_alternating.txt";
+        static constexpr const char* name = "reversed_alternating";
     };
 
     struct descending_plateau:
@@ -331,42 +339,7 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "descending_plateau.txt";
-    };
-
-    struct inversions:
-        base_distribution<inversions>
-    {
-        // Percentage of chances that an "out-of-place" value
-        // is produced for each position, the goal is to test
-        // Inv-adaptive algorithms
-        double factor;
-
-        constexpr explicit inversions(double factor) noexcept:
-            factor(factor)
-        {}
-
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
-        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
-            -> void
-        {
-            auto&& proj = cppsort::utility::as_function(projection);
-
-            // Generate a percentage of error
-            std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
-            // Generate a random value
-            std::uniform_int_distribution<long long int> value_dis(0, size - 1);
-
-            for (long long int i = 0 ; i < size ; ++i) {
-                if (percent_dis(distributions_prng) < factor) {
-                    *out++ = proj(value_dis(distributions_prng));
-                } else {
-                    *out++ = proj(i);
-                }
-            }
-        }
-
-        static constexpr const char* output = "inversions.txt";
+        static constexpr const char* name = "descending_plateau";
     };
 
     struct vergesort_killer:
@@ -398,8 +371,59 @@ namespace dist
             }
         }
 
-        static constexpr const char* output = "vergesort_killer.txt";
+        static constexpr const char* name = "vergesort_killer";
     };
+
+    ////////////////////////////////////////////////////////////
+    // Distributions: testing measures of presortedness
+
+    struct inv:
+        base_distribution<inv>
+    {
+        // Percentage of chances that an "out-of-place" value
+        // is produced for each position, the goal is to test
+        // Inv-adaptive algorithms
+        double factor;
+
+        constexpr explicit inv(double factor) noexcept:
+            factor(factor)
+        {}
+
+        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
+            -> void
+        {
+            auto&& proj = cppsort::utility::as_function(projection);
+
+            // Generate a percentage of error
+            std::uniform_real_distribution<double> percent_dis(0.0, 1.0);
+            // Generate a random value
+            std::uniform_int_distribution<long long int> value_dis(0, size - 1);
+
+            if (factor <= 0.5) {
+                for (long long int i = 0; i < size; ++i) {
+                    if (percent_dis(distributions_prng) < factor * 2) {
+                        *out++ = proj(value_dis(distributions_prng));
+                    } else {
+                        *out++ = proj(i);
+                    }
+                }
+            } else {
+                for (long long int i = size; i > 0; --i) {
+                    if (percent_dis(distributions_prng) > (factor - 0.5) * 2) {
+                        *out++ = proj(value_dis(distributions_prng));
+                    } else {
+                        *out++ = proj(i);
+                    }
+                }
+            }
+        }
+
+        static constexpr const char* name = "inv";
+    };
+
+    ////////////////////////////////////////////////////////////
+    // Miscellaneous related tools
 
     struct as_long_string:
         cppsort::utility::projection_base

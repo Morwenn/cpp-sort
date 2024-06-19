@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Morwenn
+# Copyright (c) 2021-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MSVC Builds
@@ -35,7 +35,7 @@ jobs:
           build_tools: '-T ClangCL'
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure CMake
         shell: pwsh

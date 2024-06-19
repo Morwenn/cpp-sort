@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2022 Morwenn
+# Copyright (c) 2022-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
@@ -15,7 +15,7 @@ def read_version_number(version_file_path: Path) -> str:
     parts = {}
     with version_file_path.open(encoding='utf-8') as fd:
         for line in fd:
-            if res := re.search("#define CPPSORT_VERSION_(?P<kind>[A-Z]+) (?P<value>\d+)\n", line):
+            if res := re.search(r"#define CPPSORT_VERSION_(?P<kind>[A-Z]+) (?P<value>\d+)\n", line):
                 kind, value = res.groups()
                 parts[kind] = value
     return f"{parts['MAJOR']}.{parts['MINOR']}.{parts['PATCH']}"
@@ -47,7 +47,7 @@ def write_version_h(version_file_path: Path, version: str) -> None:
 
 
 def replace_version_number(paths: list[Path], old_version: str, new_version: str) -> None:
-    copyright_regex = "# Copyright \(c\) (?P<first_year>\d{4})-\d{4} Morwenn"
+    copyright_regex = r"# Copyright \(c\) (?P<first_year>\d{4})-\d{4} Morwenn"
     current_year = datetime.datetime.now().year
 
     with fileinput.FileInput(files=paths, inplace=True) as input:

@@ -541,11 +541,11 @@ using sorter = cppsort::hybrid_adapter<
         low_projections_sorter,
         std::make_index_sequence<5>
     >,
-    cppsort::verge_sorter
+    cppsort::quick_sorter
 >;
 ```
 
-In the example above, the resulting sorter will use our `low_projections_sorter` when given an `std::array` or a fixed-size C array of size less than 5, and fall back to [`verge_sorter`][verge-sorter] when given any other collection or a pair of iterators.
+In the example above, the resulting sorter will use our `low_projections_sorter` when given an `std::array` or a fixed-size C array of size less than 5, and fall back to [`quick_sorter`][quick-sorter] when given any other collection or a pair of iterators.
 
 **Rule 8.1:** a *fixed-size sorter* is allowed but not required to work with fixed arrays of any size.
 
@@ -566,6 +566,7 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [is-projection]: Sorter-traits.md#is_projection-and-is_projection_iterator
   [is-stable]: Sorter-traits.md#is_stable
   [library-nomenclature]: Library-nomenclature.md
+  [quick-sorter]: Sorters.md#quick_sorter
   [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort
   [rebind-iterator-category]: Sorter-traits.md#rebind_iterator_category
   [schwartz-adapter]: Sorter-adapters.md#schwartz_adapter
@@ -593,6 +594,5 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [utility-as-function]: Miscellaneous-utilities.md#as_function
   [utility-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects
-  [verge-sorter]: Sorters.md#verge_sorter
   [wiki-sorter]: Sorters.md#wiki_sorter
   [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md

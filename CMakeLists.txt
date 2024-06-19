@@ -1,11 +1,11 @@
-# Copyright (c) 2015-2023 Morwenn
+# Copyright (c) 2015-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.15.0 LANGUAGES CXX)
+project(cpp-sort VERSION 1.16.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -24,7 +24,7 @@ if (CPPSORT_USE_LIBASSERT)
     include(DownloadProject)
     download_project(PROJ libassert
                      GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-                     GIT_TAG v1.2
+                     GIT_TAG v1.2.2
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})

@@ -292,12 +292,11 @@ Implements a flavour of [QuickMergesort][quick-mergesort].
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | log n       | No          | Random-access |
-| n           | n log n     | n log n     | log² n      | No          | Bidirectional |
-| n           | n log² n    | n log² n    | log² n      | No          | Forward       |
+| n           | n log n     | n log n     | log² n      | No          | Forward       |
 
 QuickMergesort is an algorithm that performs a quicksort-like partition and tries to use mergesort on the bigger partition, using the smaller one as a swap buffer used for the merge operation when possible. The flavour of QuickMergesort used by `quick_merge_sorter` uses a [selection algorithm][selection-algorithm] to split the collection into partitions containing 2/3 and 1/3 of the elements respectively. This allows to use an internal mergesort of the biggest partition (2/3 of the elements) using the other partition (1/3 of the elements) as a swap buffer.
 
-The change in time complexity for forward iterators is due to the partitioning algorithm being O(n log n) instead of O(n). The space complexity is dominated by the stack recursion in the selection algorithms:
+The space complexity is dominated by the stack recursion in the selection algorithms:
 * log n for the random-access version, which uses Andrei Alexandrescu's [*AdaptiveQuickselect*][adaptive-quickselect].
 * log² n for the forward and bidirectional versions, which use the mutually recursive [introselect][introselect] algorithm.
 
@@ -317,8 +316,7 @@ Implements a [quicksort][quicksort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | log² n      | No          | Bidirectional |
-| n           | n log² n    | n log² n    | log² n      | No          | Forward       |
+| n           | n log n     | n log n     | log² n      | No          | Forward       |
 
 Despite the name, this sorter actually implements some flavour of introsort: if quicksort performs more than 2*log(n) steps, it falls back to a [median-of-medians][median-of-medians] pivot selection instead of the usual median-of-9 one. The median-of-medians selection being mutually recursive with an introselect algorithm explains the use of log²n stack memory.
 
@@ -375,9 +373,9 @@ Implements a [smoothsort][smoothsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | 1           | No          | Random-Access |
+| n           | n log n     | n log n     | 1           | No          | Random-access |
 
-While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter`, `pdq_sorter` or `verge_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
+While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter` or `pdq_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
 
 ### `spin_sorter`
 
@@ -389,7 +387,7 @@ Implements a [spinsort][spinsort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | Yes         | Random-Access |
+| n           | n log n     | n log n     | n           | Yes         | Random-access |
 
 *New in version 1.6.0*
 
@@ -419,7 +417,7 @@ Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive so
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-Access |
+| n           | n log n     | n log n     | n           | No          | Random-access |
 
 SplitSort is a [*Rem*-adaptive][probe-rem] sorting algorithm and shares many similarities with drop-merge sort but has the following differences:
 * It only works with random-access iterators.
@@ -585,9 +583,11 @@ This sorter accepts projections, as long as `ska_sorter` can handle the return t
 
 `spread_sorter` implements a [spreadsort][spreadsort].
 
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n*(k/d)     | n*(k/s+d)   | n*(k/d)     | No          | Random-access |
+| Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
+| n           | n √log n    | min(n log n, n*k) | k           | No          | Random-access |
+
+_Note: `k` represents the key length in bits in the in table above._
 
 It comes into three main flavours (available individually if needed):
 

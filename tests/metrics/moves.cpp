@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2023-2024 Morwenn
+ * Copyright (c) 2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <cstddef>
 #include <functional>
 #include <iterator>
-#include <list>
+#include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <cpp-sort/metrics/comparisons.h>
-#include <cpp-sort/sorters/selection_sorter.h>
+#include <cpp-sort/metrics/moves.h>
+#include <cpp-sort/sorters/heap_sorter.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/span.h>
@@ -17,66 +17,59 @@
 
 using wrapper = generic_wrapper<int>;
 
-TEST_CASE( "basic metrics::comparisons tests",
-           "[metrics][selection_sorter]" )
+TEST_CASE( "basic metrics::moves tests",
+           "[metrics][heap_sorter]" )
 {
-    // Selection sort always makes the same number of comparisons
-    // for a given size of arrays, allowing to deterministically
-    // check that number of comparisons
-    cppsort::metrics::comparisons<
-        cppsort::selection_sorter
-    > sorter;
+    cppsort::metrics::moves<cppsort::heap_sorter> sorter;
 
     SECTION( "without projections" )
     {
-        std::list<int> collection;
-        auto distribution = dist::shuffled{};
+        std::vector<int> collection;
+        auto distribution = dist::descending_plateau{};
         distribution(std::back_inserter(collection), 65);
 
         auto res = sorter(collection);
-        CHECK( res == 2080 );
+        CHECK( res == 463 );
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "with projections" )
     {
-        std::list<wrapper> collection;
-        auto distribution = dist::shuffled{};
+        std::vector<wrapper> collection;
+        auto distribution = dist::descending_plateau{};
         distribution(std::back_inserter(collection), 80);
 
         auto res = sorter(collection, &wrapper::value);
-        CHECK( res == 3160 );
+        CHECK( res == 573 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }
 }
 
-TEST_CASE( "metrics::comparisons with span",
-           "[metrics][span][selection_sorter]" )
+TEST_CASE( "metrics::moves with span",
+           "[metrics][span][heap_sorter]" )
 {
-    cppsort::metrics::comparisons<
-        cppsort::selection_sorter
-    > sorter;
+    cppsort::metrics::moves<cppsort::heap_sorter> sorter;
 
     SECTION( "without projections" )
     {
-        std::list<int> collection;
-        auto distribution = dist::shuffled{};
-        distribution(std::back_inserter(collection), 65, 0);
+        std::vector<int> collection;
+        auto distribution = dist::descending_plateau{};
+        distribution(std::back_inserter(collection), 65);
 
         auto res = sorter(make_span(collection));
-        CHECK( res == 2080 );
+        CHECK( res == 463 );
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
     SECTION( "with projections" )
     {
-        std::list<wrapper> collection;
-        auto distribution = dist::shuffled{};
-        distribution(std::back_inserter(collection), 80, 0);
+        std::vector<wrapper> collection;
+        auto distribution = dist::descending_plateau{};
+        distribution(std::back_inserter(collection), 80);
 
         auto res = sorter(make_span(collection), &wrapper::value);
-        CHECK( res == 3160 );
+        CHECK( res == 573 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less<>{}, &wrapper::value) );
     }

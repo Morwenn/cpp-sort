@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -107,7 +108,7 @@ auto time_distribution(std::index_sequence<Ind...>)
     };
 
     // Output the results to their respective files
-    std::ofstream output(Dist::output);
+    std::ofstream output(std::string(Dist::name) + ".txt");
     for (auto&& sort_result: results) {
         output << std::get<0>(sort_result) << ',';
         for (auto&& nb_cycles: std::get<1>(sort_result)) {

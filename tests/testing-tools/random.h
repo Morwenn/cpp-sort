@@ -136,7 +136,7 @@ namespace hasard // Blame POSIX for picking the good name
     //
     // Returns a random integer in the range [low, high].
     // See *Optimal Discrete Uniform Generation from Coin Flips,
-    // and Applications* by Jérémie Lumbroso
+    // and Applications* by JÃ©rÃ©mie Lumbroso
 
     template<typename Integer, typename URBG>
     auto randint(Integer low, Integer high, URBG& generator)

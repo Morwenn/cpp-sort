@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2020-2023 Morwenn
+ * Copyright (c) 2020-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
@@ -14,6 +15,7 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/adapters.h>
+#include <cpp-sort/probes.h>
 #include <cpp-sort/sorters.h>
 #include "../benchmarking-tools/cpu_cycles.h"
 #include "../benchmarking-tools/distributions.h"
@@ -57,12 +59,8 @@ int main(int argc, char* argv[])
         output_directory = argv[1];
     }
 
-    // Always use a steady clock
-    using clock_type = std::conditional_t<
-        std::chrono::high_resolution_clock::is_steady,
-        std::chrono::high_resolution_clock,
-        std::chrono::steady_clock
-    >;
+    // Choose an appropriate clock
+    using clock_type = std::chrono::steady_clock;
 
     // Poor seed, yet enough for our benchmarks
     std::uint_fast32_t seed = std::time(nullptr);
@@ -78,8 +76,10 @@ int main(int argc, char* argv[])
             '-' + safe_file_name(sort.first) + ".csv";
         std::string output_path = output_directory + '/' + output_filename;
         std::ofstream output_file(output_path);
-        output_file << sort.first << '\n';
-        std::cout << sort.first << '\n';
+
+        // Add metadata about the benchmark
+        output_file << sort.first << ",Inv," << size << '\n';
+        std::cout << sort.first << ",Inv," << size << '\n';
 
         // Seed the distribution manually to ensure that all algorithms
         // sort the same collections when there is randomness
@@ -87,10 +87,15 @@ int main(int argc, char* argv[])
 
         for (int idx = 0; idx <= 100; ++idx) {
             double factor = 0.01 * idx;
-            auto distribution = dist::inversions(factor);
+            auto distribution = dist::inv(factor);
 
+            // Compute presortedness
+            collection_t collection;
+            distribution(std::back_inserter(collection), size);
+            auto presortedness = cppsort::probe::inv(collection);
+
+            // Compute the time it took
             std::vector<std::uint64_t> cycles;
-
             auto total_start = clock_type::now();
             auto total_end = clock_type::now();
             while (total_end - total_start < max_run_time && cycles.size() < max_runs_per_size) {
@@ -104,8 +109,8 @@ int main(int argc, char* argv[])
             }
 
             // Compute and display stats & numbers
-            output_file << idx << ",";
-            std::cout << idx << ",";
+            output_file << presortedness << ",";
+            std::cout << presortedness << ",";
             auto it = cycles.begin();
             output_file << *it;
             std::cout << *it;

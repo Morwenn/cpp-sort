@@ -155,13 +155,13 @@ Size | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 **Size** | **17** | **18** | **19** | **20** | **21** | **22** | **23** | **24** | **25** | **26** | **27** | **28** | **29** | **30** | **31** | **32**
 **CEs** | 71 | 77 | 85 | 91 | 99 | 106 | 114 | 120 | 130 | 139 | 147 | 155 | 164 | 172 | 180 | 185
 **Size** | **33** | **34** | **35** | **36** | **37** | **38** | **39** | **40** | **41** | **42** | **43** | **44** | **45** | **46** | **47** | **48**
-**CEs** | 199 | 209 | 220 | 227 | 241 | 250 | 259 | 265 | 282 | 292 | 304 | 311 | 324 | 332 | 340 | 346
+**CEs** | 199 | 209 | 220 | 227 | 240 | 250 | 259 | 265 | 282 | 291 | 303 | 309 | 324 | 332 | 340 | 346
 **Size** | **49** | **50** | **51** | **52** | **53** | **54** | **55** | **56** | **57** | **58** | **59** | **60** | **61** | **62** | **63** | **64**
 **CEs** | 365 | 376 | 387 | 395 | 411 | 421 | 432 | 438 | 454 | 465 | 476 | 483 | 497 | 506 | 515 | 521
 
 Networks 0, 1, 2 and 3 are stable. All other networks are unstable.
 
-One of the main advantages of sorting networks is the fixed number of CEs required to sort a collection: this means that sorting networks are far more resiliant to time and cache attacks since the number of performed comparisons does not depend on the contents of the collection. However, additional care (not provided by the library) is required to ensure that the algorithms always perform the same amount of memory loads and stores. For example, one could create a `constant_time_iterator` with a dedicated `iter_swap` tuned to perform a constant-time compare-exchange operation.
+One of the main advantages of sorting networks is the fixed number of CEs required to sort a collection: this means that sorting networks are far more resilient to time and cache attacks since the number of performed comparisons does not depend on the contents of the collection. However, additional care (not provided by the library) is required to ensure that the algorithms always perform the same amount of memory loads and stores. For example, one could create a `constant_time_iterator` with a dedicated `iter_swap` tuned to perform a constant-time compare-exchange operation.
 
 All specializations of `sorting_network_sorter` provide a `index_pairs()` `static` function template which returns an [`std::array`][std-array] of [`utility::index_pair`][utility-sorting-networks]. Those pairs represent the indices used by the CE operations of the network and can be manipulated and passed to dedicated [sorting network tools][utility-sorting-networks] from the library's utility module. The function is templated on the index/difference type, which must be constructible from `int`.
 
@@ -190,6 +190,9 @@ template<typename DifferenceType=std::ptrdiff_t>
 *Changed in version 1.15.0:* sorting 27 inputs requires 174 CEs instead of 148.
 
 *Changed in version 1.15.0:* sorting 3 inputs is now stable. Specializations 0, 1, 2 and 3 are marked as stable.
+
+*Changed in version 1.16.0:* sorting 37 and 42 inputs respectively require 240 and 291 CEs instead of 241 and 292.
+
 
   [double-insertion-sort]: Original-research.md#double-insertion-sort
   [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits

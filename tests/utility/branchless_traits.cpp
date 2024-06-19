@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -85,7 +85,7 @@ TEST_CASE( "test that some specific projections are branchless",
     struct foobar
     {
         int foo;
-        int bar() { return 0; }
+        auto bar() -> int { return 0; }
     };
 
     STATIC_CHECK( is_probably_branchless_projection_v<identity, std::string> );

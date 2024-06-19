@@ -21,7 +21,11 @@ template<typename Sorter>
 struct cpu_cycles:
     cppsort::utility::adapter_storage<Sorter>,
     cppsort::detail::check_iterator_category<Sorter>,
-    cppsort::detail::check_is_always_stable<Sorter>
+    cppsort::detail::check_is_always_stable<Sorter>,
+    cppsort::detail::sorter_facade_fptr<
+        cpu_cycles<Sorter>,
+        std::is_empty<Sorter>::value
+    >
 {
     using tag_t = cpu_cycles_tag;
     using metric_t = cppsort::utility::metric<unsigned long long, tag_t>;

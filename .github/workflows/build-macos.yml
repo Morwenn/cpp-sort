@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 Morwenn
+# Copyright (c) 2021-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MacOS Builds
@@ -23,13 +23,13 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-12
 
     strategy:
       fail-fast: false
       matrix:
         cxx:
-          - g++-10
+          - g++-11
           - clang++
         config:
           # Release build
@@ -41,7 +41,7 @@ jobs:
             sanitize: undefined
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}

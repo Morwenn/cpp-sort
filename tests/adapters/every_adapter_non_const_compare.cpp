@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2023 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
+#include <list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters.h>

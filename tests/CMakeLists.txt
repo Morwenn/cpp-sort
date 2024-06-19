@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023 Morwenn
+# Copyright (c) 2015-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -27,11 +27,15 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.4.0
+                     GIT_TAG v3.6.0
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
+
+    # Make Catch2::Catch2 a SYSTEM target
+    get_target_property(Catch2_INCLUDE_DIRECTORY Catch2 INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORY}")
 endif()
 include(Catch)
 
@@ -154,6 +158,7 @@ add_executable(main-tests
 
     # Metrics tests
     metrics/comparisons.cpp
+    metrics/moves.cpp
     metrics/projections.cpp
     metrics/running_time.cpp
 
