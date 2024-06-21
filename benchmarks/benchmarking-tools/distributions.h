@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,7 +12,6 @@
 #include <cpp-sort/detail/bitops.h>
 #include <cpp-sort/detail/type_traits.h>
 #include <cpp-sort/utility/as_function.h>
-#include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/functional.h>
 
 // Pseudo-random number generator, used by some distributions
@@ -420,6 +419,53 @@ namespace dist
         }
 
         static constexpr const char* name = "inv";
+    };
+
+    struct runs:
+        base_distribution<runs>
+    {
+        double factor;
+
+        constexpr explicit runs(double factor) noexcept:
+            factor(factor)
+        {}
+
+        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
+            -> void
+        {
+            auto&& proj = cppsort::utility::as_function(projection);
+
+            if (size == 0) return;
+            if (size == 1) {
+                *out++ = proj(1);
+                return;
+            }
+
+            // Runs(X) actually computes the number of step-downs in a collection:
+            // the number of elements smaller than the previous one
+            auto step_downs = static_cast<long long int>(factor * (size - 1));
+            // Average number of elements between two step-downs
+            auto delta = step_downs == 0 ? 0.0 :
+                static_cast<double>(size - 1) / static_cast<double>(step_downs);
+
+            // Generate increasing values, except when encountering a "step-down"
+            // boundary, in which case we decrease by one: this way of generating
+            // runs gives evenly sized runs no matter the factor
+            long long int value = 0;
+            long long int next_step = 1;
+            for (long long int idx = 0; idx < size;) {
+                if (++idx == static_cast<long long int>(next_step * delta)) {
+                    --value;
+                    ++next_step;
+                } else {
+                    ++value;
+                }
+                *out++ = proj(value);
+            }
+        }
+
+        static constexpr const char* name = "runs";
     };
 
     ////////////////////////////////////////////////////////////

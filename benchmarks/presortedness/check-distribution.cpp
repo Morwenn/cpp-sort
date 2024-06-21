@@ -15,10 +15,10 @@
 // Configuration variables
 
 // Distribution
-using dist_t = dist::inv;
+using dist_t = dist::runs;
 
 // Measure of presortedness
-auto mop = cppsort::probe::inv;
+auto mop = cppsort::probe::runs;
 
 // Size of the collections to check
 constexpr std::size_t size = 1'000'000;
