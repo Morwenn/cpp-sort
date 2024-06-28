@@ -252,6 +252,7 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         # which isn't something we want for the main tests
         testing-tools/new_delete.cpp
         testing-tools/random.cpp
+        adapters/every_adapter_heap_memory_exhaustion.cpp
         probes/every_probe_heap_memory_exhaustion.cpp
         sorters/every_sorter_heap_memory_exhaustion.cpp
     )
