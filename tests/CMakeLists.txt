@@ -64,6 +64,8 @@ macro(configure_tests target)
     target_compile_definitions(${target} PRIVATE
         # Somewhat speed up Catch2 compile times
         CATCH_CONFIG_FAST_COMPILE
+        # Let libc++ be stricter about includes
+        _LIBCPP_REMOVE_TRANSITIVE_INCLUDES
         # Enable assertions for more thorough tests
         _GLIBCXX_ASSERTIONS
         _LIBCPP_ENABLE_ASSERTIONS=1
