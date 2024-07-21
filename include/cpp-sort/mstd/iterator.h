@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -49,7 +49,7 @@ namespace cppsort::mstd
             = std::__detail::__primary_traits_iter<Iterator>;
 #elif defined(_LIBCPP_VERSION)
         template<typename Iterator>
-        conept is_iter_traits_primary
+        concept is_iter_traits_primary
             = std::__is_primary_template<std::iterator_traits<Iterator>>::value;
 #elif defined(_MSC_VER)
         template<typename Iterator>
@@ -72,7 +72,7 @@ namespace cppsort::mstd
         using iter_concept = typename std::__detail::__iter_concept_impl<Iterator>::type;
 #elif defined(_LIBCPP_VERSION)
         template<typename Iterator>
-        using iter_concept = typename __iter_concept_cache<Iterator>::type::template _Apply<Iterator>;
+        using iter_concept = typename std::__iter_concept_cache<Iterator>::type::template _Apply<Iterator>;
 #elif defined(_MSC_VER)
         template<typename Iterator>
         using iter_concept = std::_Iter_concept<Iterator>;
