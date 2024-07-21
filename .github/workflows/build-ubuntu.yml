@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023 Morwenn
+# Copyright (c) 2021-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Ubuntu Builds
@@ -23,14 +23,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     strategy:
       fail-fast: false
       matrix:
         cxx:
-          - g++-13
-          - clang++-15
+          - g++-14
+          - clang++-18
         config:
           # Release build
           - build_type: Release
@@ -43,7 +43,7 @@ jobs:
             sanitize: undefined
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}

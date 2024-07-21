@@ -23,13 +23,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-12
+    runs-on: macos-14
 
     strategy:
       fail-fast: false
       matrix:
         cxx:
-          - g++-13
+          - g++-14
+          - clang++
         config:
           # Release build
           - build_type: Release
@@ -40,7 +41,7 @@ jobs:
             sanitize: undefined
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Configure CMake
