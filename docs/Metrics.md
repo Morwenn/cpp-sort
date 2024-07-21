@@ -48,7 +48,7 @@ Returns an instance of `utility::metric<CountType, comparisons_tag>`.
 Computes the number of moves performed by the *adapted sorter*: it takes both the number of calls to the move constructor and to the move assignment operator of an object into account. A swap operation is considered equivalent to three moves.
 
 The tool currently works by creating a vector of a wrapper type which counts its moves, and moving the sorted contents back to the original collection, with the following implications:
-* Sorters that behave differently depending on the iterator type always return the number of moves they perform when sorting random-access iterators.
+* Said vector's iterators mimic the iterator category of the range passed to the *resulting sorter*: as such, behaviours that depend on the iterator _category_ are respected, but behaviours that depends on a specific iterator _type_ are not.
 * Sorters that call operations specific to some types might return a result that is not representative of how they actually perform: this is due to the wrapper not benefiting from the specializations.
 * Projection support is mandatory: `metrics::moves` passes a projection to the sorter in order to convert the wrapper type to its underlying type.
 
