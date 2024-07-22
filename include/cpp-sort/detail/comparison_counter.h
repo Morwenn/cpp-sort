@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_COMPARISON_COUNTER_H_
@@ -55,10 +55,10 @@ namespace cppsort
             cppsort::detail::comparison_counter<Compare, CountType>,
             T
         >:
-            std::conjunction<
-                std::is_arithmetic<CountType>, // Probably a safe enough bet
-                is_probably_branchless_comparison<Compare, T>
-            >
+            // Lie about being branchless if needed: what matters is to get
+            // an accurate count of the number of comparisons performed by
+            // algorithms even when not under analysis
+            is_probably_branchless_comparison<Compare, T>
         {};
     }
 }

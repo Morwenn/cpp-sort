@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_PROJECTIONS_H_
@@ -14,45 +14,61 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
+#include <cpp-sort/utility/as_function.h>
+#include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/metrics_tools.h>
 #include "../detail/checkers.h"
 #include "../detail/iterator_traits.h"
 
+namespace cppsort::metrics::detail
+{
+    template<typename Projection, typename CountType>
+    class projection_counter
+    {
+        public:
+
+            projection_counter(Projection projection, CountType& count):
+                projection(std::move(projection)),
+                count(count)
+            {}
+
+            template<typename T>
+            auto operator()(T&& value)
+                -> decltype(auto)
+            {
+                ++count;
+                auto&& proj = utility::as_function(projection);
+                return proj(std::forward<T>(value));
+            }
+
+            // Accessible member data
+            Projection projection;
+
+        private:
+
+            // Projection functions are generally passed by value,
+            // therefore we need to know where is the original counter
+            // in order to increment it
+            CountType& count;
+    };
+}
+
+namespace cppsort::utility
+{
+    template<typename Projection, typename CountType, typename T>
+    struct is_probably_branchless_projection<
+        cppsort::metrics::detail::projection_counter<Projection, CountType>,
+        T
+    >:
+        // Lie about being branchless if needed: what matters is to get
+        // an accurate count of the number of projections performed by
+        // algorithms even when not under analysis
+        is_probably_branchless_projection<Projection, T>
+    {};
+}
+
 namespace cppsort::metrics
 {
-    namespace detail
-    {
-        template<typename Projection, typename CountType>
-        class projection_counter
-        {
-            public:
-
-                projection_counter(Projection projection, CountType& count):
-                    projection(std::move(projection)),
-                    count(count)
-                {}
-
-                template<typename T>
-                auto operator()(T&& value)
-                    -> decltype(auto)
-                {
-                    ++count;
-                    auto&& proj = utility::as_function(projection);
-                    return proj(std::forward<T>(value));
-                }
-
-                // Accessible member data
-                Projection projection;
-
-            private:
-
-                // Projection functions are generally passed by value,
-                // therefore we need to know where is the original counter
-                // in order to increment it
-                CountType& count;
-        };
-    }
-
     ////////////////////////////////////////////////////////////
     // Tag
 
