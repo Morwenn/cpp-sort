@@ -423,9 +423,11 @@ This sorter accepts projections, as long as `ska_sorter` can handle the return t
 
 `spread_sorter` implements a [spreadsort][spreadsort].
 
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n*(k/d)     | n*(k/s+d)   | n*(k/d)     | No          | Random-access |
+| Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
+| ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
+| n           | n √log n    | min(n log n, n*k) | k           | No          | Random-access |
+
+_Note: `k` represents the key length in bits in the in table above._
 
 It comes into three main flavours (available individually if needed):
 
