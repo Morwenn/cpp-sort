@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
 
@@ -44,7 +44,7 @@ namespace cppsort::detail
         // Same as minmax_element, except that it assumes that the collection
         // contains at least two elements
         CPPSORT_ASSUME(first != last);
-        CPPSORT_ASSUME(std::next(first) != last);
+        CPPSORT_ASSUME(mstd::next(first) != last);
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -89,7 +89,7 @@ namespace cppsort::detail
         if (first == last) {
             return result;
         }
-        auto next = std::next(first);
+        auto next = mstd::next(first);
         if (next == last) {
             result.last = next;
             return result;

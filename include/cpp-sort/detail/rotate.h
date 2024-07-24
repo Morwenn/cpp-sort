@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -32,7 +32,7 @@ namespace cppsort::detail
         -> ForwardIterator
     {
         auto tmp = mstd::iter_move(first);
-        auto lm1 = detail::move(std::next(first), last, first);
+        auto lm1 = detail::move(mstd::next(first), last, first);
         *lm1 = std::move(tmp);
         return lm1;
     }
@@ -41,7 +41,7 @@ namespace cppsort::detail
     auto rotate_right(BidirectionalIterator first, BidirectionalIterator last)
         -> BidirectionalIterator
     {
-        auto lm1 = std::prev(last);
+        auto lm1 = mstd::prev(last);
         auto tmp = mstd::iter_move(lm1);
         auto fp1 = detail::move_backward(first, lm1, last);
         *first = std::move(tmp);
@@ -119,7 +119,7 @@ namespace cppsort::detail
     {
         using value_type = std::iter_value_t<Iterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
-            if (std::next(first) == middle) {
+            if (mstd::next(first) == middle) {
                 return rotate_left(first, last);
             }
         }
@@ -132,10 +132,10 @@ namespace cppsort::detail
     {
         using value_type = std::iter_value_t<Iterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
-            if (std::next(first) == middle) {
+            if (mstd::next(first) == middle) {
                 return rotate_left(first, last);
             }
-            if (std::next(middle) == last) {
+            if (mstd::next(middle) == last) {
                 return rotate_right(first, last);
             }
         }
@@ -148,10 +148,10 @@ namespace cppsort::detail
     {
         using value_type = std::iter_value_t<Iterator>;
         if constexpr (std::is_trivially_move_assignable_v<value_type>) {
-            if (std::next(first) == middle) {
+            if (mstd::next(first) == middle) {
                 return rotate_left(first, last);
             }
-            if (std::next(middle) == last) {
+            if (mstd::next(middle) == last) {
                 return rotate_right(first, last);
             }
             return rotate_gcd(first, middle, last);

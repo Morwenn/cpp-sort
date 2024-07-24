@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BUBBLE_SORT_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/mstd/iterator.h>
-#include <iterator>
 #include "swap_if.h"
 
 namespace cppsort::detail
@@ -33,7 +32,7 @@ namespace cppsort::detail
 
         while (--size) {
             auto current = first;
-            auto next = std::next(current);
+            auto next = mstd::next(current);
             for (mstd::iter_difference_t<ForwardIterator> i = 0; i < size; ++i) {
                 iter_swap_if(current, next, compare, projection);
                 ++next;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_INSERTION_SORT_H_
@@ -76,7 +76,7 @@ namespace cppsort::detail
             auto operator*() const
                 -> reference
             {
-                return *std::next(_it, _size - 1);
+                return *mstd::next(_it, _size - 1);
             }
 
             [[nodiscard]]
@@ -93,7 +93,7 @@ namespace cppsort::detail
                 -> group_iterator&
                 requires mstd::forward_iterator<Iterator>
             {
-                std::advance(_it, _size);
+                mstd::advance(_it, _size);
                 return *this;
             }
 
@@ -101,7 +101,7 @@ namespace cppsort::detail
                 -> group_iterator&
                 requires mstd::bidirectional_iterator<Iterator>
             {
-                std::advance(_it, -_size);
+                mstd::advance(_it, -_size);
                 return *this;
             }
 
@@ -217,7 +217,7 @@ namespace cppsort::detail
             friend auto iter_swap(group_iterator lhs, group_iterator rhs)
                 -> void
             {
-                detail::swap_ranges_inner(lhs.base(), std::next(lhs.base(), lhs.size()), rhs.base());
+                detail::swap_ranges_inner(lhs.base(), mstd::next(lhs.base(), lhs.size()), rhs.base());
             }
 
         private:
@@ -268,9 +268,9 @@ namespace cppsort::detail
         ////////////////////////////////////////////////////////////
         // Group elements by pairs
 
-        auto end = has_stray ? std::prev(last) : last;
+        auto end = has_stray ? mstd::prev(last) : last;
         for (auto it = first ; it != end ; it += 2) {
-            iter_swap_if(it, std::next(it), compare, projection);
+            iter_swap_if(it, mstd::next(it), compare, projection);
         }
 
         ////////////////////////////////////////////////////////////
@@ -304,13 +304,13 @@ namespace cppsort::detail
         // elements of the sequence
         list_t chain(node_pool);
         chain.push_back(first);
-        chain.push_back(std::next(first));
+        chain.push_back(mstd::next(first));
 
         // Upper bounds for the insertion of pend elements
         immovable_vector<typename list_t::iterator> pend((size + 1) / 2 - 1);
 
         for (auto it = first + 2 ; it != end ; it += 2) {
-            auto tmp = chain.insert(chain.end(), std::next(it));
+            auto tmp = chain.insert(chain.end(), mstd::next(it));
             pend.emplace_back(tmp);
         }
 

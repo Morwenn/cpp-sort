@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -18,9 +18,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cstddef>
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "buffered_inplace_merge.h"
 #include "lower_bound.h"
@@ -83,9 +83,9 @@ namespace cppsort::detail
                 // len >= 1, len2 >= 2
                 len21 = len2 / 2;
                 m2 = middle;
-                std::advance(m2, len21);
+                mstd::advance(m2, len21);
                 m1 = upper_bound(first, middle, proj(*m2), compare, projection);
-                len11 = std::distance(first, m1);
+                len11 = mstd::distance(first, m1);
             } else {
                 if (len1 == 1) {
                     // len1 >= len2 && len2 > 0, therefore len2 == 1
@@ -96,9 +96,9 @@ namespace cppsort::detail
                 // len1 >= 2, len2 >= 1
                 len11 = len1 / 2;
                 m1 = first;
-                std::advance(m1, len11);
+                mstd::advance(m1, len11);
                 m2 = lower_bound(middle, last, proj(*m1), compare, projection);
-                len21 = std::distance(middle, m2);
+                len21 = mstd::distance(middle, m2);
             }
             difference_type len12 = len1 - len11;  // distance(m1, middle)
             difference_type len22 = len2 - len21;  // distance(m2, last)

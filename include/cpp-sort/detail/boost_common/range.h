@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -19,10 +19,6 @@
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 
-#include <functional>
-#include <iterator>
-#include <memory>
-#include <vector>
 #include <cpp-sort/mstd/iterator.h>
 #include "util/merge.h"
 #include "../config.h"
@@ -120,7 +116,7 @@ namespace cppsort::detail::boost_common
         auto back() const
             -> RandomAccessIterator
         {
-            return std::prev(last);
+            return mstd::prev(last);
         }
     };
 

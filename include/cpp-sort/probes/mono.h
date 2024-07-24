@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MONO_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -35,12 +34,12 @@ namespace cppsort::probe
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                if (first == last || std::next(first) == last) {
+                if (first == last || mstd::next(first) == last) {
                     return 0;
                 }
 
                 auto current = first;
-                auto next = std::next(first);
+                auto next = mstd::next(first);
 
                 // The result of mono is the number of ascending runs founds +
                 // the number of descending runs founds minus one (that minus

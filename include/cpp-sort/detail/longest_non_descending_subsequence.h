@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LONGEST_NON_DESCENDING_SUBSEQUENCE_H_
@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
@@ -46,7 +45,7 @@ namespace cppsort::detail
         if (first == last) {
             return { 0, 0 };
         }
-        if (std::next(first) == last) {
+        if (mstd::next(first) == last) {
             return { 1, 1 };
         }
 

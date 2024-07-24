@@ -19,11 +19,8 @@
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_
 
-#include <algorithm>
-#include <functional>
-#include <iterator>
-#include <memory>
-#include <type_traits>
+#include <cstddef>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "../../buffered_inplace_merge.h"
 #include "../../config.h"
@@ -63,12 +60,12 @@ namespace cppsort::detail::boost_common::util
             if (buf1 == end_buf1) return cppsort::detail::move(buf2, end_buf2, buf_out);
             if (buf2 == end_buf2) return cppsort::detail::move(buf1, end_buf1, buf_out);
 
-            if (not comp(proj(*buf2), proj(*std::prev(end_buf1)))) {
+            if (not comp(proj(*buf2), proj(*mstd::prev(end_buf1)))) {
                 auto mid = cppsort::detail::move(buf1, end_buf1, buf_out);
                 return cppsort::detail::move(buf2, end_buf2, mid);
             }
 
-            if (comp(proj(*std::prev(end_buf2)), proj(*buf1))) {
+            if (comp(proj(*mstd::prev(end_buf2)), proj(*buf1))) {
                 auto mid = cppsort::detail::move(buf2, end_buf2, buf_out);
                 return cppsort::detail::move(buf1, end_buf1, mid);
             }
@@ -113,12 +110,12 @@ namespace cppsort::detail::boost_common::util
             if (buf1 == end_buf1) return end_buf2;
             if (buf2 == end_buf2) return cppsort::detail::move(buf1, end_buf1, buf_out);
 
-            if (not comp(proj(*buf2), proj(*std::prev(end_buf1)))) {
+            if (not comp(proj(*buf2), proj(*mstd::prev(end_buf1)))) {
                 cppsort::detail::move(buf1, end_buf1, buf_out);
                 return end_buf2;
             }
 
-            if (comp(proj(*std::prev(end_buf2)), proj(*buf1))) {
+            if (comp(proj(*mstd::prev(end_buf2)), proj(*buf1))) {
                 auto mid = cppsort::detail::move(buf2, end_buf2, buf_out);
                 return cppsort::detail::move(buf1, end_buf1, mid);
             }

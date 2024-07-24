@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 Morwenn
+ * Copyright (c) 2019-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SPLIT_SORT_H_
@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -36,8 +35,8 @@ namespace cppsort::detail
         if (first == last) {
             return first;
         }
-        if (std::next(first) == last) {
-            return std::next(first);
+        if (auto second = mstd::next(first); second == last) {
+            return second;
         }
 
         auto&& comp = utility::as_function(compare);
@@ -45,7 +44,7 @@ namespace cppsort::detail
 
         // Read and reorganize elements until middle is found
         auto middle = first; // Last element of the LNDS
-        auto reader_it = std::next(first);
+        auto reader_it = mstd::next(first);
         for (; reader_it != last; ++reader_it) {
             if (comp(proj(*reader_it), proj(*middle))) {
                 // We remove the top of the subsequence as well as the new element

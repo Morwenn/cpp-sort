@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -19,10 +19,9 @@
 #ifndef CPPSORT_DETAIL_SPINSORT_H_
 #define CPPSORT_DETAIL_SPINSORT_H_
 
-#include <cstddef>
+#include <iterator>
 #include <memory>
 #include <new>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/not_fn.h>
 #include <cpp-sort/mstd/iterator.h>
@@ -155,7 +154,7 @@ namespace cppsort::detail
             }
 
             // check if reverse sorted
-            if (it != std::next(rng_data.first)) {
+            if (it != mstd::next(rng_data.first)) {
                 return false;
             }
 

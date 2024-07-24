@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MERGE_SORT_H_
@@ -10,12 +10,12 @@
 ////////////////////////////////////////////////////////////
 #include <forward_list>
 #include <functional>
-#include <iterator>
 #include <list>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
@@ -33,7 +33,7 @@ namespace cppsort
 
             // Extract left part
             auto first = collection.begin();
-            auto middle = std::next(first, collection.size() / 2);
+            auto middle = mstd::next(first, collection.size() / 2);
             std::list<Args...> left(collection.get_allocator());
             left.splice(left.begin(), collection, first, middle);
 
@@ -54,7 +54,7 @@ namespace cppsort
 
             // Extract left part
             auto first = collection.before_begin();
-            auto middle = std::next(first, size / 2 + 1);
+            auto middle = mstd::next(first, size / 2 + 1);
             std::forward_list<Args...> left(collection.get_allocator());
             left.splice_after(left.before_begin(), collection, first, middle);
 

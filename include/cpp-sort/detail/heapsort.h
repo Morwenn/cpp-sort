@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -17,7 +17,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -102,7 +101,7 @@ namespace cppsort::detail
             child_i += difference_type(child + 1);
             child = 2 * child + 1;
 
-            if ((child + 1) < len && comp(proj(*child_i), proj(*std::next(child_i)))) {
+            if ((child + 1) < len && comp(proj(*child_i), proj(*mstd::next(child_i)))) {
                 // right-child exists and is greater than left-child
                 ++child_i;
                 ++child;

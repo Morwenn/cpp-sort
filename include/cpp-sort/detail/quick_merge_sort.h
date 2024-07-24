@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -98,7 +97,7 @@ namespace cppsort::detail
         // in all, ensuring that the left partition is smaller allows to use the algorithm
         // with forward iterators
         auto size_left = size / 2;
-        auto middle = std::next(first, size_left);
+        auto middle = mstd::next(first, size_left);
 
         // Recursively mergesort the to partitions
         internal_mergesort(first, middle, size_left, buffer, compare, projection);

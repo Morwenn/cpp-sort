@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Copyright (c) 2015-2023 Morwenn.
+ * Copyright (c) 2015-2024 Morwenn.
  * Copyright (c) 2021 Igor Kushnir <igorkuo@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -35,10 +35,8 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <cstddef>
-#include <iterator>
 #include <memory>
 #include <new>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
@@ -152,7 +150,7 @@ namespace cppsort::detail
 
                 iterator const pos = upper_bound(lo, start, proj(pivot), compare, projection);
                 for (iterator p = start; p > pos; --p) {
-                    *p = mstd::iter_move(std::prev(p));
+                    *p = mstd::iter_move(mstd::prev(p));
                 }
                 *pos = std::move(pivot);
             }
@@ -166,7 +164,7 @@ namespace cppsort::detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            iterator runHi = std::next(lo);
+            iterator runHi = mstd::next(lo);
             if (runHi == hi) {
                 return 1;
             }
@@ -174,12 +172,12 @@ namespace cppsort::detail
             if (comp(proj(*runHi), proj(*lo))) { // descending
                 do {
                     ++runHi;
-                } while (runHi < hi && comp(proj(*runHi), proj(*std::prev(runHi))));
+                } while (runHi < hi && comp(proj(*runHi), proj(*mstd::prev(runHi))));
                 detail::reverse(lo, runHi);
             } else { // ascending
                 do {
                     ++runHi;
-                } while (runHi < hi && not comp(proj(*runHi), proj(*std::prev(runHi))));
+                } while (runHi < hi && not comp(proj(*runHi), proj(*mstd::prev(runHi))));
             }
 
             return runHi - lo;
@@ -671,7 +669,8 @@ namespace cppsort::detail
                         break;
                     }
 
-                    count2 = len2 - gallopLeft(proj(*std::prev(cursor1)), buffer.get(), len2, len2 - 1, compare, projection);
+                    count2 = len2 - gallopLeft(proj(*mstd::prev(cursor1)), buffer.get(),
+                                               len2, len2 - 1, compare, projection);
                     if (count2 != 0) {
                         dest -= count2;
                         cursor2 -= count2;

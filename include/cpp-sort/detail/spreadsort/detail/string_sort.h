@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -25,9 +25,7 @@ Phil Endecott and Frank Gennari
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
-#include <iterator>
 #include <memory>
-#include <type_traits>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -165,7 +163,7 @@ namespace cppsort::detail::spreadsort::detail
         if (++first == last)
           return;
       }
-      auto finish = std::prev(last);
+      auto finish = mstd::prev(last);
       //Getting the last non-empty
       for (;proj(*finish).size() <= char_offset; --finish);
       ++finish;

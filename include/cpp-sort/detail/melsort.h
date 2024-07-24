@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MELSORT_H_
@@ -8,8 +8,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
 #include <cmath>
-#include <iterator>
+#include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/comparators/flip.h>
@@ -77,8 +78,8 @@ namespace cppsort::detail
         // of the collection instead of adjacent ones
         while (lists.size() > 2) {
             if (lists.size() % 2 != 0) {
-                auto last_it = std::prev(lists.end());
-                auto last_1_it = std::prev(last_it);
+                auto last_it = mstd::prev(lists.end());
+                auto last_1_it = mstd::prev(last_it);
                 last_1_it->merge(*last_it, compare, projection);
                 lists.pop_back();
             }
@@ -125,7 +126,7 @@ namespace cppsort::detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        if (first == last || std::next(first) == last) {
+        if (first == last || mstd::next(first) == last) {
             return;
         }
 
@@ -142,7 +143,7 @@ namespace cppsort::detail
         ////////////////////////////////////////////////////////////
         // Create encroaching lists
 
-        for (auto it = std::next(first); it != last; ++it) {
+        for (auto it = mstd::next(first); it != last; ++it) {
             auto&& value = proj(*it);
 
             // The heads of the lists form an ascending collection while the heads
@@ -161,14 +162,14 @@ namespace cppsort::detail
             if (not comp(value, proj(last_list.back()))) {
                 // Element belongs to the tails (bigger elements)
                 auto insertion_point = detail::lower_bound(
-                    lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
+                    lists.begin(), mstd::prev(lists.end()), value, cppsort::flip(compare),
                     [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
                 );
                 insertion_point->push_back(mstd::iter_move(it));
             } else if (not comp(proj(last_list.front()), value)) {
                 // Element belongs to the heads (smaller elements)
                 auto insertion_point = detail::lower_bound(
-                    lists.begin(), std::prev(lists.end()), value, compare,
+                    lists.begin(), mstd::prev(lists.end()), value, compare,
                     [&proj](auto& list) -> decltype(auto) { return proj(list.front()); }
                 );
                 insertion_point->push_front(mstd::iter_move(it));

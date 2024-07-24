@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -76,9 +76,9 @@ namespace cppsort::detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            for (auto cur = std::next(begin); cur != end; ++cur) {
+            for (auto cur = mstd::next(begin); cur != end; ++cur) {
                 auto sift = cur;
-                auto sift_1 = std::prev(cur);
+                auto sift_1 = mstd::prev(cur);
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
@@ -109,9 +109,9 @@ namespace cppsort::detail
             auto&& proj = utility::as_function(projection);
 
             mstd::iter_difference_t<RandomAccessIterator> limit = 0;
-            for (auto cur = std::next(begin); cur != end; ++cur) {
+            for (auto cur = mstd::next(begin); cur != end; ++cur) {
                 auto sift = cur;
-                auto sift_1 = std::prev(cur);
+                auto sift_1 = mstd::prev(cur);
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
+#include <cstddef>
 #include <memory>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "buffered_inplace_merge.h"
 #include "iterator_traits.h"
@@ -57,10 +58,10 @@ namespace cppsort::detail
 
         f0_0 = std::move(f0);
         n0_0 = n0 / 2;
-        f0_1 = std::next(f0_0, n0_0);
+        f0_1 = mstd::next(f0_0, n0_0);
         f1_1 = lower_bound_n(f1, n1, proj(*f0_1), std::move(compare), std::move(projection));
         f1_0 = detail::rotate(f0_1, std::move(f1), f1_1);
-        n0_1 = std::distance(f0_1, f1_0);
+        n0_1 = mstd::distance(f0_1, f1_0);
         ++f1_0;
         n1_0 = n0 - n0_0 - 1;
         n1_1 = n1 - n0_1;
@@ -80,11 +81,11 @@ namespace cppsort::detail
 
         f0_0 = f0;
         n0_1 = n1 / 2;
-        f1_1 = std::next(f1, n0_1);
+        f1_1 = mstd::next(f1, n0_1);
         f0_1 = upper_bound_n(f0, n0, proj(*f1_1), std::move(compare), std::move(projection));
         ++f1_1;
         f1_0 = detail::rotate(f0_1, std::move(f1), f1_1);
-        n0_0 = std::distance(f0_0, f0_1);
+        n0_0 = mstd::distance(f0_0, f0_1);
         n1_0 = n0 - n0_0;
         n1_1 = n1 - n0_1 - 1;
     }
@@ -115,7 +116,7 @@ namespace cppsort::detail
             auto buff_ptr = uninitialized_move(f0, f1, buffer, d);
 
             half_inplace_merge(
-                buffer, buff_ptr, f1, std::next(f1, n1), f0,
+                buffer, buff_ptr, f1, mstd::next(f1, n1), f0,
                 n0, std::move(compare), std::move(projection)
             );
             return;

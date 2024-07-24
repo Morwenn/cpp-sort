@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MEL_SORT_H_
@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <forward_list>
 #include <functional>
-#include <iterator>
 #include <list>
 #include <type_traits>
 #include <utility>
@@ -18,6 +17,7 @@
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -52,14 +52,14 @@ namespace cppsort
                 if (not comp(value, proj(last_list.back()))) {
                     // Element belongs to the tails (bigger elements)
                     auto insertion_point = detail::lower_bound(
-                        lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
+                        lists.begin(), mstd::prev(lists.end()), value, cppsort::flip(compare),
                         [&proj](auto& list) -> decltype(auto) { return proj(list.back()); }
                     );
                     insertion_point->splice(insertion_point->end(), collection, collection.begin());
                 } else if (not comp(proj(last_list.front()), value)) {
                     // Element belongs to the heads (smaller elements)
                     auto insertion_point = detail::lower_bound(
-                        lists.begin(), std::prev(lists.end()), value, compare,
+                        lists.begin(), mstd::prev(lists.end()), value, compare,
                         [&proj](auto& list) -> decltype(auto) { return proj(list.front()); }
                     );
                     insertion_point->splice(insertion_point->begin(), collection, collection.begin());
@@ -76,8 +76,8 @@ namespace cppsort
 
             while (lists.size() > 1) {
                 if (lists.size() % 2 != 0) {
-                    auto last_it = std::prev(lists.end());
-                    auto last_1_it = std::prev(last_it);
+                    auto last_it = mstd::prev(lists.end());
+                    auto last_1_it = mstd::prev(last_it);
                     last_1_it->merge(*last_it, projection_compare(comp, proj));
                     lists.pop_back();
                 }
@@ -105,7 +105,8 @@ namespace cppsort
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            if (collection.begin() == collection.end() || std::next(collection.begin()) == collection.end()) {
+            if (collection.begin() == collection.end() ||
+                mstd::next(collection.begin()) == collection.end()) {
                 return;
             }
 
@@ -139,16 +140,16 @@ namespace cppsort
                 if (not comp(value, proj(*last_list.last))) {
                     // Element belongs to the tails (bigger elements)
                     auto insertion_point = detail::lower_bound(
-                        lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
+                        lists.begin(), mstd::prev(lists.end()), value, cppsort::flip(compare),
                         [&proj](auto& list) -> decltype(auto) { return proj(*list.last); }
                     );
                     insertion_point->list.splice_after(insertion_point->last, collection,
                                                        collection.before_begin());
-                    insertion_point->last = std::next(insertion_point->last);
+                    insertion_point->last = mstd::next(insertion_point->last);
                 } else if (not comp(proj(last_list.list.front()), value)) {
                     // Element belongs to the heads (smaller elements)
                     auto insertion_point = detail::lower_bound(
-                        lists.begin(), std::prev(lists.end()), value, compare,
+                        lists.begin(), mstd::prev(lists.end()), value, compare,
                         [&proj](auto& list) -> decltype(auto) { return proj(list.list.front()); }
                     );
                     insertion_point->list.splice_after(insertion_point->list.before_begin(),
@@ -168,8 +169,8 @@ namespace cppsort
 
             while (lists.size() > 1) {
                 if (lists.size() % 2 != 0) {
-                    auto last_it = std::prev(lists.end());
-                    auto last_1_it = std::prev(last_it);
+                    auto last_it = mstd::prev(lists.end());
+                    auto last_1_it = mstd::prev(last_it);
                     last_1_it->list.merge(last_it->list, projection_compare(comp, proj));
                     lists.pop_back();
                 }

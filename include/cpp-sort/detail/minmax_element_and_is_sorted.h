@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MINMAX_ELEMENT_AND_IS_SORTED_H_
@@ -9,7 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "minmax_element.h"
 
@@ -42,7 +42,7 @@ namespace cppsort::detail
         if (first == last) {
             return result;
         }
-        auto next = std::next(first);
+        auto next = mstd::next(first);
         if (next == last) {
             result.last = next;
             return result;

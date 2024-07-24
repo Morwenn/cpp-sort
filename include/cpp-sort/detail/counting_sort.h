@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_COUNTING_SORT_H_
@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
-#include <iterator>
 #include <cpp-sort/mstd/iterator.h>
 #include "immovable_vector.h"
 #include "minmax_element_and_is_sorted.h"
@@ -73,7 +72,7 @@ namespace cppsort::detail
         }
 
         for (auto rit = counts.end(); rit != counts.begin(); --rit) {
-            auto count = *std::prev(rit);
+            auto count = *mstd::prev(rit);
             first = std::fill_n(first, count, max--);
         }
 

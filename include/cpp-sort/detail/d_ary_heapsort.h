@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 // boost heap: d-ary heap as container adaptor
@@ -16,7 +16,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/mstd/iterator.h>
@@ -111,7 +110,7 @@ namespace cppsort::detail
                                    Compare compare, Projection projection)
         -> void
     {
-        siftup<D>(first, std::prev(last), std::move(compare), std::move(projection));
+        siftup<D>(first, mstd::prev(last), std::move(compare), std::move(projection));
     }
 
     template<int D, typename RandomAccessIterator, typename Compare, typename Projection>
@@ -132,7 +131,7 @@ namespace cppsort::detail
     {
         if (first == last) return;
 
-        for (auto it = std::next(first); it != last; ++it) {
+        for (auto it = mstd::next(first); it != last; ++it) {
             push_d_ary_heap<D>(first, it, compare, projection);
         }
         // Take the last element into consideration

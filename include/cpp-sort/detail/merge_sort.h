@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_SORT_H_
@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -41,7 +40,7 @@ namespace cppsort::detail
 
         // Divide the range into two partitions
         auto size_left = size / 2;
-        auto middle = std::next(first, size_left);
+        auto middle = mstd::next(first, size_left);
 
         // Recursively sort the partitions
         buffer = std::move(merge_sort_impl(
@@ -96,7 +95,7 @@ namespace cppsort::detail
 
         // Divide the range into two partitions
         auto size_left = size / 2;
-        auto middle = std::next(first, size_left);
+        auto middle = mstd::next(first, size_left);
 
         // Recursively sort the partitions
         buffer = std::move(merge_sort_impl(

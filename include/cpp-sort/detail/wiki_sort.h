@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -16,7 +16,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
-#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
@@ -74,7 +73,7 @@ namespace cppsort::detail
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = first + skip ; comp(proj(*std::prev(index)), value_proj) ; index += skip) {
+        for (index = first + skip ; comp(proj(*mstd::prev(index)), value_proj) ; index += skip) {
             if (index >= last - skip) {
                 return lower_bound(index, last, value_proj,
                                    std::move(compare), std::move(projection));
@@ -101,7 +100,7 @@ namespace cppsort::detail
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = first + skip ; not comp(value_proj, proj(*std::prev(index))) ; index += skip) {
+        for (index = first + skip ; not comp(value_proj, proj(*mstd::prev(index))) ; index += skip) {
             if (index >= last - skip) {
                 return upper_bound(index, last, value_proj,
                                    std::move(compare), std::move(projection));
@@ -128,7 +127,7 @@ namespace cppsort::detail
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = last - skip ; index > first && not comp(proj(*std::prev(index)), value_proj) ; index -= skip) {
+        for (index = last - skip ; index > first && not comp(proj(*mstd::prev(index)), value_proj) ; index -= skip) {
             if (index < first + skip) {
                 return lower_bound(first, index, value_proj,
                                    std::move(compare), std::move(projection));
@@ -154,7 +153,7 @@ namespace cppsort::detail
         difference_type skip = std::max<difference_type>(size / unique, 1);
 
         RandomAccessIterator index;
-        for (index = last - skip ; index > first && comp(value_proj, proj(*std::prev(index))) ; index -= skip) {
+        for (index = last - skip ; index > first && comp(value_proj, proj(*mstd::prev(index))) ; index -= skip) {
             if (index < first + skip) {
                 return upper_bound(first, index, value_proj,
                                    std::move(compare), std::move(projection));
@@ -417,18 +416,18 @@ namespace cppsort::detail
                             auto A2 = iterator.nextRange(first);
                             auto B2 = iterator.nextRange(first);
 
-                            if (comp(proj(*std::prev(B1.end)), proj(*A1.start))) {
+                            if (comp(proj(*mstd::prev(B1.end)), proj(*A1.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
                                 detail::move(A1.start, A1.end, cache_begin + B1.length());
                                 detail::move(B1.start, B1.end, cache_begin);
-                            } else if (comp(proj(*B1.start), proj(*std::prev(A1.end)))) {
+                            } else if (comp(proj(*B1.start), proj(*mstd::prev(A1.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
                                 merge_move(A1.start, A1.end, B1.start, B1.end, cache_begin,
                                            compare, projection, projection);
                             } else {
                                 // if A1, B1, A2, and B2 are all in order, skip doing anything else
-                                if (not comp(proj(*B2.start), proj(*std::prev(A2.end))) &&
-                                    not comp(proj(*A2.start), proj(*std::prev(B1.end)))) continue;
+                                if (not comp(proj(*B2.start), proj(*mstd::prev(A2.end))) &&
+                                    not comp(proj(*A2.start), proj(*mstd::prev(B1.end)))) continue;
 
                                 // move A1 and B1 into the cache in the same order
                                 detail::move(A1.start, B1.end, cache_begin);
@@ -436,11 +435,11 @@ namespace cppsort::detail
                             A1 = { A1.start, B1.end };
 
                             // merge A2 and B2 into the cache
-                            if (comp(proj(*std::prev(B2.end)), proj(*A2.start))) {
+                            if (comp(proj(*mstd::prev(B2.end)), proj(*A2.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the cache
                                 detail::move(A2.start, A2.end, cache_begin + (A1.length() + B2.length()));
                                 detail::move(B2.start, B2.end, cache_begin + A1.length());
-                            } else if (comp(proj(*B2.start), proj(*std::prev(A2.end)))) {
+                            } else if (comp(proj(*B2.start), proj(*mstd::prev(A2.end)))) {
                                 // these two ranges weren't already in order, so merge them into the cache
                                 merge_move(A2.start, A2.end, B2.start, B2.end, cache_begin + A1.length(),
                                            compare, projection, projection);
@@ -457,11 +456,11 @@ namespace cppsort::detail
                                 cache_begin + (A1.length() + A2.length())
                             };
 
-                            if (comp(proj(*std::prev(B3.end)), proj(*A3.start))) {
+                            if (comp(proj(*mstd::prev(B3.end)), proj(*A3.start))) {
                                 // the two ranges are in reverse order, so move them in reverse order into the array
                                 detail::move(A3.start, A3.end, A1.start + A2.length());
                                 detail::move(B3.start, B3.end, A1.start);
-                            } else if (comp(proj(*B3.start), proj(*std::prev(A3.end)))) {
+                            } else if (comp(proj(*B3.start), proj(*mstd::prev(A3.end)))) {
                                 // these two ranges weren't already in order, so merge them back into the array
                                 merge_move(A3.start, A3.end, B3.start, B3.end, A1.start,
                                            compare, projection, projection);
@@ -481,10 +480,10 @@ namespace cppsort::detail
                             auto A = iterator.nextRange(first);
                             auto B = iterator.nextRange(first);
 
-                            if (comp(proj(*std::prev(B.end)), proj(*A.start))) {
+                            if (comp(proj(*mstd::prev(B.end)), proj(*A.start))) {
                                 // the two ranges are in reverse order, so a simple rotation should fix it
                                 detail::rotate(A.start, A.end, B.end);
-                            } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
+                            } else if (comp(proj(*B.start), proj(*mstd::prev(A.end)))) {
                                 // these two ranges weren't already in order, so we need to merge them
                                 buffered_inplace_merge(A.start, A.end, B.end, compare, projection,
                                                        A.length(), B.length(), cache_begin);
@@ -560,7 +559,7 @@ namespace cppsort::detail
                         // check A for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the start of A
                         for (last = A.start, count = 1; count < find ; last = index, (void) ++count) {
-                            index = FindLastForward(std::next(last), A.end, *last, compare, projection, find - count);
+                            index = FindLastForward(mstd::next(last), A.end, *last, compare, projection, find - count);
                             if (index == A.end) break;
                             CPPSORT_ASSERT(index < A.end);
                         }
@@ -603,7 +602,7 @@ namespace cppsort::detail
 
                         // check B for the number of unique values we need to fill an internal buffer
                         // these values will be pulled out to the end of B
-                        for (last = std::prev(B.end), count = 1; count < find; last = std::prev(index), (void) ++count) {
+                        for (last = mstd::prev(B.end), count = 1; count < find; last = mstd::prev(index), (void) ++count) {
                             index = FindFirstBackward(B.start, last, *last, compare, projection, find - count);
                             if (index == B.start) break;
                             CPPSORT_ASSERT(index > B.start);
@@ -661,23 +660,23 @@ namespace cppsort::detail
                             index = pull[pull_index].from;
                             for (count = 1; count < length; ++count) {
                                 index = FindFirstBackward(pull[pull_index].to, pull[pull_index].from - (count - 1),
-                                                          *std::prev(index), compare, projection, length - count);
+                                                          *mstd::prev(index), compare, projection, length - count);
                                 Range<RandomAccessIterator> range = {
-                                    std::next(index),
-                                    std::next(pull[pull_index].from)
+                                    mstd::next(index),
+                                    mstd::next(pull[pull_index].from)
                                 };
                                 detail::rotate(range.start, range.end - count, range.end);
                                 pull[pull_index].from = index + count;
                             }
                         } else if (pull[pull_index].to > pull[pull_index].from) {
                             // we're pulling values out to the right, which means the end of a B subarray
-                            index = std::next(pull[pull_index].from);
+                            index = mstd::next(pull[pull_index].from);
                             for (count = 1; count < length; ++count) {
                                 index = FindLastForward(index, pull[pull_index].to, *index,
                                                         compare, projection, length - count);
-                                Range<RandomAccessIterator> range = { pull[pull_index].from, std::prev(index) };
+                                Range<RandomAccessIterator> range = { pull[pull_index].from, mstd::prev(index) };
                                 detail::rotate(range.start, range.start + count, range.end);
-                                pull[pull_index].from = std::prev(index - count);
+                                pull[pull_index].from = mstd::prev(index - count);
                             }
                         }
                     }
@@ -721,10 +720,10 @@ namespace cppsort::detail
                             }
                         }
 
-                        if (comp(proj(*std::prev(B.end)), proj(*A.start))) {
+                        if (comp(proj(*mstd::prev(B.end)), proj(*A.start))) {
                             // the two ranges are in reverse order, so a simple rotation should fix it
                             detail::rotate(A.start, A.end, B.end);
-                        } else if (comp(proj(*B.start), proj(*std::prev(A.end)))) {
+                        } else if (comp(proj(*B.start), proj(*mstd::prev(A.end)))) {
                             // these two ranges weren't already in order, so we'll need to merge them!
 
                             // break the remainder of A into blocks. firstA is the uneven-sized first A block
@@ -757,7 +756,7 @@ namespace cppsort::detail
                                 while (true) {
                                     // if there's a previous B block and the first value of the minimum A block is <= the last value of the previous B block,
                                     // then drop that minimum A block behind. or if there are no B blocks left then keep dropping the remaining A blocks.
-                                    if ((lastB.length() > 0 && not comp(proj(*std::prev(lastB.end)), proj(*indexA))) ||
+                                    if ((lastB.length() > 0 && not comp(proj(*mstd::prev(lastB.end)), proj(*indexA))) ||
                                         blockB.length() == 0) {
                                         // figure out where to split the previous B block, and rotate it at the split
                                         RandomAccessIterator B_split = lower_bound(lastB.start, lastB.end, proj(*indexA),
@@ -889,7 +888,7 @@ namespace cppsort::detail
                             };
                             while (buffer.length() > 0) {
                                 index = FindLastBackward(pull[pull_index].range.start, buffer.start,
-                                                         *std::prev(buffer.end), compare, projection, unique);
+                                                         *mstd::prev(buffer.end), compare, projection, unique);
                                 difference_type amount = buffer.start - index;
                                 detail::rotate(index, index + amount, buffer.end);
                                 buffer.start -= amount;

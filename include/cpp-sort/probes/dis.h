@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_DIS_H_
@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <algorithm>
 #include <functional>
-#include <iterator>
 #include <new>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
@@ -39,7 +38,7 @@ namespace cppsort::probe
                 auto p = res;
                 auto pth = res_it;
                 p += size / 2;
-                std::advance(pth, size / 2);
+                mstd::advance(pth, size / 2);
                 if (cppsort::detail::is_p_sorted(first, last, pth, compare, projection)) {
                     size /= 2;
                 } else {
@@ -71,7 +70,7 @@ namespace cppsort::probe
             // Algorithm LR: cumulative max from left to right
             cppsort::detail::immovable_vector<BidirectionalIterator> lr_cummax(size);
             lr_cummax.emplace_back(first);
-            for (auto it = std::next(first) ; it != last ; ++it) {
+            for (auto it = mstd::next(first) ; it != last ; ++it) {
                 if (comp(proj(*lr_cummax.back()), proj(*it))) {
                     lr_cummax.emplace_back(it);
                 } else {
@@ -84,7 +83,7 @@ namespace cppsort::probe
             // - DM: max distance of an inversion
             difference_type res = 0;
             difference_type i = size;
-            auto rl_it = std::prev(last); // Iterator to the current RL element
+            auto rl_it = mstd::prev(last); // Iterator to the current RL element
             auto rl_min_it = rl_it; // Iterator to the current minimum of RL
             for (auto j = i ; j > 0 ; --j) {
                 while (j <= i && not comp(proj(*lr_cummax[j - 1]), proj(*rl_min_it))

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_UPPER_BOUND_H_
@@ -8,9 +8,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/comparators/not_fn.h>
 #include "lower_bound.h"
@@ -38,7 +38,7 @@ namespace cppsort::detail
         -> ForwardIterator
     {
         return lower_bound_n(
-            first, std::distance(first, last),
+            first, mstd::distance(first, last),
             std::forward<T>(value),
             cppsort::not_fn(cppsort::flip(std::move(compare))),
             std::move(projection)

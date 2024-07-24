@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_LOW_MOVES_SORTER_H_
@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <functional>
-#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
@@ -46,7 +45,7 @@ namespace cppsort
                 // There are specializations for N < 5, so unchecked_minmax_element
                 // will always be passed at least 2 elements
                 auto [min, max, last] = unchecked_minmax_element(first, sentinel, compare, projection);
-                auto last_1 = std::prev(last);
+                auto last_1 = mstd::prev(last);
 
                 if (max == first && min == last_1) {
                     if (min == max) {

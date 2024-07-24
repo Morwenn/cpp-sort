@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <list>
 #include <type_traits>
 #include <utility>
@@ -54,8 +53,8 @@ namespace cppsort::detail::verge
         // Merge runs pairwise until there are no runs left
         do {
             auto begin = first;
-            for (auto it = runs.begin() ; it != runs.end() && it != std::prev(runs.end()) ; ++it) {
-                auto next_it = std::next(it);
+            for (auto it = runs.begin() ; it != runs.end() && it != mstd::prev(runs.end()) ; ++it) {
+                auto next_it = mstd::next(it);
 
                 // Merge the runs, micro-optimize for size 1 because it can happen,
                 // and the generic inplace_merge algorithm cares not
@@ -67,8 +66,8 @@ namespace cppsort::detail::verge
                     } else {
                     }
                 } else if (next_it->size == 1) {
-                    auto&& target = proj(*std::prev(next_it->end));
-                    if (comp(target, proj(*std::prev(it->end)))) {
+                    auto&& target = proj(*mstd::prev(next_it->end));
+                    if (comp(target, proj(*mstd::prev(it->end)))) {
                         auto insert_it = detail::upper_bound_n(begin, it->size, target, compare, projection);
                         detail::rotate_right(insert_it, next_it->end);
                     }
@@ -135,7 +134,7 @@ namespace cppsort::detail::verge
 
         // Pair of iterators to iterate through the collection
         auto current = first;
-        auto next = std::next(current);
+        auto next = mstd::next(current);
 
         // Choose whether to look for an ascending or descending
         // run depending on the value of the first two elements;
@@ -340,7 +339,7 @@ namespace cppsort::detail::verge
 
         // Pair of iterators to iterate through the collection
         auto current = first;
-        auto next = std::next(first);
+        auto next = mstd::next(first);
 
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
@@ -476,8 +475,8 @@ namespace cppsort::detail::verge
 
             if (next2 == last) break;
 
-            current = std::next(current2);
-            next = std::next(next2);
+            current = mstd::next(current2);
+            next = mstd::next(next2);
         }
 
         if (begin_unsorted != last) {

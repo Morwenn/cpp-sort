@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_ENC_H_
@@ -69,7 +69,7 @@ namespace cppsort::probe
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                if (first == last || std::next(first) == last) {
+                if (first == last || mstd::next(first) == last) {
                     return 0;
                 }
 

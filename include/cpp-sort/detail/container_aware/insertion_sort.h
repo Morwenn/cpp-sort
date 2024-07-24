@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_INSERTION_SORT_H_
@@ -10,11 +10,11 @@
 ////////////////////////////////////////////////////////////
 #include <forward_list>
 #include <functional>
-#include <iterator>
 #include <list>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -47,7 +47,7 @@ namespace cppsort
                 if (insertion_point == it) {
                     ++it;
                 } else {
-                    auto next = std::next(it);
+                    auto next = mstd::next(it);
                     collection.splice(insertion_point, collection, it);
                     it = next;
                 }
@@ -70,14 +70,14 @@ namespace cppsort
             // Size of the list where a value is inserted
             typename std::forward_list<Args...>::difference_type size = 1;
 
-            while (std::next(it) != last) {
+            while (mstd::next(it) != last) {
                 // Binary search to find where to insert the value, we can't
                 // use upper_bound because of the specificities of forward_list
-                auto&& value = proj(*std::next(it));
+                auto&& value = proj(*mstd::next(it));
                 auto insertion_point = collection.before_begin();
                 for (auto search_size = size ; search_size > 0 ;) {
-                    auto search_it = std::next(insertion_point, half(search_size));
-                    if (not comp(value, proj(*std::next(search_it)))) {
+                    auto search_it = mstd::next(insertion_point, half(search_size));
+                    if (not comp(value, proj(*mstd::next(search_it)))) {
                         insertion_point = ++search_it;
                         search_size -= half(search_size) + 1;
                     } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SLABSORT_H_
@@ -15,6 +15,7 @@
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "bitops.h"
@@ -105,9 +106,9 @@ namespace cppsort::detail
         //       adaptivity to presortedness
 
         auto median_it = slabsort_get_median(first, size, iterators_buffer, compare, projection);
-        auto last_1 = std::prev(last);
+        auto last_1 = mstd::prev(last);
 
-        // Put the pivot at position std::prev(last) and partition
+        // Put the pivot at position mstd::prev(last) and partition
         mstd::iter_swap(median_it, last_1);
         auto&& pivot = proj(*last_1);
         auto middle = detail::stable_partition(
@@ -147,16 +148,16 @@ namespace cppsort::detail
         ////////////////////////////////////////////////////////////
         // Create encroaching lists
 
-        for (auto it = std::next(first) ; it != last ; ++it) {
+        for (auto it = mstd::next(first) ; it != last ; ++it) {
             auto&& value = proj(*it);
 
             auto& last_list = lists.back();
-            if (not comp(value, proj(*std::prev(last_list.end()).base()->it))) {
+            if (not comp(value, proj(*mstd::prev(last_list.end()).base()->it))) {
                 // Element belongs to the tails (bigger elements)
                 auto insertion_point = detail::lower_bound(
-                    lists.begin(), std::prev(lists.end()), value, cppsort::flip(compare),
+                    lists.begin(), mstd::prev(lists.end()), value, cppsort::flip(compare),
                     [&proj](auto& list) -> decltype(auto) {
-                        return proj(*std::prev(list.end()).base()->it);
+                        return proj(*mstd::prev(list.end()).base()->it);
                     }
                 );
                 insertion_point->push_back([&it](node_type* node) {
@@ -165,7 +166,7 @@ namespace cppsort::detail
             } else if (not comp(proj(*last_list.begin().base()->it), value)) {
                 // Element belongs to the heads (smaller elements)
                 auto insertion_point = detail::lower_bound(
-                    lists.begin(), std::prev(lists.end()), value, compare,
+                    lists.begin(), mstd::prev(lists.end()), value, compare,
                     [&proj](auto& list) -> decltype(auto) {
                         return proj(*list.begin().base()->it);
                     }
@@ -230,7 +231,7 @@ namespace cppsort::detail
         }
 
         auto middle = slabsort_partition(first, last, size, iterators_buffer, compare, projection);
-        auto size_left = std::distance(first, middle);
+        auto size_left = mstd::distance(first, middle);
         auto size_right = size - size_left;
         CPPSORT_ASSERT(size_left <= size / 2);
 

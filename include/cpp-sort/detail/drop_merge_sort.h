@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -58,7 +57,7 @@ namespace cppsort::detail
         if (first == last) {
             return first;
         }
-        auto second = std::next(first);
+        auto second = mstd::next(first);
         if (second == last) {
             return second;
         }
@@ -72,12 +71,12 @@ namespace cppsort::detail
         auto read = first;
 
         do {
-            if (first != write && comp(proj(*read), proj(*std::prev(write)))) {
+            if (first != write && comp(proj(*read), proj(*mstd::prev(write)))) {
 
                 if (double_comparison && num_dropped_in_row == 0 && write != second &&
-                    not comp(proj(*read), proj(*std::prev(write, 2)))) {
-                    dropped.push_back(mstd::iter_move(std::prev(write)));
-                    *std::prev(write) = mstd::iter_move(read);
+                    not comp(proj(*read), proj(*mstd::prev(write, 2)))) {
+                    dropped.push_back(mstd::iter_move(mstd::prev(write)));
+                    *mstd::prev(write) = mstd::iter_move(read);
                     ++read;
                     continue;
                 }
@@ -93,7 +92,7 @@ namespace cppsort::detail
                             // If the value is trivially copyable, then it shouldn't have
                             // been modified by the call to iter_move, and the original
                             // value is still fully where it should be
-                            *read = std::move(*std::prev(dropped.end()));
+                            *read = std::move(*mstd::prev(dropped.end()));
                         }
                         dropped.pop_back();
                     }
@@ -131,7 +130,7 @@ namespace cppsort::detail
         do {
             auto& last_dropped = dropped.back();
 
-            while (first != write && comp(proj(last_dropped), proj(*std::prev(write)))) {
+            while (first != write && comp(proj(last_dropped), proj(*mstd::prev(write)))) {
                 --back;
                 --write;
                 *back = mstd::iter_move(write);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_BLOCK_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
@@ -58,16 +57,16 @@ namespace cppsort::probe
             // collection that can't be found in the sorted one
 
             difference_type count = 0;
-            auto it_last_1 = std::prev(iterators.end());
+            auto it_last_1 = mstd::prev(iterators.end());
             for (auto it = iterators.begin(); it != it_last_1; ++it) {
-                auto orig_next = std::next(*it);
+                auto orig_next = mstd::next(*it);
                 if (orig_next == last) {
                     if (comp(proj(**it), proj(**it_last_1)) || comp(proj(**it_last_1), proj(**it))) {
                         ++count;
                     }
                     continue;
                 }
-                auto sorted_next = *std::next(it);
+                auto sorted_next = *mstd::next(it);
                 if (comp(proj(*orig_next), proj(*sorted_next)) || comp(proj(*sorted_next), proj(*orig_next))) {
                     ++count;
                 }

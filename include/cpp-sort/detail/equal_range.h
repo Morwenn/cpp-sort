@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -17,9 +17,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 #include "lower_bound.h"
@@ -37,11 +37,11 @@ namespace cppsort::detail
         auto&& proj = utility::as_function(projection);
 
         using difference_type = mstd::iter_difference_t<ForwardIterator>;
-        difference_type len = std::distance(first, last);
+        difference_type len = mstd::distance(first, last);
         while (len != 0) {
             difference_type l2 = half(len);
             auto m = first;
-            std::advance(m, l2);
+            mstd::advance(m, l2);
             if (comp(proj(*m), value)) {
                 first = ++m;
                 len -= l2 + 1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOWER_BOUND_H_
@@ -8,9 +8,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 
@@ -26,7 +26,7 @@ namespace cppsort::detail
         auto&& proj = utility::as_function(projection);
 
         while (size > 0) {
-            auto it = std::next(first, half(size));;
+            auto it = mstd::next(first, half(size));;
             if (comp(proj(*it), value)) {
                 first = ++it;
                 size -= half(size) + 1;
@@ -43,7 +43,7 @@ namespace cppsort::detail
                      Compare compare, Projection projection)
         -> ForwardIterator
     {
-        return lower_bound_n(first, std::distance(first, last),
+        return lower_bound_n(first, mstd::distance(first, last),
                              std::forward<T>(value),
                              std::move(compare), std::move(projection));
     }
@@ -62,7 +62,7 @@ namespace cppsort::detail
         }
 
         while (size > 1) {
-            auto it = std::next(first, half(size));
+            auto it = mstd::next(first, half(size));
             if (comp(proj(*it), value)) {
                 first = it;
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -29,7 +29,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -53,10 +52,10 @@ namespace cppsort::detail
         auto&& comp = utility::as_function(compare);
         auto&& proj = utility::as_function(projection);
 
-        auto cur = std::next(first);
+        auto cur = mstd::next(first);
         for (; cur != last; ++cur) {
             auto sift = cur;
-            auto sift_1 = std::prev(cur);
+            auto sift_1 = mstd::prev(cur);
 
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.

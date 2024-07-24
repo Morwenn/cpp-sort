@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICKSORT_H_
@@ -12,6 +12,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 #include "bubble_sort.h"
@@ -81,7 +82,7 @@ namespace cppsort::detail
         auto median_it = temp.first;
         auto last_1 = temp.second;
 
-        // Put the pivot at position std::prev(last) and partition
+        // Put the pivot at position mstd::prev(last) and partition
         mstd::iter_swap(median_it, last_1);
         auto&& pivot1 = proj(*last_1);
         auto middle1 = detail::partition(
@@ -93,15 +94,15 @@ namespace cppsort::detail
         mstd::iter_swap(middle1, last_1);
         auto&& pivot2 = proj(*middle1);
         auto middle2 = detail::partition(
-            std::next(middle1), last,
+            mstd::next(middle1), last,
             [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
         );
 
         // Recursive call: heuristic trick here: in real world cases,
         // the middle partition is more likely to be smaller than the
         // right one, so computing its size should generally be cheaper
-        auto size_left = std::distance(first, middle1);
-        auto size_middle = std::distance(middle1, middle2);
+        auto size_left = mstd::distance(first, middle1);
+        auto size_middle = mstd::distance(middle1, middle2);
         difference_type size_right = size - size_left - size_middle;
 
         // Recurse in the smallest partition first to limit the call

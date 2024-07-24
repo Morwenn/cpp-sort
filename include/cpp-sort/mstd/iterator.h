@@ -507,6 +507,47 @@ namespace cppsort::mstd
     }
 
     ////////////////////////////////////////////////////////////
+    // prev
+
+    namespace detail_prev
+    {
+        struct prev_fn
+        {
+            template<bidirectional_iterator Iterator>
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it) const
+                -> Iterator
+            {
+                --it;
+                return it;
+            }
+
+            template<bidirectional_iterator Iterator>
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it, iter_difference_t<Iterator> n) const
+                -> Iterator
+            {
+                mstd::advance(it, -n);
+                return it;
+            }
+
+            template<bidirectional_iterator Iterator>
+            [[nodiscard]]
+            constexpr auto operator()(Iterator it, iter_difference_t<Iterator> n, Iterator bound) const
+                -> Iterator
+            {
+                mstd::advance(it, -n, bound);
+                return it;
+            }
+        };
+    }
+
+    inline namespace cpo
+    {
+        inline constexpr auto prev = detail_prev::prev_fn{};
+    }
+
+    ////////////////////////////////////////////////////////////
     // iter_swap
 
     namespace detail_iter_swap

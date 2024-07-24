@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SWAP_RANGES_H_
@@ -9,10 +9,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
-#include <iterator>
-#include <type_traits>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include "config.h"
 #include "move.h"
 
@@ -52,7 +50,7 @@ namespace cppsort::detail
 #ifdef CPPSORT_ENABLE_AUDITS
         bool ranges_overlap = false;
         // This check assumes that first1 <= last1
-        auto last2 = std::next(first2, std::distance(first1, last1));
+        auto last2 = mstd::next(first2, mstd::distance(first1, last1));
         for (auto it = first1 ; it != last1 ; ++it) {
             if (it == first2) {
                 ranges_overlap = true;

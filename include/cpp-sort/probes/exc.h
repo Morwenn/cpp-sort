@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_EXC_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
@@ -65,7 +64,7 @@ namespace cppsort::probe
             while (start != last) {
                 // Find the element to put in current's place
                 auto current = start;
-                auto next_pos = std::distance(first, current);
+                auto next_pos = mstd::distance(first, current);
                 auto next = iterators[next_pos];
                 sorted[next_pos] = true;
 
@@ -83,7 +82,7 @@ namespace cppsort::probe
                         }
                         // Locate the next element of the cycle
                         current = next;
-                        auto next_pos = std::distance(first, next);
+                        auto next_pos = mstd::distance(first, next);
                         next = iterators[next_pos];
                         sorted[next_pos] = true;
                     }
@@ -92,7 +91,7 @@ namespace cppsort::probe
                 ++cycles;
 
                 // Find the next cycle
-                auto&& sorted_it = sorted.begin() + std::distance(first, start);
+                auto&& sorted_it = sorted.begin() + mstd::distance(first, start);
                 do {
                     ++start;
                     ++sorted_it;

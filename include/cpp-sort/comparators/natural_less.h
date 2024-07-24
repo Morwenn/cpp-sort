@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_NATURAL_LESS_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cctype>
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/mstd/ranges.h>
@@ -53,8 +52,8 @@ namespace cppsort
                     } while (begin2 != last2);
 
                     // Compare numbers
-                    auto size1 = std::distance(begin1, last1);
-                    auto size2 = std::distance(begin2, last2);
+                    auto size1 = mstd::distance(begin1, last1);
+                    auto size2 = mstd::distance(begin2, last2);
                     if (size1 != size2) {
                         return size1 < size2;
                     }

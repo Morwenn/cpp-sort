@@ -8,8 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/mstd/iterator.h>
@@ -68,7 +66,7 @@ namespace cppsort::detail
                 };
 
                 root = max_root;
-                child_root1 = std::prev(root);
+                child_root1 = mstd::prev(root);
                 child_root2 = root - (size - size / 2);
 
                 auto max_child_it = child_root2;
@@ -93,7 +91,7 @@ namespace cppsort::detail
 
         // Find the poplar with the bigger root
         // We can assume that there is always at least one poplar
-        auto last = std::prev(poplars.end());
+        auto last = mstd::prev(poplars.end());
         auto bigger = last;
         for (auto it = poplars.begin() ; it != last ; ++it) {
             if (comp(proj(*bigger->root()), proj(*it->root()))) {
@@ -125,7 +123,7 @@ namespace cppsort::detail
 
         auto middle = first + size / 2;
         make_poplar(first, middle, compare, projection);
-        make_poplar(middle, std::prev(last), compare, projection);
+        make_poplar(middle, mstd::prev(last), compare, projection);
         sift(std::move(first), size, std::move(compare), std::move(projection));
     }
 

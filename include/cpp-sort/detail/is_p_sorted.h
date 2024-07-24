@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_IS_P_SORTED_H_
@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
-#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
@@ -24,7 +24,7 @@ namespace cppsort::detail
         // pth is the iterator such as pth - first == p
 
         auto max_it = first;
-        for (auto it1 = std::next(pth); it1 != last; ++it1) {
+        for (auto it1 = mstd::next(pth); it1 != last; ++it1) {
             if (comp(proj(*max_it), proj(*first))) {
                 max_it = first;
             }

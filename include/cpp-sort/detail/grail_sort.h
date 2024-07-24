@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <iterator>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
@@ -46,12 +47,12 @@ namespace cppsort::detail::grail
 
         mstd::iter_difference_t<RandomAccessIterator> dist = 1;
         auto h0 = first;
-        for (auto u = std::next(first) ; u != last ; ++u) {
+        for (auto u = mstd::next(first) ; u != last ; ++u) {
             if (dist == key_count) break;
             auto r = lower_bound_n(h0, dist, proj(*u), compare.base(), projection) - h0;
             if (r == dist || compare(proj(*u), proj(h0[r])) != 0) {
                 h0 = detail::rotate(h0, h0 + dist, u);
-                detail::rotate(h0 + r, u, std::next(u));
+                detail::rotate(h0 + r, u, mstd::next(u));
                 ++dist;
             }
         }
@@ -86,7 +87,7 @@ namespace cppsort::detail::grail
         } else {
             while (middle != last) {
                 // Binary search right
-                auto it = upper_bound(first, middle, proj(*std::prev(last)), compare.base(), projection);
+                auto it = upper_bound(first, middle, proj(*mstd::prev(last)), compare.base(), projection);
                 if (it != middle) {
                     detail::rotate(it, middle, last);
                     auto delta = middle - it;
@@ -96,7 +97,7 @@ namespace cppsort::detail::grail
                 if (first == middle) break;
                 do {
                     --last;
-                } while (middle != last && compare(proj(*std::prev(middle)), proj(*std::prev(last))) <= 0);
+                } while (middle != last && compare(proj(*mstd::prev(middle)), proj(*mstd::prev(last))) <= 0);
             }
         }
     }
@@ -136,9 +137,9 @@ namespace cppsort::detail::grail
     {
         auto&& proj = utility::as_function(projection);
 
-        auto p0 = std::prev(M),
-             p1 = std::prev(middle),
-             p2 = std::prev(last);
+        auto p0 = mstd::prev(M),
+             p1 = mstd::prev(middle),
+             p2 = mstd::prev(last);
 
         while (p1 > first) {
             if (p2 < middle || compare(proj(*p1), proj(*p2)) > 0) {
@@ -225,7 +226,7 @@ namespace cppsort::detail::grail
         }
 
         int frag_type = 1 - left_over_frag;
-        if (first != middle && compare(proj(*std::prev(middle)), proj(*middle)) - frag_type >= 0) {
+        if (first != middle && compare(proj(*mstd::prev(middle)), proj(*middle)) - frag_type >= 0) {
             while (first != middle) {
                 auto len = frag_type ? (lower_bound(middle, last, proj(*first), compare.base(), projection) - middle)
                                      : (upper_bound(middle, last, proj(*first), compare.base(), projection) - middle);
@@ -630,10 +631,10 @@ namespace cppsort::detail::grail
         auto&& proj = utility::as_function(projection);
 
         auto size = last - first;
-        auto end_loop = size % 2 == 0 ? last : std::prev(last);
+        auto end_loop = size % 2 == 0 ? last : mstd::prev(last);
         for (auto it = first ; it != end_loop ; it += 2) {
-            if (compare(proj(*it), proj(*std::next(it))) > 0) {
-                mstd::iter_swap(it, std::next(it));
+            if (compare(proj(*it), proj(*mstd::next(it))) > 0) {
+                mstd::iter_swap(it, mstd::next(it));
             }
         }
 

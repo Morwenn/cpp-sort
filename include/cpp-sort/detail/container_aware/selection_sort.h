@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_SELECTION_SORT_H_
@@ -10,11 +10,11 @@
 ////////////////////////////////////////////////////////////
 #include <forward_list>
 #include <functional>
-#include <iterator>
 #include <list>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/fwd.h>
+#include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
@@ -55,13 +55,13 @@ namespace cppsort
 
             auto first = collection.before_begin();
             auto last = collection.end();
-            while (std::next(first) != last)
+            while (mstd::next(first) != last)
             {
                 auto min_it = first;
                 auto it = first;
-                while (std::next(it) != last)
+                while (mstd::next(it) != last)
                 {
-                    if (comp(proj(*std::next(it)), proj(*std::next(min_it))))
+                    if (comp(proj(*mstd::next(it)), proj(*mstd::next(min_it))))
                     {
                         min_it = it;
                     }

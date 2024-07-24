@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_INTROSELECT_H_
@@ -8,9 +8,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <iterator>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 #include "config.h"
@@ -191,14 +191,14 @@ namespace cppsort::detail
     constexpr auto last_it(Iterator first, Iterator, mstd::iter_difference_t<Iterator> size)
         -> Iterator
     {
-        return std::next(first, size - 1);
+        return mstd::next(first, size - 1);
     }
 
     template<mstd::bidirectional_iterator Iterator>
     constexpr auto last_it(Iterator, Iterator last, mstd::iter_difference_t<Iterator>)
         -> Iterator
     {
-        return std::prev(last);
+        return mstd::prev(last);
     }
 
     ////////////////////////////////////////////////////////////
@@ -211,13 +211,13 @@ namespace cppsort::detail
         -> std::pair<ForwardIterator, ForwardIterator>
     {
         if (bad_allowed > 0) {
-            auto it1 = std::next(first, size / 8);
-            auto it2 = std::next(it1, size / 8);
-            auto it3 = std::next(it2, size / 8);
-            auto middle = std::next(it3, size/2 - 3*(size/8));
-            auto it4 = std::next(middle, size / 8);
-            auto it5 = std::next(it4, size / 8);
-            auto it6 = std::next(it5, size / 8);
+            auto it1 = mstd::next(first, size / 8);
+            auto it2 = mstd::next(it1, size / 8);
+            auto it3 = mstd::next(it2, size / 8);
+            auto middle = mstd::next(it3, size/2 - 3*(size/8));
+            auto it4 = mstd::next(middle, size / 8);
+            auto it5 = mstd::next(it4, size / 8);
+            auto it6 = mstd::next(it5, size / 8);
             auto last_1 = last_it(it6, last, size - size/2 - 3*(size/8));
 
             iter_sort3(first, it1, it2, compare, projection);
@@ -252,7 +252,7 @@ namespace cppsort::detail
             auto median_it = temp.first;
             auto last_1 = temp.second;
 
-            // Put the pivot at position std::prev(last) and partition
+            // Put the pivot at position mstd::prev(last) and partition
             mstd::iter_swap(median_it, last_1);
             auto&& pivot1 = proj(*last_1);
             auto middle1 = detail::partition(
@@ -264,15 +264,15 @@ namespace cppsort::detail
             mstd::iter_swap(middle1, last_1);
             auto&& pivot2 = proj(*middle1);
             auto middle2 = detail::partition(
-                std::next(middle1), last,
+                mstd::next(middle1), last,
                 [&](auto&& elem) { return not comp(pivot2, proj(elem)); }
             );
 
             // Recursive call: heuristic trick here: in real world cases,
             // the middle partition is more likely to be smaller than the
             // right one, so computing its size should generally be cheaper
-            auto size_left = std::distance(first, middle1);
-            auto size_middle = std::distance(middle1, middle2);
+            auto size_left = mstd::distance(first, middle1);
+            auto size_middle = mstd::distance(middle1, middle2);
             auto size_right = size - size_left - size_middle;
 
             // We're done if the nth element is in the middle partition
@@ -285,13 +285,13 @@ namespace cppsort::detail
                 size = size_right;
             } else {
                 // Return an iterator to the nth element
-                return std::next(middle1, nth_pos - size_left);
+                return mstd::next(middle1, nth_pos - size_left);
             }
             --bad_allowed;
         }
         // Fallback when the collection is small enough
         small_sort(first, last, std::move(compare), std::move(projection));
-        return std::next(first, nth_pos);
+        return mstd::next(first, nth_pos);
     }
 }
 

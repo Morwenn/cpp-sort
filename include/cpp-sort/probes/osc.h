@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_OSC_H_
@@ -9,7 +9,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <functional>
-#include <iterator>
 #include <numeric>
 #include <utility>
 #include <vector>
@@ -82,11 +81,11 @@ namespace cppsort::probe
                 compare, utility::indirect{} | projection
             );
 
-            for (auto prev = first, current = std::next(prev); current != last; ++prev, (void)++current) {
+            for (auto prev = first, current = mstd::next(prev); current != last; ++prev, (void)++current) {
                 difference_type min_idx, max_idx;
                 if (comp(proj(*prev), proj(*current))) {
                     auto current_bounds = cppsort::detail::equal_range(
-                        //prev_bounds.second, std::prev(iterators.end()), proj(*current),
+                        //prev_bounds.second, mstd::prev(iterators.end()), proj(*current),
                         iterators.begin(), iterators.end(), proj(*current),
                         compare, utility::indirect{} | projection
                     );
