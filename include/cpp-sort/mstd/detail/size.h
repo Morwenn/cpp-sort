@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -27,10 +27,6 @@
 #include "common.h"
 #include "end.h"
 
-// Copy of _LIBCPP_AUTO_CAST, preserved as a macro to
-// simplify future copy-paste-steal maintenance
-#define CPPSORT_AUTO_CAST(expr) static_cast<std::decay_t<decltype((expr))>>(expr)
-
 namespace cppsort::mstd
 {
     ////////////////////////////////////////////////////////////
@@ -48,7 +44,7 @@ namespace cppsort::mstd
             size_enabled<T> &&
             detail::class_or_union<T> &&
             requires(T&& value) {
-                { CPPSORT_AUTO_CAST(value.size()) } -> detail::integer_like;
+                { auto(value.size()) } -> detail::integer_like;
             };
 
         template<typename T>
@@ -57,7 +53,7 @@ namespace cppsort::mstd
             not member_size<T> &&
             detail::class_or_union_or_enum<std::remove_cvref_t<T>> &&
             requires(T&& value) {
-                { CPPSORT_AUTO_CAST(size(value)) } -> detail::integer_like;
+                { auto(size(value)) } -> detail::integer_like;
             };
 
         template<typename T>
@@ -94,20 +90,20 @@ namespace cppsort::mstd
             template<member_size T>
             [[nodiscard]]
             constexpr auto operator()(T&& value) const
-                noexcept(noexcept(CPPSORT_AUTO_CAST(value.size())))
+                noexcept(noexcept(auto(value.size())))
                  -> detail::integer_like auto
             {
-                return CPPSORT_AUTO_CAST(value.size());
+                return auto(value.size());
             }
 
             // `[range.prim.size]`: `auto(size(t))` is a valid expression.
             template<unqualified_size T>
             [[nodiscard]]
             constexpr auto operator()(T&& value) const
-                noexcept(noexcept(CPPSORT_AUTO_CAST(size(value))))
+                noexcept(noexcept(auto(size(value))))
                  ->  detail::integer_like auto
             {
-                return CPPSORT_AUTO_CAST(size(value));
+                return auto(size(value));
             }
 
             // [range.prim.size]: the `to-unsigned-like` case.
@@ -137,7 +133,5 @@ namespace cppsort::mstd
             mstd::size(t);
         };
 }
-
-#undef CPPSORT_AUTO_CAST
 
 #endif // CPPSORT_MSTD_DETAIL_SIZE_H_

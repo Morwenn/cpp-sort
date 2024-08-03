@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,10 +23,6 @@
 #include "common.h"
 #include "begin.h"
 
-// Copy of _LIBCPP_AUTO_CAST, preserved as a macro to
-// simplify future copy-paste-steal maintenance
-#define CPPSORT_AUTO_CAST(expr) static_cast<std::decay_t<decltype((expr))>>(expr)
-
 namespace cppsort::mstd
 {
     namespace detail_end
@@ -37,7 +33,7 @@ namespace cppsort::mstd
             detail::class_or_union<std::remove_cvref_t<T>> &&
             requires(T&& rng) {
                 typename iterator_t<T>;
-                { CPPSORT_AUTO_CAST(rng.end()) } -> sentinel_for<iterator_t<T>>;
+                { auto(rng.end()) } -> sentinel_for<iterator_t<T>>;
             };
 
         void end() = delete;
@@ -49,7 +45,7 @@ namespace cppsort::mstd
             detail::class_or_union_or_enum<std::remove_cvref_t<T>> &&
             requires(T&& rng) {
                 typename iterator_t<T>;
-                { CPPSORT_AUTO_CAST(end(rng)) } -> sentinel_for<iterator_t<T>>;
+                { auto(end(rng)) } -> sentinel_for<iterator_t<T>>;
             };
 
         struct fn
@@ -65,17 +61,17 @@ namespace cppsort::mstd
             template<member_end T>
             [[nodiscard]]
             constexpr auto operator()(T&& rng) const
-                noexcept(noexcept(CPPSORT_AUTO_CAST(rng.end())))
+                noexcept(noexcept(auto(rng.end())))
             {
-                return CPPSORT_AUTO_CAST(rng.end());
+                return auto(rng.end());
             }
 
             template<unqualified_end T>
             [[nodiscard]]
             constexpr auto operator()(T&& rng) const
-                noexcept(noexcept(CPPSORT_AUTO_CAST(end(rng))))
+                noexcept(noexcept(auto(end(rng))))
             {
-                return CPPSORT_AUTO_CAST(end(rng));
+                return auto(end(rng));
             }
 
             void operator()(auto&&) const = delete;
@@ -87,7 +83,5 @@ namespace cppsort::mstd
         inline constexpr auto end = detail_end::fn{};
     }
 }
-
-#undef CPPSORT_AUTO_CAST
 
 #endif // CPPSORT_MSTD_DETAIL_END_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,10 +23,6 @@
 #include "common.h"
 #include "begin.h"
 
-// Copy of _LIBCPP_AUTO_CAST, preserved as a macro to
-// simplify future copy-paste-steal maintenance
-#define CPPSORT_AUTO_CAST(expr) static_cast<std::decay_t<decltype((expr))>>(expr)
-
 namespace cppsort::mstd
 {
     namespace detail_data
@@ -41,7 +37,7 @@ namespace cppsort::mstd
             detail::can_borrow<T> &&
             detail::class_or_union<std::remove_cvref_t<T>> &&
             requires(T&& t) {
-                { CPPSORT_AUTO_CAST(t.data()) } -> ptr_to_object;
+                { auto(t.data()) } -> ptr_to_object;
             };
 
         template<typename T>
@@ -75,7 +71,5 @@ namespace cppsort::mstd
         inline constexpr auto data = detail_data::fn{};
     }
 }
-
-#undef CPPSORT_AUTO_CAST
 
 #endif // CPPSORT_MSTD_DETAIL_DATA_H_
