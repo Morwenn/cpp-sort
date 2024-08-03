@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023 Morwenn
+# Copyright (c) 2015-2024 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.14.5)
@@ -37,7 +37,7 @@ target_include_directories(cpp-sort INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(cpp-sort INTERFACE cxx_std_20)
+target_compile_features(cpp-sort INTERFACE cxx_std_23)
 
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
