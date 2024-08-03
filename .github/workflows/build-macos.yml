@@ -43,6 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: seanmiddleditch/gha-setup-ninja@master
+      - uses: rui314/setup-mold@v1
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}

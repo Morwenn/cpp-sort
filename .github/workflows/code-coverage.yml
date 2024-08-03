@@ -24,6 +24,7 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
+      - uses: rui314/setup-mold@v1
 
       - name: Install LCOV
         run: sudo apt-get install -y lcov

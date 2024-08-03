@@ -78,15 +78,6 @@ macro(configure_tests target)
         $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-Og>
     )
 
-    # Use lld or the gold linker if possible
-    if (UNIX AND NOT APPLE)
-        if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=lld")
-        else()
-            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS " -fuse-ld=gold")
-        endif()
-    endif()
-
     # Optionally enable sanitizers
     if (UNIX AND CPPSORT_SANITIZE)
         target_compile_options(${target} PRIVATE

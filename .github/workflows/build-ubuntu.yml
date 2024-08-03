@@ -44,6 +44,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: rui314/setup-mold@v1
 
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}
