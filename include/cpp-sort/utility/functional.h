@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_FUNCTIONAL_H_
@@ -41,20 +41,12 @@ namespace cppsort::utility
                 rhs(std::move(rhs))
             {}
 
-            template<typename Arg>
-            constexpr auto operator()(Arg&& value)
-                noexcept(noexcept(rhs(lhs(std::forward<Arg>(value)))))
-                -> decltype(rhs(lhs(std::forward<Arg>(value))))
+            template<typename Self, typename Arg>
+            constexpr auto operator()(this Self&& self, Arg&& value)
+                noexcept(noexcept(self.rhs(self.lhs(std::forward<Arg>(value)))))
+                -> decltype(self.rhs(self.lhs(std::forward<Arg>(value))))
             {
-                return rhs(lhs(std::forward<Arg>(value)));
-            }
-
-            template<typename Arg>
-            constexpr auto operator()(Arg&& value) const
-                noexcept(noexcept(rhs(lhs(std::forward<Arg>(value)))))
-                -> decltype(rhs(lhs(std::forward<Arg>(value))))
-            {
-                return rhs(lhs(std::forward<Arg>(value)));
+                return self.rhs(self.lhs(std::forward<Arg>(value)));
             }
         };
     }
@@ -100,14 +92,7 @@ namespace cppsort::utility
         projection_base
     {
         template<typename T>
-        constexpr auto operator()(T&& indirect_value)
-            -> decltype(*std::forward<T>(indirect_value))
-        {
-            return *std::forward<T>(indirect_value);
-        }
-
-        template<typename T>
-        constexpr auto operator()(T&& indirect_value) const
+        static constexpr auto operator()(T&& indirect_value)
             -> decltype(*std::forward<T>(indirect_value))
         {
             return *std::forward<T>(indirect_value);
@@ -126,7 +111,7 @@ namespace cppsort::utility
         {
             private:
 
-                Function _func;
+                [[no_unique_address]] Function _func;
 
             public:
 
@@ -140,36 +125,12 @@ namespace cppsort::utility
                     _func(std::forward<Func>(func))
                 {}
 
-                template<typename T>
-                constexpr auto operator()(T&& arg) &
-                    noexcept(noexcept(as_function(_func)(std::forward<T>(arg))))
-                    -> decltype(as_function(_func)(std::forward<T>(arg)))
+                template<typename Self, typename T>
+                constexpr auto operator()(this Self&& self, T&& arg)
+                    noexcept(noexcept(as_function(std::forward<Self>(self)._func)(std::forward<T>(arg))))
+                    -> decltype(as_function(std::forward<Self>(self)._func)(std::forward<T>(arg)))
                 {
-                    return as_function(_func)(std::forward<T>(arg));
-                }
-
-                template<typename T>
-                constexpr auto operator()(T&& arg) &&
-                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(arg))))
-                    -> decltype(std::move(as_function(_func))(std::forward<T>(arg)))
-                {
-                    return std::move(as_function(_func))(std::forward<T>(arg));
-                }
-
-                template<typename T>
-                constexpr auto operator()(T&& arg) const&
-                    noexcept(noexcept(as_function(_func)(std::forward<T>(arg))))
-                    -> decltype(as_function(_func)(std::forward<T>(arg)))
-                {
-                    return as_function(_func)(std::forward<T>(arg));
-                }
-
-                template<typename T>
-                constexpr auto operator()(T&& arg) const&&
-                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(arg))))
-                    -> decltype(std::move(as_function(_func))(std::forward<T>(arg)))
-                {
-                    return std::move(as_function(_func))(std::forward<T>(arg));
+                    return as_function(std::forward<Self>(self)._func)(std::forward<T>(arg));
                 }
         };
 
@@ -179,7 +140,7 @@ namespace cppsort::utility
         {
             private:
 
-                Function _func;
+                [[no_unique_address]] Function _func;
 
             public:
 
@@ -193,36 +154,17 @@ namespace cppsort::utility
                     _func(std::forward<Func>(func))
                 {}
 
-                template<typename T, typename U>
-                constexpr auto operator()(T&& lhs, U&& rhs) &
-                    noexcept(noexcept(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
+                template<typename Self, typename T, typename U>
+                constexpr auto operator()(this Self&& self, T&& lhs, U&& rhs)
+                    noexcept(noexcept(as_function(std::forward<Self>(self)._func)(
+                        std::forward<T>(lhs), std::forward<U>(rhs))))
+                    -> decltype(as_function(std::forward<Self>(self)._func)(
+                        std::forward<T>(lhs), std::forward<U>(rhs)))
                 {
-                    return as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
-                }
-
-                template<typename T, typename U>
-                constexpr auto operator()(T&& lhs, U&& rhs) &&
-                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs)))
-                {
-                    return std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs));
-                }
-
-                template<typename T, typename U>
-                constexpr auto operator()(T&& lhs, U&& rhs) const&
-                    noexcept(noexcept(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs)))
-                {
-                    return as_function(_func)(std::forward<T>(lhs), std::forward<U>(rhs));
-                }
-
-                template<typename T, typename U>
-                constexpr auto operator()(T&& lhs, U&& rhs) const&&
-                    noexcept(noexcept(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs))))
-                    -> decltype(std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs)))
-                {
-                    return std::move(as_function(_func))(std::forward<T>(lhs), std::forward<U>(rhs));
+                    return as_function(std::forward<Self>(self)._func)(
+                        std::forward<T>(lhs),
+                        std::forward<U>(rhs)
+                    );
                 }
         };
     }
@@ -278,7 +220,7 @@ namespace cppsort::utility
         projection_base
     {
         template<typename T>
-        constexpr auto operator()(T&& value) const
+        static constexpr auto operator()(T&& value)
             -> decltype(std::forward<T>(value) / 2)
         {
             return std::forward<T>(value) / 2;
@@ -291,7 +233,7 @@ namespace cppsort::utility
         projection_base
     {
         template<typename T>
-        constexpr auto operator()(T&& value) const
+        static constexpr auto operator()(T&& value)
             -> decltype(auto)
         {
             using std::log;
@@ -305,7 +247,7 @@ namespace cppsort::utility
         projection_base
     {
         template<typename T>
-        constexpr auto operator()(T&& value) const
+        static constexpr auto operator()(T&& value)
             -> decltype(auto)
         {
             using std::sqrt;
@@ -326,7 +268,7 @@ namespace cppsort::utility
         static constexpr value_type value = Function;
 
         template<typename... Args>
-        constexpr auto operator()(Args&&... args) const
+        static constexpr auto operator()(Args&&... args)
             noexcept(noexcept(as_function(Function)(std::forward<Args>(args)...)))
             -> decltype(as_function(Function)(std::forward<Args>(args)...))
         {

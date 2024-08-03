@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PROJECTION_COMPARE_H_
@@ -34,79 +34,33 @@ namespace cppsort
                 projection_(std::move(projection))
             {}
 
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) &
-                noexcept(noexcept(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
+            template<typename Self, typename T1, typename T2>
+            constexpr auto operator()(this Self&& self, T1&& x, T2&& y)
+                noexcept(noexcept(utility::as_function(self.compare_)(
+                    utility::as_function(self.projection_)(std::forward<T1>(x)),
+                    utility::as_function(self.projection_)(std::forward<T2>(y))
                 )))
-                -> decltype(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
+                -> decltype(utility::as_function(self.compare_)(
+                    utility::as_function(self.projection_)(std::forward<T1>(x)),
+                    utility::as_function(self.projection_)(std::forward<T2>(y))
                 ))
             {
-                auto&& comp = utility::as_function(compare_);
-                auto&& proj = utility::as_function(projection_);
-                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
-            }
-
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) const&
-                noexcept(noexcept(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
-                )))
-                -> decltype(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
-                ))
-            {
-                auto&& comp = utility::as_function(compare_);
-                auto&& proj = utility::as_function(projection_);
-                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
-            }
-
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) &&
-                noexcept(noexcept(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
-                )))
-                -> decltype(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
-                ))
-            {
-                auto&& comp = utility::as_function(compare_);
-                auto&& proj = utility::as_function(projection_);
-                return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
-            }
-
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) const&&
-                noexcept(noexcept(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
-                )))
-                -> decltype(utility::as_function(compare_)(
-                    utility::as_function(projection_)(std::forward<T1>(x)),
-                    utility::as_function(projection_)(std::forward<T2>(y))
-                ))
-            {
-                auto&& comp = utility::as_function(compare_);
-                auto&& proj = utility::as_function(projection_);
+                auto&& comp = utility::as_function(self.compare_);
+                auto&& proj = utility::as_function(self.projection_);
                 return comp(proj(std::forward<T1>(x)), proj(std::forward<T2>(y)));
             }
 
             ////////////////////////////////////////////////////////////
             // Accessors
 
+            [[nodiscard]]
             constexpr auto comparison() const
                 -> Compare
             {
                 return compare_;
             }
 
+            [[nodiscard]]
             constexpr auto projection() const
                 -> Projection
             {

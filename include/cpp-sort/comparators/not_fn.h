@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_NOT_FN_H_
@@ -49,41 +49,21 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Call
 
-            template<typename... Args>
-            constexpr auto operator()(Args&&... args) &
-                noexcept(noexcept(not utility::as_function(func)(std::forward<Args>(args)...)))
-                -> decltype(not utility::as_function(func)(std::forward<Args>(args)...))
+            template<typename Self, typename... Args>
+            constexpr auto operator()(this Self&& self, Args&&... args)
+                noexcept(noexcept(not utility::as_function(std::forward<Self>(self).func)(
+                    std::forward<Args>(args)...)))
+                -> decltype(not utility::as_function(std::forward<Self>(self).func)(
+                    std::forward<Args>(args)...))
             {
-                return not utility::as_function(func)(std::forward<Args>(args)...);
-            }
-
-            template<typename... Args>
-            constexpr auto operator()(Args&&... args) const&
-                noexcept(noexcept(not utility::as_function(func)(std::forward<Args>(args)...)))
-                -> decltype(not utility::as_function(func)(std::forward<Args>(args)...))
-            {
-                return not utility::as_function(func)(std::forward<Args>(args)...);
-            }
-
-            template<typename... Args>
-            constexpr auto operator()(Args&&... args) &&
-                noexcept(noexcept(not utility::as_function(std::move(func))(std::forward<Args>(args)...)))
-                -> decltype(not utility::as_function(std::move(func))(std::forward<Args>(args)...))
-            {
-                return not utility::as_function(std::move(func))(std::forward<Args>(args)...);
-            }
-
-            template<typename... Args>
-            constexpr auto operator()(Args&&... args) const&&
-                noexcept(noexcept(not utility::as_function(std::move(func))(std::forward<Args>(args)...)))
-                -> decltype(not utility::as_function(std::move(func))(std::forward<Args>(args)...))
-            {
-                return not utility::as_function(std::move(func))(std::forward<Args>(args)...);
+                return not utility::as_function(std::forward<Self>(self).func)(
+                    std::forward<Args>(args)...);
             }
 
             ////////////////////////////////////////////////////////////
             // Accessor
 
+            [[nodiscard]]
             constexpr auto base() const
                 -> F
             {

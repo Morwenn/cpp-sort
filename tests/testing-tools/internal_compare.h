@@ -1,14 +1,9 @@
 /*
- * Copyright (c) 2017 Morwenn
+ * Copyright (c) 2017-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_INTERNAL_COMPARE_H_
 #define CPPSORT_TESTSUITE_INTERNAL_COMPARE_H_
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <iterator>
 
 ////////////////////////////////////////////////////////////
 // Class with internal comparison function
@@ -50,22 +45,22 @@ class internal_compare
             return value < other.value;
         }
 
-        friend auto operator<(const internal_compare<T>& lhs, const internal_compare<T>& rhs)
+        friend auto operator<(const internal_compare& lhs, const internal_compare& rhs)
             -> bool
         {
             return lhs.value < rhs.value;
         }
 
-        friend auto operator>(const internal_compare<T>& lhs, const internal_compare<T>& rhs)
+        friend auto operator>(const internal_compare& lhs, const internal_compare& rhs)
             -> bool
         {
             return lhs.value > rhs.value;
         }
 
-        friend auto operator-(const internal_compare<T>& value)
-            -> internal_compare<T>
+        friend auto operator-(const internal_compare& value)
+            -> internal_compare
         {
-            return internal_compare<T>(-value.value);
+            return internal_compare(-value.value);
         }
 };
 

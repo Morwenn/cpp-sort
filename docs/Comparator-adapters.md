@@ -31,10 +31,10 @@ explicit constexpr flip_t(const F& func);
 explicit constexpr flip_t(F&& func);
 
 // Call with flipped arguments
-template<typename T1, typename T2>
-constexpr auto operator()(T1&& x, T2&& y) &/const&/&&/const&&
-    noexcept(noexcept(std::invoke(base(), std::forward<T2>(y), std::forward<T1>(x))))
-    -> decltype(std::invoke(base(), std::forward<T2>(y), std::forward<T1>(x)));
+template<typename Self, typename T1, typename T2>
+constexpr auto operator()(this Self&& self, T1&& x, T2&& y)
+    noexcept(noexcept(std::invoke(self.base(), std::forward<T2>(y), std::forward<T1>(x))))
+    -> decltype(std::invoke(self.base(), std::forward<T2>(y), std::forward<T1>(x)));
 
 // Retrieve the passed callable
 constexpr auto base() const
@@ -67,10 +67,10 @@ explicit constexpr not_fn_t(const F& func);
 explicit constexpr not_fn_t(F&& func);
 
 // Call and negate
-template<typename... Args>
-constexpr auto operator()(Args&&... args) &/const&/&&/const&&
-    noexcept(noexcept(not std::invoke(base(), std::forward<Args>(args)...)))
-    -> decltype(not std::invoke(base(), std::forward<Args>(args)...));
+template<typename Self, typename... Args>
+constexpr auto operator()(this Self&& self, Args&&... args) &/const&/&&/const&&
+    noexcept(noexcept(not std::invoke(self.base(), std::forward<Args>(args)...)))
+    -> decltype(not std::invoke(self.base(), std::forward<Args>(args)...));
 
 // Retrieve the passed callable
 constexpr auto base() const
@@ -110,14 +110,14 @@ projection_compare_t() = default;
 projection_compare_t(C comp, P proj);
 
 // Call
-template<typename T1, typename T2>
-constexpr auto operator()(T1&& x, T2&& y) &/const&/&&/const&&
-    noexcept(noexcept(std::invoke(comparison(),
-                                  std::invoke(projection(), std::forward<T1>(x)),
-                                  std::invoke(projection(), std::forward<T1>(y)))))
-    -> decltype(std::invoke(comparison(),
-                            std::invoke(projection(), std::forward<T1>(x)),
-                            std::invoke(projection(), std::forward<T1>(y))));
+template<typename Self, typename T1, typename T2>
+constexpr auto operator()(this Self&& self, T1&& x, T2&& y)
+    noexcept(noexcept(std::invoke(self.comparison(),
+                                  std::invoke(self.projection(), std::forward<T1>(x)),
+                                  std::invoke(self.projection(), std::forward<T1>(y)))))
+    -> decltype(std::invoke(self.comparison(),
+                            std::invoke(self.projection(), std::forward<T1>(x)),
+                            std::invoke(self.projection(), std::forward<T1>(y))));
 
 // Retrieve the passed comparison
 constexpr auto comparison() const

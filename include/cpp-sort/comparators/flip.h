@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_FLIP_H_
@@ -50,41 +50,21 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Call
 
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) &
-                noexcept(noexcept(utility::as_function(func)(std::forward<T2>(y), std::forward<T1>(x))))
-                -> decltype(utility::as_function(func)(std::forward<T2>(y), std::forward<T1>(x)))
+            template<typename Self, typename T1, typename T2>
+            constexpr auto operator()(this Self&& self, T1&& x, T2&& y)
+                noexcept(noexcept(utility::as_function(std::forward<Self>(self).func)(
+                    std::forward<T2>(y), std::forward<T1>(x))))
+                -> decltype(utility::as_function(std::forward<Self>(self).func)(
+                    std::forward<T2>(y), std::forward<T1>(x)))
             {
-                return utility::as_function(func)(std::forward<T2>(y), std::forward<T1>(x));
-            }
-
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) const&
-                noexcept(noexcept(utility::as_function(func)(std::forward<T2>(y), std::forward<T1>(x))))
-                -> decltype(utility::as_function(func)(std::forward<T2>(y), std::forward<T1>(x)))
-            {
-                return utility::as_function(func)(std::forward<T2>(y), std::forward<T1>(x));
-            }
-
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) &&
-                noexcept(noexcept(utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x))))
-                -> decltype(utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x)))
-            {
-                return utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x));
-            }
-
-            template<typename T1, typename T2>
-            constexpr auto operator()(T1&& x, T2&& y) const&&
-                noexcept(noexcept(utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x))))
-                -> decltype(utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x)))
-            {
-                return utility::as_function(std::move(func))(std::forward<T2>(y), std::forward<T1>(x));
+                return utility::as_function(std::forward<Self>(self).func)(
+                    std::forward<T2>(y), std::forward<T1>(x));
             }
 
             ////////////////////////////////////////////////////////////
             // Accessor
 
+            [[nodiscard]]
             constexpr auto base() const
                 -> F
             {

@@ -156,11 +156,11 @@ struct indirect:
     projection_base
 {
     template<typename T>
-    constexpr auto operator()(T&& indirect_value)
+    static constexpr auto operator()(T&& indirect_value)
         -> decltype(*std::forward<T>(indirect_value));
 
     template<typename T>
-    constexpr auto operator()(T&& indirect_value) const
+    static constexpr auto operator()(T&& indirect_value) const
         -> decltype(*std::forward<T>(indirect_value));
 };
 ```
@@ -183,7 +183,7 @@ struct function_constant
     static constexpr value_type value = Function;
 
     template<typename... Args>
-    constexpr auto operator()(Args&&... args) const
+    static constexpr auto operator()(Args&&... args) const
         noexcept(noexcept(as_function(Function)(std::forward<Args>(args)...)))
         -> decltype(as_function(Function)(std::forward<Args>(args)...));
 
