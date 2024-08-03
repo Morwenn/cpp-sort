@@ -57,7 +57,7 @@ macro(configure_tests target)
         _LIBCPP_REMOVE_TRANSITIVE_INCLUDES
         # Enable assertions for more thorough tests
         _GLIBCXX_ASSERTIONS
-        _LIBCPP_ENABLE_ASSERTIONS=1
+        _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE
         CPPSORT_ENABLE_ASSERTIONS
         # We test deprecated code but we don't want it to warn
         CPPSORT_DISABLE_DEPRECATION_WARNINGS
@@ -65,8 +65,14 @@ macro(configure_tests target)
         $<$<NOT:$<BOOL:${CPPSORT_STATIC_TESTS}>>:CATCH_CONFIG_RUNTIME_STATIC_REQUIRE>
     )
 
-    # More warnings and settings
+    # More warnings & hardening
     cppsort_add_warnings(${target})
+    if (UNIX AND NOT APPLE)
+        target_compile_options(${target} PRIVATE
+            $<$<CXX_COMPILER_ID:GNU>:-fhardened>
+        )
+    endif()
+
     target_compile_options(${target} PRIVATE
         $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-O0>
         $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-Og>
