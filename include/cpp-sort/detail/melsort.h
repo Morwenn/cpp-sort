@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <algorithm>
 #include <cmath>
 #include <utility>
 #include <vector>
@@ -69,9 +68,9 @@ namespace cppsort::detail
             insert_node->next->prev = insert_node;
 
             // Remove the empty lists to help with the merges
-            lists.erase(std::remove_if(lists.begin(), lists.end(), [](auto& list) {
+            std::erase_if(lists, [](auto& list) {
                 return list.is_empty();
-            }), lists.end());
+            });
         }
 
         // Merge lists pairwise, picking a list from each half
