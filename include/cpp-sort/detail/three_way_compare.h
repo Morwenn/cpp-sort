@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_THREE_WAY_COMPARE_H_
@@ -15,61 +15,44 @@
 
 namespace cppsort::detail
 {
-    template<typename Derived>
     struct three_way_compare_base
     {
-        public:
+        template<typename Self, typename T, typename U>
+        constexpr auto operator()(this const Self& self, T&& lhs, U&& rhs)
+            -> int
+        {
+            auto&& compare = self.base();
+            return compare(std::forward<T>(lhs), std::forward<U>(rhs)) ? -1 :
+                    compare(std::forward<U>(rhs), std::forward<T>(lhs));
+        }
 
-            template<typename T, typename U>
-            constexpr auto operator()(T&& lhs, U&& rhs) const
-                -> int
-            {
-                auto&& compare = derived().base();
-                return compare(std::forward<T>(lhs), std::forward<U>(rhs)) ? -1 :
-                       compare(std::forward<U>(rhs), std::forward<T>(lhs));
-            }
+        template<typename Self, typename T, typename U>
+        auto lt(this const Self& self, T&& x, U&& y)
+            -> decltype(auto)
+        {
+            return self.base()(std::forward<T>(x), std::forward<U>(y));
+        }
 
-            template<typename T, typename U>
-            auto lt(T&& x, U&& y) const
-                -> decltype(auto)
-            {
-                return derived().base()(std::forward<T>(x), std::forward<U>(y));
-            }
+        template<typename Self, typename T, typename U>
+        auto le(this const Self& self, T&& x, U&& y)
+            -> decltype(auto)
+        {
+            return not self.base()(std::forward<U>(y), std::forward<T>(x));
+        }
 
-            template<typename T, typename U>
-            auto le(T&& x, U&& y) const
-                -> decltype(auto)
-            {
-                return not derived().base()(std::forward<U>(y), std::forward<T>(x));
-            }
+        template<typename Self, typename T, typename U>
+        auto gt(this const Self& self, T&& x, U&& y)
+            -> decltype(auto)
+        {
+            return self.base()(std::forward<U>(y), std::forward<T>(x));
+        }
 
-            template<typename T, typename U>
-            auto gt(T&& x, U&& y) const
-                -> decltype(auto)
-            {
-                return derived().base()(std::forward<U>(y), std::forward<T>(x));
-            }
-
-            template<typename T, typename U>
-            auto ge(T&& x, U&& y) const
-                -> decltype(auto)
-            {
-                return not derived().base()(std::forward<T>(x), std::forward<U>(y));
-            }
-
-        private:
-
-            auto derived() noexcept
-                -> Derived&
-            {
-                return static_cast<Derived&>(*this);
-            }
-
-            auto derived() const noexcept
-                -> const Derived&
-            {
-                return static_cast<const Derived&>(*this);
-            }
+        template<typename Self, typename T, typename U>
+        auto ge(this const Self& self, T&& x, U&& y)
+            -> decltype(auto)
+        {
+            return not self.base()(std::forward<T>(x), std::forward<U>(y));
+        }
     };
 
     template<
@@ -77,14 +60,15 @@ namespace cppsort::detail
         bool = std::is_empty_v<Compare> && std::is_default_constructible_v<Compare>
     >
     struct three_way_compare:
-        three_way_compare_base<three_way_compare<Compare>>
+        three_way_compare_base
     {
         public:
 
-            constexpr three_way_compare(Compare compare):
+            constexpr explicit three_way_compare(Compare compare):
                 compare(std::move(compare))
             {}
 
+            [[nodiscard]]
             constexpr auto base() const noexcept
                 -> Compare
             {
@@ -98,12 +82,13 @@ namespace cppsort::detail
 
     template<typename Compare>
     struct three_way_compare<Compare, true>:
-        three_way_compare_base<three_way_compare<Compare>>
+        three_way_compare_base
     {
-        constexpr three_way_compare(Compare) {}
+        constexpr explicit three_way_compare(Compare) {}
 
-        using three_way_compare_base<three_way_compare<Compare>>::operator();
+        using three_way_compare_base::operator();
 
+        [[nodiscard]]
         constexpr auto base() const noexcept
             -> Compare
         {
@@ -114,11 +99,11 @@ namespace cppsort::detail
 
     template<>
     struct three_way_compare<std::less<>, true>:
-        three_way_compare_base<three_way_compare<std::less<>>>
+        three_way_compare_base
     {
-        constexpr three_way_compare(std::less<>) {}
+        constexpr explicit three_way_compare(std::less<>) {}
 
-        using three_way_compare_base<three_way_compare<std::less<>>>::operator();
+        using three_way_compare_base::operator();
 
         template<
             typename CharT,
@@ -132,6 +117,7 @@ namespace cppsort::detail
             return lhs.compare(0, lhs.size(), rhs.data(), rhs.size());
         }
 
+        [[nodiscard]]
         constexpr auto base() const noexcept
             -> std::less<>
         {
@@ -141,11 +127,11 @@ namespace cppsort::detail
 
     template<>
     struct three_way_compare<std::ranges::less, true>:
-        three_way_compare_base<three_way_compare<std::ranges::less>>
+        three_way_compare_base
     {
-        constexpr three_way_compare(std::ranges::less) {}
+        constexpr explicit three_way_compare(std::ranges::less) {}
 
-        using three_way_compare_base<three_way_compare<std::ranges::less>>::operator();
+        using three_way_compare_base::operator();
 
         template<
             typename CharT,
@@ -159,6 +145,7 @@ namespace cppsort::detail
             return lhs.compare(0, lhs.size(), rhs.data(), rhs.size());
         }
 
+        [[nodiscard]]
         constexpr auto base() const noexcept
             -> std::ranges::less
         {
@@ -168,11 +155,11 @@ namespace cppsort::detail
 
     template<>
     struct three_way_compare<std::greater<>, true>:
-        three_way_compare_base<three_way_compare<std::greater<>>>
+        three_way_compare_base
     {
-        constexpr three_way_compare(std::greater<>) {}
+        constexpr explicit three_way_compare(std::greater<>) {}
 
-        using three_way_compare_base<three_way_compare<std::greater<>>>::operator();
+        using three_way_compare_base::operator();
 
         template<
             typename CharT,
@@ -187,6 +174,7 @@ namespace cppsort::detail
             return (res < 0) ? 1 : -res;
         }
 
+        [[nodiscard]]
         constexpr auto base() const noexcept
             -> std::greater<>
         {
@@ -196,11 +184,11 @@ namespace cppsort::detail
 
     template<>
     struct three_way_compare<std::ranges::greater, true>:
-        three_way_compare_base<three_way_compare<std::ranges::greater>>
+        three_way_compare_base
     {
-        constexpr three_way_compare(std::ranges::greater) {}
+        constexpr explicit three_way_compare(std::ranges::greater) {}
 
-        using three_way_compare_base<three_way_compare<std::ranges::greater>>::operator();
+        using three_way_compare_base::operator();
 
         template<
             typename CharT,
@@ -215,6 +203,7 @@ namespace cppsort::detail
             return (res < 0) ? 1 : -res;
         }
 
+        [[nodiscard]]
         constexpr auto base() const noexcept
             -> std::ranges::greater
         {
