@@ -143,51 +143,24 @@ namespace cppsort
             // Access a sorter by index
 
             template<std::size_t N>
-            constexpr auto get() &
-                -> decltype(auto)
+                requires std::is_empty_v<pack_element<N, Sorters...>> &&
+                         std::is_default_constructible_v<pack_element<N, Sorters...>>
+            constexpr auto get(this auto&&)
+                -> pack_element<N, Sorters...>
             {
                 using sorter_t = pack_element<N, Sorters...>;
-
-                return hybrid_adapter_storage_leaf<
-                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
-                    + sizeof...(Indices) - N - 1,
-                    sorter_t
-                >::get();
+                return sorter_t{};
             }
 
-            template<std::size_t N>
-            constexpr auto get() const&
-                -> decltype(auto)
+            template<std::size_t N, typename Self>
+                requires (not std::is_empty_v<pack_element<N, Sorters...>> ||
+                          not std::is_default_constructible_v<pack_element<N, Sorters...>>)
+            constexpr auto get(this Self&& self)
+                -> copy_cvref_t<Self, pack_element<N, Sorters...>>
             {
                 using sorter_t = pack_element<N, Sorters...>;
 
-                return hybrid_adapter_storage_leaf<
-                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
-                    + sizeof...(Indices) - N - 1,
-                    sorter_t
-                >::get();
-            }
-
-            template<std::size_t N>
-            constexpr auto get() &&
-                -> decltype(auto)
-            {
-                using sorter_t = pack_element<N, Sorters...>;
-
-                return hybrid_adapter_storage_leaf<
-                    sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
-                    + sizeof...(Indices) - N - 1,
-                    sorter_t
-                >::get();
-            }
-
-            template<std::size_t N>
-            constexpr auto get() const&&
-                -> decltype(auto)
-            {
-                using sorter_t = pack_element<N, Sorters...>;
-
-                return hybrid_adapter_storage_leaf<
+                return std::forward<Self>(self).hybrid_adapter_storage_leaf<
                     sizeof...(Sorters) * iterator_category_value<iterator_category<sorter_t>>
                     + sizeof...(Indices) - N - 1,
                     sorter_t
