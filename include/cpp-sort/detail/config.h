@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
@@ -71,14 +71,8 @@
 
 #if defined(CPPSORT_ENABLE_AUDITS)
 #   define CPPSORT_ASSUME(...) CPPSORT_ASSERT(__VA_ARGS__)
-#elif defined(__GNUC__)
-#   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
-#elif defined(__clang__)
-#   define CPPSORT_ASSUME(expression) __builtin_assume(expression)
-#elif defined(_MSC_VER)
-#   define CPPSORT_ASSUME(expression) __assume(expression)
 #else
-#   define CPPSORT_ASSUME(cond) ((void)0)
+#   define CPPSORT_ASSUME(...) [[assume(__VA_ARGS__)]]
 #endif
 
 ////////////////////////////////////////////////////////////
