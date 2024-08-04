@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_ADAPTER_STORAGE_H_
@@ -10,19 +10,18 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <utility>
+#include "../detail/type_traits.h"
 
 namespace cppsort::utility
 {
-    //
-    // Storage for adapters that adapt only one sorter at a
-    // time: it will contain nothing if the sorter is empty
-    // and default-constructible, and a copy of the sorter
-    // passed at construction time otherwise
+    // Storage for adapters that adapt only one sorter at a time:
+    // it contains nothing if the sorter is empty and
+    // default-constructible, and a copy of the sorter passed at
+    // construction time otherwise
     //
     // It can be called like the sorter it wraps with operator(),
     // which should be hidden by the adapter's own operator()
     // despite inheritance
-    //
 
     template<
         typename Sorter,
@@ -37,7 +36,7 @@ namespace cppsort::utility
         explicit constexpr adapter_storage(const Sorter&) noexcept {}
 
         template<typename... Args>
-        constexpr auto operator()(Args&&... args) const
+        static constexpr auto operator()(Args&&... args)
             noexcept(std::is_nothrow_default_constructible_v<Sorter> &&
                      std::is_nothrow_invocable_v<Sorter, Args...>)
             -> decltype(Sorter{}(std::forward<Args>(args)...))
@@ -45,7 +44,7 @@ namespace cppsort::utility
             return Sorter{}(std::forward<Args>(args)...);
         }
 
-        constexpr auto get() const
+        static constexpr auto get()
             noexcept(std::is_nothrow_default_constructible_v<Sorter>)
             -> Sorter
         {
@@ -70,44 +69,19 @@ namespace cppsort::utility
             sorter(std::move(sorter))
         {}
 
-        template<typename... Args>
-        constexpr auto operator()(Args&&... args) const
+        template<typename Self, typename... Args>
+        constexpr auto operator()(this Self&& self, Args&&... args)
             noexcept(std::is_nothrow_invocable_v<Sorter, Args...>)
-            -> decltype(sorter(std::forward<Args>(args)...))
+            -> decltype(std::forward<Self>(self).sorter(std::forward<Args>(args)...))
         {
-            return sorter(std::forward<Args>(args)...);
+            return std::forward<Self>(self).sorter(std::forward<Args>(args)...);
         }
 
-        template<typename... Args>
-        constexpr auto operator()(Args&&... args)
-            noexcept(std::is_nothrow_invocable_v<Sorter, Args...>)
-            -> decltype(sorter(std::forward<Args>(args)...))
+        template<typename Self>
+        constexpr auto get(this Self&& self) noexcept
+            -> cppsort::detail::copy_cvref_t<Self, Sorter>
         {
-            return sorter(std::forward<Args>(args)...);
-        }
-
-        constexpr auto get() & noexcept
-            -> Sorter&
-        {
-            return static_cast<Sorter&>(sorter);
-        }
-
-        constexpr auto get() const& noexcept
-            -> const Sorter&
-        {
-            return static_cast<const Sorter&>(sorter);
-        }
-
-        constexpr auto get() && noexcept
-            -> Sorter&&
-        {
-            return static_cast<Sorter&&>(sorter);
-        }
-
-        constexpr auto get() const&& noexcept
-            -> const Sorter&&
-        {
-            return static_cast<const Sorter&&>(sorter);
+            return std::forward<Self>(self).sorter;
         }
     };
 }

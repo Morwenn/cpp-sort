@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_TYPE_TRAITS_H_
@@ -81,6 +81,28 @@ namespace cppsort::detail
     template<typename T, template<typename...> typename Template>
     inline constexpr bool is_specialization_of_v
         = is_specialization_of<T, Template>::value;
+
+    ////////////////////////////////////////////////////////////
+    // copy_cvref_t: apply cv and ref qualifiers of a given type
+    // to another type
+    //
+    // See https://wg21.link/P1450
+
+    template<bool RV, typename T>
+    using apply_ref = mstd::conditional_t<RV, T&&, T&>;
+
+    template<bool C, typename T>
+    using apply_const = mstd::conditional_t<C, const T, T>;
+
+    template<bool C, bool RV, typename T>
+    using apply_const_ref = apply_ref<RV, apply_const<C, T>>;
+
+    template<typename T, typename U>
+    using copy_cvref_t = apply_const_ref<
+        std::is_const_v<std::remove_reference_t<T>>,
+        not std::is_lvalue_reference_v<T>,
+        U
+    >;
 
     ////////////////////////////////////////////////////////////
     // pack_element: retrieve the nth elements of a parameter
