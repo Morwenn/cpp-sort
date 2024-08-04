@@ -84,12 +84,9 @@
 
 #if defined(CPPSORT_ENABLE_AUDITS)
 #   define CPPSORT_UNREACHABLE CPPSORT_ASSERT(false, "unreachable");
-#elif defined(__GNUC__) || defined(__clang__)
-#   define CPPSORT_UNREACHABLE __builtin_unreachable()
-#elif defined(_MSC_VER)
-#   define CPPSORT_UNREACHABLE __assume(false)
 #else
-#   define CPPSORT_UNREACHABLE ((void)0)
+#   include <utility>
+#   define CPPSORT_UNREACHABLE ::std::unreachable()
 #endif
 
 ////////////////////////////////////////////////////////////
