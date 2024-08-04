@@ -147,13 +147,13 @@ This buffer provider allocates on the heap a number of elements depending on a g
 #include <cpp-sort/utility/functional.h>
 ```
 
-This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
+This header provides the class template `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
 
 One such simple yet very handy projection available in the header is `indirect`: its instances can be called on any dereferenceable value `it`, in which case it returns `*it`. It is meant to be used as a projection with standard algorithms when iterating over a collection of iterators.
 
 ```cpp
 struct indirect:
-    projection_base
+    projection_base<indirect>
 {
     template<typename T>
     static constexpr auto operator()(T&& indirect_value)

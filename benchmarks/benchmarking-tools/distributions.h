@@ -473,7 +473,7 @@ namespace dist
     // Miscellaneous related tools
 
     struct as_long_string:
-        cppsort::utility::projection_base
+        cppsort::utility::projection_base<as_long_string>
     {
         auto operator()(long long int value) const
             -> std::string

@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <cmath>
+#include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -22,15 +23,21 @@ namespace cppsort::utility
     ////////////////////////////////////////////////////////////
     // Base type to allow piping projections
 
-    // Literally just to check that other classes
-    // actually inherit from it
+    // CRTP base class for all projection objects: it is modelled after
+    // std::ranges::range_adaptor_closure and thus uses CRTP the same
+    // reason, namely to avoid having function objects bigger than they
+    // ought to (which happens when the same base class is inherited
+    // from several times by the same class)
+    template<typename Derived>
+        requires std::is_object_v<Derived> &&
+                 std::same_as<Derived, std::remove_cv_t<Derived>>
     struct projection_base {};
 
     namespace detail
     {
         template<typename T, typename U>
         struct projection_base_pipe_result:
-            projection_base,
+            projection_base<projection_base_pipe_result<T, U>>,
             cppsort::detail::raw_check_is_transparent<T, U>
         {
             [[no_unique_address]] T lhs;
@@ -53,8 +60,8 @@ namespace cppsort::utility
 
     template<typename T, typename U>
         requires (
-            std::is_base_of_v<projection_base, std::remove_cvref_t<T>> ||
-            std::is_base_of_v<projection_base, std::remove_cvref_t<U>>
+            std::derived_from<std::remove_reference_t<T>, projection_base<std::remove_cvref_t<T>>> ||
+            std::derived_from<std::remove_reference_t<U>, projection_base<std::remove_cvref_t<U>>>
         )
     constexpr auto operator|(T&& lhs, U&& rhs)
         -> decltype(auto)
@@ -68,7 +75,7 @@ namespace cppsort::utility
     }
 
     template<typename T>
-        requires std::is_base_of_v<projection_base, std::remove_cvref_t<T>>
+        requires std::derived_from<std::remove_reference_t<T>, projection_base<std::remove_cvref_t<T>>>
     constexpr auto operator|(T&& lhs, std::identity)
         noexcept(noexcept(std::forward<T>(lhs)))
         -> decltype(std::forward<T>(lhs))
@@ -77,7 +84,7 @@ namespace cppsort::utility
     }
 
     template<typename U>
-        requires std::is_base_of_v<projection_base, std::remove_cvref_t<U>>
+        requires std::derived_from<std::remove_reference_t<U>, projection_base<std::remove_cvref_t<U>>>
     constexpr auto operator|(std::identity, U&& rhs)
         noexcept(noexcept(std::forward<U>(rhs)))
         -> decltype(std::forward<U>(rhs))
@@ -89,7 +96,7 @@ namespace cppsort::utility
     // indirect
 
     struct indirect:
-        projection_base
+        projection_base<indirect>
     {
         template<typename T>
         static constexpr auto operator()(T&& indirect_value)
@@ -106,7 +113,7 @@ namespace cppsort::utility
     {
         template<typename Function>
         struct as_projection_fn:
-            projection_base,
+            projection_base<as_projection_fn<Function>>,
             cppsort::detail::raw_check_is_transparent<Function>
         {
             private:
@@ -217,7 +224,7 @@ namespace cppsort::utility
     // Math functions (mostly useful for buffer providers)
 
     struct half:
-        projection_base
+        projection_base<half>
     {
         template<typename T>
         static constexpr auto operator()(T&& value)
@@ -230,7 +237,7 @@ namespace cppsort::utility
     };
 
     struct log:
-        projection_base
+        projection_base<log>
     {
         template<typename T>
         static constexpr auto operator()(T&& value)
@@ -244,7 +251,7 @@ namespace cppsort::utility
     };
 
     struct sqrt:
-        projection_base
+        projection_base<sqrt>
     {
         template<typename T>
         static constexpr auto operator()(T&& value)

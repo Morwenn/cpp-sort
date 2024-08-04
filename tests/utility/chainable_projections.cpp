@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Morwenn
+ * Copyright (c) 2020-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -18,7 +18,7 @@ using wrapper = generic_wrapper<int>;
 namespace
 {
     struct proj1:
-        cppsort::utility::projection_base
+        cppsort::utility::projection_base<proj1>
     {
         auto operator()(int value) const
             -> int
@@ -28,7 +28,7 @@ namespace
     };
 
     struct proj2:
-        cppsort::utility::projection_base
+        cppsort::utility::projection_base<proj2>
     {
         auto operator()(int value)
             -> int
