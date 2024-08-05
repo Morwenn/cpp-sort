@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -36,6 +36,19 @@ namespace
             requires cppsort::is_projection_iterator_v<Projection, ForwardIterator, Compare>
         auto operator()(ForwardIterator first, ForwardIterator last,
                         Compare compare={}, Projection projection={}) const
+            -> void
+        {
+            this->get()(first, last, compare, projection);
+        }
+
+        template<
+            typename ForwardIterator,
+            typename Compare = std::less<>,
+            typename Projection = std::identity
+        >
+            requires cppsort::is_projection_iterator_v<Projection, ForwardIterator, Compare>
+        auto operator()(ForwardIterator first, ForwardIterator last,
+                        Compare compare={}, Projection projection={})
             -> void
         {
             this->get()(first, last, compare, projection);
@@ -88,6 +101,44 @@ namespace
             cppsort::sorter_facade<non_empty_sorter_impl>(a, b)
         {}
     };
+
+    ////////////////////////////////////////////////////////////
+    // Mutable sorter
+
+    struct mutable_sorter_impl
+    {
+        int dummy1=0, dummy2=0;
+
+        mutable_sorter_impl() = default;
+        constexpr mutable_sorter_impl(int a, int b):
+            dummy1(a), dummy2(b)
+        {}
+
+        template<
+            typename Iterator,
+            typename Compare = std::less<>
+        >
+            requires (not cppsort::is_projection_iterator_v<Compare, Iterator>)
+        auto operator()(Iterator first, Iterator last, Compare compare={})
+            -> void
+        {
+            dummy1 = 3;
+            std::sort(std::move(first), std::move(last), std::move(compare));
+            dummy2 = 11;
+        }
+
+        using iterator_category = std::random_access_iterator_tag;
+        using is_always_stable = std::false_type;
+    };
+
+    struct mutable_sorter:
+        cppsort::sorter_facade<mutable_sorter_impl>
+    {
+        mutable_sorter() = default;
+        mutable_sorter(int a, int b):
+            cppsort::sorter_facade<mutable_sorter_impl>(a, b)
+        {}
+    };
 }
 
 TEST_CASE( "test correct adapter_storage behavior", "[adapter_storage]" )
@@ -110,5 +161,16 @@ TEST_CASE( "test correct adapter_storage behavior", "[adapter_storage]" )
 
         adapted_sorter(arr);
         CHECK( std::is_sorted(arr.begin(), arr.end()) );
+    }
+
+    SECTION( "with a mutable sorter" )
+    {
+        mutable_sorter original_sorter(5, 8);
+        auto adapted_sorter = dummy_adapter<mutable_sorter>(original_sorter);
+
+        adapted_sorter(arr);
+        CHECK( std::is_sorted(std::begin(arr), std::end(arr)) );
+        CHECK( adapted_sorter.get().dummy1 == 3 );
+        CHECK( adapted_sorter.get().dummy2 == 11 );
     }
 }

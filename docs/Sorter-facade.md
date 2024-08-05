@@ -1,4 +1,4 @@
-To write a full-fledged sorter, implementers have to implement what we call the *unified sorting interface*: a variety of `operator()` overloads with a rather high redundancy factor. To make the task simpler, **cpp-sort** provides `sorter_facade`, a wrapper class template which wraps a user-provided *sorter implementation* with a minimal interface and generates most of the boilerplate for the required operations:
+To write a full-fledged sorter, implementers have to implement what we call the *unified sorting interface*: a variety of `operator()` overloads with a rather high redundancy factor. To make the task simpler, **cpp-sort** provides `sorter_facade`, a class template which wraps a user-provided *sorter implementation* with a minimal interface and generates most of the boilerplate for the required operations:
 
 ```cpp
 struct frob_sorter_impl
@@ -11,9 +11,9 @@ struct frob_sorter:
 {};
 ```
 
-Moreover, `sorter_facade` inherits from its template parameter, therefore it has all the properties of the *sorter implementation* it wraps, including the nested type aliases and additional functions. The only things that may be overridden are described below, but all of them eventually end up calling functions from the *sorter implementation* anyway.
+`sorter_facade` inherits from its template parameter, therefore it has all the properties of the *sorter implementation* it wraps, including the nested type aliases and additional functions. The only functions that may be overridden are described below, though all of them eventually end up calling functions from the *sorter implementation* anyway.
 
-All the `operator()` of `sorter_facade` use [`mstd::forward_iterator`][mstd-iterator] or [`mstd::forward_range`][mstd-ranges] to constrain their parameters. It is the responsibility of the *sorter implementation* author to stregthen those constraints in the implementation overloads.
+All the `operator()` of `sorter_facade` use [`mstd::forward_iterator`][mstd-iterator] or [`mstd::forward_range`][mstd-ranges] to constrain their parameters. It is the responsibility of the *sorter implementation* author to stregthen those constraints in the implementation overloads if needed.
 
 ### Construction
 
@@ -62,7 +62,7 @@ template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
-constexpr auto operator()(Iterator first, Sentinel last) const
+constexpr auto operator()(this auto&& self, Iterator first, Sentinel last)
     -> /* implementation-defined */;
 
 template<
@@ -70,7 +70,8 @@ template<
     mstd::sentinel_for<Iterator> Sentinel,
     typename Compare
 >
-constexpr auto operator()(Iterator first, Sentinel last, Compare compare) const
+constexpr auto operator()(this auto&& self, Iterator first, Sentinel last,
+                          Compare compare)
     -> /* implementation-defined */;
 
 template<
@@ -78,7 +79,8 @@ template<
     mstd::sentinel_for<Iterator> Sentinel,
     typename Projection
 >
-constexpr auto operator()(Iterator first, Sentinel last, Projection projection) const
+constexpr auto operator()(this auto&& self, Iterator first, Sentinel last,
+                          Projection projection)
     -> /* implementation-defined */;
 
 template<
@@ -87,8 +89,8 @@ template<
     typename Compare,
     typename Projection
 >
-constexpr auto operator()(Iterator first, Sentinel last,
-                          Compare compare, Projection projection) const
+constexpr auto operator()(this auto&& self, Iterator first, Sentinel last,
+                          Compare compare, Projection projection)
     -> /* implementation-defined */;
 ```
 
@@ -124,29 +126,30 @@ struct selection_sorter:
 
 ```cpp
 template<mstd::forward_range Range>
-constexpr auto operator()(Range&& range) const
+constexpr auto operator()(this auto&& self, Range&& range)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Compare>
-constexpr auto operator()(Range&& range, Compare compare) const
+constexpr auto operator()(this auto&& self, Range&& range, Compare compare)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Projection>
-constexpr auto operator()(Range&& range, Projection projection) const
+constexpr auto operator()(this auto&& self, Range&& range, Projection projection)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Compare, typename Projection>
-constexpr auto operator()(Range&& range, Compare compare, Projection projection) const
+constexpr auto operator()(this auto&& self, Range&& range,
+                          Compare compare, Projection projection)
     -> /* implementation-defined */;
 ```
 
 These overloads will generally forward the parameters to the corresponding `operator()` overloads in the wrapped *sorter implementation* if they exist, or try to call an equivalent `operator()` taking an iterator/sentinel pair in the wrapped sorter by using [`mstd::begin` and `mstd::end`][mstd-ranges] on the range to sort. It also does some additional magic to forward `compare` and `projection` to the most suitable `operator()` overload in `sorter` and to complete the call with instances of [`std::less<>`][std-less-void] and/or [`std::identity`][std-identity] when additional parameters are needed. Basically, it ensures that everything can be done if `Sorter` has a single `operator()` taking an iterator/sentinel pair, a comparison function and a projection function.
 
-It will always call the most suitable range `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking an iterator/sentinel pair when it cannot do otherwise.
+It always calls the most suitable range `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatches the call to an overload taking an iterator/sentinel pair when it cannot do otherwise.
 
 ### Projection support for comparison-only sorters
 
-Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking an iterator/sentinel pair and a comparison function can take any range, iterator/sentinel pair, comparison and/or projection function once it is wrapped into `sorter_facade`.
+Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` bakes the projection into the comparison function and gives the result to the *sorter implementation* as a comparison function. It means that a *sorter implementation* with a single `operator()` taking an iterator/sentinel pair and a comparison function can take any range, iterator/sentinel pair, comparison and/or projection function once it is wrapped into `sorter_facade`.
 
 The reverse operation (baking a comparison function into a projection function) is not doable and simply does not make sense most of the time, so `sorter_facade` does not provide such a feature for *sorter implementations* that only provide support for projections.
 
@@ -156,40 +159,40 @@ The reverse operation (baking a comparison function into a projection function) 
 
 ```cpp
 template<mstd::forward_range Range>
-auto operator()(Range&& range, std::less<>) const
+auto operator()(this auto&& self, Range&& range, std::less<>)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range>
-auto operator()(Range&& range, std::identity) const
+auto operator()(this auto&& self, Range&& range, std::identity)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range>
-auto operator()(Range&& range, std::less<>, std::identity) const
+auto operator()(this auto&& self, Range&& range, std::less<>, std::identity)onst
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Projection>
-auto operator()(Range&& range, std::less<>, Projection projection) const
+auto operator()(this auto&& self, Range&& range, std::less<>, Projection projection)
     -> /* implementation-defined */;
 
 template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
-auto operator()(Iterator first, Sentinel last, std::less<>) const
+auto operator()(this auto&& self, Iterator first, Sentinel last, std::less<>)
     -> /* implementation-defined */;
 
 template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
-auto operator()(Iterator first, Sentinel last, std::identity) const
+auto operator()(this auto&& self, Iterator first, Sentinel last, std::identity)
     -> /* implementation-defined */;
 
 template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
-auto operator()(Iterator first, Sentinel last, std::less<>, std::identity) const
+auto operator()(Iterator first, Sentinel last, std::less<>, std::identity)
     -> /* implementation-defined */;
 
 template<
@@ -197,13 +200,14 @@ template<
     mstd::sentinel_for<Iterator> Sentinel,
     typename Projection
 >
-auto operator()(Iterator first, Sentinel last, std::less<>, Projection projection) const
+auto operator()(this auto&& self, Iterator first, Sentinel last,
+                std::less<>, Projection projection)
     -> /* implementation-defined */;
 ```
 
 Special overloads using [`std::ranges::less`][std-ranges-less] as a vocabulary are also available, with a behaviour similar to that of the `std::less<>` ones above.
 
-While it does not appear in this documentation, `sorter_facade` actually relies on an extensive amount of SFINAE tricks to ensure that only the `operator()` overloads that are needed and viable are generated. For example, the magic `std::less<>` overloads won't be generated if the wrapped *sorter implementation* already accepts a comparison function.
+While it does not appear in this documentation, `sorter_facade` actually relies on an extensive amount of SFINAE tricks to ensure that only the `operator()` overloads that are needed and viable are generated. For example, the magic `std::less<>` overloads won't be generated if the wrapped *sorter implementation* already accepts a comparison function. This magic unfortunately often makes it really difficult to read error messages.
 
 
   [issue-185]: https://github.com/Morwenn/cpp-sort/issues/185
