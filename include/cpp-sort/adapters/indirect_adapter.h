@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
@@ -134,36 +134,42 @@ namespace cppsort
             {}
 
             template<
+                typename Self,
                 mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_v<Projection, Range, Compare>
-            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(this->get(),
+            auto operator()(this Self&& self, Range&& range,
+                            Compare compare={}, Projection projection={})
+                -> decltype(sort_indirectly(std::forward<Self>(self).get(),
                                             mstd::begin(range), mstd::end(range),
                                             mstd::distance(range),
                                             std::move(compare), std::move(projection)))
             {
-                return sort_indirectly(this->get(),
+                return sort_indirectly(std::forward<Self>(self).get(),
                                        mstd::begin(range), mstd::end(range),
                                        mstd::distance(range),
                                        std::move(compare), std::move(projection));
             }
 
             template<
+                typename Self,
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Sentinel last, Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(this->get(), first, mstd::next(first, last),
+            auto operator()(this Self&& self, Iterator first, Sentinel last,
+                            Compare compare={}, Projection projection={})
+                -> decltype(sort_indirectly(std::forward<Self>(self).get(),
+                                            first, mstd::next(first, last),
                                             mstd::distance(first, last),
                                             std::move(compare), std::move(projection)))
             {
-                return sort_indirectly(this->get(), first, mstd::next(first, last),
+                return sort_indirectly(std::forward<Self>(self).get(),
+                                       first, mstd::next(first, last),
                                        mstd::distance(first, last),
                                        std::move(compare), std::move(projection));
             }

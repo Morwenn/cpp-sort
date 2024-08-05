@@ -81,6 +81,8 @@ namespace cppsort
         struct hybrid_adapter_storage_leaf:
             utility::adapter_storage<Sorter>
         {
+            using base_class = utility::adapter_storage<Sorter>;
+
             hybrid_adapter_storage_leaf() = default;
 
             constexpr hybrid_adapter_storage_leaf(Sorter&& sorter):
@@ -91,11 +93,11 @@ namespace cppsort
             // preferred for its iterator category first, then for its
             // position into the sorters
 
-            template<typename... Args>
-            constexpr auto operator()(choice<Ind>, Args&&... args) const
-                -> decltype(this->get()(std::forward<Args>(args)...))
+            template<typename Self, typename... Args>
+            constexpr auto operator()(this Self&& self, choice<Ind>, Args&&... args)
+                -> decltype(std::forward<Self>(self).base_class::get()(std::forward<Args>(args)...))
             {
-                return this->get()(std::forward<Args>(args)...);
+                return std::forward<Self>(self).base_class::get()(std::forward<Args>(args)...);
             }
 
             template<typename... Args>
@@ -209,15 +211,15 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Call operator
 
-                template<mstd::forward_range Range, typename... Args>
-                constexpr auto operator()(Range&& range, Args&&... args) const
-                    -> decltype(base_class::operator()(
+                template<typename Self, mstd::forward_range Range, typename... Args>
+                constexpr auto operator()(this Self&& self, Range&& range, Args&&... args)
+                    -> decltype(std::forward<Self>(self).base_class::operator()(
                         detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ))
                 {
-                    return base_class::operator()(
+                    return std::forward<Self>(self).base_class::operator()(
                         detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
@@ -225,18 +227,19 @@ namespace cppsort
                 }
 
                 template<
+                    typename Self,
                     mstd::forward_iterator Iterator,
                     mstd::sentinel_for<Iterator> Sentinel,
                     typename... Args
                 >
-                constexpr auto operator()(Iterator first, Sentinel last, Args&&... args) const
-                    -> decltype(base_class::operator()(
+                constexpr auto operator()(this Self&& self, Iterator first, Sentinel last, Args&&... args)
+                    -> decltype(std::forward<Self>(self).base_class::operator()(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
-                    return base_class::operator()(
+                    return std::forward<Self>(self).base_class::operator()(
                         detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                         std::move(first), std::move(last),
                         std::forward<Args>(args)...

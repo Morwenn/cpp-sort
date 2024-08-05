@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 Morwenn
+ * Copyright (c) 2019-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -12,7 +12,6 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/adapters.h>
-#include <cpp-sort/fixed_sorters.h>
 #include <cpp-sort/sorters/quick_merge_sorter.h>
 #include <testing-tools/distributions.h>
 

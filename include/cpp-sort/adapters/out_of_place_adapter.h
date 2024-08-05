@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_OUT_OF_PLACE_ADAPTER_H_
@@ -31,7 +31,7 @@ namespace cppsort
     {
         template<typename Sorter, typename ForwardIterator, typename Size, typename... Args>
         auto sort_out_of_place(ForwardIterator first, ForwardIterator last,
-                               Size size, const Sorter& sorter, Args&&... args)
+                               Size size, Sorter&& sorter, Args&&... args)
             -> decltype(auto)
         {
             using rvalue_type = rvalue_type_t<ForwardIterator>;
@@ -47,7 +47,8 @@ namespace cppsort
             });
 
             // Sort the elements in the memory buffer
-            return sorter(buffer.begin(), buffer.end(), std::forward<Args>(args)...);
+            return std::forward<Sorter>(sorter)(buffer.begin(), buffer.end(),
+                                                std::forward<Args>(args)...);
         }
     }
 
@@ -73,26 +74,29 @@ namespace cppsort
         // Wrap and call the sorter
 
         template<
+            typename Self,
             mstd::forward_iterator Iterator,
             mstd::sentinel_for<Iterator> Sentinel,
             typename... Args
         >
-        auto operator()(Iterator first, Sentinel last, Args&&... args) const
+        auto operator()(this Self&& self, Iterator first, Sentinel last, Args&&... args)
             -> decltype(auto)
         {
             auto dist = mstd::distance(first, last);
             auto last_it = mstd::next(first, last);
             return detail::sort_out_of_place(std::move(first), std::move(last_it), dist,
-                                             this->get(), std::forward<Args>(args)...);
+                                             std::forward<Self>(self).get(),
+                                             std::forward<Args>(args)...);
         }
 
-        template<mstd::forward_range Range, typename... Args>
-        auto operator()(Range&& range, Args&&... args) const
+        template<typename Self, mstd::forward_range Range, typename... Args>
+        auto operator()(this Self&& self, Range&& range, Args&&... args)
             -> decltype(auto)
         {
             auto dist = mstd::distance(range);
             return detail::sort_out_of_place(mstd::begin(range), mstd::end(range), dist,
-                                             this->get(), std::forward<Args>(args)...);
+                                             std::forward<Self>(self).get(),
+                                             std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////

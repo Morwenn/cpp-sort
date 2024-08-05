@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SCHWARTZ_ADAPTER_H_
@@ -107,78 +107,93 @@ namespace cppsort
             {}
 
             template<
+                typename Self,
                 mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_v<Projection, Range, Compare>
-            auto operator()(Range&& range, Compare compare, Projection projection) const
+            auto operator()(this Self&& self, Range&& range, Compare compare, Projection projection)
                 -> decltype(auto)
             {
                 return sort_with_schwartz(mstd::begin(range), mstd::distance(range),
                                           std::move(compare), std::move(projection),
-                                          this->get());
+                                          std::forward<Self>(self).get());
             }
 
             template<
+                typename Self,
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Sentinel last,
-                            Compare compare, Projection projection) const
+            auto operator()(this Self&& self, Iterator first, Sentinel last,
+                            Compare compare, Projection projection)
                 -> decltype(auto)
             {
                 return sort_with_schwartz(first, mstd::distance(first, last),
                                           std::move(compare), std::move(projection),
-                                          this->get());
+                                          std::forward<Self>(self).get());
             }
 
             template<
+                typename Self,
                 mstd::forward_range Range,
                 typename Compare = std::less<>
             >
                 requires (not is_projection_v<Compare, Range>)
-            auto operator()(Range&& range, Compare compare={}) const
-                -> decltype(this->get()(std::forward<Range>(range), std::move(compare)))
+            auto operator()(this Self&& self, Range&& range, Compare compare={})
+                -> decltype(std::forward<Self>(self).get()(
+                    std::forward<Range>(range), std::move(compare)))
             {
                 // No projection to handle, forward everything to the adapted sorter
-                return this->get()(std::forward<Range>(range), std::move(compare));
+                return std::forward<Self>(self).get()(
+                    std::forward<Range>(range), std::move(compare));
             }
 
             template<
+                typename Self,
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>
             >
                 requires (not is_projection_iterator_v<Compare, Iterator>)
-            auto operator()(Iterator first, Sentinel last, Compare compare={}) const
-                -> decltype(this->get()(std::move(first), std::move(last), std::move(compare)))
+            auto operator()(this Self&& self, Iterator first, Sentinel last, Compare compare={})
+                -> decltype(std::forward<Self>(self).get()(
+                    std::move(first), std::move(last), std::move(compare)))
             {
                 // No projection to handle, forward everything to the adapted sorter
-                return this->get()(std::move(first), std::move(last), std::move(compare));
+                return std::forward<Self>(self).get()(
+                    std::move(first), std::move(last), std::move(compare));
             }
 
-            template<mstd::forward_range Range, typename Compare>
-            auto operator()(Range&& range, Compare compare, std::identity projection) const
-                -> decltype(this->get()(std::forward<Range>(range), std::move(compare), projection))
+            template<typename Self, mstd::forward_range Range, typename Compare>
+            auto operator()(this Self&& self, Range&& range,
+                            Compare compare, std::identity projection)
+                -> decltype(std::forward<Self>(self).get()(
+                    std::forward<Range>(range), std::move(compare), projection))
             {
                 // std::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::forward<Range>(range), std::move(compare), projection);
+                return std::forward<Self>(self).get()(
+                    std::forward<Range>(range), std::move(compare), projection);
             }
 
             template<
+                typename Self,
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare
             >
-            auto operator()(Iterator first, Sentinel last, Compare compare, std::identity projection) const
-                -> decltype(this->get()(std::move(first), std::move(last), std::move(compare), projection))
+            auto operator()(this Self&& self, Iterator first, Sentinel last,
+                            Compare compare, std::identity projection)
+                -> decltype(std::forward<Self>(self).get()(
+                    std::move(first), std::move(last), std::move(compare), projection))
             {
                 // std::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::move(first), std::move(last), std::move(compare), projection);
+                return std::forward<Self>(self).get()(
+                    std::move(first), std::move(last), std::move(compare), projection);
             }
         };
     }

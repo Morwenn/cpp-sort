@@ -81,7 +81,9 @@ namespace cppsort::utility
         constexpr auto get(this Self&& self) noexcept
             -> cppsort::detail::copy_cvref_t<Self, Sorter>
         {
-            return std::forward<Self>(self).sorter;
+            return static_cast<
+                cppsort::detail::copy_cvref_t<Self, adapter_storage<Sorter, false>>
+            >(self).sorter;
         }
     };
 }

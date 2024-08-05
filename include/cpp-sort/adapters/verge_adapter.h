@@ -38,12 +38,13 @@ namespace cppsort
             {}
 
             template<
+                typename Self,
                 mstd::bidirectional_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_v<Projection, Range, Compare>
-            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, Range&& range, Compare compare={}, Projection projection={})
                 -> mstd::iterator_t<Range>
             {
                 static_assert(
@@ -60,19 +61,20 @@ namespace cppsort
                 verge::sort<Stable>(std::move(first), last_it,
                                     mstd::distance(range),
                                     std::move(compare), std::move(projection),
-                                    this->get());
+                                    std::forward<Self>(self).get());
                 return last_it;
             }
 
             template<
+                typename Self,
                 mstd::bidirectional_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Sentinel last,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, Iterator first, Sentinel last,
+                            Compare compare={}, Projection projection={})
                 -> Iterator
             {
                 static_assert(
@@ -87,7 +89,7 @@ namespace cppsort
                 auto last_it = mstd::next(first, std::move(last));
                 verge::sort<Stable>(std::move(first), last_it, dist,
                                     std::move(compare), std::move(projection),
-                                    this->get());
+                                    std::forward<Self>(self).get());
                 return last_it;
             }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SELF_SORT_ADAPTER_H_
@@ -28,14 +28,14 @@ namespace cppsort
 
         template<typename Collection, typename... Args>
         concept has_sort_method =
-            requires (Collection& collection, Args&&... args) {
-                collection.sort(std::forward<Args>(args)...);
+            requires (Collection&& collection, Args&&... args) {
+                std::forward<Collection>(collection).sort(std::forward<Args>(args)...);
             };
 
         template<typename Collection, typename... Args>
         concept has_stable_sort_method =
-            requires (Collection& collection, Args&&... args) {
-                collection.stable_sort(std::forward<Args>(args)...);
+            requires (Collection&& collection, Args&&... args) {
+                std::forward<Collection>(collection).stable_sort(std::forward<Args>(args)...);
             };
     }
 
@@ -65,7 +65,7 @@ namespace cppsort
 
         template<typename Collection, typename... Args>
             requires detail::has_sort_method<Collection, Args...>
-        auto operator()(Collection&& collection, Args&&... args) const
+        static auto operator()(Collection&& collection, Args&&... args)
             -> decltype(std::forward<Collection>(collection).sort(utility::as_function(args)...))
         {
             return std::forward<Collection>(collection).sort(utility::as_function(args)...);
@@ -76,30 +76,32 @@ namespace cppsort
                 not detail::has_sort_method<Collection, Args...> &&
                 detail::has_stable_sort_method<Collection, Args...>
             )
-        auto operator()(Collection&& collection, Args&&... args) const
+        static auto operator()(Collection&& collection, Args&&... args)
             -> decltype(std::forward<Collection>(collection).stable_sort(utility::as_function(args)...))
         {
             return std::forward<Collection>(collection).stable_sort(utility::as_function(args)...);
         }
 
-        template<typename Collection, typename... Args>
+        template<typename Self, typename Collection, typename... Args>
             requires (
                 not detail::has_sort_method<Collection, Args...> &&
                 not detail::has_stable_sort_method<Collection, Args...>
             )
-        auto operator()(Collection&& collection, Args&&... args) const
-            -> decltype(this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...))
+        auto operator()(this Self&& self, Collection&& collection, Args&&... args)
+            -> decltype(std::forward<Self>(self).get()(
+                std::forward<Collection>(collection), std::forward<Args>(args)...))
         {
-            return this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...);
+            return std::forward<Self>(self).get()(
+                std::forward<Collection>(collection), std::forward<Args>(args)...);
         }
 
-        template<typename Iterator, typename... Args>
-        auto operator()(Iterator first, Iterator last, Args&&... args) const
-            -> decltype(this->get()(std::move(first), std::move(last),
-                                    std::forward<Args>(args)...))
+        template<typename Self, typename Iterator, typename... Args>
+        auto operator()(this Self&& self, Iterator first, Iterator last, Args&&... args)
+            -> decltype(std::forward<Self>(self).get()(
+                std::move(first), std::move(last), std::forward<Args>(args)...))
         {
-            return this->get()(std::move(first), std::move(last),
-                               std::forward<Args>(args)...);
+            return std::forward<Self>(self).get()(
+                std::move(first), std::move(last), std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////

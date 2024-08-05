@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_H_
@@ -30,21 +30,22 @@ namespace cppsort
         struct adl_despair
         {
             template<typename Sorter, typename Collection>
-            auto operator()(Sorter sorter, Collection& collection) const
+            auto operator()(this auto&&, Sorter sorter, Collection& collection)
                 -> decltype(sort(std::move(sorter), collection))
             {
                 return sort(std::move(sorter), collection);
             }
 
             template<typename Sorter, typename Collection, typename Function>
-            auto operator()(Sorter sorter, Collection& collection, Function function) const
+            auto operator()(this auto&&, Sorter sorter, Collection& collection, Function function)
                 -> decltype(sort(std::move(sorter), collection, std::move(function)))
             {
                 return sort(std::move(sorter), collection, std::move(function));
             }
 
             template<typename Sorter, typename Collection, typename Compare, typename Projection>
-            auto operator()(Sorter sorter, Collection& collection, Compare compare, Projection projection) const
+            auto operator()(this auto&&, Sorter sorter, Collection& collection,
+                            Compare compare, Projection projection)
                 -> decltype(sort(std::move(sorter), collection,
                                  std::move(compare), std::move(projection)))
             {
@@ -100,225 +101,318 @@ namespace cppsort
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection
             >
-                requires detail::can_sort<Sorter, Collection>::value
-            auto operator()(Collection& collection) const
+                requires detail::can_sort<
+                    copy_cvref_t<Self, Sorter>,
+                    Collection
+                >::value
+            auto operator()(this Self&& self, Collection& collection)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection))
+                    decltype(detail::adl_despair{}(std::forward<Self>(self).get(), collection))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection);
+                return detail::adl_despair{}(std::forward<Self>(self).get(), collection);
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection
             >
-                requires (not detail::can_sort<Sorter, Collection>::value)
-            auto operator()(Collection& collection) const
+                requires (
+                    not detail::can_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection
+                    >::value
+                )
+            auto operator()(this Self&& self, Collection& collection)
                 -> mstd::conditional_t<
                     Stability,
                     cppsort::is_stable<Sorter(Collection&)>,
-                    decltype(this->get()(collection))
+                    decltype(std::forward<Self>(self).get()(collection))
                 >
             {
-                return this->get()(collection);
+                return std::forward<Self>(self).get()(collection);
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Compare
             >
-                requires detail::can_comparison_sort<Sorter, Collection, Compare>::value
-            auto operator()(Collection& collection, Compare compare) const
+                requires detail::can_comparison_sort<
+                    copy_cvref_t<Self, Sorter>,
+                    Collection,
+                    Compare
+                >::value
+            auto operator()(this Self&& self, Collection& collection, Compare compare)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection, std::move(compare)))
+                    decltype(detail::adl_despair{}(
+                        std::forward<Self>(self).get(), collection, std::move(compare)))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection, std::move(compare));
+                return detail::adl_despair{}(std::forward<Self>(self).get(), collection, std::move(compare));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Compare
             >
                 requires (
                     not is_projection_v<Compare, Collection> &&
-                    not detail::can_comparison_sort<Sorter, Collection, Compare>::value
+                    not detail::can_comparison_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Compare
+                    >::value
                 )
-            auto operator()(Collection& collection, Compare compare) const
+            auto operator()(this Self&& self, Collection& collection, Compare compare)
                 -> mstd::conditional_t<
                     Stability,
                     cppsort::is_stable<Sorter(Collection&, Compare)>,
-                    decltype(this->get()(collection, std::move(compare)))
+                    decltype(std::forward<Self>(self).get()(collection, std::move(compare)))
                 >
             {
-                return this->get()(collection, std::move(compare));
+                return std::forward<Self>(self).get()(collection, std::move(compare));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Projection
             >
                 requires (
-                    not detail::can_comparison_sort<Sorter, Collection, Projection>::value &&
-                    detail::can_projection_sort<Sorter, Collection, Projection>::value
+                    not detail::can_comparison_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Projection
+                    >::value &&
+                    detail::can_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Projection
+                    >::value
                 )
-            auto operator()(Collection& collection, Projection projection) const
+            auto operator()(this Self&& self, Collection& collection, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection, std::move(projection)))
+                    decltype(detail::adl_despair{}(
+                        std::forward<Self>(self).get(), collection, std::move(projection)))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection, std::move(projection));
+                return detail::adl_despair{}(
+                    std::forward<Self>(self).get(), collection, std::move(projection));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Projection
             >
                 requires (
-                    not detail::can_projection_sort<Sorter, Collection, Projection>::value &&
-                    detail::can_comparison_projection_sort<Sorter, Collection, std::less<>, Projection>::value
+                    not detail::can_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Projection
+                    >::value &&
+                    detail::can_comparison_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        std::less<>,
+                        Projection
+                    >::value
                 )
-            auto operator()(Collection& collection, Projection projection) const
+            auto operator()(this Self&& self, Collection& collection, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection, std::less{}, std::move(projection)))
+                    decltype(detail::adl_despair{}(
+                        std::forward<Self>(self).get(), collection, std::less{}, std::move(projection)))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection, std::less{}, std::move(projection));
+                return detail::adl_despair{}(
+                    std::forward<Self>(self).get(), collection, std::less{}, std::move(projection));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Projection
             >
                 requires (
-                    not detail::can_projection_sort<Sorter, Collection, Projection>::value &&
-                    not detail::can_comparison_projection_sort<Sorter, Collection, std::less<>, Projection>::value &&
+                    not detail::can_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Projection
+                    >::value &&
+                    not detail::can_comparison_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        std::less<>,
+                        Projection
+                    >::value &&
                     detail::can_comparison_sort<
-                        Sorter,
+                        copy_cvref_t<Self, Sorter>,
                         Collection,
                         projection_compare_t<std::less<>, Projection>
                     >::value
                 )
-            auto operator()(Collection& collection, Projection projection) const
+            auto operator()(this Self&& self, Collection& collection, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection,
-                                                   projection_compare(std::less{}, std::move(projection))))
+                    decltype(detail::adl_despair{}(
+                        std::forward<Self>(self).get(), collection,
+                        projection_compare(std::less{}, std::move(projection))))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection,
-                                             projection_compare(std::less{}, std::move(projection)));
+                return detail::adl_despair{}(
+                    std::forward<Self>(self).get(), collection,
+                    projection_compare(std::less{}, std::move(projection)));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Projection
             >
                 requires (
                     is_projection_v<Projection, Collection> &&
-                    not detail::can_projection_sort<Sorter, Collection, Projection>::value &&
-                    not detail::can_comparison_projection_sort<Sorter, Collection, std::less<>, Projection>::value &&
+                    not detail::can_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Projection
+                    >::value &&
+                    not detail::can_comparison_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        std::less<>,
+                        Projection
+                    >::value &&
                     not detail::can_comparison_sort<
-                        Sorter,
+                        copy_cvref_t<Self, Sorter>,
                         Collection,
                         projection_compare_t<std::less<>, Projection>
                     >::value
                 )
-            auto operator()(Collection& collection, Projection projection) const
+            auto operator()(this Self&& self, Collection& collection, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     cppsort::is_stable<Sorter(Collection&, Projection)>,
-                    decltype(this->get()(collection, std::move(projection)))
+                    decltype(std::forward<Self>(self).get()(collection, std::move(projection)))
                 >
             {
-                return this->get()(collection, std::move(projection));
+                return std::forward<Self>(self).get()(collection, std::move(projection));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Compare,
                 typename Projection
             >
-                requires detail::can_comparison_projection_sort<Sorter, Collection, Compare, Projection>::value
-            auto operator()(Collection& collection, Compare compare, Projection projection) const
+                requires detail::can_comparison_projection_sort<
+                    copy_cvref_t<Self, Sorter>,
+                    Collection,
+                    Compare,
+                    Projection
+                >::value
+            auto operator()(this Self&& self, Collection& collection,
+                            Compare compare, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection,
-                                                   std::move(compare), std::move(projection)))
+                    decltype(detail::adl_despair{}(
+                        std::forward<Self>(self).get(), collection,
+                        std::move(compare), std::move(projection)))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection,
-                                             std::move(compare), std::move(projection));
+                return detail::adl_despair{}(
+                    std::forward<Self>(self).get(), collection,
+                    std::move(compare), std::move(projection));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Compare,
                 typename Projection
             >
                 requires (
-                    not detail::can_comparison_projection_sort<Sorter, Collection, Compare, Projection>::value &&
+                    not detail::can_comparison_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Compare,
+                        Projection
+                    >::value &&
                     detail::can_comparison_sort<
-                        Sorter,
+                        copy_cvref_t<Self, Sorter>,
                         Collection,
                         projection_compare_t<Compare, Projection>
                     >::value
                 )
-            auto operator()(Collection& collection, Compare compare, Projection projection) const
+            auto operator()(this Self&& self, Collection& collection,
+                            Compare compare, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     std::false_type,
-                    decltype(detail::adl_despair{}(this->get(), collection,
-                                                   projection_compare(std::move(compare), std::move(projection))))
+                    decltype(detail::adl_despair{}(
+                        std::forward<Self>(self).get(), collection,
+                        projection_compare(std::move(compare), std::move(projection))))
                 >
             {
-                return detail::adl_despair{}(this->get(), collection,
-                                             projection_compare(std::move(compare), std::move(projection)));
+                return detail::adl_despair{}(
+                    std::forward<Self>(self).get(), collection,
+                    projection_compare(std::move(compare), std::move(projection)));
             }
 
             template<
                 bool Stability = false,
+                typename Self,
                 typename Collection,
                 typename Compare,
                 typename Projection
             >
                 requires (
-                    not detail::can_comparison_projection_sort<Sorter, Collection, Compare, Projection>::value &&
+                    not detail::can_comparison_projection_sort<
+                        copy_cvref_t<Self, Sorter>,
+                        Collection,
+                        Compare,
+                        Projection
+                    >::value &&
                     not detail::can_comparison_sort<
-                        Sorter,
+                        copy_cvref_t<Self, Sorter>,
                         Collection,
                         projection_compare_t<Compare, Projection>
                     >::value
                 )
-            auto operator()(Collection& collection, Compare compare, Projection projection) const
+            auto operator()(this Self&& self, Collection& collection,
+                            Compare compare, Projection projection)
                 -> mstd::conditional_t<
                     Stability,
                     cppsort::is_stable<Sorter(Collection&, Compare, Projection)>,
-                    decltype(this->get()(collection, std::move(compare), std::move(projection)))
+                    decltype(std::forward<Self>(self).get()(
+                        collection, std::move(compare), std::move(projection)))
                 >
             {
-                return this->get()(collection, std::move(compare), std::move(projection));
+                return std::forward<Self>(self).get()(
+                    collection, std::move(compare), std::move(projection));
             }
         };
     }

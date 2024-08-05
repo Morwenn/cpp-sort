@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_STABLE_ADAPTER_H_
@@ -128,34 +128,37 @@ namespace cppsort
             {}
 
             template<
+                typename Self,
                 mstd::forward_range Range,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_v<Projection, Range, Compare>
-            auto operator()(Range&& range, Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, Range&& range,
+                            Compare compare={}, Projection projection={})
                 -> decltype(auto)
             {
                 return make_stable_and_sort(mstd::begin(range), mstd::distance(range),
                                             std::move(compare), std::move(projection),
-                                            this->get());
+                                            std::forward<Self>(self).get());
             }
 
             template<
+                typename Self,
                 mstd::forward_iterator Iterator,
                 mstd::sentinel_for<Iterator> Sentinel,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Sentinel last,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, Iterator first, Sentinel last,
+                            Compare compare={}, Projection projection={})
                 -> decltype(auto)
             {
                 auto dist = mstd::distance(first, last);
                 return make_stable_and_sort(std::move(first), dist,
                                             std::move(compare), std::move(projection),
-                                            this->get());
+                                            std::forward<Self>(self).get());
             }
 
             ////////////////////////////////////////////////////////////
@@ -202,20 +205,20 @@ namespace cppsort
             utility::adapter_storage<Sorter>(std::move(sorter))
         {}
 
-        template<typename... Args>
+        template<typename Self, typename... Args>
             requires is_stable_v<Sorter(Args...)>
-        auto operator()(Args&&... args) const
-            -> decltype(this->get()(std::forward<Args>(args)...))
+        auto operator()(this Self&& self, Args&&... args)
+            -> decltype(std::forward<Self>(self).get()(std::forward<Args>(args)...))
         {
-            return this->get()(std::forward<Args>(args)...);
+            return std::forward<Self>(self).get()(std::forward<Args>(args)...);
         }
 
-        template<typename... Args>
+        template<typename Self, typename... Args>
             requires (not is_stable_v<Sorter(Args...)>)
-        auto operator()(Args&&... args) const
-            -> decltype(make_stable<Sorter>(this->get())(std::forward<Args>(args)...))
+        auto operator()(this Self&& self, Args&&... args)
+            -> decltype(make_stable<Sorter>(std::forward<Self>(self).get())(std::forward<Args>(args)...))
         {
-            return make_stable<Sorter>(this->get())(std::forward<Args>(args)...);
+            return make_stable<Sorter>(std::forward<Self>(self).get())(std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////
