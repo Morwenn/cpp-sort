@@ -98,13 +98,14 @@ namespace cppsort::detail::verge
     >
     auto sort_impl(BidirectionalIterator first, BidirectionalIterator last,
                    mstd::iter_difference_t<BidirectionalIterator> size,
-                   Compare compare, Projection projection, Fallback fallback)
+                   Compare compare, Projection projection, Fallback&& fallback)
         -> void
     {
         if (size < 128) {
             // vergesort is inefficient for small collections
-            fallback(mstd::subrange(first, last, size),
-                     std::move(compare), std::move(projection)
+            std::forward<Fallback>(fallback)(
+                mstd::subrange(first, last, size),
+                std::move(compare), std::move(projection)
             );
             return;
         }
@@ -321,13 +322,15 @@ namespace cppsort::detail::verge
     >
     auto sort_impl(RandomAccessIterator first, RandomAccessIterator last,
                    mstd::iter_difference_t<RandomAccessIterator> size,
-                   Compare compare, Projection projection, Fallback fallback)
+                   Compare compare, Projection projection, Fallback&& fallback)
         -> void
     {
         if (size < 128) {
             // Vergesort is inefficient for small collections
-            fallback(std::move(first), std::move(last),
-                     std::move(compare), std::move(projection));
+            std::forward<Fallback>(fallback)(
+                std::move(first), std::move(last),
+                std::move(compare), std::move(projection)
+            );
             return;
         }
 
@@ -496,14 +499,14 @@ namespace cppsort::detail::verge
     constexpr auto get_maybe_stable(std::true_type, Sorter&& sorter)
         -> cppsort::stable_t<Sorter>
     {
-        return cppsort::stable_t<Sorter>(std::move(sorter));
+        return cppsort::stable_t<Sorter>(std::forward<Sorter>(sorter));
     }
 
     template<typename Sorter>
     constexpr auto get_maybe_stable(std::false_type, Sorter&& sorter)
-        -> Sorter
+        -> decltype(auto)
     {
-        return std::move(sorter);
+        return std::forward<Sorter>(sorter);
     }
 
     template<
@@ -515,7 +518,7 @@ namespace cppsort::detail::verge
     >
     auto sort(BidirectionalIterator first, BidirectionalIterator last,
               mstd::iter_difference_t<BidirectionalIterator> size,
-              Compare compare, Projection projection, Fallback fallback)
+              Compare compare, Projection projection, Fallback&& fallback)
         -> void
     {
         // Adapt the fallback sorter depending on whether a stable
@@ -523,7 +526,7 @@ namespace cppsort::detail::verge
         verge::sort_impl<Stable>(
             std::move(first), std::move(last), size,
             std::move(compare), std::move(projection),
-            get_maybe_stable(std::bool_constant<Stable>{}, std::move(fallback))
+            get_maybe_stable(std::bool_constant<Stable>{}, std::forward<Fallback>(fallback))
         );
     }
 }
