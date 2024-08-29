@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         cxx:
-          - g++-11
+          - g++-12
           - clang++
         config:
           # Release build
