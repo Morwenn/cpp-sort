@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 Morwenn
+ * Copyright (c) 2018-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_ADAPTER_STORAGE_H_
@@ -51,7 +51,7 @@ namespace utility
             return Sorter{}(std::forward<Args>(args)...);
         }
 
-        constexpr auto get() const
+        static constexpr auto get()
             noexcept(std::is_nothrow_default_constructible<Sorter>::value)
             -> Sorter
         {
