@@ -37,16 +37,18 @@ foreach (LANG ${ENABLED_LANGUAGES})
 
 		elseif ("${CMAKE_${LANG}_COMPILER_ID}" MATCHES "^(Apple)?Clang$")
 			# Some distributions like Debian ship llvm-cov with the compiler
-			# version appended as llvm-cov-x.y. To find this binary we'll build
+			# version appended as llvm-cov-x.y or just llvm-cov-x. To find this binary we'll build
 			# the suggested binary name with the compiler version.
-			string(REGEX MATCH "^[0-9]+.[0-9]+" LLVM_VERSION
+			string(REGEX MATCH "^[0-9]+\.[0-9]+" LLVM_FULL_VERSION
+				"${CMAKE_${LANG}_COMPILER_VERSION}")
+			string(REGEX MATCH "^[0-9]+" LLVM_MAJOR_VERSION
 				"${CMAKE_${LANG}_COMPILER_VERSION}")
 
 			# llvm-cov prior version 3.5 seems to be not working with coverage
 			# evaluation tools, but these versions are compatible with the gcc
 			# gcov tool.
-			if(LLVM_VERSION VERSION_GREATER 3.4)
-				find_program(LLVM_COV_BIN NAMES "llvm-cov-${LLVM_VERSION}"
+			if(LLVM_FULL_VERSION VERSION_GREATER 3.4)
+				find_program(LLVM_COV_BIN NAMES "llvm-cov-${LLVM_FULL_VERSION}" "llvm-cov-${LLVM_MAJOR_VERSION}"
 					"llvm-cov" HINTS ${COMPILER_PATH})
 				mark_as_advanced(LLVM_COV_BIN)
 
