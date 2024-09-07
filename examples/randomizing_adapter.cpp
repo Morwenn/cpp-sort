@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -38,25 +38,27 @@ struct randomizing_adapter:
     // operator()
 
     template<
+        typename Self,
         cppsort::mstd::random_access_iterator Iterator,
         typename... Args
     >
-    auto operator()(Iterator begin, Iterator end, Args&&... args) const
-        -> decltype(this->get()(begin, end, std::forward<Args>(args)...))
+    auto operator()(this Self&& self, Iterator begin, Iterator end, Args&&... args)
+        -> decltype(std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...))
     {
         my_shuffle(begin, end);
-        return this->get()(begin, end, std::forward<Args>(args)...);
+        return std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...);
     }
 
     template<
-        cppsort::mstd::forward_range Range,
+        typename Self,
+        cppsort::mstd::random_access_range Range,
         typename... Args
     >
-    auto operator()(Range&& range, Args&&... args) const
-        -> decltype(this->get()(std::forward<Range>(range), std::forward<Args>(args)...))
+    auto operator()(this Self&& self, Range&& range, Args&&... args)
+        -> decltype(std::forward<Self>(self).get()(std::forward<Range>(range), std::forward<Args>(args)...))
     {
         my_shuffle(cppsort::mstd::begin(range), cppsort::mstd::end(range));
-        return this->get()(std::forward<Range>(range), std::forward<Args>(args)...);
+        return std::forward<Self>(self).get()(std::forward<Range>(range), std::forward<Args>(args)...);
     }
 
     ////////////////////////////////////////////////////////////

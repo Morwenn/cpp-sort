@@ -40,7 +40,7 @@ The solution for libc++ was to guard `std::sort` with a `_LIBCPP_DEBUG_RANDOMIZE
 ## A basic `randomizing_adapter`
 
 Writing a sorter adapter is very similar to writing a sorter:
-* Provide a suitable `operator()`.
+* Provide a suitably constrained `operator()`.
 * Document the [category of iterators][iterator-category] it accepts.
 * Optionally document its stability guarantees.
 
@@ -53,8 +53,11 @@ In the case of `randomizing_adapter`, all of those are quite simple:
 template<typename Sorter>
 struct randomizing_adapter
 {
-    template<typename RandomAccessIterator, typename... Args>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end, Args&&... args) const
+    template<
+        cppsort::mstd::random_access_iterator Iterator,
+        typename... Args
+    >
+    auto operator()(Iterator begin, Iterator end, Args&&... args) const
         -> decltype(Sorter{}(begin, end, std::forward<Args>(args)...))
     {
         thread_local std::random_device device;
@@ -106,8 +109,11 @@ struct randomizing_adapter:
         cppsort::utility::adapter_storage<Sorter>(std::move(sorter))
     {}
 
-    template<typename RandomAccessIterator, typename... Args>
-    auto operator()(RandomAccessIterator begin, RandomAccessIterator end, Args&&... args) const
+    template<
+        cppsort::mstd::random_access_iterator Iterator,
+        typename... Args
+    >
+    auto operator()(Iterator begin, Iterator end, Args&&... args) const
         -> decltype(this->get()(begin, end, std::forward<Args>(args)...))
     {
         thread_local std::random_device device;
@@ -121,6 +127,28 @@ struct randomizing_adapter:
 `adapter_storage<Sorter>` is constructed with an instance of `Sorter` and has value semantics: it holds a copy of the sorter, not a reference to it. The stored sorter can be accessed via the `get()` method.
 
 It is special-cased for empty sorters: when constructed with one, it doesn't store it and instead default-constructs a new instance when `get()` is called. The lack of storage allows the adapter to be converted to a function pointer when it stores an empty sorter.
+
+## Supporting mutable sorters
+
+So far our adapter is only able to call a `const` overload of `operator()`. This likely covers most use cases, though it isn't sufficient to handle *mutable sorters*: sorters with a non-`const` `operator()` which might mutate its own insides. Those are fairly uncommon, though there are a couple good reasons for such sorters to exist: for example [metrics][metrics] might need to keep track of information while sorting, which might make them non-`const`.
+
+Mutable sorters support can be easily implemented by passing an explicit `this` parameter to `operator()` and forwarding the reference category of `Self`:
+
+```cpp
+template<
+    typename Self,
+    cppsort::mstd::random_access_iterator Iterator,
+    typename... Args
+>
+auto operator()(Iterator begin, Iterator end, Args&&... args) const
+    -> decltype(std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...))
+{
+    thread_local std::random_device device;
+    thread_local std::minstd_rand engine(device());
+    std::shuffle(begin, end, engine);
+    return std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...);
+}
+```
 
 ## Polishing it a bit
 
@@ -144,6 +172,7 @@ The full implementation can be found in the `examples` folder.
   [hyrums-law]: https://www.hyrumslaw.com/
   [issue-134]: https://github.com/Morwenn/cpp-sort/issues/134
   [iterator-category]: https://en.cppreference.com/w/cpp/iterator
+  [metrics]: Metrics.md
   [proxy-iterators]: https://wg21.link/P0022
   [quick-sorter]: Sorters.md#quick_sorter
   [sfinae]: https://en.cppreference.com/w/cpp/language/sfinae
