@@ -20,9 +20,9 @@ option(CPPSORT_STATIC_TESTS "Whether to turn some tests into static assertions" 
 FetchContent_Declare(
     Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2
-    GIT_TAG v3.6.0
+    GIT_TAG v3.7.0
     SYSTEM
-    FIND_PACKAGE_ARGS 3.6.0
+    FIND_PACKAGE_ARGS 3.7.0
 )
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
