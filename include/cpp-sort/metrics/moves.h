@@ -134,38 +134,40 @@ namespace metrics
             {}
 
             template<
+                typename Self,
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, ForwardIterator, Compare>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, ForwardIterator first, ForwardIterator last,
+                            Compare compare={}, Projection projection={})
                 -> metric_t
             {
                 auto count = detail::count_moves<CountType>(
                     first, last,
                     mstd::distance(first, last),
                     std::move(compare), std::move(projection),
-                    this->get()
+                    std::forward<Self>(self).get()
                 );
                 return metric_t(count);
             }
 
             template<
+                typename Self,
                 typename ForwardIterable,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_v<Projection, ForwardIterable, Compare>
-            auto operator()(ForwardIterable&& iterable,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, ForwardIterable&& iterable,
+                            Compare compare={}, Projection projection={})
             {
                 auto count = detail::count_moves<CountType>(
                     mstd::begin(iterable), mstd::end(iterable),
                     mstd::distance(iterable),
                     std::move(compare), std::move(projection),
-                    this->get()
+                    std::forward<Self>(self).get()
                 );
                 return metric_t(count);
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_RUNNING_TIME_H_
@@ -41,15 +41,15 @@ namespace cppsort::metrics
             utility::adapter_storage<Sorter>(std::move(sorter))
         {}
 
-        template<typename... Args>
-        auto operator()(Args&&... args) const
+        template<typename Self, typename... Args>
+        auto operator()(this Self&& self, Args&&... args)
             -> decltype(
-                this->get()(std::forward<Args>(args)...),
+                std::forward<Self>(self).get()(std::forward<Args>(args)...),
                 metric_t(std::declval<DurationType>())
             )
         {
             auto start = std::chrono::steady_clock::now();
-            this->get()(std::forward<Args>(args)...);
+            std::forward<Self>(self).get()(std::forward<Args>(args)...);
             auto stop = std::chrono::steady_clock::now();
             return metric_t(std::chrono::duration_cast<DurationType>(stop - start));
         }

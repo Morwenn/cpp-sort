@@ -95,19 +95,21 @@ namespace cppsort::metrics
             {}
 
             template<
+                typename Self,
                 typename ForwardIterator,
                 typename Compare = std::less<>,
                 typename Projection = std::identity
             >
                 requires is_projection_iterator_v<Projection, ForwardIterator, Compare>
-            auto operator()(ForwardIterator first, ForwardIterator last,
-                            Compare compare={}, Projection projection={}) const
+            auto operator()(this Self&& self, ForwardIterator first, ForwardIterator last,
+                            Compare compare={}, Projection projection={})
                 -> metric_t
             {
                 CountType count(0);
                 projection_counter<Projection, CountType> counter(std::move(projection), count);
 
-                this->get()(first, last, std::move(compare), std::move(counter));
+                std::forward<Self>(self).get()(std::move(first), std::move(last),
+                                               std::move(compare), std::move(counter));
                 return metric_t(count);
             }
         };

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_COMPARISONS_H_
@@ -46,65 +46,73 @@ namespace cppsort::metrics
             {}
 
             template<
+                typename Self,
                 typename Iterable,
                 typename Compare = std::less<>
             >
                 requires (not is_projection_v<Compare, Iterable>)
-            auto operator()(Iterable&& iterable, Compare compare={}) const
+            auto operator()(this Self&& self, Iterable&& iterable, Compare compare={})
                 -> metric_t
             {
                 CountType count(0);
                 using cppsort::detail::comparison_counter;
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp));
+                std::forward<Self>(self).get()(std::forward<Iterable>(iterable), std::move(cmp));
                 return metric_t(count);
             }
 
             template<
+                typename Self,
                 typename Iterator,
                 typename Compare = std::less<>
             >
                 requires (not is_projection_iterator_v<Compare, Iterator>)
-            auto operator()(Iterator first, Iterator last, Compare compare={}) const
+            auto operator()(this Self&& self, Iterator first, Iterator last,
+                            Compare compare={})
                 -> metric_t
             {
                 CountType count(0);
                 using cppsort::detail::comparison_counter;
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::move(first), std::move(last), std::move(cmp));
+                std::forward<Self>(self).get()(std::move(first), std::move(last), std::move(cmp));
                 return metric_t(count);
             }
 
             template<
+                typename Self,
                 typename Iterable,
                 typename Compare,
                 typename Projection
             >
                 requires is_projection_v<Projection, Iterable, Compare>
-            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
+            auto operator()(this Self&& self, Iterable&& iterable,
+                            Compare compare, Projection projection)
                 -> metric_t
             {
                 CountType count(0);
                 using cppsort::detail::comparison_counter;
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp), std::move(projection));
+                std::forward<Self>(self).get()(std::forward<Iterable>(iterable),
+                                               std::move(cmp), std::move(projection));
                 return metric_t(count);
             }
 
             template<
+                typename Self,
                 typename Iterator,
                 typename Compare,
                 typename Projection
             >
                 requires is_projection_iterator_v<Projection, Iterator, Compare>
-            auto operator()(Iterator first, Iterator last,
-                            Compare compare, Projection projection) const
+            auto operator()(this Self&& self, Iterator first, Iterator last,
+                            Compare compare, Projection projection)
                 -> metric_t
             {
                 CountType count(0);
                 using cppsort::detail::comparison_counter;
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::move(first), std::move(last), std::move(cmp), std::move(projection));
+                std::forward<Self>(self).get()(std::move(first), std::move(last),
+                                               std::move(cmp), std::move(projection));
                 return metric_t(count);
             }
         };
