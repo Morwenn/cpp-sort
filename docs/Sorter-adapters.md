@@ -268,7 +268,7 @@ struct stable_adapter;
 
 Specializations of `stable_adapter` must provide an `is_always_stable` member type aliasing [`std::true_type`][std-true-type]. Additionally, they might expose a `type` member type aliasing either the *adapted sorter* or some intermediate sorter which is guaranteed to always be stable (it can also alias the `stable_adapter` specialization itself, but it is generally useless). Its goal is to provide the least nested type that is known to always be stable in order to sometimes skip some template nesting. When present, this `::type` must be constructible from an instance of the *adapted sorter* (note however that `stable_adapter<T>::type` does not have to be constructible from an instance of `stable_adapter<T>`!).
 
-The main `stable_adapter` template uses [`is_stable`][is-stable] when called to check whether the *adapted sorter* produces a stable sorter when called with a given set of parameters. If the call is already stable then th *adapted sorter* is used directly otherwise `make_stable` is used to artificially turn it into a stable sort.
+The main `stable_adapter` template uses [`is_stable`][is-stable] when called to check whether the *adapted sorter* produces a stable sorter when called with a given set of parameters. If the call is already stable then the *adapted sorter* is used directly otherwise `make_stable` is used to artificially turn it into a stable sort.
 
 ![Visual explanation of what stable_adapter does](images/stable_adapter.png)
 

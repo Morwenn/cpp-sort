@@ -213,12 +213,20 @@ namespace cppsort
             return std::forward<Self>(self).get()(std::forward<Args>(args)...);
         }
 
-        template<typename Self, typename... Args>
-            requires (not is_stable_v<Sorter(Args...)>)
-        auto operator()(this Self&& self, Args&&... args)
-            -> decltype(make_stable<Sorter>(std::forward<Self>(self).get())(std::forward<Args>(args)...))
+        template<typename... Args>
+            requires (not is_stable_v<Sorter(Args...)> && std::is_empty_v<Sorter>)
+        auto operator()(Args&&... args)
+            -> decltype(make_stable<Sorter>{}(std::forward<Args>(args)...))
         {
-            return make_stable<Sorter>(std::forward<Self>(self).get())(std::forward<Args>(args)...);
+            return make_stable<Sorter>{}(std::forward<Args>(args)...);
+        }
+
+        template<typename Self, typename... Args>
+            requires (not is_stable_v<Sorter(Args...)> && not std::is_empty_v<Sorter>)
+        auto operator()(this Self&& self, Args&&... args)
+            -> decltype(make_stable(std::ref(self.get()))(std::forward<Args>(args)...))
+        {
+            return make_stable(std::ref(self.get()))(std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////
