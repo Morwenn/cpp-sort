@@ -45,25 +45,27 @@ namespace cppsort
 
         template<typename Collection, typename... Args>
             requires detail::has_stable_sort_method<Collection, Args...>
-        auto operator()(Collection&& collection, Args&&... args) const
+        static auto operator()(Collection&& collection, Args&&... args)
             -> decltype(std::forward<Collection>(collection).stable_sort(utility::as_function(args)...))
         {
             return std::forward<Collection>(collection).stable_sort(utility::as_function(args)...);
         }
 
-        template<typename Collection, typename... Args>
+        template<typename Self, typename Collection, typename... Args>
             requires (not detail::has_stable_sort_method<Collection, Args...>)
-        auto operator()(Collection&& collection, Args&&... args) const
-            -> decltype(this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...))
+        auto operator()(this Self&& self, Collection&& collection, Args&&... args)
+            -> decltype(std::forward<Self>(self).get()(
+                std::forward<Collection>(collection), std::forward<Args>(args)...))
         {
-            return this->get()(std::forward<Collection>(collection), std::forward<Args>(args)...);
+            return std::forward<Self>(self).get()(
+                std::forward<Collection>(collection), std::forward<Args>(args)...);
         }
 
-        template<typename Iterator, typename... Args>
-        auto operator()(Iterator first, Iterator last, Args&&... args) const
-            -> decltype(this->get()(first, last, std::forward<Args>(args)...))
+        template<typename Self, typename Iterator, typename... Args>
+        auto operator()(this Self&& self, Iterator first, Iterator last, Args&&... args)
+            -> decltype(std::forward<Self>(self).get()(first, last, std::forward<Args>(args)...))
         {
-            return this->get()(first, last, std::forward<Args>(args)...);
+            return std::forward<Self>(self).get()(first, last, std::forward<Args>(args)...);
         }
 
         ////////////////////////////////////////////////////////////
@@ -71,7 +73,7 @@ namespace cppsort
         // method implements a stable sort
 
         template<typename T>
-        auto operator()(std::forward_list<T>& collection) const
+        static auto operator()(std::forward_list<T>& collection)
             -> void
         {
             collection.sort();
@@ -79,14 +81,14 @@ namespace cppsort
 
         template<typename T, typename Compare>
             requires (not is_projection_v<Compare, std::forward_list<T>&>)
-        auto operator()(std::forward_list<T>& collection, Compare compare) const
+        static auto operator()(std::forward_list<T>& collection, Compare compare)
             -> void
         {
             collection.sort(utility::as_function(compare));
         }
 
         template<typename T>
-        auto operator()(std::list<T>& collection) const
+        static auto operator()(std::list<T>& collection)
             -> void
         {
             collection.sort();
@@ -94,7 +96,7 @@ namespace cppsort
 
         template<typename T, typename Compare>
             requires (not is_projection_v<Compare, std::list<T>&>)
-        auto operator()(std::list<T>& collection, Compare compare) const
+        static auto operator()(std::list<T>& collection, Compare compare)
             -> void
         {
             collection.sort(utility::as_function(compare));

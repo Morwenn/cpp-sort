@@ -112,6 +112,27 @@ TEST_CASE( "test most adapters with a mutable sorter",
         CHECK( adapted_sorter.get().after_sort == mutable_state::modified );
     }
 
+    SECTION( "stable_adapter<self_sorter_adapter>" )
+    {
+        cppsort::self_sort_adapter inner_adapter(original_sorter);
+        cppsort::stable_adapter adapted_sorter(inner_adapter);
+
+        std::list<int> li;
+        distribution(std::back_inserter(li), 65, 0);
+
+        adapted_sorter(li);
+        CHECK( std::is_sorted(li.begin(), li.end()) );
+        // List sorted itself without using the original sorter
+        CHECK( adapted_sorter.get().get().before_sort == mutable_state::initial );
+        CHECK( adapted_sorter.get().get().after_sort == mutable_state::initial );
+
+        adapted_sorter(collection);
+        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+        // Sorting a vector used the mutable sorter
+        CHECK( adapted_sorter.get().get().before_sort == mutable_state::modified );
+        CHECK( adapted_sorter.get().get().after_sort == mutable_state::modified );
+    }
+
     SECTION( "verge_adapter" )
     {
         cppsort::verge_adapter adapted_sorter(original_sorter);
