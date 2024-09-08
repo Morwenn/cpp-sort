@@ -14,11 +14,10 @@ constexpr auto sort = indirect_adapter(quick_sort);
 ```
 
 Most of the library's *sorter adapters* can store the passed *sorters* in their internals, allowing them to use adapt *stateful sorters*. Unless explicitly mentioned otherwise in an adapter's description, it is safe to assume that the *sorter adapters* in the library have the following properties:
-* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *original sorter* is empty and default-constructible, then the *sorter adapter* is also empty and default-constructible.
-* If the *sorter adapter* adapts a single *sorter*, then it has a member function called `get()` which returns a reference to the internal *sorter* whose reference and `const` qualifications match those of the *sorter adapter* instance. If the *sorter adapter* is empty and default-constructible, then a default-constructed instance of the type of the *original sorter* is returned instead.
+* The *sorter adapter* stores a copy of every passed sorters in its internals and uses those copy when needed. If every *adapted sorter* is empty and default-constructible, then the *resulting sorter* is also empty and default-constructible.
+* If the *sorter adapter* adapts a single *sorter*, then it has a member function called `get()` which returns a reference to the internal *sorter* whose reference and `const` qualifications match those of the *resulting sorter* instance. If the *resulting adapter* is empty and default-constructible, then a default-constructed instance of the type of the *adapted sorter* is returned instead.
+* The `operator()` of the *resulting sorter* has cv-qualifications similar to those of the *adapted sorter*. This is generally achieved by taking an explicit `this` template parameter.
 * If the *sorter adapter* is empty and default-constructible, then it can be converted to any function pointer whose signature matches that of its `operator()`.
-
-It is worth noting that in the current state of things, sorters & adapters are expected to have a `const operator()`, and thus don't play nice with *mutable sorters*. There are plans to properly handle *mutable sorters* in the future: you can track [the corresponding issue][issue-104].
 
 ## Available sorter adapters
 
@@ -321,7 +320,6 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
   [is-always-stable]: Sorter-traits.md#is_always_stable
   [is-stable]: Sorter-traits.md#is_stable
-  [issue-104]: https://github.com/Morwenn/cpp-sort/issues/104
   [iterator-category]: Sorter-traits.md#iterator_category
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter

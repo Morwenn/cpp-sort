@@ -61,9 +61,7 @@ Now, let's define a set of rules to apply when writing sorters. These rules don'
 
 **Rule 1.3:** a *sorter implementation* shall provide at least an overload of `operator()` that takes a pair of iterators. Overloads of `operator()` taking an iterable can be provided as well when they add value to the *sorter* (optimization, correctness, better error messages...) but should never totally replace the overload taking a pair of iterators.
 
-**Rule 1.4:** *sorters* shall be immutable and every overload of `operator()` shall explicitly be marked `const` (make sure to check twice: forgetting to `const`-qualify them can cause hundreds of lines of cryptic error messages). Some parts of the library *may* accept mutable sorters, but that's never guaranteed unless specified otherwise.
-
-**Rule 1.5:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables can be used to avoid ODR-related problems.
+**Rule 1.4:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables can be used to avoid ODR-related problems.
 
 ## Category of iterators
 
@@ -406,7 +404,7 @@ The library also contains another stability-related type trait, [`is_stable`][is
 
 ## Stateful sorters
 
-To date (version 1.5.0), every *sorter* provided by **cpp-sort** is a *stateless sorter*, which means that it is an empty type which does not carry any state between construction and subsequent invocations. However, the library is also designed to handle *stateful sorters*: those are sorters which might not be empty and which might carry a state that can change between invocations (even though the invocation itself isn't allowed to change the state as per Rule 1.4).
+To date (version 2.0.0), every *sorter* provided by **cpp-sort** is a *stateless sorter*, which means that it is an empty type which does not carry any state between construction and subsequent invocations. However, the library is also designed to handle *stateful sorters*: those are sorters which might carry a state that can change between invocations, or even when calling the *sorter*.
 
 There are no specific rules to differentiate the way *stateful* and *stateless sorters* are written, but the distinction matters because specific components of the library will act differently when exposed to a *stateful* or *stateless* sorter:
 * `sorter_facade` only provides conversions to different kinds of function pointers when the *sorter implementation* is empty (stateless) and default-constructible.
