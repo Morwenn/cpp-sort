@@ -84,9 +84,8 @@ macro(configure_tests target)
             -fsanitize=${CPPSORT_SANITIZE}
             -fno-sanitize-recover=all
         )
-        set_property(TARGET ${target}
-            APPEND_STRING PROPERTY LINK_FLAGS
-                " -fsanitize=${CPPSORT_SANITIZE}"
+        target_link_options(${target} PRIVATE
+            -fsanitize=${CPPSORT_SANITIZE}
         )
     endif()
 
