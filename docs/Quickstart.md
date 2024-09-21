@@ -20,7 +20,7 @@ int main()
 The library provides dozens of sorting algorithms described in [this page][sorters]. Their space and time complexities are all documented there, as well as their stability and the kind of iterators they work on. The [`pdq_sort`][pdq-sorter] algorithm used above only handles collections that provide random-access iterators, but other algorithms such as [`quick_sort`][quick-sorter] or [`merge_sort`][merge-sorter] work with bidirectional iterators and forward iterators.
 
 The algorithms are designed after [`std::sort`][std-sort] with extensions borrowed from later standards, and as such accept the following arguments:
-* A collection, which is represented by either a range or a pair of iterators.
+* A collection, which is represented by either a range or an iterator/sentinel pair.
 * A comparison function (optional).
 * A projection function (optional).
 

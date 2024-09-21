@@ -65,6 +65,8 @@ The library provides `mstd::iter_move`, `mstd::iter_swap` and `mstd::iter_rvalue
 
 The main reason behind that change is that **cpp-sort** relies on a reimplementation of proxy iterator support that follows a slightly different iterator model where `iter_move(it)` can return a type unrelated to that returned by `*it`, leading to incompatibilities with the stricter standard iterator model. The library's model was conceived while standard ranges were still a work in progress, hence the difference.
 
+*Note: the concepts provided by the library currently do not describe the exact requirements of `iter_move`, though this might change in the future as those exact requirements are explored.*
+
 ```cpp
 template<typename Indirect>
 concept indirectly_readable = /* implementation-defined */;
@@ -120,6 +122,11 @@ concept contiguous_iterator = /* implementation-defined */;
 
 The `mstd` iterator concepts rely on the previously described concepts, and are thus affected by the same differences. The only additional deviation from the standard library concepts is that `bidirectional_iterator` does not require a postfix `operator--` to exist at all.
 
+The `<cpp-sort/mstd/iterator.h>` header also provides the following reimplementations of standard library components, that build upon the previously described features to provide the increased flexibility of the library's iterator model:
+* `mstd::advance`
+* `mstd::next`
+* `mstd::prev`
+
 ### `<cpp-sort/mstd/ranges.h>`
 
 This header provides the following reimplementations of standard library components:
@@ -136,6 +143,7 @@ This header provides the following reimplementations of standard library compone
 * `mstd::random_access_range`
 * `mstd::contiguous_range`
 * `mstd::borrowed_range` *(relies on [`std::ranges::enable_borrowed_range`][std-borrowed-range])*
+* `mstd::subrange`
 * `mstd::iterator_t`
 * `mstd::sentinel_t`
 * `mstd::range_difference_t`

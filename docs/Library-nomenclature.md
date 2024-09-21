@@ -18,7 +18,7 @@
 
 * *Fixed-size sorter*: [fixed-size sorters][fixed-size-sorters] are a special breed of sorters designed to sort a fixed number of values. While they try their best to be full-fledge sorters, they are definitely not full-fledge sorters and probably don't blend as well as one would like into the library. Their main advantage is that they can be more performant than regular sorters in some specific scenarios.
 
-* *Iterator category*: the C++ standard defines [several categories of iterators][iterator-categories] such as forward iterators, bidirectional iterators or random-access iterators. The standard library uses [iterator tags][iterator-tags] to document the category of an iterator. These categories are important since algorithms are designed to work with some categories of iterators and not with other categories, and those in this library are not different: in-place sorting needs at least forward iterators. You can use the [`iterator_category`][iterator-category] sorter trait to get the least constrained iterator category associated with a sorter.
+* *Iterator category*: the C++ standard defines [several categories of iterators][iterator-categories] such as forward iterators, bidirectional iterators, random-access iterators or contiguous iterators. The standard library uses [iterator tags][iterator-tags] to document the category of an iterator. These categories are important since algorithms are designed to work with some categories of iterators and not with other categories, and those in this library are not different: in-place sorting needs at least forward iterators. You can use the [`iterator_category`][iterator-category] sorter trait to get the least constrained iterator category associated with a sorter.
 
         using category = cppsort::iterator_category<cppsort::merge_sorter>;
 
@@ -40,7 +40,7 @@
 
 * *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however C++20 ranges solved the problem by introducing a function named [`iter_move`][std-ranges-iter-move] and making it as well as [`iter_swap`][std-ranges-iter-swap] customization points. The library uses a slightly different iterator model, and as a result exposes the functions `mstd::iter_move` and `mstd::iter_swap` in [modified standard library components][modified-std].
 
-* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle ranges or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
+* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle ranges or iterator/sentinel pairs, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
 
         cppsort::pdq_sorter{}(std::begin(collection), std::end(collection),
                               std::greater<>{}, &wrapper::value);
@@ -65,7 +65,7 @@
 
 * *Type-specific sorter*: some non-comparison sorters such as the [`spread_sorter`][spread-sorter] implement specific sorting algorithms which only work with some specific types (for example integers or strings).
 
-* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept an iterable or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
+* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept an iterable or an iterator/sentinel pair, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
 
 
   [comparators]: Comparators.md

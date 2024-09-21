@@ -40,7 +40,7 @@ template<typename Sorter>
 struct container_aware_adapter;
 ```
 
-Some sorters in the library already have dedicated algorithms for `std::list` and `std::forward_list`. Wrapping those sorters with `container_aware_adapter` will make their `operator()` call the dedicated algorithms instead of the default ones. The dedicated algorithms are only called when the *resulting sorter* is called with a full collection since iterators don't hold enough information. When called with a pair of iterators, the *resulting sorter* uses the raw *adapted sorter*.
+Some sorters in the library already have dedicated algorithms for `std::list` and `std::forward_list`. Wrapping those sorters with `container_aware_adapter` will make their `operator()` call the dedicated algorithms instead of the default ones. The dedicated algorithms are only called when the *resulting sorter* is called with a full collection since iterators don't hold enough information. When called with an iterator/sentinel pair, the *resulting sorter* always uses the raw *adapted sorter*.
 
 An interesting property of dedicated sorting algorithms is that one can craft an algorithm for a structure that holds forward iterators even if the *adapted sorter* is only able to handle bidirectional iterators (*e.g.* `container_aware_adapter<insertion_sorter>` can handle an `std::forward_list` while it default implementation only handles bidirectional iterators).
 

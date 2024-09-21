@@ -53,9 +53,9 @@ Note that the function pointer conversion syntax above is made up, but it allows
 
 ***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
 
-### `operator()` for pairs of iterators
+### `operator()` for an iterator/sentinel pair
 
-`sorter_facade` provides the following overloads of `operator()` to handle pairs of iterators:
+`sorter_facade` provides the following overloads of `operator()` to handle an iterator/sentinel pair:
 
 ```cpp
 template<
