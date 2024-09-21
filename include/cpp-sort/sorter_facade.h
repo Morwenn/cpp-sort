@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -144,6 +145,20 @@ namespace cppsort
 
         template<typename Sorter>
         class sorter_facade_fptr<Sorter, false> {};
+
+        ////////////////////////////////////////////////////////////
+        // Return type helper for range overloads
+        //
+        // If an operator() overload that takes a range returns an
+        // iterator, we want to use borrowed_iterator_t to wrap it,
+        // but we want to otherwise forward the result unaltered
+
+        template<mstd::forward_range Range, typename Ret>
+        using wrap_return_t = mstd::conditional_t<
+            std::same_as<Ret, mstd::iterator_t<Range>>,
+            mstd::borrowed_iterator_t<Range>,
+            Ret
+        >;
     }
 
     // This class takes an incomplete sorter, analyses it and creates
@@ -190,7 +205,10 @@ namespace cppsort
                 Range
             >::value
         constexpr auto operator()(this Self&& self, Range&& range)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(std::forward<Range>(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(std::forward<Range>(range)))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(std::forward<Range>(range));
         }
@@ -201,8 +219,12 @@ namespace cppsort
                 Range
             >::value)
         constexpr auto operator()(this Self&& self, Range&& range)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range)
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range));
@@ -239,9 +261,13 @@ namespace cppsort
                 refined_t<mstd::range_reference_t<Range>, Compare>
             >::value
         constexpr auto operator()(this Self&& self, Range&& range, Compare compare)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range),
-                refined<mstd::range_reference_t<Range>>(std::move(compare))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(compare))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range),
@@ -262,9 +288,13 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Compare compare)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range),
-                refined<mstd::range_reference_t<Range>>(std::move(compare))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(compare))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range),
@@ -347,9 +377,13 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range),
@@ -376,9 +410,13 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range), std::less{},
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range), std::less{},
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range), std::less{},
@@ -415,9 +453,13 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range),
@@ -450,9 +492,13 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range), std::less{},
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range), std::less{},
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range), std::less{},
@@ -491,7 +537,10 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, std::less<>)
-            -> decltype(std::forward<Self>(self).operator()(std::forward<Range>(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).operator()(std::forward<Range>(range)))
+            >
         {
             return std::forward<Self>(self).operator()(std::forward<Range>(range));
         }
@@ -525,7 +574,10 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, std::ranges::less)
-            -> decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            >
         {
             return std::forward<Self>(self)(std::forward<Range>(range));
         }
@@ -573,7 +625,10 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, std::identity)
-            -> decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            >
         {
             return std::forward<Self>(self)(std::forward<Range>(range));
         }
@@ -619,10 +674,14 @@ namespace cppsort
                 refined_t<mstd::range_reference_t<Range>, Projection>
             >::value
         constexpr auto operator()(this Self&& self, Range&& range, Compare compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range),
-                refined<mstd::range_reference_t<Range>>(std::move(compare)),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(compare)),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range),
@@ -651,10 +710,14 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Compare compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range),
-                refined<mstd::range_reference_t<Range>>(compare),
-                refined<mstd::range_reference_t<Range>>(projection)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range),
+                    refined<mstd::range_reference_t<Range>>(compare),
+                    refined<mstd::range_reference_t<Range>>(projection)
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range),
@@ -697,7 +760,10 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, std::less<>, std::identity)
-            -> decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            >
         {
             return std::forward<Self>(self)(std::forward<Range>(range));
         }
@@ -764,9 +830,13 @@ namespace cppsort
             >::value
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::less<> compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range), compare,
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range), compare,
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range), compare,
@@ -790,9 +860,13 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::less<> compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range), compare,
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range), compare,
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range), compare,
@@ -821,9 +895,13 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::less<>, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range),
@@ -857,9 +935,13 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::less<>, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range),
@@ -898,7 +980,10 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, std::ranges::less, std::identity)
-            -> decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self)(std::forward<Range>(range)))
+            >
         {
             return std::forward<Self>(self)(std::forward<Range>(range));
         }
@@ -965,9 +1050,13 @@ namespace cppsort
             >::value
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::ranges::less compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range), compare,
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range), compare,
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range), compare,
@@ -991,9 +1080,13 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::ranges::less compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range), compare,
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range), compare,
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range), compare,
@@ -1022,9 +1115,13 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::ranges::less, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range),
@@ -1058,9 +1155,13 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   std::ranges::less, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range),
-                refined<mstd::range_reference_t<Range>>(std::move(projection))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range),
+                    refined<mstd::range_reference_t<Range>>(std::move(projection))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range),
@@ -1158,9 +1259,13 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range), projection_compare(
-                    std::less{}, refined<mstd::range_reference_t<Range>>(std::move(projection)))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range), projection_compare(
+                        std::less{}, refined<mstd::range_reference_t<Range>>(std::move(projection)))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range), projection_compare(
@@ -1198,10 +1303,14 @@ namespace cppsort
                 >::value
             )
         constexpr auto operator()(this Self&& self, Range&& range, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range),
-                projection_compare(std::less{},
-                    refined<mstd::range_reference_t<Range>>(std::move(projection)))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range),
+                    projection_compare(std::less{},
+                        refined<mstd::range_reference_t<Range>>(std::move(projection)))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range),
@@ -1233,10 +1342,14 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   Compare compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                std::forward<Range>(range), projection_compare(
-                    refined<mstd::range_reference_t<Range>>(std::move(compare)),
-                    refined<mstd::range_reference_t<Range>>(std::move(projection)))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    std::forward<Range>(range), projection_compare(
+                        refined<mstd::range_reference_t<Range>>(std::move(compare)),
+                        refined<mstd::range_reference_t<Range>>(std::move(projection)))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 std::forward<Range>(range), projection_compare(
@@ -1276,10 +1389,14 @@ namespace cppsort
             )
         constexpr auto operator()(this Self&& self, Range&& range,
                                   Compare compare, Projection projection)
-            -> decltype(std::forward<Self>(self).Sorter::operator()(
-                mstd::begin(range), mstd::end(range), projection_compare(
-                    refined<mstd::range_reference_t<Range>>(std::move(compare)),
-                    refined<mstd::range_reference_t<Range>>(std::move(projection)))))
+            -> detail::wrap_return_t<
+                Range,
+                decltype(std::forward<Self>(self).Sorter::operator()(
+                    mstd::begin(range), mstd::end(range), projection_compare(
+                        refined<mstd::range_reference_t<Range>>(std::move(compare)),
+                        refined<mstd::range_reference_t<Range>>(std::move(projection)))
+                ))
+            >
         {
             return std::forward<Self>(self).Sorter::operator()(
                 mstd::begin(range), mstd::end(range), projection_compare(

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -269,6 +269,16 @@ namespace cppsort::mstd
             iterator_t<Range>, sentinel_t<Range>,
             std::ranges::subrange_kind::sized
         >;
+
+    ////////////////////////////////////////////////////////////
+    // borrowed_subrange_t
+
+    template<range R>
+    using borrowed_subrange_t = conditional_t<
+        borrowed_range<R>,
+        subrange<iterator_t<R>>,
+        std::ranges::dangling
+    >;
 }
 
 namespace std::ranges

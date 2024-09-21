@@ -148,6 +148,8 @@ This header provides the following reimplementations of standard library compone
 * `mstd::sentinel_t`
 * `mstd::range_difference_t`
 * `mstd::range_reference_t`
+* `mstd::borrowed_iterator_t` *(relies on [`std::ranges::dangling`][std-dangling])*
+* `mstd::borrowed_subrange_t` *(relies on [`std::ranges::dangling`][std-dangling])*
 
 They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemented `mstd::` components instead, leading to the differences documented in the previous sections. The differences, albeit small, are viral - as a result this list is expected to grow as more concepts are needed in the library's user-facing components.
 
@@ -155,6 +157,7 @@ They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemen
   [kvasir-conditional]: https://odinthenerd.blogspot.com/2017/03/start-simple-with-conditional-why.html
   [std-borrowed-range]: https://en.cppreference.com/w/cpp/ranges/borrowed_range
   [std-common-reference-with]: https://en.cppreference.com/w/cpp/concepts/common_reference_with
+  [std-dangling]: https://en.cppreference.com/w/cpp/ranges/dangling
   [std-incrementable]: https://en.cppreference.com/w/cpp/iterator/incrementable
   [std-indirectly-readable]: https://en.cppreference.com/w/cpp/iterator/indirectly_readable
   [std-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move

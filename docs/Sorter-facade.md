@@ -15,7 +15,7 @@ struct frob_sorter:
 
 All the `operator()` of `sorter_facade` use [`mstd::forward_iterator`][mstd-iterator] or [`mstd::forward_range`][mstd-ranges] to constrain their parameters. It is the responsibility of the *sorter implementation* author to stregthen those constraints in the implementation overloads if needed.
 
-### Construction
+## Construction
 
 `sorter_facade` is default-constructible if the *sorter implementation* is default-constructible.
 
@@ -28,7 +28,7 @@ constexpr sorter_facade(Args&&... args):
 {}
 ```
 
-### Conversion to function pointers
+## Conversion to function pointers
 
 As long as the *sorter implementation* it wraps is an empty and default-constructible type, `sorter_facade` provides the following member functions so that a sorter can be turned into a function pointer:
 
@@ -52,6 +52,12 @@ The return type `Ret` can either match that of the sorter, or be `void`, in whic
 Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is the [`std::result_of_t`][std-result-of] of the sorter called with the parameters. The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
 ***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
+
+## `operator()`
+
+The main job of `sorter_facade` is t provide a rich overload set for `operator()`: enough to satisfy the *unified sorting interface*. The following sections describe all the iterator/sentinel and range overloads supported by the operator.
+
+**Return type:** Whenever possible, `sorter_facade::operator()` forwards the result of whichever suitable `operator()` it finds in the *sorter implementation*. There is one case however where it does more than just forwarding the result: overloads that accept a range `R` and return an iterator `I` might wrap the returned iterator in [`mstd::borrowed_iterator_t`][mstd-ranges] if `I` and `mstd::iterator_t<R>` are the same type. This wrapping ensures that those overloads return [`std::ranges::dangling`][std-ranges-dangling] if the passed range does not model a borrowed range.
 
 ### `operator()` for an iterator/sentinel pair
 
@@ -216,5 +222,6 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-ranges-dangling]: https://en.cppreference.com/w/cpp/ranges/dangling
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-result-of]: https://en.cppreference.com/w/cpp/types/result_of

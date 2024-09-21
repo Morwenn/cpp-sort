@@ -4,6 +4,7 @@
  */
 #include <algorithm>
 #include <iterator>
+#include <ranges>
 #include <span>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
@@ -58,6 +59,9 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
     distribution(std::back_inserter(collection), 491, -125);
 
     TestType sorter;
-    sorter(std::span(collection));
+    auto last_it = sorter(std::span(collection));
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
+
+    // std::span is explicitly marked as borrowed, it should not return dangling
+    STATIC_CHECK( not std::same_as<decltype(last_it), std::ranges::dangling> );
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
+#include <cpp-sort/mstd/type_traits.h>
 #include "begin.h"
 #include "data.h"
 #include "end.h"
@@ -92,6 +93,16 @@ namespace cppsort::mstd
             std::is_lvalue_reference_v<R> ||
             std::ranges::enable_borrowed_range<std::remove_cvref_t<R>>
         );
+
+    ////////////////////////////////////////////////////////////
+    // borrowed_iterator_t
+
+    template<range R>
+    using borrowed_iterator_t = conditional_t<
+        borrowed_range<R>,
+        iterator_t<R>,
+        std::ranges::dangling
+    >;
 }
 
 #endif // CPPSORT_MSTD_DETAIL_RANGE_H_
