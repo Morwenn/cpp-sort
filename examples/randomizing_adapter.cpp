@@ -12,13 +12,18 @@
 #include <cpp-sort/sorters/smooth_sorter.h>
 #include <cpp-sort/utility/adapter_storage.h>
 
-template<typename RandomAccessIterator>
-auto my_shuffle(RandomAccessIterator begin, RandomAccessIterator end)
-    -> void
+namespace mstd = cppsort::mstd;
+
+template<
+    mstd::random_access_iterator Iterator,
+    mstd::sentinel_for<Iterator> Sentinel
+>
+auto my_shuffle(Iterator begin, Sentinel end)
+    -> Iterator
 {
     thread_local std::random_device device;
     thread_local std::minstd_rand engine(device());
-    std::shuffle(begin, end, engine);
+    return std::ranges::shuffle(begin, end, engine);
 }
 
 template<typename Sorter>
@@ -39,25 +44,26 @@ struct randomizing_adapter:
 
     template<
         typename Self,
-        cppsort::mstd::random_access_iterator Iterator,
+        mstd::random_access_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename... Args
     >
-    auto operator()(this Self&& self, Iterator begin, Iterator end, Args&&... args)
-        -> decltype(std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...))
+    auto operator()(this Self&& self, Iterator begin, Sentinel end, Args&&... args)
+        -> decltype(std::forward<Self>(self).get()(begin, begin, std::forward<Args>(args)...))
     {
-        my_shuffle(begin, end);
+        auto end_it = my_shuffle(begin, end);
         return std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...);
     }
 
     template<
         typename Self,
-        cppsort::mstd::random_access_range Range,
+        mstd::random_access_range Range,
         typename... Args
     >
     auto operator()(this Self&& self, Range&& range, Args&&... args)
         -> decltype(std::forward<Self>(self).get()(std::forward<Range>(range), std::forward<Args>(args)...))
     {
-        my_shuffle(cppsort::mstd::begin(range), cppsort::mstd::end(range));
+        my_shuffle(mstd::begin(range), mstd::end(range));
         return std::forward<Self>(self).get()(std::forward<Range>(range), std::forward<Args>(args)...);
     }
 

@@ -22,7 +22,7 @@ Obviously such a trick does not guarantee a O(n log n) runtime for the resulting
 
 ### Hyrum's law
 
-An arguably more useful use for a `randomizing_adapter` would be to avoid becoming a victim of [Hyrum's law][hyrums-law].
+An arguably more compelling use case for `randomizing_adapter` would be to avoid becoming a victim of [Hyrum's law][hyrums-law].
 
 > With a sufficient number of users of an API,
 > it does not matter what you promise in the contract:
@@ -31,7 +31,7 @@ An arguably more useful use for a `randomizing_adapter` would be to avoid becomi
 
 Danila Kutenin rightfully mentions that [changing `std::sort` is harder than meets the eye][changing-std-sort], the main reason being that pieces of code accidentally rely on the observable yet not guaranteed properties of [`std::sort`][std-sort], namely the order of *equivalent elements*. The article gives [golden tests][golden-tests] as an example of things that might break when changing a sorting algorithm.
 
-In order to make it less likely for users to rely on the order of *equivalent elements*, the author proposes to shuffle the collection prior to sorting it debug mode. This makes the order of equivalent elements non deterministic, which in turns can purposefuly break code accidentally relying on this order.
+In order to make it less likely for users to rely on the order of *equivalent elements*, the author proposes to shuffle the collection prior to sorting it in debug mode. This makes the order of *equivalent elements* non-deterministic, which in turn can purposefuly break code accidentally relying on this order.
 
 It might seem at first that **cpp-sort**'s algorithms are not vulnerable to such changes since the name of the algorithm is part of sorter's name, but the truth is that their implementation still changes, and a user of the library might still want to swap a sorter for another one and suffer the same fate.
 
@@ -54,15 +54,16 @@ template<typename Sorter>
 struct randomizing_adapter
 {
     template<
-        cppsort::mstd::random_access_iterator Iterator,
+        mstd::random_access_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename... Args
     >
-    auto operator()(Iterator begin, Iterator end, Args&&... args) const
+    auto operator()(Iterator begin, Sentinel end, Args&&... args) const
         -> decltype(Sorter{}(begin, end, std::forward<Args>(args)...))
     {
         thread_local std::random_device device;
         thread_local std::minstd_rand engine(device());
-        std::shuffle(begin, end, engine);
+        std::ranges::shuffle(begin, end, engine);
         return Sorter{}(begin, end, std::forward<Args>(args)...);
     }
 
@@ -75,13 +76,13 @@ When possible, a proper *sorter adapter* is expected to be callable with the sam
 
 ## Returned value
 
-There is currently no strict rule about what a sorter adapter should return (this is actually a [open design issue][issue-134]), though the general wisdom is that an adapter should transparently provide as many features as the sorter it adapts when it reasonably can. The idea is that replacing the sorter by its wrapped counterpart should be easy.
+There is currently no strict rule about what a *sorter adapter* should return (this is actually a [open design issue][issue-134]), though the general wisdom is that an adapter should transparently provide as many features as the sorter it adapts when it reasonably can. The idea is that replacing the sorter by its wrapped counterpart should be easy.
 
 We don't have a specific use for the return channel of `randomizing_adapter` and it is simple to make it transitively return whatever the wrapped sorter returns - and even convenient -, so I decided to do just that.
 
 ## Construction
 
-A sorter adapter should be exmplicitly constructible from an instance of the sorter it adapts, so we need to give it appropriate constructors:
+A sorter adapter should be explicitly constructible from an instance of the sorter it adapts, so we need to give it appropriate constructors:
 
 ```cpp
 randomizing_adapter() = default;
@@ -96,7 +97,7 @@ auto sort = randomizing_adapter(cppsort::poplar_sorter);
 
 ## `utility::adapter_storage`
 
-As previously mentioned, our `randomizing_adapter` currently does not store the adapted sorter even though it might be desirable since sorters can be stateful. **cpp-sort** provides the class template [`utility::adapter_storage`][adapter-storage] that adapters can inherit from to take care of storing a sorter instance.
+As previously mentioned, our `randomizing_adapter` currently does not store the *adapted sorter* even though it might be desirable since sorters can be stateful. **cpp-sort** provides the class template [`utility::adapter_storage`][adapter-storage] that adapters can inherit from to take care of storing a sorter instance.
 
 ```cpp
 template<typename Sorter>
@@ -110,15 +111,16 @@ struct randomizing_adapter:
     {}
 
     template<
-        cppsort::mstd::random_access_iterator Iterator,
+        mstd::random_access_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename... Args
     >
-    auto operator()(Iterator begin, Iterator end, Args&&... args) const
+    auto operator()(Iterator begin, Sentinel end, Args&&... args) const
         -> decltype(this->get()(begin, end, std::forward<Args>(args)...))
     {
         thread_local std::random_device device;
         thread_local std::minstd_rand engine(device());
-        std::shuffle(begin, end, engine);
+        std::ranges::shuffle(begin, end, engine);
         return this->get()(begin, end, std::forward<Args>(args)...);
     }
 };
@@ -126,26 +128,27 @@ struct randomizing_adapter:
 
 `adapter_storage<Sorter>` is constructed with an instance of `Sorter` and has value semantics: it holds a copy of the sorter, not a reference to it. The stored sorter can be accessed via the `get()` method.
 
-It is special-cased for empty sorters: when constructed with one, it doesn't store it and instead default-constructs a new instance when `get()` is called. The lack of storage allows the adapter to be converted to a function pointer when it stores an empty sorter.
+It is special-cased for empty sorters: when constructed with one, it doesn't store it and instead default-constructs a new instance when `get()` is called. The absence of storage allows the adapter to be converted to a function pointer when it stores an empty sorter.
 
 ## Supporting mutable sorters
 
-So far our adapter is only able to call a `const` overload of `operator()`. This likely covers most use cases, though it isn't sufficient to handle *mutable sorters*: sorters with a non-`const` `operator()` which might mutate its own insides. Those are fairly uncommon, though there are a couple good reasons for such sorters to exist: for example [metrics][metrics] might need to keep track of information while sorting, which might make them non-`const`.
+So far our adapter is only able to call a `const` overload of `operator()`. This likely covers most use cases, though it isn't sufficient to handle *mutable sorters*: sorters with a non-`const` `operator()` which might mutate their own insides. Those are fairly uncommon, though there are a couple good reasons for such sorters to exist: for example [metrics][metrics] might need to keep track of information while sorting, which might make them non-`const`.
 
 Mutable sorters support can be easily implemented by passing an explicit `this` parameter to `operator()` and forwarding the reference category of `Self`:
 
 ```cpp
 template<
     typename Self,
-    cppsort::mstd::random_access_iterator Iterator,
+    mstd::random_access_iterator Iterator,
+    mstd::sentinel_for<Iterator> Sentinel,
     typename... Args
 >
-auto operator()(Iterator begin, Iterator end, Args&&... args) const
+auto operator()(Iterator begin, Sentinel end, Args&&... args) const
     -> decltype(std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...))
 {
     thread_local std::random_device device;
     thread_local std::minstd_rand engine(device());
-    std::shuffle(begin, end, engine);
+    std::ranges::shuffle(begin, end, engine);
     return std::forward<Self>(self).get()(begin, end, std::forward<Args>(args)...);
 }
 ```
@@ -153,8 +156,8 @@ auto operator()(Iterator begin, Iterator end, Args&&... args) const
 ## Polishing it a bit
 
 `randomizing_adapter` is already usable as is, but it can still benefit from small improvements like those we gave to `bubble_sorter` [in the other tutorial][writing-a-bubble-sorter]:
-* Add an `operator()` overload accepting an iterable to benefit from O(1) `.size()` functions.
-* Add a `static_assert` to make it clear when it isn't given random-access iterators.
+* Add an `operator()` overload accepting a range to benefit from O(1) `.size()` functions.
+* Reuse the iterator returned by `std::ranges::shuffle` to avoid a potential O(n) pass.
 
 ## Conclusion
 
@@ -179,5 +182,6 @@ The full implementation can be found in the `examples` folder.
   [sorter-adapters]: Sorter-adapters.md
   [sorter-facade]: Sorter-facade.md
   [sorter-traits]: Sorter-traits.md#sorter_traits
+  [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [writing-a-sorter]: Writing-a-sorter.md
   [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md
