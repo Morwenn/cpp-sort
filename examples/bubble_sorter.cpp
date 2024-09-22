@@ -16,22 +16,35 @@ namespace mstd = cppsort::mstd;
 namespace detail
 {
     template<mstd::forward_iterator Iterator, typename Compare>
-    auto bubble_sort(Iterator first, std::size_t size, Compare compare)
-        -> void
+    auto bubble_sort_loop(Iterator first, std::size_t size, Compare compare)
+        -> Iterator
     {
-        if (size < 2) return;
+        auto current = first;
+        auto next = mstd::next(current);
+        for (std::size_t i = 0; i < size; ++i) {
+            if (std::invoke(compare, *next, *current)) {
+                mstd::iter_swap(current, next);
+            }
+            ++next;
+            ++current;
+        }
+        return next;
+    }
+
+    template<mstd::forward_iterator Iterator, typename Compare>
+    auto bubble_sort(Iterator first, std::size_t size, Compare compare)
+        -> Iterator
+    {
+        if (size == 0) return first;
+        if (size == 1) return mstd::next(first);
+
+        // Last iterator can be computed during the first iteration
+        auto last_it = bubble_sort_loop(first, --size, compare);
 
         while (--size) {
-            auto current = first;
-            auto next = std::next(current);
-            for (std::size_t i = 0; i < size; ++i) {
-                if (std::invoke(compare, *next, *current)) {
-                    mstd::iter_swap(current, next);
-                }
-                ++next;
-                ++current;
-            }
+            bubble_sort_loop(first, size, compare);
         }
+        return last_it;
     }
 
     struct bubble_sorter_impl
@@ -43,10 +56,10 @@ namespace detail
         >
             requires (not cppsort::is_projection_iterator_v<Compare, Iterator>)
         auto operator()(Iterator first, Iterator last, Compare compare={}) const
-            -> void
+            -> Iterator
         {
-            bubble_sort(first, mstd::distance(first, last),
-                        std::move(compare));
+            return bubble_sort(first, mstd::distance(first, last),
+                               std::move(compare));
         }
 
         // Range overload
@@ -56,10 +69,10 @@ namespace detail
         >
             requires (not cppsort::is_projection_v<Compare, Range>)
         auto operator()(Range&& range, Compare compare={}) const
-            -> void
+            -> mstd::iterator_t<Range>
         {
-            bubble_sort(mstd::begin(range), mstd::distance(range),
-                        std::move(compare));
+            return bubble_sort(mstd::begin(range), mstd::distance(range),
+                               std::move(compare));
         }
 
         // Sorter traits
@@ -96,8 +109,10 @@ int main()
     {
         auto to_sort = collection;
         // Bubble sort the collection
-        bubble_sort(to_sort, projection);
+        auto last_it = bubble_sort(to_sort, projection);
         // Check that it is sorted in descending order
         assert(std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<>{}));
+        // Check that the correct iterator is returned
+        assert(last_it == to_sort.end());
     } while (std::next_permutation(collection.begin(), collection.end()));
 }

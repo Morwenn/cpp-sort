@@ -384,6 +384,48 @@ auto operator()(Iterator first, Sentinel last, Compare compare={}) const
 
 To understand what sentinels bring to the table, let's have a look at [`std::counted_iterator`][std-counted-iterator]: it is an iterator wrapper that also keeps track of the distance from the end of a range. When subtracted from [`std::default_sentinel`][std-default-sentinel], we can retrieve said stored distance in O(1) even when dealing with otherwise forward iterators, avoiding a whole pass over the collection. That subtraction is performed by `mstd::distance` in the snippet above.
 
+## Returning the last iterator
+
+Algorithms in the standard library try to follow what Alexander Stepanov once coined as the *law of useful return*: the idea that a function should return the useful information it would have to compute either way. One such information for sorting algorithm is the `last` iterator: as long as algorithms were iterator-based it did not matter much because the `last` iterator was an argument passed to the function. With sentinels in scope, the `last` iterator becomes a *compute* piece of information - the algorithm has to compute it either way, so it makes sense to return it, especially since computing it is O(n) for forward and bidirectional iterators.
+
+```cpp
+template<mstd::forward_iterator Iterator, typename Compare>
+auto bubble_sort_loop(Iterator first, std::size_t size, Compare compare)
+    -> Iterator
+{
+    auto current = first;
+    auto next = mstd::next(current);
+    for (std::size_t i = 0; i < size; ++i) {
+        if (std::invoke(compare, *next, *current)) {
+            mstd::iter_swap(current, next);
+        }
+        ++next;
+        ++current;
+    }
+    return next;
+}
+
+template<mstd::forward_iterator Iterator, typename Compare>
+auto bubble_sort(Iterator first, std::size_t size, Compare compare)
+    -> Iterator
+{
+    if (size == 0) return first;
+    if (size == 1) return mstd::next(first);
+
+    // Last iterator can be computed during the first iteration
+    auto last_it = bubble_sort_loop(first, --size, compare);
+
+    while (--size) {
+        bubble_sort_loop(first, size, compare);
+    }
+    return last_it;
+}
+```
+
+The sorter can simply return whatever this version of `bubble_sort` with minor adaptations needed.
+
+Technically the range overload of `std::ranges::sort` goes one step further and protects users by returning [`std::ranges::dangling`][std-ranges-dangling] when the passed range does not model [a borrowed range][borrowed-range] (a borrowed is an lvalue range, or an rvalue range explicitly blessed by setting its `std::enable_borrowed_range` specialization to `true`), which prevents the accidental use of a dangling iterator. However `sorter_facade` already automatically takes care of that when the *sorter implementation* returns an iterator, so no additional work is needed for sorter authors to provide that level of safety.
+
 ## Instantiating the sorter
 
 The sorter abstraction is useful, but most of the time we only need a sorting algorithm. Therefore, it is a good idea to instantiate `bubble_sorter` and to have a global `bubble_sort` instance, more versatile than the original `bubble_sort` algorithm.
@@ -410,6 +452,7 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
 
 
   [as-function]: Miscellaneous-utilities.md#as_function
+  [borrowed-range]: https://en.cppreference.com/w/cpp/ranges/borrowed_range
   [bubble-sort]: https://en.wikipedia.org/wiki/Bubble_sort
   [bubble-sorter]: https://en.wikipedia.org/wiki/Bubble_sort
   [heap-sorter]: Sorters.md#heap_sorter
@@ -430,6 +473,7 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
   [std-iter-move]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_move
   [std-iter-swap]: https://en.cppreference.com/w/cpp/iterator/ranges/iter_swap
   [std-list]: https://en.cppreference.com/w/cpp/container/list
+  [std-ranges-dangling]: https://en.cppreference.com/w/cpp/ranges/dangling
   [std-span]: https://en.cppreference.com/w/cpp/container/span
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
   [utility-size]: Miscellaneous-utilities.md#size
