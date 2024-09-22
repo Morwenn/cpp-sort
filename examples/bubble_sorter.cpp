@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -10,24 +10,23 @@
 #include <cpp-sort/mstd/ranges.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
+
+namespace mstd = cppsort::mstd;
 
 namespace detail
 {
-    template<typename ForwardIterator, typename Compare>
-    auto bubble_sort(ForwardIterator first, std::size_t size, Compare compare)
+    template<mstd::forward_iterator Iterator, typename Compare>
+    auto bubble_sort(Iterator first, std::size_t size, Compare compare)
         -> void
     {
         if (size < 2) return;
-
-        auto&& comp = cppsort::utility::as_function(compare);
 
         while (--size) {
             auto current = first;
             auto next = std::next(current);
             for (std::size_t i = 0; i < size; ++i) {
-                if (comp(*next, *current)) {
-                    cppsort::mstd::iter_swap(current, next);
+                if (std::invoke(compare, *next, *current)) {
+                    mstd::iter_swap(current, next);
                 }
                 ++next;
                 ++current;
@@ -39,33 +38,27 @@ namespace detail
     {
         // Pair of iterators overload
         template<
-            cppsort::mstd::forward_iterator Iterator,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<
-                not cppsort::is_projection_iterator_v<Compare, Iterator>
-            >
+            mstd::forward_iterator Iterator,
+            typename Compare = std::less<>
         >
+            requires (not cppsort::is_projection_iterator_v<Compare, Iterator>)
         auto operator()(Iterator first, Iterator last, Compare compare={}) const
             -> void
         {
-            bubble_sort(first,
-                        std::distance(first, last),
+            bubble_sort(first, mstd::distance(first, last),
                         std::move(compare));
         }
 
         // Range overload
         template<
-            cppsort::mstd::forward_range Range,
-            typename Compare = std::less<>,
-            typename = std::enable_if_t<
-                not cppsort::is_projection_v<Compare, Range>
-            >
+            mstd::forward_range Range,
+            typename Compare = std::less<>
         >
+            requires (not cppsort::is_projection_v<Compare, Range>)
         auto operator()(Range&& range, Compare compare={}) const
             -> void
         {
-            bubble_sort(cppsort::mstd::begin(range),
-                        cppsort::mstd::distance(range),
+            bubble_sort(mstd::begin(range), mstd::distance(range),
                         std::move(compare));
         }
 
