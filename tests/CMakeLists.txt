@@ -106,6 +106,7 @@ add_executable(main-tests
     rebind_iterator_category.cpp
     sorter_facade.cpp
     sorter_facade_constexpr.cpp
+    sorter_facade_dangling_return.cpp
     sorter_facade_defaults.cpp
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorter_facade_fptr.cpp>
     sorter_facade_range.cpp
