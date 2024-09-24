@@ -1,20 +1,22 @@
-Someday, you might want to use a specific sorting algorithm that does not exist in **cpp-sort** (there are plenty of those) but still benefit from the tools available in this library. In order to do so, you would have to wrap such an algorithm into a sorter. In this tutorial, we will see the quirks involved in writing a good sorter to wrap a sorting algorithm. Writing a basic sorter is easy, but getting everything right to the details might be a bit tricky from time to time. This guide should help you to make the good choices (well, at least I hope so).
+Someday, you might want to use a specific sorting algorithm that does not exist in **cpp-sort** (there are plenty of those) but still benefit from the tools available in this library. In order to do so, you would have to wrap such an algorithm into a sorter. In this tutorial, we will learn the quirks involved in writing a good sorter to wrap a sorting algorithm. Writing a basic sorter is easy, but getting everything right to the details can be a bit tricky from time to time. This guide intends to make you aware of those subtleties, and hopefully help you write good sorters.
 
-*This tutorial is mostly a collection of good practice, tips, and design considerations. For a full step-by-step tutorial to write a sorter, you can read [Writing a `bubble_sorter`][writing-a-bubble-sorter].*
+*This tutorial is mostly a collection of good practice, tips, and design considerations. For a step-by-step tutorial to write a sorter, you can read [Writing a `bubble_sorter`][writing-a-bubble-sorter].*
 
 ## Which kind of sorter
 
 Writing a proper **cpp-sort**-compatible sorter generally implies some familiarity with library's [nomenclature][library-nomenclature]: each term of art might imply design decisions and tricky things to take into account. These terms of art can be converted into a series of questions to answer before designing a sorter:
-* Is it a *fixed-size sorter*? Is it meant to sort a collection of arbitrary size or a fixed number of values?
 * Which *category of iterators* does it work with? Can it be used to sort an `std::forward_list`?
 * Does it implement a *comparison sort*? Does it handle arbitrary comparison functions?
-* If it is a comparison sorter, does it handle *projections* too?
+* Otherwise, does it handle *projections*?
 * Is it a *type-specific sorter*? If so, which types does it work with?
 * Is it *stable*? If not, does it have an obvious stable variant?
-* Is it a *stateful sorter* or is it a *stateless sorter*?
+* Is it *stateless*, *stateful*, or even *mutable*?
+* Can it handle arbitrary *sentinels*, or only pairs of iterators?
+* What does it return? Can it return a *dangling iterator*?
+* Is it a *fixed-size sorter*? Is it meant to sort a collection of arbitrary size or a fixed number of values?
 * Is it a *buffered sorter*? Can it take advantage of a buffer of any size to improve performance?
 
-This tutorial describes what should be taken into account when writing a sorter, depending on the answers given to the questions above. Some things are obvious, some are not, some may be a bit too clever in the end. If something ever seems too clever, not obvious enough or outright broken - or simply if you think that it could use a bit more detail -, don't hesitate to submit an issue.
+This tutorial describes what should be taken into account when writing a sorter, depending on the answers given to the questions above. Some things are obvious, some are less so, some may arguably be a bit too clever in the end. If something ever seems too clever, not obvious enough or outright broken - or simply if you think that it could use a bit more detail -, don't hesitate to open an issue.
 
 ## The most basic sorter
 
@@ -25,21 +27,20 @@ template<typename ForwardIterator>
 auto selection_sort(ForwardIterator first, ForwardIterator last)
     -> void
 {
-    for (auto it = first ; it != last ; ++it) {
+    for (auto it = first; it != last; ++it) {
         auto selection = std::min_element(it, last);
-        using std::iter_swap;
-        iter_swap(selection, it);
+        mstd::iter_swap(selection, it);
     }
 }
 ```
 
-In order to use it with **cpp-sort**, we will need to wrap it into a sorter object. Doing so is actually trivial; here is the sorter:
+In order to use it with **cpp-sort**, we need to wrap it into a sorter object. Doing so is actually trivial; here is the sorter:
 
 ```cpp
 struct selection_sorter_impl
 {
-    template<typename ForwardIterator>
-    auto operator()(ForwardIterator first, ForwardIterator last) const
+    template<mstd::forward_iterator Iterator>
+    auto operator()(Iterator first, Iterator last) const
         -> void
     {
         selection_sort(first, last);
@@ -51,27 +52,27 @@ struct selection_sorter:
 {};
 ```
 
-We just wrote what we call a *sorter implementation* and wrapped it into [`sorter_facade`][sorter-facade], a class template designed to provide additional features to a given sorter implementation. We only had to write an `operator()` that takes a pair of iterators and forwards it to `selection_sort`, yet the resulting `selection_sorter` also has an `operator()` overload which can be passed a full collection instead of a pair of iterators, and it is additionally convertible to function pointers of type `void(*)(Iterator, Iterator)` and `void(*)(Iterable&)`. This is what `sorter_facade` gives you for even the most basic sorter, without any effort.
+We just wrote what we call a *sorter implementation* and wrapped it into [`sorter_facade`][sorter-facade], a class template designed to provide additional features to a given sorter implementation. We only had to write an `operator()` that takes a pair of iterators and forwards it to `selection_sort`, yet the resulting `selection_sorter` also has an `operator()` overload which can be passed a range instead of a pair of iterators, and it is additionally convertible to function pointers of type `void(*)(Iterator, Iterator)` and `void(*)(Range&&)`. This is what `sorter_facade` gives you for even the most basic sorter, without any additional effort.
 
-Now, let's define a set of rules to apply when writing sorters. These rules don't *have* to be enforced, but enforcing them will ensure that a sorter will work smoothly with most tool available in this library. In this tutorial, every section will define a small set of rules instead of defining all of them at once without introducing the relevant concepts first. Fortunately, the simpler the sorter, the simpler the rules.
+Now, let's define a set of rules to apply when writing sorters. These rules don't *have* to be enforced, but enforcing them ensures that a sorter works smoothly with most tools available in this library. In this tutorial, every section defines a small set of rules instead of defining all of them at once without introducing the relevant concepts first. Fortunately, the simpler the sorter, the simpler the rules.
 
-**Rule 1.1:** for any *sorter*, [`std::is_sorted`][std-is-sorted] called without a comparison function on the resulting range shall return `true` (note that this is not exactly true: floating point numbers are an example of types that will almost always cause problems).
+**Rule 1.1:** for any *sorter*, [`std::is_sorted`][std-is-sorted] called without a comparison function on the resulting range shall return `true` (note that this is not exactly true: floating point numbers are an example of types that might cause problems).
 
-**Rule 1.2:** a *sorter* shall be callable with either a pair of iterators or an iterable.
+**Rule 1.2:** a *sorter* shall be callable with either a pair of iterators or a range.
 
-**Rule 1.3:** a *sorter implementation* shall provide at least an overload of `operator()` that takes a pair of iterators. Overloads of `operator()` taking an iterable can be provided as well when they add value to the *sorter* (optimization, correctness, better error messages...) but should never totally replace the overload taking a pair of iterators.
+**Rule 1.3:** a *sorter implementation* shall provide at least an overload of `operator()` that takes a pair of iterators. Overloads of `operator()` taking a range can be provided as well when they add value to the *sorter* (optimization, correctness, better error messages, etc.) but an overload taking a pair of iterators should be provided regardless.
 
-**Rule 1.4:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience. `inline` variables can be used to avoid ODR-related problems.
+**Rule 1.4:** *sorter* implementers are encouraged but not required to provide a default instance of their *sorters* for convenience, especially when they are *stateless*. `inline` variables can be used to avoid ODR-related problems.
 
 ## Category of iterators
 
-When writing a sorter, one of the most important things to consider is the [category of iterators][std-iterators] it is meant to work with. It directly influences the kinds of collections that the sorter will be able to sort. Sorters implement in-place sorting algorithms, therefore they can only sort forward iterators or more specific types. **cpp-sort** does more than document the sorter category a sorter is supposed to work with: it actually embeds the information directly into the *sorter implementation* itself. If we take the `selection_sorter` from the previous section, we can document its properties as follows:
+When writing a *sorter*, one of the important things to consider is the [category of iterators][std-iterators] it is meant to work with. It directly influences the kinds of collections that the *sorter* will be able to sort. Sorters implement in-place sorting algorithms, therefore they can only sort forward iterators or more specific kinds of iterators. **cpp-sort** does more than just document the sorter category: it embeds the information directly into the *sorter implementation* itself. If we take the `selection_sorter` from the previous section, we can document its properties as follows:
 
 ```cpp
 struct selection_sorter_impl
 {
-    template<typename ForwardIterator>
-    auto operator()(ForwardIterator first, ForwardIterator last) const
+    template<mstd::forward_iterator Iterator>
+    auto operator()(Iterator first, Iterator last) const
         -> void
     { /* see above */ }
 
@@ -81,7 +82,7 @@ struct selection_sorter_impl
 };
 ```
 
-The standard library's [iterator tags][std-iterator-tags] are used to document the iterator category supported by the sorter (stability is also documented but we'll come back to that later). It is a bit useful for error messages, but some other tools from the library rely of this information. For example [`hybrid_adapter`][hybrid-adapter] can take several sorters with different iterator categories and generate a new sorter that will call the appropriate sorter depending on the iterator category of the passed collection:
+The standard library's [iterator tags][std-iterator-tags] are used to document the iterator category supported by the sorter (stability is also documented but we'll come back to that later). The information is used to provide better error messages, but some tools from the library also rely of this piece of information. For example [`hybrid_adapter`][hybrid-adapter] can take several sorters with different iterator categories and generate a new sorter that calls the appropriate sorter depending on the iterator category of the passed collection:
 
 ```cpp
 using sorter = cppsort::hybrid_adapter<
@@ -107,9 +108,7 @@ using sorter = cppsort::hybrid_adapter<
 >;
 ```
 
-If you ever need to access the iterator category of a sorter, don't directly ask for it, use  [sorter traits][sorter-traits] instead. It shouldn't make a difference when using the regular sorters provided by **cpp-sort**, but the library's *fixed-size sorters* are an example of sorters for which the traits are not embedded in the sorter but provided as a specialization of `sorter_traits` (mainly for maintainability reasons).
-
-As you can see, the iterator category supported by a given sorter is not only there for documentation. You have tools to play with it and tools that actually need the information, so make sure to get it right when designing your sorters.
+If you ever need to access the iterator category of a sorter, don't directly ask for it, use  [sorter traits][sorter-traits] instead. The library's *fixed-size sorters* are an example of sorters for which the traits are not embedded in the sorter itself but provided as a specialization of `sorter_traits` (mainly for maintainability reasons).
 
 **Rule 2.1:** to document the *iterator category* of a *sorter*, it shall be given an `iterator_category` type aliasing one of the standard iterators tags. If the sorter can't be altered, `sorter_traits` shall be specialized instead.
 
@@ -117,19 +116,46 @@ As you can see, the iterator category supported by a given sorter is not only th
 
 **Rule 2.3:** the *iterator category* of a *sorter* shall correspond to the least specific iterator category that the sorter can handle.
 
+**Rule 2.4:** the *iterator category* of a *sorter* shall be `std::forward_iterator_tag` or a child thereof.
+
+## Sentinels
+
+The iterator model supported by `sorter_facade` goes further than handling pair of iterators: it handles iterator/sentinel pairs as long as the *sorter implementation* does so. As a result, ranges passed to a *sorter* are also allowed to return different types from thier `begin()` and `end()` methods.
+
+```cpp
+struct selection_sorter_impl
+{
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel
+    >
+    auto operator()(Iterator first, Sentinel last) const
+        -> void
+    { /* change selection_sort accordingly */ }
+
+    // Sorter traits
+    using iterator_category = std::forward_iterator_tag;
+    using is_always_stable = std::false_type;
+};
+```
+
+Sentinels are interesting in that they can accidentally change the complexity of an algorithm:
+* Computing the distance between a random-access iterator and a sentinel can be O(n).
+* Conversely, if the sentinel is a [*sized sentinel*][sized-sentinel-for], then the distance computation falls to O(1), even when compared against a forward iterator.
+
 ## Comparison sorters
 
-Most sorting algorithms are [comparison sorts][comparison-sort]. It means that, to sort the elements of a collection, they repeatedly use a comparison function that returns whether two elements are already in order. The standard library's [`std::sort`][std-sort] implicitly uses an ADL-found `operator<` to compare two elements, but it also provides an overload which takes a user-provided comparison function to compare two elements. **cpp-sort** loosely follows this design (it defaults to `std::less<>` instead of `operator<`) and allows its sorters to take an additional parameter for user-provided comparison functions. Let's write a *sorter implementation* to wrap the three-parameter overload of `std::sort`:
+Most sorting algorithms are [comparison sorts][comparison-sort]. It means that, to sort the elements of a collection, they repeatedly use a comparison function that returns whether two elements are already in order. The standard library's [`std::sort`][std-sort] implicitly uses an ADL-found `operator<` to compare two elements, but it also provides an overload which takes a user-provided comparison function to compare two elements. **cpp-sort** loosely follows this design (it defaults to [`std::less<>`][std-less-void] instead of `operator<`) and allows its sorters to take an additional parameter for user-provided comparison functions. Let's write a *sorter implementation* to wrap the three-parameter overload of `std::ranges::sort`:
 
 ```cpp
 struct std_sorter_impl
 {
     template<
-        typename RandomAccessIterator,
+        mstd::random_access_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename Compare = std::less<>
     >
-    auto operator()(RandomAccessIterator first, RandomAccessIterator last
-                    Compare compare={}) const
+    auto operator()(Iterator first, Sentinel last, Compare compare={}) const
         -> void
     {
         std::sort(first, last, compare);
@@ -145,7 +171,7 @@ struct std_sorter:
 {};
 ```
 
-Compared to the previous `selection_sorter_impl`, the only things we had to add was a template parameter defaulted to [`std::less<>`][std-less-void] and a default-contructed (when not provided) parameter to `operator()`. As usual, [`sorter_facade`][sorter-facade] generates a bunch of additional features: it still adds the overload of `operator()` taking a single iterable, but also adds an overload taking an iterable and a comparison function. Basically, it ensures that you always only have to provide a single overload of `operator()`, and generates all the other ones as well as all the corresponding conversions to function pointers.
+Compared to the previous `selection_sorter_impl`, the only things we had to add was a template parameter defaulted to [`std::less<>`][std-less-void] and a default-contructed (when not provided) parameter to `operator()`. As usual, [`sorter_facade`][sorter-facade] generates a bunch of additional features: it still adds the overload of `operator()` taking a single range, but also adds an overload taking a range and a comparison function. Basically, it ensures that you always only have to provide a single overload of `operator()`, and generates all the other ones as well as all the corresponding conversions to function pointers.
 
 This kind of comparison sorters help to compare things that don't have an overloaded `operator<` or to compare things differently. For example, passing [`std::greater<>`][std-greater-void] to a sorter instead of `std::less<>` sorts a collection in descending order:
 
@@ -154,36 +180,37 @@ This kind of comparison sorters help to compare things that don't have an overlo
 cppsort::std_sort(collection, std::greater<>{});
 ```
 
-It is worth noting that every *comparison sorter* provided by the library transforms the comparison parameter with [`utility::as_function`][utility-as-function] before actually using it. It allows to use pointers to member functions of the `lhs.compare_to(rhs)` kind out-of-the-box.
+It is worth noting that every *comparison sorter* provided by the library calls the comparison parameter as if with [`std::invoke`][std-invoke]. It notably allows to use pointers to member functions of the `lhs.compare_to(rhs)` kind out-of-the-box.
 
-The rules for *comparison sorters* are but an extension to the rules defined for basic sorters. You will see that they are very similar.
+The rules for *comparison sorters* are but an extension to the rules defined for basic sorters.
 
-**Rule 3.1:** a *comparison sorter* is also a *sorter*, which means that it shall be called without a comparison function and shall obey all the rules defined for regular *sorters*.
+**Rule 3.1:** a *comparison sorter* is a *sorter*, which means that it shall be callable without a comparison function and shall obey all the rules defined for non-comparison *sorters*.
 
 **Rule 3.2:** for any *comparison sorter* called with a specific comparison function, [`std::is_sorted`][std-is-sorted] called with the same comparison function on the resulting collection shall return `true`.
 
-**Rule 3.3:** calling a *comparison sorter* with `std::less<>` or without a comparison function shall be strictly equivalent: calling `std::is_sorted` without a comparison function on the resulting collection shall return `true`.
+**Rule 3.3:** calling a *comparison sorter* with `std::less<>` or without a comparison function shall be equivalent: calling `std::is_sorted` without a comparison function on the resulting collection shall return `true`.
 
-**Rule 3.4:** a *comparison sorter* which can be called with a collection and a comparison function shall also be callable with two corresponding iterators and the same comparison function.
+**Rule 3.4:** a *comparison sorter* which can be called with a range and a comparison function shall also be callable with a corresponding iterator/sentinel pair and the same comparison function.
 
 **Rule 3.5:** the comparison parameter always comes after the parameters corresponding to the collection to sort.
 
 ## Handling projections
 
-C++20 introduces the notion of callable *projections*, borrowed from the [Adobe Source Libraries][stlab]. A projection is a callable object that can be passed to an algorithm so that it "views" the values to be compared differently. For example, [`std::negate<>`][std-negate-void] could be used to sort a collection of integers in descending order. Let's assume that our `selection_sort` algorithm from a while has been given a fourth parameter to handle projections; here is the corresponding *sorter implementation*:
+C++20 introduces the notion of callable *projections*, an idea borrowed from the [Adobe Source Libraries][stlab]. A projection is a callable object that can be passed to an algorithm so that it "views" the values to be compared differently. For example, [`std::negate<>`][std-negate-void] could be used to sort a collection of integers in descending order. Let's assume that our `selection_sort` algorithm from a while has been given a fourth parameter to handle projections; here is the corresponding *sorter implementation*:
 
 ```cpp
 struct selection_sorter_impl
 {
     template<
-        typename ForwardIterator,
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename Compare = std::less<>,
-        typename Projection = std::identity,
-        typename = std::enable_if_t<cppsort::is_projection_iterator<
-            Projection, ForwardIterator, Compare
-        >>
+        typename Projection = std::identity
     >
-    auto operator()(ForwardIterator first, ForwardIterator last,
+        requires cppsort::is_projection_iterator<
+            Projection, Iterator, Compare
+        >
+    auto operator()(Iterator first, Sentinel last,
                     Compare compare={}, Projection projection={}) const
         -> void
     {
@@ -196,11 +223,11 @@ struct selection_sorter_impl
 };
 ```
 
-As you can see, extending the sorter to handle projections is similar to extending it to support comparisons. Note that this sorter is both a *comparison sorter* and a *projection sorter*, but some sorters can also handle projections without handling comparisons. While the default function object for comparisons is `std::less`, the equivalent default function objects for projections is [`std::identity`][std-identity]: it simply returns the passed value as is.
+As you can see, extending the sorter to handle projections is similar to extending it to support comparisons. Note that this sorter is both a *comparison sorter* and a *projection sorter*, but some sorters can handle projections without handling comparisons (typically the radix sort family). The default function object for projections is [`std::identity`][std-identity]: it simply returns the passed value as is.
 
 The only subtle trick in the example above is the use of [`is_projection_iterator`][is-projection]: this trait is used to disambiguate comparison functions from projection functions when a sorter can be called with both, and is not needed when the sorter is only a *projection sorter*. It is actually some kind of concept check and should go away when concepts make their way to the standard.
 
-Note that most of the algorithms (actually, every *projection sorter* provided by the library) transform the projection parameter with [`utility::as_function`][utility-as-function] before actually using it. This small tool allows to use pointers to member data as projections; here is an example of how it can be used:
+Projection functions, just like comparisons functions, are arbitrary *Callables* invoked with [`std::invoke`][std-invoke]. This allows to use pointers to data members as projections; here is an example of how it can be used:
 
 ```cpp
 struct wrapper { int value; }
@@ -208,27 +235,25 @@ std::vector<wrapper> vec = { {5}, {9}, {6}, {1}, {2}, {8}, {3}, {0}, {7}, {4} };
 cppsort::selection_sort(vec, &wrapper::value);
 ```
 
-Thanks to that small trick, the `selection_sorter` will sort `vec`, using the member data `wrapper::value` instead of a full `wrapper` instance (which cannot be compared) to perform the comparisons on.
+Thanks to that small trick, the `selection_sort` call above sorts `vec` by comparing the data member `wrapper::value` instead of trying to compare full `wrapper` instances (which cannot be compared).
 
-Algorithms generally apply the projection on-the-fly to the values when they are compared. Some algorithms are a bit more subtle and project a specific object once when they know that its projection will be used extensively (*e.g.* quicksort projects a pivot once before calling the partition function). If projections are really expensive, one can still use [`schwartz_adapter`][schwartz-adapter], which projects every element of the collection once prior to the sorting.
+Algorithms generally apply the projection on-the-fly to the values when they are compared. Some algorithms are a bit more subtle and project a specific object once when they know that its projection will be used extensively (*e.g.* quicksort projects a pivot once before calling the partition function). If projections are really expensive, one can use [`schwartz_adapter`][schwartz-adapter], which projects every element of the collection once and saves that result in a buffer prior to sorting it.
 
-Now that you know everything about implementing projections... it's time tell you that you don't actually need to implement them most of the time: if you create a *sorter implementation* with an `operator()` taking only two iterators and a comparison function, `sorter_facade` will create additional overloads that accept projection parameters, bake the projection into the comparison function and pass that hybrid to the appropriate overload of `operator()` in the *sorter implementation*. You only need to add a small SFINAE guard to disambiguate between comparison and  projection functions:
+Now that you know everything about implementing projections... it's time tell you that you don't actually need to implement them most of the time: if you create a *sorter implementation* with an `operator()` taking only two iterators and a comparison function, `sorter_facade` creates additional overloads that accept projection parameters, bake the projection into the comparison function and pass that hybrid to the appropriate overload of `operator()` in the *sorter implementation*. You only need to add a small SFINAE guard to disambiguate between comparison and projection functions:
 
 ```cpp
 struct selection_sorter_impl
 {
     template<
-        typename ForwardIterator,
-        typename Compare = std::less<>,
-        typename = std::enable_if_t<not cppsort::is_projection_iterator<
-            Compare, ForwardIterator
-        >>
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
+        typename Compare = std::less<>
     >
-    auto operator()(ForwardIterator first, ForwardIterator last,
-                    Compare compare={}) const
+        requires (not cppsort::is_projection_iterator<Compare, Iterator>)
+    auto operator()(Iterator first, Sentinel last, Compare compare={}) const
         -> void
     {
-        selection_sort(first, last, compare /* yes, we also have to change that */);
+        selection_sort(first, last, compare);
     }
 
     // Sorter traits
@@ -237,21 +262,19 @@ struct selection_sorter_impl
 };
 ```
 
-The general rules for *projection sorters* are really close to the ones for *comparison sorters*, and there are additional rules when a sorter is both at once. In the following section, assume a projection-enhanced `std::is_sorted`, even though no such function has been standardized yet (there is one in the Ranges TS).
+The general rules for *projection sorters* are really close to the ones for *comparison sorters*, and there are additional rules when a sorter is both at once. In the following section, assume a projection-enhanced `std::is_sorted`.
 
-**Rule 4.1:** a *projection sorter* is also a *sorter*, which means that it shall be called without a projection function and shall obey all the rules defined for regular *sorters*.
+**Rule 4.1:** a *projection sorter* is also a *sorter*, which means that it shall be callable without a projection function and shall obey all the rules defined for regular *sorters*.
 
-**Rule 4.2:** a sorter can be both a *comparison sorter* and a *projection sorter* at once. Such a sorter shall also obey all the rules defined for *sorters*, for *comparison sorters* and for *projection sorters*.
+**Rule 4.2:** a sorter can be both a *comparison sorter* and a *projection sorter* at once. Such a sorter shall also obey all the rules defined for simple *sorters*, for *comparison sorters* and for *projection sorters*.
 
-**Rule 4.3:** for any *projection sorter* called with a specific projection function, [`std::is_sorted`][std-is-sorted] called with `std::less<>` and the same projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, for any such sorter called with a specific pair of comparison and projection function, `std::is_sorted` called with the same pair of functions on the resulting collection shall return `true`.
+**Rule 4.3:** for any *projection sorter* called with a specific projection function, [`std::is_sorted`][std-is-sorted] called with `std::less<>` and the same projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, for any such sorter called with a specific pair of comparison and projection functions, `std::is_sorted` called with the same pair of functions on the resulting collection shall return `true`.
 
-**Rule 4.4:** calling a *projection sorter* with [`std::identity`][std-identity] or without a projection function shall be strictly equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `std::identity`, and calling it without any additional function should be strictly equivalent.
+**Rule 4.4:** calling a *projection sorter* with [`std::identity`][std-identity] or without a projection function shall be equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `std::identity`, and calling it without any additional function should be strictly equivalent.
 
-**Rule 4.5:** a *projection sorter* which can be called with a collection and a projection function shall also be callable with two corresponding iterators and the same projection function. If the *projection sorter* is also a *comparison sorter*, it shall also be callable with an iterable, a comparison function and a projection function.
+**Rule 4.5:** the projection parameter always comes after the parameters corresponding to the collection to sort. If the *projection sorter* is also a *comparison sorter*, the projection parameter always comes after the comparison parameter.
 
-**Rule 4.6:** the projection parameter always comes after the parameters corresponding to the collection to sort. If the *projection sorter* is also a *comparison sorter*, the projection parameter always comes after the comparison parameter.
-
-**Rule 4.7 (warning):** there is no preferred style between providing a projection overload or relying on the comparison parameter alone to handle comparisons and projections at once. Some algorithms may reduce the number of calls to the projection function, but otherwise there is no reason to hard-code the projection support.
+*Note:* there is no preferred style between providing a projection overload or relying on the comparison parameter alone to handle comparisons and projections at once. Some algorithms may reduce the number of calls to the projection function, but otherwise there is no obvious reason to hard-code the projection support.
 
 ## Non-comparison sorters
 
@@ -565,6 +588,7 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [rebind-iterator-category]: Sorter-traits.md#rebind_iterator_category
   [schwartz-adapter]: Sorter-adapters.md#schwartz_adapter
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
+  [sized-sentinel-for]: https://en.cppreference.com/w/cpp/iterator/sized_sentinel_for
   [small-array-adapter]: Sorter-adapters.md#small_array_adapter
   [sorter-facade]: Sorter-facade.md
   [sorter-traits]: Sorter-traits.md#sorter_traits
@@ -577,6 +601,7 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-integral-constant]: https://en.cppreference.com/w/cpp/types/integral_constant
+  [std-invoke]: https://en.cppreference.com/w/%20%20cpp/utility/functional/invoke
   [std-is-sorted]: https://en.cppreference.com/w/cpp/algorithm/is_sorted
   [std-iterators]: https://en.cppreference.com/w/cpp/iterator
   [std-iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
