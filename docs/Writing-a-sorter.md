@@ -283,23 +283,26 @@ While most of the well-known sorting algorithms handle user-provided comparison 
 ```cpp
 struct counting_sorter_impl
 {
-    template<typename ForwardIterator>
-    auto operator()(ForwardIterator first, ForwardIterator last) const
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel
+    >
+    auto operator()(Iterator first, Sentinel last) const
         -> void
     {
         counting_sort(first, last);
     }
 
     // Sorter traits
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::forward_iterator_tag;
     using is_always_stable = std::false_type;
 };
 ```
 
-Until there, everything is fine. However, imagine that the library where we found the `counting_sort` function also provides its evil twin, to which we will give the inventive name of `reverse_counting_sort`, meant to sort a collection of integers in descending order. We would like to take advantage of this function too, but all the rules defined in the previous sections make it pretty clear that we can't write a `reverse_counting_sorter` since such a sorter wouldn't satisfy the `std::is_sorted` guarantee that every sorter should satisfy. Note however that, after having reverse-sorted a collection of integers, the following assertion should hold:
+Until there, everything is fine. However, imagine that the library where we found the `counting_sort` function also provides its evil twin, to which we will give the inventive name of `reverse_counting_sort`, meant to sort a collection of integers in descending order. We would like to take advantage of this function too, but all the rules defined in the previous sections make it pretty clear that we can't write a `reverse_counting_sorter` since such a sorter wouldn't satisfy the `std::is_sorted` guarantee that every sorter should satisfy. Note however that, after having reverse-sorted a collection of integers, the following assertion holds:
 
 ```cpp
-assert( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+assert( std::is_sorted(std::begin(collection), std::end(collection), std::greater{}) );
 ```
 
 We would like our `counting_sorter` to reverse-sort a collection when given `std::greater<>` as a comparison function, but there is no way it can handle arbitrary comparison functions. Well... let's just make it handle specific comparison functions then:
@@ -307,30 +310,39 @@ We would like our `counting_sorter` to reverse-sort a collection when given `std
 ```cpp
 struct counting_sorter_impl
 {
-    template<typename ForwardIterator>
-    auto operator()(ForwardIterator first, ForwardIterator last) const
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel
+    >
+    auto operator()(Iterator first, Sentinel last) const
         -> void
     {
         counting_sort(first, last);
     }
 
-    template<typename ForwardIterator>
-    auto operator()(ForwardIterator first, ForwardIterator last,
-                    std::greater<>) const
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel
+    >
+    auto operator()(Iterator first, Sentinel last, std::greater<>) const
         -> void
     {
         reverse_counting_sort(first, last);
     }
 
     // Sorter traits
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::forward_iterator_tag;
     using is_always_stable = std::false_type;
 };
 ```
 
-With such an implementation, this sorter satisfies the *comparison sorter* concept when given an instance of `std::greater<>` without breaking any of the rules defined in the previous sections. Now it may seem a bit unfair for `std::less<>`... but actually [`sorter_facade`][sorter-facade] automagically generates several `operator()` overloads taking `std::less<>` when the provided *sorter implementation* doesn't handle it natively. Note that even though this section is about non-comparison sorters, the same applies to non-projection sorters (you could provide a specific overload for [`std::negate<>`][std-negate-void] for a descending sort too), and `sorter_facade` would provide equivalent `operator()` overloads taking [`std::identity`][std-identity] for *sorter implementations* that cannot handle it natively).
+With such an implementation, this sorter satisfies the *comparison sorter* concept when given an instance of `std::greater<>` without breaking any of the rules defined in the previous sections. Now it may seem a bit unfair for `std::less<>`... but actually [`sorter_facade`][sorter-facade] automagically generates several `operator()` overloads taking `std::less<>` (but also `std::ranges::less`) when the provided *sorter implementation* doesn't handle it natively. Note that even though this section is about non-comparison sorters, the same applies to non-projection sorters (you could provide a specific overload for [`std::negate<>`][std-negate-void] for a descending sort too), and `sorter_facade` would provide equivalent `operator()` overloads taking [`std::identity`][std-identity] for *sorter implementations* that cannot handle it natively).
 
-The most beautiful thing in my opinion is that no new rule is needed to support that model. All the rules previously defined guarantee that these specific overloads using standard function object as tags work. The only advice I can give is to try to use the most standard function objects as tags, or at least the ones that are the most likely to be used for the specific task. Since **cpp-sort** is heavily based on modern C++ features, it is designed to only work with the `void` specializations of the standard function objects from `<functional>`.
+The most beautiful thing in my opinion is that no new rule is needed to support that model. All the rules previously defined guarantee that these specific overloads using standard function object as tags work since they are all based on `std::is_sorted`. The only advice I can give is to try to use the most standard function objects as tags, or at least the ones that are the most likely to be used for the specific task. **cpp-sort** itself only has partia built-in support for the following `<functional>` function objects:
+* `std::less<void>`
+* `std::ranges::less`
+* `std::greater<void>`
+* `std::ranges::greater`
 
 ## Type-specific sorters
 
@@ -339,19 +351,24 @@ Now is time to remember that the counting sort doesn't handle comparisons becaus
 ```cpp
 struct counting_sorter_impl
 {
-    template<typename ForwardIterator>
-        requires std::integral<typename std::iterator_traits<ForwardIterator>::value_type>
-    auto operator()(ForwardIterator first, ForwardIterator last) const
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel
+    >
+        requires std::integral<std::iter_value_t<Iterator>>
+    auto operator()(Iterator first, Sentinel last) const
         -> void
         >
     {
         counting_sort(first, last);
     }
 
-    template<typename ForwardIterator>
-        requires std::integral<typename std::iterator_traits<ForwardIterator>::value_type>
-    auto operator()(ForwardIterator first, ForwardIterator last,
-                    std::greater<>) const
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel
+    >
+        requires std::integral<std::iter_value_t<Iterator>>
+    auto operator()(Iterator first, Sentinel last, std::greater<>) const
         -> void
         >
     {
@@ -359,7 +376,7 @@ struct counting_sorter_impl
     }
 
     // Sorter traits
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::forward_iterator_tag;
     using is_always_stable = std::false_type;
 };
 ```
@@ -377,7 +394,7 @@ using generic_sorter = cppsort::hybrid_adapter<
 >;
 ```
 
-Note that the aggregate above plays well: `counting_sorter` sorter will be called if `generic_sorter` is given a collection of integers and either `std::less<>`, `std::greater<>` or no comparison function at all. `cppsort::merge_sorter` will only be called if `counting_sorter` really has no means to sort the collection.
+Note that the aggregate above plays well: `counting_sorter` sorter will be called if `generic_sorter` is given a collection of integers and either `std::less<>`, `std::greater<>` (or their `std::ranges` counterparts), or no comparison function at all. `cppsort::merge_sorter` will only be called if `counting_sorter` really has no means to sort the collection.
 
 While type-specific sorters are, by their very nature, unable to generically handle comparison functions, it might be possible for some of them to handle projections. A simple `counting_sorter` can't handle them because it "discards" the original information and recreates integer values laters, but other sorters such as [`spread_sorter`][spread-sorter] keep the original items around. Typically, a projection-enhanced type-specific sorter will be able to handle collections of any type provided the projection function projects the items to a type originally handled by the sorter (*e.g.* `spread_sorter` handles any type projected to an integer, a floating point number or an `std::string`).
 
@@ -385,13 +402,13 @@ While type-specific sorters are, by their very nature, unable to generically han
 
 ## Stability
 
-A sorting algorithm is said to be [stable][stability] if it preserves the relative order of *equivalent elements*. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a boolean specialization of `std::integer_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
+A sorting algorithm is said to be [stable][stability] if it preserves the relative order of *equivalent elements*. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a specialization of `std::bool_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
 
 ```cpp
 using stability = cppsort::is_always_stable<cppsort::tim_sorter>;
 ```
 
-The library contains a *sorter adapter* named [`stable_adapter`][stable-adapter] that can be used to obtain a stable sorter, no matter which sorter it is given. If the *adapted sorter* `Sorter` is guaranteed to always be stable (if it defines `is_always_stable` as `std::true_type`), then `stable_sorter<Sorter>` will use it directly, otherwise it will use `make_stable<Sorter>`, where `make_stable` is a sorter adapter that uses the starting position of the elements in the collection to sort to make the *adapted sorter* stable. This mechanism only works if the *adapted sorter* is able to handle *proxy iterators*.
+The library contains a *sorter adapter* named [`stable_adapter`][stable-adapter] that can be used to obtain a stable sorter, no matter which sorter it is given. If the *adapted sorter* `Sorter` is guaranteed to always be stable (if it defines `is_always_stable` as `std::true_type`), then `stable_sorter<Sorter>` will use it directly, otherwise it will use `make_stable<Sorter>`, where `make_stable` is a sorter adapter that uses the starting position of the elements in the collection to sort to make the *adapted sorter* stable (actual rules are slightly more complicated, see the relevant section of the documentation). This mechanism only works if the *adapted sorter* is a *comparison sort* able to handle *proxy iterators*.
 
 Users are allowed to explicitly specialize `stable_adapter` to provide a stable sorter related to the original sorter. For example, if we have a `stable_selection_sorter` wrapping a stable selection sort algorithm, we can specialize `selection_sorter` as follows:
 
@@ -413,9 +430,9 @@ The library also contains another stability-related type trait, [`is_stable`][is
 
 **Rule 6.3:** a *sorter*'s `is_always_stable` shall alias `std::true_type` if and only if every algorithm provided by the sorter is guaranteed to always be stable.
 
-**Rule 6.4:** if the stability of a sorter depends on the it is called with, `is_sorter` should be specialized to provide more fine-grained stability information.
+**Rule 6.4:** if the stability of a sorter depends on the types it is called with, `is_sorter` shall be specialized to provide more fine-grained stability information.
 
-**Rule 6.5:** users are allowed to specialize the class template `stable_adapter` for any *sorter* in order to provide a stable version of the *adapted sorter*. *Note: `stable_adapter` should only be specialized when it makes sense, but there is no sane way to enforce this rule, so the decision to specialize it or not is left to the end user*.
+**Rule 6.5:** users are allowed to specialize the class template `stable_adapter` for any *sorter* in order to provide a stable version of the *adapted sorter* if the aforementioned traits are not enough. It only makes sense to provide an unstable *sorter* when it might offer performance benefits over a stable version of the same sorter.
 
 **Rule 6.6:** any specialization of `stable_adapter` shall alias `is_always_stable` to `std::true_type`.
 
@@ -423,9 +440,38 @@ The library also contains another stability-related type trait, [`is_stable`][is
 
 **Rule 6.8:** the class template `make_stable` shall not be specialized.
 
-**Rule 6.9:** it only makes sense to provide an unstable *sorter* when it might offer performance benefits over a stable version of the same sorter.
+## Return type of sorters
 
-## Stateful sorters
+A *sorter implementation* can return values of any type, even different types for different `operator()` overloads, and `sorter_facade` will simply forward the returned value through its own `operator()` overloads most of the time. There is however an exception to that rule: following the design of [`std::ranges::sort`][std-ranges-sort], if the called `operator()` accepts a range and returns an iterator whose type matches that of `begin(range)`, then `sorter_facade` wraps the returned value in `mstd::ranges::borrowed_iterator_t`, ensuring that [`std::ranges::dangling`][std-ranges-dangling] is returned for rvalue ranges instead of a likely dangling iterator, unless said range is specifically blessed by [`std::ranges::enable_borrowed_range`][std-ranges-borrowed-range].
+
+As such, *sorter implementations* do not have much to do to benefit from return type improvements, besides returning something at all:
+
+```cpp
+struct selection_sorter_impl
+{
+    template<
+        mstd::forward_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
+        typename Compare = std::less<>
+    >
+        requires (not cppsort::is_projection_iterator<Compare, Iterator>)
+    auto operator()(Iterator first, Sentinel last, Compare compare={}) const
+        -> Iterator
+    {
+        return selection_sort(first, last, compare);
+    }
+
+    // Sorter traits
+    using iterator_category = std::forward_iterator_tag;
+    using is_always_stable = std::false_type;
+};
+```
+
+Returning the end iterator makes sense when handling sentinels, because the end iterator has to be computed as part of sorting either way, and computing it outside of the sorting operation might be O(n) again if the passed range does not model a sized range.
+
+**Rule 7.1:** *sorters* shall return the end iterator of the passed range if computing it as part of the sorting operation has benefits compared to computing it outside of the sorting operation.
+
+## Stateless, stateful & mutable sorters
 
 To date (version 2.0.0), every *sorter* provided by **cpp-sort** is a *stateless sorter*, which means that it is an empty type which does not carry any state between construction and subsequent invocations. However, the library is also designed to handle *stateful sorters*: those are sorters which might carry a state that can change between invocations, or even when calling the *sorter*.
 
@@ -434,6 +480,8 @@ There are no specific rules to differentiate the way *stateful* and *stateless s
 * `adapter_storage` is stateless if and only if the wrapped sorter is empty and default-constructible.
 * Most of the library's *sorter adapters* produce a stateless *resulting sorter* if and only if the every *adapted sorter* is itself stateless.
 * `small_array_adapter` only accepts *stateless sorters*.
+
+*Stateful sorters* can also be *mutable*: that's what they are called when calling `operator()` changes the internal state. Those sorters are only different from all the ones previously described in the `const` qualification of their `operator()`.
 
 ## Buffered sorters
 
@@ -454,13 +502,13 @@ template<
 struct wiki_sorter;
 ```
 
-**Rule 7.1:** a *buffer provider* is a class that has a nested class template named `buffer`. The nested class template shall be explicitly constructible from an instance of `std::size_t` and shall at least implement the methods `begin`, `end`, `data` and `size`, with semantics similar to those of the random-access containers in the standard library.
+**Rule 8.1:** a *buffer provider* is a class that has a nested class template named `buffer`. The nested class template shall be explicitly constructible from an instance of `std::size_t` and shall at least implement the methods `begin`, `end`, `data` and `size`, with semantics similar to those of the random-access containers in the standard library.
 
-**Rule 7.2:** a *buffered sorter* is a class template which takes a *buffer provider* as a template parameter.
+**Rule 8.2:** a *buffered sorter* is a class template which takes a *buffer provider* as a template parameter.
 
-**Rule 7.3:** a valid specialization of a *buffered sorter* is a *sorter* and shall therefore obey all the rules defined for sorters. It can also be a *comparison sorter* and/or a *projection sorter*, in which case it shall obey the specific rules for these kinds of sorters too.
+**Rule 8.3:** a valid specialization of a *buffered sorter* is a *sorter* and shall therefore obey all the rules defined for sorters. It can also be a *comparison sorter* and/or a *projection sorter*, in which case it shall obey the specific rules for these kinds of sorters too.
 
-**Rule 7.4:** a *buffered sorter* should work even if the buffer provider fails to allocate the buffer, even if it degrades the performance. It shouldn't rely on a specific size of buffer to perform the sort.
+**Rule 8.4:** a *buffered sorter* should work even if the buffer provider fails to allocate the buffer, even if it degrades the performance. It shouldn't rely on a specific size of buffer to perform the sort.
 
 ## Fixed-size sorters
 
@@ -491,12 +539,12 @@ template<>
 struct low_projections_sorter_impl<0u>
 {
     template<
-        typename RandomAccessIterator,
+        mstd::random_access_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename Compare = std::less<>,
         typename Projection = std::identity
     >
-    auto operator()(RandomAccessIterator, RandomAccessIterator,
-                    Compare={}, Projection={}) const
+    auto operator()(Iterator, Sentinel, Compare={}, Projection={}) const
         -> void
     {}
 };
@@ -507,28 +555,28 @@ template<>
 struct low_projections_sorter_impl<2u>
 {
     template<
-        typename RandomAccessIterator,
+        mstd::random_access_iterator Iterator,
+        mstd::sentinel_for<Iterator> Sentinel,
         typename Compare = std::less<>,
-        typename Projection = std::identity,
-        typename = std::enable_if_t<cppsort::is_projection_iterator<
-            Projection, RandomAccessIterator, Compare
-        >>
+        typename Projection = std::identity
     >
-    auto operator()(RandomAccessIterator first, RandomAccessIterator,
+        requires cppsort::is_projection_iterator<
+            Projection, Iterator, Compare
+        >
+    auto operator()(Iterator first, Sentinel,
                     Compare compare={}, Projection projection={}) const
         -> void
     {
         auto&& comp = cppsort::utility::as_function(compare);
         auto&& proj = cppsort::utility::as_function(projection);
         if (comp(proj(first[0u]), proj(first[1u]))) {
-            using std::iter_swap;
-            iter_swap(first, first + 1u);
+            mstd::iter_swap(first, first + 1u);
         }
     }
 };
 ```
 
-We won't show other specializations here because it is rather tedious and takes some place in the tutorial, but the idea is clear: any valid specialization can be a full-fledged sorter when used properly and can also be both a *comparison sorter* and a *projection sorter* if needed. It might be interesting to know which specializations of a fixed-size sorter can be used; in order to provide this information and some more, one has to specialize the trait class template [`fixed_sorter_traits`][fixed-sorter-traits]:
+We won't show other specializations here because it is rather tedious and including them all in this tutorial would be preposterous, but the idea is clear: any valid specialization can be a full-fledged sorter when used properly and can also be both a *comparison sorter* and a *projection sorter* if needed. It can be interesting to know which specializations of a fixed-size sorter can be used; in order to provide this information and some more, one has to specialize the trait class template [`fixed_sorter_traits`][fixed-sorter-traits]:
 
 ```cpp
 namespace cppsort
@@ -564,11 +612,11 @@ using sorter = cppsort::hybrid_adapter<
 
 In the example above, the resulting sorter will use our `low_projections_sorter` when given an `std::array` or a fixed-size C array of size less than 5, and fall back to [`quick_sorter`][quick-sorter] when given any other collection or a pair of iterators.
 
-**Rule 8.1:** a *fixed-size sorter* is allowed but not required to work with fixed arrays of any size.
+**Rule 9.1:** a *fixed-size sorter* is allowed but not required to work with fixed arrays of any size.
 
-**Rule 8.2:** any valid specialization of a *fixed-size sorter* for a given size is a *sorter*, and shall therefore obey all the rules defined for sorters provided the collection to sort has the correct size. It can also be a *comparison sorter* and/or a *projection sorter*, in which case it shall obey the specific rules for these kinds of sorters too.
+**Rule 9.2:** any valid specialization of a *fixed-size sorter* for a given size is a *sorter*, and shall therefore obey all the rules defined for sorters provided the collection to sort has the correct size. It can also be a *comparison sorter* and/or a *projection sorter*, in which case it shall obey the specific rules for these kinds of sorters too.
 
-**Rule 8.3:** a *fixed-size sorter* shall specialize the class `cppsort::fixed_sorter_traits` if it needs to provide information about its domain, its iterator category or its stability. See the exact meaning of these types and how to define them in the dedicated part of the documentation.
+**Rule 9.3:** a *fixed-size sorter* shall specialize the class `cppsort::fixed_sorter_traits` if it needs to provide information about its domain, its iterator category or its stability. See the exact meaning of these types and how to define them in the dedicated part of the documentation.
 
 
   [buffer-providers]: Miscellaneous-utilities.md#buffer-providers
@@ -607,6 +655,9 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [std-iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-negate-void]: https://en.cppreference.com/w/cpp/utility/functional/negate_void
+  [std-ranges-borrowed-range]: https://en.cppreference.com/w/cpp/ranges/borrowed_range
+  [std-ranges-dangling]: https://en.cppreference.com/w/cpp/ranges/dangling
+  [std-ranges-sort]: https://en.cppreference.com/w/cpp/algorithm/ranges/sort
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [stlab]: https://stlab.adobe.com/
   [utility-as-function]: Miscellaneous-utilities.md#as_function
