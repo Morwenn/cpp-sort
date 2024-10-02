@@ -121,7 +121,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::max_impl> max{};
+    inline constexpr sorter_facade_base<detail::max_impl> max{};
 }
 
 #endif // CPPSORT_PROBES_MAX_H_

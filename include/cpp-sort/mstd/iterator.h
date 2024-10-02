@@ -171,7 +171,7 @@ namespace cppsort::mstd
         std::assignable_from<std::iter_value_t<In>&, iter_rvalue_reference_t<In>>;
 
     ////////////////////////////////////////////////////////////
-    // Note: the following types do not rely of components whose
+    // Note: the following types do not rely on components whose
     //       behaviour is different from theit std:: counterparts
     //       and as such do not need to be reimplement in mstd:
     //       * std::indirectly_readable_traits
@@ -611,6 +611,33 @@ namespace cppsort::mstd
     {
         inline constexpr auto iter_swap = detail_iter_swap::iter_swap_fn{};
     }
+
+    ////////////////////////////////////////////////////////////
+    // indirectly_swappable
+
+    template<
+        typename Indirect1,
+        typename Indirect2 = Indirect1
+    >
+    concept indirectly_swappable =
+        indirectly_readable<Indirect1> &&
+        indirectly_readable<Indirect2> &&
+        requires( const Indirect1 i1, const Indirect2 i2 )
+        {
+            mstd::iter_swap(i1, i1);
+            mstd::iter_swap(i1, i2);
+            mstd::iter_swap(i2, i1);
+            mstd::iter_swap(i2, i2);
+        };
+
+    ////////////////////////////////////////////////////////////
+    // permutable
+
+    template<typename Iterator>
+    concept permutable =
+        forward_iterator<Iterator> &&
+        //indirectly_movable_storable<Iterator, Iterator> &&
+        indirectly_swappable<Iterator, Iterator>;
 }
 
 namespace cppsort::detail

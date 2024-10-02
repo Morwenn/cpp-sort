@@ -65,7 +65,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::runs_impl> runs{};
+    inline constexpr sorter_facade_base<detail::runs_impl> runs{};
 }
 
 #endif // CPPSORT_PROBES_RUNS_H_

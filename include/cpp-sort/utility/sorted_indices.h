@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SORTED_INDICES_H_
@@ -71,12 +71,12 @@ namespace cppsort::utility
 
     template<typename Sorter>
     struct sorted_indices:
-        sorter_facade<detail::sorted_indices_impl<Sorter>>
+        sorter_facade_base<detail::sorted_indices_impl<Sorter>>
     {
         sorted_indices() = default;
 
         constexpr explicit sorted_indices(Sorter sorter):
-            sorter_facade<detail::sorted_indices_impl<Sorter>>(std::move(sorter))
+            sorter_facade_base<detail::sorted_indices_impl<Sorter>>(std::move(sorter))
         {}
     };
 }

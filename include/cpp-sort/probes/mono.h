@@ -99,7 +99,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::mono_impl> mono{};
+    inline constexpr sorter_facade_base<detail::mono_impl> mono{};
 }
 
 #endif // CPPSORT_PROBES_MONO_H_

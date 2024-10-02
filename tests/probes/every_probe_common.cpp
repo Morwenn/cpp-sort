@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <numeric>
@@ -29,7 +29,7 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
     // Ensure that all measures of presortedness return 0 when
     // given a collection where all elements are equal
 
-    std::vector<int> collection(50, 5);
+    const std::vector<int> collection(50, 5);
     std::decay_t<TestType> mop;
     auto presortedness = mop(collection);
     CHECK( presortedness == 0 );
@@ -80,14 +80,14 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
 
     SECTION( "empty collection" )
     {
-        std::vector<int> collection;
+        const std::vector<int> collection;
         auto presortedness = mop(collection);
         CHECK( presortedness == 0 );
     }
 
     SECTION( "one-element collection" )
     {
-        std::vector<int> collection = { 42 };
+        const std::vector<int> collection = { 42 };
         auto presortedness = mop(collection);
         CHECK( presortedness == 0 );
     }

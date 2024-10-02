@@ -72,7 +72,7 @@ template<typename Indirect>
 concept indirectly_readable = /* implementation-defined */;
 ```
 
-This reimplementation of [`std::indirectly_readable`][std-indirectly-readable] imposes fewer requirements that its standard counterpart on the type returned by `mstd::iter_move`: most notably it drops the [`std::common_reference_with`][std-common-reference-with] requirements involving `iter_rvalue_reference_t<Indirect>`.
+This reimplementation of [`std::indirectly_readable`][std-indirectly-readable] imposes fewer requirements than its standard counterpart on the type returned by `mstd::iter_move`: most notably it drops the [`std::common_reference_with`][std-common-reference-with] requirements involving `iter_rvalue_reference_t<Indirect>`.
 
 It is worth nothing that the concept is currently incomplete and might get stricter in the future as the exact rules needed for the **cpp-sort** iterator model to work become clearer.
 
@@ -103,7 +103,7 @@ template<typename Sentinel, typename Iterator>
 concept sized_sentinel_for = /* implementation-defined */;
 ```
 
-Similar to their standard library counterparts. It is worth noting that `sized_sentinel_for` uses [`std::disable_sized_sentinel_for`][std-sized-sentinel-for] and does not reimplement that standard trait, so that user code providing specializations for the standard trait are also taken into account by **cpp-sort**.
+Similar to their standard library counterparts. It is worth noting that `sized_sentinel_for` uses [`std::disable_sized_sentinel_for`][std-sized-sentinel-for] and does not reimplement that standard trait, so user-provided specializations of the standard trait are also taken into account by **cpp-sort**.
 
 ```cpp
 template<typename Iterator>
@@ -122,10 +122,12 @@ concept contiguous_iterator = /* implementation-defined */;
 
 The `mstd` iterator concepts rely on the previously described concepts, and are thus affected by the same differences. The only additional deviation from the standard library concepts is that `bidirectional_iterator` does not require a postfix `operator--` to exist at all.
 
-The `<cpp-sort/mstd/iterator.h>` header also provides the following reimplementations of standard library components, that build upon the previously described features to provide the increased flexibility of the library's iterator model:
+The `<cpp-sort/mstd/iterator.h>` header also provides the following reimplementations of standard library components that build upon the previously described features to provide the increased flexibility of the library's iterator model:
 * `mstd::advance`
 * `mstd::next`
 * `mstd::prev`
+* `mstd::indirectly_swappable`
+* `mstd::permutable` (minus the `indirectly_movable_storable` constraint)
 
 ### `<cpp-sort/mstd/ranges.h>`
 

@@ -179,7 +179,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::dis_impl> dis{};
+    inline constexpr sorter_facade_base<detail::dis_impl> dis{};
 }
 
 #endif // CPPSORT_PROBES_DIS_H_

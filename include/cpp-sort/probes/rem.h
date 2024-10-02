@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_REM_H_
@@ -75,7 +75,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::rem_impl> rem{};
+    inline constexpr sorter_facade_base<detail::rem_impl> rem{};
 }
 
 #endif // CPPSORT_PROBES_REM_H_

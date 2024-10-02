@@ -155,7 +155,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::osc_impl> osc{};
+    inline constexpr sorter_facade_base<detail::osc_impl> osc{};
 }
 
 #endif // CPPSORT_PROBES_OSC_H_

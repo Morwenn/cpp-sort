@@ -120,7 +120,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::enc_impl> enc{};
+    inline constexpr sorter_facade_base<detail::enc_impl> enc{};
 }
 
 #endif // CPPSORT_PROBES_ENC_H_

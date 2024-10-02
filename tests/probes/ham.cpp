@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -16,7 +16,7 @@ TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
 
     SECTION( "simple test" )
     {
-        std::forward_list<int> li = { 34, 43, 96, 42, 44, 48, 57, 42, 68, 69 };
+        const std::forward_list<int> li = { 34, 43, 96, 42, 44, 48, 57, 42, 68, 69 };
         CHECK( ham(li) == 6 );
         CHECK( ham(li.begin(), li.end()) == 6 );
 
@@ -29,7 +29,7 @@ TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
         // The upper bound should correspond to the size of
         // the input sequence
 
-        std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        const std::forward_list<int> li = { 10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         auto max_n = ham.max_for_size(cppsort::mstd::distance(li));
         CHECK( max_n == 11 );
         CHECK( ham(li) == max_n );

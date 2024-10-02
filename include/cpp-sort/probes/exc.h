@@ -141,7 +141,7 @@ namespace cppsort::probe
         };
     }
 
-    inline constexpr sorter_facade<detail::exc_impl> exc{};
+    inline constexpr sorter_facade_base<detail::exc_impl> exc{};
 }
 
 #endif // CPPSORT_PROBES_EXC_H_

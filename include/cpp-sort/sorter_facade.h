@@ -166,20 +166,20 @@ namespace cppsort
     // operator() and conversions to function pointers
 
     template<typename Sorter>
-    struct sorter_facade:
+    struct sorter_facade_base:
         Sorter,
         detail::sorter_facade_fptr<
-            sorter_facade<Sorter>,
+            sorter_facade_base<Sorter>,
             std::is_empty_v<Sorter>
         >
     {
         ////////////////////////////////////////////////////////////
         // Constructors
 
-        sorter_facade() = default;
+        sorter_facade_base() = default;
 
         template<typename... Args>
-        constexpr sorter_facade(Args&&... args):
+        constexpr sorter_facade_base(Args&&... args):
             Sorter(std::forward<Args>(args)...)
         {}
 
@@ -1402,6 +1402,46 @@ namespace cppsort
                 mstd::begin(range), mstd::end(range), projection_compare(
                     refined<mstd::range_reference_t<Range>>(std::move(compare)),
                     refined<mstd::range_reference_t<Range>>(std::move(projection))));
+        }
+    };
+
+    template<typename Sorter>
+    struct sorter_facade:
+        sorter_facade_base<Sorter>
+    {
+        using sorter_facade_base<Sorter>::sorter_facade_base;
+
+        template<
+            typename Self,
+            mstd::forward_iterator Iterator,
+            mstd::sentinel_for<Iterator> Sentinel,
+            typename... Args
+        >
+            requires mstd::permutable<Iterator>
+        constexpr auto operator()(this Self&& self, Iterator first, Sentinel last, Args&&... args)
+            -> decltype(std::forward<Self>(self).sorter_facade_base<Sorter>::operator()(
+                std::move(first), std::move(last), std::forward<Args>(args)...
+            ))
+        {
+            return std::forward<Self>(self).sorter_facade_base<Sorter>::operator()(
+                std::move(first), std::move(last), std::forward<Args>(args)...
+            );
+        }
+
+        template<
+            typename Self,
+            mstd::forward_range Range,
+            typename... Args
+        >
+            requires mstd::permutable<mstd::iterator_t<Range>>
+        constexpr auto operator()(this Self&& self, Range&& range, Args&&... args)
+            -> decltype(std::forward<Self>(self).sorter_facade_base<Sorter>::operator()(
+                std::forward<Range>(range), std::forward<Args>(args)...
+            ))
+        {
+            return std::forward<Self>(self).sorter_facade_base<Sorter>::operator()(
+                std::forward<Range>(range), std::forward<Args>(args)...
+            );
         }
     };
 }

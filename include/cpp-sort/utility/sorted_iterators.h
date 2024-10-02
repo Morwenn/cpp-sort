@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SORTED_ITERATORS_H_
@@ -106,12 +106,12 @@ namespace cppsort::utility
 
     template<typename Sorter>
     struct sorted_iterators:
-        sorter_facade<detail::sorted_iterators_impl<Sorter>>
+        sorter_facade_base<detail::sorted_iterators_impl<Sorter>>
     {
         sorted_iterators() = default;
 
         constexpr explicit sorted_iterators(Sorter sorter):
-            sorter_facade<detail::sorted_iterators_impl<Sorter>>(std::move(sorter))
+            sorter_facade_base<detail::sorted_iterators_impl<Sorter>>(std::move(sorter))
         {}
     };
 }
