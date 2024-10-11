@@ -431,7 +431,7 @@ namespace dist
             factor(factor)
         {}
 
-        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        template<typename OutputIterator, typename Projection=std::identity>
         auto operator()(OutputIterator out, long long int size, Projection projection={}) const
             -> void
         {
