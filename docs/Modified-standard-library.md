@@ -122,12 +122,28 @@ concept contiguous_iterator = /* implementation-defined */;
 
 The `mstd` iterator concepts rely on the previously described concepts, and are thus affected by the same differences. The only additional deviation from the standard library concepts is that `bidirectional_iterator` does not require a postfix `operator--` to exist at all.
 
-The `<cpp-sort/mstd/iterator.h>` header also provides the following reimplementations of standard library components that build upon the previously described features to provide the increased flexibility of the library's iterator model:
+```cpp
+template<typename Iterator>
+concept permutable =
+    forward_iterator<Iterator> &&
+    // Altered indirectly_movable_storable
+    indirectly_movable<Iterator, Iterator> &&
+    indirectly_writable<Iterator, std::iter_value_t<Iterator>> &&
+    std::movable<std::remove_cvref_t<iter_rvalue_reference_t<Iterator>>> &&
+    weakly_assignable_from<
+        std::iter_value_t<Iterator>&,
+        iter_rvalue_reference_t<Iterator>
+    > &&
+    indirectly_swappable<Iterator, Iterator>;
+```
+
+`mstd::permutable` is where the **cpp-sort** iterator model differs from the standard one: the main difference with the standard one is that `*it1 = std::move(*it2)` is not required to work, only `*it1 = mstd::iter_move(it2)` is. In this regard, `iter_value_t<Iterator>` is the odd type, while `std::remove_cvref_t<iter_rvalue_reference_t<Iterator>` - which can be a completely different type - is the "normal" one. `weakly_assignable_from` above is basically [`std::assignable_from`][std-assignable-from] without the [common reference][std-common-reference-with] requirement.
+
+The `<cpp-sort/mstd/iterator.h>` header also provides the following reimplementations of standard library components that build upon the previously described features to provide the aforementioned increased flexibility of the library's iterator model:
 * `mstd::advance`
 * `mstd::next`
 * `mstd::prev`
 * `mstd::indirectly_swappable`
-* `mstd::permutable` (minus the `indirectly_movable_storable` constraint)
 
 ### `<cpp-sort/mstd/ranges.h>`
 
@@ -157,6 +173,7 @@ They are mostly equivalent to the `std::ranges` ones, but rely on the reimplemen
 
 
   [kvasir-conditional]: https://odinthenerd.blogspot.com/2017/03/start-simple-with-conditional-why.html
+  [std-assignable-from]: https://en.cppreference.com/w/cpp/concepts/assignable_from
   [std-borrowed-range]: https://en.cppreference.com/w/cpp/ranges/borrowed_range
   [std-common-reference-with]: https://en.cppreference.com/w/cpp/concepts/common_reference_with
   [std-dangling]: https://en.cppreference.com/w/cpp/ranges/dangling

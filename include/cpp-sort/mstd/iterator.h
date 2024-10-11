@@ -633,10 +633,28 @@ namespace cppsort::mstd
     ////////////////////////////////////////////////////////////
     // permutable
 
+    namespace detail
+    {
+        // assignable_from without the common reference requirement
+        template<typename T, typename U>
+        concept weakly_assignable_from =
+            std::is_lvalue_reference_v<T> &&
+            requires(T lhs, U&& rhs) {
+                { lhs = std::forward<U>(rhs) } -> std::same_as<T>;
+            };
+    }
+
     template<typename Iterator>
     concept permutable =
         forward_iterator<Iterator> &&
-        //indirectly_movable_storable<Iterator, Iterator> &&
+        // Altered indirectly_movable_storable
+        indirectly_movable<Iterator, Iterator> &&
+        indirectly_writable<Iterator, std::iter_value_t<Iterator>> &&
+        std::movable<std::remove_cvref_t<iter_rvalue_reference_t<Iterator>>> &&
+        detail::weakly_assignable_from<
+            std::iter_value_t<Iterator>&,
+            iter_rvalue_reference_t<Iterator>
+        > &&
         indirectly_swappable<Iterator, Iterator>;
 }
 

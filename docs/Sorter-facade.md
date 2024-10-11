@@ -57,7 +57,9 @@ Note that the function pointer conversion syntax above is made up, but it allows
 
 The main job of `sorter_facade` is t provide a rich overload set for `operator()`: enough to satisfy the *unified sorting interface*. The following sections describe all the iterator/sentinel and range overloads supported by the operator.
 
-**Return type:** Whenever possible, `sorter_facade::operator()` forwards the result of whichever suitable `operator()` it finds in the *sorter implementation*. There is one case however where it does more than just forwarding the result: overloads that accept a range `R` and return an iterator `I` might wrap the returned iterator in [`mstd::borrowed_iterator_t`][mstd-ranges] if `I` and `mstd::iterator_t<R>` are the same type. This wrapping ensures that those overloads return [`std::ranges::dangling`][std-ranges-dangling] if the passed range does not model a borrowed range.
+**Return type:** whenever possible, `sorter_facade::operator()` forwards the result of whichever suitable `operator()` it finds in the *sorter implementation*. There is one case however where it does more than just forwarding the result: overloads that accept a range `R` and return an iterator `I` might wrap the returned iterator in [`mstd::borrowed_iterator_t`][mstd-ranges] if `I` and `mstd::iterator_t<R>` are the same type. This wrapping ensures that those overloads return [`std::ranges::dangling`][std-ranges-dangling] if the passed range does not model a borrowed range.
+
+**Permutability:** just like [`std::ranges::sort`][std-ranges-sort], **cpp-sort** imposes a permutability requirement upon the iterators of the collection to sort. However the library's `mstd::permutable` is more flexible than its standard counterpart to accomodate a slightly different iterator model - see the page [about the `mstd::` namespace][mstd-iterator] for more information. `mstd::permutable` imposes fewer requirements than [`std::permutable`][std-permutable] though any iterator accepted by the latter should also be accepted by the former. As such, if your algorithm only supports the standard iterator model, you should strengthen the requirement yourself.
 
 ### `operator()` for an iterator/sentinel pair
 
@@ -68,6 +70,7 @@ template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
+    requires mstd::permutable<Iterator>
 constexpr auto operator()(this auto&& self, Iterator first, Sentinel last)
     -> /* implementation-defined */;
 
@@ -76,6 +79,7 @@ template<
     mstd::sentinel_for<Iterator> Sentinel,
     typename Compare
 >
+    requires mstd::permutable<Iterator>
 constexpr auto operator()(this auto&& self, Iterator first, Sentinel last,
                           Compare compare)
     -> /* implementation-defined */;
@@ -85,6 +89,7 @@ template<
     mstd::sentinel_for<Iterator> Sentinel,
     typename Projection
 >
+    requires mstd::permutable<Iterator>
 constexpr auto operator()(this auto&& self, Iterator first, Sentinel last,
                           Projection projection)
     -> /* implementation-defined */;
@@ -95,6 +100,7 @@ template<
     typename Compare,
     typename Projection
 >
+    requires mstd::permutable<Iterator>
 constexpr auto operator()(this auto&& self, Iterator first, Sentinel last,
                           Compare compare, Projection projection)
     -> /* implementation-defined */;
@@ -132,18 +138,22 @@ struct selection_sorter:
 
 ```cpp
 template<mstd::forward_range Range>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 constexpr auto operator()(this auto&& self, Range&& range)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Compare>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 constexpr auto operator()(this auto&& self, Range&& range, Compare compare)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Projection>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 constexpr auto operator()(this auto&& self, Range&& range, Projection projection)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Compare, typename Projection>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 constexpr auto operator()(this auto&& self, Range&& range,
                           Compare compare, Projection projection)
     -> /* implementation-defined */;
@@ -165,18 +175,22 @@ The reverse operation (baking a comparison function into a projection function) 
 
 ```cpp
 template<mstd::forward_range Range>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 auto operator()(this auto&& self, Range&& range, std::less<>)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 auto operator()(this auto&& self, Range&& range, std::identity)
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 auto operator()(this auto&& self, Range&& range, std::less<>, std::identity)onst
     -> /* implementation-defined */;
 
 template<mstd::forward_range Range, typename Projection>
+    requires mstd::permutable<mstd::iterator_t<Range>>
 auto operator()(this auto&& self, Range&& range, std::less<>, Projection projection)
     -> /* implementation-defined */;
 
@@ -184,6 +198,7 @@ template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
+    requires mstd::permutable<Iterator>
 auto operator()(this auto&& self, Iterator first, Sentinel last, std::less<>)
     -> /* implementation-defined */;
 
@@ -191,6 +206,7 @@ template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
+    requires mstd::permutable<Iterator>
 auto operator()(this auto&& self, Iterator first, Sentinel last, std::identity)
     -> /* implementation-defined */;
 
@@ -198,6 +214,7 @@ template<
     mstd::forward_iterator Iterator,
     mstd::sentinel_for<Iterator> Sentinel
 >
+    requires mstd::permutable<Iterator>
 auto operator()(Iterator first, Sentinel last, std::less<>, std::identity)
     -> /* implementation-defined */;
 
@@ -206,6 +223,7 @@ template<
     mstd::sentinel_for<Iterator> Sentinel,
     typename Projection
 >
+    requires mstd::permutable<Iterator>
 auto operator()(this auto&& self, Iterator first, Sentinel last,
                 std::less<>, Projection projection)
     -> /* implementation-defined */;
@@ -222,6 +240,8 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-permutable]: https://en.cppreference.com/w/cpp/iterator/permutable
   [std-ranges-dangling]: https://en.cppreference.com/w/cpp/ranges/dangling
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
+  [std-ranges-sort]: https://en.cppreference.com/w/cpp/algorithm/ranges/sort
   [std-result-of]: https://en.cppreference.com/w/cpp/types/result_of
