@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstddef>
@@ -8,7 +8,6 @@
 #include <type_traits>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
@@ -21,13 +20,11 @@ namespace detail
     {
         if (size < 2) return;
 
-        auto&& comp = cppsort::utility::as_function(compare);
-
         while (--size) {
             auto current = first;
             auto next = std::next(current);
             for (std::size_t i = 0; i < size; ++i) {
-                if (comp(*next, *current)) {
+                if (compare(*next, *current)) {
                     using cppsort::utility::iter_swap;
                     iter_swap(current, next);
                 }

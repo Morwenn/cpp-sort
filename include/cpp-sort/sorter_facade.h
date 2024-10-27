@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTER_FACADE_H_
@@ -14,6 +14,7 @@
 #include <cpp-sort/comparators/projection_compare.h>
 #include <cpp-sort/refined.h>
 #include <cpp-sort/sorter_traits.h>
+#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include "detail/config.h"
 #include "detail/type_traits.h"
@@ -204,12 +205,16 @@ namespace cppsort
                     Iterator,
                     refined_t<decltype(*first), Compare>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last),
-                                            refined<decltype(*first)>(std::move(compare))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last),
+                    refined<decltype(*first)>(utility::as_function(std::move(compare)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last),
-                                      refined<decltype(*first)>(std::move(compare)));
+            return Sorter::operator()(
+                std::move(first), std::move(last),
+                refined<decltype(*first)>(utility::as_function(std::move(compare)))
+            );
         }
 
         template<typename Iterable, typename Compare>
@@ -220,12 +225,16 @@ namespace cppsort
                     Iterable,
                     refined_t<decltype(*std::begin(iterable)), Compare>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(compare))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(compare)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare)))
+            );
         }
 
         template<typename Iterable, typename Compare>
@@ -241,12 +250,16 @@ namespace cppsort
                     decltype(std::begin(iterable)),
                     refined_t<decltype(*std::begin(iterable)), Compare>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(compare))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(compare)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare)))
+            );
         }
 
         ////////////////////////////////////////////////////////////
@@ -265,12 +278,16 @@ namespace cppsort
                     Iterator,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last),
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last),
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last),
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                std::move(first), std::move(last),
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterator, typename Projection>
@@ -287,12 +304,16 @@ namespace cppsort
                     std::less<>,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last), std::less<>{},
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last), std::less<>{},
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last), std::less<>{},
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                std::move(first), std::move(last), std::less<>{},
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -308,12 +329,16 @@ namespace cppsort
                     Iterable,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -335,12 +360,16 @@ namespace cppsort
                     std::less<>,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable), std::less<>{},
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable), std::less<>{},
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable), std::less<>{},
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable), std::less<>{},
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -372,12 +401,16 @@ namespace cppsort
                     decltype(std::begin(iterable)),
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -405,12 +438,16 @@ namespace cppsort
                     std::less<>,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), std::less<>{},
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable), std::less<>{},
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable), std::less<>{},
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable), std::less<>{},
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         ////////////////////////////////////////////////////////////
@@ -555,14 +592,18 @@ namespace cppsort
                     refined_t<decltype(*first), Compare>,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(first, last,
-                                            refined<decltype(*first)>(std::move(compare)),
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    first, last,
+                    refined<decltype(*first)>(utility::as_function(std::move(compare))),
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(first, last,
-                                      refined<decltype(*first)>(std::move(compare)),
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                first, last,
+                refined<decltype(*first)>(utility::as_function(std::move(compare))),
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Compare, typename Projection>
@@ -574,14 +615,18 @@ namespace cppsort
                     refined_t<decltype(*std::begin(iterable)), Compare>,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(compare)),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare))),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(compare)),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare))),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Compare, typename Projection>
@@ -599,14 +644,18 @@ namespace cppsort
                     refined_t<decltype(*std::begin(iterable)), Compare>,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                            refined<decltype(*std::begin(iterable))>(compare),
-                                            refined<decltype(*std::begin(iterable))>(projection)))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare))),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(compare)),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(compare))),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         ////////////////////////////////////////////////////////////
@@ -683,12 +732,16 @@ namespace cppsort
                     std::less<>,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last), compare,
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last), compare,
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last), compare,
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                std::move(first), std::move(last), compare,
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterator, typename Projection>
@@ -705,12 +758,16 @@ namespace cppsort
                     Iterator,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last),
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last),
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last),
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                std::move(first), std::move(last),
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -722,12 +779,16 @@ namespace cppsort
                     std::less<>,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable), compare,
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable), compare,
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable), compare,
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable), compare,
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -745,12 +806,16 @@ namespace cppsort
                     std::less<>,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), compare,
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable), compare,
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable), compare,
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable), compare,
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -773,12 +838,16 @@ namespace cppsort
                     Iterable,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -806,12 +875,16 @@ namespace cppsort
                     decltype(std::begin(iterable)),
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
 #ifdef __cpp_lib_ranges
@@ -854,12 +927,16 @@ namespace cppsort
                     std::ranges::less,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last), compare,
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last), compare,
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last), compare,
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                std::move(first), std::move(last), compare,
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterator, typename Projection>
@@ -876,12 +953,16 @@ namespace cppsort
                     Iterator,
                     refined_t<decltype(*first), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::move(first), std::move(last),
-                                            refined<decltype(*first)>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::move(first), std::move(last),
+                    refined<decltype(*first)>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::move(first), std::move(last),
-                                      refined<decltype(*first)>(std::move(projection)));
+            return Sorter::operator()(
+                std::move(first), std::move(last),
+                refined<decltype(*first)>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -893,12 +974,16 @@ namespace cppsort
                     std::ranges::less,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable), compare,
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable), compare,
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable), compare,
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable), compare,
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -916,12 +1001,16 @@ namespace cppsort
                     std::ranges::less,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable), compare,
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable), compare,
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable), compare,
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable), compare,
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -944,12 +1033,16 @@ namespace cppsort
                     Iterable,
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::forward<Iterable>(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::forward<Iterable>(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::forward<Iterable>(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::forward<Iterable>(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 
         template<typename Iterable, typename Projection>
@@ -977,12 +1070,16 @@ namespace cppsort
                     decltype(std::begin(iterable)),
                     refined_t<decltype(*std::begin(iterable)), Projection>
                 >::value,
-                decltype(Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                            refined<decltype(*std::begin(iterable))>(std::move(projection))))
+                decltype(Sorter::operator()(
+                    std::begin(iterable), std::end(iterable),
+                    refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+                ))
             >
         {
-            return Sorter::operator()(std::begin(iterable), std::end(iterable),
-                                      refined<decltype(*std::begin(iterable))>(std::move(projection)));
+            return Sorter::operator()(
+                std::begin(iterable), std::end(iterable),
+                refined<decltype(*std::begin(iterable))>(utility::as_function(std::move(projection)))
+            );
         }
 #endif
 

@@ -498,11 +498,9 @@ struct low_projections_sorter_impl<2u>
         >>
     >
     auto operator()(RandomAccessIterator first, RandomAccessIterator,
-                    Compare compare={}, Projection projection={}) const
+                    Compare comp={}, Projection proj={}) const
         -> void
     {
-        auto&& comp = cppsort::utility::as_function(compare);
-        auto&& proj = cppsort::utility::as_function(projection);
         if (comp(proj(first[0u]), proj(first[1u]))) {
             using std::iter_swap;
             iter_swap(first, first + 1u);

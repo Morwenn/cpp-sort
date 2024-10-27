@@ -141,6 +141,12 @@ Some *sorter implementations* are able to handle custom comparison functions but
 
 The reverse operation (baking a comparison function into a projection function) is not doable and simply does not make sense most of the time, so `sorter_facade` does not provide it for projection-only *sorter implementations*.
 
+### Automatic support for generalized callables
+
+*New in version 1.17.0*
+
+Instead of just forwarding the passed comparison and projection functions down to the *sorter implementation*, `sorter_facade` wraps said function within [`std::mem_fn`][std-mem-fn] when needed passes the result to the *sorter implementation* instead. This makes any *wrapped sorter* accept any suitable [*Callable*][callable] type, including pointers to data members.
+
 ### Universal support for `std::less<>` and `utility::identity`
 
 **cpp-sort** considers that every collection sorted without a specific comparison nor projection function shoud work *as if* it was sorted with `std::less<>` and `utility::identity`. However, some sorters do not provide overloads for `operator()` taking comparison and/or projection functions. `sorter_facade` provides the following overloads so that every sorter can be passed `std::less<>` and/or `utility::identity` even if does not handle other comparisons or projections:
@@ -194,12 +200,14 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
 *Changed in version 1.10.0:* those overloads are now `constexpr`.
 
 
+  [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [issue-185]: https://github.com/Morwenn/cpp-sort/issues/185
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
   [std-begin]: https://en.cppreference.com/w/cpp/iterator/begin
   [std-end]: https://en.cppreference.com/w/cpp/iterator/end
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
+  [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-result-of]: https://en.cppreference.com/w/cpp/types/result_of
   [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects

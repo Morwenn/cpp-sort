@@ -1,14 +1,16 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
+#include <iterator>
 #include <type_traits>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include <testing-tools/internal_compare.h>
 #include <testing-tools/wrapper.h>
 
 namespace
@@ -16,20 +18,20 @@ namespace
     struct comparison_sorter_impl
     {
         template<typename Iterator, typename Compare=std::less<>>
-        auto operator()(Iterator, Iterator, Compare={}) const
+        auto operator()(Iterator begin, Iterator, Compare compare={}) const
             -> bool
         {
-            return true;
+            return compare(*begin, *std::next(begin)), true;
         }
     };
 
     struct projection_sorter_impl
     {
         template<typename Iterator, typename Projection=cppsort::utility::identity>
-        auto operator()(Iterator, Iterator, Projection={}) const
+        auto operator()(Iterator begin, Iterator, Projection projection={}) const
             -> bool
         {
-            return true;
+            return projection(*begin) < projection(*std::next(begin)), true;
         }
     };
 
@@ -43,10 +45,11 @@ namespace
                 Projection, Iterator, Compare
             >>
         >
-        auto operator()(Iterator, Iterator, Compare={}, Projection={}) const
+        auto operator()(Iterator begin, Iterator,
+                        Compare compare={}, Projection projection={}) const
             -> bool
         {
-            return true;
+            return compare(projection(*begin), projection(*std::next(begin))), true;
         }
     };
 
@@ -71,9 +74,10 @@ TEST_CASE( "sorter_facade miscellaneous checks",
 
     using wrapper = generic_wrapper<int>;
 
-    // Collection to "sort"
-    std::vector<int> vec;
-    std::vector<wrapper> vec_wrap;
+    // Collections to "sort"
+    std::vector<int> vec = { 1, 2 };
+    std::vector<wrapper> vec_wrap = { 1, 2 };
+    std::vector<internal_compare<int>> vec_cmp = { 1, 2 };
 
     SECTION( "with comparison only" )
     {
@@ -82,6 +86,10 @@ TEST_CASE( "sorter_facade miscellaneous checks",
 
         CHECK( comparison_sorter{}(vec, std::greater<>{}) );
         CHECK( comparison_sorter{}(vec.begin(), vec.end(), std::greater<>{}) );
+
+        CHECK( comparison_sorter{}(vec_cmp, &internal_compare<int>::compare_to) );
+        CHECK( comparison_sorter{}(vec_cmp.begin(), vec_cmp.end(),
+                                   &internal_compare<int>::compare_to) );
     }
 
     SECTION( "with projection only" )
@@ -101,6 +109,10 @@ TEST_CASE( "sorter_facade miscellaneous checks",
         CHECK( comparison_projection_sorter{}(vec, std::greater<>{}) );
         CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), std::greater<>{}) );
 
+        CHECK( comparison_projection_sorter{}(vec_cmp, &internal_compare<int>::compare_to) );
+        CHECK( comparison_projection_sorter{}(vec_cmp.begin(), vec_cmp.end(),
+                                              &internal_compare<int>::compare_to) );
+
         CHECK( comparison_projection_sorter{}(vec, cppsort::utility::identity{}) );
         CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
@@ -114,5 +126,12 @@ TEST_CASE( "sorter_facade miscellaneous checks",
         CHECK( comparison_projection_sorter{}(vec_wrap, std::greater<>{}, &wrapper::value) );
         CHECK( comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(),
                                               std::greater<>{}, &wrapper::value) );
+
+
+        CHECK( comparison_projection_sorter{}(vec_cmp, &internal_compare<int>::compare_to,
+                                              cppsort::utility::identity{}) );
+        CHECK( comparison_projection_sorter{}(vec_cmp.begin(), vec_cmp.end(),
+                                              &internal_compare<int>::compare_to,
+                                              cppsort::utility::identity{}) );
     }
 }

@@ -163,6 +163,8 @@ auto bubble_sort(BidirectionalIterator first, BidirectionalIterator last,
 }
 ```
 
+Though [`sorter_facade`][sorter-facade] already automatically transforms all comparison functions passed to a sorter with `as_function`, and gives the result to the *sorter implementation*, making manual handling of it harmless but ultimately useless.
+
 ## Using `bubble_sorter` with forward iterators
 
 In its current state, `bubble_sort` isn't usable with forward iterators because of the `last--` operation, which requires bidirectional iterators. In order to drop this backwards iteration without performing lots of extra useless operations, we can use the following technique: we know that when bubble sort traverses the collection for the *nth* time, it is supposed to perform *size - n* comparisons (the last *n* elements are already in order). While decrementing a forward iterator isn't possible, we can still compute the size of the collection to sort then decrement it and perform the correct number of comparisons:
@@ -176,13 +178,11 @@ auto bubble_sort(ForwardIterator first, ForwardIterator last,
     auto size = std::distance(first, last);
     if (size < 2) return;
 
-    auto&& comp = cppsort::utility::as_function(compare);
-
     while (--size) {
         auto current = first;
         auto next = std::next(current);
         for (std::size_t i = 0; i < size; ++i) {
-            if (comp(*next, *current)) {
+            if (compare(*next, *current)) {
                 std::iter_swap(current, next);
             }
             ++next;
@@ -211,14 +211,11 @@ auto bubble_sort(ForwardIterator first, ForwardIterator last,
     auto size = std::distance(first, last);
     if (size < 2) return;
 
-    auto&& comp = cppsort::utility::as_function(compare);
-    auto&& proj = cppsort::utility::as_function(projection);
-
     while (--size) {
         auto current = first;
         auto next = std::next(current);
         for (std::size_t i = 0; i < size; ++i) {
-            if (comp(proj(*next), proj(*current))) {
+            if (compare(projection(*next), projection(*current))) {
                 std::iter_swap(current, next);
             }
             ++next;
@@ -228,7 +225,7 @@ auto bubble_sort(ForwardIterator first, ForwardIterator last,
 }
 ```
 
-Note the use of [`utility::as_function`][as-function] again to transform the projection parameter. While using the raw projection would have been enough in most scenarios, this line makes it possible to pass pointers to data members instead of functions to sort the collection on a specific field; this is a rather powerful mechanism. Now, to the sorter:
+[`sorter_facade`][sorter-facade] automatically uses [`utility::as_function`][as-function] to transform the projection parameter, just like it does with the comparison one. It makes it possible to pass pointers to data members instead of functions to sort the collection on a specific field; this is a rather powerful mechanism. Now, to the sorter:
 
 ```cpp
 struct bubble_sorter_impl
@@ -301,13 +298,11 @@ auto bubble_sort(ForwardIterator first, ForwardIterator last,
     auto size = std::distance(first, last);
     if (size < 2) return;
 
-    auto&& comp = cppsort::utility::as_function(compare);
-
     while (--size) {
         auto current = first;
         auto next = std::next(current);
         for (std::size_t i = 0; i < size; ++i) {
-            if (comp(*next, *current)) {
+            if (compare(*next, *current)) {
                 using cppsort::utility::iter_swap;
                 iter_swap(current, next);
             }
@@ -329,8 +324,6 @@ auto bubble_sort(ForwardIterator first, std::size_t size,
     -> void
 {
     if (size < 2) return;
-
-    auto&& comp = cppsort::utility::as_function(compare);
 
     while (--size) {
         auto current = first;
