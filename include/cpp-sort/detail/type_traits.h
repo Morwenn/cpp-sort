@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_TYPE_TRAITS_H_
@@ -11,6 +11,10 @@
 #include <cstddef>
 #include <tuple>
 #include <type_traits>
+
+#if defined(_LIBCPP_VERSION)
+#   include "invoke_result.h"
+#endif
 
 namespace cppsort
 {
@@ -106,7 +110,18 @@ namespace detail
     ////////////////////////////////////////////////////////////
     // std::invoke_result from C++17
 
-#ifdef __cpp_lib_is_invocable
+#if defined(_LIBCPP_VERSION)
+
+    // Old libc++ versions don't work for some reason,
+    // replace with more recent implementation
+
+    template<typename Func, typename... Args>
+    using invoke_result = libcxx::invoke_result<Func, Args...>;
+
+    template<typename Func, typename... Args>
+    using invoke_result_t = libcxx::invoke_result_t<Func, Args...>;
+
+#elif defined(__cpp_lib_is_invocable)
 
     template<typename Func, typename... Args>
     using invoke_result = std::invoke_result<Func, Args...>;
