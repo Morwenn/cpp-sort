@@ -1,11 +1,9 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <deque>
 #include <forward_list>
-#include <iterator>
 #include <list>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
@@ -13,6 +11,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include "test_distribution.h"
 
 TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
@@ -59,24 +58,13 @@ TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[d
     SECTION( "with std::vector" )
     {
         std::vector<int> collection;
-        collection.reserve(10'000);
-        auto distribution = dist::shuffled{};
-        distribution(std::back_inserter(collection), 10'000, -2500);
-
-        TestType sorter;
-        sorter(collection);
-        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+        helpers::test_distribution<TestType>(collection, 10'000, dist::shuffled{}, -2500);
     }
 
     SECTION( "with std::deque" )
     {
         std::deque<int> collection;
-        auto distribution = dist::shuffled{};
-        distribution(std::back_inserter(collection), 10'000, -2500);
-
-        TestType sorter;
-        sorter(collection);
-        CHECK( std::is_sorted(collection.begin(), collection.end()) );
+        helpers::test_distribution<TestType>(collection, 10'000, dist::shuffled{}, -2500);
     }
 }
 
@@ -95,12 +83,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with shuffled distribution", "[d
                     cppsort::verge_sorter )
 {
     std::list<int> collection;
-    auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(collection), 2500, -1000);
-
-    TestType sorter;
-    sorter(collection);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    helpers::test_distribution<TestType>(collection, 2500, dist::shuffled{}, -1000);
 }
 
 TEMPLATE_TEST_CASE( "test forward sorters with shuffled distribution", "[distributions]",
@@ -114,10 +97,5 @@ TEMPLATE_TEST_CASE( "test forward sorters with shuffled distribution", "[distrib
                     cppsort::splay_sorter )
 {
     std::forward_list<int> collection;
-    auto distribution = dist::shuffled{};
-    distribution(std::front_inserter(collection), 2500, -1000);
-
-    TestType sorter;
-    sorter(collection);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    helpers::test_distribution<TestType>(collection, 2500, dist::shuffled{}, -1000);
 }

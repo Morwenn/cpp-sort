@@ -1,15 +1,14 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
-#include <iterator>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include "test_distribution.h"
 
 TEMPLATE_TEST_CASE( "test random-access sorters with all_equal distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
@@ -43,11 +42,5 @@ TEMPLATE_TEST_CASE( "test random-access sorters with all_equal distribution", "[
                     > )
 {
     std::vector<int> collection;
-    collection.reserve(10'000);
-    auto distribution = dist::all_equal{};
-    distribution(std::back_inserter(collection), 10'000);
-
-    TestType sorter;
-    sorter(collection);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    helpers::test_distribution<TestType>(collection, 10'000, dist::all_equal{});
 }

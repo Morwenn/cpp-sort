@@ -1,9 +1,7 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
-#include <iterator>
 #include <list>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
@@ -11,6 +9,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include "test_distribution.h"
 
 TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
@@ -44,13 +43,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with descending_sawtooth distrib
                     > )
 {
     std::vector<int> collection;
-    collection.reserve(10'000);
-    auto distribution = dist::descending_sawtooth{};
-    distribution(std::back_inserter(collection), 10'000);
-
-    TestType sorter;
-    sorter(collection);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    helpers::test_distribution<TestType>(collection, 10'000, dist::descending_sawtooth{});
 }
 
 TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_sawtooth distribution", "[distributions]",
@@ -64,10 +57,5 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_sawtooth distrib
                     cppsort::verge_sorter )
 {
     std::list<int> collection;
-    auto distribution = dist::descending_sawtooth{};
-    distribution(std::back_inserter(collection), 1000);
-
-    TestType sorter;
-    sorter(collection);
-    CHECK( std::is_sorted(collection.begin(), collection.end()) );
+    helpers::test_distribution<TestType>(collection, 1000, dist::descending_sawtooth{});
 }
