@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Morwenn
+ * Copyright (c) 2020-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FIXED_SIZE_LIST_H_
@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <concepts>
 #include <cstddef>
 #include <iterator>
 #include <memory>
@@ -559,7 +560,7 @@ namespace cppsort::detail
                 insert_node_(&sentinel_node_, std::move(value));
             }
 
-            template<typename Callable>
+            template<std::invocable<node_type*> Callable>
             auto push_back(Callable&& setter)
                 -> void
             {
@@ -578,7 +579,7 @@ namespace cppsort::detail
                 insert_node_(sentinel_node_.next, std::move(value));
             }
 
-            template<typename Callable>
+            template<std::invocable<node_type*> Callable>
             auto push_front(Callable&& setter)
                 -> void
             {
@@ -797,7 +798,7 @@ namespace cppsort::detail
                 return new_node;
             }
 
-            template<typename Callable>
+            template<std::invocable<node_type*> Callable>
             auto insert_node_(list_node_base* pos, Callable setter)
                 -> node_type*
             {
