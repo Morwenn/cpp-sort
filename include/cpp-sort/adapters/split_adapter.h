@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2024 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SPLIT_ADAPTER_H_
@@ -50,7 +50,7 @@ namespace cppsort
                 static_assert(
                     std::is_base_of_v<
                         iterator_category,
-                        iterator_category_t<Iterator>
+                        iterator_concept_t<Iterator>
                     >,
                     "split_adapter requires a stronger iterator category"
                 );

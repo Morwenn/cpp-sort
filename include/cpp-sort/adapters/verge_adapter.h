@@ -50,9 +50,9 @@ namespace cppsort
                 static_assert(
                     std::is_base_of_v<
                         iterator_category,
-                        iterator_category_t<mstd::iterator_t<Range>>
+                        iterator_concept_t<mstd::iterator_t<Range>>
                     >,
-                    "split_adapter requires a stronger iterator category"
+                    "verge_adapter requires a stronger iterator category"
                 );
 
                 auto first = mstd::begin(range);
@@ -80,7 +80,7 @@ namespace cppsort
                 static_assert(
                     std::is_base_of_v<
                         iterator_category,
-                        iterator_category_t<Iterator>
+                        iterator_concept_t<Iterator>
                     >,
                     "verge_adapter requires a stronger iterator category"
                 );

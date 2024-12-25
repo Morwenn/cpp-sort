@@ -35,7 +35,7 @@ namespace cppsort::detail
             ////////////////////////////////////////////////////////////
             // Public types
 
-            using iterator_category = iterator_category_t<Iterator>;
+            using iterator_category = iterator_concept_t<Iterator>;
             using iterator_type     = Iterator;
             using value_type        = std::iter_value_t<Iterator>;
             using difference_type   = mstd::iter_difference_t<Iterator>;
