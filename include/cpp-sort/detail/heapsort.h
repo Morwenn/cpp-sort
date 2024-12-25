@@ -21,6 +21,7 @@
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
+#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
@@ -57,7 +58,7 @@ namespace cppsort::detail
             return;
         }
 
-        auto top = mstd::iter_move(start);
+        rvalue_type_t<RandomAccessIterator> top = mstd::iter_move(start);
         do {
             // we are not in heap-order, swap the parent with it's largest child
             *start = mstd::iter_move(child_i);
@@ -130,7 +131,7 @@ namespace cppsort::detail
             len = (len - 2) / 2;
             auto ptr = first + len;
             if (comp(proj(*ptr), proj(*--last))) {
-                auto t = mstd::iter_move(last);
+                rvalue_type_t<RandomAccessIterator> t = mstd::iter_move(last);
                 auto&& proj_t = proj(t);
                 do {
                     *last = mstd::iter_move(ptr);
@@ -153,7 +154,7 @@ namespace cppsort::detail
         -> void
     {
         if (len > 1) {
-            auto top = mstd::iter_move(first);  // create a hole at first
+            rvalue_type_t<RandomAccessIterator> top = mstd::iter_move(first);  // create a hole at first
             auto hole = detail::floyd_sift_down(first, compare, projection, len);
             if (hole == --last) {
                 *hole = std::move(top);

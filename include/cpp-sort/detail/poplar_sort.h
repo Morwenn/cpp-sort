@@ -15,6 +15,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "bitops.h"
 #include "insertion_sort.h"
+#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
@@ -55,7 +56,7 @@ namespace cppsort::detail
             max_root = child_root2;
         }
         if (max_root != root) {
-            auto value = mstd::iter_move(root);
+            rvalue_type_t<RandomAccessIterator> value = mstd::iter_move(root);
             auto&& value_proj = proj(value);
             do {
                 *root = mstd::iter_move(max_root);

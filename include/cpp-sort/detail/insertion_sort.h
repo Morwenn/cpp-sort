@@ -32,6 +32,7 @@
 #include <utility>
 #include <cpp-sort/mstd/iterator.h>
 #include <cpp-sort/utility/as_function.h>
+#include "iterator_traits.h"
 
 namespace cppsort::detail
 {
@@ -60,7 +61,7 @@ namespace cppsort::detail
             // Compare first so we can avoid 2 moves for
             // an element already positioned correctly.
             if (comp(proj(*sift), proj(*sift_1))) {
-                auto tmp = mstd::iter_move(sift);
+                rvalue_type_t<BidirectionalIterator> tmp = mstd::iter_move(sift);
                 auto&& tmp_proj = proj(tmp);
 
                 do {

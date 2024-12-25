@@ -211,6 +211,7 @@ add_executable(main-tests
     sorters/every_sorter_span.cpp
     sorters/every_sorter_throwing_moves.cpp
     sorters/every_sorter_tricky_difference_type.cpp
+    sorters/every_sorter_zip_view.cpp
     sorters/merge_insertion_sorter_projection.cpp
     sorters/merge_sorter.cpp
     sorters/merge_sorter_projection.cpp

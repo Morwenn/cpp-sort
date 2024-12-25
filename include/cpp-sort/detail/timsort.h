@@ -146,7 +146,7 @@ namespace cppsort::detail
             }
             for (; start < hi; ++start) {
                 CPPSORT_ASSERT(lo <= start);
-                auto pivot = mstd::iter_move(start);
+                rvalue_type pivot = mstd::iter_move(start);
 
                 iterator const pos = upper_bound(lo, start, proj(pivot), compare, projection);
                 for (iterator p = start; p > pos; --p) {

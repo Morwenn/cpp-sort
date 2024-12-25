@@ -82,7 +82,7 @@ namespace cppsort::detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    auto tmp = mstd::iter_move(sift);
+                    rvalue_type_t<RandomAccessIterator> tmp = mstd::iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do {
@@ -115,7 +115,7 @@ namespace cppsort::detail
 
                 // Compare first so we can avoid 2 moves for an element already positioned correctly.
                 if (comp(proj(*sift), proj(*sift_1))) {
-                    auto tmp = mstd::iter_move(sift);
+                    rvalue_type_t<RandomAccessIterator> tmp = mstd::iter_move(sift);
                     auto&& tmp_proj = proj(tmp);
 
                     do {
@@ -148,7 +148,7 @@ namespace cppsort::detail
             } else if (num > 0) {
                 RandomAccessIterator l = first + offsets_l[0];
                 RandomAccessIterator r = last - offsets_r[0];
-                auto tmp = mstd::iter_move(l);
+                rvalue_type_t<RandomAccessIterator> tmp = mstd::iter_move(l);
                 *l = mstd::iter_move(r);
                 for (std::size_t i = 1; i < num; ++i) {
                     l = first + offsets_l[i];
@@ -174,7 +174,7 @@ namespace cppsort::detail
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
-            auto pivot = mstd::iter_move(begin);
+            rvalue_type_t<RandomAccessIterator> pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
             auto first = begin;
@@ -315,7 +315,7 @@ namespace cppsort::detail
             auto&& proj = utility::as_function(projection);
 
             // Move pivot into local for speed.
-            auto pivot = mstd::iter_move(begin);
+            rvalue_type_t<RandomAccessIterator> pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
 
             auto first = begin;
@@ -361,7 +361,7 @@ namespace cppsort::detail
             auto&& comp = utility::as_function(compare);
             auto&& proj = utility::as_function(projection);
 
-            auto pivot = mstd::iter_move(begin);
+            rvalue_type_t<RandomAccessIterator> pivot = mstd::iter_move(begin);
             auto&& pivot_proj = proj(pivot);
             auto first = begin;
             auto last = end;

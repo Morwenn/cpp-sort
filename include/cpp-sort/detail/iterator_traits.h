@@ -27,9 +27,26 @@ namespace cppsort::detail
     template<typename Iterator>
     using iterator_concept_t = typename mstd::detail::iter_concept<Iterator>;
 
+    template<typename T>
+    inline constexpr bool has_rvalue_type_v = requires {
+        typename T::rvalue_type;
+    };
+
+    template<typename Iterator, bool=has_rvalue_type_v<Iterator>>
+    struct rvalue_type
+    {
+        using type = typename Iterator::rvalue_type;
+    };
+
+    template<typename Iterator>
+    struct rvalue_type<Iterator, false>
+    {
+        using type = std::iter_value_t<Iterator>;
+    };
+
     // Additional common type to use instead of value_t
     template<typename Iterator>
-    using rvalue_type_t = std::remove_cvref_t<mstd::iter_rvalue_reference_t<Iterator>>;
+    using rvalue_type_t = typename rvalue_type<Iterator>::type;
 
     // Handy addition from time to time
     template<typename Iterator, typename Projection>
