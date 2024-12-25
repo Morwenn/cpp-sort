@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
 
     strategy:
       fail-fast: false
@@ -32,15 +32,15 @@ jobs:
           # Release build
           - cxx: g++-14
             build_type: Release
-          - cxx: clang++
+          - cxx: $(brew --prefix llvm@18)/bin/clang++
             build_type: Release
           # Debug builds
           - cxx: g++-14
             build_type: Debug
-          - cxx: clang++
+          - cxx: $(brew --prefix llvm@18)/bin/clang++
             build_type: Debug
             sanitize: address
-          - cxx: clang++
+          - cxx: $(brew --prefix llvm@18)/bin/clang++
             build_type: Debug
             sanitize: undefined
 
