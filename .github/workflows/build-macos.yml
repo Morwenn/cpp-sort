@@ -28,16 +28,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cxx:
-          - g++-14
-          - clang++
         config:
           # Release build
-          - build_type: Release
+          - cxx: g++-14
+            build_type: Release
+          - cxx: clang++
+            build_type: Release
           # Debug builds
-          - build_type: Debug
+          - cxx: g++-14
+            build_type: Debug
+          - cxx: clang++
+            build_type: Debug
             sanitize: address
-          - build_type: Debug
+          - cxx: clang++
+            build_type: Debug
             sanitize: undefined
 
     steps:
@@ -48,7 +52,7 @@ jobs:
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
         run: |
-          export CXX=${{matrix.cxx}}
+          export CXX=${{matrix.config.cxx}}
           cmake -H${{github.event.repository.name}} -Bbuild \
                 -DCMAKE_CONFIGURATION_TYPES=${{matrix.config.build_type}} \
                 -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
