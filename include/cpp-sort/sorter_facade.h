@@ -1418,6 +1418,7 @@ namespace cppsort
             typename... Args
         >
             requires mstd::permutable<Iterator>
+                && detail::are_parameters_valid<Iterator, Args...>
         constexpr auto operator()(this Self&& self, Iterator first, Sentinel last, Args&&... args)
             -> decltype(std::forward<Self>(self).sorter_facade_base<Sorter>::operator()(
                 std::move(first), std::move(last), std::forward<Args>(args)...
@@ -1434,6 +1435,7 @@ namespace cppsort
             typename... Args
         >
             requires mstd::permutable<mstd::iterator_t<Range>>
+                && detail::are_parameters_valid<mstd::iterator_t<Range>, Args...>
         constexpr auto operator()(this Self&& self, Range&& range, Args&&... args)
             -> decltype(std::forward<Self>(self).sorter_facade_base<Sorter>::operator()(
                 std::forward<Range>(range), std::forward<Args>(args)...

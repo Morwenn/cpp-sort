@@ -212,6 +212,7 @@ namespace cppsort
                 // Call operator
 
                 template<typename Self, mstd::forward_range Range, typename... Args>
+                    requires are_parameters_valid<mstd::iterator_t<Range>, Args...>
                 constexpr auto operator()(this Self&& self, Range&& range, Args&&... args)
                     -> decltype(std::forward<Self>(self).base_class::operator()(
                         detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
@@ -232,6 +233,7 @@ namespace cppsort
                     mstd::sentinel_for<Iterator> Sentinel,
                     typename... Args
                 >
+                    requires are_parameters_valid<Iterator, Args...>
                 constexpr auto operator()(this Self&& self, Iterator first, Sentinel last, Args&&... args)
                     -> decltype(std::forward<Self>(self).base_class::operator()(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},

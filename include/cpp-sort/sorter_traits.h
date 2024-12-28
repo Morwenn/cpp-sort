@@ -65,6 +65,28 @@ namespace cppsort
         = is_projection_iterator<Projection, Iterator, Compare>::value;
 
     ////////////////////////////////////////////////////////////
+    // Whether projection/comparison are valid for a given
+    // iterator type
+
+    namespace detail
+    {
+        template<typename Iterator, typename... Args>
+        inline constexpr bool are_parameters_valid = false;
+
+        template<typename Iterator>
+        inline constexpr bool are_parameters_valid<Iterator> = true;
+
+        template<typename Iterator, typename Func>
+        inline constexpr bool are_parameters_valid<Iterator, Func>
+            = is_projection_iterator_v<std::identity, Iterator, Func> ||
+            is_projection_iterator_v<Func, Iterator, std::less<>>;
+
+        template<typename Iterator, typename Compare, typename Projection>
+        inline constexpr bool are_parameters_valid<Iterator, Compare, Projection>
+            = is_projection_iterator_v<Projection, Iterator, Compare>;
+    }
+
+    ////////////////////////////////////////////////////////////
     // Sorter type categories
 
     namespace detail
