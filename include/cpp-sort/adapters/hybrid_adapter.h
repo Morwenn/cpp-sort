@@ -95,9 +95,9 @@ namespace cppsort
 
             template<typename Self, typename... Args>
             constexpr auto operator()(this Self&& self, choice<Ind>, Args&&... args)
-                -> decltype(std::forward<Self>(self).base_class::get()(std::forward<Args>(args)...))
+                -> decltype(static_cast<detail::copy_cvref_t<Self, base_class>>(self).get()(std::forward<Args>(args)...))
             {
-                return std::forward<Self>(self).base_class::get()(std::forward<Args>(args)...);
+                return static_cast<detail::copy_cvref_t<Self, base_class>>(self).get()(std::forward<Args>(args)...);
             }
 
             template<typename... Args>
@@ -214,13 +214,13 @@ namespace cppsort
                 template<typename Self, mstd::forward_range Range, typename... Args>
                     requires are_parameters_valid<mstd::iterator_t<Range>, Args...>
                 constexpr auto operator()(this Self&& self, Range&& range, Args&&... args)
-                    -> decltype(std::forward<Self>(self).base_class::operator()(
+                    -> decltype(static_cast<detail::copy_cvref_t<Self, base_class>>(self)(
                         detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ))
                 {
-                    return std::forward<Self>(self).base_class::operator()(
+                    return static_cast<detail::copy_cvref_t<Self, base_class>>(self)(
                         detail::choice_for_it<mstd::iterator_t<Range>, sizeof...(Sorters)>{},
                         std::forward<Range>(range),
                         std::forward<Args>(args)...
@@ -235,13 +235,13 @@ namespace cppsort
                 >
                     requires are_parameters_valid<Iterator, Args...>
                 constexpr auto operator()(this Self&& self, Iterator first, Sentinel last, Args&&... args)
-                    -> decltype(std::forward<Self>(self).base_class::operator()(
+                    -> decltype(static_cast<detail::copy_cvref_t<Self, base_class>>(self)(
                             detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                             std::move(first), std::move(last),
                             std::forward<Args>(args)...
                     ))
                 {
-                    return std::forward<Self>(self).base_class::operator()(
+                    return static_cast<detail::copy_cvref_t<Self, base_class>>(self)(
                         detail::choice_for_it<Iterator, sizeof...(Sorters)>{},
                         std::move(first), std::move(last),
                         std::forward<Args>(args)...
