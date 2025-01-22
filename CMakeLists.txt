@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2024 Morwenn
+# Copyright (c) 2015-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
@@ -24,7 +24,7 @@ if (CPPSORT_USE_LIBASSERT)
     include(DownloadProject)
     download_project(PROJ libassert
                      GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-                     GIT_TAG v1.2.2
+                     GIT_TAG 634f50fb4086d377ad9a2f83d693d2e8fe4972a7  # v2.1.4
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
@@ -57,7 +57,7 @@ endif()
 
 # Optionally link to libassert
 if (CPPSORT_USE_LIBASSERT)
-    target_link_libraries(cpp-sort INTERFACE assert)
+    target_link_libraries(cpp-sort INTERFACE libassert::assert)
     target_compile_definitions(cpp-sort INTERFACE CPPSORT_USE_LIBASSERT)
 endif()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONFIG_H_
@@ -69,7 +69,7 @@
 #if defined(CPPSORT_ENABLE_ASSERTIONS)
 #   include <cassert>
 #   if defined(CPPSORT_USE_LIBASSERT)
-#       include <assert.hpp>
+#       include <libassert/assert.hpp>
 #   endif
 #endif
 
