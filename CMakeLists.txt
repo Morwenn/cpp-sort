@@ -93,7 +93,7 @@ configure_package_config_file(
 set(CPPSORT_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 write_basic_package_version_file(
-    ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
     COMPATIBILITY
         SameMajorVersion
 )
