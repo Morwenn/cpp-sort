@@ -73,12 +73,18 @@ jobs:
       - name: Build the test suite
         shell: bash
         working-directory: ${{runner.workspace}}/build
+        env: # Note: clang bug with sanitizers, remove after upgrading
+          ASAN_OPTIONS: "use_sigaltstack=false"
+          UBSAN_OPTIONS: "use_sigaltstack=false"
         run: cmake --build . --config ${{matrix.config.build_type}} -j 2
 
       - name: Run the test suite
         if: ${{matrix.config.valgrind != 'ON'}}
         env:
           CTEST_OUTPUT_ON_FAILURE: 1
+          # Note: clang bug with sanitizers, remove after upgrading
+          ASAN_OPTIONS: "use_sigaltstack=false"
+          UBSAN_OPTIONS: "use_sigaltstack=false"
         working-directory: ${{runner.workspace}}/build
         run: ctest -C ${{matrix.config.build_type}}
 
