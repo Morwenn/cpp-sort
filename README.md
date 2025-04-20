@@ -122,8 +122,8 @@ page][benchmarks].
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
 **cpp-sort** requires C++14 support, and should work with the following compilers:
-* g++7 or more recent.
-* clang++6.0 or more recent (with both libstdc++ and libc++).
+* g++-9 or more recent.
+* clang++-11 or more recent (with both libstdc++ and libc++).
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
 * Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
 * clang-cl corresponding the the Visual Studio version above.
