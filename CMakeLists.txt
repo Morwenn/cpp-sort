@@ -42,8 +42,8 @@ target_compile_features(cpp-sort INTERFACE cxx_std_14)
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
     target_compile_options(cpp-sort INTERFACE
-        $<$<COMPILE_LANGUAGE:CXX>:/permissive- /Zc:preprocessor>
-        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler "/permissive- /Zc:preprocessor">
+        $<$<COMPILE_LANGUAGE:CXX>:/permissive->
+        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler "/permissive-">
     )
 endif()
 
