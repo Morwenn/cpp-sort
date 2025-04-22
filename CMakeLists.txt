@@ -44,7 +44,6 @@ if (MSVC)
     target_compile_options(cpp-sort INTERFACE
         $<$<COMPILE_LANGUAGE:CXX>:/permissive->
         $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler="/permissive-">
-    )
 endif()
 
 # Handle diagnostic options

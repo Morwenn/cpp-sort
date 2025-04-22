@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 Morwenn
+# Copyright (c) 2021-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Ubuntu Builds
@@ -23,14 +23,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
       matrix:
         cxx:
-          - g++-7
-          - clang++-6.0
+          - g++-9
+          - clang++-11
         config:
           # Release build
           - build_type: Release
@@ -46,12 +46,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install GCC
-        if: ${{matrix.cxx == 'g++-7'}}
-        run: sudo apt-get install -y g++-7
+        if: ${{matrix.cxx == 'g++-9'}}
+        run: sudo apt-get install -y g++-9
 
       - name: Install Clang
-        if: ${{matrix.cxx == 'clang++-6.0'}}
-        run: sudo apt-get install -y clang-6.0 lld-6.0
+        if: ${{matrix.cxx == 'clang++-11'}}
+        run: sudo apt-get install -y clang-11 lld-11
 
       - name: Install Valgrind
         if: ${{matrix.config.valgrind == 'ON'}}
@@ -73,12 +73,18 @@ jobs:
       - name: Build the test suite
         shell: bash
         working-directory: ${{runner.workspace}}/build
+        env: # Note: clang bug with sanitizers, remove after upgrading
+          ASAN_OPTIONS: "use_sigaltstack=false"
+          UBSAN_OPTIONS: "use_sigaltstack=false"
         run: cmake --build . --config ${{matrix.config.build_type}} -j 2
 
       - name: Run the test suite
         if: ${{matrix.config.valgrind != 'ON'}}
         env:
           CTEST_OUTPUT_ON_FAILURE: 1
+          # Note: clang bug with sanitizers, remove after upgrading
+          ASAN_OPTIONS: "use_sigaltstack=false"
+          UBSAN_OPTIONS: "use_sigaltstack=false"
         working-directory: ${{runner.workspace}}/build
         run: ctest -C ${{matrix.config.build_type}}
 
