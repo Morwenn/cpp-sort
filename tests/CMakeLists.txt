@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2024 Morwenn
+# Copyright (c) 2015-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -27,7 +27,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.7.0
+                     GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b  # v3.8.1
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
