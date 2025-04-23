@@ -43,7 +43,7 @@ target_compile_features(cpp-sort INTERFACE cxx_std_14)
 if (MSVC)
     target_compile_options(cpp-sort INTERFACE
         $<$<COMPILE_LANGUAGE:CXX>:/permissive->
-        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler "/permissive-">
+        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler="/permissive-">
     )
 endif()
 
