@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2024 Morwenn
+# Copyright (c) 2020-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Coverage Upload to Codecov
@@ -35,6 +35,8 @@ jobs:
           cmake -H${{github.event.repository.name}} -Bbuild
           -DCMAKE_BUILD_TYPE=Debug
           -DCPPSORT_ENABLE_COVERAGE=ON
+          -DGENINFO_EXTRA_FLAGS="--ignore-errors mismatch,mismatch"
+          -DLCOV_EXTRA_FLAGS="--ignore-errors unused"
           -G"Unix Makefiles"
 
       - name: Build with coverage
