@@ -38,9 +38,7 @@ jobs:
           - build_type: Debug
             valgrind: ON
           - build_type: Debug
-            sanitize: address
-          - build_type: Debug
-            sanitize: undefined
+            sanitize: address,undefined
 
     steps:
       - uses: actions/checkout@v4

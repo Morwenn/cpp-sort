@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 Morwenn
+# Copyright (c) 2021-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MacOS Builds
@@ -37,10 +37,7 @@ jobs:
           # Debug builds
           - cxx: clang++
             build_type: Debug
-            sanitize: address
-          - cxx: clang++
-            build_type: Debug
-            sanitize: undefined
+            sanitize: address,undefined
 
     steps:
       - uses: actions/checkout@v4
