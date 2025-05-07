@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_INDIRECT_ADAPTER_H_
@@ -12,7 +12,6 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
-#include <vector>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/adapter_storage.h>
@@ -92,8 +91,6 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Move the values according the iterator's positions
 
-                std::vector<bool> sorted(last - first, false);
-
                 // Element where the current cycle starts
                 auto start = first;
 
@@ -102,7 +99,9 @@ namespace cppsort
                     auto current = start;
                     auto next_pos = current - first;
                     auto next = iterators[next_pos];
-                    sorted[next_pos] = true;
+                    // We replace all "sorted" iterators with last to make it
+                    // possible to find unsorted iterators between cycles
+                    iterators[next_pos] = last;
 
                     // Process the current cycle
                     if (next != current) {
@@ -112,7 +111,7 @@ namespace cppsort
                             current = next;
                             auto next_pos = next - first;
                             next = iterators[next_pos];
-                            sorted[next_pos] = true;
+                            iterators[next_pos] = last;
                         }
                         *current = std::move(tmp);
                     }
@@ -120,7 +119,7 @@ namespace cppsort
                     // Find the next cycle
                     do {
                         ++start;
-                    } while (start != last && sorted[start - first]);
+                    } while (start != last && iterators[start - first] == last);
 
                 }
 #ifdef __cpp_lib_uncaught_exceptions
