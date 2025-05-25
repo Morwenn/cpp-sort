@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -34,6 +34,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     auto osc    = cppsort::probe::osc(sequence);
     auto rem    = cppsort::probe::rem(sequence);
     auto runs   = cppsort::probe::runs(sequence);
+    auto spear  = cppsort::probe::spear(sequence);
     auto sus    = cppsort::probe::sus(sequence);
 
     // Measures of Presortedness and Optimal Sorting Algorithms
@@ -90,6 +91,11 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // Computing and ranking measures of presortedness
     // by Jingsen Chen
     CHECK( enc <= dis + 1 );
+
+    // Spearman's Footrule as a Measure of Disarray
+    // by Persi Diaconis and Ronald Lewis Graham
+    CHECK( inv + exc <= spear );
+    CHECK( spear <= 2 * inv );
 
     // Intuitive result: a descending run can be seen as several
     // ascending runs

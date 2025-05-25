@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -21,6 +21,7 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
     std::vector<int> collection; collection.reserve(491);
@@ -44,6 +45,7 @@ TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[pr
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
     std::vector<int> collection; collection.reserve(491);

@@ -275,6 +275,22 @@ Computes the number of non-decreasing runs in *X* minus one.
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
+### *Spear*
+
+```cpp
+#include <cpp-sort/probes/spear.h>
+```
+
+Spearman's footrule distance: sum of distances between the position of individual elements in *X* and their position once *X* is sorted. Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
+
+| Complexity  | Memory      | Iterators     |
+| ----------- | ----------- | ------------- |
+| n log n     | n           | Forward       |
+
+`max_for_size`: |*X*|²/2 when *X* is sorted in reverse order.
+
+*New in version 1.17.0*
+
 ### *SUS*
 
 ```cpp
@@ -296,6 +312,14 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 ## Other measures of presortedness
 
 Some additional measures of presortedness how been described in the literature but do not appear in the partial ordering graph. This section describes some of them but is not an exhaustive list.
+
+### *DS*
+
+A measure called *DS* appears in *Computing and ranking measures of presortedness* by J. Chen, and in some literature about measures of presortedness online (including some earlier versions of this documentation). The measure corresponds to the one we call *Spear* in the library.
+
+*Spear* is introduced under the name *D*, likely for (Spearman's Footrule) *Distance*, in *Spearman's Footrule as a Measure of Disarray* by P. Diaconis and R. L. Graham. Other sources give the name $D_S$, and similary give the name $D_H$ to *Ham*, for Hamming distance. I believe that the name *DS* comes from there.
+
+In other domains, that value is called *F* (for *Footrule*). It is no more helpful a name than *D* or *DS*, so I decided to use *Spear* for this library's name (for *Spearman*) - following the same naming pattern that led to *Ham* -, despite there being no precedent in the literature.
 
 ### *Par*
 

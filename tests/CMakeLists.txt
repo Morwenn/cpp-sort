@@ -198,6 +198,7 @@ add_executable(main-tests
     probes/osc.cpp
     probes/rem.cpp
     probes/runs.cpp
+    probes/spear.cpp
     probes/sus.cpp
     probes/relations.cpp
     probes/every_probe_common.cpp
