@@ -100,22 +100,22 @@ namespace detail
 
             // Sort the actual elements via the tuple array:
             index = 0;
-            for (auto current_tuple = storage.begin(); current_tuple != storage.end(); ++current_tuple, ++index) {
-                if (current_tuple->original_index != index) {
-                    auto end_value = iter_move(current_tuple->original_location);
+            for (auto const& current_tuple : storage) {
+                if (current_tuple.original_index != index) {
+                    auto end_value = iter_move(current_tuple.original_location);
 
                     auto destination_index = index;
-                    auto source_index = current_tuple->original_index;
+                    auto source_index = current_tuple.original_index;
 
                     do {
                         *(storage[destination_index].original_location) = iter_move(storage[source_index].original_location);
 
                         destination_index = source_index;
-                        source_index = storage[destination_index].original_index;
-                        storage[destination_index].original_index = destination_index;
+                        source_index = std::exchange(storage[destination_index].original_index, destination_index);
                     } while (source_index != index);
                     *(storage[destination_index].original_location) = std::move(end_value);
                 }
+                ++index;
             }
 
 #ifdef __cpp_lib_uncaught_exceptions

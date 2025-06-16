@@ -98,10 +98,9 @@ namespace cppsort
                     // Find the element to put in current's place
                     auto current = start;
                     auto next_pos = current - first;
-                    auto next = iterators[next_pos];
                     // We replace all "sorted" iterators with last to make it
                     // possible to find unsorted iterators between cycles
-                    iterators[next_pos] = last;
+                    auto next = std::exchange(iterators[next_pos], last);
 
                     // Process the current cycle
                     if (next != current) {
@@ -110,8 +109,7 @@ namespace cppsort
                             *current = iter_move(next);
                             current = next;
                             auto next_pos = next - first;
-                            next = iterators[next_pos];
-                            iterators[next_pos] = last;
+                            next = std::exchange(iterators[next_pos], last);
                         }
                         *current = std::move(tmp);
                     }
