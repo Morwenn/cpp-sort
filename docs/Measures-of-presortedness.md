@@ -11,10 +11,10 @@ Measures of presortedness were formally defined by H. Mannila in *Measures of pr
 > 1. If *X* is sorted, then *M*(*X*) = 0
 > 2. If *X* and *Y* are order isomorphic, then *M*(*X*) = *M*(*Y*)
 > 3. If *X* is a subset of *Y*, then *M*(*X*) ≤ *M*(*Y*)
-> 4. If every element of *X* is smaller than every element of *Y*, then *M*(*X.Y*) ≤ *M*(*X*) + *M*(*Y*)
-> 5. *M*({*x*}.*X*) ≤ |*X*| + *M*(*X*) for every natural integer *X*
+> 4. If every element of *X* is smaller than every element of *Y*, then *M*(*XY*) ≤ *M*(*X*) + *M*(*Y*)
+> 5. *M*(⟨*x*⟩*X*) ≤ |*X*| + *M*(*X*) for every element *x* of the domain
 
-A few measures of presortedness described in the research papers actually return 1 when *X* is already sorted, thus violating the first property above. We implement these measures in a such way that they return 0 instead, generally by subtracting 1 from the result of the described operation.
+A few measures of presortedness described in the research papers actually return 1 when *X* is already sorted, thus violating the first property above. We implement those measures in a such way that they return 0 instead, generally by subtracting 1 from the result of the described operation.
 
 ### Partial ordering of measures of presortedness
 
@@ -47,7 +47,7 @@ auto c = probe::ham(li, std::greater<>{});
 auto d = probe::runs(integers, std::negate<>{});
 ```
 
-Note however that these algorithms can be expensive. Using them before an actual sorting algorithm little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
+Note however that most of these algorithms can be expensive. Using them before an actual sorting algorithm has little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
 Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 
@@ -59,7 +59,7 @@ auto inv = cppsort::indirect_adapter<decltype(cppsort::probe::inv)>{};
 auto inv = cppsort::indirect_adapter(cppsort::probe::inv);
 ```
 
-All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is possible to include all of them at once with the following include:
+All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is still possible to include all of them at once with the following include:
 
 ```cpp
 #include <cpp-sort/probes.h>
@@ -75,13 +75,13 @@ static constexpr auto max_for_size(Integer n)
     -> Integer;
 ```
 
-It takes an integer `n` and returns the maximum value that the measure of presortedness might return for a collection of size `n`.
+It takes an integer `n` and returns the maximum value that the measure of presortedness can return for a collection of size `n`.
 
 *New in version 1.10.0*
 
 ## Available measures of presortedness
 
-Measures of presortedness are pretty formalized, so the names of the functions in the library are short and correspond to the ones used in the literature.
+Measures of presortedness are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
 
 In the following descriptions we use *X* to represent the input sequence, and |*X*| to represent the size of that sequence.
 
