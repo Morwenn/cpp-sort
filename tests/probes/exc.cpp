@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -41,7 +41,7 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         CHECK( exc(li.begin(), li.end()) == max_n );
     }
 
-    SECTION( "regressions" )
+    SECTION( "regression: ascending duplicates" )
     {
         std::vector<int> collection;
         collection.reserve(100);
@@ -49,5 +49,11 @@ TEST_CASE( "presortedness measure: exc", "[probe][exc]" )
         distribution(std::back_inserter(collection), 100);
 
         CHECK( exc(collection) == 0 );
+    }
+
+    SECTION( "regression: first and last elements of a cycle compare equal" )
+    {
+        std::vector<int> collection = { 0, 0, -1 };
+        CHECK( exc(collection) == 1 );
     }
 }

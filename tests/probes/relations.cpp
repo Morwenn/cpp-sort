@@ -49,7 +49,11 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // by Ola Petersson and Alistair Moffat
     CHECK( runs <= rem + 1 );
 
-    CHECK( exc + 1 <= ham );
+    if (exc == 0) {
+        CHECK( exc == ham );
+    } else {
+        CHECK( exc + 1 <= ham );
+    }
     CHECK( ham <= 2 * exc );
 
     CHECK( max <= dis );
