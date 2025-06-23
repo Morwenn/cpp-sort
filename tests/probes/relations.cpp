@@ -74,6 +74,11 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     CHECK( enc <= runs );
     CHECK( (2 * std::sqrt(enc) + 1) <= inv );
     CHECK( enc <= std::min(rem + 1, size - rem) );
+    if (enc == 0) {
+        CHECK( enc == exc );
+    } else {
+        CHECK( (enc + 1) <= 2 * exc );
+    }
     CHECK( 2 * enc <= exc );
 
     // Sorting Shuffled Monotone Sequences
