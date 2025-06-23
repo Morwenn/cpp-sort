@@ -2,6 +2,7 @@
  * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <cmath>
 #include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
@@ -72,7 +73,7 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     // Encroaching lists as a measure of presortedness
     // by Steven S. Skiena
     CHECK( enc <= runs );
-    CHECK( (2 * std::sqrt(enc) + 1) <= inv );
+    CHECK( enc <= std::sqrt(2 * inv) );
     CHECK( enc <= std::min(rem + 1, size - rem) );
     if (enc == 0) {
         CHECK( enc == exc );
