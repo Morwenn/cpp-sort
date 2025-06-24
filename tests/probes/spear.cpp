@@ -38,7 +38,7 @@ TEST_CASE( "presortedness measure: spear", "[probe][max]" )
         CHECK( spear(li.begin(), li.end()) == max_n );
     }
 
-    SECTION( "exhaustive check for 4 values" )
+    SECTION( "exhaustive check for 4 distinct values" )
     {
         // Results from Spearman's Footrule as a Measure of Disarray
         // by Diaconis and Graham
@@ -71,5 +71,11 @@ TEST_CASE( "presortedness measure: spear", "[probe][max]" )
         CHECK( spear({4, 2, 3, 1}) == 6 );
         CHECK( spear({4, 3, 1, 2}) == 8 );
         CHECK( spear({4, 3, 2, 1}) == 8 );
+    }
+
+    SECTION( "regression test: some equal values" )
+    {
+        int arr[] = {2, 2, 0, -1};
+        CHECK( spear(arr) == 8 );
     }
 }

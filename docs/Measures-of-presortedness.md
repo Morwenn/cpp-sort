@@ -281,7 +281,7 @@ Computes the number of non-decreasing runs in *X* minus one.
 #include <cpp-sort/probes/spear.h>
 ```
 
-Spearman's footrule distance: sum of distances between the position of individual elements in *X* and their position once *X* is sorted. Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
+Spearman's footrule distance: sum of distances between the position of individual elements in *X* and their position once *X* is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |

@@ -13,14 +13,12 @@
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
-#include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/equal_range.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/pdqsort.h"
+#include "../detail/spinsort.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -36,50 +34,54 @@ namespace probe
             -> ::cppsort::detail::difference_type_t<ForwardIterator>
         {
             using difference_type = ::cppsort::detail::difference_type_t<ForwardIterator>;
-            auto&& proj = utility::as_function(projection);
 
             if (size < 2) {
                 return 0;
             }
 
             ////////////////////////////////////////////////////////////
-            // Indirectly sort the iterators
+            // Indirectly sort the collection
 
-            // Copy the iterators in a vector
-            cppsort::detail::immovable_vector<ForwardIterator> iterators(size);
+            // Copy the iterators and their original index in a vector
+            cppsort::detail::immovable_vector<
+                std::pair<ForwardIterator, difference_type>
+            > iter_idx(size);
+            difference_type index = 0;
             for (auto it = first; it != last; ++it) {
-                iterators.emplace_back(it);
+                iter_idx.emplace_back(it, index);
+                ++index;
             }
 
-            // Sort the iterators on pointed values
-            cppsort::detail::pdqsort(
-                iterators.begin(), iterators.end(),
-                compare, utility::indirect{} | projection
+            // Sort the iterator/index pairs on pointed values
+            // Note: we use a stable sort to ensure that we don't end up with
+            //       to big values for equivalent elements. For example given
+            //       the sequence (5, 1, 2, 8, 9, 5), we want the first 5 to
+            //       have the sorted position 2, and the second 5 to have the
+            //       sorted position 3. Otherwise we might get 10 as a result
+            //       instead of the expected 8, and it will depend on the used
+            //       unstable sort implementation.
+            cppsort::detail::spinsort(
+                iter_idx.begin(), iter_idx.end(),
+                std::move(compare),
+                &std::pair<ForwardIterator, difference_type>::first
+                    | utility::indirect{}
+                    | std::move(projection)
             );
 
             ////////////////////////////////////////////////////////////
-            // Sum of distances between an elements and their sorted
+            // Sum of distances between elements and their sorted
             // positions
 
             difference_type sum_dist = 0;
-            difference_type it_pos = 0;
-            for (auto it = first; it != last; ++it) {
-                // Find the range where *it belongs once sorted
-                auto rng = cppsort::detail::equal_range(
-                    iterators.begin(), iterators.end(), proj(*it),
-                    compare, utility::indirect{} | projection
-                );
-                auto pos_min = rng.first - iterators.begin();
-                auto pos_max = rng.second - iterators.begin();
-
-                // If *it isn't into one of its sorted positions, computed the closest one
-                if (it_pos < pos_min) {
-                    sum_dist += pos_min - it_pos;
-                } else if (it_pos >= pos_max) {
-                    sum_dist += it_pos - pos_max + 1;
+            difference_type current_pos = 0;
+            for (auto const& it_idx: iter_idx) {
+                auto original_pos = it_idx.second;
+                if (original_pos < current_pos) {
+                    sum_dist += current_pos - original_pos;
+                } else {
+                    sum_dist += original_pos - current_pos;
                 }
-
-                ++it_pos;
+                ++current_pos;
             }
             return sum_dist;
         }
