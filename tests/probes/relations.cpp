@@ -6,108 +6,167 @@
 #include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes.h>
 #include <testing-tools/distributions.h>
 
 TEST_CASE( "relations between measures of presortedness", "[probe]" )
 {
-    constexpr std::vector<int>::difference_type size = 100;
+    // The adaptive sorting literature lists a number of relations between different
+    // measures of presortedness; the following tests check that these relations are
+    // respected in the library
 
-    std::vector<int> sequence;
-    sequence.reserve(size);
-    auto distribution = dist::shuffled{};
-    distribution(std::back_inserter(sequence), size, 0);
-
-    // The computer science literature lists a number of
-    // relations between the results of different measures
-    // of presortedness on a same sequence; the following
-    // tests check that these relations are respected in
-    // the library
-
-    auto block  = cppsort::probe::block(sequence);
-    auto dis    = cppsort::probe::dis(sequence);
-    auto enc    = cppsort::probe::enc(sequence);
-    auto exc    = cppsort::probe::exc(sequence);
-    auto ham    = cppsort::probe::ham(sequence);
-    auto inv    = cppsort::probe::inv(sequence);
-    auto max    = cppsort::probe::max(sequence);
-    auto mono   = cppsort::probe::mono(sequence);
-    auto osc    = cppsort::probe::osc(sequence);
-    auto rem    = cppsort::probe::rem(sequence);
-    auto runs   = cppsort::probe::runs(sequence);
-    auto spear  = cppsort::probe::spear(sequence);
-    auto sus    = cppsort::probe::sus(sequence);
+    using namespace cppsort::probe;
+    using difference_type = std::vector<int>::difference_type;
 
     // Measures of Presortedness and Optimal Sorting Algorithms
     // by Heikki Mannila
-    CHECK( exc <= inv );
+
+    rc::prop("Exc(X) ≤ Inv(X)", [](const std::vector<int>& sequence) {
+        return exc(sequence) <= inv(sequence);
+    });
 
     // Splitsort - an adaptive sorting algorithm
     // by Christos Levcopoulos and Ola Petersson
-    CHECK( rem <= inv );
+
+    rc::prop("Rem(X) ≤ Inv(X)", [](const std::vector<int>& sequence) {
+        return rem(sequence) <= inv(sequence);
+    });
 
     // A framework for adaptive sorting
     // by Ola Petersson and Alistair Moffat
-    CHECK( runs <= rem + 1 );
 
-    if (exc == 0) {
-        CHECK( exc == ham );
-    } else {
-        CHECK( exc + 1 <= ham );
-    }
-    CHECK( ham <= 2 * exc );
+    rc::prop("Runs(X) ≤ Rem(X) + 1", [](const std::vector<int>& sequence) {
+        return runs(sequence) <= rem(sequence) + 1;
+    });
 
-    CHECK( max <= dis );
-    CHECK( dis <= 2 * max );
+    rc::prop("Exc(X) + 1 ≤ Ham(X)", [](const std::vector<int>& sequence) {
+        auto exc = cppsort::probe::exc(sequence);
+        auto ham = cppsort::probe::ham(sequence);
+        return (exc == 0 && ham == 0) || (exc + 1 <= ham);
+    });
+    rc::prop("Ham(X) ≤ 2 Exc(X)", [](const std::vector<int>& sequence) {
+        return ham(sequence) <= 2 * exc(sequence);
+    });
+
+    rc::prop("Max(X) ≤ Dis(X)", [](const std::vector<int>& sequence) {
+        return max(sequence) <= dis(sequence);
+    });
+    rc::prop("Dis(X) ≤ 2 Max(X)", [](const std::vector<int>& sequence) {
+        return dis(sequence) <= 2 * max(sequence);
+    });
 
     // A New Measure of Presortedness
     // by Vladimir Estivill-Castro and Derick Wood
-    CHECK( dis <= inv );
-    CHECK( rem <= size * (1 - 1 / (dis + 1)) );
-    CHECK( inv <= size * dis / 2 );
+
+    rc::prop("Dis(X) ≤ Inv(X)", [](const std::vector<int>& sequence) {
+        return dis(sequence) <= inv(sequence);
+    });
+
+    rc::prop("Rem(X) ≤ |X| * (1 - 1 / (Dis(X) + 1))", [](const std::vector<int>& sequence) {
+        auto size = static_cast<difference_type>(sequence.size());
+        return rem(sequence) <= size * (1 - 1 / (dis(sequence) + 1));
+    });
+
+    rc::prop("Inv(X) ≤ |X| * Dis(X)/2", [](const std::vector<int>& sequence) {
+        auto size = static_cast<difference_type>(sequence.size());
+        return inv(sequence) <= size * dis(sequence) / 2;
+    });
 
     // Practical Adaptive Sorting
     // by Vladimir Estivill-Castro and Derick Wood
-    CHECK( rem <= 2 * exc );
+
+    rc::prop("Rem(X) ≤ 2 Exc(X)", [](const std::vector<int>& sequence) {
+        return rem(sequence) <= 2 * exc(sequence);
+    });
 
     // Encroaching lists as a measure of presortedness
     // by Steven S. Skiena
-    CHECK( enc <= runs );
-    CHECK( enc <= std::sqrt(2 * inv) );
-    CHECK( enc <= std::min(rem + 1, size - rem) );
-    if (enc == 0) {
-        CHECK( enc == exc );
-    } else {
-        CHECK( (enc + 1) <= 2 * exc );
-    }
-    CHECK( 2 * enc <= exc );
+
+    rc::prop("Enc(X) ≤ Runs(X)", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= runs(sequence);
+    });
+
+    rc::prop("2 sqrt(Enc(X)) + 1 ≤ Inv(X)", [](const std::vector<int>& sequence) {
+        auto enc = cppsort::probe::enc(sequence);
+        auto inv = cppsort::probe::inv(sequence);
+        return enc <= std::sqrt(2 * inv);
+    });
+
+    rc::prop("Enc(X) ≤ min(Rem(X) + 1, |X| - Rem(X))", [](const std::vector<int>& sequence) {
+        auto size = static_cast<difference_type>(sequence.size());
+        auto rem = cppsort::probe::rem(sequence);
+        return enc(sequence) <= std::min<long long>(rem + 1, size - rem);
+    });
+
+    rc::prop("(Enc(X) + 1) ≤ 2 Exc(X)", [](const std::vector<int>& sequence) {
+        auto exc = cppsort::probe::exc(sequence);
+        auto enc = cppsort::probe::enc(sequence);
+        return (enc == 0 && exc == 0) || ((enc + 1) <= 2 * exc);
+    });
 
     // Sorting Shuffled Monotone Sequences
     // by Christos Levcopoulos and Ola Petersson
-    CHECK( sus <= runs );
-    CHECK( sus <= max );
-    CHECK( enc <= sus );
+
+    rc::prop("SUS(X) ≤ Runs(X)", [](const std::vector<int>& sequence) {
+        return sus(sequence) <= runs(sequence);
+    });
+
+    rc::prop("SUS(X) ≤ Max(X)", [](const std::vector<int>& sequence) {
+        return sus(sequence) <= max(sequence);
+    });
+
+    rc::prop("Enc(X) ≤ SUS(X)", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= sus(sequence);
+    });
 
     // Heapsort - Adapted for Presorted Files
     // by Christos Levcopoulos and Ola Petersson
-    CHECK( osc <= 4 * inv );
-    CHECK( osc <= 2 * size * runs + size );
-    CHECK( osc <= size * dis );
+
+    rc::prop("Osc(X) ≤ 4 Inv(X)", [](const std::vector<int>& sequence) {
+        return osc(sequence) <= 4 * inv(sequence);
+    });
+
+    rc::prop("Osc(X) ≤ 2 * |X| * Runs(X) + |X|", [](const std::vector<int>& sequence) {
+        auto size = static_cast<difference_type>(sequence.size());
+        return osc(sequence) <= 2 * size * runs(sequence) + size;
+    });
+
+    rc::prop("Osc(X) ≤ |X| * Dis(X)", [](const std::vector<int>& sequence) {
+        auto size = static_cast<difference_type>(sequence.size());
+        return osc(sequence) <= size * dis(sequence);
+    });
 
     // Sublinear Merging and Natural Mergesort
     // by Svante Carlsson, Christos Levcopoulos and Ola Petersson
-    CHECK( block <= 3 * rem );
+
+    rc::prop("Block(X) ≤ 3 Rem(X)", [](const std::vector<int>& sequence) {
+        return block(sequence) <= 3 * rem(sequence);
+    });
 
     // Computing and ranking measures of presortedness
     // by Jingsen Chen
-    CHECK( enc <= dis + 1 );
+
+    rc::prop("Enc(X) ≤ Dis(X) + 1", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= dis(sequence) + 1;
+    });
 
     // Spearman's Footrule as a Measure of Disarray
     // by Persi Diaconis and Ronald Lewis Graham
-    CHECK( inv + exc <= spear );
-    CHECK( spear <= 2 * inv );
+
+    rc::prop("Inv(X) + Exc(X) ≤ Spear(X)", [](const std::vector<int>& sequence) {
+        return inv(sequence) + exc(sequence) <= spear(sequence);
+    });
+
+    rc::prop("Spear(X) ≤ 2 Inv(X)", [](const std::vector<int>& sequence) {
+        return spear(sequence) <= 2 * inv(sequence);
+    });
 
     // Intuitive result: a descending run can be seen as several
     // ascending runs
-    CHECK( mono <= runs );
+
+    rc::prop("Mono(X) ≤ Runs(X)", [](const std::vector<int>& sequence) {
+        return mono(sequence) <= runs(sequence);
+    });
 }

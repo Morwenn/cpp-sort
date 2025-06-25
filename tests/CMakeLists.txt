@@ -40,6 +40,30 @@ endif()
 include(Catch)
 
 ########################################
+# Download RapidCheck
+
+message(STATUS "Looking for RapidCheck")
+find_package(rapidcheck QUIET)
+if (TARGET rapidcheck)
+    get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "RapidCheck found: ${rapidcheck_INCLUDE_DIRECTORY}")
+else()
+    message(STATUS "RapidCheck not found")
+    download_project(PROJ RapidCheck
+                     GIT_REPOSITORY https://github.com/emil-e/rapidcheck
+                     GIT_TAG ff6af6fc683159deb51c543b065eba14dfcf329b
+                     UPDATE_DISCONNECTED 1
+    )
+
+    set(RC_INSTALL_ALL_EXTRAS ON)
+    add_subdirectory(${RapidCheck_SOURCE_DIR} ${RapidCheck_BINARY_DIR})
+
+    # Make rapidcheck a SYSTEM target
+    get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(rapidcheck PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${rapidcheck_INCLUDE_DIRECTORY}")
+endif()
+
+########################################
 # Configure coverage
 
 if (CPPSORT_ENABLE_COVERAGE)
@@ -58,6 +82,7 @@ macro(configure_tests target)
 
     target_link_libraries(${target} PRIVATE
         Catch2::Catch2WithMain
+        rapidcheck_catch
         cpp-sort::cpp-sort
     )
 
