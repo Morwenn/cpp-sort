@@ -208,6 +208,7 @@ add_executable(main-tests
     distributions/pipe_organ.cpp
     distributions/push_front.cpp
     distributions/push_middle.cpp
+    distributions/rapidcheck.cpp
     distributions/shuffled.cpp
     distributions/shuffled_16_values.cpp
 
