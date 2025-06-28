@@ -14,7 +14,7 @@ Measures of presortedness were formally defined by H. Mannila in *Measures of pr
 > 4. If every element of *X* is smaller than every element of *Y*, then *M*(*XY*) ≤ *M*(*X*) + *M*(*Y*)
 > 5. *M*(⟨*x*⟩*X*) ≤ |*X*| + *M*(*X*) for every element *x* of the domain
 
-A few measures of presortedness described in the research papers actually return 1 when *X* is already sorted, thus violating the first property above. We implement those measures in a such way that they return 0 instead, generally by subtracting 1 from the result of the described operation.
+A few measures of presortedness described below do not fully satisfy all of the criteria above: instead of sctrictly following Mannila, **cpp-sort** takes a broader approach similar to that of O. Petersson and A. Moffat in *A framework for adaptive sorting*, and includes more measures of disorder found in the relevant literature. For legibility, some measures that are normally defined as returning 1 when *X* is already sorted, are implemented here in a such way that they return 0 instead (generally by subtracting 1 from the result of the described operation).
 
 ### Partial ordering of measures of presortedness
 
@@ -170,6 +170,8 @@ Computes the number of elements in *X* that are not in their sorted position, wh
 
 `max_for_size`: |*X*| when every element in *X* is one element away from its sorted position.
 
+**Note:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Ham(\langle 1, 2, 3 \rangle)$.
+
 ### *Inv*
 
 ```cpp
@@ -235,6 +237,8 @@ When there isn't enough extra memory available, `probe::osc` falls back to an in
 
 `max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
 
+**Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
+
 ***WARNING:** the O(n²) fallback of `probe::osc` is deprecated since version 1.12.0 and removed in version 2.0.0.*
 
 *Changed in version 1.12.0:* `probe::osc` is now O(n log n) instead of O(n²) but now also requires O(n) memory. The O(n²) is kept for backward compatibility but will be removed in the future.
@@ -288,6 +292,8 @@ Spearman's footrule distance: sum of distances between the position of individua
 | n log n     | n           | Forward       |
 
 `max_for_size`: |*X*|²/2 when *X* is sorted in reverse order.
+
+**Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Spear(\langle 1, 2, 3 \rangle)$.
 
 *New in version 1.17.0*
 

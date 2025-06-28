@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes.h>
 
 //
@@ -27,6 +29,7 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
+    // First property formalized by Mannila
     // Ensure that all measures of presortedness return 0 when
     // given a collection where all elements are equal
 
@@ -51,6 +54,7 @@ TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
+    // First property formalized by Mannila
     // Ensure that all measures of presortedness return 0 when
     // given a collection where all elements are sorted
 
@@ -76,6 +80,7 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
+    // First property formalized by Mannila
     // Ensure that all measures of presortedness return 0 when
     // given a collection with 0 or 1 element
 
@@ -94,4 +99,29 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
         auto presortedness = mop(collection);
         CHECK( presortedness == 0 );
     }
+}
+
+TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
+                    decltype(cppsort::probe::block),
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::sus) )
+{
+    // Fifth property formalized by Mannila
+    // The following probes don't satisfy it: ham, osc, spear
+
+    rc::prop("M(⟨a⟩X) ≤ |X| + M(X)", [](const std::vector<int>& sequence) {
+        std::decay_t<TestType> mop;
+        auto size = static_cast<std::vector<int>::difference_type>(sequence.size());
+        if (size <= 2) {
+            return true;
+        }
+        return mop(sequence) <= (size - 1) + mop(sequence.begin() + 1, sequence.end());
+    });
 }
