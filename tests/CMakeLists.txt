@@ -129,6 +129,11 @@ macro(configure_tests target)
         )
     endif()
 
+    if (MSVC)
+        # We've become too bloated for that poor compiler :(
+        target_compile_options(${target} PRIVATE /bigobj)
+    endif()
+
     if (CPPSORT_ENABLE_COVERAGE)
         add_coverage(${target})
     endif()
