@@ -105,7 +105,11 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     rc::prop("(Enc(X) + 1) ≤ 2 Exc(X)", [](const std::vector<int>& sequence) {
         auto exc = cppsort::probe::exc(sequence);
         auto enc = cppsort::probe::enc(sequence);
-        return (enc == 0 && exc == 0) || ((enc + 1) <= 2 * exc);
+        return (enc == 0 && exc == 0) || (enc + 1 <= 2 * exc);
+    });
+
+    rc::prop("Conjecture: Enc(X) ≤ Exc(X)", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= exc(sequence);
     });
 
     // Sorting Shuffled Monotone Sequences
