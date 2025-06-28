@@ -53,8 +53,10 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
     rc::prop("Max(X) ≤ Dis(X)", [](const std::vector<int>& sequence) {
         return max(sequence) <= dis(sequence);
     });
-    rc::prop("Dis(X) ≤ 2 Max(X)", [](const std::vector<int>& sequence) {
-        return dis(sequence) <= 2 * max(sequence);
+    rc::prop("Dis(X) < 2 Max(X)", [](const std::vector<int>& sequence) {
+        auto dis = cppsort::probe::dis(sequence);
+        auto max = cppsort::probe::max(sequence);
+        return (dis == 0 && max == 0) || (dis < 2 * max);
     });
 
     // A New Measure of Presortedness
