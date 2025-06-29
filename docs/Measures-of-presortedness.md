@@ -329,7 +329,7 @@ In other domains, that value is called *F* (for *Footrule*). It is no more helpf
 
 ### *Par*
 
-*Par* was described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
+*Par* is described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
 
 > *Par(X)* = min { *p* | *X* is *p*-sorted }
 
@@ -342,6 +342,10 @@ The following definition is also given to determine whether a sequence is *p*-so
 > In fact, *Par*(*X*) = *Dis*(*X*), for all *X*.
 
 In their subsequent papers, those authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
+
+### *Pos*
+
+*Pos* is described by V. Estivill-Castro and D. Wood in *Sorting, Measures of disorder, and Worst-case performance* as "the position number": the number of elements in a sequence that are not in their sorted position. This definition matches that of *Ham*, the Hamming distance between a sequence and its sorted permutation.
 
 ### *Radius*
 

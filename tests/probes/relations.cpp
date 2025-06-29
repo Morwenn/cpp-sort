@@ -83,6 +83,13 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
         return rem(sequence) <= 2 * exc(sequence);
     });
 
+    // Sorting, Measures of disorder, and Worst-case performance
+    // by Vladimir Estivill-Castro and Derick Wood
+
+    rc::prop("Rem(X) ≤ Ham(X)", [](const std::vector<int>& sequence) {
+        return rem(sequence) <= ham(sequence);
+    });
+
     // Encroaching lists as a measure of presortedness
     // by Steven S. Skiena
 

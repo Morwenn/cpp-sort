@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
 #include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/ham.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/distributions.h>
@@ -46,4 +48,8 @@ TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
 
         CHECK( ham(collection) == 0 );
     }
+
+    rc::prop("Ham(X) ≠ 1", [](const std::vector<int>& sequence) {
+        return cppsort::probe::ham(sequence) != 1;
+    });
 }
