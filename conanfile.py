@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2018-2024 Morwenn
+# Copyright (c) 2018-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 import os.path
@@ -16,7 +16,7 @@ required_conan_version = ">=1.50.0"
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.16.0"
+    version = "1.17.0"
     description = "Sorting algorithms & related tools"
     license = "MIT"
     url = "https://github.com/Morwenn/cpp-sort"
