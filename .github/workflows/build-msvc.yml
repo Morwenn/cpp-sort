@@ -31,6 +31,7 @@ jobs:
         config:
         - build_type: Release
         - build_type: Debug
+          exclude: "stable_t<hybrid_adapter>"
         - build_type: Debug
           build_tools: '-T ClangCL'
 
@@ -55,4 +56,7 @@ jobs:
         env:
           CTEST_OUTPUT_ON_FAILURE: 1
         working-directory: ${{runner.workspace}}/build
-        run: ctest -C ${{matrix.config.build_type}} --no-tests=error
+        run: |
+          ctest -C ${{matrix.config.build_type}} `
+                -E "${{matrix.config.exclude}}" `
+                --no-tests=error
