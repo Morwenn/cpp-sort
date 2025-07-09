@@ -1,7 +1,7 @@
 ![cpp-sort logo](docs/images/cpp-sort-logo.svg)
 
-[![Latest Release](https://img.shields.io/badge/release-1.16.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.16.0)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.16.0-blue.svg)](https://conan.io/center/recipes/cpp-sort?version=1.16.0)
+[![Latest Release](https://img.shields.io/badge/release-1.17.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.17.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.17.0-blue.svg)](https://conan.io/center/recipes/cpp-sort?version=1.17.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 [![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
 
@@ -122,8 +122,8 @@ page][benchmarks].
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
 **cpp-sort** requires C++14 support, and should work with the following compilers:
-* g++7 or more recent.
-* clang++6.0 or more recent (with both libstdc++ and libc++).
+* g++-9 or more recent.
+* clang++-11 or more recent (with both libstdc++ and libc++).
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
 * Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
 * clang-cl corresponding the the Visual Studio version above.

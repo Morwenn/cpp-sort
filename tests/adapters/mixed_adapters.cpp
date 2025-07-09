@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -248,7 +248,11 @@ TEST_CASE( "stable_t<hybrid_adapter>", "[stable_adapter][hybrid_adapter]" )
 
     sorter_t sorter;
     stable_sorter_t stable_sorter(std::move(sorter));
-    (void)stable_sorter;
 
-    CHECK( true );
+    std::list<int> li;
+    auto distribution = dist::shuffled{};
+    distribution(std::back_inserter(li), 100, 10'000);
+    stable_sorter(li);
+
+    CHECK( std::is_sorted(li.begin(),li.end()) );
 }

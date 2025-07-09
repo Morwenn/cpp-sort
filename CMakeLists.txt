@@ -1,11 +1,11 @@
-# Copyright (c) 2015-2024 Morwenn
+# Copyright (c) 2015-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.16.0 LANGUAGES CXX)
+project(cpp-sort VERSION 1.17.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -24,7 +24,7 @@ if (CPPSORT_USE_LIBASSERT)
     include(DownloadProject)
     download_project(PROJ libassert
                      GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-                     GIT_TAG v1.2.2
+                     GIT_TAG 634f50fb4086d377ad9a2f83d693d2e8fe4972a7  # v2.1.4
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
@@ -42,8 +42,8 @@ target_compile_features(cpp-sort INTERFACE cxx_std_14)
 # MSVC won't work without a stricter standard compliance
 if (MSVC)
     target_compile_options(cpp-sort INTERFACE
-        /permissive-
-        /Zc:preprocessor
+        $<$<COMPILE_LANGUAGE:CXX>:/permissive->
+        $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler="/permissive-">
     )
 endif()
 
@@ -57,8 +57,11 @@ endif()
 
 # Optionally link to libassert
 if (CPPSORT_USE_LIBASSERT)
-    target_link_libraries(cpp-sort INTERFACE assert)
+    target_link_libraries(cpp-sort INTERFACE libassert::assert)
     target_compile_definitions(cpp-sort INTERFACE CPPSORT_USE_LIBASSERT)
+    if (MSVC)
+        target_compile_options(cpp-sort INTERFACE /Zc:preprocessor)
+    endif()
 endif()
 
 add_library(cpp-sort::cpp-sort ALIAS cpp-sort)
@@ -93,7 +96,7 @@ configure_package_config_file(
 set(CPPSORT_SIZEOF_VOID_P ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 write_basic_package_version_file(
-    ${CMAKE_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/cpp-sort-config-version.cmake
     COMPATIBILITY
         SameMajorVersion
 )

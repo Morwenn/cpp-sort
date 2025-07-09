@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/metrics_tools.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
+#include "../detail/fake_category_iterator.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -75,6 +76,14 @@ namespace metrics
                 cppsort::detail::rvalue_type_t<ForwardIterator>,
                 CountType
             >;
+            // Use a special iterator that wraps wrapper_t* and pretends
+            // it is of a different iterator category to better force the
+            // sorter to use strategies matching the category of the
+            // passed iterator type
+            using iterator_t = cppsort::detail::fake_category_iterator<
+                wrapper_t*,
+                cppsort::detail::iterator_category_t<ForwardIterator>
+            >;
 
             // Use an immovable_vector to ensure that no move is performed
             // hile filling the vector
@@ -85,10 +94,12 @@ namespace metrics
             }
 
             std::forward<Sorter>(sorter)(
-                vec.begin(), vec.end(), std::move(compare),
+                iterator_t(vec.begin()), iterator_t(vec.end()), std::move(compare),
                 utility::as_projection(&wrapper_t::value) | std::move(projection)
             );
 
+            // Move back the wrapped value only, not the wrapper itself,
+            // this ensures that those moves are not counted
             auto vec_it = vec.begin();
             for (auto it = first; it != last; ++it, ++vec_it) {
                 *it = std::move(vec_it->value);

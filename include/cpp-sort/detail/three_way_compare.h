@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_THREE_WAY_COMPARE_H_
@@ -83,7 +83,7 @@ namespace detail
     {
         public:
 
-            constexpr three_way_compare(Compare compare):
+            constexpr explicit three_way_compare(Compare compare):
                 compare(std::move(compare))
             {}
 
@@ -102,7 +102,7 @@ namespace detail
     struct three_way_compare<Compare, true>:
         three_way_compare_base<three_way_compare<Compare>>
     {
-        constexpr three_way_compare(Compare) {}
+        constexpr explicit three_way_compare(Compare) {}
 
         using three_way_compare_base<three_way_compare<Compare>>::operator();
 
@@ -118,7 +118,7 @@ namespace detail
     struct three_way_compare<std::less<>, true>:
         three_way_compare_base<three_way_compare<std::less<>>>
     {
-        constexpr three_way_compare(std::less<>) {}
+        constexpr explicit three_way_compare(std::less<>) {}
 
         using three_way_compare_base<three_way_compare<std::less<>>>::operator();
 
@@ -146,7 +146,7 @@ namespace detail
     struct three_way_compare<std::ranges::less, true>:
         three_way_compare_base<three_way_compare<std::ranges::less>>
     {
-        constexpr three_way_compare(std::ranges::less) {}
+        constexpr explicit three_way_compare(std::ranges::less) {}
 
         using three_way_compare_base<three_way_compare<std::ranges::less>>::operator();
 
@@ -174,7 +174,7 @@ namespace detail
     struct three_way_compare<std::greater<>, true>:
         three_way_compare_base<three_way_compare<std::greater<>>>
     {
-        constexpr three_way_compare(std::greater<>) {}
+        constexpr explicit three_way_compare(std::greater<>) {}
 
         using three_way_compare_base<three_way_compare<std::greater<>>>::operator();
 
@@ -203,7 +203,7 @@ namespace detail
     struct three_way_compare<std::ranges::greater, true>:
         three_way_compare_base<three_way_compare<std::ranges::greater>>
     {
-        constexpr three_way_compare(std::ranges::greater) {}
+        constexpr explicit three_way_compare(std::ranges::greater) {}
 
         using three_way_compare_base<three_way_compare<std::ranges::greater>>::operator();
 

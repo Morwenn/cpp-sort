@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 Morwenn
+# Copyright (c) 2021-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: MinGW-w64 Builds
@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     strategy:
       fail-fast: false
@@ -38,7 +38,6 @@ jobs:
         working-directory: ${{runner.workspace}}
         run: |
           cmake -H${{github.event.repository.name}} -Bbuild `
-                -DCMAKE_CONFIGURATION_TYPES=${{matrix.build_type}} `
                 -DCMAKE_BUILD_TYPE=${{matrix.build_type}} `
                 -G"MinGW Makefiles" `
                 -DCPPSORT_BUILD_EXAMPLES=ON

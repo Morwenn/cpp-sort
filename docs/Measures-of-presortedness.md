@@ -11,10 +11,10 @@ Measures of presortedness were formally defined by H. Mannila in *Measures of pr
 > 1. If *X* is sorted, then *M*(*X*) = 0
 > 2. If *X* and *Y* are order isomorphic, then *M*(*X*) = *M*(*Y*)
 > 3. If *X* is a subset of *Y*, then *M*(*X*) ≤ *M*(*Y*)
-> 4. If every element of *X* is smaller than every element of *Y*, then *M*(*X.Y*) ≤ *M*(*X*) + *M*(*Y*)
-> 5. *M*({*x*}.*X*) ≤ |*X*| + *M*(*X*) for every natural integer *X*
+> 4. If every element of *X* is smaller than every element of *Y*, then *M*(*XY*) ≤ *M*(*X*) + *M*(*Y*)
+> 5. *M*(⟨*x*⟩*X*) ≤ |*X*| + *M*(*X*) for every element *x* of the domain
 
-A few measures of presortedness described in the research papers actually return 1 when *X* is already sorted, thus violating the first property above. We implement these measures in a such way that they return 0 instead, generally by subtracting 1 from the result of the described operation.
+A few measures of presortedness described below do not fully satisfy all of the criteria above: instead of sctrictly following Mannila, **cpp-sort** takes a broader approach similar to that of O. Petersson and A. Moffat in *A framework for adaptive sorting*, and includes more measures of disorder found in the relevant literature. For legibility, some measures that are normally defined as returning 1 when *X* is already sorted, are implemented here in a such way that they return 0 instead (generally by subtracting 1 from the result of the described operation).
 
 ### Partial ordering of measures of presortedness
 
@@ -47,7 +47,7 @@ auto c = probe::ham(li, std::greater<>{});
 auto d = probe::runs(integers, std::negate<>{});
 ```
 
-Note however that these algorithms can be expensive. Using them before an actual sorting algorithm little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
+Note however that most of these algorithms can be expensive. Using them before an actual sorting algorithm has little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
 Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 
@@ -59,7 +59,7 @@ auto inv = cppsort::indirect_adapter<decltype(cppsort::probe::inv)>{};
 auto inv = cppsort::indirect_adapter(cppsort::probe::inv);
 ```
 
-All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is possible to include all of them at once with the following include:
+All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is still possible to include all of them at once with the following include:
 
 ```cpp
 #include <cpp-sort/probes.h>
@@ -75,13 +75,13 @@ static constexpr auto max_for_size(Integer n)
     -> Integer;
 ```
 
-It takes an integer `n` and returns the maximum value that the measure of presortedness might return for a collection of size `n`.
+It takes an integer `n` and returns the maximum value that the measure of presortedness can return for a collection of size `n`.
 
 *New in version 1.10.0*
 
 ## Available measures of presortedness
 
-Measures of presortedness are pretty formalized, so the names of the functions in the library are short and correspond to the ones used in the literature.
+Measures of presortedness are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
 
 In the following descriptions we use *X* to represent the input sequence, and |*X*| to represent the size of that sequence.
 
@@ -170,6 +170,8 @@ Computes the number of elements in *X* that are not in their sorted position, wh
 
 `max_for_size`: |*X*| when every element in *X* is one element away from its sorted position.
 
+**Note:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Ham(\langle 1, 2, 3 \rangle)$.
+
 ### *Inv*
 
 ```cpp
@@ -235,6 +237,8 @@ When there isn't enough extra memory available, `probe::osc` falls back to an in
 
 `max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
 
+**Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
+
 ***WARNING:** the O(n²) fallback of `probe::osc` is deprecated since version 1.12.0 and removed in version 2.0.0.*
 
 *Changed in version 1.12.0:* `probe::osc` is now O(n log n) instead of O(n²) but now also requires O(n) memory. The O(n²) is kept for backward compatibility but will be removed in the future.
@@ -275,6 +279,24 @@ Computes the number of non-decreasing runs in *X* minus one.
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
+### *Spear*
+
+```cpp
+#include <cpp-sort/probes/spear.h>
+```
+
+Spearman's footrule distance: sum of distances between the position of individual elements in *X* and their position once *X* is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
+
+| Complexity  | Memory      | Iterators     |
+| ----------- | ----------- | ------------- |
+| n log n     | n           | Forward       |
+
+`max_for_size`: |*X*|²/2 when *X* is sorted in reverse order.
+
+**Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Spear(\langle 1, 2, 3 \rangle)$.
+
+*New in version 1.17.0*
+
 ### *SUS*
 
 ```cpp
@@ -297,9 +319,17 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 
 Some additional measures of presortedness how been described in the literature but do not appear in the partial ordering graph. This section describes some of them but is not an exhaustive list.
 
+### *DS*
+
+A measure called *DS* appears in *Computing and ranking measures of presortedness* by J. Chen, and in some literature about measures of presortedness online (including some earlier versions of this documentation). The measure corresponds to the one we call *Spear* in the library.
+
+*Spear* is introduced under the name *D*, likely for (Spearman's Footrule) *Distance*, in *Spearman's Footrule as a Measure of Disarray* by P. Diaconis and R. L. Graham. Other sources give the name $D_S$, and similary give the name $D_H$ to *Ham*, for Hamming distance. I believe that the name *DS* comes from there.
+
+In other domains, that value is called *F* (for *Footrule*). It is no more helpful a name than *D* or *DS*, so I decided to use *Spear* for this library's name (for *Spearman*) - following the same naming pattern that led to *Ham* -, despite there being no precedent in the literature.
+
 ### *Par*
 
-*Par* was described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
+*Par* is described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
 
 > *Par(X)* = min { *p* | *X* is *p*-sorted }
 
@@ -312,6 +342,10 @@ The following definition is also given to determine whether a sequence is *p*-so
 > In fact, *Par*(*X*) = *Dis*(*X*), for all *X*.
 
 In their subsequent papers, those authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
+
+### *Pos*
+
+*Pos* is described by V. Estivill-Castro and D. Wood in *Sorting, Measures of disorder, and Worst-case performance* as "the position number": the number of elements in a sequence that are not in their sorted position. This definition matches that of *Ham*, the Hamming distance between a sequence and its sorted permutation.
 
 ### *Radius*
 

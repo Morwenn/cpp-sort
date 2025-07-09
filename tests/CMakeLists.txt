@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2024 Morwenn
+# Copyright (c) 2015-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -27,7 +27,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG v3.6.0
+                     GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b  # v3.8.1
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
@@ -38,6 +38,30 @@ else()
     set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORY}")
 endif()
 include(Catch)
+
+########################################
+# Download RapidCheck
+
+message(STATUS "Looking for RapidCheck")
+find_package(rapidcheck QUIET)
+if (TARGET rapidcheck)
+    get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "RapidCheck found: ${rapidcheck_INCLUDE_DIRECTORY}")
+else()
+    message(STATUS "RapidCheck not found")
+    download_project(PROJ RapidCheck
+                     GIT_REPOSITORY https://github.com/emil-e/rapidcheck
+                     GIT_TAG ff6af6fc683159deb51c543b065eba14dfcf329b
+                     UPDATE_DISCONNECTED 1
+    )
+
+    set(RC_INSTALL_ALL_EXTRAS ON)
+    add_subdirectory(${RapidCheck_SOURCE_DIR} ${RapidCheck_BINARY_DIR})
+
+    # Make rapidcheck a SYSTEM target
+    get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(rapidcheck PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${rapidcheck_INCLUDE_DIRECTORY}")
+endif()
 
 ########################################
 # Configure coverage
@@ -58,12 +82,15 @@ macro(configure_tests target)
 
     target_link_libraries(${target} PRIVATE
         Catch2::Catch2WithMain
+        rapidcheck_catch
         cpp-sort::cpp-sort
     )
 
     target_compile_definitions(${target} PRIVATE
         # Somewhat speed up Catch2 compile times
         CATCH_CONFIG_FAST_COMPILE
+        # Let libc++ be stricter about includes
+        _LIBCPP_REMOVE_TRANSITIVE_INCLUDES
         # Enable assertions for more thorough tests
         _GLIBCXX_ASSERTIONS
         _LIBCPP_ENABLE_ASSERTIONS=1
@@ -100,6 +127,11 @@ macro(configure_tests target)
             APPEND_STRING PROPERTY LINK_FLAGS
                 " -fsanitize=${CPPSORT_SANITIZE}"
         )
+    endif()
+
+    if (MSVC)
+        # We've become too bloated for that poor compiler :(
+        target_compile_options(${target} PRIVATE /bigobj)
     endif()
 
     if (CPPSORT_ENABLE_COVERAGE)
@@ -181,6 +213,7 @@ add_executable(main-tests
     distributions/pipe_organ.cpp
     distributions/push_front.cpp
     distributions/push_middle.cpp
+    distributions/rapidcheck.cpp
     distributions/shuffled.cpp
     distributions/shuffled_16_values.cpp
 
@@ -196,6 +229,7 @@ add_executable(main-tests
     probes/osc.cpp
     probes/rem.cpp
     probes/runs.cpp
+    probes/spear.cpp
     probes/sus.cpp
     probes/relations.cpp
     probes/every_probe_common.cpp
@@ -258,6 +292,7 @@ if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
         # which isn't something we want for the main tests
         testing-tools/new_delete.cpp
         testing-tools/random.cpp
+        adapters/every_adapter_heap_memory_exhaustion.cpp
         probes/every_probe_heap_memory_exhaustion.cpp
         sorters/every_sorter_heap_memory_exhaustion.cpp
     )

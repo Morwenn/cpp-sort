@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
+#include "../detail/attributes.h"
 #include "../detail/raw_checkers.h"
 
 namespace cppsort
@@ -84,6 +85,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Accessor
 
+            CPPSORT_ATTRIBUTE_NODISCARD
             constexpr auto base() const
                 -> F
             {

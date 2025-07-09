@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_HAM_H_
@@ -110,7 +110,7 @@ namespace probe
             static constexpr auto max_for_size(Integer n)
                 -> Integer
             {
-                return n == 0 ? 0 : n;
+                return n;
             }
         };
     }

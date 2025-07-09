@@ -122,7 +122,7 @@ foreach (LANG ${ENABLED_LANGUAGES})
 					CACHE STRING "${COMPILER} flags for code coverage.")
 				mark_as_advanced(COVERAGE_${COMPILER}_FLAGS)
 				break()
-			else ()
+			elseif (NOT CMAKE_REQUIRED_QUIET)
 				message(WARNING "Code coverage is not available for ${COMPILER}"
 				        " compiler. Targets using this compiler will be "
 				        "compiled without it.")
