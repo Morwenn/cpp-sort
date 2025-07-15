@@ -9,11 +9,11 @@ In this documentation, we call *adapted sorters* the sorters passed to the adapt
 In C++17, *sorter adapters* can be used in a function-like fashion thanks to `explicit` constructors (taking one or several sorters) by taking advantage of implicit [deduction guides][ctad]. The following example illustrates how it simplifies their use:
 
 ```cpp
-// C++14
+// With explicit template parameter
 using sorter = indirect_adapter<quick_sorter>;
 constexpr auto sort = sorter{};
 
-// C++17
+// With CTAD
 constexpr auto sort = indirect_adapter(quick_sort);
 ```
 

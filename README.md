@@ -11,7 +11,7 @@
 > since there are some applications in which they turn out to be best.*
 > — Donald Knuth, The Art Of Computer Programming, Volume 3
 
-**cpp-sort** is a generic C++14 header-only sorting library. It revolves
+**cpp-sort** is a generic C++17 header-only sorting library. It revolves
 around one main generic sorting interface and provides several small tools
 to pick and/or design sorting algorithms. Using its basic sorting features
 should be trivial enough:
@@ -121,7 +121,7 @@ page][benchmarks].
 ![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/MSVC%20Builds/badge.svg?branch=develop)
 ![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
 
-**cpp-sort** requires C++14 support, and should work with the following compilers:
+**cpp-sort** requires C++17 support, and should work with the following compilers:
 * g++-9 or more recent.
 * clang++-11 or more recent (with both libstdc++ and libc++).
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.

@@ -290,7 +290,7 @@ Generic agorithms are good, more generic algorithms are sometimes better. The cu
 
 C++20 ranges introduces the notion of ["proxy iterators"][proxy-iterators], which are basically iterators that can't yield a proper reference to the object they point to, but instead yield a proxy object acting as a reference. In order to handle such iterators, C++20 introduces the *customization point objects* [`std::ranges::iter_move`][std-iter-move] and [`std::ranges::iter_swap`][std-iter-swap] which should be used instead of `std::move(*it)` and `std::iter_swap(it1, it2)` in generic algorithms that aim to support proxy iterators.
 
-**cpp-sort** being a C++14 library, it can't rely on these CPOs and provides the utility functions [`utility::iter_move` and `utility::iter_swap`][utility-iter-move] to replace them. They are a bit cruder than their standard equivalents you have to import them into the current namespace and perform an unqualified call, *à la* `std::swap`.
+**cpp-sort** being a C++17 library, it can't rely on these CPOs and provides the utility functions [`utility::iter_move` and `utility::iter_swap`][utility-iter-move] to replace them. They are a bit cruder than their standard equivalents you have to import them into the current namespace and perform an unqualified call, *à la* `std::swap`.
 
 ```cpp
 template<typename ForwardIterator, typename Compare>

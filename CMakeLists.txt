@@ -37,7 +37,7 @@ target_include_directories(cpp-sort INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(cpp-sort INTERFACE cxx_std_14)
+target_compile_features(cpp-sort INTERFACE cxx_std_17)
 
 # MSVC won't work without a stricter standard compliance
 if (MSVC)

@@ -1,8 +1,8 @@
-This page describes the features that change in **cpp-sort** depending on the C++ version with which it is compiled (C++14 or later) as well as the support for miscellaneous compiler extensions; for a full changelog between actual releases, you can check the dedicated [releases page][cpp-sort-releases].
+This page describes the features that change in **cpp-sort** depending on the C++ version with which it is compiled (C++17 or later) as well as the support for miscellaneous compiler extensions; for a full changelog between actual releases, you can check the dedicated [releases page][cpp-sort-releases].
 
 ## C++14 features
 
-While **cpp-sort** theoretically requires a fully C++14-compliant compiler, a few standard features are either not available or deactivated in popular compilers and the library tries to take those into account if possible.
+While **cpp-sort** theoretically requires a fully C++17-compliant compiler, a few standard features are either not available or deactivated in some popular compilers and the library tries to take those into account when possible.
 
 **Performance improvements:**
 * Sized deallocation: this C++14 feature is not always available (Clang requires `-fsized-deallocation` for example) and standard allocation functions typically don't take advantage of it. However, if `__cpp_sized_deallocation` is defined and the global deallocations functions are replaced with overloads that take advantage of sized deallocation, then several sorters will explicitly try to take advantage of it.

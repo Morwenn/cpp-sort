@@ -52,10 +52,10 @@ Note however that most of these algorithms can be expensive. Using them before a
 Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
 
 ```cpp
-// C++14
+// With explicit template parameter
 auto inv = cppsort::indirect_adapter<decltype(cppsort::probe::inv)>{};
 
-// C++17
+// With CTAD
 auto inv = cppsort::indirect_adapter(cppsort::probe::inv);
 ```
 
