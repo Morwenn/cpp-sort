@@ -53,12 +53,6 @@ namespace detail
     using enable_if_t = typename enable_if_impl<B>::template type<T>;
 
     ////////////////////////////////////////////////////////////
-    // std::void_t from C++17
-
-    template<typename...>
-    using void_t = void;
-
-    ////////////////////////////////////////////////////////////
     // std::nonesuch from Library Fundamentals TS v2
 
     struct nonesuch
@@ -88,7 +82,7 @@ namespace detail
         template<typename...> class Op,
         typename... Args
     >
-    struct detector<Default, void_t<Op<Args...>>, Op, Args...>
+    struct detector<Default, std::void_t<Op<Args...>>, Op, Args...>
     {
         using value_t = std::true_type;
         using type = Op<Args...>;
@@ -154,12 +148,12 @@ namespace detail
     {};
 
     template<typename Func, typename... Args>
-    struct is_invocable_impl<void, void_t<invoke_result_t<Func, Args...>>, Func, Args...>:
+    struct is_invocable_impl<void, std::void_t<invoke_result_t<Func, Args...>>, Func, Args...>:
         std::true_type
     {};
 
     template<typename Ret, typename Func, typename... Args>
-    struct is_invocable_impl<Ret, void_t<invoke_result_t<Func, Args...>>, Func, Args...>:
+    struct is_invocable_impl<Ret, std::void_t<invoke_result_t<Func, Args...>>, Func, Args...>:
         std::is_convertible<invoke_result_t<Func, Args...>, Ret>
     {};
 

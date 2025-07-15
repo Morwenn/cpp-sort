@@ -281,7 +281,7 @@ namespace cppsort
         template<typename Sorter>
         struct bidir_at_best_tag<
             Sorter,
-            void_t<typename sorter_traits<Sorter>::iterator_category>
+            std::void_t<typename sorter_traits<Sorter>::iterator_category>
         >
         {
             using type = conditional_t<
