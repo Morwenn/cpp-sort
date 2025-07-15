@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2024 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PROJECTION_COMPARE_H_
@@ -191,7 +191,7 @@ namespace cppsort
     {
         template<typename Compare, typename Projection, typename T>
         struct is_probably_branchless_comparison<projection_compare<Compare, Projection>, T>:
-            cppsort::detail::conjunction<
+            std::conjunction<
                 is_probably_branchless_projection<Projection, T>,
                 is_probably_branchless_comparison<
                     Compare,

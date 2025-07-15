@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_STABLE_SORT_H_
@@ -116,7 +116,7 @@ namespace cppsort
         typename Sorter,
         typename Iterable,
         typename Func,
-        typename = detail::enable_if_t<detail::disjunction<
+        typename = detail::enable_if_t<std::disjunction<
             is_comparison_sorter<Sorter, Iterable, Func>,
             is_projection_sorter<Sorter, Iterable, Func>
         >::value>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_CASE_INSENSITIVE_LESS_H_
@@ -235,9 +235,9 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
-                            conjunction<
+                            std::conjunction<
                                 is_invocable_r<nope_type, caller, U, U>,
-                                negation<is_invocable_r<nope_type, caller, U, U, std::locale>>
+                                std::negation<is_invocable_r<nope_type, caller, U, U, std::locale>>
                             >::value,
                             decltype(case_insensitive_less(lhs, rhs, loc))
                         >
@@ -248,7 +248,7 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
-                            conjunction<
+                            std::conjunction<
                                 is_invocable_r<nope_type, caller, U, U>,
                                 is_invocable_r<nope_type, caller, U, U, std::locale>
                             >::value,
