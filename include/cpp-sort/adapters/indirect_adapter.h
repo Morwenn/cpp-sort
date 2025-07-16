@@ -51,21 +51,10 @@ namespace cppsort
                              RandomAccessIterator first, RandomAccessIterator last,
                              difference_type_t<RandomAccessIterator> size,
                              Compare compare, Projection projection)
-#ifdef __cpp_lib_uncaught_exceptions
         -> decltype(std::forward<Sorter>(sorter)(
             (RandomAccessIterator*)0, (RandomAccessIterator*)0,
             std::move(compare), utility::indirect{} | std::move(projection)
         ))
-#else
-        -> std::enable_if_t<
-                has_comparison_projection_sort_iterator<
-                    Sorter,
-                    RandomAccessIterator*,
-                    Compare,
-                    decltype(utility::indirect{} | std::move(projection))
-                >::value
-            >
-#endif
         {
             using utility::iter_move;
 
@@ -77,17 +66,9 @@ namespace cppsort
                 iterators.emplace_back(it);
             }
 
-#ifndef __cpp_lib_uncaught_exceptions
-            // Sort the iterators on pointed values
-            std::forward<Sorter>(sorter)(
-                iterators.begin(), iterators.end(),
-                std::move(compare),
-                utility::indirect{} | std::move(projection)
-            );
-#else
             // Work around the sorters that return void
             auto exit_function = make_scope_success([&] {
-#endif
+
                 ////////////////////////////////////////////////////////////
                 // Move the values according the iterator's positions
 
@@ -120,7 +101,6 @@ namespace cppsort
                     } while (start != last && iterators[start - first] == last);
 
                 }
-#ifdef __cpp_lib_uncaught_exceptions
             });
 
             if (size < 2) {
@@ -132,7 +112,6 @@ namespace cppsort
                 std::move(compare),
                 utility::indirect{} | std::move(projection)
             );
-#endif
         }
 
         template<typename Sorter>

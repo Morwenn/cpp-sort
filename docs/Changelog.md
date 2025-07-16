@@ -36,10 +36,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     There is no specific check for this feature: the sorter adpater constructors have been written in such a way that implicit deduction guides work out-of-the-box.
 
-* `indirect_adapter` and `out_of_place_adapter` return the result returned by the *adapter sorter*.
-
-    This feature is made available through the check `__cpp_lib_uncaught_exceptions`.
-
 * New [`function_constant`][cpp-sort-function-objects] utility to micro-optimize function pointers and class member pointers.
 
     ```cpp
