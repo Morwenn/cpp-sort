@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -18,6 +18,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <iterator>
+#include <numeric>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
@@ -91,19 +92,6 @@ namespace detail
         return r;
     }
 
-    template<typename Integral>
-    auto gcd(Integral x, Integral y)
-        -> Integral
-    {
-        do
-        {
-            Integral t = x % y;
-            x = y;
-            y = t;
-        } while (y);
-        return x;
-    }
-
     template<typename RandomAccessIterator>
     auto rotate_gcd(RandomAccessIterator first, RandomAccessIterator middle,
                     RandomAccessIterator last)
@@ -119,7 +107,7 @@ namespace detail
             detail::swap_ranges_inner(first, middle, middle);
             return middle;
         }
-        const difference_type g = gcd(m1, m2);
+        const difference_type g = std::gcd(m1, m2);
         for (RandomAccessIterator p = first + g; p != first;)
         {
             auto t  = iter_move(--p);
