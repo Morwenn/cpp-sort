@@ -200,7 +200,7 @@ This header also provides additional function objects implementing basic unary o
 
 All of those function objects inherit from `projection_base` and are [*transparent function objects*][transparent-func].
 
-Since C++17, the following utility is also available when some level of micro-optimization is needed:
+The following utility is also available when some level of micro-optimization is needed:
 
 ```cpp
 template<auto Function>
@@ -222,8 +222,6 @@ struct function_constant
 This utility is modeled after [`std::integral_constant`][std-integral-constant], but is different in that it takes its parameter as `template<auto>`, and `operator()` calls the wrapped value instead of returning it. The goal is to store function pointers and pointer to members "for free": they are only "stored" as a template parameter, which allows `function_constant` to be an empty class. This has two main advantages: `function_constant` can benefit from [*Empty Base Optimization*][ebo] since it weighs virtually nothing, and it won't need to be pushed on the stack when passed to a function, while the wrapped pointer would have been if passed unwrapped. Unless you are micro-optimizing some specific piece of code, you shouldn't need this class.
 
 `is_probably_branchless_comparison` and `is_probably_branchless_projection` will correspond to `std::true_type` if the wrapped `Function` also gives `std::true_type`. Moreover, you can even specialize these traits for specific `function_constant` instanciations if you need even more performance.
-
-*Warning: `function_constant` is only available since C++17.*
 
 *New in version 1.7.0:* `projection_base` and chainable projections.
 

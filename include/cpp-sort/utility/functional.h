@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_FUNCTIONAL_H_
@@ -380,7 +380,6 @@ namespace utility
     ////////////////////////////////////////////////////////////
     // Function constant (micro-optimization)
 
-#ifdef __cpp_nontype_template_parameter_auto
     template<auto Function>
     struct function_constant
     {
@@ -415,7 +414,6 @@ namespace utility
             typename function_constant<Function>::value_type, T
         >
     {};
-#endif
 }}
 
 #endif // CPPSORT_UTILITY_FUNCTIONAL_H_
