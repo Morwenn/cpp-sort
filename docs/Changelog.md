@@ -36,11 +36,6 @@ When compiled with C++17, **cpp-sort** might gain a few additional features depe
 
     There is no specific feature macro available to test this, it starts working when `std::begin` and `std::end` are `constexpr`.
 
-**Size improvements:**
-* When used in different translation units, [`smooth_sorter`][smooth-sorter] might produce fewer duplicates and consume less binary size in C++17.
-
-    This optimization is available when the feature-testing macro `__cpp_inline_variables` is available.
-
 ## C++20 features
 
 When compiled with C++20, **cpp-sort** might gain a few additional features depending on the level of C++20 support provided by the compiler. The availability of those features depends on the presence of corresponding [feature-testing macros][feature-test-macros] when possible, even though some checks are more granular. Don't hesitate to open an issue if your compiler and standard library supports one of those features but it doesn't seem to work in **cpp-sort**.
@@ -78,7 +73,6 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [feature-test-macros]: https://wg21.link/SD6
   [pdq-sorter]: Sorters.md#pdq_sorter
   [ska-sorter]: Sorters.md#ska_sorter
-  [smooth-sorter]: Sorters.md#smooth-sorter_sorter
   [sorter-facade]: Sorter-facade.md
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity

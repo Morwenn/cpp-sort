@@ -28,18 +28,6 @@
 #endif
 
 ////////////////////////////////////////////////////////////
-// Check for C++17 features
-
-// Make sure that there is a single variable before C++17,
-// default to static in C++14 to avoid ODR issues
-
-#if defined(__cpp_inline_variables)
-#   define CPPSORT_INLINE_VARIABLE inline
-#else
-#   define CPPSORT_INLINE_VARIABLE static
-#endif
-
-////////////////////////////////////////////////////////////
 // Check for C++20 features
 
 // There is no feature-test macro for std::identity that can
