@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPREAD_SORTER_STRING_SPREAD_SORTER_H_
@@ -12,6 +12,7 @@
 #include <functional>
 #include <iterator>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/sorter_facade.h>
@@ -21,10 +22,6 @@
 #include "../../detail/iterator_traits.h"
 #include "../../detail/spreadsort/string_sort.h"
 #include "../../detail/type_traits.h"
-
-#if __cplusplus > 201402L && __has_include(<string_view>)
-#   include <string_view>
-#endif
 
 namespace cppsort
 {
@@ -46,9 +43,7 @@ namespace cppsort
                             Projection projection={}) const
                 -> detail::enable_if_t<
                     std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
-#if __cplusplus > 201402L && __has_include(<string_view>)
                     || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
-#endif
                 >
             {
                 static_assert(
@@ -72,9 +67,7 @@ namespace cppsort
                             Projection projection={}) const
                 -> detail::enable_if_t<(
                         std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
-#if __cplusplus > 201402L && __has_include(<string_view>)
                         || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
-#endif
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
@@ -102,9 +95,7 @@ namespace cppsort
                             std::greater<> compare, Projection projection={}) const
                 -> detail::enable_if_t<
                     std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
-#if __cplusplus > 201402L && __has_include(<string_view>)
                     || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
-#endif
                 >
             {
                 static_assert(
@@ -129,9 +120,7 @@ namespace cppsort
                             std::greater<> compare, Projection projection={}) const
                 -> detail::enable_if_t<(
                         std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
-#if __cplusplus > 201402L && __has_include(<string_view>)
                         || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
-#endif
                     ) && (sizeof(wchar_t) == 2)
                 >
             {

@@ -12,10 +12,6 @@ While **cpp-sort** theoretically requires a fully C++17-compliant compiler, a fe
 When compiled with C++17, **cpp-sort** might gain a few additional features depending on the level of C++17 support provided by the compiler. The availability of most of the features depends on the presence of corresponding [feature-testing macros][feature-test-macros]. The support for feature-testing macros being optional in C++17, it is possible that some of the features listed below aren't available even though the compiler is implements them. If it is the case and it is a problem for you, don't hesitate to open an issue so that we can explicitly support the given compiler.
 
 **New features:**
-* `string_spread_sort` now accepts [`std::string_view`][std-string-view] and sometimes `std::wstring_view`.
-
-    This feature is made available through the check `__cplusplus > 201402L && __has_include(<string_view>)`.
-
 * Sorter adapters have been updated to take advantage of deduction guides:
 
     ```cpp
@@ -100,6 +96,5 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
-  [std-string-view]: https://en.cppreference.com/w/cpp/string/basic_string_view
   [std-swap]: https://en.cppreference.com/w/cpp/algorithm/swap
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap

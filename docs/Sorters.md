@@ -593,7 +593,7 @@ It comes into three main flavours (available individually if needed):
 
 * `integer_spread_sorter` works with any type satisfying the trait `std::is_integral`.
 * `float_spread_sorter` works with any type satisfying the trait `std::numeric_limits::is_iec559` whose size is the same as `std::uint32_t` or `std::uin64_t`.
-* `string_spread_sorter` works with `std::string` and `std::wstring` (if `wchar_t` is 2 bytes). This sorter also supports reverse sorting with `std::greater<>` and `std::ranges::greater`. In C++17 it also works with `std::string_view` and `std::wstring_view` (if `wchar_t` is 2 bytes).
+* `string_spread_sorter` works with `std::string` and `std::string_view`, as well as `std::wstring` and `std::wstring_view` when `wchar_t` is 2 bytes. This sorter also supports reverse sorting with `std::greater<>` and `std::ranges::greater`.
 
 These sorters accept projections as long as their simplest form can handle the result of the projection. The three of them are aggregated into one main sorter the following way:
 
