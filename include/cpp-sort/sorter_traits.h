@@ -70,13 +70,13 @@ namespace cppsort
     {
         template<typename Sorter, typename Iterable>
         struct has_sort:
-            is_invocable<Sorter, Iterable&>
+            std::is_invocable<Sorter, Iterable&>
         {};
 
         template<typename Sorter, typename Iterable, typename Compare>
         struct has_comparison_sort:
             std::conjunction<
-                is_invocable<Sorter, Iterable&, Compare>,
+                std::is_invocable<Sorter, Iterable&, Compare>,
                 is_projection<utility::identity, Iterable, Compare>
             >
         {};
@@ -84,7 +84,7 @@ namespace cppsort
         template<typename Sorter, typename Iterable, typename Projection>
         struct has_projection_sort:
             std::conjunction<
-                is_invocable<Sorter, Iterable&, Projection>,
+                std::is_invocable<Sorter, Iterable&, Projection>,
                 is_projection<Projection, Iterable>
             >
         {};
@@ -92,20 +92,20 @@ namespace cppsort
         template<typename Sorter, typename Iterable, typename Compare, typename Projection>
         struct has_comparison_projection_sort:
             std::conjunction<
-                is_invocable<Sorter, Iterable&, Compare, Projection>,
+                std::is_invocable<Sorter, Iterable&, Compare, Projection>,
                 is_projection<Projection, Iterable, Compare>
             >
         {};
 
         template<typename Sorter, typename Iterator>
         struct has_sort_iterator:
-            is_invocable<Sorter, Iterator, Iterator>
+            std::is_invocable<Sorter, Iterator, Iterator>
         {};
 
         template<typename Sorter, typename Iterator, typename Compare>
         struct has_comparison_sort_iterator:
             std::conjunction<
-                is_invocable<Sorter, Iterator, Iterator, Compare>,
+                std::is_invocable<Sorter, Iterator, Iterator, Compare>,
                 is_projection_iterator<utility::identity, Iterator, Compare>
             >
         {};
@@ -113,7 +113,7 @@ namespace cppsort
         template<typename Sorter, typename Iterator, typename Projection>
         struct has_projection_sort_iterator:
             std::conjunction<
-                is_invocable<Sorter, Iterator, Iterator, Projection>,
+                std::is_invocable<Sorter, Iterator, Iterator, Projection>,
                 is_projection_iterator<Projection, Iterator>
             >
         {};
@@ -121,7 +121,7 @@ namespace cppsort
         template<typename Sorter, typename Iterator, typename Compare, typename Projection>
         struct has_comparison_projection_sort_iterator:
             std::conjunction<
-                is_invocable<Sorter, Iterator, Iterator, Compare, Projection>,
+                std::is_invocable<Sorter, Iterator, Iterator, Compare, Projection>,
                 is_projection_iterator<Projection, Iterator, Compare>
             >
         {};

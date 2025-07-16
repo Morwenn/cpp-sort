@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_HYBRID_ADAPTER_H_
@@ -100,7 +100,7 @@ namespace cppsort
             template<typename... Args>
             static constexpr auto _detail_stability(choice<Ind>, Args&&... args)
                 -> detail::enable_if_t<
-                    is_invocable_v<Sorter, Args...>,
+                    std::is_invocable_v<Sorter, Args...>,
                     is_stable<Sorter(Args...)>
                 >;
         };

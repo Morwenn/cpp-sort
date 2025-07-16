@@ -98,63 +98,6 @@ namespace detail
     using detected_t = typename detector<nonesuch, void, Op, Args...>::type;
 
     ////////////////////////////////////////////////////////////
-    // std::is_invocable from C++17
-
-#ifdef __cpp_lib_is_invocable
-
-    template<typename Func, typename... Args>
-    using is_invocable = std::is_invocable<Func, Args...>;
-
-    template<typename Func, typename... Args>
-    constexpr bool is_invocable_v = std::is_invocable_v<Func, Args...>;
-
-    template<typename Ret, typename Func, typename... Args>
-    using is_invocable_r = std::is_invocable_r<Ret, Func, Args...>;
-
-    template<typename Ret, typename Func, typename... Args>
-    constexpr bool is_invocable_r_v = std::is_invocable_r_v<Ret, Func, Args...>;
-
-#else
-
-    template<typename Ret, typename, typename Func, typename... Args>
-    struct is_invocable_impl:
-        std::false_type
-    {};
-
-    template<typename Func, typename... Args>
-    struct is_invocable_impl<void, std::void_t<std::invoke_result_t<Func, Args...>>, Func, Args...>:
-        std::true_type
-    {};
-
-    template<typename Ret, typename Func, typename... Args>
-    struct is_invocable_impl<Ret, std::void_t<std::invoke_result_t<Func, Args...>>, Func, Args...>:
-        std::is_convertible<std::invoke_result_t<Func, Args...>, Ret>
-    {};
-
-    template<typename Ret, typename T, std::size_t N, typename... Args>
-    struct is_invocable_impl<Ret, void, T[N], Args...>:
-        std::false_type
-    {};
-
-    template<typename Func, typename... Args>
-    struct is_invocable:
-        is_invocable_impl<void, void, Func, Args...>
-    {};
-
-    template<typename Func, typename... Args>
-    constexpr bool is_invocable_v = is_invocable<Func, Args...>::value;
-
-    template<typename Ret, typename Func, typename... Args>
-    struct is_invocable_r:
-        is_invocable_impl<Ret, void, Func, Args...>
-    {};
-
-    template<typename Ret, typename Func, typename... Args>
-    constexpr bool is_invocable_r_v = is_invocable_r<Ret, Func, Args...>::value;
-
-#endif
-
-    ////////////////////////////////////////////////////////////
     // std::remove_cvref from C++20
 
     template<typename T>

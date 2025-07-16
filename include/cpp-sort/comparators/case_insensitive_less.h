@@ -153,7 +153,7 @@ namespace cppsort
             auto case_insensitive_less(const T& lhs, const T& rhs)
                 -> nope_type;
 
-            // It makes is_invocable easier to work with
+            // It makes std::is_invocable easier to work with
             struct caller
             {
                 template<typename T>
@@ -185,7 +185,7 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
-                            not is_invocable_r_v<nope_type, caller, U, U, std::locale>,
+                            not std::is_invocable_r_v<nope_type, caller, U, U, std::locale>,
                             decltype(case_insensitive_less(lhs, rhs, loc))
                         >
                     {
@@ -195,7 +195,7 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
-                            is_invocable_r_v<nope_type, caller, U, U, std::locale>,
+                            std::is_invocable_r_v<nope_type, caller, U, U, std::locale>,
                             bool
                         >
                     {
@@ -225,7 +225,7 @@ namespace cppsort
                     template<typename U=T>
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
-                            not is_invocable_r_v<nope_type, caller, U, U>,
+                            not std::is_invocable_r_v<nope_type, caller, U, U>,
                             decltype(case_insensitive_less(lhs, rhs))
                         >
                     {
@@ -236,8 +236,8 @@ namespace cppsort
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
                             std::conjunction<
-                                is_invocable_r<nope_type, caller, U, U>,
-                                std::negation<is_invocable_r<nope_type, caller, U, U, std::locale>>
+                                std::is_invocable_r<nope_type, caller, U, U>,
+                                std::negation<std::is_invocable_r<nope_type, caller, U, U, std::locale>>
                             >::value,
                             decltype(case_insensitive_less(lhs, rhs, loc))
                         >
@@ -249,8 +249,8 @@ namespace cppsort
                     auto operator()(const T& lhs, const T& rhs) const
                         -> detail::enable_if_t<
                             std::conjunction<
-                                is_invocable_r<nope_type, caller, U, U>,
-                                is_invocable_r<nope_type, caller, U, U, std::locale>
+                                std::is_invocable_r<nope_type, caller, U, U>,
+                                std::is_invocable_r<nope_type, caller, U, U, std::locale>
                             >::value,
                             bool
                         >
