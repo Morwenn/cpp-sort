@@ -17,17 +17,6 @@
 #endif
 
 ////////////////////////////////////////////////////////////
-// Check for __has_* macros
-
-#ifndef __has_include
-#   define __has_include(x) 0
-#endif
-
-#ifndef __has_cpp_attribute
-#   define __has_cpp_attribute(x) 0
-#endif
-
-////////////////////////////////////////////////////////////
 // Check for C++20 features
 
 // There is no feature-test macro for std::identity that can
