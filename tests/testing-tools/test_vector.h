@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_TEST_VECTOR_H_
@@ -10,10 +10,10 @@
 ////////////////////////////////////////////////////////////
 #include <cstddef>
 #include <iterator>
+#include <memory>
 #include <new>
 #include <stdexcept>
 #include <utility>
-#include <cpp-sort/detail/memory.h>
 
 ////////////////////////////////////////////////////////////
 // Vector with a tiny size
@@ -273,7 +273,7 @@ class test_vector
         ~test_vector()
         {
             // Destroy the constructed elements
-            cppsort::detail::destroy(memory_, end_);
+            std::destroy(memory_, end_);
             // Free the allocated memory
             ::operator delete(memory_);
         }
@@ -330,7 +330,7 @@ class test_vector
             -> void
         {
             // Destroy the constructed elements
-            cppsort::detail::destroy(memory_, end_);
+            std::destroy(memory_, end_);
             // Ensure the new size is zero
             end_ = memory_;
         }

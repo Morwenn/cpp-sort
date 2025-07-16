@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Morwenn
+ * Copyright (c) 2020-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FIXED_SIZE_LIST_H_
@@ -92,7 +92,7 @@ namespace detail
     auto destroy_node_contents(NodeType* node)
         -> void
     {
-        detail::destroy_at(&(node->*Ptr));
+        std::destroy_at(&(node->*Ptr));
     }
 
     ////////////////////////////////////////////////////////////
@@ -170,10 +170,7 @@ namespace detail
             ~fixed_size_list_node_pool()
             {
                 // Destroy the nodes
-                node_type* ptr = buffer_.get();
-                for (std::ptrdiff_t n = 0 ; n < capacity_ ; ++n, ++ptr) {
-                    detail::destroy_at(ptr);
-                }
+                std::destroy_n(buffer_.get(), capacity_);
             }
 
             ////////////////////////////////////////////////////////////
