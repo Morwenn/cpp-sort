@@ -959,7 +959,7 @@ namespace detail
 
     template<>
     struct is_ska_sortable<float>:
-        std::integral_constant<bool,
+        std::bool_constant<
             sizeof(float) == sizeof(std::uint32_t) &&
             std::numeric_limits<float>::is_iec559
         >
@@ -967,7 +967,7 @@ namespace detail
 
     template<>
     struct is_ska_sortable<double>:
-        std::integral_constant<bool,
+        std::bool_constant<
             sizeof(double) == sizeof(std::uint64_t) &&
             std::numeric_limits<double>::is_iec559
         >

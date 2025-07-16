@@ -368,7 +368,7 @@ While type-specific sorters are, by their very nature, unable to generically han
 
 ## Stability
 
-A sorting algorithm is said to be [stable][stability] if it preserves the relative order of *equivalent elements*. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a boolean specialization of `std::integer_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
+A sorting algorithm is said to be [stable][stability] if it preserves the relative order of *equivalent elements*. **cpp-sort** documents the stability of every sorter by giving them an `is_always_stable` type aliasing a specialization of `std::bool_constant`. This information should be accessed via [`sorter_traits`][sorter-traits] or via the more specific [`is_always_stable`][is-always-stable] trait. The stability of a sorter is always either [`std::true_type` or `std::false_type`][std-integral-constant].
 
 ```cpp
 using stability = cppsort::is_always_stable<cppsort::tim_sorter>;

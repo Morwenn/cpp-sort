@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CHECKERS_H_
@@ -45,8 +45,7 @@ namespace detail
     template<typename... Sorters>
     struct check_is_always_stable_impl<true, Sorters...>
     {
-        using is_always_stable = std::integral_constant<
-            bool,
+        using is_always_stable = std::bool_constant<
             all(typename sorter_traits<Sorters>::is_always_stable{}()...)
         >;
     };

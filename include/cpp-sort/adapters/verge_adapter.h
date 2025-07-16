@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_VERGE_ADAPTER_H_
@@ -92,7 +92,7 @@ namespace cppsort
             // Sorter traits
 
             using iterator_category = typename bidir_at_best_tag<Sorter>::type;
-            using is_always_stable = std::integral_constant<bool, Stable>;
+            using is_always_stable = std::bool_constant<Stable>;
         };
     }
 
