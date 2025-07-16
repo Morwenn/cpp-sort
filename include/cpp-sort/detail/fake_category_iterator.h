@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Morwenn
+ * Copyright (c) 2024-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FAKE_CATEGORY_ITERATOR_H_
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
-#include "attributes.h"
 #include "iterator_traits.h"
 #include "type_traits.h"
 
@@ -59,7 +58,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto base() const
                 -> iterator_type
             {
@@ -69,14 +68,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator*() const
                 -> decltype(*base())
             {
                 return *_it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator->() const
                 -> pointer
             {
@@ -133,7 +132,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Elements access operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
             {
@@ -143,14 +142,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Comparison operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator==(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> bool
             {
                 return lhs.base() == rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator!=(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> bool
             {
@@ -160,28 +159,28 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Relational operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator<(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> bool
             {
                 return lhs.base() < rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator<=(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> bool
             {
                 return lhs.base() <= rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator>(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> bool
             {
                 return lhs.base() > rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator>=(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> bool
             {
@@ -191,7 +190,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Arithmetic operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator+(fake_category_iterator it, difference_type size)
                 -> fake_category_iterator
             {
@@ -199,7 +198,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator+(difference_type size, fake_category_iterator it)
                 -> fake_category_iterator
             {
@@ -207,7 +206,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator-(fake_category_iterator it, difference_type size)
                 -> fake_category_iterator
             {
@@ -215,7 +214,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator-(const fake_category_iterator& lhs, const fake_category_iterator& rhs)
                 -> difference_type
             {
@@ -232,7 +231,7 @@ namespace detail
                 iter_swap(lhs.base(), rhs.base());
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto iter_move(fake_category_iterator it)
                 -> decltype(auto)
             {

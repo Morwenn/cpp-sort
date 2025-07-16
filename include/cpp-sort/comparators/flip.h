@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_FLIP_H_
@@ -12,7 +12,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
-#include "../detail/attributes.h"
 #include "../detail/raw_checkers.h"
 
 namespace cppsort
@@ -86,7 +85,7 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Accessor
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             constexpr auto base() const
                 -> F
             {

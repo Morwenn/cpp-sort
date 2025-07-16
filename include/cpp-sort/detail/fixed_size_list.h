@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
-#include "attributes.h"
 #include "config.h"
 #include "memory.h"
 
@@ -176,7 +175,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Node providing/retrieval
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto next_free_node() noexcept
                 -> node_type*
             {
@@ -282,7 +281,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             constexpr auto base() const noexcept
                 -> node_type*
             {
@@ -292,14 +291,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator*() const noexcept
                 -> reference
             {
                 return static_cast<node_type*>(ptr_)->value;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator->() const noexcept
                 -> pointer
             {
@@ -342,14 +341,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Comparison operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend constexpr auto operator==(const fixed_size_list_iterator& lhs, const fixed_size_list_iterator& rhs) noexcept
                 -> bool
             {
                 return lhs.base() == rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend constexpr auto operator!=(const fixed_size_list_iterator& lhs, const fixed_size_list_iterator& rhs) noexcept
                 -> bool
             {
@@ -488,21 +487,21 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto front() noexcept
                 -> reference
             {
                 return static_cast<node_type*>(sentinel_node_.next)->value;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto back() noexcept
                 -> reference
             {
                 return static_cast<node_type*>(sentinel_node_.prev)->value;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto node_pool() noexcept
                 -> fixed_size_list_node_pool<node_type>&
             {
@@ -512,14 +511,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Iterators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto begin() noexcept
                 -> iterator
             {
                 return iterator(sentinel_node_.next);
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto end() noexcept
                 -> iterator
             {
@@ -529,7 +528,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Capacity
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto is_empty() const noexcept
                 -> bool
             {
@@ -589,7 +588,7 @@ namespace detail
                 insert_node_(sentinel_node_.next, std::forward<Callable>(setter));
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto extract(list_node_base* node) noexcept
                 -> node_type*
             {
@@ -600,21 +599,21 @@ namespace detail
                 return static_cast<node_type*>(node);
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto extract(iterator pos) noexcept
                 -> node_type*
             {
                 return extract(pos.base());
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto extract_back() noexcept
                 -> node_type*
             {
                 return extract(sentinel_node_.prev);
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto extract_front() noexcept
                 -> node_type*
             {

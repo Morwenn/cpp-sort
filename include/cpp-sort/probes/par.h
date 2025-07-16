@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_PAR_H_
@@ -11,7 +11,7 @@
 #include <cpp-sort/probes/dis.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/attributes.h"
+#include "../detail/config.h"
 
 namespace cppsort
 {

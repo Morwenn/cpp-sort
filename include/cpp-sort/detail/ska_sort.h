@@ -23,7 +23,6 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
-#include "attributes.h"
 #include "iterator_traits.h" // projected_t
 #include "memcpy_cast.h"
 #include "partition.h"
@@ -170,11 +169,11 @@ namespace detail
             case 3:
                 to_call(begin);
                 ++begin;
-                CPPSORT_ATTRIBUTE_FALLTHROUGH;
+                [[fallthrough]];
             case 2:
                 to_call(begin);
                 ++begin;
-                CPPSORT_ATTRIBUTE_FALLTHROUGH;
+                [[fallthrough]];
             case 1:
                 to_call(begin);
         }

@@ -154,9 +154,8 @@
 ////////////////////////////////////////////////////////////
 // CPPSORT_DEPRECATED
 
-// [[deprecated]] is available since C++14, hence why this
-// macro is not in attributes.h: we hide it behind a macro
-// to make sure that it can be silenced
+// We hide [[deprecated]] behind a macro to make sure that
+// it can be silenced
 
 #ifndef CPPSORT_DEPRECATED
 #   ifndef CPPSORT_DISABLE_DEPRECATION_WARNINGS

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BITOPS_H_
@@ -11,7 +11,6 @@
 #include <cstddef>
 #include <limits>
 #include <type_traits>
-#include "attributes.h"
 #include "config.h"
 #include "type_traits.h"
 
@@ -21,7 +20,7 @@ namespace detail
 {
     // Cast signed value to unsigned one
     template<typename Integer>
-    CPPSORT_ATTRIBUTE_NODISCARD
+    [[nodiscard]]
     constexpr auto as_unsigned(Integer value)
         -> std::make_unsigned_t<Integer>
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FIXED_SORTING_NETWORK_SORTER_H_
@@ -89,7 +89,6 @@ namespace cppsort
 #include <functional>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/sorting_networks.h>
-#include "../detail/attributes.h"
 #include "../detail/swap_if.h"
 #include "../detail/type_traits.h"
 

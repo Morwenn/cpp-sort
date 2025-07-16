@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_
@@ -11,7 +11,6 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
-#include "attributes.h"
 #include "iterator_traits.h"
 
 namespace cppsort
@@ -80,14 +79,14 @@ namespace detail
             return *this;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto get()
             -> decltype(*it)
         {
             return *it;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto get() const
             -> decltype(*it)
         {
@@ -134,14 +133,14 @@ namespace detail
             return *this;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto get()
             -> Value&
         {
             return value;
         }
 
-        CPPSORT_ATTRIBUTE_NODISCARD
+        [[nodiscard]]
         auto get() const
             -> const Value&
         {
@@ -182,7 +181,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Members access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto base() const
                 -> iterator_type
             {
@@ -192,14 +191,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Element access
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator*() const
                 -> decltype(*base())
             {
                 return *_it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator->() const
                 -> pointer
             {
@@ -240,7 +239,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Elements access operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             auto operator[](difference_type pos) const
                 -> decltype(base()[pos])
             {
@@ -250,14 +249,14 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Comparison operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator==(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() == rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator!=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
@@ -267,28 +266,28 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Relational operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator<(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() < rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator<=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() <= rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator>(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
                 return lhs.base() > rhs.base();
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator>=(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> bool
             {
@@ -298,7 +297,7 @@ namespace detail
             ////////////////////////////////////////////////////////////
             // Arithmetic operators
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator+(associate_iterator it, difference_type size)
                 -> associate_iterator
             {
@@ -306,7 +305,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator+(difference_type size, associate_iterator it)
                 -> associate_iterator
             {
@@ -314,7 +313,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator-(associate_iterator it, difference_type size)
                 -> associate_iterator
             {
@@ -322,7 +321,7 @@ namespace detail
                 return it;
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto operator-(const associate_iterator& lhs, const associate_iterator& rhs)
                 -> difference_type
             {
@@ -339,7 +338,7 @@ namespace detail
                 iter_swap(lhs.base(), rhs.base());
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             friend auto iter_move(associate_iterator it)
                 -> associated_value<
                     value_type_t<typename value_type_t<Iterator>::iterator_type>,
@@ -361,7 +360,7 @@ namespace detail
     // Construction function
 
     template<typename Iterator>
-    CPPSORT_ATTRIBUTE_NODISCARD
+    [[nodiscard]]
     auto make_associate_iterator(Iterator it)
         -> associate_iterator<Iterator>
     {

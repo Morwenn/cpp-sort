@@ -13,7 +13,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include "../detail/attributes.h"
 #include "../detail/config.h"
 #include "../detail/raw_checkers.h"
 
@@ -102,14 +101,14 @@ namespace cppsort
             ////////////////////////////////////////////////////////////
             // Accessors
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             constexpr auto comparison() const
                 -> Compare
             {
                 return std::get<0>(data);
             }
 
-            CPPSORT_ATTRIBUTE_NODISCARD
+            [[nodiscard]]
             constexpr auto projection() const
                 -> Projection
             {
