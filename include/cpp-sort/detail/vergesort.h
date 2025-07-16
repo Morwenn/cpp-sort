@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <iterator>
 #include <list>
-#include <type_traits>
 #include <utility>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/utility/as_function.h>
@@ -244,7 +243,7 @@ namespace verge
                 ++next;
 
                 difference_type run_size = 2;
-                if (Stable) {
+                if constexpr (Stable) {
                     // Find a strictly descending run
                     while (next != last) {
                         if (not comp(proj(*next), proj(*current))) break;
@@ -385,7 +384,7 @@ namespace verge
             if (comp(proj(*next), proj(*current))) {
                 // Found a descending run, scan to the left and to the right
                 // until the limits of the run are reached
-                if (Stable) {
+                if constexpr (Stable) {
                     // Find a strictly descending run to avoid breaking
                     // the stability of the algorithm with reverse()
                     do {
@@ -498,18 +497,14 @@ namespace verge
     ////////////////////////////////////////////////////////////
     // Vergesort main interface
 
-    template<typename Sorter>
-    auto get_maybe_stable(std::true_type, Sorter&& sorter)
-        -> cppsort::stable_t<Sorter>
+    template<bool Stable, typename Sorter>
+    constexpr auto get_maybe_stable(Sorter&& sorter)
     {
-        return cppsort::stable_t<Sorter>(std::move(sorter));
-    }
-
-    template<typename Sorter>
-    auto get_maybe_stable(std::false_type, Sorter&& sorter)
-        -> Sorter
-    {
-        return std::move(sorter);
+        if constexpr (Stable) {
+            return cppsort::stable_t<Sorter>(std::move(sorter));
+        } else {
+            return std::move(sorter);
+        }
     }
 
     template<
@@ -529,7 +524,7 @@ namespace verge
         verge::sort<Stable>(iterator_category_t<BidirectionalIterator>{},
                             std::move(first), std::move(last), size,
                             std::move(compare), std::move(projection),
-                            get_maybe_stable(std::bool_constant<Stable>{}, std::move(fallback)));
+                            get_maybe_stable<Stable>(std::move(fallback)));
     }
 }}}
 

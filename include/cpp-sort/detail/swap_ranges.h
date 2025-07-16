@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SWAP_RANGES_H_
@@ -9,14 +9,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <algorithm>
-#include <cstddef>
 #include <iterator>
-#include <type_traits>
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 #include "iterator_traits.h"
 #include "move.h"
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -73,39 +70,11 @@ namespace detail
         return swap_ranges_overlap(first1, last1, first2);
     }
 
-#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
     template<typename RandomAccessIterator>
     auto swap_ranges_inner_impl(std::random_access_iterator_tag,
                                 RandomAccessIterator first1, RandomAccessIterator last1,
                                 RandomAccessIterator first2)
-        -> detail::enable_if_t<
-            not detail::has_iter_move_v<RandomAccessIterator>,
-            RandomAccessIterator
-        >
-    {
-        CPPSORT_ASSERT(first1 <= last1);
-
-        auto last2 = first2 + (last1 - first1);
-        (void)last2;
-        CPPSORT_ASSERT(not (first2 >= first1 && first2 < last1));
-        CPPSORT_ASSERT(not (last2 > first1 && last2 <= last1));
-
-        return std::_Swap_ranges_unchecked(first1, last1, first2);
-    }
-#endif
-
-    template<typename RandomAccessIterator>
-    auto swap_ranges_inner_impl(std::random_access_iterator_tag,
-                                RandomAccessIterator first1, RandomAccessIterator last1,
-                                RandomAccessIterator first2)
-#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        -> detail::enable_if_t<
-            detail::has_iter_move_v<RandomAccessIterator>,
-            RandomAccessIterator
-        >
-#else
         -> RandomAccessIterator
-#endif
     {
         CPPSORT_ASSERT(first1 <= last1);
 
@@ -114,6 +83,11 @@ namespace detail
         CPPSORT_ASSERT(not (first2 >= first1 && first2 < last1));
         CPPSORT_ASSERT(not (last2 > first1 && last2 <= last1));
 
+#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
+        if constexpr (not detail::has_iter_move_v<RandomAccessIterator>) {
+            return std::_Swap_ranges_unchecked(first1, last1, first2);
+        }
+#endif
         return detail::swap_ranges_overlap(first1, last1, first2);
     }
 

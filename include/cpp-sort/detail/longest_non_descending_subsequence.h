@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LONGEST_NON_DESCENDING_SUBSEQUENCE_H_
@@ -52,7 +52,7 @@ namespace detail
         // we can compute it as-we-go when it is not known in order to avoid
         // making two passes over the sequence - when the sequence is made
         // of random-access iterators, we only compute it once
-        if (RecomputeSize && is_random_access) {
+        if constexpr (RecomputeSize && is_random_access) {
             size = std::distance(first, last);
         }
 
@@ -77,7 +77,7 @@ namespace detail
             }
             ++first;
 
-            if (RecomputeSize && not is_random_access) {
+            if constexpr (RecomputeSize && not is_random_access) {
                 // Compute the size as-we-go if iterators are not random-access
                 ++size;
             }

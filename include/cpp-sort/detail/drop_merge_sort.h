@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -74,12 +74,14 @@ namespace detail
         do {
             if (begin != write && comp(proj(*read), proj(*std::prev(write)))) {
 
-                if (double_comparison && num_dropped_in_row == 0 && write != std::next(begin) &&
-                    not comp(proj(*read), proj(*std::prev(write, 2)))) {
-                    dropped.push_back(iter_move(std::prev(write)));
-                    *std::prev(write) = iter_move(read);
-                    ++read;
-                    continue;
+                if constexpr (double_comparison) {
+                    if (num_dropped_in_row == 0 && write != std::next(begin) &&
+                        not comp(proj(*read), proj(*std::prev(write, 2)))) {
+                        dropped.push_back(iter_move(std::prev(write)));
+                        *std::prev(write) = iter_move(read);
+                        ++read;
+                        continue;
+                    }
                 }
 
                 if (num_dropped_in_row < recency) {
@@ -89,7 +91,7 @@ namespace detail
                 } else {
                     for (difference_type i = 0 ; i < num_dropped_in_row ; ++i) {
                         --read;
-                        if (not std::is_trivially_copyable<rvalue_type>::value) {
+                        if constexpr (not std::is_trivially_copyable<rvalue_type>::value) {
                             // If the value is trivially copyable, then it shouldn't have
                             // been modified by the call to iter_move, and the original
                             // value is still fully where it should be
@@ -104,7 +106,7 @@ namespace detail
                     num_dropped_in_row = 0;
                 }
             } else {
-                if (std::is_trivially_copyable<rvalue_type>::value) {
+                if constexpr (std::is_trivially_copyable<rvalue_type>::value) {
                     // If the type is trivially copyable, the potential self-move
                     // should not trigger any issue
                     *write = iter_move(read);

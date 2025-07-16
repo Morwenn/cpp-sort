@@ -25,26 +25,17 @@ namespace detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
-            not cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
+        -> OutputIterator
     {
-        return std::move(first, last, result);
-    }
-
-    template<typename InputIterator, typename OutputIterator>
-    auto move(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
-            cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
-    {
-        for (; first != last; ++first, (void) ++result) {
-            using utility::iter_move;
-            *result = iter_move(first);
+        if constexpr (cppsort::detail::has_iter_move_v<InputIterator>) {
+            for (; first != last; ++first, (void) ++result) {
+                using utility::iter_move;
+                *result = iter_move(first);
+            }
+            return result;
+        } else {
+            return std::move(first, last, result);
         }
-        return result;
     }
 
     ////////////////////////////////////////////////////////////
@@ -52,61 +43,39 @@ namespace detail
 
     template<typename InputIterator, typename OutputIterator>
     auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
-            not cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
+        -> OutputIterator
     {
-        return std::move_backward(first, last, result);
-    }
-
-    template<typename InputIterator, typename OutputIterator>
-    auto move_backward(InputIterator first, InputIterator last, OutputIterator result)
-        -> detail::enable_if_t<
-            cppsort::detail::has_iter_move_v<InputIterator>,
-            OutputIterator
-        >
-    {
-        while (first != last) {
-            using utility::iter_move;
-            *--result = iter_move(--last);
+        if constexpr (cppsort::detail::has_iter_move_v<InputIterator>) {
+            while (first != last) {
+                using utility::iter_move;
+                *--result = iter_move(--last);
+            }
+            return result;
+        } else {
+            return std::move_backward(first, last, result);
         }
-        return result;
     }
 
     ////////////////////////////////////////////////////////////
     // uninitialized_move
 
     template<typename InputIterator, typename T>
-    auto uninitialized_move_impl(std::true_type, InputIterator first, InputIterator last,
-                                 T* result, destruct_n<T>&)
-        -> T*
-    {
-        return detail::move(first, last, result);
-    }
-
-    template<typename InputIterator, typename T>
-    auto uninitialized_move_impl(std::false_type, InputIterator first, InputIterator last,
-                                 T* result, destruct_n<T>& destroyer)
-        -> T*
-    {
-        for (; first != last; ++first, (void) ++result, ++destroyer) {
-            using utility::iter_move;
-            ::new(static_cast<void*>(result)) T(iter_move(first));
-        }
-        return result;
-    }
-
-    template<typename InputIterator, typename T>
     auto uninitialized_move(InputIterator first, InputIterator last, T* result, destruct_n<T>& destroyer)
         -> T*
     {
-        using truth_type = std::bool_constant<
+        constexpr bool is_trivial_enough =
             std::is_trivial<value_type_t<InputIterator>>::value &&
-            std::is_trivial<T>::value
-        >;
-        return uninitialized_move_impl(truth_type{}, std::move(first), std::move(last),
-                                       std::move(result), destroyer);
+            std::is_trivial<T>::value;
+
+        if (is_trivial_enough) {
+            return detail::move(first, last, result);
+        } else {
+            for (; first != last; ++first, (void) ++result, ++destroyer) {
+                using utility::iter_move;
+                ::new(static_cast<void*>(result)) T(iter_move(first));
+            }
+            return result;
+        }
     }
 }}
 

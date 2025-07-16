@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -23,7 +23,6 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 #include "move.h"
-#include "type_traits.h"
 
 namespace cppsort
 {
@@ -43,35 +42,23 @@ namespace detail
         }
     }
 
-#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
     template<typename RandomAccessIterator>
     auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
                       std::random_access_iterator_tag)
-        -> detail::enable_if_t<
-            not detail::has_iter_move_v<RandomAccessIterator>,
-            void
-        >
-    {
-        std::reverse(first, last);
-    }
-#endif
-
-    template<typename RandomAccessIterator>
-    auto reverse_impl(RandomAccessIterator first, RandomAccessIterator last,
-                      std::random_access_iterator_tag)
-#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
-        -> detail::enable_if_t<
-            detail::has_iter_move_v<RandomAccessIterator>,
-            void
-        >
-#else
         -> void
-#endif
     {
-        if (first != last) {
-            for (; first < --last ; ++first) {
-                using utility::iter_swap;
-                iter_swap(first, last);
+#if defined(_USE_STD_VECTOR_ALGORITHMS) && _USE_STD_VECTOR_ALGORITHMS
+        if constexpr (not detail::has_iter_move_v<RandomAccessIterator>) {
+            std::reverse(first, last);
+        }
+        else
+#endif
+        {
+            if (first != last) {
+                for (; first < --last ; ++first) {
+                    using utility::iter_swap;
+                    iter_swap(first, last);
+                }
             }
         }
     }
