@@ -16,7 +16,6 @@
 #include "../detail/attributes.h"
 #include "../detail/config.h"
 #include "../detail/raw_checkers.h"
-#include "../detail/type_traits.h"
 
 namespace cppsort
 {
@@ -195,7 +194,7 @@ namespace cppsort
                 is_probably_branchless_projection<Projection, T>,
                 is_probably_branchless_comparison<
                     Compare,
-                    cppsort::detail::invoke_result_t<Projection, T>
+                    std::invoke_result_t<Projection, T>
                 >
             >
         {};
