@@ -231,15 +231,10 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
-| n²          | 1           | Forward       |
-
-When there isn't enough extra memory available, `probe::osc` falls back to an in-place O(n²) algorithm.
 
 `max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
 
 **Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
-
-***WARNING:** the O(n²) fallback of `probe::osc` is deprecated since version 1.12.0 and removed in version 2.0.0.*
 
 *Changed in version 1.12.0:* `probe::osc` is now O(n log n) instead of O(n²) but now also requires O(n) memory. The O(n²) is kept for backward compatibility but will be removed in the future.
 
