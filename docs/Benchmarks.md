@@ -59,7 +59,7 @@ Pretty much all stable sorts in the library are different flavours of merge sort
 
 These plots highlight a few important things:
 * `spin_sort` consistently beats pretty much anything else.
-* `block_sort` and `grail_sort` in this benchmark run with O(1) extra memory, which makes them decent stable sorting algorithms for their category.
+* `wiki_sort` and `grail_sort` in this benchmark run with O(1) extra memory, which makes them decent stable sorting algorithms for their category.
 * Interestingly `stable_adapter(pdq_sort)` is among the best algorithms, despite the overhead of making `pdq_sort` artificially stable.
 
 ## Slow O(n log n) sorts
@@ -144,13 +144,13 @@ The improvements are not always as clear as in this benchmark, but it shows that
 
 ## Sorting stably without heap memory
 
-Only a few algorithms allow to sort a collection stably without using extra heap memory: `grail_sort` and `block_sort` can accept a fixed-size buffer (possibly of size 0) while `merge_sort` has a fallback algorithm when no heap memory is available.
+Only a few algorithms allow to sort a collection stably without using extra heap memory: `grail_sort` and `wiki_sort` can accept a fixed-size buffer (possibly of size 0) while `merge_sort` has a fallback algorithm when no heap memory is available.
 
 ![Benchmark speed of stable sorts with no heap memory with increasing size for std::vector<double>](https://i.imgur.com/1a64irX.png)
 ![Benchmark speed of stable sorts with no heap memory with increasing size for std::deque<double>](https://i.imgur.com/U5uD8Er.png)
 ![Detail of the previous benchmark](https://i.imgur.com/owUictQ.png)
 
-`merge_sort` is definitely losing this benchmark. Interestingly enough `block_sort` is way better with a fixed buffer of 512 elements while it hardly affects `grail_sort` at all. For `std::deque`, `grail_sort` is almost always the fastest no matter what.
+`merge_sort` is definitely losing this benchmark. Interestingly enough `wiki_sort` is way better with a fixed buffer of 512 elements while it hardly affects `grail_sort` at all. For `std::deque`, `grail_sort` is almost always the fastest no matter what.
 
 ![Benchmark stable sorts with no heap memory over different patterns for std::vector<double>](https://i.imgur.com/74YxCLI.png)
 ![Benchmark stable sorts with no heap memory over different patterns for std::deque<double>](https://i.imgur.com/jqek5Ii.png)
