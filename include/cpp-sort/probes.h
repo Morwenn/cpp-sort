@@ -17,7 +17,6 @@
 #include <cpp-sort/probes/max.h>
 #include <cpp-sort/probes/mono.h>
 #include <cpp-sort/probes/osc.h>
-#include <cpp-sort/probes/par.h>
 #include <cpp-sort/probes/rem.h>
 #include <cpp-sort/probes/runs.h>
 #include <cpp-sort/probes/spear.h>
