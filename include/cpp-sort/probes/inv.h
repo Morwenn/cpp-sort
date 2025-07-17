@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_INV_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/count_inversions.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -93,17 +92,12 @@ namespace probe
             static constexpr auto max_for_size(Integer n)
                 -> Integer
             {
-                return n == 0 ? 0 : n * (n - 1) / 2;
+                return n * (n - 1) / 2;
             }
         };
     }
 
-    namespace
-    {
-        constexpr auto&& inv = utility::static_const<
-            sorter_facade<detail::inv_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::inv_impl> inv{};
 }}
 
 #endif // CPPSORT_PROBES_INV_H_

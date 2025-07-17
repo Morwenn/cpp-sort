@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2019 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_NATURAL_LESS_H_
@@ -11,7 +11,6 @@
 #include <cctype>
 #include <iterator>
 #include <utility>
-#include <cpp-sort/utility/static_const.h>
 
 namespace cppsort
 {
@@ -113,12 +112,7 @@ namespace cppsort
 
     using natural_less_t = detail::natural_less_fn;
 
-    namespace
-    {
-        constexpr auto&& natural_less = utility::static_const<
-            detail::natural_less_fn
-        >::value;
-    }
+    inline constexpr detail::natural_less_fn natural_less{};
 }
 
 #endif // CPPSORT_COMPARATORS_NATURAL_LESS_H_

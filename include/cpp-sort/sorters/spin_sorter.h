@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPIN_SORTER_H_
@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/spinsort.h"
 #include "../detail/type_traits.h"
@@ -68,11 +67,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& spin_sort
-            = utility::static_const<spin_sorter>::value;
-    }
+    inline constexpr spin_sorter spin_sort{};
 }
 
 #endif // CPPSORT_SORTERS_SPIN_SORTER_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_GRAIL_SORTER_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/grail_sort.h"
 #include "../detail/type_traits.h"
 
@@ -72,11 +71,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& grail_sort
-            = utility::static_const<grail_sorter<>>::value;
-    }
+    inline constexpr grail_sorter grail_sort{};
 }
 
 #endif // CPPSORT_SORTERS_GRAIL_SORTER_H_

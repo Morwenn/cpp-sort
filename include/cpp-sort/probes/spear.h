@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/spinsort.h"
@@ -131,12 +130,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& spear = utility::static_const<
-            sorter_facade<detail::spear_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::spear_impl> spear{};
 }}
 
 #endif // CPPSORT_PROBES_SPEAR_H_

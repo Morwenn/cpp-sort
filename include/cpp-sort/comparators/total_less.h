@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_TOTAL_LESS_H_
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/branchless_traits.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/floating_point_weight.h"
 #include "../detail/type_traits.h"
 
@@ -68,12 +67,7 @@ namespace cppsort
 
     using total_less_t = detail::total_less_fn;
 
-    namespace
-    {
-        constexpr auto&& total_less = utility::static_const<
-            detail::total_less_fn
-        >::value;
-    }
+    inline constexpr detail::total_less_fn total_less{};
 
     // Branchless traits
 

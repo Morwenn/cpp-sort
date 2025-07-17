@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_BLOCK_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
@@ -123,12 +122,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& block = utility::static_const<
-            sorter_facade<detail::block_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::block_impl> block{};
 }}
 
 #endif // CPPSORT_PROBES_BLOCK_H_

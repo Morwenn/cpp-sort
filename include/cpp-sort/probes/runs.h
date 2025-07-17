@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_RUNS_H_
@@ -14,7 +14,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
@@ -73,12 +72,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& runs = utility::static_const<
-            sorter_facade<detail::runs_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::runs_impl> runs{};
 }}
 
 #endif // CPPSORT_PROBES_RUNS_H_

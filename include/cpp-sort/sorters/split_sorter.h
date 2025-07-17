@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SPLIT_SORTER_H_
@@ -12,7 +12,6 @@
 #include <type_traits>
 #include <cpp-sort/adapters/split_adapter.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/config.h"
 
 namespace cppsort
@@ -49,12 +48,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        CPPSORT_DEPRECATED("split_sort is deprecated and will be removed in version 2.0.0, use split_adapter(pdq_sort) instead")
-        constexpr auto&& split_sort
-            = utility::static_const<deprecated::split_sorter>::value;
-    }
+    CPPSORT_DEPRECATED("split_sort is deprecated and will be removed in version 2.0.0, use split_adapter(pdq_sort) instead")
+    inline constexpr split_sorter split_sort{};
 }
 
 #endif // CPPSORT_SORTERS_SPLIT_SORTER_H_

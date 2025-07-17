@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_POPLAR_SORTER_H_
@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/poplar_sort.h"
 #include "../detail/type_traits.h"
@@ -68,11 +67,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& poplar_sort
-            = utility::static_const<poplar_sorter>::value;
-    }
+    inline constexpr poplar_sorter poplar_sort{};
 }
 
 #endif // CPPSORT_SORTERS_POPLAR_SORTER_H_

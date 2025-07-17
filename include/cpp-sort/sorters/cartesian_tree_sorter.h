@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_CARTESIAN_TREE_SORTER_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/cartesian_tree_sort.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -95,11 +94,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& cartesian_tree_sort
-            = utility::static_const<cartesian_tree_sorter>::value;
-    }
+    inline constexpr cartesian_tree_sorter cartesian_tree_sort{};
 }
 
 #endif // CPPSORT_SORTERS_CARTESIAN_TREE_SORTER_H_

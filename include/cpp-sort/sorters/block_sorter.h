@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/config.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -74,12 +73,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        CPPSORT_DEPRECATED("block_sort() is deprecated and will be removed in version 2.0.0, use wiki_sort() instead")
-        constexpr auto&& block_sort
-            = utility::static_const<block_sorter<>>::value;
-    }
+    CPPSORT_DEPRECATED("block_sort() is deprecated and will be removed in version 2.0.0, use wiki_sort() instead")
+    inline constexpr block_sorter block_sort{};
 }
 
 #endif // CPPSORT_SORTERS_BLOCK_SORTER_H_

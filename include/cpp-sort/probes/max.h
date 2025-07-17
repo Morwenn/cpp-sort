@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_MAX_H_
@@ -17,7 +17,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/equal_range.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -130,12 +129,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& max = utility::static_const<
-            sorter_facade<detail::max_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::max_impl> max{};
 }}
 
 #endif // CPPSORT_PROBES_MAX_H_

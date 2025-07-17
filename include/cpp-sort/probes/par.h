@@ -10,7 +10,6 @@
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/probes/dis.h>
 #include <cpp-sort/sorter_facade.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/config.h"
 
 namespace cppsort
@@ -24,13 +23,8 @@ namespace probe
         {};
     }
 
-    namespace
-    {
-        CPPSORT_DEPRECATED("probe::par is deprecated and will be removed in version 2.0.0, use probe::dis instead")
-        constexpr auto&& par = utility::static_const<
-            sorter_facade<detail::par_impl>
-        >::value;
-    }
+    CPPSORT_DEPRECATED("probe::par is deprecated and will be removed in version 2.0.0, use probe::dis instead")
+    inline constexpr sorter_facade<detail::par_impl> par{};
 }}
 
 #endif // CPPSORT_PROBES_PAR_H_

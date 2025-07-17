@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_D_ARY_HEAP_SORTER_H_
@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/d_ary_heapsort.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -69,12 +68,8 @@ namespace cppsort
         static_assert(D >= 2, "d_ary_heap_sorter must be instantiated with D >= 2");
     };
 
-    namespace
-    {
-        template<int D>
-        constexpr auto&& d_ary_heap_sort
-            = utility::static_const<d_ary_heap_sorter<D>>::value;
-    }
+    template<int D>
+    inline constexpr d_ary_heap_sorter<D> d_ary_heap_sort{};
 }
 
 #endif // CPPSORT_SORTERS_D_ARY_HEAP_SORTER_H_

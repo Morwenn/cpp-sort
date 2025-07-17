@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_WIKI_SORTER_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 #include "../detail/wiki_sort.h"
@@ -73,11 +72,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& wiki_sort
-            = utility::static_const<wiki_sorter<>>::value;
-    }
+    inline constexpr wiki_sorter wiki_sort{};
 }
 
 #endif // CPPSORT_SORTERS_WIKI_SORTER_H_

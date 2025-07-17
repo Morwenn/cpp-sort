@@ -16,7 +16,6 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/pdqsort.h"
@@ -115,12 +114,7 @@ namespace probe
         };
     }
 
-    namespace
-    {
-        constexpr auto&& ham = utility::static_const<
-            sorter_facade<detail::ham_impl>
-        >::value;
-    }
+    inline constexpr sorter_facade<detail::ham_impl> ham{};
 }}
 
 #endif // CPPSORT_PROBES_HAM_H_

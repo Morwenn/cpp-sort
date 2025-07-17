@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_INSERTION_SORTER_H_
@@ -15,7 +15,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/insertion_sort.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
@@ -68,11 +67,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& insertion_sort
-            = utility::static_const<insertion_sorter>::value;
-    }
+    inline constexpr insertion_sorter insertion_sort{};
 }
 
 #ifdef CPPSORT_ADAPTERS_CONTAINER_AWARE_ADAPTER_DONE_

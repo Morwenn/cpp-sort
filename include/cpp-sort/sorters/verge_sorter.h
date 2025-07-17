@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_VERGE_SORTER_H_
@@ -14,7 +14,6 @@
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorters/pdq_sorter.h>
 #include <cpp-sort/sorters/quick_merge_sorter.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/config.h"
 
 namespace cppsort
@@ -118,12 +117,8 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        CPPSORT_DEPRECATED("verge_sort is deprecated and will be removed in version 2.0.0, use verge_adapter instead")
-        constexpr auto&& verge_sort
-            = utility::static_const<deprecated::verge_sorter>::value;
-    }
+    CPPSORT_DEPRECATED("verge_sort is deprecated and will be removed in version 2.0.0, use verge_adapter instead")
+    inline constexpr verge_sorter verge_sort{};
 }
 
 #endif // CPPSORT_SORTERS_VERGE_SORTER_H_

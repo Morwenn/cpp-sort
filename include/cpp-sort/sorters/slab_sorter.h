@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_SORTERS_SLAB_SORTER_H_
@@ -16,7 +16,6 @@
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include <cpp-sort/utility/static_const.h>
 #include "../detail/iterator_traits.h"
 #include "../detail/slabsort.h"
 #include "../detail/type_traits.h"
@@ -95,11 +94,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Sort function
 
-    namespace
-    {
-        constexpr auto&& slab_sort
-            = utility::static_const<slab_sorter>::value;
-    }
+    inline constexpr slab_sorter slab_sort{};
 }
 
 #endif // CPPSORT_SORTERS_SLAB_SORTER_H_
