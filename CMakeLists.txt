@@ -1,7 +1,7 @@
 # Copyright (c) 2015-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 3.8.0)
+cmake_minimum_required(VERSION 3.11.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -19,13 +19,18 @@ option(CPPSORT_USE_LIBASSERT "Use libassert for assertions (experimental)" OFF)
 
 # Optionally use libassert for assertions
 if (CPPSORT_USE_LIBASSERT)
-    include(DownloadProject)
-    download_project(PROJ libassert
-                     GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-                     GIT_TAG 634f50fb4086d377ad9a2f83d693d2e8fe4972a7  # v2.1.4
-                     UPDATE_DISCONNECTED 1
+    include(FetchContent)
+
+    FetchContent_Declare(
+        libassert
+        GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
+        GIT_TAG 634f50fb4086d377ad9a2f83d693d2e8fe4972a7  # v2.1.4
     )
-    add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
+    FetchContent_GetProperties(libassert)
+    if (NOT libassert_POPULATED)
+        FetchContent_Populate(libassert)
+        add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
+    endif()
 endif()
 
 # Create cpp-sort library and configure it

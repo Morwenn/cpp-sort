@@ -6,7 +6,7 @@ The library's repository does contain files specific to other tools, but most of
 
 ### Using cpp-sort
 
-**cpp-sort** can be installed via CMake, in which case it exports a `cpp-sort::cpp-sort` target and all the files required for a basic integration. Once it has been installed on the system, the following lines should be enough to use it as a dependency:
+**cpp-sort** can be installed via CMake (3.11 or greater), in which case it exports a `cpp-sort::cpp-sort` target and all the files required for a basic integration. Once it has been installed on the system, the following lines should be enough to use it as a dependency:
 
 ```cmake
 find_package(cpp-sort REQUIRED CONFIG)
@@ -45,7 +45,7 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 
 *New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS`, `CPPSORT_ENABLE_AUDITS` and `CPPSORT_USE_LIBASSERT`.
 
-[Catch2][catch2] 3.0.0-preview4 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
+[Catch2][catch2] 3.1.0 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
 
 *Changed in version 1.7.0:* if a suitable Catch2 version is found on the system, it will be used.
 

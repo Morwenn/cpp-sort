@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
-include(DownloadProject)
+include(FetchContent)
 
 ########################################
 # Test suite options
@@ -22,17 +22,20 @@ if (TARGET Catch2::Catch2)
     message(STATUS "Catch2 found: ${Catch2_INCLUDE_DIRECTORY}")
 else()
     message(STATUS "Catch2 not found")
-    download_project(PROJ Catch2
-                     GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b  # v3.8.1
-                     UPDATE_DISCONNECTED 1
+    FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2
+        GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b  # v3.8.1
     )
-    add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
-    list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
-
-    # Make Catch2::Catch2 a SYSTEM target
-    get_target_property(Catch2_INCLUDE_DIRECTORY Catch2 INTERFACE_INCLUDE_DIRECTORIES)
-    set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORY}")
+    FetchContent_GetProperties(Catch2)
+    if (NOT Catch2_POPULATED)
+        FetchContent_Populate(Catch2)
+        add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
+        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+        # Make Catch2::Catch2 a SYSTEM target
+        get_target_property(catch2_INCLUDE_DIRECTORY Catch2 INTERFACE_INCLUDE_DIRECTORIES)
+        set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${catch2_INCLUDE_DIRECTORY}")
+    endif()
 endif()
 include(Catch)
 
@@ -46,18 +49,20 @@ if (TARGET rapidcheck)
     message(STATUS "RapidCheck found: ${rapidcheck_INCLUDE_DIRECTORY}")
 else()
     message(STATUS "RapidCheck not found")
-    download_project(PROJ RapidCheck
-                     GIT_REPOSITORY https://github.com/emil-e/rapidcheck
-                     GIT_TAG ff6af6fc683159deb51c543b065eba14dfcf329b
-                     UPDATE_DISCONNECTED 1
+    FetchContent_Declare(
+        RapidCheck
+        GIT_REPOSITORY https://github.com/emil-e/rapidcheck
+        GIT_TAG ff6af6fc683159deb51c543b065eba14dfcf329b
     )
-
-    set(RC_INSTALL_ALL_EXTRAS ON)
-    add_subdirectory(${RapidCheck_SOURCE_DIR} ${RapidCheck_BINARY_DIR})
-
-    # Make rapidcheck a SYSTEM target
-    get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
-    set_target_properties(rapidcheck PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${rapidcheck_INCLUDE_DIRECTORY}")
+    FetchContent_GetProperties(RapidCheck)
+    if (NOT RapidCheck_POPULATED)
+        FetchContent_Populate(RapidCheck)
+        set(RC_INSTALL_ALL_EXTRAS ON)
+        add_subdirectory(${rapidcheck_SOURCE_DIR} ${rapidcheck_BINARY_DIR})
+        # Make rapidcheck a SYSTEM target
+        get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
+        set_target_properties(rapidcheck PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${rapidcheck_INCLUDE_DIRECTORY}")
+    endif()
 endif()
 
 ########################################
