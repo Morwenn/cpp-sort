@@ -69,8 +69,8 @@ int main()
     > sorter;
 
     // Sort li and vec in reverse order using their value member
-    sorter(li, std::greater<>{}, &wrapper::value);
-    sorter(vec, std::greater<>{}, &wrapper::value);
+    sorter(li, std::greater{}, &wrapper::value);
+    sorter(vec, std::greater{}, &wrapper::value);
 
     assert(std::equal(
         li.begin(), li.end(),

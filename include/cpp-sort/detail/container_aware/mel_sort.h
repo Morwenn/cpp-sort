@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MEL_SORT_H_
@@ -212,7 +212,7 @@ namespace cppsort
         auto operator()(std::list<Args...>& iterable) const
             -> void
         {
-            detail::list_mel_sort(iterable, std::less<>{}, utility::identity{});
+            detail::list_mel_sort(iterable, std::less{}, utility::identity{});
         }
 
         template<typename Compare, typename... Args>
@@ -230,7 +230,7 @@ namespace cppsort
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
-            detail::list_mel_sort(iterable, std::less<>{}, std::move(projection));
+            detail::list_mel_sort(iterable, std::less{}, std::move(projection));
         }
 
         template<
@@ -255,7 +255,7 @@ namespace cppsort
         auto operator()(std::forward_list<Args...>& iterable) const
             -> void
         {
-            detail::flist_mel_sort(iterable, std::less<>{}, utility::identity{});
+            detail::flist_mel_sort(iterable, std::less{}, utility::identity{});
         }
 
         template<typename Compare, typename... Args>
@@ -273,7 +273,7 @@ namespace cppsort
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
-            detail::flist_mel_sort(iterable, std::less<>{}, std::move(projection));
+            detail::flist_mel_sort(iterable, std::less{}, std::move(projection));
         }
 
         template<

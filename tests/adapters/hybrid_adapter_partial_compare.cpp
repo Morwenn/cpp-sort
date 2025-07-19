@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -85,19 +85,19 @@ TEST_CASE( "hybrid_adapter over partial comparison sorter",
 
     SECTION( "with std::less<>" )
     {
-        sorter_type res1 = sorter(vec, std::less<>{});
+        sorter_type res1 = sorter(vec, std::less{});
         CHECK( res1 == sorter_type::ascending );
 
-        sorter_type res2 = sorter(vec.begin(), vec.end(), std::less<>{});
+        sorter_type res2 = sorter(vec.begin(), vec.end(), std::less{});
         CHECK( res2 == sorter_type::ascending );
     }
 
     SECTION( "with std::greater<>" )
     {
-        sorter_type res1 = sorter(vec, std::greater<>{});
+        sorter_type res1 = sorter(vec, std::greater{});
         CHECK( res1 == sorter_type::descending );
 
-        sorter_type res2 = sorter(vec.begin(), vec.end(), std::greater<>{});
+        sorter_type res2 = sorter(vec.begin(), vec.end(), std::greater{});
         CHECK( res2 == sorter_type::descending );
     }
 

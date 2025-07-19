@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <array>
@@ -182,7 +182,7 @@ TEST_CASE( "small array adapter",
             fixed_sorter_with_domain
         > sorter;
 
-        auto res1 = sorter(collection, std::greater<>{}, &wrapper::value);
+        auto res1 = sorter(collection, std::greater{}, &wrapper::value);
         CHECK( res1 == sorter_type::fixed_with_domain );
         auto res2 = sorter(collection, &wrapper::value);
         CHECK( res2 == sorter_type::fixed_with_domain );

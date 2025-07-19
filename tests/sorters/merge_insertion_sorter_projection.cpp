@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -25,25 +25,25 @@ TEST_CASE( "merge_insertion_sorter tests with projections",
     SECTION( "sort with random-access iterable" )
     {
         cppsort::merge_insertion_sort(vec, &wrapper::value);
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        cppsort::merge_insertion_sort(vec, std::greater<>{}, &wrapper::value);
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );
+        cppsort::merge_insertion_sort(vec, std::greater{}, &wrapper::value);
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
         cppsort::merge_insertion_sort(vec.begin(), vec.end(), &wrapper::value);
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
         cppsort::merge_insertion_sort(vec.begin(), vec.end(),
-                                      std::greater<>{}, &wrapper::value);
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );
+                                      std::greater{}, &wrapper::value);
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
     }
 }

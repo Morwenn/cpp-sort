@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -113,14 +113,14 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
 
     SECTION( "with comparison only" )
     {
-        call res1 = comparison_sorter{}(vec, std::less<>{});
+        call res1 = comparison_sorter{}(vec, std::less{});
         CHECK( res1 == call::iterable );
-        call res2 = comparison_sorter{}(vec.begin(), vec.end(), std::less<>{});
+        call res2 = comparison_sorter{}(vec.begin(), vec.end(), std::less{});
         CHECK( res2 == call::iterator );
 
-        call res3 = comparison_sorter{}(vec, std::greater<>{});
+        call res3 = comparison_sorter{}(vec, std::greater{});
         CHECK( res3 == call::iterable );
-        call res4 = comparison_sorter{}(vec.begin(), vec.end(), std::greater<>{});
+        call res4 = comparison_sorter{}(vec.begin(), vec.end(), std::greater{});
         CHECK( res4 == call::iterator );
     }
 
@@ -139,14 +139,14 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
 
     SECTION( "with both comparison and projection" )
     {
-        call res1 = comparison_projection_sorter{}(vec, std::less<>{});
+        call res1 = comparison_projection_sorter{}(vec, std::less{});
         CHECK( res1 == call::iterable );
-        call res2 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::less<>{});
+        call res2 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::less{});
         CHECK( res2 == call::iterator );
 
-        call res3 = comparison_projection_sorter{}(vec, std::greater<>{});
+        call res3 = comparison_projection_sorter{}(vec, std::greater{});
         CHECK( res3 == call::iterable );
-        call res4 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::greater<>{});
+        call res4 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::greater{});
         CHECK( res4 == call::iterator );
 
         call res5 = comparison_projection_sorter{}(vec, cppsort::utility::identity{});
@@ -160,16 +160,16 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
         call res8 = comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(), &wrapper::value);
         CHECK( res8 == call::iterator );
 
-        call res9 = comparison_projection_sorter{}(vec, std::greater<>{}, cppsort::utility::identity{});
+        call res9 = comparison_projection_sorter{}(vec, std::greater{}, cppsort::utility::identity{});
         CHECK( res9 == call::iterable );
         call res10 = comparison_projection_sorter{}(vec.begin(), vec.end(),
-                                                    std::greater<>{}, cppsort::utility::identity{});
+                                                    std::greater{}, cppsort::utility::identity{});
         CHECK( res10 == call::iterator );
 
-        call res11 = comparison_projection_sorter{}(vec_wrap, std::greater<>{}, &wrapper::value);
+        call res11 = comparison_projection_sorter{}(vec_wrap, std::greater{}, &wrapper::value);
         CHECK( res11 == call::iterable );
         call res12 = comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(),
-                                                    std::greater<>{}, &wrapper::value);
+                                                    std::greater{}, &wrapper::value);
         CHECK( res12 == call::iterator );
     }
 }

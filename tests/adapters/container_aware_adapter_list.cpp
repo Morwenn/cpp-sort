@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -33,15 +33,15 @@ TEST_CASE( "container_aware_adapter and std::list",
         std::list<double> collection(vec.begin(), vec.end());
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::greater<>{}, std::negate<>{});
+        sorter(collection, std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         // Make sure that the generic overload is also called when needed
@@ -59,15 +59,15 @@ TEST_CASE( "container_aware_adapter and std::list",
         std::list<double> collection(vec.begin(), vec.end());
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::greater<>{}, std::negate<>{});
+        sorter(collection, std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         // Make sure that the generic overload is also called when needed
@@ -85,15 +85,15 @@ TEST_CASE( "container_aware_adapter and std::list",
         std::list<double> collection(vec.begin(), vec.end());
 
         collection = std::list<double>(vec.begin(), vec.end());
-        sorter(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = std::list<double>(vec.begin(), vec.end());
-        sorter(collection, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = std::list<double>(vec.begin(), vec.end());
-        sorter(collection, std::greater<>{}, std::negate<>{});
+        sorter(collection, std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         // Make sure that the generic overload is also called when needed
@@ -111,15 +111,15 @@ TEST_CASE( "container_aware_adapter and std::list",
         std::list<double> collection(vec.begin(), vec.end());
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = { vec.begin(), vec.end() };
-        sorter(collection, std::greater<>{}, std::negate<>{});
+        sorter(collection, std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         // Make sure that the generic overload is also called when needed

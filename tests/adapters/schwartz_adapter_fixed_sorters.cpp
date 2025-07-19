@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -74,27 +74,27 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "size 3" )
@@ -105,22 +105,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "size 4" )
@@ -131,27 +131,27 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "size 5" )
@@ -162,22 +162,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "size 6" )
@@ -188,22 +188,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_comparisons_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "size 31" )
@@ -214,17 +214,17 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "size 32" )
@@ -235,22 +235,22 @@ TEST_CASE( "Schwartzian transform adapter with fixed-size sorters",
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         low_moves_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         merge_exchange_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         odd_even_merge_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
 
         std::shuffle(collection.begin(), collection.end(), hasard::engine());
         sorting_network_sort(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }
 

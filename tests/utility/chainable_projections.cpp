@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Morwenn
+ * Copyright (c) 2020-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -51,25 +51,25 @@ TEST_CASE( "Pipe a projection_base and function pointer",
     SECTION( "const projection" )
     {
         cppsort::spin_sort(vec, &wrapper::value | projection1);
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
     }
 
     SECTION( "chained const projection" )
     {
-        cppsort::spin_sort(vec, &wrapper::value | projection1 | std::negate<>{});
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
+        cppsort::spin_sort(vec, &wrapper::value | projection1 | std::negate{});
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "non-const projection" )
     {
         cppsort::spin_sort(vec, &wrapper::value | projection2);
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
     }
 
     SECTION( "chained non-const projection" )
     {
-        cppsort::spin_sort(vec, &wrapper::value | projection2 | std::negate<>{});
-        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less<>{}, &wrapper::value) );
+        cppsort::spin_sort(vec, &wrapper::value | projection2 | std::negate{});
+        CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less{}, &wrapper::value) );
     }
 }
 
@@ -89,7 +89,7 @@ TEST_CASE( "Pipe a projection_base several times",
     CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
     cppsort::spin_sort(vec2, projection2 | projection1 | projection2);
-    CHECK( std::is_sorted(vec2.begin(), vec2.end(), std::greater<>{}) );
+    CHECK( std::is_sorted(vec2.begin(), vec2.end(), std::greater{}) );
 }
 
 TEST_CASE( "Pipe a projection with as_projection",
@@ -104,7 +104,7 @@ TEST_CASE( "Pipe a projection with as_projection",
 
     // Basic check
     cppsort::spin_sort(vec, projection1 | projection2);
-    CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater<>{}, &wrapper::value) );
+    CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
 }
 
 TEST_CASE( "Pipe utility::identity with utility::identity",

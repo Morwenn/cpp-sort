@@ -112,7 +112,7 @@ TEST_CASE( "check that adapters correctly forward the result of the wrapped sort
             return_sorter
         >{};
         CHECK( sort(vec) == 42 );
-        CHECK( sort(vec.begin(), vec.end(), std::less<>{}, cppsort::utility::identity{}) == 42 );
+        CHECK( sort(vec.begin(), vec.end(), std::less{}, cppsort::utility::identity{}) == 42 );
         CHECK( sort(vec.begin(), vec.end(), cppsort::utility::identity{}) == 42 );
     }
 

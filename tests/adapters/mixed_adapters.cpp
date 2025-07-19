@@ -107,7 +107,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 
         sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "indirect_adapter over schwartz_adapter" )
@@ -120,7 +120,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 
         sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "schwartz_adapter over schwartz_adapter" )
@@ -133,7 +133,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 
         sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 
     SECTION( "indirect_adapter over indirect_adapter" )
@@ -146,7 +146,7 @@ TEST_CASE( "indirect sort with Schwartzian transform",
 
         sorter(collection, &wrapper::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }
 

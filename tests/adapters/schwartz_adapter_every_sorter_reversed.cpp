@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2022 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
     CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                              std::greater<>{}, &wrapper<>::value) );
+                              std::greater{}, &wrapper<>::value) );
 }
 
 TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse iterators",
@@ -82,15 +82,15 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
 
         sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::greater<>{}, &wrapper<>::value) );
+                                  std::greater{}, &wrapper<>::value) );
 
         sorter(collection2.rbegin(), collection2.rend(), &wrapper<int>::value);
         CHECK( helpers::is_sorted(collection2.begin(), collection2.end(),
-                                  std::greater<>{}, &wrapper<int>::value) );
+                                  std::greater{}, &wrapper<int>::value) );
 
         sorter(collection3.rbegin(), collection3.rend(), &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
-                                  std::greater<>{}, &wrapper<std::string>::value) );
+                                  std::greater{}, &wrapper<std::string>::value) );
     }
 
     SECTION( "spread_sorter" )
@@ -99,20 +99,20 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter and reverse
 
         sorter(collection.rbegin(), collection.rend(), &wrapper<>::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::greater<>{}, &wrapper<>::value) );
+                                  std::greater{}, &wrapper<>::value) );
 
         sorter(collection2.rbegin(), collection2.rend(), &wrapper<int>::value);
         CHECK( helpers::is_sorted(collection2.begin(), collection2.end(),
-                                  std::greater<>{}, &wrapper<int>::value) );
+                                  std::greater{}, &wrapper<int>::value) );
 
         sorter(collection3.rbegin(), collection3.rend(), &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
-                                  std::greater<>{}, &wrapper<std::string>::value) );
+                                  std::greater{}, &wrapper<std::string>::value) );
 
         std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
         sorter(collection3.rbegin(), collection3.rend(),
-               std::greater<>{}, &wrapper<std::string>::value);
+               std::greater{}, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
-                                  std::less<>{}, &wrapper<std::string>::value) );
+                                  std::less{}, &wrapper<std::string>::value) );
     }
 }

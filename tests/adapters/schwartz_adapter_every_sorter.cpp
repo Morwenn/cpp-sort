@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -56,7 +56,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
     CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                              std::less<>{}, &wrapper<>::value) );
+                              std::less{}, &wrapper<>::value) );
 }
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapter", "[schwartz_adapter]",
@@ -79,7 +79,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapt
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
     CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                              std::less<>{}, &wrapper<>::value) );
+                              std::less{}, &wrapper<>::value) );
 }
 
 TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "[schwartz_adapter]",
@@ -98,7 +98,7 @@ TEMPLATE_TEST_CASE( "every forward sorter with Schwartzian transform adapter", "
     cppsort::schwartz_adapter<TestType> sorter;
     sorter(collection, &wrapper<>::value);
     CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                              std::less<>{}, &wrapper<>::value) );
+                              std::less{}, &wrapper<>::value) );
 }
 
 TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwartz_adapter]" )
@@ -123,15 +123,15 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
 
         sorter(collection, &wrapper<>::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper<>::value) );
+                                  std::less{}, &wrapper<>::value) );
 
         sorter(collection2, &wrapper<int>::value);
         CHECK( helpers::is_sorted(collection2.begin(), collection2.end(),
-                                  std::less<>{}, &wrapper<int>::value) );
+                                  std::less{}, &wrapper<int>::value) );
 
         sorter(collection3, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
-                                  std::less<>{}, &wrapper<std::string>::value) );
+                                  std::less{}, &wrapper<std::string>::value) );
     }
 
     SECTION( "spread_sorter" )
@@ -140,19 +140,19 @@ TEST_CASE( "type-specific sorters with Schwartzian transform adapter", "[schwart
 
         sorter(collection, &wrapper<>::value);
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper<>::value) );
+                                  std::less{}, &wrapper<>::value) );
 
         sorter(collection2, &wrapper<int>::value);
         CHECK( helpers::is_sorted(collection2.begin(), collection2.end(),
-                                  std::less<>{}, &wrapper<int>::value) );
+                                  std::less{}, &wrapper<int>::value) );
 
         sorter(collection3, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
-                                  std::less<>{}, &wrapper<std::string>::value) );
+                                  std::less{}, &wrapper<std::string>::value) );
 
         std::shuffle(collection3.begin(), collection3.end(), hasard::engine());
-        sorter(collection3, std::greater<>{}, &wrapper<std::string>::value);
+        sorter(collection3, std::greater{}, &wrapper<std::string>::value);
         CHECK( helpers::is_sorted(collection3.begin(), collection3.end(),
-                                  std::greater<>{}, &wrapper<std::string>::value) );
+                                  std::greater{}, &wrapper<std::string>::value) );
     }
 }

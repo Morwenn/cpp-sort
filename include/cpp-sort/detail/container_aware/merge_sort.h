@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CONTAINER_AWARE_MERGE_SORT_H_
@@ -88,7 +88,7 @@ namespace cppsort
         auto operator()(std::list<Args...>& iterable) const
             -> void
         {
-            detail::list_merge_sort(iterable, std::less<>{}, utility::identity{});
+            detail::list_merge_sort(iterable, std::less{}, utility::identity{});
         }
 
         template<typename Compare, typename... Args>
@@ -106,7 +106,7 @@ namespace cppsort
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
-            detail::list_merge_sort(iterable, std::less<>{}, std::move(projection));
+            detail::list_merge_sort(iterable, std::less{}, std::move(projection));
         }
 
         template<
@@ -132,7 +132,7 @@ namespace cppsort
             -> void
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
-                                     std::less<>{}, utility::identity{});
+                                     std::less{}, utility::identity{});
         }
 
         template<typename Compare, typename... Args>
@@ -152,7 +152,7 @@ namespace cppsort
             >
         {
             detail::flist_merge_sort(iterable, utility::size(iterable),
-                                     std::less<>{}, std::move(projection));
+                                     std::less{}, std::move(projection));
         }
 
         template<

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -80,8 +80,8 @@ TEST_CASE( "test most adapters with a pointer to member function comparison",
             cppsort::poplar_sorter
         >;
 
-        sorter{}(collection, &internal_compare<int>::compare_to, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter{}(collection, &internal_compare<int>::compare_to, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "self_sort_adapter" )

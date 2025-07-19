@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -25,12 +25,12 @@ TEST_CASE( "spread_sorter generate overloads",
         std::iota(vec.begin(), vec.end(), 0);
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec, std::less<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::less<>{}) );
+        cppsort::spread_sort(vec, std::less{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::less{}) );
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec.begin(), vec.end(), std::less<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::less<>{}) );
+        cppsort::spread_sort(vec.begin(), vec.end(), std::less{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::less{}) );
     }
 
     SECTION( "default operator() with utility::identity" )
@@ -53,11 +53,11 @@ TEST_CASE( "spread_sorter generate overloads",
         std::iota(vec.begin(), vec.end(), 0);
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec, std::less<>{}, cppsort::utility::identity{});
+        cppsort::spread_sort(vec, std::less{}, cppsort::utility::identity{});
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec.begin(), vec.end(), std::less<>{}, cppsort::utility::identity{});
+        cppsort::spread_sort(vec.begin(), vec.end(), std::less{}, cppsort::utility::identity{});
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 }

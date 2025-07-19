@@ -121,6 +121,6 @@ int main()
         // Bubble sort the collection
         bubble_sort(to_sort, projection);
         // Check that it is sorted in descending order
-        assert(std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<>{}));
+        assert(std::is_sorted(to_sort.begin(), to_sort.end(), std::greater{}));
     } while (std::next_permutation(collection.begin(), collection.end()));
 }

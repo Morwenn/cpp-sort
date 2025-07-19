@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -30,33 +30,33 @@ TEST_CASE( "basic tests with indirect_adapter",
 
     SECTION( "with comparison" )
     {
-        sorter(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
         collection = vec;
-        sorter(collection.begin(), collection.end(), std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection.begin(), collection.end(), std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "with projection" )
     {
-        sorter(collection, std::negate<>{});
+        sorter(collection, std::negate{});
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, std::negate<>{}) );
+                                  std::less{}, std::negate{}) );
 
         collection = vec;
-        sorter(collection.begin(), collection.end(), std::negate<>{});
+        sorter(collection.begin(), collection.end(), std::negate{});
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, std::negate<>{}) );
+                                  std::less{}, std::negate{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
-        sorter(collection, std::greater<>{}, std::negate<>{});
+        sorter(collection, std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
 
         collection = vec;
-        sorter(collection.begin(), collection.end(), std::greater<>{}, std::negate<>{});
+        sorter(collection.begin(), collection.end(), std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }
@@ -74,20 +74,20 @@ TEST_CASE( "indirect_adapter with temporary span",
 
     SECTION( "with comparison" )
     {
-        sorter(make_span(collection), std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(make_span(collection), std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "with projection" )
     {
-        sorter(make_span(collection), std::negate<>{});
+        sorter(make_span(collection), std::negate{});
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, std::negate<>{}) );
+                                  std::less{}, std::negate{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
-        sorter(make_span(collection), std::greater<>{}, std::negate<>{});
+        sorter(make_span(collection), std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }
@@ -101,6 +101,6 @@ TEST_CASE( "indirect_adapter over non-comparison sorter",
     distribution(std::back_inserter(collection), 221, -32);
 
     cppsort::indirect_adapter<cppsort::spread_sorter> sorter;
-    sorter(collection, std::negate<>{});
-    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+    sorter(collection, std::negate{});
+    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 }

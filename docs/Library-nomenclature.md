@@ -8,7 +8,7 @@
 
 * *Comparison function*: most of the sorting algorithms in the library are comparison sorts. It means that the algorithm uses a comparison function to know the order of the elements and sort them accordingly; such a comparison function shall take two values and have a return type convertible to `bool`. The available sorting algorithms transform comparison functions on the fly so that some pointers to member functions can also be used as comparison functions, as if called with [`std::invoke`][std-invoke]. The default comparison function used by the sorting algorithms is [`std::less<>`][std-less-void]. Many sorters can take a comparison function as an additional parameter. For example, using `std::greater<>` instead of the default comparison function would sort a collection in descending order.
 
-        cppsort::heap_sort(collection, std::greater<>{});
+        cppsort::heap_sort(collection, std::greater{});
 
     Some algorithms don't accept such an additional parameter. It may be because they implement a non-comparison sort instead, a sorting algorithm that uses other properties of the elements to perform the sort rather than a comparison function (for example a [radix sort][radix-sort]).
 
@@ -43,7 +43,7 @@
 * *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
 
         cppsort::pdq_sorter{}(std::begin(collection), std::end(collection),
-                              std::greater<>{}, &wrapper::value);
+                              std::greater{}, &wrapper::value);
 
 * *Sorter adapter*: [sorter adapters][sorter-adapters] are class templates that take one or several sorters and produce a new sorter from the parameters. What a sorter adapter can do is not constrained, but they are generally expected to behave like sorters themselves. For example, **cpp-sort** contains adapters to count the number of comparisons performed by a sorting algorithms or to aggregate several sorters together. The best way to learn more about them is still to read the dedicated section of the documentation.
 

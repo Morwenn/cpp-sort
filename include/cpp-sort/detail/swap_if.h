@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SWAP_IF_H_
@@ -40,10 +40,10 @@ namespace detail
 
     template<typename T>
     auto swap_if(T& lhs, T& rhs)
-        noexcept(noexcept(swap_if(lhs, rhs, std::less<>{}, utility::identity{})))
+        noexcept(noexcept(swap_if(lhs, rhs, std::less{}, utility::identity{})))
         -> void
     {
-        swap_if(lhs, rhs, std::less<>{}, utility::identity{});
+        swap_if(lhs, rhs, std::less{}, utility::identity{});
     }
 
     template<typename Integer>

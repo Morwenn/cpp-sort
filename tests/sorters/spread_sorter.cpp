@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2023 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -77,11 +77,11 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         }
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec, std::greater<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        cppsort::spread_sort(vec, std::greater{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
-        cppsort::spread_sort(vec.begin(), vec.end(), std::greater<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        cppsort::spread_sort(vec.begin(), vec.end(), std::greater{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
     }
 }

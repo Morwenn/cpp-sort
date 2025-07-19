@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -81,11 +81,11 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::container_aware_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "counting_adapter" )
@@ -93,8 +93,8 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::counting_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "hybrid_adapter" )
@@ -108,17 +108,17 @@ TEST_CASE( "test stateful sorters with every adapter",
             stateful_sorter<std::random_access_iterator_tag>
         > sort_it(sorter1, sorter2, sorter3);
 
-        int res1 = sort_it(fli, std::greater<>{});
+        int res1 = sort_it(fli, std::greater{});
         CHECK( res1 == 1 );
-        CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater{}) );
 
-        int res2 = sort_it(li, std::greater<>{});
+        int res2 = sort_it(li, std::greater{});
         CHECK( res2 == 2 );
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
 
-        int res3 = sort_it(collection, std::greater<>{});
+        int res3 = sort_it(collection, std::greater{});
         CHECK( res3 == 3 );
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "indirect_adapter" )
@@ -126,8 +126,8 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::indirect_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "out_of_place_adapter" )
@@ -135,14 +135,14 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::out_of_place_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
 
-        sort_it(fli, std::greater<>{});
-        CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater<>{}) );
+        sort_it(fli, std::greater{});
+        CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater{}) );
     }
 
     SECTION( "schwartz_adapter" )
@@ -150,8 +150,8 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::schwartz_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "self_sort_adapter" )
@@ -159,11 +159,11 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::self_sort_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "stable_adapter<self_sort_adapter>" )
@@ -173,11 +173,11 @@ TEST_CASE( "test stateful sorters with every adapter",
             cppsort::self_sort_adapter<stateful_sorter<>>
         >(cppsort::self_sort_adapter<stateful_sorter<>>(sorter));
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "stable_adapter" )
@@ -185,8 +185,8 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::stable_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "verge_adapter" )
@@ -194,7 +194,7 @@ TEST_CASE( "test stateful sorters with every adapter",
         stateful_sorter<> sorter(42);
         cppsort::verge_adapter<stateful_sorter<>> sort_it(sorter);
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 }

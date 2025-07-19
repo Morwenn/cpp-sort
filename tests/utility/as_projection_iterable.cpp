@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -135,22 +135,22 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
     {
         auto res1 = comp_sort(vec, func);
         CHECK( res1 == call::iterable );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res2 = comp_sort(vec.begin(), vec.end(), func);
         CHECK( res2 == call::iterator );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res3 = comp_sort(vec, cppsort::utility::as_comparison(func));
         CHECK( res3 == call::iterable );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res4 = comp_sort(vec.begin(), vec.end(), cppsort::utility::as_comparison(func));
         CHECK( res4 == call::iterator );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res5 = comp_sort(vec, cppsort::utility::as_projection(func));
@@ -165,26 +165,26 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables and mixed compar
         vec = collection;
         auto res7 = comp_sort(vec, func, cppsort::utility::as_projection(func));
         CHECK( res7 == call::iterable );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res8 = comp_sort(vec.begin(), vec.end(), func,
                               cppsort::utility::as_projection(func));
         CHECK( res8 == call::iterator );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res9 = comp_sort(vec, cppsort::utility::as_comparison(func),
                               cppsort::utility::as_projection(func));
         CHECK( res9 == call::iterable );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
 
         vec = collection;
         auto res10 = comp_sort(vec.begin(), vec.end(),
                                cppsort::utility::as_comparison(func),
                                cppsort::utility::as_projection(func));
         CHECK( res10 == call::iterator );
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
     }
 
     SECTION( "projection_sorter" )

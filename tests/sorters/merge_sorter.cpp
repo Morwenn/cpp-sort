@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -27,8 +27,8 @@ TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        cppsort::merge_sort(vec, std::greater<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        cppsort::merge_sort(vec, std::greater{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
     }
 
     SECTION( "sort with random-access iterators" )
@@ -39,8 +39,8 @@ TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        cppsort::merge_sort(vec.begin(), vec.end(), std::greater<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        cppsort::merge_sort(vec.begin(), vec.end(), std::greater{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
     }
 
     SECTION( "sort with bidirectional iterators" )
@@ -53,8 +53,8 @@ TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
     SECTION( "sort with bidirectional iterators and compare" )
     {
         std::list<int> li(vec.begin(), vec.end());
-        cppsort::merge_sort(li.begin(), li.end(), std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        cppsort::merge_sort(li.begin(), li.end(), std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "sort with forward iterators" )
@@ -67,7 +67,7 @@ TEST_CASE( "merge_sorter tests", "[merge_sorter]" )
     SECTION( "sort with forward iterators and compare" )
     {
         std::forward_list<int> li(vec.begin(), vec.end());
-        cppsort::merge_sort(li.begin(), li.end(), std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        cppsort::merge_sort(li.begin(), li.end(), std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 }

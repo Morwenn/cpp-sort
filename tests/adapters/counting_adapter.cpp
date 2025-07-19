@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -53,7 +53,7 @@ TEST_CASE( "basic counting_adapter tests",
         std::size_t res = sorter(collection, &wrapper::value);
         CHECK( res == 3160 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }
 
@@ -108,6 +108,6 @@ TEST_CASE( "counting_adapter with span",
         std::size_t res = sorter(make_span(collection), &wrapper::value);
         CHECK( res == 3160 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }

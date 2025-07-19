@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -31,8 +31,8 @@ TEST_CASE( "counting_sorter tests", "[counting_sorter]" )
     {
         std::vector<int> vec; vec.reserve(size);
         distribution(std::back_inserter(vec), size, -1568);
-        cppsort::counting_sort(vec, std::greater<>{});
-        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater<>{}) );
+        cppsort::counting_sort(vec, std::greater{});
+        CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
     }
 
     SECTION( "sort with unsigned int iterators" )

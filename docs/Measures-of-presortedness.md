@@ -43,8 +43,8 @@ In **cpp-sort**, measures of presortedness are implemented as instances of some 
 using namespace cppsort;
 auto a = probe::inv(collection);
 auto b = probe::rem(vec.begin(), vec.end());
-auto c = probe::ham(li, std::greater<>{});
-auto d = probe::runs(integers, std::negate<>{});
+auto c = probe::ham(li, std::greater{});
+auto d = probe::runs(integers, std::negate{});
 ```
 
 Note however that most of these algorithms can be expensive. Using them before an actual sorting algorithm has little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.

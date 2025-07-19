@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -21,19 +21,19 @@ TEST_CASE( "test stable sorting C arrays", "[sort]" )
 
     SECTION( "with comparison function" )
     {
-        cppsort::stable_sort(arr, std::greater<>{});
-        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater<>{}) );
+        cppsort::stable_sort(arr, std::greater{});
+        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater{}) );
     }
 
     SECTION( "with projection function" )
     {
-        cppsort::stable_sort(arr, std::negate<>{});
-        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater<>{}) );
+        cppsort::stable_sort(arr, std::negate{});
+        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater{}) );
     }
 
     SECTION( "with comparison and projection functions" )
     {
-        cppsort::stable_sort(arr, std::greater<>{}, std::negate<>{});
+        cppsort::stable_sort(arr, std::greater{}, std::negate{});
         CHECK( helpers::is_sorted(std::begin(arr), std::end(arr)) );
     }
 
@@ -45,19 +45,19 @@ TEST_CASE( "test stable sorting C arrays", "[sort]" )
 
     SECTION( "with sorter and comparison function" )
     {
-        cppsort::stable_sort(cppsort::selection_sort, arr, std::greater<>{});
-        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater<>{}) );
+        cppsort::stable_sort(cppsort::selection_sort, arr, std::greater{});
+        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater{}) );
     }
 
     SECTION( "with sorter and projection function" )
     {
-        cppsort::stable_sort(cppsort::selection_sort, arr, std::negate<>{});
-        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater<>{}) );
+        cppsort::stable_sort(cppsort::selection_sort, arr, std::negate{});
+        CHECK( helpers::is_sorted(std::begin(arr), std::end(arr), std::greater{}) );
     }
 
     SECTION( "with sorter, comparison and projection function" )
     {
-        cppsort::stable_sort(cppsort::selection_sort, arr, std::greater<>{}, std::negate<>{});
+        cppsort::stable_sort(cppsort::selection_sort, arr, std::greater{}, std::negate{});
         CHECK( helpers::is_sorted(std::begin(arr), std::end(arr)) );
     }
 }

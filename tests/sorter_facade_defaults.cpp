@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -99,14 +99,14 @@ TEST_CASE( "std::less<> forwarding to sorters",
 
     SECTION( "with std::less<>" )
     {
-        CHECK( comparison_sorter{}(vec, std::less<>{}) );
-        CHECK( comparison_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
+        CHECK( comparison_sorter{}(vec, std::less{}) );
+        CHECK( comparison_sorter{}(vec.begin(), vec.end(), std::less{}) );
 
-        CHECK( non_comparison_sorter{}(vec, std::less<>{}) );
-        CHECK( non_comparison_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
+        CHECK( non_comparison_sorter{}(vec, std::less{}) );
+        CHECK( non_comparison_sorter{}(vec.begin(), vec.end(), std::less{}) );
 
-        CHECK( not non_comparison_iterable_sorter{}(vec, std::less<>{}) );
-        CHECK( non_comparison_iterable_sorter{}(vec.begin(), vec.end(), std::less<>{}) );
+        CHECK( not non_comparison_iterable_sorter{}(vec, std::less{}) );
+        CHECK( non_comparison_iterable_sorter{}(vec.begin(), vec.end(), std::less{}) );
     }
 
     SECTION( "with utility::identity" )

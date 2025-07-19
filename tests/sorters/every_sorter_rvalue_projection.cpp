@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -52,8 +52,8 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
         distribution(std::back_inserter(collection), 50);
 
         TestType sorter;
-        sorter(collection, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "std::deque" )
@@ -62,8 +62,8 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
         distribution(std::back_inserter(collection), 50);
 
         TestType sorter;
-        sorter(collection, std::negate<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sorter(collection, std::negate{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 }
 
@@ -85,8 +85,8 @@ TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue
     distribution(std::back_inserter(collection), 50);
 
     TestType sorter;
-    sorter(collection, std::negate<>{});
-    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+    sorter(collection, std::negate{});
+    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 }
 
 TEMPLATE_TEST_CASE( "forward sorters with a projection returning an rvalue", "[sorters][projection]",
@@ -103,6 +103,6 @@ TEMPLATE_TEST_CASE( "forward sorters with a projection returning an rvalue", "[s
     distribution(std::front_inserter(collection), 50);
 
     TestType sorter;
-    sorter(collection, std::negate<>{});
-    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+    sorter(collection, std::negate{});
+    CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 }

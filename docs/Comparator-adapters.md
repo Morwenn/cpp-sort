@@ -103,7 +103,7 @@ It is accompanied by a `make_projection_compare` function template to avoid havi
 ```cpp
 // Sort a family from older to younger member
 std::vector<Person> family = { /* ... */ };
-std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::greater<>{}, &Person::age));
+std::sort(family.begin(), family.end(), cppsort::make_projection_compare(std::greater{}, &Person::age));
 ```
 
 `projection_compare<C, P>` has the following member functions:

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -26,7 +26,7 @@ TEST_CASE( "ska_sorter tests with projections",
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec, &std::pair<int, float>::first);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(),
-                                  std::less<>{}, &std::pair<int, float>::second) );
+                                  std::less{}, &std::pair<int, float>::second) );
     }
 
     SECTION( "sort with unsigned int iterators" )
@@ -39,7 +39,7 @@ TEST_CASE( "ska_sorter tests with projections",
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec, &std::pair<unsigned, float>::first);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(),
-                                  std::less<>{}, &std::pair<unsigned, float>::second) );
+                                  std::less{}, &std::pair<unsigned, float>::second) );
     }
 
     SECTION( "sort with float iterable" )
@@ -52,7 +52,7 @@ TEST_CASE( "ska_sorter tests with projections",
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec, &std::pair<int, float>::second);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(),
-                                  std::less<>{}, &std::pair<int, float>::first) );
+                                  std::less{}, &std::pair<int, float>::first) );
     }
 
     SECTION( "sort with double iterators" )
@@ -65,7 +65,7 @@ TEST_CASE( "ska_sorter tests with projections",
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec, &std::pair<int, double>::second);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(),
-                                  std::less<>{}, &std::pair<int, double>::first) );
+                                  std::less{}, &std::pair<int, double>::first) );
     }
 
     SECTION( "sort with std::string iterators" )
@@ -80,6 +80,6 @@ TEST_CASE( "ska_sorter tests with projections",
         std::shuffle(vec.begin(), vec.end(), hasard::engine());
         cppsort::ska_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }

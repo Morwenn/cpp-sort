@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -45,7 +45,7 @@ TEST_CASE( "basic metrics::moves tests",
         auto res = sorter(collection, &wrapper::value);
         CHECK( res == 573 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }
 
@@ -74,7 +74,7 @@ TEST_CASE( "metrics::moves with span",
         auto res = sorter(make_span(collection), &wrapper::value);
         CHECK( res == 573 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
-                                  std::less<>{}, &wrapper::value) );
+                                  std::less{}, &wrapper::value) );
     }
 }
 

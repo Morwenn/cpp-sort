@@ -153,7 +153,7 @@ This kind of comparison sorters help to compare things that don't have an overlo
 
 ```cpp
 // Sort collection in reverse order with std::sort
-cppsort::std_sort(collection, std::greater<>{});
+cppsort::std_sort(collection, std::greater{});
 ```
 
 It is worth noting that every *comparison sorter* provided by the library transforms the comparison parameter with [`utility::as_function`][utility-as-function] before actually using it. It allows to use pointers to member functions of the `lhs.compare_to(rhs)` kind out-of-the-box.
@@ -278,7 +278,7 @@ struct counting_sorter_impl
 Until there, everything is fine. However, imagine that the library where we found the `counting_sort` function also provides its evil twin, to which we will give the inventive name of `reverse_counting_sort`, meant to sort a collection of integers in descending order. We would like to take advantage of this function too, but all the rules defined in the previous sections make it pretty clear that we can't write a `reverse_counting_sorter` since such a sorter wouldn't satisfy the `std::is_sorted` guarantee that every sorter should satisfy. Note however that, after having reverse-sorted a collection of integers, the following assertion should hold:
 
 ```cpp
-assert( std::is_sorted(std::begin(collection), std::end(collection), std::greater<>{}) );
+assert( std::is_sorted(std::begin(collection), std::end(collection), std::greater{}) );
 ```
 
 We would like our `counting_sorter` to reverse-sort a collection when given `std::greater<>` as a comparison function, but there is no way it can handle arbitrary comparison functions. Well... let's just make it handle specific comparison functions then:

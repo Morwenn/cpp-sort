@@ -201,12 +201,12 @@ namespace cppsort
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
-                                                       std::less<>{}, std::move(projection)))
+                                                       std::less{}, std::move(projection)))
                     >
                 >
             {
                 return detail::adl_despair{}(this->get(), iterable,
-                                             std::less<>{}, std::move(projection));
+                                             std::less{}, std::move(projection));
             }
 
             template<
@@ -227,12 +227,12 @@ namespace cppsort
                         Stability,
                         std::false_type,
                         decltype(detail::adl_despair{}(this->get(), iterable,
-                                                       make_projection_compare(std::less<>{}, std::move(projection))))
+                                                       make_projection_compare(std::less{}, std::move(projection))))
                     >
                 >
             {
                 return detail::adl_despair{}(this->get(), iterable,
-                                             make_projection_compare(std::less<>{}, std::move(projection)));
+                                             make_projection_compare(std::less{}, std::move(projection)));
             }
 
             template<

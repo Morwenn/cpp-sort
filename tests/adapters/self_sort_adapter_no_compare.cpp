@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -107,7 +107,7 @@ TEST_CASE( "self-sortable object without comparison",
         std::copy(tmp.begin(), tmp.end(), collection.begin());
 
         // Sort and check it's sorted
-        auto res = sorter(collection, std::less<>{});
+        auto res = sorter(collection, std::less{});
         CHECK( res == sorter_type::dummy_sorter );
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }

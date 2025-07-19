@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <functional>
@@ -46,19 +46,19 @@ TEST_CASE( "basic tests with container_aware_adapter",
 
     SECTION( "with comparison" )
     {
-        CHECK( sorter(collection, std::greater<>{}) );
+        CHECK( sorter(collection, std::greater{}) );
         STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>)>::value );
     }
 
     SECTION( "with projection" )
     {
-        CHECK( sorter(collection, std::negate<>{}) );
+        CHECK( sorter(collection, std::negate{}) );
         STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::negate<>)>::value );
     }
 
     SECTION( "with automagic comparison-projection" )
     {
-        CHECK( sorter(collection, std::greater<>{}, std::negate<>{}) );
+        CHECK( sorter(collection, std::greater{}, std::negate{}) );
         STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&,
                                                       std::greater<>, std::negate<>)>::value );
     }

@@ -51,11 +51,11 @@ int main()
     // Sort using operator<(Person, Person)
     quick_sort(persons);
     // Sort in reverse order usinig operator<(Person, Person)
-    quick_sort(persons, cppsort::flip(std::less<>{}));
+    quick_sort(persons, cppsort::flip(std::less{}));
     // Sort the first half of the collection from youngest to oldest
     quick_sort(std::begin(persons), persons+50, &Person::age);
     // Sort the second half of the collection from older to youngest
-    quick_sort(persons+50, std::end(persons), std::greater<>{}, &Person::age);
+    quick_sort(persons+50, std::end(persons), std::greater{}, &Person::age);
 
     std::list<Person> li(std::begin(persons), std::end(persons));
     // quick_sort also works on bidirectional (and forward) iterators

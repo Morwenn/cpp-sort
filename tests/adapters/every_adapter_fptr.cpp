@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -37,11 +37,11 @@ TEST_CASE( "function pointer test for every adapter",
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
         constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it2(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it2(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "counting_adapter" )
@@ -51,9 +51,9 @@ TEST_CASE( "function pointer test for every adapter",
         >;
         constexpr std::size_t(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
-        std::size_t res = sort_it(collection, std::greater<>{});
+        std::size_t res = sort_it(collection, std::greater{});
         CHECK( res == 2080 );
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "hybrid_adapter" )
@@ -64,8 +64,8 @@ TEST_CASE( "function pointer test for every adapter",
         >;
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "indirect_adapter" )
@@ -75,8 +75,8 @@ TEST_CASE( "function pointer test for every adapter",
         >;
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "out_of_place_adapter" )
@@ -88,14 +88,14 @@ TEST_CASE( "function pointer test for every adapter",
         constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
         constexpr void(*sort_it3)(std::forward_list<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it2(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it2(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
 
-        sort_it3(fli, std::greater<>{});
-        CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater<>{}) );
+        sort_it3(fli, std::greater{});
+        CHECK( std::is_sorted(fli.begin(), fli.end(), std::greater{}) );
     }
 
     SECTION( "schwartz_adapter" )
@@ -105,8 +105,8 @@ TEST_CASE( "function pointer test for every adapter",
         >;
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "schwartz_adapter<small_array_adapter>" )
@@ -117,8 +117,8 @@ TEST_CASE( "function pointer test for every adapter",
         constexpr void(*sort_it)(std::array<short int, 6>&, std::greater<>) = sorter{};
 
         std::array<short int, 6> arr = {{ 4, 3, 2, 5, 6, 1 }};
-        sort_it(arr, std::greater<>{});
-        CHECK( std::is_sorted(arr.begin(), arr.end(), std::greater<>{}) );
+        sort_it(arr, std::greater{});
+        CHECK( std::is_sorted(arr.begin(), arr.end(), std::greater{}) );
     }
 
     SECTION( "self_sort_adapter" )
@@ -129,11 +129,11 @@ TEST_CASE( "function pointer test for every adapter",
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
         constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it2(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it2(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "stable_adapter<self_sort_adapter>" )
@@ -144,11 +144,11 @@ TEST_CASE( "function pointer test for every adapter",
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
         constexpr void(*sort_it2)(std::list<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
 
-        sort_it2(li, std::greater<>{});
-        CHECK( std::is_sorted(li.begin(), li.end(), std::greater<>{}) );
+        sort_it2(li, std::greater{});
+        CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
     SECTION( "small_array_adapter" )
@@ -165,16 +165,16 @@ TEST_CASE( "function pointer test for every adapter",
         std::array<short int, 6> arr = {{ 4, 3, 2, 5, 6, 1 }};
 
         auto to_sort = arr;
-        sort_it1(to_sort, std::greater<>{});
-        CHECK( std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<>{}) );
+        sort_it1(to_sort, std::greater{});
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end(), std::greater{}) );
 
         to_sort = arr;
-        sort_it2(to_sort, std::greater<>{});
-        CHECK( std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<>{}) );
+        sort_it2(to_sort, std::greater{});
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end(), std::greater{}) );
 
         to_sort = arr;
-        sort_it3(to_sort, std::greater<>{});
-        CHECK( std::is_sorted(to_sort.begin(), to_sort.end(), std::greater<>{}) );
+        sort_it3(to_sort, std::greater{});
+        CHECK( std::is_sorted(to_sort.begin(), to_sort.end(), std::greater{}) );
     }
 
     SECTION( "stable_adapter" )
@@ -184,8 +184,8 @@ TEST_CASE( "function pointer test for every adapter",
         >;
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "verge_adapter" )
@@ -195,7 +195,7 @@ TEST_CASE( "function pointer test for every adapter",
         >;
         constexpr void(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
 
-        sort_it(collection, std::greater<>{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater<>{}) );
+        sort_it(collection, std::greater{});
+        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 }
