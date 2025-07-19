@@ -35,8 +35,6 @@ The project's CMake files offers some options, though they are mainly used to co
 * `CPPSORT_ENABLE_AUDITS`: when `ON`, defines the eponymous macro which enables expensive debug assertions from the library's internals, defaults to `OFF`.
 * `CPPSORT_USE_LIBASSERT` (experimental): when `ON`, internal assertions use [libassert][libassert] instead of the standard `assert` macro, providing additional information about the errors. Defaults to `OFF`.
 
-Some of those options also exist without the `CPPSORT_` prefix, but they are deprecated. For compatibility reasons, the options with the `CPPSORT_` prefix default to the values of the equivalent unprefixed options.
-
 Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enabled even if `CPPSORT_ENABLE_ASSERTIONS` is `OFF`. See [the relevant page][assertions-and-audits] for more information.
 
 *New in version 1.6.0:* added the option `BUILD_EXAMPLES`.
@@ -46,8 +44,6 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 *New in version 1.13.0:* added the option `CPPSORT_STATIC_TESTS`.
 
 *New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS`, `CPPSORT_ENABLE_AUDITS` and `CPPSORT_USE_LIBASSERT`.
-
-***WARNING:** options without a `CPPSORT_` prefixed are deprecated in version 1.9.0 and removed in version 2.0.0.*
 
 [Catch2][catch2] 3.0.0-preview4 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
 

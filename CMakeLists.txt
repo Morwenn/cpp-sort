@@ -11,10 +11,8 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # Project options
-option(BUILD_TESTING "Build the cpp-sort test suite (deprecated, use CPPSORT_BUILD_TESTING)" ON)
-option(BUILD_EXAMPLES "Build the cpp-sort examples (deprecated, use CPPSORT_BUILD_EXAMPLES)" OFF)
-option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ${BUILD_TESTING})
-option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" ${BUILD_EXAMPLES})
+option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ON)
+option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
 option(CPPSORT_ENABLE_AUDITS "Enable assertions in the library" OFF)
 option(CPPSORT_ENABLE_ASSERTIONS "Enable assertions in the library" ${CPPSORT_ENABLE_AUDITS})
 option(CPPSORT_USE_LIBASSERT "Use libassert for assertions (experimental)" OFF)
