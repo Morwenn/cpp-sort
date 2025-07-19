@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with shuffled distribution", "[d
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<>,
                     cppsort::wiki_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -81,7 +81,7 @@ TEMPLATE_TEST_CASE( "test bidirectional sorters with shuffled distribution", "[d
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
                     cppsort::splay_sorter,
-                    cppsort::verge_sorter )
+                    old_verge_sorter )
 {
     std::list<int> collection;
     helpers::test_distribution<TestType>(collection, 2500, dist::shuffled{}, -1000);

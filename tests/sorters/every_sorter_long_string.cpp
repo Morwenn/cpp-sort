@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE( "test every sorter with long std::string", "[sorters]",
                     old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<>,
                     cppsort::wiki_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>

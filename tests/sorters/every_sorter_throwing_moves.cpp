@@ -103,7 +103,7 @@ TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[
                     old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<>,
                     cppsort::wiki_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
@@ -159,7 +159,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters against throwing move operations", "[
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
                     cppsort::splay_sorter,
-                    cppsort::verge_sorter )
+                    old_verge_sorter )
 {
     auto distribution = dist::shuffled{};
     // Initialize counters

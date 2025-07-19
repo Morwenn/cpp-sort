@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
                     cppsort::std_sorter,
                     cppsort::stable_adapter<cppsort::std_sorter>,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<> )
 {
     std::vector<double> collection; collection.reserve(412);
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with indirect_adapter", "[indire
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
                     cppsort::splay_sorter,
-                    cppsort::verge_sorter )
+                    old_verge_sorter )
 {
     std::list<double> collection;
     auto distribution = dist::shuffled{};

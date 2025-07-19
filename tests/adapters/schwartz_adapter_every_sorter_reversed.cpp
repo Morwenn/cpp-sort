@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
                     cppsort::splay_sorter,
                     old_split_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     std::vector<wrapper<>> collection;

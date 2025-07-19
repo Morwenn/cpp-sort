@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE( "test most sorters with no_post_iterator", "[sorters]",
                     old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     std::vector<int> collection;

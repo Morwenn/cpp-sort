@@ -38,7 +38,7 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
                     old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<> )
 {
     // This test is meant to check that sorters can correctly handle
@@ -79,7 +79,7 @@ TEMPLATE_TEST_CASE( "bidirectional sorters with a projection returning an rvalue
                     cppsort::selection_sorter,
                     cppsort::slab_sorter,
                     cppsort::splay_sorter,
-                    cppsort::verge_sorter )
+                    old_verge_sorter )
 {
     std::list<int> collection;
     auto distribution = dist::shuffled{};

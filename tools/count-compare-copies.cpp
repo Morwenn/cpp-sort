@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -77,7 +77,6 @@ int main()
         { "smooth_sort",            cppsort::smooth_sort            },
         { "std_sort",               cppsort::std_sort               },
         { "tim_sort",               cppsort::tim_sort               },
-        { "verge_sort",             cppsort::verge_sort             },
         { "wiki_sort",              cppsort::wiki_sort              },
     };
 

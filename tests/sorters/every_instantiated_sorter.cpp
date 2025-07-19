@@ -169,12 +169,6 @@ TEST_CASE( "test every instantiated sorter", "[sorters]" )
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 
-    SECTION( "verge_sorter" )
-    {
-        cppsort::verge_sort(collection);
-        CHECK( std::is_sorted(collection.begin(), collection.end()) );
-    }
-
     SECTION( "wiki_sort" )
     {
         cppsort::wiki_sort(collection);

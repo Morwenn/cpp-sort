@@ -283,7 +283,6 @@ struct stable_adapter;
 `stable_adapter` is the main customization point of those stable sorting facilities, and as such can be specialized to provide stable versions of your own unstable sorters or adapters. **cpp-sort** itself provides `stable_adapter` specializations for the following components:
 
 * [`std_sorter`][std-sorter] (calls [`std::stable_sort`][std-stable-sort] instead of [`std::sort`][std-sort])
-* [`verge_sorter`][verge-sorter]
 * [`hybrid_adapter`][hybrid-adapter]
 * [`self_sort_adapter`][self-sort-adapter]
 * `stable_adapter` itself (automatic unnesting)
@@ -318,12 +317,18 @@ This little dance sometimes allows to reduce the nesting of function calls and t
 #include <cpp-sort/adapters/verge_adapter.h>
 ```
 
-The complexity analysis is a bit too complicated to be included in this documentation. Additionally, the space and time complexity changes depending on whether the merging algorithm has enough space to run in O(n) time or whether it needs to fall back to an O(n log n) algorithm. Assuming that the *adapted sorter* works in O(n log n) time and O(1) space, the complexity of the *resulting sorter* is as follows:
+Vergesort is a [*Mono*-adaptive][probe-mono] algorithm as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to the *adapted sorted* to sort them.
+
+The space and time complexities of this adapter change depending on whether the merging algorithm has enough space to run in O(n) time or whether it needs to fall back to an O(n log n) algorithm for merging. Assuming that the *adapted sorter* works in O(n log n) time and O(1) space, the complexity of the *resulting sorter* is as follows:
 
 | Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n log log n | n           | No          | Bidirectional |
 | n           | n log n     | n log n           | log n       | No          | Bidirectional |
+
+We can understand that complexity as being bound by either the vergesort optimization layer or, by the *adapted sorter*'s complexity:
+* When vergesort doesn't find big enough runs, the complexity is bound by that of the *adapted sorter*.
+* When it does find big enough runs, the complexity is bound by the merging phase of the optimization layer. In such a case, `inplace_merge` is used to merge the runs: it uses additional memory if any is available, in which case vergesort is O(n log n). If there isn't much extra memory available, it may still require O(log n) extra memory (and thus raise an `std::bad_alloc` if there isn't that much memory available) in which case the complexity falls to O(n log n log log n).
 
 The *resulting sorter* is always unstable, no matter the stability of the *adapted sorter*. It accepts bidirectional ranges.
 
@@ -367,5 +372,4 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
   [std-true-type]: https://en.cppreference.com/w/cpp/types/integral_constant
   [verge-adapter]: Sorter-adapters.md#verge_adapter
-  [verge-sorter]: Sorters.md#verge_sorter
   [vergesort-fallbacks]: https://github.com/Morwenn/vergesort/blob/trunk/fallbacks.md

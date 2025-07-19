@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE( "test every sorter with move-only types", "[sorters]",
                     old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     // General test to make sure that every sorter compiles fine with

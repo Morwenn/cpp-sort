@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE( "test every sorter with a pointer to member function compari
                     old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<> )
 {
     std::vector<internal_compare<int>> collection;

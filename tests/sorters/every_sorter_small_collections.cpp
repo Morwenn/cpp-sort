@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE( "test every sorter with small collections", "[sorters]",
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<> )
 {
     // Test that all sorters are able to sort empty collections or

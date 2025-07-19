@@ -380,33 +380,6 @@ While the sorting algorithm is stable and the complexity guarantees are good eno
 
 *Changed in version 1.5.0:* `tim_sorter` now handles comparison and projection objects that aren't default-constructible.
 
-### `verge_sorter`
-
-```cpp
-#include <cpp-sort/sorters/verge_sorter.h>
-```
-
-Implements a [vergesort][vergesort] algorithm backed by a quicksort derivative.
-
-| Best        | Average     | Worst             | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n log log n | n           | No          | Random-access |
-| n           | n log n     | n log n           | log n       | No          | Random-access |
-| n           | n log n     | n log n log log n | n           | No          | Bidirectional |
-| n           | n log n     | n log n           | log² n      | No          | Bidirectional |
-
-Vergesort is a [*Runs*-adaptive][probe-runs] algorithm (including descending runs) as long as the size of those runs is greater than *n / log n*; when the runs are smaller, it falls back to another sorting algorithm to sort them (pdqsort for random-access iterators, QuickMergesort otherwise).
-
-Vergesort's complexity is bound either by its optimization layer or by the fallback sorter's complexity:
-* When it doesn't find big runs, the complexity is bound by the fallback sorter: depending on the category of iterators you can refer to the tables of either `pdq_sorter` or `quick_merge_sorter`.
-* When it does find big runs, vergesort's complexity is bound by the merging phase of its optimization layer. In such a case, `inplace_merge` is used to merge the runs: it will use additional memory if any is available, in which case vergesort is O(n log n). If there isn't much extra memory available, it may still require O(log n) extra memory (and thus raise an `std::bad_alloc` if there isn't that much memory available) in which case the complexity falls to O(n log n log log n). It should not happen that much, and the additional *log log n* factor is likely irrelevant for most real-world applications.
-
-When wrapped into [`stable_adapter`][stable-adapter], it has a slightly different behaviour: it detects strictly descending runs instead of non-ascending ones, and wraps the fallback sorter with `stable_t`. This make the specialization stable, and faster than just using `make_stable`.
-
-*Changed in version 1.6.0:* when sorting a collection made of bidirectional iterators, `verge_sorter` falls back to `quick_merge_sorter` instead of `quick_sorter`.
-
-*New in version 1.9.0:* explicit specialization for `stable_adapter<verge_sorter>`.
-
 ### `wiki_sorter<>`
 
 ```cpp
@@ -537,7 +510,6 @@ struct spread_sorter:
   [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort
   [pdq-sorter]: Sorters.md#pdq_sorter
   [pdqsort]: https://github.com/orlp/pdqsort
-  [probe-runs]: Measures-of-presortedness.md#runs
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [quicksort]: https://en.wikipedia.org/wiki/Quicksort
   [schwartz-adapter]: Sorter-adapters.md#schwartz_adapter
@@ -556,7 +528,6 @@ struct spread_sorter:
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
   [timsort]: https://en.wikipedia.org/wiki/Timsort
-  [vergesort]: https://github.com/Morwenn/vergesort
   [wiki-sort]: https://github.com/BonzaiThePenguin/WikiSort
   [wiki-sorter]: Sorters.md#wiki_sorter
   [writing-a-sorter]: Writing-a-sorter.md

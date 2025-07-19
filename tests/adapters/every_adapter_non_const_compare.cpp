@@ -139,14 +139,4 @@ TEST_CASE( "test adapters extended compatibility with LWG 3031", "[adapters]" )
         sorter{}(vec, non_const_compare);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
-
-    SECTION( "verge_adapter" )
-    {
-        using sorter = cppsort::verge_adapter<
-            cppsort::poplar_sorter
-        >;
-
-        sorter{}(vec, non_const_compare);
-        CHECK( std::is_sorted(vec.begin(), vec.end()) );
-    }
 }

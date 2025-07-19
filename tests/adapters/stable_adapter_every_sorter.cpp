@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable_adapter", "[stable_a
                     old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )
 {
     cppsort::stable_t<TestType> sorter;
@@ -86,7 +86,7 @@ TEMPLATE_TEST_CASE( "every bidirectional sorter with stable_adapter", "[stable_a
                     cppsort::selection_sorter,
                     cppsort::splay_sorter,
                     cppsort::slab_sorter,
-                    cppsort::verge_sorter )
+                    old_verge_sorter )
 {
     cppsort::stable_t<TestType> sorter;
     std::list<wrapper> collection(1000);

@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE( "test sorter with pipe_organ distribution", "[distributions]
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
-                    cppsort::verge_sorter,
+                    old_verge_sorter,
                     cppsort::wiki_sorter<>,
                     cppsort::wiki_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::half>
