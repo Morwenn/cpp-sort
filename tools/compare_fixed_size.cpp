@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -10,8 +10,9 @@
 #include <iostream>
 #include <iterator>
 #include <numeric>
-#include <cpp-sort/adapters.h>
+#include <cpp-sort/adapters/small_array_adapter.h>
 #include <cpp-sort/fixed_sorters.h>
+#include <cpp-sort/metrics/comparisons.h>
 #include <cpp-sort/sorters.h>
 
 using namespace cppsort;

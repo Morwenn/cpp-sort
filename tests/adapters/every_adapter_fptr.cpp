@@ -44,18 +44,6 @@ TEST_CASE( "function pointer test for every adapter",
         CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
-    SECTION( "counting_adapter" )
-    {
-        using sorter = cppsort::counting_adapter<
-            cppsort::selection_sorter
-        >;
-        constexpr std::size_t(*sort_it)(std::vector<short int>&, std::greater<>) = sorter{};
-
-        std::size_t res = sort_it(collection, std::greater{});
-        CHECK( res == 2080 );
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
-    }
-
     SECTION( "hybrid_adapter" )
     {
         using sorter = cppsort::hybrid_adapter<

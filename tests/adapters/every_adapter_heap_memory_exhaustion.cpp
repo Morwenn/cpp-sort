@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Morwenn
+ * Copyright (c) 2024-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -26,7 +26,6 @@ using HybridSorter = cppsort::hybrid_adapter<Sorter, cppsort::mel_sorter>;
 
 TEMPLATE_TEST_CASE( "heap exhaustion for random-access adapters", "[adapters][heap_exhaustion]",
                     cppsort::container_aware_adapter<Sorter>,
-                    cppsort::counting_adapter<Sorter>,
                     HybridSorter,
                     cppsort::self_sort_adapter<Sorter>,
                     cppsort::split_adapter<Sorter> )
@@ -45,7 +44,6 @@ TEMPLATE_TEST_CASE( "heap exhaustion for random-access adapters", "[adapters][he
 
 TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional adapters", "[adapters][heap_exhaustion]",
                     cppsort::container_aware_adapter<Sorter>,
-                    cppsort::counting_adapter<Sorter>,
                     HybridSorter,
                     cppsort::self_sort_adapter<Sorter>,
                     cppsort::split_adapter<Sorter> )
@@ -64,7 +62,6 @@ TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional adapters", "[adapters][he
 
 TEMPLATE_TEST_CASE( "heap exhaustion for forward adapters", "[adapters][heap_exhaustion]",
                     cppsort::container_aware_adapter<Sorter>,
-                    cppsort::counting_adapter<Sorter>,
                     HybridSorter,
                     cppsort::self_sort_adapter<Sorter> )
 {

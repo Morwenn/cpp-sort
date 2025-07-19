@@ -88,15 +88,6 @@ TEST_CASE( "test stateful sorters with every adapter",
         CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
-    SECTION( "counting_adapter" )
-    {
-        stateful_sorter<> sorter(42);
-        cppsort::counting_adapter<stateful_sorter<>> sort_it(sorter);
-
-        sort_it(collection, std::greater{});
-        CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
-    }
-
     SECTION( "hybrid_adapter" )
     {
         stateful_sorter<std::forward_iterator_tag> sorter1(41);
