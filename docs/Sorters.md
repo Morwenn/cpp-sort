@@ -62,26 +62,6 @@ Implements a heapsort algorithm based on a [*d*-ary heap][d-ary-heap]: the value
 
 *New in version 1.14.0*
 
-### `drop_merge_sorter`
-
-```cpp
-#include <cpp-sort/sorters/drop_merge_sorter.h>
-```
-
-***WARNING:** `drop_merge_sorter` is deprecated in version 1.15.0 and removed in version 2.0.0, use [`drop_merge_adapter`][drop-merge-adapter]`(`[`pdq_sort`][pdq-sorter]`)` instead.*
-
-Implements a [drop-merge sort][drop-merge-sort].
-
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Bidirectional |
-
-Drop-merge sort is a [*Rem*-adaptive][probe-rem] sorting algorithm. While it is not as good as other sorting algorithms to sort shuffled data, it is excellent when more than 80% of the data is already ordered according to *Rem*.
-
-*Deprecated in version 1.15.0*
-
-*Removed in version 2.0.0*
-
 ### `grail_sorter<>`
 
 ```cpp
@@ -574,8 +554,6 @@ struct spread_sorter:
   [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
   [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
   [d-ary-heap]: https://en.wikipedia.org/wiki/D-ary_heap
-  [drop-merge-adapter]: Sorter-adapters.md#drop_merge_adapter
-  [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [grailsort]: https://github.com/Mrrl/GrailSort
   [heapsort]: https://en.wikipedia.org/wiki/Heapsort
   [heap-sorter]: Sorters.md#heap_sorter

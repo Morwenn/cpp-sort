@@ -29,7 +29,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<9>,
                     old_default_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,
@@ -62,7 +62,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with Schwartzian transform adapter", "[schwartz_adapter]",
                     cppsort::cartesian_tree_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
                     cppsort::merge_sorter,

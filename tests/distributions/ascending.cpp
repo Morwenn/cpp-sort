@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2024 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <vector>
@@ -8,6 +8,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include "test_distribution.h"
 
 TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]",
@@ -19,7 +20,7 @@ TEMPLATE_TEST_CASE( "test sorter with ascending distribution", "[distributions]"
                     // so here is the dedicated test (see issue #103)
                     cppsort::counting_sorter,
                     cppsort::d_ary_heap_sorter<5>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>

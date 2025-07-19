@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -10,6 +10,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/test_vector.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with an int8_t difference_type", "[sorters]",
@@ -17,7 +18,7 @@ TEMPLATE_TEST_CASE( "test every sorter with an int8_t difference_type", "[sorter
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::d_ary_heap_sorter<4>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>

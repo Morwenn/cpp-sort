@@ -19,7 +19,7 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     cppsort::counting_sorter,
                     cppsort::d_ary_heap_sorter<2>,
                     old_default_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>

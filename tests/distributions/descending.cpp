@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2024 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <vector>
@@ -8,13 +8,14 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include "test_distribution.h"
 
 TEMPLATE_TEST_CASE( "test sorter with descending distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<7>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>

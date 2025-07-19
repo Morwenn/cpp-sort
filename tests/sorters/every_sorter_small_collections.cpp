@@ -1,18 +1,19 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
 #include <vector>
 #include <catch2/catch_template_test_macros.hpp>
 #include <cpp-sort/sorters.h>
+#include <testing-tools/old_sorters.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with small collections", "[sorters]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::d_ary_heap_sorter<9>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
                     cppsort::insertion_sorter,

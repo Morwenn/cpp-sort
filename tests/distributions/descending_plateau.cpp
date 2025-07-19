@@ -9,13 +9,14 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include "test_distribution.h"
 
 TEMPLATE_TEST_CASE( "test random-access sorters with descending_plateau distribution", "[distributions]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<6>,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<
                         cppsort::utility::dynamic_buffer<cppsort::utility::sqrt>
@@ -48,7 +49,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with descending_plateau distribu
 
 TEMPLATE_TEST_CASE( "test bidirectional sorters with descending_plateau distribution", "[distributions]",
                     cppsort::cartesian_tree_sorter,
-                    cppsort::drop_merge_sorter,
+                    old_drop_merge_sorter,
                     cppsort::merge_sorter,
                     cppsort::quick_merge_sorter,
                     cppsort::quick_sorter,

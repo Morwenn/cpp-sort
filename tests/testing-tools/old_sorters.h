@@ -9,6 +9,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <utility>
+#include <cpp-sort/adapters/drop_merge_adapter.h>
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
@@ -26,7 +27,7 @@
 // that are otherwise not as tested as most sorters.
 
 ////////////////////////////////////////////////////////////
-// old_default_sorter
+// default_sorter
 
 struct old_default_sorter:
     cppsort::self_sort_adapter<
@@ -54,5 +55,14 @@ namespace cppsort
         {}
     };
 }
+
+////////////////////////////////////////////////////////////
+// drop_merge_sorter
+
+struct old_drop_merge_sorter:
+    cppsort::drop_merge_adapter<cppsort::pdq_sorter>
+{
+    old_drop_merge_sorter() = default;
+};
 
 #endif // CPPSORT_TESTSUITE_OLD_SORTERS_H_
