@@ -9,7 +9,6 @@
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/sorters/default_sorter.h>
-#include <cpp-sort/sort.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
 #include <testing-tools/wrapper.h>
@@ -25,55 +24,57 @@ TEST_CASE( "default sorter tests with projections",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80);
 
+    cppsort::default_sorter do_sort;
+
     SECTION( "sort with random-access iterable" )
     {
-        cppsort::sort(vec, &wrapper::value);
+        do_sort(vec, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterable and compare" )
     {
-        cppsort::sort(vec, std::greater{}, &wrapper::value);
+        do_sort(vec, std::greater{}, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators" )
     {
-        cppsort::sort(vec.begin(), vec.end(), &wrapper::value);
+        do_sort(vec.begin(), vec.end(), &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "sort with random-access iterators and compare" )
     {
-        cppsort::sort(vec.begin(), vec.end(), std::greater{}, &wrapper::value);
+        do_sort(vec.begin(), vec.end(), std::greater{}, &wrapper::value);
         CHECK( helpers::is_sorted(vec.begin(), vec.end(), std::greater{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators" )
     {
         std::list<wrapper> li(vec.begin(), vec.end());
-        cppsort::sort(li.begin(), li.end(), &wrapper::value);
+        do_sort(li.begin(), li.end(), &wrapper::value);
         CHECK( helpers::is_sorted(li.begin(), li.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "sort with bidirectional iterators and compare" )
     {
         std::list<wrapper> li(vec.begin(), vec.end());
-        cppsort::sort(li.begin(), li.end(), std::greater{}, &wrapper::value);
+        do_sort(li.begin(), li.end(), std::greater{}, &wrapper::value);
         CHECK( helpers::is_sorted(li.begin(), li.end(), std::greater{}, &wrapper::value) );
     }
 
     SECTION( "sort with forward iterators" )
     {
         std::forward_list<wrapper> li(vec.begin(), vec.end());
-        cppsort::sort(li.begin(), li.end(), &wrapper::value);
+        do_sort(li.begin(), li.end(), &wrapper::value);
         CHECK( helpers::is_sorted(li.begin(), li.end(), std::less{}, &wrapper::value) );
     }
 
     SECTION( "sort with forward iterators and compare" )
     {
         std::forward_list<wrapper> li(vec.begin(), vec.end());
-        cppsort::sort(li.begin(), li.end(), std::greater{}, &wrapper::value);
+        do_sort(li.begin(), li.end(), std::greater{}, &wrapper::value);
         CHECK( helpers::is_sorted(li.begin(), li.end(), std::greater{}, &wrapper::value) );
     }
 }

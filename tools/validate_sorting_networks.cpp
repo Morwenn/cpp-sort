@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -15,15 +15,15 @@
 #include <utility>
 #include <vector>
 #include <cpp-sort/detail/bitops.h>
+#include <cpp-sort/detail/iterator_traits.h>
 #include <cpp-sort/fixed/sorting_network_sorter.h>
-#include <cpp-sort/sort.h>
 
 #define CPPSORT_LIKELY(x) __builtin_expect((x), 1)
 #define CPPSORT_UNLIKELY(x) __builtin_expect((x), 0)
 
 ////////////////////////////////////////////////////////////
 // Dedicated algorithm to find all permutations of an array
-// of 0 and 1 and play an algorithm to each permutation,
+// of 0 and 1 and play an algorithm for each permutation,
 // notably using a Gray code progression to find every
 // permutation
 

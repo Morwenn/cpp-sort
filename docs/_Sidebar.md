@@ -2,7 +2,6 @@
 * [Quickstart](Quickstart.md)
 * Sorting library
     * [Library nomenclature](Library-nomenclature.md)
-    * [Sorting functions](Sorting-functions.md)
     * [Sorters](Sorters.md)
     * [Fixed-size sorters](Fixed-size-sorters.md)
     * [Sorter adapters](Sorter-adapters.md)
