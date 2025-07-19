@@ -100,7 +100,7 @@ TEMPLATE_TEST_CASE( "random-access sorters against throwing move operations", "[
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter,

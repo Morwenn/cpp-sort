@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE( "test random-access sorters with median_of_3_killer distribu
                     cppsort::smooth_sorter,
                     cppsort::splay_sorter,
                     cppsort::spin_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,

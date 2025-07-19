@@ -339,33 +339,6 @@ Implements a [splaysort][splaysort].
 
 *New in version 1.15.0*
 
-### `split_sorter`
-
-```cpp
-#include <cpp-sort/sorters/split_sorter.h>
-```
-
-***WARNING:** `split_sorter` is deprecated in version 1.15.0 and removed in version 2.0.0, use [`split_adapter`][split-adapter]`(`[`pdq_sort`][pdq-sorter]`)` instead.*
-
-Implements an in-place *SplitSort* as descirbed in *Splitsort — an adaptive sorting algorithm* by C. Levcopoulos and O. Petersson. This library implements the simpler "in-place" version of the algorithm described in the paper.
-
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Random-access |
-
-SplitSort is a [*Rem*-adaptive][probe-rem] sorting algorithm and shares many similarities with drop-merge sort but has the following differences:
-* It only works with random-access iterators.
-* While it uses O(n) extra memory to merge some elements, it can run perfectly fine with O(1) extra memory.
-* Benchmarks shows that drop-merge sort is better when few elements aren't in place, but SplitSort has a lower overhead on random data while still performing better than most general-purpose sorting algorithms when the data is already somewhat sorted.
-
-This sorter can't throw `std::bad_alloc`.
-
-*New in version 1.4.0*
-
-*Deprecated in version 1.15.0*
-
-*Removed in version 2.0.0*
-
 ### `std_sorter`
 
 ```cpp
@@ -564,7 +537,6 @@ struct spread_sorter:
   [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort
   [pdq-sorter]: Sorters.md#pdq_sorter
   [pdqsort]: https://github.com/orlp/pdqsort
-  [probe-rem]: Measures-of-presortedness.md#rem
   [probe-runs]: Measures-of-presortedness.md#runs
   [quick-mergesort]: https://arxiv.org/abs/1307.3033
   [quicksort]: https://en.wikipedia.org/wiki/Quicksort
@@ -576,7 +548,6 @@ struct spread_sorter:
   [sorter-adapters]: Sorter-adapters.md
   [spinsort]: https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/sort/single_thread/spinsort.html
   [splaysort]: https://en.wikipedia.org/wiki/Splaysort
-  [split-adapter]: Sorter-adapters.md#split_adapter
   [spreadsort]: https://en.wikipedia.org/wiki/Spreadsort
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void

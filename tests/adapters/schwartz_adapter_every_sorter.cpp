@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with Schwartzian transform adapt
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter,
                     cppsort::wiki_sorter<cppsort::utility::fixed_buffer<0>> )

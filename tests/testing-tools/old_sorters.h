@@ -13,6 +13,7 @@
 #include <cpp-sort/adapters/hybrid_adapter.h>
 #include <cpp-sort/adapters/self_sort_adapter.h>
 #include <cpp-sort/adapters/small_array_adapter.h>
+#include <cpp-sort/adapters/split_adapter.h>
 #include <cpp-sort/adapters/stable_adapter.h>
 #include <cpp-sort/fixed/low_comparisons_sorter.h>
 #include <cpp-sort/sorter_facade.h>
@@ -63,6 +64,15 @@ struct old_drop_merge_sorter:
     cppsort::drop_merge_adapter<cppsort::pdq_sorter>
 {
     old_drop_merge_sorter() = default;
+};
+
+////////////////////////////////////////////////////////////
+// split_sorter
+
+struct old_split_sorter:
+    cppsort::split_adapter<cppsort::pdq_sorter>
+{
+    old_split_sorter() = default;
 };
 
 #endif // CPPSORT_TESTSUITE_OLD_SORTERS_H_

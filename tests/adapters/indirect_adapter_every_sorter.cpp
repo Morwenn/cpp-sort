@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with indirect adapter", "[indire
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::spread_sorter,
                     cppsort::std_sorter,
                     cppsort::stable_adapter<cppsort::std_sorter>,

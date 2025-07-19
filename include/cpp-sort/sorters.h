@@ -29,7 +29,6 @@
 #include <cpp-sort/sorters/spin_sorter.h>
 #include <cpp-sort/sorters/splay_sorter.h>
 #include <cpp-sort/sorters/spread_sorter.h>
-#include <cpp-sort/sorters/split_sorter.h>
 #include <cpp-sort/sorters/std_sorter.h>
 #include <cpp-sort/sorters/tim_sorter.h>
 #include <cpp-sort/sorters/verge_sorter.h>

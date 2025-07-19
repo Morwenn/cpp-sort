@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE( "random-access sorters with a projection returning an rvalue
                     cppsort::smooth_sorter,
                     cppsort::spin_sorter,
                     cppsort::splay_sorter,
-                    cppsort::split_sorter,
+                    old_split_sorter,
                     cppsort::std_sorter,
                     cppsort::tim_sorter,
                     cppsort::verge_sorter,
