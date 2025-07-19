@@ -6,9 +6,9 @@ While these function objects offer little more than regular sorting functions by
 #include <cpp-sort/sorters.h>
 ```
 
-For every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates). The only sorter without a corresponding global instance is [`default_sorter`][default-sorter] since it mainly exists as a fallback sorter for the functions [`cppsort::sort` and `cppsort::stable_sort`][sorting-functions] when they are called without an explicit sorter.
+For every `foobar_sorter` described in this page, there is a corresponding `foobar_sort` global instance that allows not to care about the sorter abstraction as long as it is not needed (the instances are usable as regular function templates).
 
-If you want to read more about sorters and/or write your own one, then you should have a look at [the dedicated page][writing-a-sorter] or at [a specific example][writing-a-bubble-sorter].
+If you want to read more about sorters and/or write your own, then you should have a look at [the dedicated page][writing-a-sorter] or at [a specific example][writing-a-bubble-sorter].
 
 ## Comparison sorters
 
@@ -61,44 +61,6 @@ Implements a heapsort algorithm based on a [*d*-ary heap][d-ary-heap]: the value
 *d*-ary heapsorts are more complicated than their binary counterparts, but storing more elements in each node can improve locality of reference and improve the execution speed. This sorter, unlike [`heap_sorter`][heap-sorter], does not implement a [bottom-up node searching strategy][bottom-up-heapsort].
 
 *New in version 1.14.0*
-
-### `default_sorter`
-
-```cpp
-#include <cpp-sort/sorters/default_sorter.h>
-```
-
-***WARNING:** `default_sorter` is deprecated in version 1.8.0 and removed in version 2.0.0, see [issue #168][issue-168] for the rationale.*
-
-Sorter striving to use a sorting algorithm as optimized as possible. It is the fallback sorter used by [`cppsort::sort`][cppsort-sort] when no sorter is given. The current implementation defines it as follows:
-
-```cpp
-struct default_sorter:
-    self_sort_adapter<
-        hybrid_adapter<
-            small_array_adapter<
-                low_comparisons_sorter,
-                std::make_index_sequence<14u>
-            >,
-            quick_sorter,
-            pdq_sorter
-        >
-    >
-{};
-```
-
-The adapter [`stable_adapter`][stable-adapter] has an explicit specialization for `default_sorter` defined as follows:
-
-```cpp
-template<>
-struct stable_adapter<default_sorter>:
-    merge_sorter
-{};
-```
-
-*Deprecated in version 1.8.0*
-
-*Removed in version 2.0.0*
 
 ### `drop_merge_sorter`
 
@@ -611,9 +573,7 @@ struct spread_sorter:
   [cartesian-tree-sort]: https://en.wikipedia.org/wiki/Cartesian_tree#Application_in_sorting
   [container-aware-adapter]: Sorter-adapters.md#container_aware_adapter
   [counting-sort]: https://en.wikipedia.org/wiki/Counting_sort
-  [cppsort-sort]: Sorting-functions.md#cppsortsort
   [d-ary-heap]: https://en.wikipedia.org/wiki/D-ary_heap
-  [default-sorter]: Sorters.md#default_sorter
   [drop-merge-adapter]: Sorter-adapters.md#drop_merge_adapter
   [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [grailsort]: https://github.com/Mrrl/GrailSort
@@ -636,7 +596,6 @@ struct spread_sorter:
   [ska-sort]: https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
   [smoothsort]: https://en.wikipedia.org/wiki/Smoothsort
   [sorter-adapters]: Sorter-adapters.md
-  [sorting-functions]: Sorting-functions.md
   [spinsort]: https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/sort/single_thread/spinsort.html
   [splaysort]: https://en.wikipedia.org/wiki/Splaysort
   [split-adapter]: Sorter-adapters.md#split_adapter

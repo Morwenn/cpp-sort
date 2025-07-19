@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -13,13 +13,14 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/wrapper.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with verge_adapter", "[verge_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<4>,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
@@ -56,7 +57,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter",
                     "[verge_adapter][stable_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
@@ -91,7 +92,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with stable verge_adapter",
 
 TEMPLATE_TEST_CASE( "every bidirectiona sorter with verge_adapter", "[verge_adapter]",
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,

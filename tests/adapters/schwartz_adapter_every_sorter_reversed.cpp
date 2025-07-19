@@ -13,6 +13,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/random.h>
 #include <testing-tools/wrapper.h>
 
@@ -27,7 +28,7 @@ TEMPLATE_TEST_CASE( "every sorter with Schwartzian transform adapter and reverse
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<8>,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -10,6 +10,7 @@
 #include <cpp-sort/utility/buffer.h>
 #include <cpp-sort/utility/functional.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/span.h>
 
 TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
@@ -17,7 +18,7 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
                     cppsort::cartesian_tree_sorter,
                     cppsort::counting_sorter,
                     cppsort::d_ary_heap_sorter<2>,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::grail_sorter<

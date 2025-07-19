@@ -9,17 +9,17 @@
 #include <list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <cpp-sort/sorters/default_sorter.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 
-TEST_CASE( "default sorter tests", "[default_sorter]" )
+TEST_CASE( "default sorter tests", "[old_default_sorter]" )
 {
     // Collection to sort
     std::vector<int> vec; vec.reserve(80);
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80, 0);
 
-    cppsort::default_sorter do_sort;
+    old_default_sorter do_sort;
 
     SECTION( "sort with random-access iterable" )
     {

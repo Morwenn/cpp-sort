@@ -282,7 +282,6 @@ struct stable_adapter;
 
 `stable_adapter` is the main customization point of those stable sorting facilities, and as such can be specialized to provide stable versions of your own unstable sorters or adapters. **cpp-sort** itself provides `stable_adapter` specializations for the following components:
 
-* [`default_sorter`][default-sorter]
 * [`std_sorter`][std-sorter] (calls [`std::stable_sort`][std-stable-sort] instead of [`std::sort`][std-sort])
 * [`verge_sorter`][verge-sorter]
 * [`hybrid_adapter`][hybrid-adapter]
@@ -345,7 +344,6 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
-  [default-sorter]: Sorters.md#default_sorter
   [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
   [fixed-size-sorters]: Fixed-size-sorters.md
   [fixed-sorter-traits]: Sorter-traits.md#fixed_sorter_traits

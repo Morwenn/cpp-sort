@@ -8,13 +8,13 @@
 #include <list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <cpp-sort/sorters/default_sorter.h>
 #include <testing-tools/algorithm.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 #include <testing-tools/wrapper.h>
 
 TEST_CASE( "default sorter tests with projections",
-           "[default_sorter][projection]" )
+           "[old_default_sorter][projection]" )
 {
     // Wrapper to hide the integer
     using wrapper = generic_wrapper<int>;
@@ -24,7 +24,7 @@ TEST_CASE( "default sorter tests with projections",
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(vec), 80);
 
-    cppsort::default_sorter do_sort;
+    old_default_sorter do_sort;
 
     SECTION( "sort with random-access iterable" )
     {

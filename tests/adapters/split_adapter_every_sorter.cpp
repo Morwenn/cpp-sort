@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -11,12 +11,13 @@
 #include <cpp-sort/sorters.h>
 #include <cpp-sort/utility/buffer.h>
 #include <testing-tools/distributions.h>
+#include <testing-tools/old_sorters.h>
 
 TEMPLATE_TEST_CASE( "every random-access sorter with split_adapter", "[split_adapter]",
                     cppsort::adaptive_shivers_sorter,
                     cppsort::cartesian_tree_sorter,
                     cppsort::d_ary_heap_sorter<2>,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::grail_sorter<>,
                     cppsort::heap_sorter,
@@ -52,7 +53,7 @@ TEMPLATE_TEST_CASE( "every random-access sorter with split_adapter", "[split_ada
 
 TEMPLATE_TEST_CASE( "every bidirectional sorter with split_adapter", "[split_adapter]",
                     cppsort::cartesian_tree_sorter,
-                    cppsort::default_sorter,
+                    old_default_sorter,
                     cppsort::drop_merge_sorter,
                     cppsort::insertion_sorter,
                     cppsort::mel_sorter,
