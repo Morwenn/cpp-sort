@@ -17,14 +17,13 @@
 namespace cppsort::utility
 {
     template<typename RandomAccessIterator1, typename RandomAccessIterator2>
-    auto apply_permutation(RandomAccessIterator1 first, RandomAccessIterator1 last,
+    auto apply_permutation(RandomAccessIterator1 first, [[maybe_unused]] RandomAccessIterator1 last,
                            RandomAccessIterator2 indices_first, RandomAccessIterator2 indices_last)
         -> void
     {
         using difference_type = cppsort::detail::difference_type_t<RandomAccessIterator1>;
         using utility::iter_move;
         CPPSORT_ASSERT( (last - first) == (indices_last - indices_first) );
-        (void)last;
 
         auto size = indices_last - indices_first;
         for (difference_type idx = 0; idx < size; ++idx) {
