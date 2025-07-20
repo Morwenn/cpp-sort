@@ -14,7 +14,7 @@
 namespace
 {
     // Type of sorter used for checks
-    enum class sorter_type
+    enum struct sorter_type
     {
         integer,
         floating_point,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -11,7 +11,7 @@
 
 namespace
 {
-    enum class sorter_type
+    enum struct sorter_type
     {
         bidirectional,
         random_access

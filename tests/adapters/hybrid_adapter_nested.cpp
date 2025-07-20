@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -13,7 +13,7 @@
 namespace
 {
     // Type of sorter used for checks
-    enum class sorter_type
+    enum struct sorter_type
     {
         forward,
         bidirectional,
