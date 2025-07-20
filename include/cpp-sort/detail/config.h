@@ -102,13 +102,13 @@
 #if defined(CPPSORT_ENABLE_AUDITS)
 #   define CPPSORT_ASSUME(...) CPPSORT_ASSERT(__VA_ARGS__)
 #elif defined(__GNUC__)
-#   define CPPSORT_ASSUME(expression) do { if (!(expression)) __builtin_unreachable(); } while(0)
+#   define CPPSORT_ASSUME(...) do { if (!(__VA_ARGS__)) __builtin_unreachable(); } while(0)
 #elif defined(__clang__)
-#   define CPPSORT_ASSUME(expression) __builtin_assume(expression)
+#   define CPPSORT_ASSUME(...) __builtin_assume(__VA_ARGS__)
 #elif defined(_MSC_VER)
-#   define CPPSORT_ASSUME(expression) __assume(expression)
+#   define CPPSORT_ASSUME(...) __assume(__VA_ARGS__)
 #else
-#   define CPPSORT_ASSUME(cond) ((void)0)
+#   define CPPSORT_ASSUME(...) ((void)0)
 #endif
 
 ////////////////////////////////////////////////////////////
