@@ -19,7 +19,7 @@ namespace cppsort
     template<typename F>
     struct not_fn_t;
     template<typename F1, typename F2>
-    class projection_compare;
+    class projection_compare_t;
 
     ////////////////////////////////////////////////////////////
     // flip_t
@@ -153,13 +153,13 @@ namespace cppsort
         };
 
         template<typename F1, typename F2>
-        struct flip_impl<projection_compare<F1, F2>>
+        struct flip_impl<projection_compare_t<F1, F2>>
         {
-            using type = projection_compare<
+            using type = projection_compare_t<
                 typename detail::flip_impl<F1>::type, F2
             >;
 
-            static constexpr auto construct(const projection_compare<F1, F2>& func)
+            static constexpr auto construct(const projection_compare_t<F1, F2>& func)
                 -> type
             {
                 return type(
