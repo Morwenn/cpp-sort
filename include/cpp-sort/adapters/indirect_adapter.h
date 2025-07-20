@@ -67,7 +67,7 @@ namespace cppsort
             }
 
             // Work around the sorters that return void
-            auto exit_function = make_scope_success([&] {
+            auto exit_function = scope_success([&] {
 
                 ////////////////////////////////////////////////////////////
                 // Move the values according the iterator's positions

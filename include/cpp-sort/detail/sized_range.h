@@ -63,14 +63,6 @@ namespace detail
             ForwardIterator end_;
             difference_type_t<ForwardIterator> size_;
     };
-
-    template<typename ForwardIterator>
-    constexpr auto make_sized_range(ForwardIterator begin, ForwardIterator end,
-                                    difference_type_t<ForwardIterator> size)
-        -> sized_range<ForwardIterator>
-    {
-        return sized_range<ForwardIterator>(std::move(begin), std::move(end), size);
-    }
 }}
 
 #endif // CPPSORT_DETAIL_SIZED_RANGE_H_

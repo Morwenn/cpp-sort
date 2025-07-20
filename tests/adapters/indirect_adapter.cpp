@@ -74,20 +74,20 @@ TEST_CASE( "indirect_adapter with temporary span",
 
     SECTION( "with comparison" )
     {
-        sorter(make_span(collection), std::greater{});
+        sorter(span(collection), std::greater{});
         CHECK( std::is_sorted(collection.begin(), collection.end(), std::greater{}) );
     }
 
     SECTION( "with projection" )
     {
-        sorter(make_span(collection), std::negate{});
+        sorter(span(collection), std::negate{});
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less{}, std::negate{}) );
     }
 
     SECTION( "with comparison and projection" )
     {
-        sorter(make_span(collection), std::greater{}, std::negate{});
+        sorter(span(collection), std::greater{}, std::negate{});
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
 }

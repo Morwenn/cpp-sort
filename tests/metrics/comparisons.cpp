@@ -64,7 +64,7 @@ TEST_CASE( "metrics::comparisons with span",
         auto distribution = dist::shuffled{};
         distribution(std::back_inserter(collection), 65, 0);
 
-        auto res = sorter(make_span(collection));
+        auto res = sorter(span(collection));
         CHECK( res == 2080 );
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
@@ -75,7 +75,7 @@ TEST_CASE( "metrics::comparisons with span",
         auto distribution = dist::shuffled{};
         distribution(std::back_inserter(collection), 80, 0);
 
-        auto res = sorter(make_span(collection), &wrapper::value);
+        auto res = sorter(span(collection), &wrapper::value);
         CHECK( res == 3160 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less{}, &wrapper::value) );

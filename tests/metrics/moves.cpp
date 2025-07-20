@@ -60,7 +60,7 @@ TEST_CASE( "metrics::moves with span",
         auto distribution = dist::descending_plateau{};
         distribution(std::back_inserter(collection), 65);
 
-        auto res = sorter(make_span(collection));
+        auto res = sorter(span(collection));
         CHECK( res == 463 );
         CHECK( std::is_sorted(collection.begin(), collection.end()) );
     }
@@ -71,7 +71,7 @@ TEST_CASE( "metrics::moves with span",
         auto distribution = dist::descending_plateau{};
         distribution(std::back_inserter(collection), 80);
 
-        auto res = sorter(make_span(collection), &wrapper::value);
+        auto res = sorter(span(collection), &wrapper::value);
         CHECK( res == 573 );
         CHECK( helpers::is_sorted(collection.begin(), collection.end(),
                                   std::less{}, &wrapper::value) );

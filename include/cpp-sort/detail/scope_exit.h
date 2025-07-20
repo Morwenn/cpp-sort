@@ -65,11 +65,8 @@ namespace detail
     };
 
     template<typename EF>
-    auto make_scope_exit(EF&& function)
-        -> scope_exit<EF>
-    {
-        return scope_exit<EF>(std::forward<EF>(function));
-    }
+    scope_exit(EF)
+        -> scope_exit<EF>;
 
     template<typename EF>
     struct scope_success
@@ -121,11 +118,8 @@ namespace detail
     };
 
     template<typename EF>
-    auto make_scope_success(EF&& function)
-        -> scope_success<EF>
-    {
-        return scope_success<EF>(std::forward<EF>(function));
-    }
+    scope_success(EF)
+        -> scope_success<EF>;
 }}
 
 #endif // CPPSORT_DETAIL_SCOPE_EXIT_H_

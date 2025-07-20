@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -170,7 +170,7 @@ namespace detail
             // reverse the elements between first and it1
             auto nreverse = it - rng_data.first;
             auto mid = rng_data.first + nreverse / 2;
-            detail::swap_ranges_overlap(rng_data.first, mid, std::make_reverse_iterator(it));
+            detail::swap_ranges_overlap(rng_data.first, mid, std::reverse_iterator(it));
 
             // insert the elements between it1 and last
             if (it != rng_data.last) {

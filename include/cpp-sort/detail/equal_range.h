@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -52,13 +52,13 @@ namespace detail
                 len = l2;
             } else {
                 ForwardIterator mp1 = m;
-                return std::make_pair(
+                return std::pair(
                     lower_bound(first, m, value, compare, projection),
                     upper_bound(++mp1, last, value, compare, projection)
                 );
             }
         }
-        return std::make_pair(first, first);
+        return std::pair(first, first);
     }
 }}
 

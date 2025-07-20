@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_TESTSUITE_SPAN_H_
@@ -42,10 +42,7 @@ class span
 };
 
 template<typename Iterable>
-auto make_span(Iterable& iterable)
-    -> span<decltype(std::begin(iterable))>
-{
-    return span<decltype(std::begin(iterable))>(iterable);
-}
+explicit span(Iterable& iterable)
+    -> span<decltype(std::begin(iterable))>;
 
 #endif // CPPSORT_TESTSUITE_SPAN_H_

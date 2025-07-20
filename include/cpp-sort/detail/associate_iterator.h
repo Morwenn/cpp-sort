@@ -355,17 +355,6 @@ namespace detail
 
             Iterator _it;
     };
-
-    ////////////////////////////////////////////////////////////
-    // Construction function
-
-    template<typename Iterator>
-    [[nodiscard]]
-    auto make_associate_iterator(Iterator it)
-        -> associate_iterator<Iterator>
-    {
-        return associate_iterator<Iterator>(std::move(it));
-    }
 }}
 
 #endif // CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_

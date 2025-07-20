@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Morwenn
+ * Copyright (c) 2018-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_INTROSELECT_H_
@@ -247,11 +247,11 @@ namespace detail
             iter_sort3(it3, middle, it4, compare, projection);
             iter_sort3(it5, it6, last_1, compare, projection);
             auto median_it = iter_sort3(it1, middle, it6, std::move(compare), std::move(projection));
-            return std::make_pair(median_it, last_1);
+            return std::pair(median_it, last_1);
         } else {
             auto last_1 = last_it(first, last, size);
             auto median_it = median_of_medians(first, last, size, compare, projection);
-            return std::make_pair(median_it, last_1);
+            return std::pair(median_it, last_1);
         }
     }
 

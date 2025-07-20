@@ -77,7 +77,7 @@ namespace detail
         }
 
         // Work around the sorters that return void
-        auto exit_function = make_scope_success([&] {
+        auto exit_function = scope_success([&] {
 
             // Sort the actual elements via the tuple array:
             index = 0;

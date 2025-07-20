@@ -58,6 +58,6 @@ TEMPLATE_TEST_CASE( "test every sorter with temporary span", "[sorters][span]",
     distribution(std::back_inserter(collection), 491, -125);
 
     TestType sorter;
-    sorter(make_span(collection));
+    sorter(span(collection));
     CHECK( std::is_sorted(collection.begin(), collection.end()) );
 }

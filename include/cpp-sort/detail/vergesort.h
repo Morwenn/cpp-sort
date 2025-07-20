@@ -108,7 +108,7 @@ namespace verge
     {
         if (size < 128) {
             // vergesort is inefficient for small collections
-            fallback(make_sized_range(first, last, size),
+            fallback(sized_range(first, last, size),
                      std::move(compare), std::move(projection));
             return;
         }
@@ -201,7 +201,7 @@ namespace verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_range(begin_unsorted, begin_rng, size_unsorted),
+                        fallback(sized_range(begin_unsorted, begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted} );
                         runs.push_back({ next, run_size });
@@ -263,7 +263,7 @@ namespace verge
 
                 if (run_size > minrun_limit) {
                     if (begin_unsorted != last) {
-                        fallback(make_sized_range(begin_unsorted, begin_rng, size_unsorted),
+                        fallback(sized_range(begin_unsorted, begin_rng, size_unsorted),
                                  compare, projection);
                         runs.push_back({ begin_rng, size_unsorted });
                         detail::reverse(begin_rng, next);
@@ -306,7 +306,7 @@ namespace verge
             // next run, so we add one back here to compensate
             ++size_unsorted;
             if (size_unsorted > 1) {
-                fallback(make_sized_range(begin_unsorted, last, size_unsorted),
+                fallback(sized_range(begin_unsorted, last, size_unsorted),
                          compare, projection);
             }
             runs.push_back({ last, size_unsorted });

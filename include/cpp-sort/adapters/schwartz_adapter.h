@@ -85,8 +85,8 @@ namespace cppsort
 
             // Indirectly sort the original sequence
             return std::forward<Sorter>(sorter)(
-                make_associate_iterator(projected.begin()),
-                make_associate_iterator(projected.end()),
+                associate_iterator(projected.begin()),
+                associate_iterator(projected.end()),
                 std::move(compare),
                 data_getter{}
             );

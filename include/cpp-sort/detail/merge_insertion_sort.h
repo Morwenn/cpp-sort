@@ -217,26 +217,6 @@ namespace detail
     };
 
     ////////////////////////////////////////////////////////////
-    // Construction function
-
-    template<typename Iterator>
-    [[nodiscard]]
-    auto make_group_iterator(Iterator it, difference_type_t<Iterator> size)
-        -> group_iterator<Iterator>
-    {
-        return { it, size };
-    }
-
-    template<typename Iterator>
-    [[nodiscard]]
-    auto make_group_iterator(group_iterator<Iterator> it, difference_type_t<Iterator> size)
-        -> group_iterator<Iterator>
-    {
-        size *= it.size();
-        return { it.base(), size };
-    }
-
-    ////////////////////////////////////////////////////////////
     // Merge-insertion sort
 
     template<typename RandomAccessIterator, typename NodeType, typename Compare, typename Projection>
@@ -267,8 +247,8 @@ namespace detail
         // Recursively sort the pairs by max
 
         merge_insertion_sort_impl(
-            make_group_iterator(first, 2),
-            make_group_iterator(end, 2),
+            group_iterator(first.base(), 2 * first.size()),
+            group_iterator(end.base(), 2 * end.size()),
             node_pool, compare, projection
         );
 
@@ -282,7 +262,7 @@ namespace detail
         // between the nodes so that the future allocations remain
         // somewhat cache-friendly - it is theoretically more work,
         // but benchmarks proved that it made a huge difference
-        auto node_pool_reset = make_scope_exit([&node_pool, size, group_size=first.size()] {
+        auto node_pool_reset = scope_exit([&node_pool, size, group_size=first.size()] {
             if (group_size > 1) {
                 node_pool.reset_nodes(size);
             }
@@ -411,8 +391,8 @@ namespace detail
         fixed_size_list_node_pool<node_type> node_pool(size);
 
         merge_insertion_sort_impl(
-            make_group_iterator(std::move(first), 1),
-            make_group_iterator(std::move(last), 1),
+            group_iterator(std::move(first), 1),
+            group_iterator(std::move(last), 1),
             node_pool,
             std::move(compare), std::move(projection)
         );

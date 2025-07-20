@@ -217,14 +217,4 @@ class no_post_iterator
         Iterator _it;
 };
 
-////////////////////////////////////////////////////////////
-// Construction function
-
-template<typename Iterator>
-auto make_no_post_iterator(Iterator it)
-    -> no_post_iterator<Iterator>
-{
-    return no_post_iterator<Iterator>(std::move(it));
-}
-
 #endif // CPPSORT_TESTSUITE_NO_POST_ITERATOR_H_

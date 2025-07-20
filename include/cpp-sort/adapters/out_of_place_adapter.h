@@ -41,7 +41,7 @@ namespace cppsort
             buffer.insert_back(first, last);
 
             // Work around the sorters that return void
-            auto exit_function = make_scope_success([&] {
+            auto exit_function = scope_success([&] {
                 // Copy the sorted elements back in the original collection
                 std::move(buffer.begin(), buffer.end(), first);
             });
