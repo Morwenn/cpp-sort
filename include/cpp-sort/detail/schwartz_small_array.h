@@ -19,7 +19,7 @@
 namespace cppsort
 {
     template<
-        template<std::size_t> class FixedSizeSorter,
+        template<std::size_t> typename FixedSizeSorter,
         size_t... Indices
     >
     struct schwartz_adapter<
@@ -54,7 +54,7 @@ namespace cppsort
         }
     };
 
-    template<template<std::size_t> class FixedSizeSorter>
+    template<template<std::size_t> typename FixedSizeSorter>
     struct schwartz_adapter<small_array_adapter<FixedSizeSorter, void>>:
         fixed_sorter_traits<FixedSizeSorter>,
         detail::sorter_facade_fptr<

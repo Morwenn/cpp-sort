@@ -11,7 +11,7 @@
 #include <vector>
 #include <cpp-sort/sorters.h>
 
-template<template<typename...> class Collection, typename T, typename Compare>
+template<template<typename...> typename Collection, typename T, typename Compare>
 using sort_f = void (*)(Collection<T>&, Compare);
 
 struct compare_t

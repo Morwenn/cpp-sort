@@ -286,12 +286,12 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Mechanism used to unwrap nested hybrid_adapter
 
-        template<template<typename...> class Flattenable, typename TypeList, typename Accumulator>
+        template<template<typename...> typename Flattenable, typename TypeList, typename Accumulator>
         struct flatten_fold;
 
         template<
-            template<typename...> class Flattenable,
-            template<typename...> class TsList, typename Front, typename... Rest,
+            template<typename...> typename Flattenable,
+            template<typename...> typename TsList, typename Front, typename... Rest,
             typename... As
         >
         struct flatten_fold<Flattenable, TsList<Front, Rest...>, hybrid_adapter_impl<As...>>
@@ -300,8 +300,8 @@ namespace cppsort
         };
 
         template<
-            template<typename...> class Flattenable,
-            template<typename...> class TsList, typename... InnerTs, typename... Rest,
+            template<typename...> typename Flattenable,
+            template<typename...> typename TsList, typename... InnerTs, typename... Rest,
             typename... As
         >
         struct flatten_fold<Flattenable, TsList<Flattenable<InnerTs...>, Rest...>, hybrid_adapter_impl<As...>>
@@ -310,8 +310,8 @@ namespace cppsort
         };
 
         template<
-            template<typename...> class Flattenable,
-            template<typename...> class TsList,
+            template<typename...> typename Flattenable,
+            template<typename...> typename TsList,
             typename Accumulator
         >
         struct flatten_fold<Flattenable, TsList<>, Accumulator>

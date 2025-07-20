@@ -53,7 +53,7 @@ struct sorter_name<sorting_network_sorter<N>>
     static constexpr const char* value = "sorting_network_sorter";
 };
 
-template<template<std::size_t> class Sorter, typename Indices>
+template<template<std::size_t> typename Sorter, typename Indices>
 struct sorter_name<small_array_adapter<Sorter, Indices>>
 {
     static constexpr const char* value = sorter_name<Sorter<0u>>::value;
