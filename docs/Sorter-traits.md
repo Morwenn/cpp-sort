@@ -153,7 +153,7 @@ When a sorter adapter is used, the *resulting sorter* is considered always stabl
 template<typename>
 struct is_stable;
 
-template<typename Sorter, typename Args> 
+template<typename Sorter, typename Args>
 struct is_stable<Sorter(Args...)>:
     sorter_traits<Sorter>::is_always_stable
 {};
@@ -166,7 +166,7 @@ This trait is a more flexible version of [`is_always_stable`][is-always-stable]:
 
 ```cpp
 using sorter = self_sort_adapter<heap_sorter>;
-static_assert(is_stable<sorter(std::list<int>&)>, "");
+static_assert(is_stable<sorter(std::list<int>&)>);
 ```
 
 [`self_sort_adapter`][self-sort-adapter] is a [*sorter adapter*][sorter-adapters] that checks whether a container can sort itself and, if so, uses the container's sorting method instead of the *adapted sorter*. As a matter of fact, [`std::list::sort`][std-list-sort] implements a stable sorting algorithm and **cpp-sort** specializes `is_stable` to take that information into account, so `is_stable_v<sorter(std::list<int>&)>` is `true` despite `is_always_stable_v<sorter>` being `false`. However, `is_stable_v<sorter(std::vector<int>&)>` and `is_stable_v<sorter(std::list<int>::iterator, std::list<int>::iterator)>` remain `false`.

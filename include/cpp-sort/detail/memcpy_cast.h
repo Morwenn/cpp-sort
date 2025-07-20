@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MEMCPY_CAST_H_
@@ -20,9 +20,9 @@ namespace detail
     auto memcpy_cast(const From& value)
         -> To
     {
-        static_assert(std::is_trivially_copyable<From>::value, "");
-        static_assert(std::is_trivially_copyable<To>::value, "");
-        static_assert(sizeof(From) == sizeof(To), "");
+        static_assert(std::is_trivially_copyable<From>::value);
+        static_assert(std::is_trivially_copyable<To>::value);
+        static_assert(sizeof(From) == sizeof(To));
 
         To result;
         std::memcpy(std::addressof(result),

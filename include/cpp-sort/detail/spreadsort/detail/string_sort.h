@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -109,7 +109,7 @@ namespace spreadsort
 
             std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
             for (std::size_t u = std::get<0>(data); u < minSize; ++u) {
-                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type));
                 if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
                     return static_cast<Unsigned_char_type>(proj_x[u]) <
                            static_cast<Unsigned_char_type>(proj_y[u]);
@@ -140,7 +140,7 @@ namespace spreadsort
 
             std::size_t minSize = (std::min)(proj_x.size(), proj_y.size());
             for (std::size_t u = std::get<0>(data); u < minSize; ++u) {
-                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type), "");
+                static_assert(sizeof(proj_x[u]) == sizeof(Unsigned_char_type));
                 if (static_cast<Unsigned_char_type>(proj_x[u]) != static_cast<Unsigned_char_type>(proj_y[u])) {
                     return static_cast<Unsigned_char_type>(proj_x[u]) >
                            static_cast<Unsigned_char_type>(proj_y[u]);
