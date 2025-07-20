@@ -285,7 +285,7 @@ namespace detail
     };
 
     template<typename T>
-    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same_v<void, decltype(to_unsigned_or_bool(std::declval<T>()))>>>:
+    struct FallbackSubKey<T, detail::enable_if_t<not std::is_void_v<decltype(to_unsigned_or_bool(std::declval<T>()))>>>:
         SubKey<decltype(to_unsigned_or_bool(std::declval<T>()))>
     {};
 
@@ -470,7 +470,7 @@ namespace detail
     };
 
     template<typename T>
-    struct FallbackSubKey<T, detail::enable_if_t<not std::is_same_v<void, decltype(std::declval<T>()[0])>>>:
+    struct FallbackSubKey<T, detail::enable_if_t<not std::is_void_v<decltype(std::declval<T>()[0])>>>:
         ListSubKey<T>
     {};
 
@@ -858,7 +858,7 @@ namespace detail
     template<std::ptrdiff_t StdSortThreshold, std::ptrdiff_t AmericanFlagSortThreshold,
              typename CurrentSubKey, typename SubKeyType>
     struct FallbackInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, SubKeyType,
-                                 detail::enable_if_t<not std::is_same_v<void, decltype(std::declval<SubKeyType>()[0])>>>:
+                                 detail::enable_if_t<not std::is_void_v<decltype(std::declval<SubKeyType>()[0])>>>:
         ListInplaceSorter<StdSortThreshold, AmericanFlagSortThreshold, CurrentSubKey, SubKeyType>
     {};
 
