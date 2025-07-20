@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -26,9 +26,9 @@ namespace
         template<typename RandomAccessIterator>
         auto operator()(RandomAccessIterator, RandomAccessIterator) const
             -> std::enable_if_t<
-                std::is_integral<
+                std::is_integral_v<
                     typename std::iterator_traits<RandomAccessIterator>::value_type
-                >::value,
+                >,
                 sorter_type
             >
         {
@@ -43,9 +43,9 @@ namespace
         template<typename RandomAccessIterator>
         auto operator()(RandomAccessIterator, RandomAccessIterator) const
             -> std::enable_if_t<
-                std::is_floating_point<
+                std::is_floating_point_v<
                     typename std::iterator_traits<RandomAccessIterator>::value_type
-                >::value,
+                >,
                 sorter_type
             >
         {

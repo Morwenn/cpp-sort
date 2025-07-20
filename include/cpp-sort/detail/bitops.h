@@ -103,14 +103,14 @@ namespace detail
 
     template<typename Integer>
     constexpr auto half(Integer value)
-        -> detail::enable_if_t<std::is_integral<Integer>::value, Integer>
+        -> detail::enable_if_t<std::is_integral_v<Integer>, Integer>
     {
         return static_cast<Integer>(as_unsigned(value) / 2);
     }
 
     template<typename T>
     constexpr auto half(T value)
-        -> detail::enable_if_t<not std::is_integral<T>::value, T>
+        -> detail::enable_if_t<not std::is_integral_v<T>, T>
     {
         return value / 2;
     }

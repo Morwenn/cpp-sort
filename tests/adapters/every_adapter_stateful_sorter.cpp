@@ -39,13 +39,14 @@ namespace
             -> int
         {
             cppsort::quick_merge_sort(std::move(first), std::move(last), std::move(compare));
-            if (std::is_same<IteratorCategory, std::forward_iterator_tag>::value) {
+            if constexpr (std::is_same_v<IteratorCategory, std::forward_iterator_tag>) {
                 return 1;
             }
-            if (std::is_same<IteratorCategory, std::bidirectional_iterator_tag>::value) {
+            else if constexpr (std::is_same_v<IteratorCategory, std::bidirectional_iterator_tag>) {
                 return 2;
+            } else {
+                return 3;
             }
-            return 3;
         }
 
         using iterator_category = IteratorCategory;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -40,10 +40,10 @@ struct randomizing_adapter:
         -> decltype(this->get()(begin, end, std::forward<Args>(args)...))
     {
         static_assert(
-            std::is_base_of<
+            std::is_base_of_v<
                 iterator_category,
                 typename std::iterator_traits<RandomAccessIterator>::iterator_category
-            >::value,
+            >,
             "randomizing_adapter requires at least forward iterators"
         );
 
@@ -56,10 +56,10 @@ struct randomizing_adapter:
         -> decltype(this->get()(std::forward<RandomAccessIterable>(iterable), std::forward<Args>(args)...))
     {
         static_assert(
-            std::is_base_of<
+            std::is_base_of_v<
                 iterator_category,
                 typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
-            >::value,
+            >,
             "randomizing_adapter requires at least forward iterators"
         );
 

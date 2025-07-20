@@ -23,7 +23,7 @@ namespace cppsort
 
         template<typename T>
         auto partial_less(T lhs, T rhs) noexcept
-            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> detail::enable_if_t<std::is_floating_point_v<T>, bool>
         {
             return lhs < rhs;
         }

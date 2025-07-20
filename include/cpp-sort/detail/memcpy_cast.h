@@ -20,8 +20,8 @@ namespace detail
     auto memcpy_cast(const From& value)
         -> To
     {
-        static_assert(std::is_trivially_copyable<From>::value);
-        static_assert(std::is_trivially_copyable<To>::value);
+        static_assert(std::is_trivially_copyable_v<From>);
+        static_assert(std::is_trivially_copyable_v<To>);
         static_assert(sizeof(From) == sizeof(To));
 
         To result;

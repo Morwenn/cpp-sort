@@ -36,10 +36,10 @@ namespace detail
                                             Compare compare, Projection projection)
         -> std::pair<difference_type_t<ForwardIterator>, difference_type_t<ForwardIterator>>
     {
-        constexpr bool is_random_access = std::is_base_of<
+        constexpr bool is_random_access = std::is_base_of_v<
             std::random_access_iterator_tag,
             iterator_category_t<ForwardIterator>
-        >::value;
+        >;
 
         if (first == last) {
             return { 0, 0 };

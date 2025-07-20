@@ -23,7 +23,7 @@ namespace foobar
         typename T,
         typename Compare,
         typename = std::enable_if_t<
-            not cppsort::is_projection<Compare, T>::value
+            not cppsort::is_projection_v<Compare, T>
         >
     >
     auto sort(cppsort::merge_sorter, cool_list<T>&, Compare)
@@ -47,27 +47,27 @@ TEST_CASE( "basic tests with container_aware_adapter",
     SECTION( "with comparison" )
     {
         CHECK( sorter(collection, std::greater{}) );
-        STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::greater<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable_v<sorter_t(foobar::cool_list<int>&, std::greater<>)> );
     }
 
     SECTION( "with projection" )
     {
         CHECK( sorter(collection, std::negate{}) );
-        STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&, std::negate<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable_v<sorter_t(foobar::cool_list<int>&, std::negate<>)> );
     }
 
     SECTION( "with automagic comparison-projection" )
     {
         CHECK( sorter(collection, std::greater{}, std::negate{}) );
-        STATIC_CHECK( not cppsort::is_stable<sorter_t(foobar::cool_list<int>&,
-                                                      std::greater<>, std::negate<>)>::value );
+        STATIC_CHECK( not cppsort::is_stable_v<sorter_t(foobar::cool_list<int>&,
+                                                        std::greater<>, std::negate<>)> );
     }
 
     SECTION( "more about stability" )
     {
-        STATIC_CHECK( cppsort::is_stable<sorter_t(std::list<int>&)>::value );
-        STATIC_CHECK( cppsort::is_stable<sorter_t(std::list<int>::iterator, std::list<int>::iterator)>::value );
-        STATIC_CHECK( cppsort::is_stable<sorter_t(foobar::cool_list<int>::iterator,
-                                                  foobar::cool_list<int>::iterator)>::value );
+        STATIC_CHECK( cppsort::is_stable_v<sorter_t(std::list<int>&)> );
+        STATIC_CHECK( cppsort::is_stable_v<sorter_t(std::list<int>::iterator, std::list<int>::iterator)> );
+        STATIC_CHECK( cppsort::is_stable_v<sorter_t(foobar::cool_list<int>::iterator,
+                                                    foobar::cool_list<int>::iterator)> );
     }
 }

@@ -338,7 +338,7 @@ namespace cppsort
         detail::container_aware_adapter_base<Sorter>,
         detail::sorter_facade_fptr<
             container_aware_adapter<Sorter>,
-            std::is_empty<Sorter>::value
+            std::is_empty_v<Sorter>
         >
     {
         container_aware_adapter() = default;

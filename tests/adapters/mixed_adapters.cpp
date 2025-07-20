@@ -170,41 +170,41 @@ TEST_CASE( "stability of metrics::comparisons over self_sort_adapter",
 
     SECTION( "is_always_stable" )
     {
-        STATIC_CHECK( not cppsort::is_always_stable<sorter1>::value );
-        STATIC_CHECK( not cppsort::is_always_stable<sorter2>::value );
+        STATIC_CHECK( not cppsort::is_always_stable_v<sorter1> );
+        STATIC_CHECK( not cppsort::is_always_stable_v<sorter2> );
     }
 
     SECTION( "is_stable" )
     {
-        using cppsort::is_stable;
+        using cppsort::is_stable_v;
 
-        STATIC_CHECK( is_stable<sorter1(std::list<int>&)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::vector<int>&)>::value );
-        STATIC_CHECK( is_stable<sorter1(std::list<int>&, std::greater<>)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::vector<int>&, std::greater<>)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::list<int>&, std::negate<>)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::vector<int>&, std::negate<>)>::value );
+        STATIC_CHECK( is_stable_v<sorter1(std::list<int>&)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::vector<int>&)> );
+        STATIC_CHECK( is_stable_v<sorter1(std::list<int>&, std::greater<>)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::vector<int>&, std::greater<>)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::list<int>&, std::negate<>)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::vector<int>&, std::negate<>)> );
 
-        STATIC_CHECK( not is_stable<sorter1(std::list<int>::iterator, std::list<int>::iterator)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::vector<int>::iterator, std::vector<int>::iterator)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::list<int>::iterator, std::list<int>::iterator, std::greater<>)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::vector<int>::iterator, std::vector<int>::iterator, std::greater<>)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)>::value );
-        STATIC_CHECK( not is_stable<sorter1(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)>::value );
+        STATIC_CHECK( not is_stable_v<sorter1(std::list<int>::iterator, std::list<int>::iterator)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::vector<int>::iterator, std::vector<int>::iterator)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::list<int>::iterator, std::list<int>::iterator, std::greater<>)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::vector<int>::iterator, std::vector<int>::iterator, std::greater<>)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)> );
+        STATIC_CHECK( not is_stable_v<sorter1(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)> );
 
-        STATIC_CHECK( is_stable<sorter2(std::list<int>&)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::vector<int>&)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::list<int>&, std::greater<>)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::vector<int>&, std::greater<>)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::list<int>&, std::negate<>)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::vector<int>&, std::negate<>)>::value );
+        STATIC_CHECK( is_stable_v<sorter2(std::list<int>&)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::vector<int>&)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::list<int>&, std::greater<>)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::vector<int>&, std::greater<>)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::list<int>&, std::negate<>)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::vector<int>&, std::negate<>)> );
 
-        STATIC_CHECK( is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::greater<>)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::greater<>)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)>::value );
-        STATIC_CHECK( is_stable<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)>::value );
+        STATIC_CHECK( is_stable_v<sorter2(std::list<int>::iterator, std::list<int>::iterator)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::vector<int>::iterator, std::vector<int>::iterator)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::greater<>)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::greater<>)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::list<int>::iterator, std::list<int>::iterator, std::negate<>)> );
+        STATIC_CHECK( is_stable_v<sorter2(std::vector<int>::iterator, std::vector<int>::iterator, std::negate<>)> );
     }
 }
 
@@ -220,9 +220,9 @@ TEST_CASE( "stable_adapter over stable_adapter", "[stable_adapter]" )
         using nested2 = cppsort::stable_adapter<nested1>;
         using nested3 = cppsort::stable_adapter<nested2>;
 
-        STATIC_CHECK( std::is_same<cppsort::stable_t<nested1>, sorter>::value );
-        STATIC_CHECK( std::is_same<cppsort::stable_t<nested2>, sorter>::value );
-        STATIC_CHECK( std::is_same<cppsort::stable_t<nested3>, sorter>::value );
+        STATIC_CHECK( std::is_same_v<cppsort::stable_t<nested1>, sorter> );
+        STATIC_CHECK( std::is_same_v<cppsort::stable_t<nested2>, sorter> );
+        STATIC_CHECK( std::is_same_v<cppsort::stable_t<nested3>, sorter> );
     }
 
     SECTION( "over stable sorter" )
@@ -233,9 +233,9 @@ TEST_CASE( "stable_adapter over stable_adapter", "[stable_adapter]" )
         using nested2 = cppsort::stable_adapter<nested1>;
         using nested3 = cppsort::stable_adapter<nested2>;
 
-        STATIC_CHECK( std::is_same<cppsort::stable_t<nested1>, sorter>::value );
-        STATIC_CHECK( std::is_same<cppsort::stable_t<nested2>, sorter>::value );
-        STATIC_CHECK( std::is_same<cppsort::stable_t<nested3>, sorter>::value );
+        STATIC_CHECK( std::is_same_v<cppsort::stable_t<nested1>, sorter> );
+        STATIC_CHECK( std::is_same_v<cppsort::stable_t<nested2>, sorter> );
+        STATIC_CHECK( std::is_same_v<cppsort::stable_t<nested3>, sorter> );
     }
 }
 

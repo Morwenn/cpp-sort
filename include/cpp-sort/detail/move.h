@@ -64,8 +64,8 @@ namespace detail
         -> T*
     {
         constexpr bool is_trivial_enough =
-            std::is_trivial<value_type_t<InputIterator>>::value &&
-            std::is_trivial<T>::value;
+            std::is_trivial_v<value_type_t<InputIterator>> &&
+            std::is_trivial_v<T>;
 
         if (is_trivial_enough) {
             return detail::move(first, last, result);

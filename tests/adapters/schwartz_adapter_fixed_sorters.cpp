@@ -266,7 +266,7 @@ TEST_CASE( "stability of Schwartzian transform adapter with fixed-size sorters",
 
     SECTION( "is_always_stable" )
     {
-        STATIC_CHECK( not is_always_stable<small_array_adapter<low_moves_sorter>>::value );
-        STATIC_CHECK( not is_always_stable<sorter>::value );
+        STATIC_CHECK( not is_always_stable_v<small_array_adapter<low_moves_sorter>> );
+        STATIC_CHECK( not is_always_stable_v<sorter> );
     }
 }

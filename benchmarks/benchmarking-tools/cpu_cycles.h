@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cstdint>
@@ -24,7 +24,7 @@ struct cpu_cycles:
     cppsort::detail::check_is_always_stable<Sorter>,
     cppsort::detail::sorter_facade_fptr<
         cpu_cycles<Sorter>,
-        std::is_empty<Sorter>::value
+        std::is_empty_v<Sorter>
     >
 {
     using tag_t = cpu_cycles_tag;

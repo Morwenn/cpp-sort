@@ -29,14 +29,14 @@ namespace cppsort
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last) const
                 -> detail::enable_if_t<
-                    detail::is_integral<value_type_t<ForwardIterator>>::value
+                    detail::is_integral_v<value_type_t<ForwardIterator>>
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<ForwardIterator>
-                    >::value,
+                    >,
                     "counting_sorter requires at least forward iterators"
                 );
 
@@ -46,14 +46,14 @@ namespace cppsort
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last, std::greater<>) const
                 -> detail::enable_if_t<
-                    detail::is_integral<value_type_t<ForwardIterator>>::value
+                    detail::is_integral_v<value_type_t<ForwardIterator>>
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<ForwardIterator>
-                    >::value,
+                    >,
                     "counting_sorter requires at least forward iterators"
                 );
 
@@ -64,14 +64,14 @@ namespace cppsort
             template<typename ForwardIterator>
             auto operator()(ForwardIterator first, ForwardIterator last, std::ranges::greater) const
                 -> detail::enable_if_t<
-                    detail::is_integral<value_type_t<ForwardIterator>>::value
+                    detail::is_integral_v<value_type_t<ForwardIterator>>
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<ForwardIterator>
-                    >::value,
+                    >,
                     "counting_sorter requires at least forward iterators"
                 );
 

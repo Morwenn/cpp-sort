@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_ADAPTERS_SPLIT_ADAPTER_H_
@@ -49,10 +49,10 @@ namespace cppsort
                 -> void
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<BidirectionalIterator>
-                    >::value,
+                    >,
                     "split_adapter requires a stronger iterator category"
                 );
 

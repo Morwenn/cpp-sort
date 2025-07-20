@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BINARY_TREE_H_
@@ -45,7 +45,7 @@ namespace detail
         constexpr binary_tree_node(T&& value, binary_tree_node_base* parent,
                                    binary_tree_node_base* left_child = nullptr,
                                    binary_tree_node_base* right_child = nullptr)
-            noexcept(std::is_nothrow_move_constructible<T>::value):
+            noexcept(std::is_nothrow_move_constructible_v<T>):
             binary_tree_node_base(parent, left_child, right_child),
             value(std::move(value))
         {}

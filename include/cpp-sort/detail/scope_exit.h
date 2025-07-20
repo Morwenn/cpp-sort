@@ -28,14 +28,14 @@ namespace detail
 
             template<typename EFP>
             explicit scope_exit(EFP&& func)
-                noexcept(std::is_nothrow_constructible<EF, EFP>::value ||
-                         std::is_nothrow_constructible<EF, EFP&>::value):
+                noexcept(std::is_nothrow_constructible_v<EF, EFP> ||
+                         std::is_nothrow_constructible_v<EF, EFP&>):
                 exit_function(std::forward<EFP>(func))
             {}
 
             scope_exit(scope_exit&& rhs)
-                noexcept(std::is_nothrow_move_constructible<EF>::value ||
-                         std::is_nothrow_copy_constructible<EF>::value):
+                noexcept(std::is_nothrow_move_constructible_v<EF> ||
+                         std::is_nothrow_copy_constructible_v<EF>):
                 exit_function(std::forward<EF>(rhs.exit_function))
             {}
 
@@ -84,14 +84,14 @@ namespace detail
 
             template<typename EFP>
             explicit scope_success(EFP&& func)
-                noexcept(std::is_nothrow_constructible<EF, EFP>::value ||
-                         std::is_nothrow_constructible<EF, EFP&>::value):
+                noexcept(std::is_nothrow_constructible_v<EF, EFP> ||
+                         std::is_nothrow_constructible_v<EF, EFP&>):
                 exit_function(std::forward<EFP>(func))
             {}
 
             scope_success(scope_success&& rhs)
-                noexcept(std::is_nothrow_move_constructible<EF>::value ||
-                         std::is_nothrow_copy_constructible<EF>::value):
+                noexcept(std::is_nothrow_move_constructible_v<EF> ||
+                         std::is_nothrow_copy_constructible_v<EF>):
                 exit_function(std::forward<EF>(rhs.exit_function))
             {}
 

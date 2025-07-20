@@ -50,10 +50,10 @@ namespace detail
             -> void
         {
             static_assert(
-                std::is_base_of<
+                std::is_base_of_v<
                     iterator_category,
                     typename std::iterator_traits<ForwardIterator>::iterator_category
-                >::value,
+                >,
                 "bubble_sorter requires at least forward iterators"
             );
 
@@ -73,10 +73,10 @@ namespace detail
             -> void
         {
             static_assert(
-                std::is_base_of<
+                std::is_base_of_v<
                     iterator_category,
                     typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
-                >::value,
+                >,
                 "bubble_sorter requires at least forward iterators"
             );
 

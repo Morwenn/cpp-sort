@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SORTED_INDICES_H_
@@ -53,10 +53,10 @@ namespace utility
                 -> std::vector<cppsort::detail::difference_type_t<RandomAccessIterator>>
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         cppsort::detail::iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "sorted_indices requires at least random-access iterators"
                 );
 

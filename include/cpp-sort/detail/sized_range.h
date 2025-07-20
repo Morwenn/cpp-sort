@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SIZED_RANGE_H_
@@ -32,7 +32,7 @@ namespace detail
                 size_(size)
             {
                 using category = iterator_category_t<ForwardIterator>;
-                if (std::is_base_of<std::random_access_iterator_tag, category>::value) {
+                if constexpr (std::is_base_of_v<std::random_access_iterator_tag, category>) {
                     CPPSORT_ASSERT(std::distance(begin, end) == size);
                 } else {
                     CPPSORT_AUDIT(std::distance(begin, end) == size);

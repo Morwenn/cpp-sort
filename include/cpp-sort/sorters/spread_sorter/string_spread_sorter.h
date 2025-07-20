@@ -41,15 +41,15 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> detail::enable_if_t<
-                    std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
-                    || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
+                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "string_spread_sorter requires at least random-access iterators"
                 );
 
@@ -65,16 +65,16 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             Projection projection={}) const
                 -> detail::enable_if_t<(
-                        std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
-                        || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
+                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "string_spread_sorter requires at least random-access iterators"
                 );
 
@@ -92,58 +92,6 @@ namespace cppsort
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::greater<> compare, Projection projection={}) const
-                -> detail::enable_if_t<
-                    std::is_same<projected_t<RandomAccessIterator, Projection>, std::string>::value
-                    || std::is_same<projected_t<RandomAccessIterator, Projection>, std::string_view>::value
-                >
-            {
-                static_assert(
-                    std::is_base_of<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >::value,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
-                unsigned char unused = '\0';
-                spreadsort::reverse_string_sort(std::move(first), std::move(last),
-                                                std::move(compare), std::move(projection),
-                                                unused);
-            }
-
-            template<
-                typename RandomAccessIterator,
-                typename Projection = utility::identity
-            >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::greater<> compare, Projection projection={}) const
-                -> detail::enable_if_t<(
-                        std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring>::value
-                        || std::is_same<projected_t<RandomAccessIterator, Projection>, std::wstring_view>::value
-                    ) && (sizeof(wchar_t) == 2)
-                >
-            {
-                static_assert(
-                    std::is_base_of<
-                        iterator_category,
-                        iterator_category_t<RandomAccessIterator>
-                    >::value,
-                    "string_spread_sorter requires at least random-access iterators"
-                );
-
-                std::uint16_t unused = 0;
-                spreadsort::reverse_string_sort(std::move(first), std::move(last),
-                                                std::move(compare), std::move(projection),
-                                                unused);
-            }
-
-#ifdef __cpp_lib_ranges
-            template<
-                typename RandomAccessIterator,
-                typename Projection = utility::identity
-            >
-            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::ranges::greater compare, Projection projection={}) const
                 -> detail::enable_if_t<
                     std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
                     || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
@@ -168,10 +116,62 @@ namespace cppsort
                 typename Projection = utility::identity
             >
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
-                            std::ranges::greater compare, Projection projection={}) const
+                            std::greater<> compare, Projection projection={}) const
                 -> detail::enable_if_t<(
                         std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
                         || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
+                    ) && (sizeof(wchar_t) == 2)
+                >
+            {
+                static_assert(
+                    std::is_base_of_v<
+                        iterator_category,
+                        iterator_category_t<RandomAccessIterator>
+                    >,
+                    "string_spread_sorter requires at least random-access iterators"
+                );
+
+                std::uint16_t unused = 0;
+                spreadsort::reverse_string_sort(std::move(first), std::move(last),
+                                                std::move(compare), std::move(projection),
+                                                unused);
+            }
+
+#ifdef __cpp_lib_ranges
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            std::ranges::greater compare, Projection projection={}) const
+                -> detail::enable_if_t<
+                    std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::string>
+                    || std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
+                >
+            {
+                static_assert(
+                    std::is_base_of_v<
+                        iterator_category,
+                        iterator_category_t<RandomAccessIterator>
+                    >,
+                    "string_spread_sorter requires at least random-access iterators"
+                );
+
+                unsigned char unused = '\0';
+                spreadsort::reverse_string_sort(std::move(first), std::move(last),
+                                                std::move(compare), std::move(projection),
+                                                unused);
+            }
+
+            template<
+                typename RandomAccessIterator,
+                typename Projection = utility::identity
+            >
+            auto operator()(RandomAccessIterator first, RandomAccessIterator last,
+                            std::ranges::greater compare, Projection projection={}) const
+                -> detail::enable_if_t<(
+                        std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
+                        || std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {

@@ -321,9 +321,9 @@ struct counting_sorter_impl
     template<typename ForwardIterator>
     auto operator()(ForwardIterator first, ForwardIterator last) const
         -> std::enable_if_t<
-            std::is_integral<
+            std::is_integral_v<
                 typename std::iterator_traits<ForwardIterator>::value_type
-            >::value
+            >
         >
     {
         counting_sort(first, last);
@@ -333,9 +333,9 @@ struct counting_sorter_impl
     auto operator()(ForwardIterator first, ForwardIterator last,
                     std::greater<>) const
         -> std::enable_if_t<
-            std::is_integral<
+            std::is_integral_v<
                 typename std::iterator_traits<ForwardIterator>::value_type
-            >::value
+            >
         >
     {
         reverse_counting_sort(first, last);

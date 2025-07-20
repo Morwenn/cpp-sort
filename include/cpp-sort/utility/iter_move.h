@@ -64,7 +64,7 @@ namespace cppsort
 
         template<typename Iterator>
         using iter_move_t = cppsort::detail::conditional_t<
-            std::is_reference<typename std::iterator_traits<Iterator>::reference>::value,
+            std::is_reference_v<typename std::iterator_traits<Iterator>::reference>,
             std::remove_reference_t<typename std::iterator_traits<Iterator>::reference>&&,
             std::decay_t<typename std::iterator_traits<Iterator>::reference>
         >;

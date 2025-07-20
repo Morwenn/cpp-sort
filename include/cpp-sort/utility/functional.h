@@ -69,8 +69,8 @@ namespace utility
         typename T,
         typename U,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value ||
-            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<U>>::value
+            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<T>> ||
+            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<U>>
         >
     >
     constexpr auto operator|(T&& lhs, U&& rhs)
@@ -88,7 +88,7 @@ namespace utility
     template<
         typename T,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<T>>
         >
     >
     constexpr auto operator|(T&& lhs, std::identity)
@@ -100,7 +100,7 @@ namespace utility
     template<
         typename T,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of<projection_base, cppsort::detail::remove_cvref_t<T>>::value
+            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<T>>
         >
     >
     constexpr auto operator|(std::identity, T&& rhs)
@@ -195,7 +195,7 @@ namespace utility
                 template<
                     typename Func,
                     typename = cppsort::detail::enable_if_t<
-                        not std::is_same<cppsort::detail::remove_cvref_t<Func>, as_projection_fn>::value
+                        not std::is_same_v<cppsort::detail::remove_cvref_t<Func>, as_projection_fn>
                     >
                 >
                 constexpr explicit as_projection_fn(Func&& func):
@@ -252,7 +252,7 @@ namespace utility
                 template<
                     typename Func,
                     typename = cppsort::detail::enable_if_t<
-                        not std::is_same<cppsort::detail::remove_cvref_t<Func>, as_comparison_fn>::value
+                        not std::is_same_v<cppsort::detail::remove_cvref_t<Func>, as_comparison_fn>
                     >
                 >
                 constexpr explicit as_comparison_fn(Func&& func):

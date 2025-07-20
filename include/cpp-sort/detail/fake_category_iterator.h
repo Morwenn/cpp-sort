@@ -29,7 +29,7 @@ namespace detail
     {
         using real_category_tag = iterator_category_t<Iterator>;
         static_assert(
-            std::is_base_of<IteratorTag, real_category_tag>::value,
+            std::is_base_of_v<IteratorTag, real_category_tag>,
             "The iterator tag of fake_iterator_category must be less "
             "specific than that of the wrapped one"
         );

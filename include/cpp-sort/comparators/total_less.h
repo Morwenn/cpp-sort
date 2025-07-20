@@ -24,7 +24,7 @@ namespace cppsort
 
         template<typename T>
         constexpr auto total_less(T lhs, T rhs) noexcept
-            -> detail::enable_if_t<is_integral<T>::value, bool>
+            -> detail::enable_if_t<is_integral_v<T>, bool>
         {
             return lhs < rhs;
         }
@@ -34,7 +34,7 @@ namespace cppsort
 
         template<typename T>
         auto total_less(T lhs, T rhs)
-            -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
+            -> detail::enable_if_t<std::is_floating_point_v<T>, bool>
         {
             if (std::isfinite(lhs) && std::isfinite(rhs)) {
                 if (lhs == 0 && rhs == 0) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SORTED_ITERATORS_H_
@@ -78,7 +78,7 @@ namespace utility
             {
                 using category = cppsort::detail::iterator_category_t<decltype(std::begin(iterable))>;
                 static_assert(
-                    std::is_base_of<iterator_category, category>::value,
+                    std::is_base_of_v<iterator_category, category>,
                     "sorted_iterators requires at least forward iterators"
                 );
 
@@ -101,7 +101,7 @@ namespace utility
             {
                 using category = cppsort::detail::iterator_category_t<ForwardIterator>;
                 static_assert(
-                    std::is_base_of<iterator_category, category>::value,
+                    std::is_base_of_v<iterator_category, category>,
                     "sorted_iterators requires at least forward iterators"
                 );
 

@@ -254,10 +254,10 @@ namespace cppsort
         Sorter
     {
         static_assert(
-            std::is_base_of<
+            std::is_base_of_v<
                 cppsort::iterator_category<Sorter>,
                 Category
-            >::value,
+            >,
             "the new iterator category should be more specific"
         );
 
@@ -285,10 +285,10 @@ namespace cppsort
         >
         {
             using type = conditional_t<
-                std::is_base_of<
+                std::is_base_of_v<
                     std::bidirectional_iterator_tag,
                     typename sorter_traits<Sorter>::iterator_category
-                >::value,
+                >,
                 typename sorter_traits<Sorter>::iterator_category,
                 std::bidirectional_iterator_tag
             >;

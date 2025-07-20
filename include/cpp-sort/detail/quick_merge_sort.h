@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2023 Morwenn
+ * Copyright (c) 2018-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_QUICK_MERGE_SORT_H_
@@ -139,7 +139,7 @@ namespace detail
             auto pivot = detail::nth_element(first, last, size_left, size, compare, projection);
             internal_mergesort(first, pivot, size_left, pivot, compare, projection);
 
-            if (std::is_base_of<std::random_access_iterator_tag, iterator_category_t<ForwardIterator>>::value) {
+            if (std::is_base_of_v<std::random_access_iterator_tag, iterator_category_t<ForwardIterator>>) {
                 // Avoid weird codegen bug with MinGW-w64 (see GitHub issue #151)
                 std::advance(first, size_left);
             } else {

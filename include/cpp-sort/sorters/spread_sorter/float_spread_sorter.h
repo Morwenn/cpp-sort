@@ -44,10 +44,10 @@ namespace cppsort
                 >
             {
                 static_assert(
-                    std::is_base_of<
+                    std::is_base_of_v<
                         iterator_category,
                         iterator_category_t<RandomAccessIterator>
-                    >::value,
+                    >,
                     "float_spread_sorter requires at least random-access iterators"
                 );
 

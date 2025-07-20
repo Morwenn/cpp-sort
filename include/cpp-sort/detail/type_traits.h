@@ -150,6 +150,9 @@ namespace detail
     {};
 
     template<typename T>
+    constexpr bool is_integral_v = is_integral<T>::value;
+
+    template<typename T>
     struct is_signed:
         std::is_signed<T>::type
     {};
@@ -160,6 +163,9 @@ namespace detail
     {};
 
     template<typename T>
+    constexpr bool is_signed_v = is_signed<T>::value;
+
+    template<typename T>
     struct is_unsigned:
         std::is_unsigned<T>::type
     {};
@@ -168,10 +174,16 @@ namespace detail
     struct is_unsigned<__uint128_t>:
         std::true_type
     {};
+
+    template<typename T>
+    constexpr bool is_unsigned_v = is_unsigned<T>::value;
 #else
     using std::is_integral;
+    using std::is_integral_v;
     using std::is_signed;
+    using std::is_signed_v;
     using std::is_unsigned;
+    using std::is_unsigned_v;
 #endif
 
     ////////////////////////////////////////////////////////////

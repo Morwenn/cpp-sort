@@ -412,10 +412,10 @@ Another small change that can greatly improve error messages is the addition of 
 
 ```cpp
 static_assert(
-    std::is_base_of<
+    std::is_base_of_v
         iterator_category,
         typename std::iterator_traits<ForwardIterator>::iterator_category
-    >::value,
+    >,
     "bubble_sorter requires at least forward iterators"
 );
 ```

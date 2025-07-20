@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -68,10 +68,10 @@ TEST_CASE( "iterator category rebinder",
             std::random_access_iterator_tag
         >;
 
-        STATIC_CHECK( std::is_same<cppsort::iterator_category<sorter1>,
-                                   std::bidirectional_iterator_tag>::value );
-        STATIC_CHECK( std::is_same<cppsort::iterator_category<sorter2>,
-                                   std::random_access_iterator_tag>::value );
+        STATIC_CHECK( std::is_same_v<cppsort::iterator_category<sorter1>,
+                                     std::bidirectional_iterator_tag> );
+        STATIC_CHECK( std::is_same_v<cppsort::iterator_category<sorter2>,
+                                     std::random_access_iterator_tag> );
     }
 
     SECTION( "with hybrid_adapter" )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_METRICS_TOOLS_H_
@@ -41,12 +41,12 @@ namespace utility
             metric(metric&&) = default;
 
             constexpr explicit metric(const T& value)
-                noexcept(std::is_nothrow_copy_constructible<T>::value):
+                noexcept(std::is_nothrow_copy_constructible_v<T>):
                 _value(value)
             {}
 
             constexpr explicit metric(T&& value)
-                noexcept(std::is_nothrow_move_constructible<T>::value):
+                noexcept(std::is_nothrow_move_constructible_v<T>):
                 _value(std::move(value))
             {}
 
@@ -71,7 +71,7 @@ namespace utility
             metric& operator=(metric&&) = default;
 
             constexpr auto operator=(const T& other)
-                noexcept(std::is_nothrow_copy_assignable<T>::value)
+                noexcept(std::is_nothrow_copy_assignable_v<T>)
                 -> metric&
             {
                 _value = other;
@@ -79,7 +79,7 @@ namespace utility
             }
 
             constexpr auto operator=(T&& other)
-                noexcept(std::is_nothrow_move_assignable<T>::value)
+                noexcept(std::is_nothrow_move_assignable_v<T>)
                 -> metric&
             {
                 _value = std::move(other);
@@ -88,7 +88,7 @@ namespace utility
 
             template<typename U>
             constexpr auto operator=(const metric<U, Tag>& other)
-                noexcept(std::is_nothrow_assignable<T&, const U&>::value)
+                noexcept(std::is_nothrow_assignable_v<T&, const U&>)
                 -> metric&
             {
                 _value = other._value;
@@ -97,7 +97,7 @@ namespace utility
 
             template<typename U>
             constexpr auto operator=(metric<U, Tag>&& other)
-                noexcept(std::is_nothrow_assignable<T&, U>::value)
+                noexcept(std::is_nothrow_assignable_v<T&, U>)
                 -> metric&
             {
                 _value = std::move(other._value);

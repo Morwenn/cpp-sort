@@ -37,7 +37,7 @@ namespace cppsort
             >
             static constexpr auto invoke(Args... args)
                 -> detail::enable_if_t<
-                    not std::is_void<Ret>::value,
+                    not std::is_void_v<Ret>,
                     Ret
                 >
             {
@@ -50,7 +50,7 @@ namespace cppsort
             >
             static constexpr auto invoke(Args... args)
                 -> detail::enable_if_t<
-                    std::is_void<Ret>::value,
+                    std::is_void_v<Ret>,
                     void
                 >
             {
@@ -150,7 +150,7 @@ namespace cppsort
         Sorter,
         detail::sorter_facade_fptr<
             sorter_facade<Sorter>,
-            std::is_empty<Sorter>::value
+            std::is_empty_v<Sorter>
         >
     {
         ////////////////////////////////////////////////////////////

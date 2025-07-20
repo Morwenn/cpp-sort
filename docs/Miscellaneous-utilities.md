@@ -284,9 +284,9 @@ public:
     metric(metric&&) = default;
 
     constexpr explicit metric(const T& value)
-        noexcept(std::is_nothrow_copy_constructible<T>::value);
+        noexcept(std::is_nothrow_copy_constructible_v<T>);
     constexpr explicit metric(T&& value)
-        noexcept(std::is_nothrow_move_constructible<T>::value);
+        noexcept(std::is_nothrow_move_constructible_v<T>);
 
     ////////////////////////////////////////////////////////////
     // Accessors
@@ -303,19 +303,19 @@ public:
     metric& operator=(metric&&) = default;
 
     constexpr auto operator=(const T& other)
-        noexcept(std::is_nothrow_copy_assignable<T>::value)
+        noexcept(std::is_nothrow_copy_assignable_v<T>)
         -> metric&;
     constexpr auto operator=(T&& other)
-        noexcept(std::is_nothrow_move_assignable<T>::value)
+        noexcept(std::is_nothrow_move_assignable_v<T>)
         -> metric&;
 
     template<typename U>
     constexpr auto operator=(const metric<U, Tag>& other)
-        noexcept(std::is_nothrow_assignable<T&, const U&>::value)
+        noexcept(std::is_nothrow_assignable_v<T&, const U&>)
         -> metric&;
     template<typename U>
     constexpr auto operator=(metric<U, Tag>&& other)
-        noexcept(std::is_nothrow_assignable<T&, U>::value)
+        noexcept(std::is_nothrow_assignable_v<T&, U>)
         -> metric&;
 
     ////////////////////////////////////////////////////////////
