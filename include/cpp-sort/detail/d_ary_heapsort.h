@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 // boost heap: d-ary heap as container adaptor
@@ -23,9 +23,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "min_element.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<int D, typename RandomAccessIterator>
     auto parent_it(RandomAccessIterator first, RandomAccessIterator it)
@@ -165,6 +163,6 @@ namespace detail
         sort_d_ary_heap<D>(std::move(first), std::move(last),
                            std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_D_ARY_HEAPSORT_H_

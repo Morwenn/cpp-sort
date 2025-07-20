@@ -19,9 +19,7 @@
 #include "quicksort.h"
 #include "swap_ranges.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     constexpr int qmsort_limit = 32;
 
@@ -149,6 +147,6 @@ namespace detail
         }
         small_sort(first, last, std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_QUICK_MERGE_SORT_H_

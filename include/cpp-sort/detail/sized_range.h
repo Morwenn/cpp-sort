@@ -13,9 +13,7 @@
 #include "config.h"
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     // Very simple class to bundle together a pair of begin/end
     // iterators and a corresponding size - shallow constness
@@ -63,6 +61,6 @@ namespace detail
             ForwardIterator end_;
             difference_type_t<ForwardIterator> size_;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_SIZED_RANGE_H_

@@ -30,11 +30,10 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "config.h"
 
-namespace cppsort
+namespace cppsort::detail
 {
-namespace detail
-{
-    namespace smoothsort_detail {
+    namespace smoothsort_detail
+    {
       /* A constant containing the number of Leonardo numbers that can fit into
        * 64 bits.
        */
@@ -486,6 +485,6 @@ namespace detail
       for (RandomIterator itr = end; itr != begin; --itr)
         smoothsort_detail::LeonardoHeapRemove(begin, itr, shape, compare, projection);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SMOOTHSORT_H_

@@ -26,9 +26,7 @@
 #include "move.h"
 #include "swap_ranges.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator>
     auto rotate_left(ForwardIterator first, ForwardIterator last)
@@ -185,6 +183,6 @@ namespace detail
             return first;
         return rotate_impl(first, middle, last, iterator_category_t<ForwardIterator>{});
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_ROTATE_H_

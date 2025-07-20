@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -31,13 +31,7 @@
 #include "../../merge_move.h"
 #include "../../move.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace boost_common
-{
-namespace util
+namespace cppsort::detail::boost_common::util
 {
     //-----------------------------------------------------------------------------
     //  function : merge
@@ -134,6 +128,6 @@ namespace util
                                             end_buf1 - buf1, compare, projection);
         return end_buf2;
     }
-}}}}
+}
 
 #endif // CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_

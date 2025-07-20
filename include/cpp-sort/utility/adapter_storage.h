@@ -11,9 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     //
     // Storage for adapters that adapt only one sorter at a
@@ -112,6 +110,6 @@ namespace utility
             return static_cast<const Sorter&&>(sorter);
         }
     };
-}}
+}
 
 #endif // CPPSORT_UTILITY_ADAPTER_STORAGE_H_

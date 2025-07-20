@@ -12,9 +12,7 @@
 #include <tuple>
 #include <type_traits>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Alternative to std::conditional_t from C++11
@@ -265,6 +263,6 @@ namespace detail
 
     template<typename Needle, typename... Haystack>
     constexpr int index_of = index_of_impl<Needle, Haystack...>::value;
-}}
+}
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_

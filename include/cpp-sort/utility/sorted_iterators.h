@@ -22,9 +22,7 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     namespace detail
     {
@@ -127,7 +125,7 @@ namespace utility
             sorter_facade<detail::sorted_iterators_impl<Sorter>>(std::move(sorter))
         {}
     };
-}}
+}
 
 namespace cppsort
 {

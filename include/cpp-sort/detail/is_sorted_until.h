@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_IS_SORTED_UNTIL_H_
@@ -10,9 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <cpp-sort/utility/as_function.h>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     constexpr auto is_sorted_until(ForwardIterator first, ForwardIterator last,
@@ -44,6 +42,6 @@ namespace detail
             std::move(compare), std::move(projection)
         ) == last;
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_IS_SORTED_UNTIL_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_BUBBLE_SORT_H_
@@ -12,9 +12,7 @@
 #include "iterator_traits.h"
 #include "swap_if.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     //
     // This sorting algorithm isn't exposed to users of the
@@ -43,6 +41,6 @@ namespace detail
             }
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_BUBBLE_SORT_H_

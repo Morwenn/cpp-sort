@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_BUFFER_H_
@@ -12,9 +12,7 @@
 #include <cstddef>
 #include <memory>
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     ////////////////////////////////////////////////////////////
     // Fixed-size buffer
@@ -258,6 +256,6 @@ namespace utility
             {}
         };
     };
-}}
+}
 
 #endif // CPPSORT_UTILITY_BUFFER_H_

@@ -17,9 +17,7 @@
 #include <cpp-sort/utility/sorting_networks.h>
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Basic empty fixed-size "sorter", generally the one used
@@ -57,6 +55,6 @@ namespace detail
             return {};
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_EMPTY_SORTER_H_

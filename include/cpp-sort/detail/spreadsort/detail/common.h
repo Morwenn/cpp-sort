@@ -28,13 +28,7 @@ Phil Endecott and Frank Gennari
 #include "constants.h"
 #include "../../type_traits.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace spreadsort
-{
-namespace detail
+namespace cppsort::detail::spreadsort::detail
 {
     //This only works on unsigned data types
     template<typename T>
@@ -128,6 +122,6 @@ namespace detail
         bin_cache.resize(cache_end);
       return &(bin_cache[cache_offset]);
     }
-}}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_DETAIL_COMMON_H_

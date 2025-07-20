@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -15,13 +15,7 @@
 #ifndef CPPSORT_DETAIL_SPREADSORT_DETAIL_CONSTANTS_H_
 #define CPPSORT_DETAIL_SPREADSORT_DETAIL_CONSTANTS_H_
 
-namespace cppsort
-{
-namespace detail
-{
-namespace spreadsort
-{
-namespace detail
+namespace cppsort::detail::spreadsort::detail
 {
     //Tuning constants
     enum {
@@ -52,6 +46,6 @@ namespace detail
         //There is a minimum size below which it is not worth using spreadsort
         min_sort_size = 1000
     };
-}}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_DETAIL_CONSTANTS_H_

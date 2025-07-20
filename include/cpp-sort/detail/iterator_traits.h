@@ -13,9 +13,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     //
     // A few type aliases to make it easier to write
@@ -51,6 +49,6 @@ namespace detail
     using projected_t = remove_cvref_t<
         std::invoke_result_t<Projection, decltype(*std::declval<Iterator&>())>
     >;
-}}
+}
 
 #endif // CPPSORT_DETAIL_ITERATOR_TRAITS_H_

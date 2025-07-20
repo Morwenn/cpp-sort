@@ -18,9 +18,7 @@
 #include "config.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // swap_if
@@ -213,6 +211,6 @@ namespace detail
         // iter_move or iter_swap ADL-found functions
         swap_if(*lhs, *rhs, std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SWAP_IF_H_

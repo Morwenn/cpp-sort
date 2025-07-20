@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_CARTESIAN_TREE_SORT_H_
@@ -21,9 +21,7 @@
 #include "iterator_traits.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename T>
     struct cartesian_tree
@@ -157,6 +155,6 @@ namespace detail
             }
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_CARTESIAN_TREE_SORT_H_

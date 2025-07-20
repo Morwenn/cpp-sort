@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_MOVES_SORT4_H_
@@ -17,9 +17,7 @@
 #include "../min_element.h"
 #include "../type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_moves_sorter_impl<4u>
@@ -46,6 +44,6 @@ namespace detail
             low_moves_sorter<3u>{}(first+1u, last, std::move(compare), std::move(projection));
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT4_H_

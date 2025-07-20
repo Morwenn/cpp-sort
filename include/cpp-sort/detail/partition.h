@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -22,9 +22,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename Predicate, typename ForwardIterator>
     auto partition_impl(ForwardIterator first, ForwardIterator last, Predicate pred,
@@ -85,6 +83,6 @@ namespace detail
             iterator_category_t<ForwardIterator>{}
         );
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_PARTITION_H_

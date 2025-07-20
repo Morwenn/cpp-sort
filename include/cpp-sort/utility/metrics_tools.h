@@ -14,9 +14,7 @@
 #include <utility>
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     ////////////////////////////////////////////////////////////
     // metric<T, Tag>
@@ -331,6 +329,6 @@ namespace utility
                 return std::get<Idx>(std::move(mm).metrics_);
             }
     };
-}}
+}
 
 #endif // CPPSORT_UTILITY_METRICS_TOOLS_H_

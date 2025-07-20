@@ -13,9 +13,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<std::size_t N, typename RandomAccessIterator>
     auto rotate_left(RandomAccessIterator first)
@@ -32,6 +30,6 @@ namespace detail
         }
         first[N-1] = std::move(tmp);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_ROTATE_LEFT_H_

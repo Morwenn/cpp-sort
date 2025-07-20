@@ -20,9 +20,7 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace probe
+namespace cppsort::probe
 {
     namespace detail
     {
@@ -98,6 +96,6 @@ namespace probe
     }
 
     inline constexpr sorter_facade<detail::inv_impl> inv{};
-}}
+}
 
 #endif // CPPSORT_PROBES_INV_H_

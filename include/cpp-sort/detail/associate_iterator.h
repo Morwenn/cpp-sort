@@ -13,9 +13,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     //
     // This header contains utility classes used when an adapter
@@ -355,6 +353,6 @@ namespace detail
 
             Iterator _it;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_ASSOCIATE_ITERATOR_H_

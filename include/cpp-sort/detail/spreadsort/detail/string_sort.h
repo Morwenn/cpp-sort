@@ -38,13 +38,8 @@ Phil Endecott and Frank Gennari
 #include "../../pdqsort.h"
 #include "../../type_traits.h"
 
-namespace cppsort
+namespace cppsort::detail::spreadsort::detail
 {
-namespace detail
-{
-namespace spreadsort
-{
-  namespace detail {
     //Offsetting on identical characters.  This function works a chunk of
     //characters at a time for cache efficiency and optimal worst-case
     //performance.
@@ -406,7 +401,6 @@ namespace spreadsort
       reverse_string_sort_rec<Unsigned_char_type>(first, last, 0, bin_cache, 0,
                                                   bin_sizes, projection);
     }
-  }
-}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_DETAIL_STRING_SORT_H_

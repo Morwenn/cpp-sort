@@ -12,9 +12,7 @@
 #include <memory>
 #include <type_traits>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename To, typename From>
     auto memcpy_cast(const From& value)
@@ -30,6 +28,6 @@ namespace detail
                     sizeof(From));
         return result;
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MEMCPY_CAST_H_

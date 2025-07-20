@@ -36,9 +36,7 @@
 #include "iterator_traits.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     constexpr static bool double_comparison = true;
 
@@ -144,6 +142,6 @@ namespace detail
             dropped.pop_back();
         } while (not dropped.empty());
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_DROP_MERGE_SORT_H_

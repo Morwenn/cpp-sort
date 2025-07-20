@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -24,9 +24,7 @@
 #include "config.h"
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename Compare, typename RandomAccessIterator, typename Projection>
     auto sift_down(RandomAccessIterator first, RandomAccessIterator,
@@ -209,6 +207,6 @@ namespace detail
         detail::sort_heap(std::move(first), std::move(last),
                           std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_HEAPSORT_H_

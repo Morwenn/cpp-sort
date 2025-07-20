@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MIN_ELEMENT_H_
@@ -12,9 +12,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include "config.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto unchecked_min_element(ForwardIterator first, ForwardIterator last,
@@ -46,6 +44,6 @@ namespace detail
         return unchecked_min_element(std::move(first), std::move(last),
                                      std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MIN_ELEMENT_H_

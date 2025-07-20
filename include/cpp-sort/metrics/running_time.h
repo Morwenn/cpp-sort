@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_RUNNING_TIME_H_
@@ -16,9 +16,7 @@
 #include <cpp-sort/utility/metrics_tools.h>
 #include "../detail/checkers.h"
 
-namespace cppsort
-{
-namespace metrics
+namespace cppsort::metrics
 {
     ////////////////////////////////////////////////////////////
     // Tag
@@ -56,7 +54,7 @@ namespace metrics
             return metric_t(std::chrono::duration_cast<DurationType>(stop - start));
         }
     };
-}}
+}
 
 namespace cppsort
 {

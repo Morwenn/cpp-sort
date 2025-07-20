@@ -6,7 +6,7 @@
  * - http://cr.openjdk.java.net/~martin/webrevs/openjdk7/timsort/raw_files/new/src/share/classes/java/util/TimSort.java
  *
  * Copyright (c) 2011 Fuji, Goro (gfx) <gfuji@cpan.org>.
- * Copyright (c) 2015-2023 Morwenn.
+ * Copyright (c) 2015-2025 Morwenn.
  * Copyright (c) 2021 Igor Kushnir <igorkuo@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -53,9 +53,7 @@
 #include "type_traits.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename Iterator>
     struct run
@@ -785,6 +783,6 @@ namespace detail
             std::move(first), std::move(last),
             std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_TIMSORT_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_APPLY_PERMUTATION_H_
@@ -14,9 +14,7 @@
 #include "../detail/config.h"
 #include "../detail/iterator_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     template<typename RandomAccessIterator1, typename RandomAccessIterator2>
     auto apply_permutation(RandomAccessIterator1 first, RandomAccessIterator1 last,
@@ -52,6 +50,6 @@ namespace utility
         apply_permutation(std::begin(iterable), std::end(iterable),
                           std::begin(indices), std::end(indices));
     }
-}}
+}
 
 #endif // CPPSORT_UTILITY_APPLY_PERMUTATION_H_

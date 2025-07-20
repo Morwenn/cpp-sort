@@ -5,9 +5,7 @@
 #ifndef CPPSORT_DETAIL_SORTING_NETWORK_SORT40_H_
 #define CPPSORT_DETAIL_SORTING_NETWORK_SORT40_H_
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct sorting_network_sorter_impl<40>
@@ -317,6 +315,6 @@ namespace detail
             }};
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_SORTING_NETWORK_SORT40_H_

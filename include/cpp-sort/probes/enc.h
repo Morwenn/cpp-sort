@@ -22,9 +22,7 @@
 #include "../detail/lower_bound.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace probe
+namespace cppsort::probe
 {
     namespace detail
     {
@@ -124,6 +122,6 @@ namespace probe
     }
 
     inline constexpr sorter_facade<detail::enc_impl> enc{};
-}}
+}
 
 #endif // CPPSORT_PROBES_ENC_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_COMPARISONS_H_
@@ -19,9 +19,7 @@
 #include "../detail/comparison_counter.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace metrics
+namespace cppsort::metrics
 {
     ////////////////////////////////////////////////////////////
     // Tag
@@ -134,7 +132,7 @@ namespace metrics
             sorter_facade<detail::comparisons_impl<Sorter, CountType>>(std::move(sorter))
         {}
     };
-}}
+}
 
 namespace cppsort
 {

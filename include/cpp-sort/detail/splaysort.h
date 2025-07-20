@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Morwenn
+ * Copyright (c) 2022-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SPLAYSORT_H_
@@ -18,9 +18,7 @@
 #include "immovable_vector.h"
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     struct splay_tree_base
     {
@@ -268,6 +266,6 @@ namespace detail
 
         tree.move_to(first);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SPLAYSORT_H_

@@ -11,9 +11,7 @@
 #include <type_traits>
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     // Raw checkers: type traits that check whether a specific type member
     // exists within a type. Inheriting from the checker will give to the
@@ -114,6 +112,6 @@ namespace detail
             (has_is_transparent<TT>::value && ...)
         >
     {};
-}}
+}
 
 #endif // CPPSORT_DETAIL_RAW_CHECKERS_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MERGE_MOVE_H_
@@ -15,9 +15,7 @@
 #include "is_sorted_until.h"
 #include "move.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename InputIterator1, typename InputIterator2, typename OutputIterator,
              typename Compare, typename Projection1, typename Projection2>
@@ -63,6 +61,6 @@ namespace detail
             ++result;
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MERGE_MOVE_H_

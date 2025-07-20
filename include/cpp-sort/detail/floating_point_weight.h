@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_FLOATING_POINT_WEIGHT_H_
@@ -10,9 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <cmath>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     //
     // Helpers for floating point comparison, mostly
@@ -75,6 +73,6 @@ namespace detail
                 return 0;
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_FLOATING_POINT_WEIGHT_H_

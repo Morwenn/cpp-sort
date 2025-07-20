@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_MOVES_H_
@@ -23,9 +23,7 @@
 #include "../detail/iterator_traits.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace metrics
+namespace cppsort::metrics
 {
     namespace detail
     {
@@ -187,7 +185,7 @@ namespace metrics
             sorter_facade<detail::moves_impl<Sorter, CountType>>(std::move(sorter))
         {}
     };
-}}
+}
 
 namespace cppsort
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -27,9 +27,7 @@
 #include "memory.h"
 #include "rotate.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename BidirectionalIterator, typename Predicate>
     auto stable_partition(BidirectionalIterator first, BidirectionalIterator last, Predicate pred,
@@ -177,6 +175,6 @@ namespace detail
         }
         return stable_partition(first, last, std::move(pred), len, buffer);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_STABLE_PARTITION_H_

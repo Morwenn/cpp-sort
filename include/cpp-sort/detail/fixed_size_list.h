@@ -16,9 +16,7 @@
 #include "config.h"
 #include "memory.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // List node base
@@ -852,6 +850,6 @@ namespace detail
             // Function pointer to a node's value destructor
             node_value_destructor_t node_destructor_;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_FIXED_SIZE_LIST_H_

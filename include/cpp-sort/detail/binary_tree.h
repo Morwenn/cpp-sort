@@ -11,9 +11,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     struct binary_tree_node_base
     {
@@ -53,6 +51,6 @@ namespace detail
         // Stored value
         T value;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_BINARY_TREE_H_

@@ -28,11 +28,7 @@ Phil Endecott and Frank Gennari
 #include "detail/float_sort.h"
 #include "../pdqsort.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace spreadsort
+namespace cppsort::detail::spreadsort
 {
   /*!
     \brief @c float_sort with casting to the appropriate size.
@@ -69,6 +65,6 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
       detail::float_sort(std::move(first), std::move(last),
                          std::move(projection));
   }
-}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_FLOAT_SORT_H_

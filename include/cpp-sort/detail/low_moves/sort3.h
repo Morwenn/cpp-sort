@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_MOVES_SORT3_H_
@@ -18,9 +18,7 @@
 #include "../rotate_right.h"
 #include "../type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_moves_sorter_impl<3u>
@@ -62,6 +60,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_MOVES_SORT3_H_

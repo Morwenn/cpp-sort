@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -34,9 +34,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename BidirectionalIterator, typename Compare, typename Projection>
     auto insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
@@ -66,6 +64,6 @@ namespace detail
             }
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_INSERTION_SORT_H_

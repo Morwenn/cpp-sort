@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT7_H_
 #define CPPSORT_DETAIL_LOW_COMPARISONS_SORT7_H_
 
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_comparisons_sorter_impl<7u>
@@ -29,6 +27,6 @@ namespace detail
             front_insert<7u>(std::move(first), std::move(compare), std::move(projection));
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT7_H_

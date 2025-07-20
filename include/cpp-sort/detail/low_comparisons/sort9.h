@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_LOW_COMPARISONS_SORT9_H_
@@ -10,9 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include "../rotate_right.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<>
     struct low_comparisons_sorter_impl<9u>
@@ -554,6 +552,6 @@ namespace detail
             }
         }
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_LOW_COMPARISONS_SORT9_H_

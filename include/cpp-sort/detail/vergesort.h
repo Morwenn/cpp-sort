@@ -24,11 +24,7 @@
 #include "sized_range.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace verge
+namespace cppsort::detail::verge
 {
     ////////////////////////////////////////////////////////////
     // Run helper class, represents a non-decreasing run with
@@ -526,6 +522,6 @@ namespace verge
                             std::move(compare), std::move(projection),
                             get_maybe_stable<Stable>(std::move(fallback)));
     }
-}}}
+}
 
 #endif // CPPSORT_DETAIL_VERGESORT_H_

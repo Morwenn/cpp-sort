@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_UTILITY_SORTING_NETWORKS_H_
@@ -15,9 +15,7 @@
 #include <cpp-sort/utility/functional.h>
 #include "../detail/swap_if.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     ////////////////////////////////////////////////////////////
     // Extremely simple but sufficient replacement for std::pair
@@ -123,6 +121,6 @@ namespace utility
                                        Compare, Projection)
         -> void
     {}
-}}
+}
 
 #endif // CPPSORT_UTILITY_SORTING_NETWORKS_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SELECTION_SORT_H_
@@ -11,9 +11,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "min_element.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename Compare, typename Projection>
     auto selection_sort(ForwardIterator first, ForwardIterator last,
@@ -25,6 +23,6 @@ namespace detail
             iter_swap(it, unchecked_min_element(it, last, compare, projection));
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SELECTION_SORT_H_

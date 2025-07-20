@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Morwenn
+ * Copyright (c) 2023-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_METRICS_PROJECTIONS_H_
@@ -27,9 +27,7 @@ namespace cppsort
     ////////////////////////////////////////////////////////////
     // Projections counter
 
-    namespace metrics
-    {
-    namespace detail
+    namespace metrics::detail
     {
         template<typename Projection, typename CountType>
         class projection_counter
@@ -60,7 +58,7 @@ namespace cppsort
                 // in order to increment it
                 CountType& count;
         };
-    }}
+    }
 
     namespace utility
     {
@@ -77,9 +75,7 @@ namespace cppsort
     }
 }
 
-namespace cppsort
-{
-namespace metrics
+namespace cppsort::metrics
 {
     ////////////////////////////////////////////////////////////
     // Tag
@@ -137,7 +133,7 @@ namespace metrics
             sorter_facade<detail::projections_impl<Sorter, CountType>>(std::move(sorter))
         {}
     };
-}}
+}
 
 namespace cppsort
 {

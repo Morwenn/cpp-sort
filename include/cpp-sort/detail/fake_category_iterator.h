@@ -15,9 +15,7 @@
 #include "iterator_traits.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // Iterator with fàake iterator category: it wrap a given
@@ -243,6 +241,6 @@ namespace detail
 
             Iterator _it;
     };
-}}
+}
 
 #endif // CPPSORT_DETAIL_FAKE_CATEGORY_ITERATOR_H_

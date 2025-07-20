@@ -29,9 +29,7 @@
 #include "pdqsort.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // ska_sort algorithm
@@ -989,6 +987,6 @@ namespace detail
 
     template<typename T>
     constexpr bool is_ska_sortable_v = is_ska_sortable<T>::value;
-}}
+}
 
 #endif // CPPSORT_DETAIL_SKA_SORT_H_

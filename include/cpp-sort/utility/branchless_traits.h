@@ -13,9 +13,7 @@
 #include "../detail/config.h"
 #include "../detail/type_traits.h"
 
-namespace cppsort
-{
-namespace utility
+namespace cppsort::utility
 {
     ////////////////////////////////////////////////////////////
     // Whether a comparison function is likely branchless when
@@ -143,6 +141,6 @@ struct is_probably_branchless_projection_impl<std::_Mem_fn<T Class::*>, U>:
     template<typename Projection, typename T>
     constexpr bool is_probably_branchless_projection_v
         = is_probably_branchless_projection<Projection, T>::value;
-}}
+}
 
 #endif // CPPSORT_UTILITY_BRANCHLESS_TRAITS_H_

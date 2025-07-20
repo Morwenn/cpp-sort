@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020 Morwenn
+ * Copyright (c) 2015-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -28,11 +28,7 @@ Phil Endecott and Frank Gennari
 #include "detail/string_sort.h"
 #include "../pdqsort.h"
 
-namespace cppsort
-{
-namespace detail
-{
-namespace spreadsort
+namespace cppsort::detail::spreadsort
 {
 
 /*! \brief String sort algorithm using random access iterators, allowing character-type overloads.\n
@@ -157,6 +153,6 @@ Some performance plots of runtime vs. n and log(range) are provided:\n
       detail::reverse_string_sort(std::move(first), std::move(last),
                                   std::move(projection), unused);
   }
-}}}
+}
 
 #endif // CPPSORT_DETAIL_SPREADSORT_STRING_SORT_H_

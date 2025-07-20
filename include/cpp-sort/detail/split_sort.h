@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_SPLIT_SORT_H_
@@ -14,9 +14,7 @@
 #include <cpp-sort/utility/iter_move.h>
 #include "inplace_merge.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<
         typename BidirectionalIterator,
@@ -61,6 +59,6 @@ namespace detail
         std::forward<Sorter>(sorter)(middle, last, compare, projection);
         inplace_merge(first, middle, last, std::move(compare), std::move(projection));
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SPLIT_SORT_H_

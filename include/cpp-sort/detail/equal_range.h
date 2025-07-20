@@ -25,9 +25,7 @@
 #include "lower_bound.h"
 #include "upper_bound.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename ForwardIterator, typename T,
              typename Compare, typename Projection>
@@ -60,6 +58,6 @@ namespace detail
         }
         return std::pair(first, first);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_EQUAL_RANGE_H_

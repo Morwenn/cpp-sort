@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2023 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
@@ -18,9 +18,7 @@
 #include "insertion_sort.h"
 #include "iterator_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     template<typename RandomAccessIterator>
     struct poplar
@@ -206,6 +204,6 @@ namespace detail
 
         } while (poplars.size() > 1);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_POPLAR_SORT_H_

@@ -16,9 +16,7 @@
 #include "memory.h"
 #include "type_traits.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // move
@@ -77,6 +75,6 @@ namespace detail
             return result;
         }
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_MOVE_H_

@@ -15,9 +15,7 @@
 #include "iterator_traits.h"
 #include "move.h"
 
-namespace cppsort
-{
-namespace detail
+namespace cppsort::detail
 {
     ////////////////////////////////////////////////////////////
     // swap_ranges_overlap
@@ -98,6 +96,6 @@ namespace detail
         using category = iterator_category_t<ForwardIterator>;
         return swap_ranges_inner_impl(category{}, first1, last1, first2);
     }
-}}
+}
 
 #endif // CPPSORT_DETAIL_SWAP_RANGES_H_
