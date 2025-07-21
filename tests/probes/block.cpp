@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Morwenn
+ * Copyright (c) 2021-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -17,7 +17,7 @@ TEST_CASE( "presortedness measure: block", "[probe][block]" )
 
     SECTION( "simple test" )
     {
-        std::forward_list<int> li = { 74, 59, 62, 23, 86, 69, 18, 52, 77, 68 };
+        const std::forward_list<int> li = { 74, 59, 62, 23, 86, 69, 18, 52, 77, 68 };
         CHECK( block(li) == 8 );
         CHECK( block(li.begin(), li.end()) == 8 );
 
@@ -30,7 +30,7 @@ TEST_CASE( "presortedness measure: block", "[probe][block]" )
         // The upper bound should correspond to the size of
         // the input sequence minus one
 
-        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        const std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         auto max_n = block.max_for_size(cppsort::utility::size(li));
         CHECK( max_n == 10 );
         CHECK( block(li) == max_n );

@@ -18,11 +18,11 @@ TEST_CASE( "presortedness measure: spear", "[probe][max]" )
 
     SECTION( "simple test" )
     {
-        std::forward_list<int> li = { 12, 28, 17, 59, 13, 10, 39, 21, 31, 30 };
+        const std::forward_list<int> li = { 12, 28, 17, 59, 13, 10, 39, 21, 31, 30 };
         CHECK( spear(li) == 28 );
         CHECK( spear(li.begin(), li.end()) == 28 );
 
-        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        const std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( spear(tricky, &internal_compare<int>::compare_to) == 28 );
     }
 
@@ -31,7 +31,7 @@ TEST_CASE( "presortedness measure: spear", "[probe][max]" )
         // The upper bound should be n²/2 when the collection
         // is sorted in reverse order
 
-        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        const std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         auto max_n = spear.max_for_size(cppsort::utility::size(li));
         CHECK( max_n == 60 );
         CHECK( spear(li) == max_n );
@@ -75,7 +75,7 @@ TEST_CASE( "presortedness measure: spear", "[probe][max]" )
 
     SECTION( "regression test: some equal values" )
     {
-        int arr[] = {2, 2, 0, -1};
+        const int arr[] = {2, 2, 0, -1};
         CHECK( spear(arr) == 8 );
     }
 }

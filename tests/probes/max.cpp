@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -17,11 +17,11 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
 
     SECTION( "simple test" )
     {
-        std::forward_list<int> li = { 12, 28, 17, 59, 13, 10, 39, 21, 31, 30 };
+        const std::forward_list<int> li = { 12, 28, 17, 59, 13, 10, 39, 21, 31, 30 };
         CHECK( (max)(li) == 6 );
         CHECK( (max)(li.begin(), li.end()) == 6 );
 
-        std::vector<internal_compare<int>> tricky(li.begin(), li.end());
+        const std::vector<internal_compare<int>> tricky(li.begin(), li.end());
         CHECK( (max)(tricky, &internal_compare<int>::compare_to) == 6 );
     }
 
@@ -30,7 +30,7 @@ TEST_CASE( "presortedness measure: max", "[probe][max]" )
         // The upper bound should correspond to the size of
         // the input sequence minus one
 
-        std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
+        const std::forward_list<int> li = { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 };
         auto max_n = (max).max_for_size(cppsort::utility::size(li));
         CHECK( max_n == 10 );
         CHECK( (max)(li) == max_n );
