@@ -4,7 +4,7 @@ Sometimes one needs to apply several transformations to the elements of a collec
 
 ```cpp
 struct my_negate:
-    cppsort::utility::projection_base
+    cppsort::utility::projection_base<my_negate>
 {
     int operator()(int value) const
     {
@@ -13,7 +13,7 @@ struct my_negate:
 };
 ```
 
-Making a function object inherit from `utility::projection_base` allows it to benefit from the `operator|` overload used to compose projections; the projection inheriting from that class can appear on any side of the operator, and the other argument can be any suitable [*Callable*][callable]. Here is an example of what is possible with the custom projection defined above:
+Making a function object `F` inherit from `utility::projection_base<F>` allows it to benefit from the `operator|` overload used to compose projections; the projection inheriting from that class can appear on any side of the operator, and the other argument can be any suitable [*Callable*][callable]. Here is an example of what is possible with the custom projection defined above:
 
 ```cpp
 // Create a vector of wrapper

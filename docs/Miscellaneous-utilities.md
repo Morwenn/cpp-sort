@@ -159,7 +159,7 @@ This buffer provider allocates on the heap a number of elements depending on a g
 
 ***WARNING:** `utility::identity` is removed in version 2.0.0, use `std::identity` instead.*
 
-This header provides the class `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
+This header provides the class template `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
 
 Also available in this header, the struct `identity` is a function object that can type any value of any movable type and return it as is. It is used as a default for every projection parameter in the library so that sorters view the values as they are by default, without a modification.
 
@@ -181,7 +181,7 @@ Another simple yet very handy projection available in the header is `indirect`: 
 
 ```cpp
 struct indirect:
-    projection_base
+    projection_base<indirect>
 {
     template<typename T>
     constexpr auto operator()(T&& indirect_value)

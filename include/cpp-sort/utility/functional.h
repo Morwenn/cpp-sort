@@ -26,15 +26,26 @@ namespace cppsort::utility
     ////////////////////////////////////////////////////////////
     // Base type to allow piping projections
 
-    // Literally just to check that other classes
-    // actually inherit from it
-    struct projection_base {};
+    // CRTP base class for all projection objects: it is modelled after
+    // std::ranges::range_adaptor_closure and thus uses CRTP for the same
+    // reason, namely to avoid having function objects bigger than they
+    // ought to (which happens when the same base class is inherited
+    // from several times by the same class)
+
+    template<typename Derived>
+    struct projection_base
+    {
+        static_assert(
+            std::is_object_v<Derived> &&
+            std::is_same_v<Derived, std::remove_cv_t<Derived>>
+        );
+    };
 
     namespace detail
     {
         template<typename T, typename U>
         struct projection_base_pipe_result:
-            projection_base,
+            projection_base<projection_base_pipe_result<T, U>>,
             cppsort::detail::raw_check_is_transparent<T, U>
         {
             T lhs;
@@ -67,8 +78,13 @@ namespace cppsort::utility
         typename T,
         typename U,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<T>> ||
-            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<U>>
+            std::is_base_of_v<
+                projection_base<std::remove_reference_t<T>>,
+                cppsort::detail::remove_cvref_t<T>
+            > || std::is_base_of_v<
+                projection_base<std::remove_reference_t<U>>,
+                cppsort::detail::remove_cvref_t<U>
+            >
         >
     >
     constexpr auto operator|(T&& lhs, U&& rhs)
@@ -86,7 +102,10 @@ namespace cppsort::utility
     template<
         typename T,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<T>>
+            std::is_base_of_v<
+                projection_base<std::remove_reference_t<T>>,
+                cppsort::detail::remove_cvref_t<T>
+            >
         >
     >
     constexpr auto operator|(T&& lhs, std::identity)
@@ -98,7 +117,10 @@ namespace cppsort::utility
     template<
         typename T,
         typename = cppsort::detail::enable_if_t<
-            std::is_base_of_v<projection_base, cppsort::detail::remove_cvref_t<T>>
+            std::is_base_of_v<
+                projection_base<std::remove_reference_t<T>>,
+                cppsort::detail::remove_cvref_t<T>
+            >
         >
     >
     constexpr auto operator|(std::identity, T&& rhs)
@@ -112,7 +134,7 @@ namespace cppsort::utility
     // Identity (mostly useful for projections)
 
     struct identity:
-        projection_base
+        projection_base<identity>
     {
         template<typename T>
         constexpr auto operator()(T&& value) const noexcept
@@ -153,7 +175,7 @@ namespace cppsort::utility
     // indirect
 
     struct indirect:
-        projection_base
+        projection_base<indirect>
     {
         template<typename T>
         constexpr auto operator()(T&& indirect_value)
@@ -177,7 +199,7 @@ namespace cppsort::utility
     {
         template<typename Function>
         struct as_projection_fn:
-            projection_base,
+            projection_base<as_projection_fn<Function>>,
             cppsort::detail::raw_check_is_transparent<Function>
         {
             private:
@@ -335,7 +357,7 @@ namespace cppsort::utility
     // Math functions (mostly useful for buffer providers)
 
     struct half:
-        projection_base
+        projection_base<half>
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -348,7 +370,7 @@ namespace cppsort::utility
     };
 
     struct log:
-        projection_base
+        projection_base<log>
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
@@ -362,7 +384,7 @@ namespace cppsort::utility
     };
 
     struct sqrt:
-        projection_base
+        projection_base<sqrt>
     {
         template<typename T>
         constexpr auto operator()(T&& value) const
