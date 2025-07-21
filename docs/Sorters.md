@@ -28,8 +28,6 @@ Implements an [adative ShiversSort][adaptive-shivers-sort], a *k*-aware natural 
 
 While the sorting algorithm is stable and the complexity guarantees are good enough, this sorter is rather slow compared to the some other ones when the data distribution is random. That said, it would probably be a good choice when comparing data is expensive, but moving it is inexpensive (this is the use case for which it was designed).
 
-*New in version 1.13.0*
-
 ### `cartesian_tree_sorter`
 
 ```cpp
@@ -41,10 +39,6 @@ Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highl
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | No          | Forward       |
-
-*New in version 1.10.0*
-
-*Changed in version 1.11.0:* `cartesian_tree_sorter` now works with forward iterators. It used to only work with random-access iterators.
 
 ### `d_ary_heap_sorter`
 
@@ -59,8 +53,6 @@ Implements a heapsort algorithm based on a [*d*-ary heap][d-ary-heap]: the value
 | n log n     | n log n     | n log n     | 1           | No          | Random-access |
 
 *d*-ary heapsorts are more complicated than their binary counterparts, but storing more elements in each node can improve locality of reference and improve the execution speed. This sorter, unlike [`heap_sorter`][heap-sorter], does not implement a [bottom-up node searching strategy][bottom-up-heapsort].
-
-*New in version 1.14.0*
 
 ### `grail_sorter<>`
 
@@ -84,8 +76,6 @@ struct grail_sorter;
 ```
 
 Whether this sorter works with types that are not default-constructible depends on the memory allocation strategy of the buffer provider. The default specialization works with such types.
-
-*Changed in version 1.5.0:* `grail_sorter` now handles comparison and projection objects that aren't default-constructible.
 
 ### `heap_sorter`
 
@@ -143,8 +133,6 @@ This sorter also has the following dedicated algorithms when used together with 
 
 None of the container-aware algorithms invalidates iterators.
 
-*New in version 1.10.0*
-
 ### `merge_insertion_sorter`
 
 ```cpp
@@ -156,10 +144,6 @@ Implements the Ford-Johnson merge-insertion sort. This algorithm isn't meant to 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | ?           | n log n     | n log n     | n           | No          | Random-access |
-
-*Until version 1.7.0:* the algorithm used GNU's [`bitmap_allocator`][bitmap-allocator] with `std::list` when possible instead of the default allocator, leading to speed improvements up to 25%.
-
-*Changed in version 1.7.0:* the `std::list` used by the algorithm has been replaced with a custom list implementation whose speed does not depend on the availability of some allocator, and which should be faster than the previous implementation in any case (still not anywhere near fast).
 
 ### `merge_sorter`
 
@@ -236,10 +220,6 @@ The space complexity is dominated by the stack recursion in the selection algori
 
 This sorter can't throw `std::bad_alloc`.
 
-*New in version 1.2.0*
-
-*Changed in version 1.9.0:* the random-access version now runs in O(n log n) instead of accidentally running in O(n²).
-
 ### `quick_sorter`
 
 ```cpp
@@ -255,8 +235,6 @@ Implements a [quicksort][quicksort].
 Despite the name, this sorter actually implements some flavour of introsort: if quicksort performs more than 2*log(n) steps, it falls back to a [median-of-medians][median-of-medians] pivot selection instead of the usual median-of-9 one. The median-of-medians selection being mutually recursive with an introselect algorithm explains the use of log²n stack memory.
 
 This sorter can't throw `std::bad_alloc`.
-
-*Changed in version 1.2.0:* `quick_sorter` used to run in O(n²), but a fallback to median-of-medians pivot selection was introduced to make it run in O(n log n) or O(n log² n) depending of the iterator category, the tradeoff being the log² n space used by stack recursion (as opposed to the previous log n one).
 
 ### `selection_sorter`
 
@@ -293,10 +271,6 @@ Implements a variant of slabsort, a rather slow but highly adaptive algorithm de
 
 This algorithm actually uses a rather big amount of memory but scales better than other O(n log n) algorithms of the library described as "slow" when the collections get bigger.
 
-*New in version 1.10.0*
-
-*Changed in version 1.12.1:* `slab_sorter` now works with bidirectional iterators.
-
 ### `smooth_sorter`
 
 ```cpp
@@ -323,8 +297,6 @@ Implements a [spinsort][spinsort].
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | Yes         | Random-access |
 
-*New in version 1.6.0*
-
 ### `splay_sorter`
 
 ```cpp
@@ -336,8 +308,6 @@ Implements a [splaysort][splaysort].
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | n           | Yes         | Forward       |
-
-*New in version 1.15.0*
 
 ### `std_sorter`
 
@@ -378,8 +348,6 @@ Implements a [timsort][timsort].
 
 While the sorting algorithm is stable and the complexity guarantees are good enough, this sorter is rather slow compared to the some other ones when the data distribution is random. That said, it would probably be a good choice when comparing data is expensive, but moving it is inexpensive (this is the use case for which it was designed).
 
-*Changed in version 1.5.0:* `tim_sorter` now handles comparison and projection objects that aren't default-constructible.
-
 ### `wiki_sorter<>`
 
 ```cpp
@@ -403,8 +371,6 @@ struct wiki_sorter;
 
 Whether this sorter works with types that are not default-constructible depends on the memory allocation strategy of the *buffer provider*. The default specialization does not work with such types.
 
-*New in version 1.11.0*
-
 ## Type-specific sorters
 
 The following sorters are available but will only work for some specific types instead of using a user-provided comparison function. Some of them also accept projections as long as the result of the projection can be handled by the sorter.
@@ -424,10 +390,6 @@ The following sorters are available but will only work for some specific types i
 This sorter works with any type satisfying the trait `std::is_integral` (as well as `[un]signed __int128` even when the standard library isn't properly instrumented to handle them). It can be insanely faster than other sorting algorithms when there are only a few different values in a tight range (*e.g.* values between 0 and 100 in an array of 10000 elements), but will be far too slow and eat too much memory if the range is wider than the number of elements (*e.g.* an array with two elements whose values are 0 and 100000). No memory is used if the collection is already sorted.
 
 \* *Since the original integers are discarded and overwritten, whether the algorithm is stable or not does not mean much. Moreover, it can only sort integers, so the potential stability problems shouldn't even be observable.*
-
-*Changed in version 1.6.0:* support for `[un]signed __int128`.
-
-*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`][std-ranges-greater].
 
 ### `ska_sorter`
 
@@ -449,8 +411,6 @@ Even though it isn't based on comparison, `ska_sorter` can sort a variety of typ
 * Any type implementing `operator[]` provided its return type is also handled by `ska_sort` (this includes standard strings and random-access collections).
 
 This sorter accepts projections, as long as `ska_sorter` can handle the return type of the projection.
-
-*Changed in version 1.2.0:* support for `[un]signed __int128`.
 
 ### `spread_sorter`
 
@@ -486,8 +446,6 @@ struct spread_sorter:
     >
 {};
 ```
-
-*Changed in version 1.9.0:* conditional support for [`std::ranges::greater`][std-ranges-greater].
 
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484

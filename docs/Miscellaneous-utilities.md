@@ -18,8 +18,6 @@ struct adapter_storage;
 
 The usual way to use it when implementing a *sorter adapter* is to make said adapter inherit from `adapter_storage<Sorter>` and to feed it a copy of the *original sorter*. Then either `get()` or `operator()` can be used to correctly call the wrapped sorter.
 
-*New in version 1.5.0*
-
 ### `apply_permutation`
 
 ```cpp
@@ -40,8 +38,6 @@ template<typename RandomAccessIterable1, typename RandomAccessIterable2>
 auto apply_permutation(RandomAccessIterable1&& iterable, RandomAccessIterable2&& indices)
     -> void;
 ```
-
-*New in version 1.14.0*
 
 ### `as_comparison` and `as_projection`
 
@@ -64,12 +60,6 @@ constexpr auto as_comparison(Function&& func)
 ```
 
 When the object passed to `as_comparison` or `as_projection` is a [*transparent function object*][transparent-func], then the object returned by those functions will also be *transparent*.
-
-*Changed in version 1.7.0:* `as_comparison` and `as_projection` accept any *Callable*.
-
-*Changed in version 1.7.0:* the object returned by `as_projection` inherits from `projection_base`.
-
-*Changed in version 1.13.0:* the objects returned by `as_comparison` and `as_projection` are now conditionally [*transparent*][transparent-func].
 
 ### `as_function`
 
@@ -125,10 +115,6 @@ This trait tells whether the projection function `Projection` is likely to gener
 
 These traits can be specialized for user-defined types. If one of the traits is specialized to consider that a user-defined type is likely to be branchless with a comparison/projection function, cv-qualified and reference-qualified versions of the same user-defined type will also be considered to produce branchless code when compared/projected with the same function.
 
-*Changed in version 1.9.0:* conditional support for [`std::ranges::less`][std-ranges-less] and [`std::ranges::greater`][std-ranges-greater].
-
-*Changed in version 1.9.0:* conditional support for [`std::identity`][std-identity].
-
 ### Buffer providers
 
 ```cpp
@@ -157,7 +143,7 @@ This buffer provider allocates on the heap a number of elements depending on a g
 #include <cpp-sort/utility/functional.h>
 ```
 
-***WARNING:** `utility::identity` is removed in version 2.0.0, use `std::identity` instead.*
+***WARNING:** `utility::identity` is removed in version 3.0.0, use `std::identity` instead.*
 
 This header provides the class template `projection_base` and the mechanism used to compose projections with `operator|`. See [Chainable projections][chainable-projections] for more information.
 
@@ -223,21 +209,13 @@ This utility is modeled after [`std::integral_constant`][std-integral-constant],
 
 `is_probably_branchless_comparison` and `is_probably_branchless_projection` will correspond to `std::true_type` if the wrapped `Function` also gives `std::true_type`. Moreover, you can even specialize these traits for specific `function_constant` instanciations if you need even more performance.
 
-*New in version 1.7.0:* `projection_base` and chainable projections.
-
-*Changed in version 1.9.0:* `std::identity` is now also supported wherever the library has special behavior for `utility::identity`.
-
-*Changed in version 1.13.0:* `half`, `log` and `sqrt` are now [*transparent function objects*][transparent-func].
-
-*New in version 1.14.0:* `indirect`.
-
 ### `iter_move` and `iter_swap`
 
 ```cpp
 #include <cpp-sort/utility/iter_move.h>
 ```
 
-***WARNING:** this header is removed in version 2.0.0, use `mstd::iter_move` and `mstd::iter_swap` instead.*
+***WARNING:** this header is removed in version 3.0.0, use `mstd::iter_move` and `mstd::iter_swap` instead.*
 
 The functions `iter_move` and `iter_swap` are equivalent to the same functions as proposed by [P0022][p0022]: utility functions intended to be used with ADL to handle proxy iterators among other things. An algorithm can use them instead of `std::move` and possibly ADL-found `swap` to handle tricky classes such as `std::vector<bool>`.
 
@@ -254,8 +232,6 @@ constexpr auto iter_swap(Iterator lhs, Iterator rhs)
 ```
 
 *NOTE:* while both overloads are marked as `constexpr`, the generic version of `iter_swap` might use `std::swap`, which is not `constexpr` before C++20.
-
-*Changed in version 1.10.0:* generic `iter_move` and `iter_swap` overloads are now marked as `constexpr`.
 
 ### Metrics tools
 
@@ -391,19 +367,15 @@ auto m = get<foo_tag>(mm);
 
 `utility::metrics` is still mostly experimental and unused in the rest of the library. As such this documentation is voluntarily thin.
 
-*New in version 1.15.0*
-
 ### `size`
 
 ```cpp
 #include <cpp-sort/utility/size.h>
 ```
 
-***WARNING:** this header is removed in version 2.0.0, use `mstd::distance` instead.*
+***WARNING:** this header is removed in version 3.0.0, use `mstd::distance` instead.*
 
 `size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
-
-*Changed in version 1.12.1:* `utility::size()` now also works for collections that only provide non-`const` `begin()` and `end()`.
 
 ### `sorted_indices`
 
@@ -421,8 +393,6 @@ auto indices = get_sorted_indices_for(vec);
 ```
 
 When the collection contains *equivalent elements*, the order of their indices in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_indices` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the indices of *equivalent elements* appear in a stable order in the result.
-
-*New in version 1.14.0*
 
 ### `sorted_iterators`
 
@@ -446,8 +416,6 @@ for (auto it: iterators) {
 It can be thought of as a kind of sorted view of the passed collection - as long as said collection does not change. It can be useful when the order of the original collection must be preserved, but operations have to be performed on the sorted collection.
 
 When the collection contains *equivalent elements*, the order of the corresponding iterators in the result depends on the sorter being used. However that order should be consistent across all stable sorters. `sorted_iterators` follows the [`is_stable` protocol][is-stable], so the trait can be used to check whether the iterators to *equivalent elements* appear in a stable order in the result.
-
-*New in version 1.14.0*
 
 ### Sorting network tools
 
@@ -497,8 +465,6 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
 ```
 
 `swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
-
-*New in version 1.11.0*
 
 
   [apply-permutation]: Miscellaneous-utilities.md#apply_permutation

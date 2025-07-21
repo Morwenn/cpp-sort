@@ -33,8 +33,6 @@ If the library throws any other exception, it will likely come from user code. T
     ```
     This means that some of the library's algorithms can actually perform self-swap operations, and it is the responsibility of the author of class `T` to make sure that such code works as expected.
 
-*New in version 1.4.0*
-
 ### Determinism & reproducibility
 
 So far every algorithm in the library is deterministic: for a given input, one should always get the exact same sequence of operations performed. It was a deliberate choice not to use algorithms such as random pivot quicksort or random sampling algorithms.
@@ -67,8 +65,6 @@ Including that header will provide forward declarations for sorters, fixed-size 
 
 Some old components undergo deprecation before being removed in the following major revisions of the library. Those components are marked as `[[deprecated]]` and thus will warn when used. You can silence the deprecation warnings by defining the preprocessor macro `CPPSORT_DISABLE_DEPRECATION_WARNINGS`.
 
-*New in version 1.8.0*
-
 ### Assertions & audits
 
 Some algorithms have assertions to guard against accidental logic issues (mostly in algorithms adapted from other projects), but they are disabled by default. You can enable these assertions by defining the preprocessor macro `CPPSORT_ENABLE_ASSERTIONS`. This new macro still honours `NDEBUG`, so assertions won't be enabled anyway if `NDEBUG` is defined.
@@ -77,14 +73,6 @@ A similar `CPPSORT_ENABLE_AUDITS` macro can be defined to enable audits: those a
 
 The macros `CPPSORT_ENABLE_ASSERTIONS` and `CPPSORT_ENABLE_AUDITS` can be configured directly from CMake by setting the eponymous options to `ON`. See [the Tooling page][tooling-cmake] for more information.
 
-*New in version 1.6.0*
-
-*New in version 1.9.0*: `CPPSORT_ENABLE_AUDITS`
-
-*New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS` and `CPPSORT_ENABLE_AUDITS` can be defined with CMake options.
-
-*Changed in version 1.15.0*: defining `CPPSORT_ENABLE_AUDITS` now automatically defines `CPPSORT_ENABLE_ASSERTIONS`.
-
 #### Rich assertions with libassert (experimental)
 
 When defined, the macro `CPPSORT_USE_LIBASSERT` makes internal assertions use [libassert][libassert] instead of the standard `assert` macro. This allows assertions to provide additional information when an assertion fires, notably by displaying a full stack trace, and optionally to decompose the asserted expressions. See the library's README for more information.
@@ -92,8 +80,6 @@ When defined, the macro `CPPSORT_USE_LIBASSERT` makes internal assertions use [l
 This option can be enabled from CMake by setting the `CPPSORT_USE_LIBASSERT` to `ON`. See [the Tooling page][tooling-cmake] for more information.
 
 *Note: the support for libassert is still experimental and has not been tested on all supported platforms. Errors are to be expected.*
-
-*New in version 1.15.0*
 
 ## Miscellaneous
 

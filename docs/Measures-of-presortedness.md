@@ -77,8 +77,6 @@ static constexpr auto max_for_size(Integer n)
 
 It takes an integer `n` and returns the maximum value that the measure of presortedness can return for a collection of size `n`.
 
-*New in version 1.10.0*
-
 ## Available measures of presortedness
 
 Measures of presortedness are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
@@ -103,8 +101,6 @@ Our implementation is slightly different from the original description in *Subli
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
 
-*New in version 1.12.0*
-
 ### *Dis*
 
 ```cpp
@@ -121,10 +117,6 @@ Computes the maximum distance determined by an inversion.
 When enough memory is available `probe::dis` runs in O(n) using an algorithm described by T. Altman and Y. Igarashi in *Roughly Sorting: Sequential and Parallel Approach*, otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
 `max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
-
-*Changed in version 1.8.0:* `probe::dis` is now O(n²) instead of accidentally being O(n³) when passed forward or bidirectional iterators.
-
-*Changed in version 1.12.0:* `probe::dis` is now O(n log n) instead of O(n²). When sorting bidirectional iterators, if enough heap memory is available, it runs in O(n) time and O(n) space.
 
 ### *Enc*
 
@@ -218,8 +210,6 @@ The measure of presortedness is slightly different from its original description
 
 `max_for_size`: (|*X*| + 1) / 2 - 1 when *X* is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
-*New in version 1.1.0*
-
 ### *Osc*
 
 ```cpp
@@ -235,8 +225,6 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 `max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
 
 **Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
-
-*Changed in version 1.12.0:* `probe::osc` is now O(n log n) instead of O(n²) but now also requires O(n) memory. The O(n²) is kept for backward compatibility but will be removed in the future.
 
 ### *Rem*
 
@@ -282,8 +270,6 @@ Spearman's footrule distance: sum of distances between the position of individua
 
 **Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Spear(\langle 1, 2, 3 \rangle)$.
 
-*New in version 1.17.0*
-
 ### *SUS*
 
 ```cpp
@@ -299,8 +285,6 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 | n log n     | n           | Forward       |
 
 `max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
-
-*New in version 1.10.0*
 
 ## Other measures of presortedness
 

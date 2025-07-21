@@ -1,5 +1,3 @@
-*New in version 1.15.0*
-
 *Metrics* are special kinds of [*sorter adapters*][sorter-adapters] that can be used to compute properties about a sorting algorithm, such as the number of comparisons performed while sorting a given collection, or the time it took to sort. As *sorter adapters*, metrics follow the *unified sorting interface*, and *do* sort the passed collection before returning the result.
 
 The anatomy of a metric adapter is thus close to that of any *sorter adapter* with the following additional properties:
@@ -41,8 +39,6 @@ struct comparisons;
 
 Returns an instance of `utility::metric<CountType, comparisons_tag>`.
 
-*Changed in version 1.16.0:* `comparisons` now honours [`is_probably_branchless_comparison`][branchless-traits] to better represent the branches taken by the analyzed comparison function.
-
 ### `moves`
 
 ```cpp
@@ -66,10 +62,6 @@ struct moves;
 
 Returns an instance of `utility::metric<CountType, moves_tag>`.
 
-*New in version 1.16.0*
-
-*Changed in version 1.17.0:* `metrics::moves` now mimicks the iterator category of the passed range passed to the *resulting sorter*, leading to more accurate results.
-
 ### `projections`
 
 ```cpp
@@ -89,8 +81,6 @@ struct projections;
 ```
 
 Returns an instance of `utility::metric<CountType, projections_tag>`.
-
-*Changed in version 1.16.0:* `projections` now honours [`is_probably_branchless_projection`][branchless-traits] to better represent the branches taken by the analyzed projection function.
 
 ### `running_time`
 

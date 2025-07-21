@@ -20,8 +20,6 @@ add_subdirectory(third_party/cpp-sort)
 target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 ```
 
-*New in version 1.6.0:* cpp-sort can be used directly with `add_subdirectory`.
-
 ### Building cpp-sort
 
 The project's CMake files offers some options, though they are mainly used to configure the test suite and examples:
@@ -37,19 +35,7 @@ The project's CMake files offers some options, though they are mainly used to co
 
 Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enabled even if `CPPSORT_ENABLE_ASSERTIONS` is `OFF`. See [the relevant page][assertions-and-audits] for more information.
 
-*New in version 1.6.0:* added the option `BUILD_EXAMPLES`.
-
-*New in version 1.9.0:* options with the `CPPSORT_` prefix.
-
-*New in version 1.13.0:* added the option `CPPSORT_STATIC_TESTS`.
-
-*New in version 1.15.0:* `CPPSORT_ENABLE_ASSERTIONS`, `CPPSORT_ENABLE_AUDITS` and `CPPSORT_USE_LIBASSERT`.
-
-[Catch2][catch2] 3.1.0 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
-
-*Changed in version 1.7.0:* if a suitable Catch2 version is found on the system, it will be used.
-
-*Changed in version 1.13.0:* cpp-sort now requires Catch2 version 3.0.0-preview4 instead of 2.6.0.
+[Catch2][catch2] v3.1.0 or greater is required to build the tests: if a suitable version has been installed on the system it will be used, otherwise the latest suitable Catch2 release will be downloaded.
 
 ## Conan
 
@@ -66,8 +52,6 @@ conan install --requires=cpp-sort/1.17.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to create your own package with the `conanfile.py` available in this repository.
-
-*Changed in version 1.15.0:* the recipes now only target conan 2.X.
 
 ## Gollum
 

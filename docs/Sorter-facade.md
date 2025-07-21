@@ -26,8 +26,6 @@ constexpr sorter_facade(Args&&... args):
 {}
 ```
 
-*Changed in version 1.5.0:* `sorter_facade` can now be constructed with any number of parameters and forwards them to the *sorter implementation*.
-
 ### Conversion to function pointers
 
 As long as the *sorter implementation* it wraps is an empty and default-constructible type, `sorter_facade` provides the following member functions so that a sorter can be turned into a function pointer:
@@ -48,12 +46,6 @@ The return type `Ret` can either match that of the sorter, or be `void`, in whic
 Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is the [`std::result_of_t`][std-result-of] of the sorter called with the parameters. The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
 ***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
-
-*Changed in version 1.5.0:* these conversion operators exist if and only if the wrapped *sorter implementation* is empty and default-constructible.
-
-*Changed in version 1.10.0:* the conversion operators are always `constexpr` (it used to be a C++17 feature).
-
-*Changed in version 1.11.0:* the return type of the function pointer type can be `void` regardless of the type(s) returned by the sorter.
 
 ### `operator()` for pairs of iterators
 
@@ -103,8 +95,6 @@ struct selection_sorter:
 {};
 ```
 
-*Changed in version 1.10.0:* those overloads are now `constexpr`.
-
 ### `operator()` for ranges
 
 `sorter_facade` provides the following overloads of `operator()` to handle ranges:
@@ -133,8 +123,6 @@ It will always call the most suitable iterable `operator()` overload in the wrap
 
 *NOTE:* range overloads are marked as `constexpr` but rely on [`std::begin`][std-begin] and [`std::end`][std-end], which means that they can't actually be used in a `constexpr` context before C++17 (except for arrays).
 
-*Changed in version 1.10.0:* those overloads are now `constexpr`.
-
 ### Projection support for comparison-only sorters
 
 Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking a pair of iterators and a comparison function can take any iterable, pair of iterators, comparison and/or projection function once it is wrapped into `sorter_facade`.
@@ -147,37 +135,37 @@ The reverse operation (baking a comparison function into a projection function) 
 
 ```cpp
 template<typename Iterable>
-auto operator()(Iterable&& iterable, std::less<>) const
+constexpr auto operator()(Iterable&& iterable, std::less<>) const
     -> /* implementation-defined */;
 
 template<typename Iterable>
-auto operator()(Iterable&& iterable, utility::identity) const
+constexpr auto operator()(Iterable&& iterable, utility::identity) const
     -> /* implementation-defined */;
 
 template<typename Iterable>
-auto operator()(Iterable&& iterable, std::less<>, utility::identity) const
+constexpr auto operator()(Iterable&& iterable, std::less<>, utility::identity) const
     -> /* implementation-defined */;
 
 template<typename Iterable, typename Projection>
-auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
+constexpr auto operator()(Iterable&& iterable, std::less<>, Projection projection) const
     -> /* implementation-defined */;
 
 template<typename Iterator>
-auto operator()(Iterator first, Iterator last, std::less<>) const
+constexpr auto operator()(Iterator first, Iterator last, std::less<>) const
     -> /* implementation-defined */;
 
 template<typename Iterator>
-auto operator()(Iterator first, Iterator last, utility::identity) const
+constexpr auto operator()(Iterator first, Iterator last, utility::identity) const
     -> /* implementation-defined */;
 
 template<typename Iterator>
-auto operator()(Iterator first, Iterator last,
-                std::less<>, utility::identity) const
+constexpr auto operator()(Iterator first, Iterator last,
+                          std::less<>, utility::identity) const
     -> /* implementation-defined */;
 
 template<typename Iterator, typename Projection>
-auto operator()(Iterator first, Iterator last,
-                std::less<>, Projection projection) const
+constexpr auto operator()(Iterator first, Iterator last,
+                          std::less<>, Projection projection) const
     -> /* implementation-defined */;
 ```
 
@@ -186,12 +174,6 @@ When [`std::identity`][std-identity] is available, special overloads are provide
 When [`std::ranges::less`][std-ranges-less] is available, special overloads are provided with a behaviour similar to that of the `std::less<>` ones.
 
 While it does not appear in this documentation, `sorter_facade` actually relies on an extensive amount of SFINAE tricks to ensure that only the `operator()` overloads that are needed and viable are generated. For example, the magic `std::less<>` overloads won't be generated if the wrapped *sorter implementation* already accepts a comparison function.
-
-*Changed in version 1.9.0:* when `std::identity` is available, special overloads are provided.
-
-*Changed in version 1.9.0:* when `std::ranges::less` is available, special overloads are provided.
-
-*Changed in version 1.10.0:* those overloads are now `constexpr`.
 
 
   [issue-185]: https://github.com/Morwenn/cpp-sort/issues/185
