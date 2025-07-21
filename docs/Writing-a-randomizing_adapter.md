@@ -31,7 +31,7 @@ An arguably more useful use for a `randomizing_adapter` would be to avoid becomi
 
 Danila Kutenin rightfully mentions that [changing `std::sort` is harder than meets the eye][changing-std-sort], the main reason being that pieces of code accidentally rely on the observable yet not guaranteed properties of [`std::sort`][std-sort], namely the order of *equivalent elements*. The article gives [golden tests][golden-tests] as an example of things that might break when changing a sorting algorithm.
 
-In order to make it less likely for users to rely on the order of *equivalent elements*, the author proposes to shuffle the collection prior to sorting it debug mode. This makes the order of *equivalent elements* non deterministic, which in turns can purposefuly break code accidentally relying on this order.
+In order to make it less likely for users to rely on the order of *equivalent elements*, the author proposes to shuffle the collection prior to sorting it in debug mode. This makes the order of *equivalent elements* non-deterministic, which in turn can purposefuly break a piece code that accidentally relies on this specific order.
 
 It might seem at first that **cpp-sort**'s algorithms are not vulnerable to such changes since the name of the algorithm is part of sorter's name, but the truth is that their implementation still changes, and a user of the library might still want to swap a sorter for another one and suffer the same fate.
 
@@ -78,14 +78,14 @@ We don't have a specific use for the return channel of `randomizing_adapter` and
 
 ## Construction
 
-A sorter adapter should be exmplicitly constructible from an instance of the sorter it adapts, so we need to give it appropriate constructors:
+A sorter adapter should be explicitly constructible from an instance of the sorter it adapts, so we need to give it appropriate constructors:
 
 ```cpp
 randomizing_adapter() = default;
 constexpr explicit randomizing_adapter(Sorter) {}
 ```
 
-It might seem useless since our adapter does not store an instance of the sorter it wraps, but it adds expressiveness with C++17 [class template argument deduction][ctad]:
+It might seem useless since our adapter does not store an instance of the sorter it wraps, but it adds expressiveness with [class template argument deduction][ctad]:
 
 ```cpp
 auto sort = randomizing_adapter(cppsort::poplar_sorter);
@@ -130,7 +130,7 @@ It is special-cased for empty sorters: when constructed with one, it doesn't sto
 
 ## Conclusion
 
-We have seen how to write a simple sorter adapter which gives users the option to harden their code against Hyrum's law in a more granular fashion that simply sticking a macro in every sorter.
+We have seen how to write a simple sorter adapter which gives users the option to harden their code against Hyrum's law in a more granular fashion than simply sticking a macro in every sorter.
 
 This one was pretty straightforward, but writing adapters can occasionally be much more challenging. Good adapters can ideally replace the sorter they wrap without effort, and there's generally more to it than meets the eye.
 
@@ -150,5 +150,6 @@ The full implementation can be found in the `examples` folder.
   [sorter-adapters]: Sorter-adapters.md
   [sorter-facade]: Sorter-facade.md
   [sorter-traits]: Sorter-traits.md#sorter_traits
+  [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort.html
   [writing-a-sorter]: Writing-a-sorter.md
   [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md
