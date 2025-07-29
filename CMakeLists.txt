@@ -24,7 +24,7 @@ if (CPPSORT_USE_LIBASSERT)
     FetchContent_Declare(
         libassert
         GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-        GIT_TAG 634f50fb4086d377ad9a2f83d693d2e8fe4972a7  # v2.1.4
+        GIT_TAG bd33ba116f209bf71761c58dccc2f3bf277e0824  # v2.2.1
     )
     FetchContent_GetProperties(libassert)
     if (NOT libassert_POPULATED)
