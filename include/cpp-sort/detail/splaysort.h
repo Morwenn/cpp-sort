@@ -169,30 +169,24 @@ namespace cppsort::detail
             auto move_to(OutputIterator out)
                 -> void
             {
-                binary_tree_node_base* curr = root();
-                while (curr->left_child != &sentinel_node_) {
-                    curr = curr->left_child;
-                }
-                *out = std::move(static_cast<node_type*>(curr)->value);
-                ++out;
+                binary_tree_node_base* current = root();
 
-                while (true) {
-                    if (curr->right_child != &sentinel_node_) {
-                        auto prev = std::exchange(curr, curr->right_child);
-                        curr->parent = prev->parent;
-                        prev->right_child = &sentinel_node_;
-                        while (curr->left_child != &sentinel_node_) {
-                            curr = curr->left_child;
-                        }
-                    } else if (curr->parent != &sentinel_node_) {
-                        curr = curr->parent;
-                    } else {
-                        return;
+                from_parent:
+                    while (current->left_child != &sentinel_node_) {
+                        current = current->left_child;
                     }
-
-                    *out = std::move(static_cast<node_type*>(curr)->value);
+                from_child:
+                    *out = std::move(static_cast<node_type*>(current)->value);
                     ++out;
-                }
+                    if (current->right_child != &sentinel_node_) {
+                        auto previous = std::exchange(current, current->right_child);
+                        current->parent = previous->parent;
+                        goto from_parent;
+                    }
+                    current = current->parent;
+                    if (current != &sentinel_node_) {
+                        goto from_child;
+                    }
             }
 
         private:
