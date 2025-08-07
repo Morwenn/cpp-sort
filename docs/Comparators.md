@@ -64,7 +64,7 @@ Partial order comparators are considered as [generating branchless code][branchl
 #include <cpp-sort/comparators/natural_less.h>
 ```
 
-The comparator `natural_less` is a [customization point][custom-point] that can be used to perform a [natural sort][natural-sort]. The function handles any two forward iterable sequences of `char` out of the box using [`std::isdigit`][std-is-digit] to identify digits (which includes `std::string`, `std::vector<char>` and `char[]`). Other character types and locales are currently not handled and it is unlikely that the library will evolve more than switching to `<locale>`'s `std::isdigit` instead of `<cctype>`'s one.
+The comparator `natural_less` is a [customization point][custom-point] that can be used to perform a [natural sort][natural-sort]. The function handles any two forward ranges of `char` out of the box using [`std::isdigit`][std-is-digit] to identify digits (which includes `std::string`, `std::vector<char>` and `char[]`). Other character types and locales are currently not handled and it is unlikely that the library will evolve more than switching to `<locale>`'s `std::isdigit` instead of `<cctype>`'s one.
 
 ### Case-insensitive comparator
 
@@ -72,7 +72,7 @@ The comparator `natural_less` is a [customization point][custom-point] that can 
 #include <cpp-sort/comparators/case_insensitive_less.h>
 ```
 
-The comparator `case_insensitive_less` is a [customization point][custom-point] that be used to perform a [case-insensitive][case-sensitivity] sort on collections. The function handles any forward iterable sequence of `char` or `wchar_t` out of the box using [`std::ctype::tolower`][to-lower] prior to character comparison. The customization point has two distinct signatures:
+The comparator `case_insensitive_less` is a [customization point][custom-point] that be used to perform a [case-insensitive][case-sensitivity] sort on collections. The function handles any forward range of `char` or `wchar_t` out of the box using [`std::ctype::tolower`][to-lower] prior to character comparison. The customization point has two distinct signatures:
 
 ```cpp
 template<typename T>

@@ -356,19 +356,19 @@ struct bubble_sorter_impl
                     std::move(compare));
     }
 
-    // Iterable overload
+    // Range overload
     template<
-        typename ForwardIterable,
+        typename ForwardRange,
         typename Compare = std::less<>,
         typename = std::enable_if_t<not cppsort::is_projection_v<
-            Compare, ForwardIterable
+            Compare, ForwardRange
         >>
     >
-    auto operator()(ForwardIterable&& iterable, Compare compare={}) const
+    auto operator()(ForwardRange&& range, Compare compare={}) const
         -> void
     {
-        bubble_sort(std::begin(iterable),
-                    cppsort::utility::size(iterable),
+        bubble_sort(std::begin(range),
+                    cppsort::utility::size(range),
                     std::move(compare));
     }
 

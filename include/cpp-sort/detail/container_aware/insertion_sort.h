@@ -113,28 +113,28 @@ namespace cppsort
         // std::list
 
         template<typename... Args>
-        auto operator()(std::list<Args...>& iterable) const
+        auto operator()(std::list<Args...>& range) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::less{}, utility::identity{});
+            detail::list_insertion_sort(range, std::less{}, utility::identity{});
         }
 
         template<typename Compare, typename... Args>
-        auto operator()(std::list<Args...>& iterable, Compare compare) const
+        auto operator()(std::list<Args...>& range, Compare compare) const
             -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::list<Args...>, Compare>
             >
         {
-            detail::list_insertion_sort(iterable, std::move(compare), utility::identity{});
+            detail::list_insertion_sort(range, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
-        auto operator()(std::list<Args...>& iterable, Projection projection) const
+        auto operator()(std::list<Args...>& range, Projection projection) const
             -> detail::enable_if_t<
                 is_projection_v<Projection, std::list<Args...>>
             >
         {
-            detail::list_insertion_sort(iterable, std::less{}, std::move(projection));
+            detail::list_insertion_sort(range, std::less{}, std::move(projection));
         }
 
         template<
@@ -145,39 +145,39 @@ namespace cppsort
                 is_projection_v<Projection, std::list<Args...>, Compare>
             >
         >
-        auto operator()(std::list<Args...>& iterable,
+        auto operator()(std::list<Args...>& range,
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::list_insertion_sort(iterable, std::move(compare), std::move(projection));
+            detail::list_insertion_sort(range, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////
         // std::forward_list
 
         template<typename... Args>
-        auto operator()(std::forward_list<Args...>& iterable) const
+        auto operator()(std::forward_list<Args...>& range) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::less{}, utility::identity{});
+            detail::flist_insertion_sort(range, std::less{}, utility::identity{});
         }
 
         template<typename Compare, typename... Args>
-        auto operator()(std::forward_list<Args...>& iterable, Compare compare) const
+        auto operator()(std::forward_list<Args...>& range, Compare compare) const
             -> detail::enable_if_t<
                 is_projection_v<utility::identity, std::forward_list<Args...>, Compare>
             >
         {
-            detail::flist_insertion_sort(iterable, std::move(compare), utility::identity{});
+            detail::flist_insertion_sort(range, std::move(compare), utility::identity{});
         }
 
         template<typename Projection, typename... Args>
-        auto operator()(std::forward_list<Args...>& iterable, Projection projection) const
+        auto operator()(std::forward_list<Args...>& range, Projection projection) const
             -> detail::enable_if_t<
                 is_projection_v<Projection, std::forward_list<Args...>>
             >
         {
-            detail::flist_insertion_sort(iterable, std::less{}, std::move(projection));
+            detail::flist_insertion_sort(range, std::less{}, std::move(projection));
         }
 
         template<
@@ -188,11 +188,11 @@ namespace cppsort
                 is_projection_v<Projection, std::forward_list<Args...>, Compare>
             >
         >
-        auto operator()(std::forward_list<Args...>& iterable,
+        auto operator()(std::forward_list<Args...>& range,
                         Compare compare, Projection projection) const
             -> void
         {
-            detail::flist_insertion_sort(iterable, std::move(compare), std::move(projection));
+            detail::flist_insertion_sort(range, std::move(compare), std::move(projection));
         }
 
         ////////////////////////////////////////////////////////////

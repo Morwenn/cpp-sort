@@ -21,13 +21,13 @@ TEST_CASE( "default sorter tests", "[old_default_sorter]" )
 
     old_default_sorter do_sort;
 
-    SECTION( "sort with random-access iterable" )
+    SECTION( "sort with random-access range" )
     {
         do_sort(vec);
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with random-access iterable and compare" )
+    SECTION( "sort with random-access range and compare" )
     {
         do_sort(vec, std::greater{});
         CHECK( std::is_sorted(vec.begin(), vec.end(), std::greater{}) );
@@ -73,14 +73,14 @@ TEST_CASE( "default sorter tests", "[old_default_sorter]" )
         CHECK( std::is_sorted(li.begin(), li.end(), std::greater{}) );
     }
 
-    SECTION( "sort with self-sortable iterable" )
+    SECTION( "sort with self-sortable range" )
     {
         std::list<int> li(vec.begin(), vec.end());
         do_sort(li);
         CHECK( std::is_sorted(li.begin(), li.end()) );
     }
 
-    SECTION( "sort with self-sortable iterable and compare" )
+    SECTION( "sort with self-sortable range and compare" )
     {
         std::forward_list<int> li(vec.begin(), vec.end());
         do_sort(li, std::greater{});

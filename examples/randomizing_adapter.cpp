@@ -51,20 +51,20 @@ struct randomizing_adapter:
         return this->get()(begin, end, std::forward<Args>(args)...);
     }
 
-    template<typename RandomAccessIterable, typename... Args>
-    auto operator()(RandomAccessIterable&& iterable, Args&&... args) const
-        -> decltype(this->get()(std::forward<RandomAccessIterable>(iterable), std::forward<Args>(args)...))
+    template<typename RandomAccessRange, typename... Args>
+    auto operator()(RandomAccessRange&& range, Args&&... args) const
+        -> decltype(this->get()(std::forward<RandomAccessRange>(range), std::forward<Args>(args)...))
     {
         static_assert(
             std::is_base_of_v<
                 iterator_category,
-                typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
+                typename std::iterator_traits<decltype(std::begin(range))>::iterator_category
             >,
             "randomizing_adapter requires at least forward iterators"
         );
 
-        my_shuffle(std::begin(iterable), std::end(iterable));
-        return this->get()(std::forward<RandomAccessIterable>(iterable), std::forward<Args>(args)...);
+        my_shuffle(std::begin(range), std::end(range));
+        return this->get()(std::forward<RandomAccessRange>(range), std::forward<Args>(args)...);
     }
 
     ////////////////////////////////////////////////////////////

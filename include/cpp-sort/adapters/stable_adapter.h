@@ -122,18 +122,18 @@ namespace cppsort
             {}
 
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, ForwardRange, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
+            auto operator()(ForwardRange&& range,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return make_stable_and_sort(std::begin(iterable), utility::size(iterable),
+                return make_stable_and_sort(std::begin(range), utility::size(range),
                                             std::move(compare), std::move(projection),
                                             this->get());
             }

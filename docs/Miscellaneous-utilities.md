@@ -31,11 +31,11 @@ The algorithm requires both the elements range and the indices range to be mutab
 ```cpp
 template<typename RandomAccessIterator1, typename RandomAccessIterator2>
 auto apply_permutation(RandomAccessIterator1 first, RandomAccessIterator1 last,
-                        RandomAccessIterator2 indices_first, RandomAccessIterator2 indices_last)
+                       RandomAccessIterator2 indices_first, RandomAccessIterator2 indices_last)
     -> void;
 
-template<typename RandomAccessIterable1, typename RandomAccessIterable2>
-auto apply_permutation(RandomAccessIterable1&& iterable, RandomAccessIterable2&& indices)
+template<typename RandomAccessRange1, typename RandomAccessRange2>
+auto apply_permutation(RandomAccessRange1&& range, RandomAccessRange2&& indices)
     -> void;
 ```
 
@@ -375,7 +375,7 @@ auto m = get<foo_tag>(mm);
 
 ***WARNING:** this header is removed in version 3.0.0, use `mstd::distance` instead.*
 
-`size` is a function that can be used to get the size of an iterable. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the iterable is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(iter), std::end(iter))` on the iterable. Therefore, this function can also be used for `std::forward_list` as well as some implementations of ranges.
+`size` is a function that can be used to get the size of a container. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the container is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(cont), std::end(cont))` on the container. Therefore, this function can also be used for `std::forward_list` as well as some views.
 
 ### `sorted_indices`
 

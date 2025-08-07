@@ -15,7 +15,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
 {
     auto distribution = dist::shuffled{};
 
-    SECTION( "sort with int iterable" )
+    SECTION( "sort with int range" )
     {
         std::vector<int> vec;
         vec.reserve(100'000);
@@ -33,7 +33,7 @@ TEST_CASE( "spread_sorter tests", "[spread_sorter]" )
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with float iterable" )
+    SECTION( "sort with float range" )
     {
         std::vector<float> vec;
         vec.reserve(100'000);

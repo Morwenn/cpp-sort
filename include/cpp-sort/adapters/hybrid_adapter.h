@@ -233,17 +233,17 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Call operator
 
-                template<typename Iterable, typename... Args>
-                constexpr auto operator()(Iterable&& iterable, Args&&... args) const
+                template<typename Range, typename... Args>
+                constexpr auto operator()(Range&& range, Args&&... args) const
                     -> decltype(base_class::operator()(
-                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                        std::forward<Iterable>(iterable),
+                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ))
                 {
                     return base_class::operator()(
-                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                        std::forward<Iterable>(iterable),
+                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        std::forward<Range>(range),
                         std::forward<Args>(args)...
                     );
                 }
@@ -266,11 +266,11 @@ namespace cppsort
                 ////////////////////////////////////////////////////////////
                 // Stability of a call
 
-                template<typename Iterable, typename... Args>
-                static constexpr auto _detail_stability(Iterable&& iterable, Args&&... args)
+                template<typename Range, typename... Args>
+                static constexpr auto _detail_stability(Range&& range, Args&&... args)
                     -> decltype(base_class::_detail_stability(
-                        detail::choice_for_it<decltype(std::begin(iterable)), sizeof...(Sorters)>{},
-                        std::forward<Iterable>(iterable),
+                        detail::choice_for_it<decltype(std::begin(range)), sizeof...(Sorters)>{},
+                        std::forward<Range>(range),
                         std::forward<Args>(args)...
                     ));
 

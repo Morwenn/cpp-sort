@@ -172,7 +172,7 @@ template<typename Sorter>
 struct self_sort_adapter;
 ```
 
-Since it is impossible to guarantee the stability of the `sort` method of a given iterable, the *resulting sorter*'s `is_always_stable` is `std::false_type`. However, [`is_stable`][is-stable] will be `std::true_type` if a container's `stable_sort` is called or if a call to the *adapted sorter* is stable. A special case considers valid calls to `std::list::sort` and `std::forward_list::sort` to be stable.
+Since it is impossible to guarantee the stability of the `sort` method of a given container, the *resulting sorter*'s `is_always_stable` is `std::false_type`. However, [`is_stable`][is-stable] is `std::true_type` when a container's `stable_sort` is called or if a call to the *adapted sorter* is stable. It is special-cased to consider calls to `std::list::sort` and `std::forward_list::sort` to be stable.
 
 ### `small_array_adapter`
 

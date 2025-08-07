@@ -44,24 +44,24 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Generic cases
 
-        template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
+        template<typename Range, typename... Args>
+        auto operator()(Range&& range, Args&&... args) const
             -> detail::enable_if_t<
-                detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
+                detail::has_stable_sort_method<Range, Args...>,
+                decltype(std::forward<Range>(range).stable_sort(utility::as_function(args)...))
             >
         {
-            return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
+            return std::forward<Range>(range).stable_sort(utility::as_function(args)...);
         }
 
-        template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
+        template<typename Range, typename... Args>
+        auto operator()(Range&& range, Args&&... args) const
             -> detail::enable_if_t<
-                not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                not detail::has_stable_sort_method<Range, Args...>,
+                decltype(this->get()(std::forward<Range>(range), std::forward<Args>(args)...))
             >
         {
-            return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+            return this->get()(std::forward<Range>(range), std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>
@@ -76,10 +76,10 @@ namespace cppsort
         // method implements a stable sort
 
         template<typename T>
-        auto operator()(std::forward_list<T>& iterable) const
+        auto operator()(std::forward_list<T>& range) const
             -> void
         {
-            iterable.sort();
+            range.sort();
         }
 
         template<
@@ -87,17 +87,17 @@ namespace cppsort
             typename Compare,
             typename = detail::enable_if_t<not is_projection_v<Compare, std::forward_list<T>&>>
         >
-        auto operator()(std::forward_list<T>& iterable, Compare compare) const
+        auto operator()(std::forward_list<T>& range, Compare compare) const
             -> void
         {
-            iterable.sort(utility::as_function(compare));
+            range.sort(utility::as_function(compare));
         }
 
         template<typename T>
-        auto operator()(std::list<T>& iterable) const
+        auto operator()(std::list<T>& range) const
             -> void
         {
-            iterable.sort();
+            range.sort();
         }
 
         template<
@@ -105,10 +105,10 @@ namespace cppsort
             typename Compare,
             typename = detail::enable_if_t<not is_projection_v<Compare, std::list<T>&>>
         >
-        auto operator()(std::list<T>& iterable, Compare compare) const
+        auto operator()(std::list<T>& range, Compare compare) const
             -> void
         {
-            iterable.sort(utility::as_function(compare));
+            range.sort(utility::as_function(compare));
         }
 
         ////////////////////////////////////////////////////////////

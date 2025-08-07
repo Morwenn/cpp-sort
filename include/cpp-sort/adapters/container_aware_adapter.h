@@ -29,62 +29,62 @@ namespace cppsort
 
         struct adl_despair
         {
-            template<typename Sorter, typename Iterable>
-            auto operator()(Sorter sorter, Iterable& iterable) const
-                -> decltype(sort(std::move(sorter), iterable))
+            template<typename Sorter, typename Range>
+            auto operator()(Sorter sorter, Range& range) const
+                -> decltype(sort(std::move(sorter), range))
             {
-                return sort(std::move(sorter), iterable);
+                return sort(std::move(sorter), range);
             }
 
-            template<typename Sorter, typename Iterable, typename Function>
-            auto operator()(Sorter sorter, Iterable& iterable, Function function) const
-                -> decltype(sort(std::move(sorter), iterable, std::move(function)))
+            template<typename Sorter, typename Range, typename Function>
+            auto operator()(Sorter sorter, Range& range, Function function) const
+                -> decltype(sort(std::move(sorter), range, std::move(function)))
             {
-                return sort(std::move(sorter), iterable, std::move(function));
+                return sort(std::move(sorter), range, std::move(function));
             }
 
-            template<typename Sorter, typename Iterable, typename Compare, typename Projection>
-            auto operator()(Sorter sorter, Iterable& iterable, Compare compare, Projection projection) const
-                -> decltype(sort(std::move(sorter), iterable,
+            template<typename Sorter, typename Range, typename Compare, typename Projection>
+            auto operator()(Sorter sorter, Range& range, Compare compare, Projection projection) const
+                -> decltype(sort(std::move(sorter), range,
                                  std::move(compare), std::move(projection)))
             {
-                return sort(std::move(sorter), iterable,
+                return sort(std::move(sorter), range,
                             std::move(compare), std::move(projection));
             }
         };
 
-        template<typename Sorter, typename Iterable>
+        template<typename Sorter, typename Range>
         struct can_sort:
             std::conjunction<
-                std::is_invocable<adl_despair, Sorter, Iterable&>,
-                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&>>
+                std::is_invocable<adl_despair, Sorter, Range&>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Range&>>
             >
         {};
 
-        template<typename Sorter, typename Iterable, typename Compare>
+        template<typename Sorter, typename Range, typename Compare>
         struct can_comparison_sort:
             std::conjunction<
-                std::is_invocable<adl_despair, Sorter, Iterable&, Compare>,
-                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare>>,
-                is_projection<utility::identity, Iterable, Compare>
+                std::is_invocable<adl_despair, Sorter, Range&, Compare>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Range&, Compare>>,
+                is_projection<utility::identity, Range, Compare>
             >
         {};
 
-        template<typename Sorter, typename Iterable, typename Projection>
+        template<typename Sorter, typename Range, typename Projection>
         struct can_projection_sort:
             std::conjunction<
-                std::is_invocable<adl_despair, Sorter, Iterable&, Projection>,
-                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Projection>>,
-                is_projection<Projection, Iterable>
+                std::is_invocable<adl_despair, Sorter, Range&, Projection>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Range&, Projection>>,
+                is_projection<Projection, Range>
             >
         {};
 
-        template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+        template<typename Sorter, typename Range, typename Compare, typename Projection>
         struct can_comparison_projection_sort:
             std::conjunction<
-                std::is_invocable<adl_despair, Sorter, Iterable&, Compare, Projection>,
-                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Iterable&, Compare, Projection>>,
-                is_projection<Projection, Iterable, Compare>
+                std::is_invocable<adl_despair, Sorter, Range&, Compare, Projection>,
+                std::negation<std::is_invocable_r<nope_type, adl_despair, Sorter, Range&, Compare, Projection>>,
+                is_projection<Projection, Range, Compare>
             >
         {};
 
@@ -100,235 +100,235 @@ namespace cppsort
 
             template<
                 bool Stability = false,
-                typename Iterable
+                typename Range
             >
-            auto operator()(Iterable& iterable) const
+            auto operator()(Range& range) const
                 -> detail::enable_if_t<
-                    detail::can_sort<Sorter, Iterable>::value,
+                    detail::can_sort<Sorter, Range>::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable))
+                        decltype(detail::adl_despair{}(this->get(), range))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable);
+                return detail::adl_despair{}(this->get(), range);
             }
 
             template<
                 bool Stability = false,
-                typename Iterable
+                typename Range
             >
-            auto operator()(Iterable& iterable) const
+            auto operator()(Range& range) const
                 -> detail::enable_if_t<
-                    not detail::can_sort<Sorter, Iterable>::value,
+                    not detail::can_sort<Sorter, Range>::value,
                     conditional_t<
                         Stability,
-                        cppsort::is_stable<Sorter(Iterable&)>,
-                        decltype(this->get()(iterable))
+                        cppsort::is_stable<Sorter(Range&)>,
+                        decltype(this->get()(range))
                     >
                 >
             {
-                return this->get()(iterable);
+                return this->get()(range);
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Compare
             >
-            auto operator()(Iterable& iterable, Compare compare) const
+            auto operator()(Range& range, Compare compare) const
                 -> detail::enable_if_t<
-                    detail::can_comparison_sort<Sorter, Iterable, Compare>::value,
+                    detail::can_comparison_sort<Sorter, Range, Compare>::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable, std::move(compare)))
+                        decltype(detail::adl_despair{}(this->get(), range, std::move(compare)))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable, std::move(compare));
+                return detail::adl_despair{}(this->get(), range, std::move(compare));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Compare
             >
-            auto operator()(Iterable& iterable, Compare compare) const
+            auto operator()(Range& range, Compare compare) const
                 -> detail::enable_if_t<
-                    not is_projection_v<Compare, Iterable> &&
-                    not detail::can_comparison_sort<Sorter, Iterable, Compare>::value,
+                    not is_projection_v<Compare, Range> &&
+                    not detail::can_comparison_sort<Sorter, Range, Compare>::value,
                     conditional_t<
                         Stability,
-                        cppsort::is_stable<Sorter(Iterable&, Compare)>,
-                        decltype(this->get()(iterable, std::move(compare)))
+                        cppsort::is_stable<Sorter(Range&, Compare)>,
+                        decltype(this->get()(range, std::move(compare)))
                     >
                 >
             {
-                return this->get()(iterable, std::move(compare));
+                return this->get()(range, std::move(compare));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Range& range, Projection projection) const
                 -> detail::enable_if_t<
-                    not detail::can_comparison_sort<Sorter, Iterable, Projection>::value &&
-                    detail::can_projection_sort<Sorter, Iterable, Projection>::value,
+                    not detail::can_comparison_sort<Sorter, Range, Projection>::value &&
+                    detail::can_projection_sort<Sorter, Range, Projection>::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable, std::move(projection)))
+                        decltype(detail::adl_despair{}(this->get(), range, std::move(projection)))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable, std::move(projection));
+                return detail::adl_despair{}(this->get(), range, std::move(projection));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Range& range, Projection projection) const
                 -> detail::enable_if_t<
-                    not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
-                    detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value,
+                    not detail::can_projection_sort<Sorter, Range, Projection>::value &&
+                    detail::can_comparison_projection_sort<Sorter, Range, std::less<>, Projection>::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable,
+                        decltype(detail::adl_despair{}(this->get(), range,
                                                        std::less{}, std::move(projection)))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable,
+                return detail::adl_despair{}(this->get(), range,
                                              std::less{}, std::move(projection));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Range& range, Projection projection) const
                 -> detail::enable_if_t<
-                    not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
-                    not detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
+                    not detail::can_projection_sort<Sorter, Range, Projection>::value &&
+                    not detail::can_comparison_projection_sort<Sorter, Range, std::less<>, Projection>::value &&
                     detail::can_comparison_sort<
                         Sorter,
-                        Iterable,
+                        Range,
                         projection_compare_t<std::less<>, Projection>
                     >::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable,
+                        decltype(detail::adl_despair{}(this->get(), range,
                                                        projection_compare(std::less{}, std::move(projection))))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable,
+                return detail::adl_despair{}(this->get(), range,
                                              projection_compare(std::less{}, std::move(projection)));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Projection projection) const
+            auto operator()(Range& range, Projection projection) const
                 -> detail::enable_if_t<
-                    is_projection_v<Projection, Iterable> &&
-                    not detail::can_projection_sort<Sorter, Iterable, Projection>::value &&
-                    not detail::can_comparison_projection_sort<Sorter, Iterable, std::less<>, Projection>::value &&
+                    is_projection_v<Projection, Range> &&
+                    not detail::can_projection_sort<Sorter, Range, Projection>::value &&
+                    not detail::can_comparison_projection_sort<Sorter, Range, std::less<>, Projection>::value &&
                     not detail::can_comparison_sort<
                         Sorter,
-                        Iterable,
+                        Range,
                         projection_compare_t<std::less<>, Projection>
                     >::value,
                     conditional_t<
                         Stability,
-                        cppsort::is_stable<Sorter(Iterable&, Projection)>,
-                        decltype(this->get()(iterable, std::move(projection)))
+                        cppsort::is_stable<Sorter(Range&, Projection)>,
+                        decltype(this->get()(range, std::move(projection)))
                     >
                 >
             {
-                return this->get()(iterable, std::move(projection));
+                return this->get()(range, std::move(projection));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Compare,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Range& range, Compare compare, Projection projection) const
                 -> detail::enable_if_t<
-                    detail::can_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value,
+                    detail::can_comparison_projection_sort<Sorter, Range, Compare, Projection>::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable,
+                        decltype(detail::adl_despair{}(this->get(), range,
                                                        std::move(compare), std::move(projection)))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable,
+                return detail::adl_despair{}(this->get(), range,
                                              std::move(compare), std::move(projection));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Compare,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Range& range, Compare compare, Projection projection) const
                 -> detail::enable_if_t<
-                    not detail::can_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value &&
+                    not detail::can_comparison_projection_sort<Sorter, Range, Compare, Projection>::value &&
                     detail::can_comparison_sort<
                         Sorter,
-                        Iterable,
+                        Range,
                         projection_compare_t<Compare, Projection>
                     >::value,
                     conditional_t<
                         Stability,
                         std::false_type,
-                        decltype(detail::adl_despair{}(this->get(), iterable,
+                        decltype(detail::adl_despair{}(this->get(), range,
                                                        projection_compare(std::move(compare), std::move(projection))))
                     >
                 >
             {
-                return detail::adl_despair{}(this->get(), iterable,
+                return detail::adl_despair{}(this->get(), range,
                                              projection_compare(std::move(compare), std::move(projection)));
             }
 
             template<
                 bool Stability = false,
-                typename Iterable,
+                typename Range,
                 typename Compare,
                 typename Projection
             >
-            auto operator()(Iterable& iterable, Compare compare, Projection projection) const
+            auto operator()(Range& range, Compare compare, Projection projection) const
                 -> detail::enable_if_t<
-                    not detail::can_comparison_projection_sort<Sorter, Iterable, Compare, Projection>::value &&
+                    not detail::can_comparison_projection_sort<Sorter, Range, Compare, Projection>::value &&
                     not detail::can_comparison_sort<
                         Sorter,
-                        Iterable,
+                        Range,
                         projection_compare_t<Compare, Projection>
                     >::value,
                     conditional_t<
                         Stability,
-                        cppsort::is_stable<Sorter(Iterable&, Compare, Projection)>,
-                        decltype(this->get()(iterable, std::move(compare), std::move(projection)))
+                        cppsort::is_stable<Sorter(Range&, Compare, Projection)>,
+                        decltype(this->get()(range, std::move(compare), std::move(projection)))
                     >
                 >
             {
-                return this->get()(iterable, std::move(compare), std::move(projection));
+                return this->get()(range, std::move(compare), std::move(projection));
             }
         };
     }

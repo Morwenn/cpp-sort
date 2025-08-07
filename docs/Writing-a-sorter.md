@@ -51,15 +51,15 @@ struct selection_sorter:
 {};
 ```
 
-We just wrote what we call a *sorter implementation* and wrapped it into [`sorter_facade`][sorter-facade], a class template designed to provide additional features to a given sorter implementation. We only had to write an `operator()` that takes a pair of iterators and forwards it to `selection_sort`, yet the resulting `selection_sorter` also has an `operator()` overload which can be passed a full collection instead of a pair of iterators, and it is additionally convertible to function pointers of type `void(*)(Iterator, Iterator)` and `void(*)(Iterable&)`. This is what `sorter_facade` gives you for even the most basic sorter, without any effort.
+We just wrote what we call a *sorter implementation* and wrapped it into [`sorter_facade`][sorter-facade], a class template designed to provide additional features to a given sorter implementation. We only had to write an `operator()` that takes a pair of iterators and forwards it to `selection_sort`, yet the resulting `selection_sorter` also has an `operator()` overload which can be passed a full collection instead of a pair of iterators, and it is additionally convertible to function pointers of type `void(*)(Iterator, Iterator)` and `void(*)(Range&)`. This is what `sorter_facade` gives you for even the most basic sorter, without any effort.
 
 Now, let's define a set of rules to apply when writing sorters. These rules don't *have* to be enforced, but enforcing them will ensure that a sorter will work smoothly with most tool available in this library. In this tutorial, every section will define a small set of rules instead of defining all of them at once without introducing the relevant concepts first. Fortunately, the simpler the sorter, the simpler the rules.
 
 **Rule 1.1:** for any *sorter*, [`std::is_sorted`][std-is-sorted] called without a comparison function on the resulting range shall return `true` (note that this is not exactly true: floating point numbers are an example of types that will almost always cause problems).
 
-**Rule 1.2:** a *sorter* shall be callable with either a pair of iterators or an iterable.
+**Rule 1.2:** a *sorter* shall be callable with either a pair of iterators or a range.
 
-**Rule 1.3:** a *sorter implementation* shall provide at least an overload of `operator()` that takes a pair of iterators. Overloads of `operator()` taking an iterable can be provided as well when they add value to the *sorter* (optimization, correctness, better error messages...) but should never totally replace the overload taking a pair of iterators.
+**Rule 1.3:** a *sorter implementation* shall provide at least an overload of `operator()` that takes a pair of iterators. Overloads of `operator()` taking a range can be provided as well when they add value to the *sorter* (optimization, correctness, better error messages...) but should never totally replace the overload taking a pair of iterators.
 
 **Rule 1.4:** *sorters* shall be immutable and every overload of `operator()` shall explicitly be marked `const` (make sure to check twice: forgetting to `const`-qualify them can cause hundreds of lines of cryptic error messages). Some parts of the library *may* accept mutable sorters, but that's never guaranteed unless specified otherwise.
 
@@ -147,7 +147,7 @@ struct std_sorter:
 {};
 ```
 
-Compared to the previous `selection_sorter_impl`, the only things we had to add was a template parameter defaulted to [`std::less<>`][std-less-void] and a default-contructed (when not provided) parameter to `operator()`. As usual, [`sorter_facade`][sorter-facade] generates a bunch of additional features: it still adds the overload of `operator()` taking a single iterable, but also adds an overload taking an iterable and a comparison function. Basically, it ensures that you always only have to provide a single overload of `operator()`, and generates all the other ones as well as all the corresponding conversions to function pointers.
+Compared to the previous `selection_sorter_impl`, the only things we had to add was a template parameter defaulted to [`std::less<>`][std-less-void] and a default-contructed (when not provided) parameter to `operator()`. As usual, [`sorter_facade`][sorter-facade] generates a bunch of additional features: it still adds the overload of `operator()` taking a single range, but also adds an overload taking a range and a comparison function. Basically, it ensures that you always only have to provide a single overload of `operator()`, and generates all the other ones as well as all the corresponding conversions to function pointers.
 
 This kind of comparison sorters help to compare things that don't have an overloaded `operator<` or to compare things differently. For example, passing [`std::greater<>`][std-greater-void] to a sorter instead of `std::less<>` sorts a collection in descending order:
 
@@ -249,7 +249,7 @@ The general rules for *projection sorters* are really close to the ones for *com
 
 **Rule 4.4:** calling a *projection sorter* with [`utility::identity`][utility-identity] or without a projection function shall be strictly equivalent: calling `std::is_sorted` without a comparison function and without a projection function on the resulting collection shall return `true`. If the *projection sorter* is also a *comparison sorter*, calling such a sorter with any valid combination of `std::less<>` and `utility::identity`, and calling it without any additional function should be strictly equivalent.
 
-**Rule 4.5:** a *projection sorter* which can be called with a collection and a projection function shall also be callable with two corresponding iterators and the same projection function. If the *projection sorter* is also a *comparison sorter*, it shall also be callable with an iterable, a comparison function and a projection function.
+**Rule 4.5:** a *projection sorter* which can be called with a collection and a projection function shall also be callable with two corresponding iterators and the same projection function. If the *projection sorter* is also a *comparison sorter*, it shall also be callable with a range, a comparison function and a projection function.
 
 **Rule 4.6:** the projection parameter always comes after the parameters corresponding to the collection to sort. If the *projection sorter* is also a *comparison sorter*, the projection parameter always comes after the comparison parameter.
 

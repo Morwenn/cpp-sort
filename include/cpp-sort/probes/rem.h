@@ -25,22 +25,22 @@ namespace cppsort::probe
         struct rem_impl
         {
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = cppsort::detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare> && (
+                    is_projection_v<Projection, ForwardRange, Compare> && (
                         cppsort::detail::is_detected_v<
                             cppsort::utility::detail::has_size_method_t,
-                            ForwardIterable
+                            ForwardRange
                         > ||
                         cppsort::detail::is_bounded_array_v<
-                            cppsort::detail::remove_cvref_t<ForwardIterable>
+                            cppsort::detail::remove_cvref_t<ForwardRange>
                         >
                     )
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
+            auto operator()(ForwardRange&& range,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
@@ -50,8 +50,8 @@ namespace cppsort::probe
                 // consistent as far as the standard library is concerned. We also
                 // handle C arrays whose size is known and part of the type.
                 auto res = cppsort::detail::longest_non_descending_subsequence<false>(
-                    std::begin(iterable), std::end(iterable),
-                    utility::size(iterable),
+                    std::begin(range), std::end(range),
+                    utility::size(range),
                     std::move(compare), std::move(projection)
                 );
                 auto lnds_size = res.second - res.first;

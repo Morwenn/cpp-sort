@@ -80,13 +80,13 @@ namespace cppsort
             return detail::sort_out_of_place(first, last, size, this->get(), std::forward<Args>(args)...);
         }
 
-        template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
+        template<typename Range, typename... Args>
+        auto operator()(Range&& range, Args&&... args) const
             -> decltype(auto)
         {
-            // Might be an optimization for forward/bidirectional iterables
-            auto size = utility::size(iterable);
-            return detail::sort_out_of_place(std::begin(iterable), std::end(iterable), size,
+            // Might be an optimization for forward/bidirectional ranges
+            auto size = utility::size(range);
+            return detail::sort_out_of_place(std::begin(range), std::end(range), size,
                                              this->get(), std::forward<Args>(args)...);
         }
 

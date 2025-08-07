@@ -61,26 +61,26 @@ namespace detail
                         compare);
         }
 
-        // Iterable overload
+        // Range overload
         template<
-            typename ForwardIterable,
+            typename ForwardRange,
             typename Compare = std::less<>,
             typename = std::enable_if_t<not cppsort::is_projection_v<
-                Compare, ForwardIterable
+                Compare, ForwardRange
             >>
         >
-        auto operator()(ForwardIterable&& iterable, Compare compare={}) const
+        auto operator()(ForwardRange&& range, Compare compare={}) const
             -> void
         {
             static_assert(
                 std::is_base_of_v<
                     iterator_category,
-                    typename std::iterator_traits<decltype(std::begin(iterable))>::iterator_category
+                    typename std::iterator_traits<decltype(std::begin(range))>::iterator_category
                 >,
                 "bubble_sorter requires at least forward iterators"
             );
 
-            bubble_sort(std::begin(iterable), cppsort::utility::size(iterable),
+            bubble_sort(std::begin(range), cppsort::utility::size(range),
                         compare);
         }
 

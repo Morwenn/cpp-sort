@@ -54,19 +54,19 @@ namespace cppsort::probe
         struct inv_impl
         {
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = cppsort::detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, ForwardRange, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
+            auto operator()(ForwardRange&& range,
                             Compare compare={}, Projection projection={}) const
                 -> decltype(auto)
             {
-                return inv_probe_algo(std::begin(iterable), std::end(iterable),
-                                      utility::size(iterable),
+                return inv_probe_algo(std::begin(range), std::end(range),
+                                      utility::size(range),
                                       std::move(compare), std::move(projection));
             }
 

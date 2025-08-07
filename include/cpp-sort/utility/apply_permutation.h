@@ -42,11 +42,11 @@ namespace cppsort::utility
         }
     }
 
-    template<typename RandomAccessIterable1, typename RandomAccessIterable2>
-    auto apply_permutation(RandomAccessIterable1&& iterable, RandomAccessIterable2&& indices)
+    template<typename RandomAccessRange1, typename RandomAccessRange2>
+    auto apply_permutation(RandomAccessRange1&& range, RandomAccessRange2&& indices)
         -> void
     {
-        apply_permutation(std::begin(iterable), std::end(iterable),
+        apply_permutation(std::begin(range), std::end(range),
                           std::begin(indices), std::end(indices));
     }
 }

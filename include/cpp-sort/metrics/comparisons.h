@@ -47,19 +47,19 @@ namespace cppsort::metrics
             {}
 
             template<
-                typename Iterable,
+                typename Range,
                 typename Compare = std::less<>,
                 typename = cppsort::detail::enable_if_t<
-                    not is_projection_v<Compare, Iterable>
+                    not is_projection_v<Compare, Range>
                 >
             >
-            auto operator()(Iterable&& iterable, Compare compare={}) const
+            auto operator()(Range&& range, Compare compare={}) const
                 -> metric_t
             {
                 CountType count(0);
                 using cppsort::detail::comparison_counter;
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp));
+                this->get()(std::forward<Range>(range), std::move(cmp));
                 return metric_t(count);
             }
 
@@ -81,20 +81,20 @@ namespace cppsort::metrics
             }
 
             template<
-                typename Iterable,
+                typename Range,
                 typename Compare,
                 typename Projection,
                 typename = cppsort::detail::enable_if_t<
-                    is_projection_v<Projection, Iterable, Compare>
+                    is_projection_v<Projection, Range, Compare>
                 >
             >
-            auto operator()(Iterable&& iterable, Compare compare, Projection projection) const
+            auto operator()(Range&& range, Compare compare, Projection projection) const
                 -> metric_t
             {
                 CountType count(0);
                 using cppsort::detail::comparison_counter;
                 comparison_counter<Compare, CountType> cmp(std::move(compare), count);
-                this->get()(std::forward<Iterable>(iterable), std::move(cmp), std::move(projection));
+                this->get()(std::forward<Range>(range), std::move(cmp), std::move(projection));
                 return metric_t(count);
             }
 

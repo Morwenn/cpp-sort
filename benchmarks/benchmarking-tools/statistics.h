@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2020 Morwenn
+ * Copyright (c) 2020-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cmath>
 
 // Simple statistics functions
 
-template<typename Iterable>
-auto average(const Iterable& values)
+template<typename Range>
+auto average(const Range& values)
     -> double
 {
     double avg = 0.0;
@@ -17,8 +17,8 @@ auto average(const Iterable& values)
     return avg;
 }
 
-template<typename Iterable>
-auto standard_deviation(const Iterable& values, double avg)
+template<typename Range>
+auto standard_deviation(const Range& values, double avg)
     -> double
 {
     double stddev = 0.0;

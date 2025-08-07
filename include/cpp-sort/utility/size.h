@@ -18,44 +18,44 @@ namespace cppsort::utility
 {
     namespace detail
     {
-        template<typename Iterable>
-        using has_size_method_t = decltype(std::declval<const Iterable&>().size());
+        template<typename Range>
+        using has_size_method_t = decltype(std::declval<const Range&>().size());
     }
 
     template<
-        typename Iterable,
+        typename Range,
         typename = cppsort::detail::enable_if_t<
-            cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
+            cppsort::detail::is_detected_v<detail::has_size_method_t, Range>
         >
     >
-    constexpr auto size(const Iterable& iterable)
-        -> decltype(iterable.size())
+    constexpr auto size(const Range& range)
+        -> decltype(range.size())
     {
-        return iterable.size();
+        return range.size();
     }
 
     template<
-        typename Iterable,
+        typename Range,
         typename = cppsort::detail::enable_if_t<
-            not cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
+            not cppsort::detail::is_detected_v<detail::has_size_method_t, Range>
         >
     >
-    constexpr auto size(const Iterable& iterable)
-        -> decltype(std::distance(std::begin(iterable), std::end(iterable)))
+    constexpr auto size(const Range& range)
+        -> decltype(std::distance(std::begin(range), std::end(range)))
     {
-        return std::distance(std::begin(iterable), std::end(iterable));
+        return std::distance(std::begin(range), std::end(range));
     }
 
     template<
-        typename Iterable,
+        typename Range,
         typename = cppsort::detail::enable_if_t<
-            not cppsort::detail::is_detected_v<detail::has_size_method_t, Iterable>
+            not cppsort::detail::is_detected_v<detail::has_size_method_t, Range>
         >
     >
-    constexpr auto size(Iterable& iterable)
-        -> decltype(std::distance(std::begin(iterable), std::end(iterable)))
+    constexpr auto size(Range& range)
+        -> decltype(std::distance(std::begin(range), std::end(range)))
     {
-        return std::distance(std::begin(iterable), std::end(iterable));
+        return std::distance(std::begin(range), std::end(range));
     }
 
     template<typename T, std::size_t N>

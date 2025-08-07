@@ -37,7 +37,7 @@ namespace
         }
     };
 
-    struct non_comparison_iterable_sorter_impl
+    struct non_comparison_range_sorter_impl
     {
         template<typename Iterator>
         auto operator()(Iterator, Iterator) const
@@ -46,8 +46,8 @@ namespace
             return true;
         }
 
-        template<typename Iterable>
-        auto operator()(Iterable&) const
+        template<typename Range>
+        auto operator()(Range&) const
             -> bool
         {
             return false;
@@ -72,8 +72,8 @@ namespace
         cppsort::sorter_facade<non_comparison_sorter_impl>
     {};
 
-    struct non_comparison_iterable_sorter:
-        cppsort::sorter_facade<non_comparison_iterable_sorter_impl>
+    struct non_comparison_range_sorter:
+        cppsort::sorter_facade<non_comparison_range_sorter_impl>
     {};
 
     struct comparison_projection_sorter:
@@ -89,8 +89,8 @@ TEST_CASE( "std::less<> forwarding to sorters",
     // custom comparison functions
 
     // Make sure the iterator overload calls the operator() from
-    // the sorter for iterators, and that the iterable overload
-    // calls the original sorter's iterable operator() overload
+    // the sorter for iterators, and that the range overload
+    // calls the original sorter's range operator() overload
 
     // Equivalent tests are done for the automatic overloads
     // of operator() for utility::identity
@@ -105,8 +105,8 @@ TEST_CASE( "std::less<> forwarding to sorters",
         CHECK( non_comparison_sorter{}(vec, std::less{}) );
         CHECK( non_comparison_sorter{}(vec.begin(), vec.end(), std::less{}) );
 
-        CHECK( not non_comparison_iterable_sorter{}(vec, std::less{}) );
-        CHECK( non_comparison_iterable_sorter{}(vec.begin(), vec.end(), std::less{}) );
+        CHECK( not non_comparison_range_sorter{}(vec, std::less{}) );
+        CHECK( non_comparison_range_sorter{}(vec.begin(), vec.end(), std::less{}) );
     }
 
     SECTION( "with utility::identity" )
@@ -117,8 +117,8 @@ TEST_CASE( "std::less<> forwarding to sorters",
         CHECK( non_comparison_sorter{}(vec, cppsort::utility::identity{}) );
         CHECK( non_comparison_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
-        CHECK( not non_comparison_iterable_sorter{}(vec, cppsort::utility::identity{}) );
-        CHECK( non_comparison_iterable_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
+        CHECK( not non_comparison_range_sorter{}(vec, cppsort::utility::identity{}) );
+        CHECK( non_comparison_range_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );
 
         CHECK( comparison_projection_sorter{}(vec, cppsort::utility::identity{}) );
         CHECK( comparison_projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{}) );

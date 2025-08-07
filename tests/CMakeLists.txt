@@ -155,7 +155,7 @@ add_executable(main-tests
     sorter_facade_constexpr.cpp
     sorter_facade_defaults.cpp
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:sorter_facade_fptr.cpp>
-    sorter_facade_iterable.cpp
+    sorter_facade_range.cpp
 
     # Adapters tests
     adapters/container_aware_adapter.cpp
@@ -269,7 +269,7 @@ add_executable(main-tests
     utility/apply_permutation.cpp
     utility/as_comparison.cpp
     utility/as_projection.cpp
-    utility/as_projection_iterable.cpp
+    utility/as_projection_range.cpp
     utility/branchless_traits.cpp
     utility/buffer.cpp
     utility/chainable_projections.cpp

@@ -15,7 +15,7 @@ All of the graphs on this page have been generated with slightly modified versio
 
 *The latest benchmarks were run on Windows 10 with 64-bit MinGW-w64 g++12.0, with the flags -O3 -march=native -std=c++20.*
 
-# Random-access iterables
+# Random-access collections
 
 Most sorting algorithms are designed to work with random-access iterators, so this section is deemed to be bigger than the other ones. Note that many of the algorithms work better with contiguous iterators; the results for `std::vector` and `std::deque` are probably different.
 
@@ -76,7 +76,7 @@ The analysis is pretty simple here:
 * As a result `smooth_sort` and `poplar_sort` beat each other depending on the type of the collection to sort.
 * Slabsort has an unusual graph: even for shuffled data it might end up beating `heap_sort` when the collection becomes big enough.
 
-# Bidirectional iterables
+# Bidirectional collections
 
 Sorting algorithms that handle non-random-access iterators are often second class citizens, but **cpp-sort** still provides a few ones. The most interesting part is that we can see how generic sorting algorithms perform compared to algorithms such as [`std::list::sort`][std-list-sort] which are aware of the data structure they are sorting.
 
@@ -92,14 +92,14 @@ For elements as small as `double`, there are two clear winners here: `drop_merge
 * `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.
 * `mel_sort` is bad.
 
-# Forward iterables
+# Forward collections
 
 Even fewer sorters can handle forward iterators. `out_of_place_adapter(pdq_sort)` was not included in the patterns benchmark, because it adapts to patterns the same way `pdq_sort` does.
 
 ![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/if15kX1.png)
 ![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/uF0UzLm.png)
 
-The results are roughly the same than with bidirectional iterables:
+The results are roughly the same than with bidirectional collections:
 * Sorting out-of-place is faster than anything else.
 * [`std::forward_list::sort`][std-forward-list-sort] doesn't scale well when moves are inexpensive.
 * `quick_sort` and `quick_merge_sort` are good enough contenders when trying to avoid heap memory allocations.

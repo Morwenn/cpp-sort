@@ -64,24 +64,24 @@ namespace cppsort::utility
             {}
 
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = cppsort::detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, ForwardRange, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable, Compare compare={}, Projection projection={}) const
-                -> std::vector<cppsort::detail::remove_cvref_t<decltype(std::begin(iterable))>>
+            auto operator()(ForwardRange&& range, Compare compare={}, Projection projection={}) const
+                -> std::vector<cppsort::detail::remove_cvref_t<decltype(std::begin(range))>>
             {
-                using category = cppsort::detail::iterator_category_t<decltype(std::begin(iterable))>;
+                using category = cppsort::detail::iterator_category_t<decltype(std::begin(range))>;
                 static_assert(
                     std::is_base_of_v<iterator_category, category>,
                     "sorted_iterators requires at least forward iterators"
                 );
 
-                auto dist = cppsort::utility::size(iterable);
-                return compute_sorted_iterators(this->get(), std::begin(iterable), std::end(iterable),
+                auto dist = cppsort::utility::size(range);
+                return compute_sorted_iterators(this->get(), std::begin(range), std::end(range),
                                                 dist, std::move(compare), std::move(projection));
             }
 

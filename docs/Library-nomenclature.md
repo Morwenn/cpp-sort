@@ -40,7 +40,7 @@
 
 * *Proxy iterator*: sometimes `std::move` and `std::swap` are not enough to correctly move values around, and we need to know more about the iterators in order to perform the appropriate operation. It's typically the case with proxy iterators: iterators whose `reference` type is not actually a reference type (*e.g.* `std::vector<bool>::reference`). Traditional algorithms don't play well with these types, however there are [standard proposals][p0022] to solve the problem by introducing a function named `iter_move` and making it as well as `iter_swap` customization points. No proposal has been accepted yet, so standard libraries don't handle proxy iterators; however every sorter in **cpp-sort** can actually handle such iterators (except `std_sorter` and `std_stable_sorter`). The library exposes the functions [`utility::iter_move` and `utility::iter_swap`][utility-iter-move] in case you also need to make your own algorithms handle proxy iterators.
 
-* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle iterables or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
+* *Sorter*: [sorters][sorters] are the protagonists in this library. They are function objects implementing specific sorting algorithms. Their `operator()` is overloaded so that it can handle ranges or pairs of iterators, and conditionally overloaded so that it can handle user-provided comparison and/or projection functions (see *unified sorting interface*).
 
         cppsort::pdq_sorter{}(std::begin(collection), std::end(collection),
                               std::greater{}, &wrapper::value);
@@ -65,7 +65,7 @@
 
 * *Type-specific sorter*: some non-comparison sorters such as the [`spread_sorter`][spread-sorter] implement specific sorting algorithms which only work with some specific types (for example integers or strings).
 
-* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept an iterable or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
+* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept a range or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
 
 
   [comparators]: Comparators.md

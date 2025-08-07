@@ -27,32 +27,32 @@ namespace cppsort
         // Whether a class has a member sort method
 
         template<
-            typename Iterable,
+            typename Range,
             typename... Args
         >
         using has_sort_method_t
-            = decltype(std::declval<Iterable&>().sort(utility::as_function(std::declval<Args&>())...));
+            = decltype(std::declval<Range&>().sort(utility::as_function(std::declval<Args&>())...));
 
         template<
-            typename Iterable,
+            typename Range,
             typename... Args
         >
         constexpr bool has_sort_method
-            = is_detected_v<has_sort_method_t, Iterable, Args...>;
+            = is_detected_v<has_sort_method_t, Range, Args...>;
 
         template<
-            typename Iterable,
+            typename Range,
             typename... Args
         >
         using has_stable_sort_method_t
-            = decltype(std::declval<Iterable&>().stable_sort(utility::as_function(std::declval<Args&>())...));
+            = decltype(std::declval<Range&>().stable_sort(utility::as_function(std::declval<Args&>())...));
 
         template<
-            typename Iterable,
+            typename Range,
             typename... Args
         >
         constexpr bool has_stable_sort_method
-            = is_detected_v<has_stable_sort_method_t, Iterable, Args...>;
+            = is_detected_v<has_stable_sort_method_t, Range, Args...>;
     }
 
     ////////////////////////////////////////////////////////////
@@ -79,36 +79,36 @@ namespace cppsort
         ////////////////////////////////////////////////////////////
         // Function call operator
 
-        template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
+        template<typename Range, typename... Args>
+        auto operator()(Range&& range, Args&&... args) const
             -> detail::enable_if_t<
-                detail::has_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).sort(utility::as_function(args)...))
+                detail::has_sort_method<Range, Args...>,
+                decltype(std::forward<Range>(range).sort(utility::as_function(args)...))
             >
         {
-            return std::forward<Iterable>(iterable).sort(utility::as_function(args)...);
+            return std::forward<Range>(range).sort(utility::as_function(args)...);
         }
 
-        template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
+        template<typename Range, typename... Args>
+        auto operator()(Range&& range, Args&&... args) const
             -> detail::enable_if_t<
-                not detail::has_sort_method<Iterable, Args...> &&
-                detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...))
+                not detail::has_sort_method<Range, Args...> &&
+                detail::has_stable_sort_method<Range, Args...>,
+                decltype(std::forward<Range>(range).stable_sort(utility::as_function(args)...))
             >
         {
-            return std::forward<Iterable>(iterable).stable_sort(utility::as_function(args)...);
+            return std::forward<Range>(range).stable_sort(utility::as_function(args)...);
         }
 
-        template<typename Iterable, typename... Args>
-        auto operator()(Iterable&& iterable, Args&&... args) const
+        template<typename Range, typename... Args>
+        auto operator()(Range&& range, Args&&... args) const
             -> detail::enable_if_t<
-                not detail::has_sort_method<Iterable, Args...> &&
-                not detail::has_stable_sort_method<Iterable, Args...>,
-                decltype(this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...))
+                not detail::has_sort_method<Range, Args...> &&
+                not detail::has_stable_sort_method<Range, Args...>,
+                decltype(this->get()(std::forward<Range>(range), std::forward<Args>(args)...))
             >
         {
-            return this->get()(std::forward<Iterable>(iterable), std::forward<Args>(args)...);
+            return this->get()(std::forward<Range>(range), std::forward<Args>(args)...);
         }
 
         template<typename Iterator, typename... Args>

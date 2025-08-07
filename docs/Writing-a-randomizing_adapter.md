@@ -125,7 +125,7 @@ It is special-cased for empty sorters: when constructed with one, it doesn't sto
 ## Polishing it a bit
 
 `randomizing_adapter` is already usable as is, but it can still benefit from small improvements like those we gave to `bubble_sorter` [in the other tutorial][writing-a-bubble-sorter]:
-* Add an `operator()` overload accepting an iterable to benefit from O(1) `.size()` functions.
+* Add an `operator()` overload accepting a range to benefit from containers that provide a O(1) `.size()` function.
 * Add a `static_assert` to make it clear when it isn't given random-access iterators.
 
 ## Conclusion

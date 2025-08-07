@@ -108,17 +108,17 @@ namespace cppsort
             {}
 
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, ForwardRange, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable, Compare compare, Projection projection) const
+            auto operator()(ForwardRange&& range, Compare compare, Projection projection) const
                 -> decltype(auto)
             {
-                return sort_with_schwartz(std::begin(iterable), utility::size(iterable),
+                return sort_with_schwartz(std::begin(range), utility::size(range),
                                           std::move(compare), std::move(projection),
                                           this->get());
             }
@@ -140,15 +140,15 @@ namespace cppsort
                                           this->get());
             }
 
-            template<typename ForwardIterable, typename Compare=std::less<>>
-            auto operator()(ForwardIterable&& iterable, Compare compare={}) const
+            template<typename ForwardRange, typename Compare=std::less<>>
+            auto operator()(ForwardRange&& range, Compare compare={}) const
                 -> detail::enable_if_t<
-                    not is_projection_v<Compare, ForwardIterable>,
-                    decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare)))
+                    not is_projection_v<Compare, ForwardRange>,
+                    decltype(this->get()(std::forward<ForwardRange>(range), std::move(compare)))
                 >
             {
                 // No projection to handle, forward everything to the adapted sorter
-                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare));
+                return this->get()(std::forward<ForwardRange>(range), std::move(compare));
             }
 
             template<typename ForwardIterator, typename Compare=std::less<>>
@@ -163,12 +163,12 @@ namespace cppsort
                 return this->get()(std::move(first), std::move(last), std::move(compare));
             }
 
-            template<typename ForwardIterable, typename Compare>
-            auto operator()(ForwardIterable&& iterable, Compare compare, utility::identity projection) const
-                -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
+            template<typename ForwardRange, typename Compare>
+            auto operator()(ForwardRange&& range, Compare compare, utility::identity projection) const
+                -> decltype(this->get()(std::forward<ForwardRange>(range), std::move(compare), projection))
             {
                 // utility::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
+                return this->get()(std::forward<ForwardRange>(range), std::move(compare), projection);
             }
 
             template<typename ForwardIterator, typename Compare>
@@ -181,12 +181,12 @@ namespace cppsort
             }
 
 #if CPPSORT_STD_IDENTITY_AVAILABLE
-            template<typename ForwardIterable, typename Compare>
-            auto operator()(ForwardIterable&& iterable, Compare compare, std::identity projection) const
-                -> decltype(this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection))
+            template<typename ForwardRange, typename Compare>
+            auto operator()(ForwardRange&& range, Compare compare, std::identity projection) const
+                -> decltype(this->get()(std::forward<ForwardRange>(range), std::move(compare), projection))
             {
                 // std::identity does nothing, bypass schartz_adapter entirely
-                return this->get()(std::forward<ForwardIterable>(iterable), std::move(compare), projection);
+                return this->get()(std::forward<ForwardRange>(range), std::move(compare), projection);
             }
 
             template<typename ForwardIterator, typename Compare>

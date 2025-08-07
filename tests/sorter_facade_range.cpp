@@ -16,7 +16,7 @@ namespace
     enum struct call
     {
         iterator,
-        iterable
+        range
     };
 
     struct comparison_sorter_impl
@@ -28,11 +28,11 @@ namespace
             return call::iterator;
         }
 
-        template<typename Iterable, typename Compare=std::less<>>
-        auto operator()(Iterable&, Compare={}) const
+        template<typename Range, typename Compare=std::less<>>
+        auto operator()(Range&, Compare={}) const
             -> call
         {
-            return call::iterable;
+            return call::range;
         }
     };
 
@@ -45,11 +45,11 @@ namespace
             return call::iterator;
         }
 
-        template<typename Iterable, typename Projection=cppsort::utility::identity>
-        auto operator()(Iterable&, Projection={}) const
+        template<typename Range, typename Projection=cppsort::utility::identity>
+        auto operator()(Range&, Projection={}) const
             -> call
         {
-            return call::iterable;
+            return call::range;
         }
     };
 
@@ -70,17 +70,17 @@ namespace
         }
 
         template<
-            typename Iterable,
+            typename Range,
             typename Compare = std::less<>,
             typename Projection = cppsort::utility::identity,
             typename = std::enable_if_t<cppsort::is_projection_v<
-                Projection, Iterable, Compare
+                Projection, Range, Compare
             >>
         >
-        auto operator()(Iterable&, Compare={}, Projection={}) const
+        auto operator()(Range&, Compare={}, Projection={}) const
             -> call
         {
-            return call::iterable;
+            return call::range;
         }
     };
 
@@ -97,11 +97,11 @@ namespace
     {};
 }
 
-TEST_CASE( "sorter_facade with sorters overloaded for iterables",
+TEST_CASE( "sorter_facade with sorters overloaded for ranges",
            "[sorter_facade][comparison][projection]" )
 {
     // Some sorters can optimize the computations a bit by adding
-    // overloaded operator() that take a full iteratable instead
+    // overloaded operator() that take a full range instead
     // of a pair of iterators. We need to make sure that these
     // optimizations work too.
 
@@ -114,12 +114,12 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
     SECTION( "with comparison only" )
     {
         call res1 = comparison_sorter{}(vec, std::less{});
-        CHECK( res1 == call::iterable );
+        CHECK( res1 == call::range );
         call res2 = comparison_sorter{}(vec.begin(), vec.end(), std::less{});
         CHECK( res2 == call::iterator );
 
         call res3 = comparison_sorter{}(vec, std::greater{});
-        CHECK( res3 == call::iterable );
+        CHECK( res3 == call::range );
         call res4 = comparison_sorter{}(vec.begin(), vec.end(), std::greater{});
         CHECK( res4 == call::iterator );
     }
@@ -127,12 +127,12 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
     SECTION( "with projection only" )
     {
         call res1 = projection_sorter{}(vec, cppsort::utility::identity{});
-        CHECK( res1 == call::iterable );
+        CHECK( res1 == call::range );
         call res2 = projection_sorter{}(vec.begin(), vec.end(), cppsort::utility::identity{});
         CHECK( res2 == call::iterator );
 
         call res3 = projection_sorter{}(vec_wrap, &wrapper::value);
-        CHECK( res3 == call::iterable );
+        CHECK( res3 == call::range );
         call res4 = projection_sorter{}(vec_wrap.begin(), vec_wrap.end(), &wrapper::value);
         CHECK( res4 == call::iterator );
     }
@@ -140,34 +140,34 @@ TEST_CASE( "sorter_facade with sorters overloaded for iterables",
     SECTION( "with both comparison and projection" )
     {
         call res1 = comparison_projection_sorter{}(vec, std::less{});
-        CHECK( res1 == call::iterable );
+        CHECK( res1 == call::range );
         call res2 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::less{});
         CHECK( res2 == call::iterator );
 
         call res3 = comparison_projection_sorter{}(vec, std::greater{});
-        CHECK( res3 == call::iterable );
+        CHECK( res3 == call::range );
         call res4 = comparison_projection_sorter{}(vec.begin(), vec.end(), std::greater{});
         CHECK( res4 == call::iterator );
 
         call res5 = comparison_projection_sorter{}(vec, cppsort::utility::identity{});
-        CHECK( res5 == call::iterable );
+        CHECK( res5 == call::range );
         call res6 = comparison_projection_sorter{}(vec.begin(), vec.end(),
                                                    cppsort::utility::identity{});
         CHECK( res6 == call::iterator );
 
         call res7 = comparison_projection_sorter{}(vec_wrap, &wrapper::value);
-        CHECK( res7 == call::iterable );
+        CHECK( res7 == call::range );
         call res8 = comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(), &wrapper::value);
         CHECK( res8 == call::iterator );
 
         call res9 = comparison_projection_sorter{}(vec, std::greater{}, cppsort::utility::identity{});
-        CHECK( res9 == call::iterable );
+        CHECK( res9 == call::range );
         call res10 = comparison_projection_sorter{}(vec.begin(), vec.end(),
                                                     std::greater{}, cppsort::utility::identity{});
         CHECK( res10 == call::iterator );
 
         call res11 = comparison_projection_sorter{}(vec_wrap, std::greater{}, &wrapper::value);
-        CHECK( res11 == call::iterable );
+        CHECK( res11 == call::range );
         call res12 = comparison_projection_sorter{}(vec_wrap.begin(), vec_wrap.end(),
                                                     std::greater{}, &wrapper::value);
         CHECK( res12 == call::iterator );

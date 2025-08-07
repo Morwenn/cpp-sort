@@ -126,25 +126,25 @@ namespace cppsort
             {}
 
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, ForwardRange, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
+            auto operator()(ForwardRange&& range,
                             Compare compare={}, Projection projection={}) const
-                -> decltype(sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(iterable))>>{},
+                -> decltype(sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(range))>>{},
                                             this->get(),
-                                            std::begin(iterable), std::end(iterable),
-                                            cppsort::utility::size(iterable),
+                                            std::begin(range), std::end(range),
+                                            cppsort::utility::size(range),
                                             std::move(compare), std::move(projection)))
             {
-                auto size = cppsort::utility::size(iterable);
-                return sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(iterable))>>{},
+                auto size = cppsort::utility::size(range);
+                return sort_indirectly(iterator_category_t<remove_cvref_t<decltype(std::begin(range))>>{},
                                        this->get(),
-                                       std::begin(iterable), std::end(iterable), size,
+                                       std::begin(range), std::end(range), size,
                                        std::move(compare), std::move(projection));
             }
 

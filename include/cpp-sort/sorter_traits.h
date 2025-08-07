@@ -24,10 +24,10 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename Projection, typename Iterable, typename Compare>
+        template<typename Projection, typename Range, typename Compare>
         using is_projection_t = std::invoke_result_t<Compare,
-            std::invoke_result_t<Projection, decltype(*std::begin(std::declval<Iterable&>()))>,
-            std::invoke_result_t<Projection, decltype(*std::end(std::declval<Iterable&>()))>
+            std::invoke_result_t<Projection, decltype(*std::begin(std::declval<Range&>()))>,
+            std::invoke_result_t<Projection, decltype(*std::end(std::declval<Range&>()))>
         >;
 
         template<typename Projection, typename Iterator, typename Compare>
@@ -39,16 +39,16 @@ namespace cppsort
 
     template<
         typename Projection,
-        typename Iterable,
+        typename Range,
         typename Compare = std::less<>
     >
     struct is_projection:
-        detail::is_detected<detail::is_projection_t, Projection, Iterable, Compare>
+        detail::is_detected<detail::is_projection_t, Projection, Range, Compare>
     {};
 
-    template<typename Projection, typename Iterable, typename Compare=std::less<>>
+    template<typename Projection, typename Range, typename Compare=std::less<>>
     constexpr bool is_projection_v
-        = is_projection<Projection, Iterable, Compare>::value;
+        = is_projection<Projection, Range, Compare>::value;
 
     template<
         typename Projection,
@@ -68,32 +68,32 @@ namespace cppsort
 
     namespace detail
     {
-        template<typename Sorter, typename Iterable>
+        template<typename Sorter, typename Range>
         struct has_sort:
-            std::is_invocable<Sorter, Iterable&>
+            std::is_invocable<Sorter, Range&>
         {};
 
-        template<typename Sorter, typename Iterable, typename Compare>
+        template<typename Sorter, typename Range, typename Compare>
         struct has_comparison_sort:
             std::conjunction<
-                std::is_invocable<Sorter, Iterable&, Compare>,
-                is_projection<utility::identity, Iterable, Compare>
+                std::is_invocable<Sorter, Range&, Compare>,
+                is_projection<utility::identity, Range, Compare>
             >
         {};
 
-        template<typename Sorter, typename Iterable, typename Projection>
+        template<typename Sorter, typename Range, typename Projection>
         struct has_projection_sort:
             std::conjunction<
-                std::is_invocable<Sorter, Iterable&, Projection>,
-                is_projection<Projection, Iterable>
+                std::is_invocable<Sorter, Range&, Projection>,
+                is_projection<Projection, Range>
             >
         {};
 
-        template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+        template<typename Sorter, typename Range, typename Compare, typename Projection>
         struct has_comparison_projection_sort:
             std::conjunction<
-                std::is_invocable<Sorter, Iterable&, Compare, Projection>,
-                is_projection<Projection, Iterable, Compare>
+                std::is_invocable<Sorter, Range&, Compare, Projection>,
+                is_projection<Projection, Range, Compare>
             >
         {};
 
@@ -127,41 +127,41 @@ namespace cppsort
         {};
     }
 
-    template<typename Sorter, typename Iterable>
+    template<typename Sorter, typename Range>
     struct is_sorter:
-        detail::has_sort<Sorter, Iterable>
+        detail::has_sort<Sorter, Range>
     {};
 
-    template<typename Sorter, typename Iterable>
+    template<typename Sorter, typename Range>
     constexpr bool is_sorter_v
-        = is_sorter<Sorter, Iterable>::value;
+        = is_sorter<Sorter, Range>::value;
 
-    template<typename Sorter, typename Iterable, typename Compare>
+    template<typename Sorter, typename Range, typename Compare>
     struct is_comparison_sorter:
-        detail::has_comparison_sort<Sorter, Iterable, Compare>
+        detail::has_comparison_sort<Sorter, Range, Compare>
     {};
 
-    template<typename Sorter, typename Iterable, typename Compare>
+    template<typename Sorter, typename Range, typename Compare>
     constexpr bool is_comparison_sorter_v
-        = is_comparison_sorter<Sorter, Iterable, Compare>::value;
+        = is_comparison_sorter<Sorter, Range, Compare>::value;
 
-    template<typename Sorter, typename Iterable, typename Projection>
+    template<typename Sorter, typename Range, typename Projection>
     struct is_projection_sorter:
-        detail::has_projection_sort<Sorter, Iterable, Projection>
+        detail::has_projection_sort<Sorter, Range, Projection>
     {};
 
-    template<typename Sorter, typename Iterable, typename Projection>
+    template<typename Sorter, typename Range, typename Projection>
     constexpr bool is_projection_sorter_v
-        = is_projection_sorter<Sorter, Iterable, Projection>::value;
+        = is_projection_sorter<Sorter, Range, Projection>::value;
 
-    template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+    template<typename Sorter, typename Range, typename Compare, typename Projection>
     struct is_comparison_projection_sorter:
-        detail::has_comparison_projection_sort<Sorter, Iterable, Compare, Projection>
+        detail::has_comparison_projection_sort<Sorter, Range, Compare, Projection>
     {};
 
-    template<typename Sorter, typename Iterable, typename Compare, typename Projection>
+    template<typename Sorter, typename Range, typename Compare, typename Projection>
     constexpr bool is_comparison_projection_sorter_v
-        = is_comparison_projection_sorter<Sorter, Iterable, Compare, Projection>::value;
+        = is_comparison_projection_sorter<Sorter, Range, Compare, Projection>::value;
 
     template<typename Sorter, typename Iterator>
     struct is_sorter_iterator:

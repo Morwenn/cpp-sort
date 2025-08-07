@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2023 Morwenn
+ * Copyright (c) 2017-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -20,7 +20,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
 {
     auto distribution = dist::shuffled{};
 
-    SECTION( "sort with int iterable" )
+    SECTION( "sort with int range" )
     {
         std::vector<int> vec;
         vec.reserve(100'000);
@@ -39,7 +39,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     }
 
 #ifdef __SIZEOF_INT128__
-    SECTION( "sort with int128 iterable" )
+    SECTION( "sort with int128 range" )
     {
         std::vector<__int128_t> vec;
         vec.reserve(100'000);
@@ -48,7 +48,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
         CHECK( std::is_sorted(vec.begin(), vec.end()) );
     }
 
-    SECTION( "sort with unsigned int128 iterable" )
+    SECTION( "sort with unsigned int128 range" )
     {
         std::vector<__uint128_t> vec;
         vec.reserve(100'000);
@@ -58,7 +58,7 @@ TEST_CASE( "ska_sorter tests", "[ska_sorter]" )
     }
 #endif
 
-    SECTION( "sort with float iterable" )
+    SECTION( "sort with float range" )
     {
         std::vector<float> vec;
         vec.reserve(100'000);

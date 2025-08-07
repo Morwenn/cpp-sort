@@ -38,27 +38,27 @@ namespace cppsort
             {}
 
             template<
-                typename BidirectionalIterable,
+                typename BidirectionalRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_v<Projection, BidirectionalIterable, Compare>
+                    is_projection_v<Projection, BidirectionalRange, Compare>
                 >
             >
-            auto operator()(BidirectionalIterable&& iterable,
+            auto operator()(BidirectionalRange&& range,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of_v<
                         iterator_category,
-                        iterator_category_t<decltype(std::begin(iterable))>
+                        iterator_category_t<decltype(std::begin(range))>
                     >,
                     "verge_adapter requires a stronger iterator category"
                 );
 
-                verge::sort<Stable>(std::begin(iterable), std::end(iterable),
-                                    utility::size(iterable),
+                verge::sort<Stable>(std::begin(range), std::end(range),
+                                    utility::size(range),
                                     std::move(compare), std::move(projection),
                                     this->get());
             }

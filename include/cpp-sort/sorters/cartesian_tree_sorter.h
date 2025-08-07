@@ -30,27 +30,27 @@ namespace cppsort
         struct cartesian_tree_sorter_impl
         {
             template<
-                typename ForwardIterable,
+                typename ForwardRange,
                 typename Compare = std::less<>,
                 typename Projection = utility::identity,
                 typename = detail::enable_if_t<
-                    is_projection_v<Projection, ForwardIterable, Compare>
+                    is_projection_v<Projection, ForwardRange, Compare>
                 >
             >
-            auto operator()(ForwardIterable&& iterable,
+            auto operator()(ForwardRange&& range,
                             Compare compare={}, Projection projection={}) const
                 -> void
             {
                 static_assert(
                     std::is_base_of_v<
                         iterator_category,
-                        iterator_category_t<decltype(std::begin(iterable))>
+                        iterator_category_t<decltype(std::begin(range))>
                     >,
                     "cartesian_tree_sorter requires at least forward iterators"
                 );
 
-                cartesian_tree_sort(std::begin(iterable), std::end(iterable),
-                                    utility::size(iterable),
+                cartesian_tree_sort(std::begin(range), std::end(range),
+                                    utility::size(range),
                                     std::move(compare), std::move(projection));
             }
 
