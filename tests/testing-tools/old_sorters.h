@@ -45,19 +45,16 @@ struct old_default_sorter:
     >
 {};
 
-namespace cppsort
+template<>
+struct cppsort::stable_adapter<::old_default_sorter>:
+    cppsort::merge_sorter
 {
-    template<>
-    struct stable_adapter<::old_default_sorter>:
-        cppsort::merge_sorter
-    {
-        stable_adapter() = default;
+    stable_adapter() = default;
 
-        constexpr explicit stable_adapter(const ::old_default_sorter&) noexcept:
-            stable_adapter()
-        {}
-    };
-}
+    constexpr explicit stable_adapter(const ::old_default_sorter&) noexcept:
+        stable_adapter()
+    {}
+};
 
 ////////////////////////////////////////////////////////////
 // drop_merge_sorter
@@ -94,34 +91,29 @@ struct old_verge_sorter:
     old_verge_sorter() = default;
 };
 
-namespace cppsort
+template<>
+struct cppsort::stable_adapter<::old_verge_sorter>:
+    cppsort::stable_t<
+        cppsort::verge_adapter<
+            cppsort::hybrid_adapter<
+                cppsort::pdq_sorter,
+                cppsort::quick_merge_sorter
+            >
+        >
+    >
 {
-    template<>
-    struct stable_adapter<::old_verge_sorter>:
-        cppsort::sorter_facade<
-            cppsort::detail::verge_adapter_impl<
+    stable_adapter() = default;
+
+    constexpr explicit stable_adapter(const ::old_verge_sorter&):
+        cppsort::stable_t<
+            cppsort::verge_adapter<
                 cppsort::hybrid_adapter<
                     cppsort::pdq_sorter,
                     cppsort::quick_merge_sorter
-                >,
-                true
-            >
-        >
-    {
-        stable_adapter() = default;
-
-        constexpr explicit stable_adapter(const ::old_verge_sorter&):
-            cppsort::sorter_facade<
-                cppsort::detail::verge_adapter_impl<
-                    cppsort::hybrid_adapter<
-                        cppsort::pdq_sorter,
-                        cppsort::quick_merge_sorter
-                    >,
-                    true
                 >
-            >()
-        {}
-    };
-}
+            >
+        >()
+    {}
+};
 
 #endif // CPPSORT_TESTSUITE_OLD_SORTERS_H_
