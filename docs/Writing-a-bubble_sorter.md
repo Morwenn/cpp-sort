@@ -192,7 +192,7 @@ The only change to make at the sorter level is to modify its declared iterator c
 
 ## Handling projection parameters
 
-[Projections][projections] are functions and function-like objects that can be used to "view" the values to sort differently during comparison. Most of the comparison sorters in **cpp-sort** take an optional projection parameter. Our `bubble_sorter` being a comparison sorter, it may be interesting to have it handle projections too. In order to do that, we have to alter both the sorting algorithm and the sorter. Fortunately, the modifications are pretty straigthforward: in the algorithm, we only have to add another parameter and use it on the values that are being compared:
+[Projections][projections] are functions and function-like objects that can be used to "view" the values to sort differently during a comparison. Most of the comparison sorters in **cpp-sort** take an optional projection parameter. Our `bubble_sorter` being a comparison sorter, it may be interesting to have it handle projections too. In order to do that, we have to alter both the sorting algorithm and the sorter. Fortunately, the modifications are pretty straigthforward: in the algorithm, we only have to add another parameter and use it on the values that are being compared:
 
 ```cpp
 template<
@@ -252,7 +252,7 @@ struct bubble_sorter_impl
 
 We can see several improvements compared to the previous version: first of all, we added an optional projection parameter which defauts to [`utility::identity`][utility-identity] (in C++20 we would use [`std::identity`][std-identity]). This is a function object that takes a value and returns it as is so that the default behaviour of the algorithm is to run *as if* projections didn't exist. It is very likely to be optimized away by the compiler.
 
-The second modification is one I wish we could do without (but will have to live with until concepts): [`is_projection_iterator_v`][is-projection] is a trait that checks whether a projection function can be used on a dereferenced iterator. It also optionally checks that a given comparison function can be called with the result of two such projections. This trait exists to ensure that a sorter's `operator()` is not called if these conditions are not satisfied, which may be crucial when aggregating sorters with [`hybrid_adapter`][hybrid-adapter].
+The second modification is one I wish we could do without (but will have to live with until concepts are added to the library): [`is_projection_iterator_v`][is-projection] is a trait that checks whether a projection function can be used on a dereferenced iterator. It also optionally checks that a given comparison function can be called with the result of two such projections. This trait exists to ensure that a sorter's `operator()` is not called if these conditions are not satisfied, which may be crucial when aggregating sorters with [`hybrid_adapter`][hybrid-adapter].
 
 Now that we saw how to handle projections in your algorithm, here is the interesting part: you generally don't need to manually handle projections. [`sorter_facade`][sorter-facade] generates overloads of `operator()` taking projection functions that bake the projection directly into the comparison, and forward that mix to the sorter implementation. In our implementation of `bubble_sort`, we always use the projection inside the comparison, so handling the projections by hand isn't giving us any optimization opportunity; we might as well just implement the comparison and add the small required SFINAE check:
 

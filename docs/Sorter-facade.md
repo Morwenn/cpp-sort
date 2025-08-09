@@ -13,7 +13,7 @@ struct frob_sorter:
 
 Moreover, `sorter_facade` inherits from its template parameter, therefore it has all the properties of the *sorter implementation* it wraps, including the nested type aliases and additional functions. The only things that may be overridden are described below, but all of them eventually end up calling functions from the *sorter implementation* anyway.
 
-### Construction
+## Construction
 
 `sorter_facade` is default-constructible if the *sorter implementation* is default-constructible.
 
@@ -26,7 +26,7 @@ constexpr sorter_facade(Args&&... args):
 {}
 ```
 
-### Conversion to function pointers
+## Conversion to function pointers
 
 As long as the *sorter implementation* it wraps is an empty and default-constructible type, `sorter_facade` provides the following member functions so that a sorter can be turned into a function pointer:
 
@@ -46,6 +46,12 @@ The return type `Ret` can either match that of the sorter, or be `void`, in whic
 Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is the [`std::result_of_t`][std-result-of] of the sorter called with the parameters. The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
 ***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
+
+## `operator()`
+
+The main job of `sorter_facade` is to provide a rich overload set for `operator()`: enough to satisfy the *unified sorting interface*. The following sections describe all the overloads supported by the operator.
+
+**Return type:** whenever possible, `sorter_facade::operator()` forwards the result of whichever suitable `operator()` it picked from the *sorter implementation*.
 
 ### `operator()` for pairs of iterators
 

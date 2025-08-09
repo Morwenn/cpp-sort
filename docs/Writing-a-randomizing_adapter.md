@@ -22,7 +22,7 @@ Obviously such a trick does not guarantee a O(n log n) runtime for the resulting
 
 ### Hyrum's law
 
-An arguably more useful use for a `randomizing_adapter` would be to avoid becoming a victim of [Hyrum's law][hyrums-law].
+An arguably more compelling use case for `randomizing_adapter` would be to avoid becoming a victim of [Hyrum's law][hyrums-law].
 
 > With a sufficient number of users of an API,
 > it does not matter what you promise in the contract:
@@ -72,7 +72,7 @@ When possible, a proper *sorter adapter* is expected to be callable with the sam
 
 ## Returned value
 
-There is currently no strict rule about what a sorter adapter should return (this is actually a [open design issue][issue-134]), though the general wisdom is that an adapter should transparently provide as many features as the sorter it adapts when it reasonably can. The idea is that replacing the sorter by its wrapped counterpart should be easy.
+There is currently no strict rule about what a *sorter adapter* should return (this is actually a [open design issue][issue-134]), though the general wisdom is that an adapter should transparently provide as many features as the sorter it adapts when it reasonably can. The idea is that replacing the sorter by its wrapped counterpart should be easy.
 
 We don't have a specific use for the return channel of `randomizing_adapter` and it is simple to make it transitively return whatever the wrapped sorter returns - and even convenient -, so I decided to do just that.
 
@@ -93,7 +93,7 @@ auto sort = randomizing_adapter(cppsort::poplar_sorter);
 
 ## `utility::adapter_storage`
 
-As previously mentioned, our `randomizing_adapter` currently does not store the adapted sorter even though it might be desirable since sorters can be stateful. **cpp-sort** provides the class template [`utility::adapter_storage`][adapter-storage] that adapters can inherit from to take care of storing a sorter instance.
+As previously mentioned, our `randomizing_adapter` currently does not store the *adapted sorter* even though it might be desirable since sorters can be stateful. **cpp-sort** provides the class template [`utility::adapter_storage`][adapter-storage] that adapters can inherit from to take care of storing a sorter instance.
 
 ```cpp
 template<typename Sorter>
@@ -120,7 +120,7 @@ struct randomizing_adapter:
 
 `adapter_storage<Sorter>` is constructed with an instance of `Sorter` and has value semantics: it holds a copy of the sorter, not a reference to it. The stored sorter can be accessed via the `get()` method.
 
-It is special-cased for empty sorters: when constructed with one, it doesn't store it and instead default-constructs a new instance when `get()` is called. The lack of storage allows the adapter to be converted to a function pointer when it stores an empty sorter.
+It is special-cased for empty sorters: when constructed with one, it doesn't store it and instead default-constructs a new instance when `get()` is called. The absence of storage allows the adapter to be converted to a function pointer when it stores an empty sorter.
 
 ## Polishing it a bit
 
