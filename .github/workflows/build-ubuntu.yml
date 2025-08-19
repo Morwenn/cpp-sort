@@ -28,11 +28,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build:
-          - compiler: g++-9
-            linker: GOLD
-          - compiler: clang++-11
-            linker: LLD
+        cxx:
+          - g++-9
+          - clang++-11
         config:
           # Release build
           - build_type: Release
@@ -44,13 +42,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: rui314/setup-mold@v1
 
       - name: Install GCC
-        if: ${{matrix.build.compiler == 'g++-9'}}
+        if: ${{matrix.cxx == 'g++-9'}}
         run: sudo apt-get install -y g++-9
 
       - name: Install Clang
-        if: ${{matrix.build.compiler == 'clang++-11'}}
+        if: ${{matrix.cxx == 'clang++-11'}}
         run: sudo apt-get install -y clang-11 lld-11
 
       - name: Install Valgrind
@@ -60,12 +59,10 @@ jobs:
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
         env:
-          CXX: ${{matrix.build.compiler}}
+          CXX: ${{matrix.cxx}}
         run: |
           cmake -S ${{github.event.repository.name}} -B build \
-                -DCMAKE_CONFIGURATION_TYPES=${{matrix.config.build_type}} \
                 -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
-                -DCMAKE_LINKER_TYPE=${{matrix.build.linker}} \
                 -DCPPSORT_SANITIZE=${{matrix.config.sanitize}} \
                 -DCPPSORT_USE_VALGRIND=${{matrix.config.valgrind}} \
                 -DCPPSORT_BUILD_EXAMPLES=ON \

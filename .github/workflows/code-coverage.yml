@@ -24,6 +24,7 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
+      - uses: rui314/setup-mold@v1
 
       - name: Install LCOV
         run: sudo apt-get install -y lcov
@@ -34,7 +35,6 @@ jobs:
         run: >
           cmake -S ${{github.event.repository.name}} -B build
           -DCMAKE_BUILD_TYPE=Debug
-          -DCMAKE_LINKER_TYPE=GOLD
           -DCPPSORT_ENABLE_COVERAGE=ON
           -DGENINFO_EXTRA_FLAGS="--ignore-errors mismatch,mismatch"
           -DLCOV_EXTRA_FLAGS="--ignore-errors unused"
