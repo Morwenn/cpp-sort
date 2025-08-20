@@ -62,8 +62,9 @@ namespace cppsort::detail
         -> T*
     {
         constexpr bool is_trivial_enough =
-            std::is_trivial_v<value_type_t<InputIterator>> &&
-            std::is_trivial_v<T>;
+            std::is_trivially_copyable_v<value_type_t<InputIterator>> &&
+            std::is_trivially_copyable_v<T> &&
+            sizeof(T) == sizeof(value_type_t<InputIterator>);
 
         if (is_trivial_enough) {
             return detail::move(first, last, result);
