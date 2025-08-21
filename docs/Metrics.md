@@ -1,7 +1,7 @@
 *Metrics* are special kinds of [*sorter adapters*][sorter-adapters] that can be used to compute properties about a sorting algorithm, such as the number of comparisons performed while sorting a given collection, or the time it took to sort. As *sorter adapters*, metrics follow the *unified sorting interface*, and *do* sort the passed collection before returning the result.
 
 The anatomy of a metric adapter is thus close to that of any *sorter adapter* with the following additional properties:
-* The result of the *adapted sorter*'s is replaced with an instance of [`cppsort:::utility::metric`][utility-metrics-tools], which is a small wrapper type encapsulating a value.
+* The result of the *adapted sorter*'s is replaced with an instance of [`cppsort::utility::metric`][utility-metrics-tools], which is a small wrapper type encapsulating a value.
 * It exposes a `tag_t` type aliasing the tag of the returned metric value.
 * It exposes a `metric_t` type aliasing the returned metric type.
 

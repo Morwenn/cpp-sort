@@ -1,33 +1,61 @@
-Also known as *measures of disorder*, the *measures of presortedness* are algorithms used to tell how much a sequence is already sorted, or how much disorder there is in it.
-
-Given a measure of presortedness *M*, a comparison sort is said to be *M*-optimal if it takes a number of comparisons that is within a constant factor of the lower bound.
+Also known as *measures of disorder*, the *measures of presortedness* are non-negative integer functions used to tell how much a sequence differs from its sorted permutation. A measure of presortedness *grows* with the amount of disorder in the sequence.
 
 ## Formal definition
 
-Measures of presortedness were formally defined by H. Mannila in *Measures of presortedness and optimal sorting algorithms*. Here is the formal definition as reformulated by M. La Rocca & D. Cantone in [*NeatSort - A practical adaptive algorithm*][neatsort]:
+Measures of presortedness were formally defined by Heikki Mannila in *Measures of presortedness and optimal sorting algorithms*:
 
-> Given two sequences *X* and *Y* of distinct elements, a measure of disorder *M* is a function that satisfies the following properties:
+> Given two sequences $X$ and $Y$ of distinct elements, a measure of presortedness *M* is a function that satisfies the following properties:
 >
-> 1. If *X* is sorted, then *M*(*X*) = 0
-> 2. If *X* and *Y* are order isomorphic, then *M*(*X*) = *M*(*Y*)
-> 3. If *X* is a subset of *Y*, then *M*(*X*) ≤ *M*(*Y*)
-> 4. If every element of *X* is smaller than every element of *Y*, then *M*(*XY*) ≤ *M*(*X*) + *M*(*Y*)
-> 5. *M*(⟨*x*⟩*X*) ≤ |*X*| + *M*(*X*) for every element *x* of the domain
+> 1. If $X$ is sorted, then $M(X) = 0$
+> 2. If $X$ and $Y$ are order isomorphic, then $M(X) = M(Y)$
+> 3. If $X$ is a subsequence of $Y$, then $M(X) ≤ M(Y)$
+> 4. If every element of $X$ is smaller than every element of $Y$, then $M(XY) ≤ M(X) + M(Y)$
+> 5. $M(⟨x⟩X) ≤ |X| + M(X)$ for every element $x$ of the domain
 
-A few measures of presortedness described below do not fully satisfy all of the criteria above: instead of sctrictly following Mannila, **cpp-sort** takes a broader approach similar to that of O. Petersson and A. Moffat in *A framework for adaptive sorting*, and includes more measures of disorder found in the relevant literature. For legibility, some measures that are normally defined as returning 1 when *X* is already sorted, are implemented here in a such way that they return 0 instead (generally by subtracting 1 from the result of the described operation).
+The aforementioned paper gives more details about the reasoning that led to each of the five criteria, though that's a fairly strict definition that excludes several useful metrics that have historically been used as measures of disorders.  Jingsen Chen recognizes that limitation and proposes to loosen the criteria in *Computing and ranking measures of presortedness* to encompass more existing measures of disorder:
+
+> Let $a$, $b$ and $c$ be positive constants. Given two sequences $X$ and $Y$ of distinct elements, a measure of presortedness *M* is a function that satisfies the following properties:
+>
+> 1. If $X$ is sorted, then $M(X) = a$
+> 2. If $X$ and $Y$ are order isomorphic, then $M(X) = M(Y)$
+> 3. If $X$ is a subsequence of $Y$, then $M(X) ≤ M(Y)$
+> 4. If every element of $X$ is smaller than every element of $Y$, then $M(XY) ≤ M(X) + M(Y) + b$
+> 5. $M(⟨x⟩X) ≤ |X| + M(X) + c$ for every element $x$ of the domain
+
+**cpp-sort** follows an even broader approach similar to that of Ola Petersson and Alistair Moffat in *A framework for adaptive sorting*, allowing it to include a greater number of measures of disorder found in the literature: a measure of presortedness is a non-negative integer function that respects Mannila's criterion 2 (equivalence over order isomorphism).
+
+For legibility reasons, some measures that are normally defined as returning $1$ when $X$ is already sorted, are implemented here in a such way that they return $0$ instead (generally by subtracting $1$ from the result of the described operation).
+
+### Adaptive algorithms and measures of presortedness
+
+*Measures of presortedness and optimal sorting algorithms* also defines what it means for a sorting algorithm to be $M$-optimal or $M$-adaptive with regard to a measure of presortedness $M$. We first need a few definitions.
+
+Let $X$ be a sequence of elements, and let $S_X$ be set of all permutations of that sequence:
+
+$$below_M(X) = \{ \pi | \pi \in S_X \text{ and } M(\pi) \le M(X) \}$$
+
+Let $T_S(X)$ be the number of steps needed for an algorithm $S$ to sort $X$. A sorting algorithm is said to be $M$-optimal if and only if, for some constant $c$, we have for all $X$:
+
+$$T_S(X) \le c \cdot max\{|X|, \log{} |below_M(X)|\}$$
+
+TODO: in other words, if it takes a number of comparisons that is within a constant factor of the lower bound.
 
 ### Partial ordering of measures of presortedness
 
+Jingsen Chen introduces a method to compare measures of presortedness in *Computing and ranking measures of presortedness* which is not based purely on the numeric result of the measures, but on the following intuition: a measure of presortedness $M_1$ is algorithmically superior to another measure $M_2$ if any $M_1$-optimal algorithm is also $M_2$-optimal. We note that relationship as $M_1 \preceq M_2$.
+
+TODO: probably comes from Moffat and Pertersson, investigate
+
 La Rocca & Cantone also define a partial order on measures of presortedness as follows:
 
-Let *M1* and *M2* be two measures of presortedness.
-- *M1* is algorithmically finer than *M2* if and only if any *M1*-optimal algorithm is also *M2*-optimal.
-- *M1* and *M2* are algorithmically equivalent (denoted *M1*≡*M2* in the graph below) if and only if *M1* is algorithmically finer than *M2* and *M2* is algorithmically finer than *M1*.
+Let $M_1$ and $M_2$ be two measures of presortedness.
+- $M_1$ is algorithmically finer than $M_2$ if and only if any $M_1$-optimal algorithm is also $M_2$-optimal.
+- $M_1$ and $M_2$ are algorithmically equivalent (denoted $M_1$≡$M_2$ in the graph below) if and only if $M_1$ is algorithmically finer than $M_2$ and $M_2$ is algorithmically finer than $M_1$.
 
 The graph below shows the partial ordering of several measures of presortedness:
 - *Reg* is algorithmically finest measure of presortedness.
 - *m₀* is a measure of presortedness that always returns 0.
-- *m₀₁* is a measure of presortedness that returns 0 when *X* is sorted and 1 otherwise.
+- *m₀₁* is a measure of presortedness that returns 0 when $X$ is sorted and 1 otherwise.
 
 ![Partial ordering of measures of presortedness](images/mops-partial-ordering.png)
 
@@ -81,7 +109,7 @@ It takes an integer `n` and returns the maximum value that the measure of presor
 
 Measures of presortedness are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
 
-In the following descriptions we use *X* to represent the input sequence, and |*X*| to represent the size of that sequence.
+In the following descriptions we use $X$ to represent the input sequence, and $|X|$ to represent the size of that sequence.
 
 ### *Block*
 
@@ -92,14 +120,14 @@ In the following descriptions we use *X* to represent the input sequence, and |*
 Computes the number of elements in a sequence that aren't followed by the same element in the sorted sequence.
 
 Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
-* It doesn't add 1 to the general result, thus returning 0 when *X* is sorted - therefore respecting the Mannila definition of a MOP.
+* It doesn't add 1 to the general result, thus returning 0 when $X$ is sorted - therefore respecting the Mannila definition of a MOP.
 * It explicitly handles *equivalent elements*, while the original formal definition makes it difficult.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
 ### *Dis*
 
@@ -116,7 +144,7 @@ Computes the maximum distance determined by an inversion.
 
 When enough memory is available `probe::dis` runs in O(n) using an algorithm described by T. Altman and Y. Igarashi in *Roughly Sorting: Sequential and Parallel Approach*, otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
-`max_for_size`: |*X*| - 1 when the last element of *X* is smaller than the first one.
+`max_for_size`: $|X| - 1$ when the last element of $X$ is smaller than the first one.
 
 ### *Enc*
 
@@ -124,13 +152,13 @@ When enough memory is available `probe::dis` runs in O(n) using an algorithm des
 #include <cpp-sort/probes/enc.h>
 ```
 
-Computes the number of encroaching lists that can be extracted from *X* minus one (see *Encroaching lists as a measure of presortedness* by S. Skiena).
+Computes the number of encroaching lists that can be extracted from $X$ minus one (see *Encroaching lists as a measure of presortedness* by S. Skiena).
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: (|*X*| + 1) / 2 - 1 when the values already extracted from *X* constitute stronger bounds than the values yet to be extracted (for example the sequence {0 9 1 8 2 7 3 6 4 5} will trigger the worst case).
+`max_for_size`: $\frac{|X| + 1}{2} - 1$ when the values already extracted from $X$ constitute stronger bounds than the values yet to be extracted (for example the sequence $\langle 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ will trigger the worst case).
 
 ### *Exc*
 
@@ -138,13 +166,13 @@ Computes the number of encroaching lists that can be extracted from *X* minus on
 #include <cpp-sort/probes/exc.h>
 ```
 
-Computes the minimum number of exchanges required to sort *X*, which corresponds to |*X*| minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let {2, 4, 0, 6, 3, 1, 5} be a sequence, the cycles are {0, 2} and {1, 3, 4, 5, 6} so *Exc*(*X*) = |*X*| - 2 = 5.
+Computes the minimum number of exchanges required to sort $X$, which corresponds to $|X|$ minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let $\langle 2, 4, 0, 6, 3, 1, 5 \rangle$ be a sequence, the cycles are $\langle 0, 2 \rangle$ and $\langle 1, 3, 4, 5, 6 \rangle$ so $Exc(X) = |X| - 2 = 5$.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| - 1 when every element in *X* is one element away from its sorted position.
+`max_for_size`: $|X| - 1$ when every element in $X$ is one element away from its sorted position.
 
 *Warning: this algorithm might be noticeably slower when the passed range is not random-access.*
 
@@ -154,13 +182,13 @@ Computes the minimum number of exchanges required to sort *X*, which corresponds
 #include <cpp-sort/probes/ham.h>
 ```
 
-Computes the number of elements in *X* that are not in their sorted position, which corresponds to the [Hamming distance][hamming-distance] between *X* and its sorted permutation.
+Computes the number of elements in $X$ that are not in their sorted position, which corresponds to the [Hamming distance][hamming-distance] between $X$ and its sorted permutation.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| when every element in *X* is one element away from its sorted position.
+`max_for_size`: $|X|$ when every element in $X$ is one element away from its sorted position.
 
 **Note:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Ham(\langle 1, 2, 3 \rangle)$.
 
@@ -170,13 +198,13 @@ Computes the number of elements in *X* that are not in their sorted position, wh
 #include <cpp-sort/probes/inv.h>
 ```
 
-Computes the number of inversions in *X*, where an inversion corresponds to a pair (a, b) of elements not in order. For example, the sequence {2, 1, 3, 0} has 4 inversions: (2, 1), (2, 0), (1, 0) and (3, 0).
+Computes the number of inversions in $X$, where an inversion corresponds to a pair (a, b) of elements not in order. For example, the sequence $\langle 2, 1, 3, 0 \rangle$ has 4 inversions: $(2, 1)$, $(2, 0)$, $(1, 0)$ and $(3, 0)$.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| * (|*X*| - 1) / 2 when *X* is sorted in reverse order.
+`max_for_size`: $\frac{|X|(|X| - 1)}{2}$ when $X$ is sorted in reverse order.
 
 ### *Max*
 
@@ -184,13 +212,13 @@ Computes the number of inversions in *X*, where an inversion corresponds to a pa
 #include <cpp-sort/probes/max.h>
 ```
 
-Computes the maximum distance an element in *X* must travel to find its sorted position.
+Computes the maximum distance an element in $X$ must travel to find its sorted position.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
 ### *Mono*
 
@@ -198,17 +226,17 @@ Computes the maximum distance an element in *X* must travel to find its sorted p
 #include <cpp-sort/probes/mono.h>
 ```
 
-Computes the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted
+Computes the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from $X$ to make it sorted
 
 The measure of presortedness is slightly different from its original description in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang:
-* It subtracts 1 from the number of runs, thus returning 0 when *X* is sorted.
+* It subtracts 1 from the number of runs, thus returning 0 when $X$ is sorted.
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n           | 1           | Forward       |
 
-`max_for_size`: (|*X*| + 1) / 2 - 1 when *X* is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
+`max_for_size`: $\frac{|X| + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
 ### *Osc*
 
@@ -222,7 +250,7 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
+`max_for_size`: $\frac{|X|(|X| - 2) - 1}{2}$ when the values in $X$ are strongly oscillating.
 
 **Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
 
@@ -232,13 +260,13 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 #include <cpp-sort/probes/rem.h>
 ```
 
-Computes the minimum number of elements that must be removed from *X* to obtain a sorted subsequence, which corresponds to |*X*| minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of *X*.
+Computes the minimum number of elements that must be removed from $X$ to obtain a sorted subsequence, which corresponds to $|X|$ minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of $X$.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
 ### *Runs*
 
@@ -246,13 +274,13 @@ Computes the minimum number of elements that must be removed from *X* to obtain 
 #include <cpp-sort/probes/runs.h>
 ```
 
-Computes the number of non-decreasing runs in *X* minus one.
+Computes the number of non-decreasing runs in $X$ minus one.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n           | 1           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
 ### *Spear*
 
@@ -260,13 +288,13 @@ Computes the number of non-decreasing runs in *X* minus one.
 #include <cpp-sort/probes/spear.h>
 ```
 
-Spearman's footrule distance: sum of distances between the position of individual elements in *X* and their position once *X* is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
+Spearman's footrule distance: sum of distances between the position of individual elements in $X$ and their position once $X$ is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*|²/2 when *X* is sorted in reverse order.
+`max_for_size`: $\frac{|X|²}{2}$ when $X$ is sorted in reverse order.
 
 **Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Spear(\langle 1, 2, 3 \rangle)$.
 
@@ -276,7 +304,7 @@ Spearman's footrule distance: sum of distances between the position of individua
 #include <cpp-sort/probes/sus.h>
 ```
 
-Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of *X*.
+Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which $X$ can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of $X$.
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
 
@@ -284,7 +312,7 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: |*X*| - 1 when *X* is sorted in reverse order.
+`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
 ## Other measures of presortedness
 
@@ -294,7 +322,7 @@ Some additional measures of presortedness how been described in the literature b
 
 A measure called *DS* appears in *Computing and ranking measures of presortedness* by J. Chen, and in some literature about measures of presortedness online (including some earlier versions of this documentation). The measure corresponds to the one we call *Spear* in the library.
 
-*Spear* is introduced under the name *D*, likely for (Spearman's Footrule) *Distance*, in *Spearman's Footrule as a Measure of Disarray* by P. Diaconis and R. L. Graham. Other sources give the name $D_S$, and similary give the name $D_H$ to *Ham*, for Hamming distance. I believe that the name *DS* comes from there.
+*Spear* is introduced under the name *D*, likely for (Spearman's Footrule) *Distance*, in *Spearman's Footrule as a Measure of Disarray* by P. Diaconis and R. L. Graham. Other sources give the name $D_S$, and similary give the name $D_H$ to *Ham*, for Hamming distance. I believe that's where the name *DS* comes from.
 
 In other domains, that value is called *F* (for *Footrule*). It is no more helpful a name than *D* or *DS*, so I decided to use *Spear* for this library's name (for *Spearman*) - following the same naming pattern that led to *Ham* -, despite there being no precedent in the literature.
 
@@ -302,15 +330,15 @@ In other domains, that value is called *F* (for *Footrule*). It is no more helpf
 
 *Par* is described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
 
-> *Par(X)* = min { *p* | *X* is *p*-sorted }
+> *Par(X)* = min { *p* | $X$ is *p*-sorted }
 
 The following definition is also given to determine whether a sequence is *p*-sorted:
 
-> *X* is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., |*X*|}, *i* - *j* > *p* implies *Xj* ≤ *Xi*.
+> $X$ is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., $|X|$}, *i* - *j* > *p* implies *Xj* ≤ *Xi*.
 
 *Right invariant metrics and measures of presortedness* by V. Estivill-Castro, H. Mannila and D. Wood mentions that:
 
-> In fact, *Par*(*X*) = *Dis*(*X*), for all *X*.
+> In fact, *Par*($X$) = *Dis*($X$), for all $X$.
 
 In their subsequent papers, those authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
 
@@ -320,12 +348,11 @@ In their subsequent papers, those authors consistently use *Dis* instead of *Par
 
 ### *Radius*
 
-T. Altman and Y. Igarashi mention the concept of *k*-sortedness and the measure *Radius*(*X*) in *Roughly Sorting: Sequential and Parallel Approach*. However *k*-sortedness is the same as *p*-sortedness, and *Radius* is just another name for *Par* (and thus for *Dis*).
+T. Altman and Y. Igarashi mention the concept of *k*-sortedness and the measure *Radius*($X$) in *Roughly Sorting: Sequential and Parallel Approach*. However *k*-sortedness is the same as *p*-sortedness, and *Radius* is just another name for *Par* (and thus for *Dis*).
 
 
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
-  [neatsort]: https://arxiv.org/pdf/1407.6183.pdf
   [original-research]: Original-research.md#partial-ordering-of-mono
   [probe-dis]: Measures-of-presortedness.md#dis
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
