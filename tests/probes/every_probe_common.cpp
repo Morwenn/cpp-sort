@@ -101,6 +101,42 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
     }
 }
 
+TEMPLATE_TEST_CASE( "test order isomorphism for every probe", "[probe]",
+                    decltype(cppsort::probe::block),
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::ham),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::osc),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
+                    decltype(cppsort::probe::sus) )
+{
+    // Second property formalized by Mannila
+    // Ensure that when the relative order of elements of two sequences
+    // is the same, then the measure of presortedness returns the same
+    // result
+
+    rc::prop("order isomorphism", [](std::vector<int> sequence1) {
+        std::decay_t<TestType> mop;
+
+        for (int& elem: sequence1) {
+            elem /= 2;
+        }
+
+        auto sequence2 = sequence1;
+        for (int& elem: sequence2) {
+            elem *= 2;
+        }
+
+        return mop(sequence1) == mop(sequence2);
+    });
+}
+
 TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
                     decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
