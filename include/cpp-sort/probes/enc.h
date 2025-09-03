@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/functional.h>
+#include "../detail/is_sorted_until.h"
 #include "../detail/iterator_traits.h"
 #include "../detail/lower_bound.h"
 #include "../detail/type_traits.h"
@@ -70,9 +71,11 @@ namespace cppsort::probe
                 auto&& comp = utility::as_function(compare);
                 auto&& proj = utility::as_function(projection);
 
-                if (first == last || std::next(first) == last) {
-                    return 0;
-                }
+                // Ignore the first monotonic run of the collection, technically
+                // implements M_Enc as proposed by V. Estivill-Castro in *Sorting
+                // and Measures of Disorder*
+                first = cppsort::detail::is_sorted_until(first, last, compare, projection);
+                if (first == last) return 0;
 
                 // Heads an tails of encroaching lists
                 std::vector<std::pair<ForwardIterator, ForwardIterator>> lists;
@@ -109,14 +112,14 @@ namespace cppsort::probe
                     ++first;
                 }
 
-                return lists.size() - 1;
+                return lists.size();
             }
 
             template<typename Integer>
             static constexpr auto max_for_size(Integer n)
                 -> Integer
             {
-                return n == 0 ? 0 : (n + 1) / 2 - 1;
+                return n / 2;
             }
         };
     }

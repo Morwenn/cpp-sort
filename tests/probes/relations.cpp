@@ -109,10 +109,8 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
         return enc(sequence) <= std::min<long long>(rem + 1, size - rem);
     });
 
-    rc::prop("(Enc(X) + 1) ≤ 2 Exc(X)", [](const std::vector<int>& sequence) {
-        auto exc = cppsort::probe::exc(sequence);
-        auto enc = cppsort::probe::enc(sequence);
-        return (enc == 0 && exc == 0) || (enc + 1 <= 2 * exc);
+    rc::prop("Enc(X) ≤ 2 Exc(X)", [](const std::vector<int>& sequence) {
+        return cppsort::probe::enc(sequence) <= 2 * cppsort::probe::exc(sequence);
     });
 
     rc::prop("Conjecture: Enc(X) ≤ Exc(X)", [](const std::vector<int>& sequence) {
@@ -130,8 +128,8 @@ TEST_CASE( "relations between measures of presortedness", "[probe]" )
         return sus(sequence) <= max(sequence);
     });
 
-    rc::prop("Enc(X) ≤ SUS(X)", [](const std::vector<int>& sequence) {
-        return enc(sequence) <= sus(sequence);
+    rc::prop("Enc(X) ≤ SUS(X) + 1", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= sus(sequence) + 1;
     });
 
     // Heapsort - Adapted for Presorted Files

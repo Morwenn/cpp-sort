@@ -152,13 +152,30 @@ When enough memory is available `probe::dis` runs in O(n) using an algorithm des
 #include <cpp-sort/probes/enc.h>
 ```
 
-Computes the number of encroaching lists that can be extracted from $X$ minus one (see *Encroaching lists as a measure of presortedness* by S. Skiena).
+Computes an approximation of the number of encroaching lists that can be extracted from $X$ (see *Encroaching lists as a measure of presortedness* by S. Skiena). Encroaching lists are better explained by their construction algorithm: create an empty list $L$ of lists given a sequence $X$ of elements, for each element $E$ of $X$:
+1. If $L$ is empty, create a new list with $E$.
+2. Otherwise, compare $E$ to the head and tail of the rightmost list of $L$.
+  2.1 If $E$ is greater than the head, find the lefmost list that has a head smaller than $E$, and prepend $E$ to that list.
+  2.2 Otherwise, it $E$ is smaller than the tail, find the lefmost list that has a tail greater than $E$, and append $E$ to that list.
+  3.3 Otherwise append a new list to $L$ with the element $E$.
+
+Those lists are called encroaching because the bounds of a given list "encroach" those of all lists on its right.
+
+The number of encroaching lists does not satisfy the formal definition of a measure of presortedness because it returns $1$ for non-empty sorted sequences instead of $0$, which does not respect first Mannila's criterion. Using $Enc(X) - 1$ does not work either because it does not respect Mannila's fourth criterion. To circumvent these issues, `probe::enc` implements an equivalent measure of disorder $M_{Enc}$ proposed by V. Estivill-Castro in *Sorting and Measures of Disorder*, which satisfies all of Mannila's criteria for what makes a measure of presortedness:
+
+$$
+M_{Enc}(X)=
+\begin{cases}
+0 & \text{if } X \text{ is sorted,}\\
+Enc(X_{tail}) & \text{otherwise, where } X_{tail} \text{ is } X \text{ without its leading ascending run.}
+\end{cases}
+$$
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
 | n log n     | n           | Forward       |
 
-`max_for_size`: $\frac{|X| + 1}{2} - 1$ when the values already extracted from $X$ constitute stronger bounds than the values yet to be extracted (for example the sequence $\langle 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ will trigger the worst case).
+`max_for_size`: $\frac{|X|}{2}$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
 
 ### *Exc*
 
