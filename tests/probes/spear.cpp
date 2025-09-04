@@ -12,7 +12,7 @@
 #include <testing-tools/distributions.h>
 #include <testing-tools/internal_compare.h>
 
-TEST_CASE( "presortedness measure: spear", "[probe][max]" )
+TEST_CASE( "measure of disorder: spear", "[probe][max]" )
 {
     using cppsort::probe::spear;
 

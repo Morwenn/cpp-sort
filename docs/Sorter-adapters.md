@@ -337,8 +337,8 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
   [metrics-comparisons]: Metrics.md#comparisons
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
-  [probe-mono]: Measures-of-presortedness.md#mono
-  [probe-rem]: Measures-of-presortedness.md#rem
+  [probe-mono]: Measures-of-disorder.md#mono
+  [probe-rem]: Measures-of-disorder.md#rem
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [stable-adapter]: Sorter-adapters.md#stable_adapter-make_stable-and-stable_t
   [self-sort-adapter]: Sorter-adapters.md#self_sort_adapter

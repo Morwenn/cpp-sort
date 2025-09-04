@@ -202,7 +202,7 @@ Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv
 
 ### Partial ordering of *Mono*
 
-The measure of presortedness *Mono* is described in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang. They describe it as follows:
+The measure of disorder *Mono* is described in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang. They describe it as follows:
 
 > Intuitively, if *Mono*(*X*) = *k*, then *X* is the concatenation of *k* monotonic lists (either sorted or reversely sorted).
 
@@ -213,7 +213,7 @@ It computes the number of ascending or descending runs in *X*. Technically the d
 Therefore we redefine *Mono*(*X*) as the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted.
 - ***Mono* ⊇ *Runs***: this relation is already mentioned in *Sort Race* and rather intuitive: since *Mono* detects both non-increasing and non-decreasing runs, it is as least as good as *Runs* that only detects non-decreasing runs.
 - ***SMS* ⊇ *Mono***: this one seems intuitive too: *SMS* which removes runs of non-adjacent elements should be at least as good as *Mono* which only removes runs of adjacent elements.
-- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in *X*, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* will find maximum disorder. Therefore *Enc*(*X*) should always be at most as big as *Mono*(*X*).
+- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in *X*, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* finds maximum disorder. Therefore *Enc*(*X*) should always be at most as big as *Mono*(*X*).
 
 The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
 - ***Mono* ⊋ *Exc***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Exc*

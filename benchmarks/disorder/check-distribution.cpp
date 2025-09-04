@@ -17,8 +17,8 @@
 // Distribution
 using dist_t = dist::runs;
 
-// Measure of presortedness
-auto mop = cppsort::probe::runs;
+// Measure of disorder
+auto measure = cppsort::probe::runs;
 
 // Size of the collections to check
 constexpr std::size_t size = 1'000'000;
@@ -28,7 +28,7 @@ constexpr std::size_t size = 1'000'000;
 //
 // The raison d'être of this script is to be able to visualize
 // the aspects of the distributions used to test whether some
-// sorter adapt to given measures of presortedness: for example
+// sorter adapt to given measures of disorder: for example
 // dist::inv, when given a percentage pct, should be able to
 // create a random collection X such as:
 //    prove::inv(X) = pct * probe::inv.max_for_size(|X|)
@@ -45,7 +45,7 @@ int main()
     // Print metadata about the check
     std::cout << dist_t::name << ','
               << size << ','
-              << mop.max_for_size(size) << ','
+              << measure.max_for_size(size) << ','
               << seed << std::endl;
 
     for (int idx = 0; idx <= 100; ++idx) {
@@ -53,13 +53,13 @@ int main()
         double factor = 0.01 * idx;
         auto distribution = dist_t(factor);
 
-        // Compute presortedness
+        // Compute disorder
         std::vector<int> collection;
         collection.reserve(size);
         distribution(std::back_inserter(collection), size);
-        auto presortedness = mop(collection);
+        auto disorder = measure(collection);
 
         // Display results
-        std::cout << idx << ',' << presortedness << std::endl;
+        std::cout << idx << ',' << disorder << std::endl;
     }
 }

@@ -10,7 +10,7 @@
 #include <testing-tools/internal_compare.h>
 #include <testing-tools/wrapper.h>
 
-TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
+TEST_CASE( "measure of disorder: osc", "[probe][osc]" )
 {
     using cppsort::probe::osc;
 

@@ -24,9 +24,11 @@
 
     Note that the *sorters* (and virtually bery algorithm) in **cpp-sort** accept iterators that do not implement post-increment and post-decrement operations. The iterator categories accepted by the library are thus less restrictive than the ones mandated for the standard library.
 
-* *Measure of presortedness*: also known as a *measure of disorder*, it corresponds to an algorithm telling how much a collection is already sorted. There isn't a single way to tell how much a collection is already sorted, one can for example count the number of inversions or the number of elements to remove to get a sorted subsequence. The main advantage of measures of presortedness are that some algorithms, known as *adaptative algorithms*, are known to be optimal for some of these measures, which means that they can advantage of the order that already exists in the collection in some way. **cpp-sort** provides a number of [measures of presortedness][measures-of-presortedness] in the namespace `cppsort::probe`:
+* *Measure of disorder*: a function used to estimate the amount of disorder in a sequence. There are many different to do that, such as counting the number of inversions in the sequence, or the number of elements to remove to get a sorted subsequence. **cpp-sort** provides a number of [measures of disorder][Measures-of-disorder] in the namespace `cppsort::probe`.
 
-        auto max_inversion = cppsort::probe::dis(collection);
+        auto max_inversions = cppsort::probe::dis(collection);
+
+* *Measure of presortedness*: a special kind of *measure of disorder* that satisfies a specific set of additional properties (see the page on *measures of disorder*). The overarching goal of those measures is to be able to estimate and reason about the number of steps required to sort a sequence of elements. Most notably, they allow to formally reason about *adaptive sorting algorithms*: given a measure of presortedness $M$, an $M$-adaptive (or $M$-optimal) sorting algorithm is an algorithm that can sort a sequence with a number of steps that is without a constant bound of the estimated minimal number of steps for the estimated disorder.
 
 * *Metric*: as special kind of *sorter adapter* that returns information about sorted collections. See [the corresponding page][metrics] for additional information.
 
@@ -65,7 +67,7 @@
 
 * *Type-specific sorter*: some non-comparison sorters such as the [`spread_sorter`][spread-sorter] implement specific sorting algorithms which only work with some specific types (for example integers or strings).
 
-* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of presortedness* and a few other components of the library accept a range or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
+* *Unified sorting interface*: *sorters*, *sorter adapters*, *measures of disorder* and a few other components of the library accept a range or a pair of iterators, and optionally a comparison function and/or a comparison function. Those components typically rely on the library's [`sorter_facade`][sorter-facade] which handles the dispatching to the component's implementation and to handle a number of special cases. For simplicity, what is accepted by the `operator()` of such components is referred to as the *unified sorting interface* in the rest of the library.
 
 
   [comparators]: Comparators.md
@@ -75,7 +77,7 @@
   [iterator-categories]: https://en.cppreference.com/w/cpp/iterator
   [iterator-category]: Sorter-traits.md#iterator_category
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
-  [measures-of-presortedness]: Measures-of-presortedness.md
+  [Measures-of-disorder]: Measures-of-disorder.md
   [metrics]: Metrics.md
   [p0022]: https://wg21.link/P0022
   [radix-sort]: https://en.wikipedia.org/wiki/Radix_sort

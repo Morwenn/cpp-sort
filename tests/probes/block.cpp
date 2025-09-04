@@ -11,7 +11,7 @@
 #include <testing-tools/distributions.h>
 #include <testing-tools/internal_compare.h>
 
-TEST_CASE( "presortedness measure: block", "[probe][block]" )
+TEST_CASE( "measure of disorder: block", "[probe][block]" )
 {
     using cppsort::probe::block;
 

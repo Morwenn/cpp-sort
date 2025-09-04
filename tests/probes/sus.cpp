@@ -9,7 +9,7 @@
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
 
-TEST_CASE( "presortedness measure: sus", "[probe][sus]" )
+TEST_CASE( "measure of disorder: sus", "[probe][sus]" )
 {
     using cppsort::probe::sus;
 

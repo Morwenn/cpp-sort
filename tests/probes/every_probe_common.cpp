@@ -14,7 +14,7 @@
 #include "testing-tools/random.h"
 
 //
-// Common tests for measures of presortedness
+// Test common properties of measures of presortedness
 //
 
 TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
@@ -33,13 +33,13 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
                     decltype(cppsort::probe::sus) )
 {
     // First property formalized by Mannila
-    // Ensure that all measures of presortedness return 0 when
+    // Ensure that all measures of disorder return 0 when
     // given a collection where all elements are equal
 
     const std::vector<int> collection(50, 5);
-    std::decay_t<TestType> mop;
-    auto presortedness = mop(collection);
-    CHECK( presortedness == 0 );
+    std::decay_t<TestType> measure;
+    auto disorder = measure(collection);
+    CHECK( disorder == 0 );
 }
 
 TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
@@ -58,14 +58,14 @@ TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
                     decltype(cppsort::probe::sus) )
 {
     // First property formalized by Mannila
-    // Ensure that all measures of presortedness return 0 when
+    // Ensure that all measures of disorder return 0 when
     // given a collection where all elements are sorted
 
     std::vector<int> collection(50);
     std::iota(collection.begin(), collection.end(), 0);
-    std::decay_t<TestType> mop;
-    auto presortedness = mop(collection);
-    CHECK( presortedness == 0 );
+    std::decay_t<TestType> measure;
+    auto disorder = measure(collection);
+    CHECK( disorder == 0 );
 }
 
 TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
@@ -84,23 +84,23 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
                     decltype(cppsort::probe::sus) )
 {
     // First property formalized by Mannila
-    // Ensure that all measures of presortedness return 0 when
+    // Ensure that all measures of disorder return 0 when
     // given a collection with 0 or 1 element
 
-    std::decay_t<TestType> mop;
+    std::decay_t<TestType> measure;
 
     SECTION( "empty collection" )
     {
         const std::vector<int> collection;
-        auto presortedness = mop(collection);
-        CHECK( presortedness == 0 );
+        auto disorder = measure(collection);
+        CHECK( disorder == 0 );
     }
 
     SECTION( "one-element collection" )
     {
         const std::vector<int> collection = { 42 };
-        auto presortedness = mop(collection);
-        CHECK( presortedness == 0 );
+        auto disorder = measure(collection);
+        CHECK( disorder == 0 );
     }
 }
 
@@ -121,11 +121,11 @@ TEMPLATE_TEST_CASE( "test order isomorphism for every probe", "[probe]",
 {
     // Second property formalized by Mannila
     // Ensure that when the relative order of elements of two sequences
-    // is the same, then the measure of presortedness returns the same
+    // is the same, then the measure of disorder returns the same
     // result
 
     rc::prop("order isomorphism", [](std::vector<int> sequence1) {
-        std::decay_t<TestType> mop;
+        std::decay_t<TestType> measure;
 
         for (int& elem: sequence1) {
             elem /= 2;
@@ -136,7 +136,7 @@ TEMPLATE_TEST_CASE( "test order isomorphism for every probe", "[probe]",
             elem *= 2;
         }
 
-        return mop(sequence1) == mop(sequence2);
+        return measure(sequence1) == measure(sequence2);
     });
 }
 
@@ -156,16 +156,19 @@ TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
     // The following probes don't satisfy it: ham, osc, spear
 
     rc::prop("M(⟨a⟩X) ≤ |X| + M(X)", [](const std::vector<int>& sequence) {
-        std::decay_t<TestType> mop;
+        std::decay_t<TestType> measure;
+
         auto size = static_cast<std::vector<int>::difference_type>(sequence.size());
         if (size <= 2) {
             return true;
         }
-        return mop(sequence) <= (size - 1) + mop(sequence.begin() + 1, sequence.end());
+
+        return measure(sequence) <= (size - 1)
+             + measure(sequence.begin() + 1, sequence.end());
     });
 }
 
-TEMPLATE_TEST_CASE( "test prefix monoticity", "[probe]",
+TEMPLATE_TEST_CASE( "test prefix monotonicity", "[probe]",
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::exc),
@@ -201,12 +204,12 @@ TEMPLATE_TEST_CASE( "test prefix monoticity", "[probe]",
         // Ensure that all elements of Z are greater than all elements of X and Y
         std::nth_element(x_begin, z_begin, sequence.end());
 
-        std::decay_t<TestType> mop;
-        auto disorder_x = mop(x_begin, y_begin);
-        auto disorder_y = mop(y_begin, z_begin);
-        auto disorder_yz = mop(y_begin, sequence.end());
+        std::decay_t<TestType> measure;
+        auto disorder_x = measure(x_begin, y_begin);
+        auto disorder_y = measure(y_begin, z_begin);
+        auto disorder_yz = measure(y_begin, sequence.end());
         auto new_x_begin = std::rotate(x_begin, y_begin, z_begin);
-        auto disorder_xz = mop(new_x_begin, sequence.end());
+        auto disorder_xz = measure(new_x_begin, sequence.end());
 
         return disorder_x <= disorder_y
             ? disorder_xz <= disorder_yz
@@ -234,10 +237,9 @@ TEMPLATE_TEST_CASE( "test M(XY) = M(X) + M(Y) if X <= Y for most probes M", "[pr
         std::uniform_int_distribution<diff_t> dist;
         auto x_begin = sequence.begin();
         auto y_begin = x_begin + dist(hasard::engine(), param_t{0, size});
-        std::cout << "nooooo: " << (y_begin - x_begin) << std::endl;
         std::nth_element(x_begin, y_begin, sequence.end());
 
-        std::decay_t<TestType> mop;
-        return mop(sequence) == mop(x_begin, y_begin) + mop(y_begin, sequence.end());
+        std::decay_t<TestType> measure;
+        return measure(sequence) == measure(x_begin, y_begin) + measure(y_begin, sequence.end());
     });
 }

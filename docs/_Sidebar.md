@@ -8,7 +8,7 @@
       * [Metrics](Metrics.md)
     * [Sorter facade](Sorter-facade.md)
     * [Sorter traits](Sorter-traits.md)
-    * [Measures of presortedness](Measures-of-presortedness.md)
+    * [Measures of disorder](Measures-of-disorder.md)
 * [Comparators and projections](Comparators-and-projections.md)
     * [Comparators](Comparators.md)
     * [Comparator adapters](Comparator-adapters.md)

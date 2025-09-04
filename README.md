@@ -41,7 +41,7 @@ of the library:
 * Sorters can be wrapped in [sorter adapters](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters) to augment their behaviour
 * The library provides a [sorter facade](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) to easily build sorters
 * [Fixed-size sorters](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters) can be used to efficiently sort tiny fixed-size collections
-* [Measures of presortedness](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-presortedness) can be used to evaluate the disorder in a collection
+* [Measures of disorder](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-disorder) can be used to evaluate the disorder in a collection
 
 Here is a more complete example of what can be done with the library:
 

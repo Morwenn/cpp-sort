@@ -1,30 +1,48 @@
-Also known as *measures of disorder*, the *measures of presortedness* are non-negative integer functions used to tell how much a sequence differs from its sorted permutation. A measure of presortedness *grows* with the amount of disorder in the sequence.
+*Measures of disorder* are functions used to measure how much a sequence differs from its sorted permutation. Several loose definitions of measures of disorder exist in the literature; in this documentation, we use the formal definition provided by Vladimir Estivill-Castro in *Sorting and Measures of Disorder*. That is, a *measure of disorder* $M$ is a non-negative real function that accepts a sequence $X$ and satifies the following properties:
+1. When $X$ is sorted, $M(X) = \min_{|Y|=|X|}\{M(Y)\}$. In other words, a measure of disorder *grows* with the amount of disorder in $X$, and reaches its minimum when $X$ is sorted.
+2. Order isomorphism: if the relative order of elements in two sequences $X$ and $Y$ is the same, then $M(X) = M(Y)$.
 
-## Formal definition
+In the rest of this document, we also use the following notation:
+* Sequences are ordered, and use angle brackets as delimiter, ex: $\langle 1, 3, 2, 4, 10 \rangle$.
+* $|X|$ corresponds to the number of elements in the sequence $X$ (its size).
+* Given two sequences $X$ and $Y$, $X \lt Y$ means that every of $X$ compares less than every element in $Y$ (assume similar meaning for other ordering operators).
+* Given two sequences $X$ and $Y$, $XY$ corresponds to their concatenation. Similarly $\langle e \rangle X$ is the concatenation of the sequence made of the single element $e$ and of the sequence $X$.
+* The expression "subsequence of $X$" refers to a sequence obtained by removing any number of possibly non-adjacent elements from $X$, unless specified otherwise.
 
-Measures of presortedness were formally defined by Heikki Mannila in *Measures of presortedness and optimal sorting algorithms*:
+## Measures of presortedness
 
-> Given two sequences $X$ and $Y$ of distinct elements, a measure of presortedness *M* is a function that satisfies the following properties:
+*Measures of presortedness* are a specific category of *measures of disorder* formally defined by Heikki Mannila in *Measures of presortedness and optimal sorting algorithms*:
+
+> Given two sequences $X$ and $Y$ of distinct elements, a measure of presortedness *M* is a non-negative integer function that satisfies the following properties:
 >
 > 1. If $X$ is sorted, then $M(X) = 0$
 > 2. If $X$ and $Y$ are order isomorphic, then $M(X) = M(Y)$
 > 3. If $X$ is a subsequence of $Y$, then $M(X) ≤ M(Y)$
-> 4. If every element of $X$ is smaller than every element of $Y$, then $M(XY) ≤ M(X) + M(Y)$
-> 5. $M(⟨x⟩X) ≤ |X| + M(X)$ for every element $x$ of the domain
+> 4. If $X \le Y$, then $M(XY) ≤ M(X) + M(Y)$
+> 5. $M(⟨e⟩X) ≤ |X| + M(X)$ for every element $e$ of the domain
 
-The aforementioned paper gives more details about the reasoning that led to each of the five criteria, though that's a fairly strict definition that excludes several useful metrics that have historically been used as measures of disorders.  Jingsen Chen recognizes that limitation and proposes to loosen the criteria in *Computing and ranking measures of presortedness* to encompass more existing measures of disorder:
+Mannila's goal was to define strong properties allowing to reason about the minimum amount of work required for an adaptive sorting algorithm to sort a sequence with little disorder. Namely:
+* Criterion 1 above tries to formally represent the intuitive notion that no work is needed to sort a sequence that is already sorted.
+* Criterion 4 considers that if $X \le Y$, then sorting $XY$ should take no more work than sorting $X$ and $Y$ individually.
+* Explanation for the other criteria follow a similar logic can be found in the aforementioned paper.
+
+Some authors found that definition to be overly strict for their application, and considered that it excludes several useful metrics that have historically been used as measures of disorders. Jingsen Chen was one of them, and proposed to loosen the criteria in *Computing and ranking measures of presortedness* to encompass more existing measures of disorder:
 
 > Let $a$, $b$ and $c$ be positive constants. Given two sequences $X$ and $Y$ of distinct elements, a measure of presortedness *M* is a function that satisfies the following properties:
 >
 > 1. If $X$ is sorted, then $M(X) = a$
 > 2. If $X$ and $Y$ are order isomorphic, then $M(X) = M(Y)$
 > 3. If $X$ is a subsequence of $Y$, then $M(X) ≤ M(Y)$
-> 4. If every element of $X$ is smaller than every element of $Y$, then $M(XY) ≤ M(X) + M(Y) + b$
-> 5. $M(⟨x⟩X) ≤ |X| + M(X) + c$ for every element $x$ of the domain
+> 4. If $X \le Y$, then $M(XY) ≤ M(X) + M(Y) + b$
+> 5. $M(⟨e⟩X) ≤ |X| + M(X) + c$ for every element $e$ of the domain
 
-**cpp-sort** follows an even broader approach similar to that of Ola Petersson and Alistair Moffat in *A framework for adaptive sorting*, allowing it to include a greater number of measures of disorder found in the literature: a measure of presortedness is a non-negative integer function that respects Mannila's criterion 2 (equivalence over order isomorphism).
+That loosened definition however is arguably less suited to estimate the amount of work need to order a sequence. We include it here for the sake of exposition and to highlight that vocabulary in the domain has historically been debated, but in the rest of this document the expression *measure of presortedness* refers to any measure of disorder that satisfies Mannila's five criteria.
 
-For legibility reasons, some measures that are normally defined as returning $1$ when $X$ is already sorted, are implemented here in a such way that they return $0$ instead (generally by subtracting $1$ from the result of the described operation).
+Speaking of which, Mannila actually deemed those five criteria insufficiently strong to reason about the minimum amount of work required to sort a sequence. Following in his steps, Estivill-Castro proposes in *Sorting and Measures of Disorder* a couple of new properties he considers "intuitively desirable" to formally represent the idea of presortedness:
+* **Prefix monotonicity:** given a measure of disorder $M$ and three sequences $X$, $Y$ and $Z$, if $X \le Z$, $Y \le Z$ and $M(X) \le M(Y)$ then $M(XZ) \le M(YZ)$.
+* **Monotonicity:** given a measure of disorder $M$ and four sequences $W$, $X$, $Y$ and $Z$, if $W \le X \le Z$, $W \le Y \le Z$ and $M(X) \le M(Y)$, then $M(WXZ) \le M(WYZ)$.
+
+The *monotonicity* property implies the *prefix monotonicity* one. A measure of presortedness that also satisfies the *monotonicity* property is called in a *monotonic measure of presortedness*.
 
 ### Adaptive algorithms and measures of presortedness
 
@@ -38,34 +56,42 @@ Let $T_S(X)$ be the number of steps needed for an algorithm $S$ to sort $X$. A s
 
 $$T_S(X) \le c \cdot max\{|X|, \log{} |below_M(X)|\}$$
 
-TODO: in other words, if it takes a number of comparisons that is within a constant factor of the lower bound.
+In other words, a sorting algorithm is considered $M$-optimal if it takes a number of steps that is within a constant factor of the lower bound of $M$ to sort a sequence. For example a $Rem$-optimal algorithm should be able to sort any sequence in $O(|X| \log{} Rem(X))$ steps.
 
-### Partial ordering of measures of presortedness
+### Partial ordering of measures of disorder
 
-Jingsen Chen introduces a method to compare measures of presortedness in *Computing and ranking measures of presortedness* which is not based purely on the numeric result of the measures, but on the following intuition: a measure of presortedness $M_1$ is algorithmically superior to another measure $M_2$ if any $M_1$-optimal algorithm is also $M_2$-optimal. We note that relationship as $M_1 \preceq M_2$.
+Early on, authors have been wanting to prove that some measures of disorder were "better" than other, though it quickly appeared that just comparing the raw numbers by the measures was not enough. Alistair Moffat proposed the following intuitive definition in *Ranking measures of sortedness and sorting nearly sorted lists*:
 
-TODO: probably comes from Moffat and Pertersson, investigate
+> Let $M_1$ and $M_2$ be two measures of disorder:
+>
+> * $M_1$ is algorithmically finer than $M_2$ (denoted $M_1 \le_{alg} M_2$) if and only if any $M_1$-optimal sorting algorithm is also $M_2$-optimal.
+> * $M_1$ and $M_2$ are algorithmically equivalent (denoted $M_1 =_{alg} M_2$) if and only if $M_1 \le_{alg} M_2$ and $M_2 \le_{alg} M_1$.
 
-La Rocca & Cantone also define a partial order on measures of presortedness as follows:
+While useful to understand what we want from a partial order on measures of disorder, the definition above does not help a lot when it comes to actually proving that a measure is algorithmically finer than another. To better compare two measures of disorder, Jingsen Chen introduces the following operator in *Computing and ranking measures of presortedness*:
 
-Let $M_1$ and $M_2$ be two measures of presortedness.
-- $M_1$ is algorithmically finer than $M_2$ if and only if any $M_1$-optimal algorithm is also $M_2$-optimal.
-- $M_1$ and $M_2$ are algorithmically equivalent (denoted $M_1$≡$M_2$ in the graph below) if and only if $M_1$ is algorithmically finer than $M_2$ and $M_2$ is algorithmically finer than $M_1$.
+> Let $M_1$ and $M_2$ be two measures of disorder:
+>
+> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $|below_{M_1}(X)| \le c \cdot |below_{M_2}(X)|$ for any sequence $X.
+> * $M_1$ and $M_2$ are equivalent (denoted $M_1 \equiv M_2$) if and only if $M_1 \preceq M_2$ and $M_2 \preceq M_1$.
 
-The graph below shows the partial ordering of several measures of presortedness:
-- *Reg* is algorithmically finest measure of presortedness.
+That definition seems to match the one proposed much earlier by Alistair Moffat and Ola Petersson in *A Framework for Adaptive Sorting*, though the authors use the symbol $\supseteq$ instead of $\preceq$.
+
+To prove that two measures of disorder were equivalent, authors have used the simpler method of showing that there exists some non-0 constants $c$ and $d$ such as $M_1(X) \le c \cdot M_2(X) \le d \cdot M_1(X)$. For example, the result $Max \equiv Dis$ below was originally obtained by proving that $Max(X) \le Dis(X) \le 2 Max(X)$ for any sequence $X$.
+
+The graph below shows the partial ordering of several measures of disorder:
+- *Reg* is a measure of presortedness superior to all other ones in the graph.
 - *m₀* is a measure of presortedness that always returns 0.
 - *m₀₁* is a measure of presortedness that returns 0 when $X$ is sorted and 1 otherwise.
 
-![Partial ordering of measures of presortedness](images/mops-partial-ordering.png)
+![Partial ordering of measures of disorder](images/mops-partial-ordering.png)
 
-This graph is a modified version of the one in *A framework for adaptive sorting* by O. Petersson and A. Moffat. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Max*, *Osc* and *SUS*).
+This graph is a modified version of the one in *A framework for adaptive sorting*. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Max*, *Osc* and *SUS*).
 
-The measures of presortedness in bold in the graph are available in **cpp-sort**, the others are not.
+The measures of disorder in bold in the graph are available in **cpp-sort**, the others are not.
 
-## Measures of presortedness in cpp-sort
+## Measures of disorder in cpp-sort
 
-In **cpp-sort**, measures of presortedness are implemented as instances of some specific function objects. They take a range or a pair of iterators and return how much disorder there is in the sequence according to the measure. Measures of presortedness follow the *unified sorting interface*, allowing a certain degree a freedom in the parameters they accept:
+In **cpp-sort**, measures of disorder are implemented as instances of some specific function objects. They take a range or a pair of iterators as input and return how much disorder there is contained in the sequence according to the measure. Measures of disorder follow the *unified sorting interface*, allowing a certain degree a freedom in the parameters they accept:
 
 ```cpp
 using namespace cppsort;
@@ -77,7 +103,7 @@ auto d = probe::runs(integers, std::negate{});
 
 Note however that most of these algorithms can be expensive. Using them before an actual sorting algorithm has little interest if any. They are instead meant to be profiling tools: when sorting is a critical part of your application, you can use these measures on typical data and check whether it is mostly sorted according to one measure or another, then you may be able to find a sorting algorithm known to be optimal with regard to this specific measure.
 
-Measures of presortedness can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of presortedness, some of them can still be used to mitigate space and time:
+Measures of disorder can be used with the *sorter adapters* from the library. Even though most of the adapters are meaningless with measures of disorder, some of them can still be used to mitigate space and time:
 
 ```cpp
 // With explicit template parameter
@@ -87,7 +113,7 @@ auto inv = cppsort::indirect_adapter<decltype(cppsort::probe::inv)>{};
 auto inv = cppsort::indirect_adapter(cppsort::probe::inv);
 ```
 
-All measures of presortedness live in the subnamespace `cppsort::probe`. Even though all of them are available in their own header, it is still possible to include all of them at once with the following include:
+Measures of disorder live in the namespace `cppsort::probe`. Although all of them are available in their own header, it is still possible to include all of them at once with the following include:
 
 ```cpp
 #include <cpp-sort/probes.h>
@@ -95,7 +121,7 @@ All measures of presortedness live in the subnamespace `cppsort::probe`. Even th
 
 ### `max_for_size`
 
-All measures of presortedness in the library have the following `static` member function:
+All measures of disorder in the library have the following `static` member function:
 
 ```cpp
 template<typename Integer>
@@ -103,13 +129,11 @@ static constexpr auto max_for_size(Integer n)
     -> Integer;
 ```
 
-It takes an integer `n` and returns the maximum value that the measure of presortedness can return for a collection of size `n`.
+It takes an integer `n` and returns the maximum value that the measure of disorder can return for a sequence of size `n`.
 
-## Available measures of presortedness
+## Available measures of disorder
 
-Measures of presortedness are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
-
-In the following descriptions we use $X$ to represent the input sequence, and $|X|$ to represent the size of that sequence.
+Measures of disorder are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
 
 ### *Block*
 
@@ -245,7 +269,7 @@ Computes the maximum distance an element in $X$ must travel to find its sorted p
 
 Computes the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from $X$ to make it sorted
 
-The measure of presortedness is slightly different from its original description in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang:
+The measure of disorder is slightly different from its original description in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang:
 * It subtracts 1 from the number of runs, thus returning 0 when $X$ is sorted.
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones.
 
@@ -305,7 +329,7 @@ Computes the number of non-decreasing runs in $X$ minus one.
 #include <cpp-sort/probes/spear.h>
 ```
 
-Spearman's footrule distance: sum of distances between the position of individual elements in $X$ and their position once $X$ is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of presortedness was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
+Spearman's footrule distance: sum of distances between the position of individual elements in $X$ and their position once $X$ is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of disorder was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
 
 | Complexity  | Memory      | Iterators     |
 | ----------- | ----------- | ------------- |
@@ -331,13 +355,13 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
-## Other measures of presortedness
+## Other measures of disorder
 
-Some additional measures of presortedness how been described in the literature but do not appear in the partial ordering graph. This section describes some of them but is not an exhaustive list.
+Some additional measures of disorder have been described in the literature but do not appear in the partial ordering graph. This section describes some of them but is not an exhaustive list.
 
 ### *DS*
 
-A measure called *DS* appears in *Computing and ranking measures of presortedness* by J. Chen, and in some literature about measures of presortedness online (including some earlier versions of this documentation). The measure corresponds to the one we call *Spear* in the library.
+A measure called *DS* appears in *Computing and ranking measures of presortedness* by J. Chen, and in some literature about measures of disorder online (including some earlier versions of this documentation). The measure corresponds to the one we call *Spear* in the library.
 
 *Spear* is introduced under the name *D*, likely for (Spearman's Footrule) *Distance*, in *Spearman's Footrule as a Measure of Disarray* by P. Diaconis and R. L. Graham. Other sources give the name $D_S$, and similary give the name $D_H$ to *Ham*, for Hamming distance. I believe that's where the name *DS* comes from.
 
@@ -371,5 +395,4 @@ T. Altman and Y. Igarashi mention the concept of *k*-sortedness and the measure 
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [original-research]: Original-research.md#partial-ordering-of-mono
-  [probe-dis]: Measures-of-presortedness.md#dis
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf

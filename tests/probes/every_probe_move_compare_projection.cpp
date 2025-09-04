@@ -29,8 +29,8 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
     distribution(std::back_inserter(collection), 491, -125);
 
     using probe = TestType;
-    auto mop = probe{}(collection, move_check_compare{});
-    CHECK( mop >= 0 );
+    auto disorder = probe{}(collection, move_check_compare{});
+    CHECK( disorder >= 0 );
 }
 
 TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[probe]",
@@ -53,6 +53,6 @@ TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[pr
     distribution(std::back_inserter(collection), 491, -125);
 
     using probe = TestType;
-    auto mop = probe{}(collection, move_check_projection{});
-    CHECK( mop >= 0 );
+    auto disorder = probe{}(collection, move_check_projection{});
+    CHECK( disorder >= 0 );
 }

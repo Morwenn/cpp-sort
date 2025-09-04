@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Morwenn
+ * Copyright (c) 2020-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -89,10 +89,10 @@ int main(int argc, char* argv[])
             double factor = 0.01 * idx;
             auto distribution = dist::inv(factor);
 
-            // Compute presortedness
+            // Compute disorder
             collection_t collection;
             distribution(std::back_inserter(collection), size);
-            auto presortedness = cppsort::probe::inv(collection);
+            auto disorder = cppsort::probe::inv(collection);
 
             // Compute the time it took
             std::vector<std::uint64_t> cycles;
@@ -109,8 +109,8 @@ int main(int argc, char* argv[])
             }
 
             // Compute and display stats & numbers
-            output_file << presortedness << ",";
-            std::cout << presortedness << ",";
+            output_file << disorder << ",";
+            std::cout << disorder << ",";
             auto it = cycles.begin();
             output_file << *it;
             std::cout << *it;

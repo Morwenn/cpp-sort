@@ -28,13 +28,13 @@ TEMPLATE_TEST_CASE( "heap exhaustion for random-access probes", "[probe][heap_ex
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
-    std::vector<int>::difference_type mop;
+    std::vector<int>::difference_type disorder;
     using probe = TestType;
     {
         scoped_memory_exhaustion _;
-        mop = probe{}(collection);
+        disorder = probe{}(collection);
     }
-    CHECK( mop >= 0 );
+    CHECK( disorder >= 0 );
 }
 
 TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional probes", "[probe][heap_exhaustion]",
@@ -46,13 +46,13 @@ TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional probes", "[probe][heap_ex
     auto distribution = dist::shuffled{};
     distribution(std::back_inserter(collection), 491, -125);
 
-    std::list<int>::difference_type mop;
+    std::list<int>::difference_type disorder;
     using probe = TestType;
     {
         scoped_memory_exhaustion _;
-        mop = probe{}(collection);
+        disorder = probe{}(collection);
     }
-    CHECK( mop >= 0 );
+    CHECK( disorder >= 0 );
 }
 
 TEMPLATE_TEST_CASE( "heap exhaustion for forward probes", "[probe][heap_exhaustion]",
@@ -64,11 +64,11 @@ TEMPLATE_TEST_CASE( "heap exhaustion for forward probes", "[probe][heap_exhausti
     auto distribution = dist::shuffled{};
     distribution(std::front_inserter(collection), 491, -125);
 
-    std::forward_list<int>::difference_type mop;
+    std::forward_list<int>::difference_type disorder;
     using probe = TestType;
     {
         scoped_memory_exhaustion _;
-        mop = probe{}(collection);
+        disorder = probe{}(collection);
     }
-    CHECK( mop >= 0 );
+    CHECK( disorder >= 0 );
 }

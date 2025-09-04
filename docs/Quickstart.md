@@ -185,9 +185,9 @@ cppsort::utility::apply_permutation(ages, indices);
 
 This method allows to call a O(n log n) sorting agorithm once, and to call the O(n) `apply_permutation` once per array to bring into sorted order. Do note however that `apply_permutation` also alters the indices collection, which has to be copied for each array to bring into sorted order.
 
-## Measures of presortedness
+## Measures of disorder
 
-**cpp-sort** also provides a collection of [measures of presortedness][mops]: also known as *measures of disorder*, they are algorithms that evaluate the amount of disorder present in a collection - the exact algorithms used are described in the corresponding documentation page, and mostly come from the literature around adaptive sorting. These measures are provided as function objects implementing the *unified sorting interface* and returning an integer type. The exact value returned depends on the measure used, but all of them return 0 for a sorted collection.
+**cpp-sort** also provides a collection of [measures of disorder][measures-of-disorder]: they are algorithms that evaluate the amount of disorder present in a collection - the exact algorithms used are described in the corresponding documentation page, and mostly come from the literature around adaptive sorting. These measures are provided as function objects implementing the *unified sorting interface* and returning an integer type. The exact value returned depends on the measure used, but all of them return 0 for a sorted collection.
 
 ```cpp
 #include <iostream>
@@ -203,7 +203,7 @@ int main()
 }
 ```
 
-For a measure of presortedness *M*, some algorithms are said to be *M*-adaptive when they naturally take advantage of the particular kind of presortedness described by *M* to perform proportionally less work. Analyzing the presortedness patterns found in real data can therefore be useful to pick an adaptive sorting algorithm tailored for the job.
+For a measure of disorder *M*, some algorithms are said to be *M*-adaptive when they naturally take advantage of the particular kind of disorder described by *M* to perform proportionally less work. Analyzing the patterns found in real data can therefore be useful to pick an adaptive sorting algorithm tailored for the job.
 
 ## Going further
 
@@ -213,11 +213,11 @@ The previous sections describe some of the main tools provided by **cpp-sort** b
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/
   [merge-sorter]: Sorters.md#merge_sorter
-  [mops]: Measures-of-presortedness.md
+  [measures-of-disorder]: Measures-of-disorder.md
   [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [parallel-arrays]: https://en.wikipedia.org/wiki/Parallel_array
   [pdq-sorter]: Sorters.md#pdq_sorter
-  [probe-rem]: Measures-of-presortedness.md#rem
+  [probe-rem]: Measures-of-disorder.md#rem
   [quick-sorter]: Sorters.md#quick_sorter
   [schwartzian-transform]: https://en.wikipedia.org/wiki/Schwartzian_transform
   [ska-sorter]: Sorters.md#ska_sorter

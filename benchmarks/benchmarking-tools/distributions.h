@@ -374,7 +374,7 @@ namespace dist
     };
 
     ////////////////////////////////////////////////////////////
-    // Distributions: testing measures of presortedness
+    // Distributions: testing measures of disorder
 
     struct inv:
         base_distribution<inv>

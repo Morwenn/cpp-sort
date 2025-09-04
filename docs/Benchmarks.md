@@ -4,7 +4,7 @@
 * *1.16.0 for slow O(n log n) sorts*
 * *1.14.0 for small array sorts*
 * *1.13.1 for unstable random-access sorts, forward sorts, and the expensive move/cheap comparison benchmark*
-* *1.12.0 for measures of presortedness*
+* *1.12.0 for measures of disorder*
 * *1.9.0 otherwise*
 
 Benchmarking is hard and I might not be doing it right. Moreover, benchmarking sorting algorithms highlights that the time needed to sort a collection of elements depends on several things: the type to sort, the size of the collection, the cost of comparing two values, the cost of moving an element, the patterns formed by the distribution of the values in the collection to sort, the type of the collection itself, etc. The aim of this page is to help you choose a sorting algorithm depending on your needs. You can find two main kinds of benchmarks: the ones that compare algorithms against shuffled collections of different sizes, and the ones that compare algorithms against different data patterns for a given collection size.
@@ -170,23 +170,23 @@ We can see several trends in these benchmarks, rather consistant across `int` an
 * [`low_comparisons_sorter`][low-comparisons-sorter] is second-best here but has a very limited range.
 * [`selection_sorter`][selection-sorter] and [`low_moves_sorter`][low-moves-sorter] are the worst contenders here. They are both different flavours of selection sorts, and as a results are pretty similar.
 
-# Measures of presortedness
+# Measures of disorder
 
-This benchmark for [measures of presortedness][measures-of-presortedness] is small and only intends to show the cost that these tools might incur. It is not meant to be exhaustive in any way.
+This benchmark for [measures of disorder][Measures-of-disorder] is small and only intends to show the cost that these tools might incur. It is not meant to be exhaustive in any way.
 
-![Benchmark speed of measures of presortedness for increasing size for std::vector<int>](https://i.imgur.com/pjc7zJF.png)
+![Benchmark speed of measures of disorder for increasing size for std::vector<int>](https://i.imgur.com/pjc7zJF.png)
 
 It makes rather easy to see the different groups of complexities:
 * *Run(X)* and *Mono(X)* are obvious O(n) algorithms.
 * *Dis(X)* is a more involved O(n) algorithm.
-* All of the other measures of presortedness run in O(n log n) time.
+* All of the other measures of disorder run in O(n log n) time.
 
 
   [fixed-size-sorters]: Fixed-size-sorters.md
   [insertion-sorter]: Sorters.md#insertion_sorter
   [low-comparisons-sorter]: Fixed-size-sorters.md#low_comparisons_sorter
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
-  [measures-of-presortedness]: Measures-of-presortedness.md
+  [Measures-of-disorder]: Measures-of-disorder.md
   [merge-exchange-network-sorter]: Fixed-size-sorters.md#merge_exchange_network_sorter
   [selection-sorter]: Sorters.md#selection_sorter
   [sorting-network-sorter]: Fixed-size-sorters.md#sorting_network_sorter

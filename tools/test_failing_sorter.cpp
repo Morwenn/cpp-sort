@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -58,7 +58,7 @@ void test(const char* name)
         std::cout << (collection != copy) << std::endl;
     }
 
-    // Measures of presortedness
+    // Measures of disorder
     std::cout << '\n'
         << "block: " << cppsort::probe::block(copy2) << std::endl
         << "dis: " << cppsort::probe::dis(copy2) << std::endl

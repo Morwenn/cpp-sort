@@ -11,10 +11,10 @@
 #include <cpp-sort/probes.h>
 #include <testing-tools/distributions.h>
 
-TEST_CASE( "relations between measures of presortedness", "[probe]" )
+TEST_CASE( "relations between measures of disorder", "[probe]" )
 {
     // The adaptive sorting literature lists a number of relations between different
-    // measures of presortedness; the following tests check that these relations are
+    // measures of disorder; the following tests check that these relations are
     // respected in the library
 
     using namespace cppsort::probe;

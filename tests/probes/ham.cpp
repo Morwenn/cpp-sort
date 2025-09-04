@@ -13,7 +13,7 @@
 #include <testing-tools/distributions.h>
 #include <testing-tools/internal_compare.h>
 
-TEST_CASE( "presortedness measure: ham", "[probe][ham]" )
+TEST_CASE( "measure of disorder: ham", "[probe][ham]" )
 {
     using cppsort::probe::ham;
 
