@@ -2,12 +2,18 @@
  * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <forward_list>
+#include <random>
+#include <type_traits>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/dis.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
+#include <testing-tools/random.h>
 
 TEST_CASE( "measure of disorder: dis", "[probe][dis]" )
 {
@@ -58,4 +64,22 @@ TEST_CASE( "measure of disorder: dis", "[probe][dis]" )
         CHECK( dis(li) == max_n );
         CHECK( dis(li.begin(), li.end()) == max_n );
     }
+
+    // Sorting and Measures of Disorder
+    // by Vladimir Estivill-Castro
+
+    rc::prop("Dis(XY) = max{Dis(X), Dis(Y)} if X ≤ Y", [](std::vector<int> sequence) {
+        using diff_t = std::vector<int>::difference_type;
+        using param_t = std::uniform_int_distribution<diff_t>::param_type;
+
+        // Split the sequence into two consecutive subsequences X and Y
+        auto size = static_cast<diff_t>(sequence.size());
+        std::uniform_int_distribution<diff_t> dist;
+        auto x_begin = sequence.begin();
+        auto y_begin = x_begin + dist(hasard::engine(), param_t{0, size});
+        std::nth_element(x_begin, y_begin, sequence.end());
+
+        using cppsort::probe::dis;
+        return dis(sequence) == (std::max)(dis(x_begin, y_begin), dis(y_begin, sequence.end()));
+    });
 }
