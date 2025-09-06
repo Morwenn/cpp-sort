@@ -351,7 +351,7 @@ Spearman's footrule distance: sum of distances between the position of individua
 #include <cpp-sort/probes/sus.h>
 ```
 
-Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which $X$ can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of $X$.
+Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which $X$ can be partitioned, minus 1. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of $X$ minus 1.
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
 
