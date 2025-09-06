@@ -257,7 +257,6 @@ TEMPLATE_TEST_CASE( "test prefix monotonicity", "[probe]",
 }
 
 TEMPLATE_TEST_CASE( "test M(XY) = M(X) + M(Y) if X <= Y for most probes M", "[probe]",
-                    decltype(cppsort::probe::exc),
                     decltype(cppsort::probe::ham),
                     decltype(cppsort::probe::inv),
                     decltype(cppsort::probe::rem),

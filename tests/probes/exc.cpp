@@ -4,8 +4,11 @@
  */
 #include <forward_list>
 #include <iterator>
+#include <random>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/exc.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/distributions.h>
@@ -64,4 +67,24 @@ TEST_CASE( "measure of disorder: exc", "[probe][exc]" )
         CHECK( exc(seq) == 1 );
         CHECK( exc(subseq) == 2 );
     }
+
+    // Property formalized by Estivill-Castro in *Sorting and Measures of Disorder*,
+    // only works when X has distinct values
+
+    rc::prop("Exc(XY) = Exc(X) + Exc(Y) if X ≤ Y", []() {
+        using diff_t = std::vector<int>::difference_type;
+        using param_t = std::uniform_int_distribution<diff_t>::param_type;
+
+        auto sequence =  *rc::gen::unique<std::vector<int>>(rc::gen::arbitrary<int>());
+
+        // Split the sequence into two consequent subsequences X and Y
+        auto size = static_cast<diff_t>(sequence.size());
+        std::uniform_int_distribution<diff_t> dist;
+        auto x_begin = sequence.begin();
+        auto y_begin = x_begin + dist(hasard::engine(), param_t{0, size});
+        std::nth_element(x_begin, y_begin, sequence.end());
+
+        using cppsort::probe::exc;
+        return exc(sequence) == exc(x_begin, y_begin) + exc(y_begin, sequence.end());
+    });
 }
