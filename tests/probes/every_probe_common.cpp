@@ -225,7 +225,7 @@ TEMPLATE_TEST_CASE( "test prefix monotonicity", "[probe]",
     // Note: the original paper claims that Osc also satisfies this property,
     // but it fails for X=⟨3, 0⟩ Y=⟨⟩ Z=⟨4, 2⟩
 
-    rc::prop("prefix monoticity", [](std::vector<int> sequence) {
+    rc::prop("prefix monotonicity", [](std::vector<int> sequence) {
         using diff_t = std::vector<int>::difference_type;
         using param_t = std::uniform_int_distribution<diff_t>::param_type;
 
@@ -253,6 +253,58 @@ TEMPLATE_TEST_CASE( "test prefix monotonicity", "[probe]",
         return disorder_x <= disorder_y
             ? disorder_xz <= disorder_yz
             : disorder_yz <= disorder_xz;
+    });
+}
+
+TEMPLATE_TEST_CASE( "test monotonicity", "[probe]",
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::ham),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
+                    decltype(cppsort::probe::sus) )
+{
+    // Property formalized by Estivill-Castro in *Sorting and Measures of Disorder*
+    // The following probes don't satisfy it: Block, Enc, Mono, Osc
+
+    // Note: the original paper claims that MEnc[k,A,D] also satisfies this property,
+    // but at the time of writing this comment I ahev no idea what that means
+
+    rc::prop("monotonicity", [](std::vector<int> sequence) {
+        using diff_t = std::vector<int>::difference_type;
+        using param_t = std::uniform_int_distribution<diff_t>::param_type;
+
+        auto size = static_cast<diff_t>(sequence.size());
+        if (size < 4) {
+            return true;
+        }
+
+        // Split the sequence into three consequent subsequences W, X and Z
+        std::uniform_int_distribution<diff_t> dist;
+        auto w_begin = sequence.begin();
+        auto x_begin = w_begin + dist(hasard::engine(), param_t{0, size - 1});
+        auto z_begin = w_begin + dist(hasard::engine(), param_t{x_begin - w_begin, size - 1});
+
+        // Ensure that all elements of Z are greater than all elements of W and X
+        std::nth_element(w_begin, z_begin, sequence.end());
+        // Ensure that all elements of W are smaller than all elements of X
+        std::nth_element(w_begin, x_begin, z_begin);
+
+        std::decay_t<TestType> measure;
+        auto disorder_x = measure(x_begin, z_begin);
+        auto disorder_wxz = measure(sequence);
+
+        // Create Y such as W <= Y <= Z by shuffling X
+        std::shuffle(x_begin, z_begin, hasard::engine());
+        auto disorder_y = measure(x_begin, z_begin);
+        auto disorder_wyz = measure(sequence);
+
+        return disorder_x <= disorder_y
+            ? disorder_wxz <= disorder_wyz
+            : disorder_wyz <= disorder_wxz;
     });
 }
 
