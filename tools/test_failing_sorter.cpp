@@ -71,6 +71,7 @@ void test(const char* name)
         << "osc: " << cppsort::probe::osc(copy2) << std::endl
         << "rem: " << cppsort::probe::rem(copy2) << std::endl
         << "runs: " << cppsort::probe::runs(copy2) << std::endl
+        << "spear: " << cppsort::probe::spear(copy2) << std::endl
         << "sus: " << cppsort::probe::sus(copy2) << std::endl
         << '\n';
 
