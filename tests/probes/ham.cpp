@@ -49,6 +49,14 @@ TEST_CASE( "measure of disorder: ham", "[probe][ham]" )
         CHECK( ham(collection) == 0 );
     }
 
+    SECTION( "Example of Ham(subsequence(X)) > Ham(X)" )
+    {
+        const std::forward_list<int> seq =    { 3, 1, 2, 0 };
+        const std::forward_list<int> subseq = { 3, 1, 2 };
+        CHECK( ham(seq) == 2 );
+        CHECK( ham(subseq) == 3 );
+    }
+
     rc::prop("Ham(X) ≠ 1", [](const std::vector<int>& sequence) {
         return cppsort::probe::ham(sequence) != 1;
     });

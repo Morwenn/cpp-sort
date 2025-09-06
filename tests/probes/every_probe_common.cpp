@@ -140,6 +140,45 @@ TEMPLATE_TEST_CASE( "test order isomorphism for every probe", "[probe]",
     });
 }
 
+TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]",
+                    decltype(cppsort::probe::block),
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::osc),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
+                    decltype(cppsort::probe::sus) )
+{
+    // Third property formalized by Mannila
+    // Ensure that the disorder that exists in a subsequence is no
+    // greater than the disorder that exists in the whole sequence
+
+    rc::prop("M(subsequence(X)) ≤ M(X)", [](std::vector<int> sequence) {
+        std::decay_t<TestType> measure;
+        auto disorder_x = measure(sequence);
+
+        std::uniform_int_distribution<int> uni(0, sequence.size());
+
+        using diff_t = std::vector<int>::difference_type;
+        using param_t = std::uniform_int_distribution<diff_t>::param_type;
+        std::uniform_int_distribution<diff_t> dist;
+
+        diff_t size = sequence.size();
+        auto number_of_elements_to_remove = dist(hasard::engine(), param_t{0, size});
+        for (; number_of_elements_to_remove > 0; --number_of_elements_to_remove) {
+            auto idx = dist(hasard::engine(), param_t{0, size - 1});
+            sequence.erase(sequence.begin() + idx);
+            --size;
+        }
+
+        return measure(sequence) <= disorder_x;
+    });
+}
+
 TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
                     decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),

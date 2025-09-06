@@ -56,4 +56,12 @@ TEST_CASE( "measure of disorder: exc", "[probe][exc]" )
         const std::vector<int> collection = { 0, 0, -1 };
         CHECK( exc(collection) == 1 );
     }
+
+    SECTION( "Example of Exc(subsequence(X)) > Exc(X)" )
+    {
+        const std::forward_list<int> seq =    { 3, 1, 2, 0 };
+        const std::forward_list<int> subseq = { 3, 1, 2 };
+        CHECK( exc(seq) == 1 );
+        CHECK( exc(subseq) == 2 );
+    }
 }

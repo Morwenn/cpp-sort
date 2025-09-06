@@ -217,6 +217,8 @@ Computes the minimum number of exchanges required to sort $X$, which corresponds
 
 `max_for_size`: $|X| - 1$ when every element in $X$ is one element away from its sorted position.
 
+**Note:** *Exc* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $Exc(\langle 3, 1, 2, 0 \rangle) = 1$, but $Exc(\langle 3, 1, 2 \rangle) = 2$.
+
 *Warning: this algorithm might be noticeably slower when the passed range is not random-access.*
 
 ### *Ham*
@@ -233,7 +235,9 @@ Computes the number of elements in $X$ that are not in their sorted position, wh
 
 `max_for_size`: $|X|$ when every element in $X$ is one element away from its sorted position.
 
-**Note:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Ham(\langle 1, 2, 3 \rangle)$.
+**Note:** *Ham* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $Ham(\langle 3, 1, 2, 0 \rangle) = 2$, but $Ham(\langle 3, 1, 2 \rangle) = 3$.
+
+**Note²:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Ham(\langle 1, 2, 3 \rangle)$.
 
 ### *Inv*
 
