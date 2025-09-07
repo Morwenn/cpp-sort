@@ -203,7 +203,6 @@ namespace
 TEMPLATE_TEST_CASE( "test M(XY) <= M(X) + M(Y) if X <= Y for most probes M", "[probe]",
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
-                    decltype(cppsort::probe::exc),
                     decltype(cppsort::probe::max),
                     decltype(cppsort::probe::sus) )
 {
@@ -231,6 +230,10 @@ TEMPLATE_TEST_CASE( "test M(XY) = M(X) + M(Y) if X <= Y for some probes M", "[pr
 {
     // Property formalized by Estivill-Castro in *Sorting and Measures of Disorder*
     // It is a stronger bound on Mannila's fourth property that some measures satisfy
+
+    // Note: probe::exc also satisfies this property, but our implementation only
+    //       handles it correctly when no equivalent elements exist in the sequence,
+    //       so we test it in its own file
 
     rc::prop("M(XY) = M(X) + M(Y) if X ≤ Y", [](std::vector<int> sequence) {
         auto y_begin = split_in_two(sequence);
