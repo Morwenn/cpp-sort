@@ -94,6 +94,7 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
         const std::vector<int> collection;
         auto disorder = measure(collection);
         CHECK( disorder == 0 );
+        CHECK( measure.max_for_size(0) == 0 );
     }
 
     SECTION( "one-element collection" )
@@ -101,6 +102,7 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
         const std::vector<int> collection = { 42 };
         auto disorder = measure(collection);
         CHECK( disorder == 0 );
+        CHECK( measure.max_for_size(0) == 0 );
     }
 }
 
@@ -368,5 +370,27 @@ TEMPLATE_TEST_CASE( "test monotonicity", "[probe]",
         return disorder_x <= disorder_y
             ? disorder_wxz <= disorder_wyz
             : disorder_wyz <= disorder_wxz;
+    });
+}
+
+TEMPLATE_TEST_CASE( "test that probes never produce more disorder than their theoretical maximum", "[probe]",
+                    decltype(cppsort::probe::block),
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::ham),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::osc),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
+                    decltype(cppsort::probe::sus) )
+{
+    rc::prop("M(X) ≤ max_for_size(|X|)", [](const std::vector<int>& sequence) {
+        using diff_t = std::vector<int>::difference_type;
+        std::decay_t<TestType> measure;
+        return measure(sequence) <= measure.template max_for_size<diff_t>(sequence.size());
     });
 }
