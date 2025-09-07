@@ -154,7 +154,12 @@ namespace cppsort::probe
             static constexpr auto max_for_size(Integer n)
                 -> Integer
             {
-                return n < 2 ? 0 : (n * (n - 2) - 1) / 2;
+                if (n < 2) return 0;
+                if (n % 2 == 0) {
+                    return (n * (n - 2)) / 2;
+                } else {
+                    return (n * (n - 2) - 1) / 2;
+                }
             }
         };
     }

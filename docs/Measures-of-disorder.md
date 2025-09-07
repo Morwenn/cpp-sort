@@ -303,7 +303,7 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
 
-`max_for_size`: $\frac{|X|(|X| - 2) - 1}{2}$ when the values in $X$ are strongly oscillating.
+`max_for_size`: it is reached when the values in $X$ are strongly oscillating, and equals $\frac{|X|(|X| - 2)}{2}$ when $|X|$ is even, and $\frac{|X|(|X| - 2) - 1}{2}$ when $|X|$ is odd.
 
 **Note:** *Osc* does not respect Mannila's criterion 4: $Osc(\langle 0 \rangle) = 0$ and $Osc(\langle 3, 2, 1 \rangle) = 0$, but $Osc(\langle 0, 3, 2, 1 \rangle) = 2$.
 
