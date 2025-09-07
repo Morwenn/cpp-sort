@@ -147,9 +147,9 @@ Our implementation is slightly different from the original description in *Subli
 * It doesn't add 1 to the general result, thus returning 0 when $X$ is sorted and respecting Mannila's first criterion for what makes a measure of presortedness (though this change might be responsible for the breakage of criterion 4).
 * It explicitly handles *equivalent elements*, while the original formal definition makes it difficult.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | No        |
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
@@ -163,10 +163,10 @@ Our implementation is slightly different from the original description in *Subli
 
 Computes the maximum distance determined by an inversion.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n           | n           | Bidirectional |
-| n log n     | 1           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n           | n           | Bidirectional | Yes       |
+| n log n     | 1           | Forward       | Yes       |
 
 When enough memory is available `probe::dis` runs in O(n) using an algorithm described by T. Altman and Y. Igarashi in *Roughly Sorting: Sequential and Parallel Approach*, otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
@@ -197,9 +197,9 @@ Enc(X_{tail}) & \text{otherwise, where } X_{tail} \text{ is } X \text{ without i
 \end{cases}
 $$
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | No        |
 
 `max_for_size`: $\frac{|X|}{2}$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
 
@@ -213,9 +213,9 @@ Computes the minimum number of exchanges required to sort $X$, which corresponds
 
 **Warning:** `probe::exc` generally returns a result higher than the minimum number of exchanges required to sort $X$ when it contains *equivalent elements*. This is because extending $Exc$ to *equivalent elements* is a NP-hard problem (see *One the Cost of Interchange Rearrangement in Strings* by Amir et al). The function does handle such elements in some simple cases, but not in the general case.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $|X| - 1$ when every element in $X$ is one element away from its sorted position.
 
@@ -231,9 +231,9 @@ Computes the minimum number of exchanges required to sort $X$, which corresponds
 
 Computes the number of elements in $X$ that are not in their sorted position, which corresponds to the [Hamming distance][hamming-distance] between $X$ and its sorted permutation.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $|X|$ when every element in $X$ is one element away from its sorted position.
 
@@ -249,9 +249,9 @@ Computes the number of elements in $X$ that are not in their sorted position, wh
 
 Computes the number of inversions in $X$, where an inversion corresponds to a pair (a, b) of elements not in order. For example, the sequence $\langle 2, 1, 3, 0 \rangle$ has 4 inversions: $(2, 1)$, $(2, 0)$, $(1, 0)$ and $(3, 0)$.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $\frac{|X|(|X| - 1)}{2}$ when $X$ is sorted in reverse order.
 
@@ -263,9 +263,9 @@ Computes the number of inversions in $X$, where an inversion corresponds to a pa
 
 Computes the maximum distance an element in $X$ must travel to find its sorted position.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
@@ -281,9 +281,9 @@ The measure of disorder is slightly different from its original description in [
 * It subtracts 1 from the number of runs, thus returning 0 when $X$ is sorted.
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n           | 1           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n           | 1           | Forward       | No        |
 
 `max_for_size`: $\frac{|X| + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
@@ -297,9 +297,9 @@ The measure of disorder is slightly different from its original description in [
 
 Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson in *Adaptive Heapsort*, using an algorithm devised by J. Nehring.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | No        |
 
 `max_for_size`: $\frac{|X|(|X| - 2) - 1}{2}$ when the values in $X$ are strongly oscillating.
 
@@ -315,9 +315,9 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 
 Computes the minimum number of elements that must be removed from $X$ to obtain a sorted subsequence, which corresponds to $|X|$ minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of $X$.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
@@ -329,9 +329,9 @@ Computes the minimum number of elements that must be removed from $X$ to obtain 
 
 Computes the number of non-decreasing runs in $X$ minus one.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n           | 1           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n           | 1           | Forward       | Yes       |
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
@@ -343,9 +343,9 @@ Computes the number of non-decreasing runs in $X$ minus one.
 
 Spearman's footrule distance: sum of distances between the position of individual elements in $X$ and their position once $X$ is sorted (we use a stable sort to handle *equivalent elements*). Its use a a measure of disorder was proposed by P. Diaconis and R. L. Graham in *Spearman's Footrule as a Measure of Disarray*.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $\frac{|X|²}{2}$ when $X$ is sorted in reverse order.
 
@@ -361,9 +361,9 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
 
-| Complexity  | Memory      | Iterators     |
-| ----------- | ----------- | ------------- |
-| n log n     | n           | Forward       |
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n log n     | n           | Forward       | Yes       |
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
