@@ -144,7 +144,7 @@ Measures of disorder are pretty formalized, so the names of the functions in the
 Computes the number of elements in a sequence that aren't followed by the same element in the sorted sequence.
 
 Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
-* It doesn't add 1 to the general result, thus returning 0 when $X$ is sorted - therefore respecting the Mannila definition of a MOP.
+* It doesn't add 1 to the general result, thus returning 0 when $X$ is sorted and respecting Mannila's first criterion for what makes a measure of presortedness (though this change might be responsible for the breakage of criterion 4).
 * It explicitly handles *equivalent elements*, while the original formal definition makes it difficult.
 
 | Complexity  | Memory      | Iterators     |
@@ -152,6 +152,8 @@ Our implementation is slightly different from the original description in *Subli
 | n log n     | n           | Forward       |
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
+
+**Note:** `probe::block` does not respect Mannila's criterion 4: $Block(\langle 1, 0 \rangle) = 1$ and $Block(\langle 2, 3 \rangle) = 0$, but $Block(\langle 1, 0, 2, 3 \rangle) = 2$.
 
 ### *Dis*
 
@@ -285,6 +287,8 @@ The measure of disorder is slightly different from its original description in [
 
 `max_for_size`: $\frac{|X| + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
+**Note:** `probe::mono` does not respect Mannila's criterion 4: $Mono(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $Mono(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $Mono(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
+
 ### *Osc*
 
 ```cpp
@@ -299,7 +303,9 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 
 `max_for_size`: $\frac{|X|(|X| - 2) - 1}{2}$ when the values in $X$ are strongly oscillating.
 
-**Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
+**Note:** *Osc* does not respect Mannila's criterion 4: $Osc(\langle 0 \rangle) = 0$ and $Osc(\langle 3, 2, 1 \rangle) = 0$, but $Osc(\langle 0, 3, 2, 1 \rangle) = 2$.
+
+**Note²:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
 
 ### *Rem*
 

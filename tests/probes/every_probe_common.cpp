@@ -179,6 +179,66 @@ TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]
     });
 }
 
+namespace
+{
+    // Split a sequence into two consequent subsequences X and Y,
+    // with all elements of X being not greater than all elements of Y,
+    // the split point is chosen at random
+
+    auto split_in_two(std::vector<int>& sequence)
+        -> std::vector<int>::iterator
+    {
+        using diff_t = std::vector<int>::difference_type;
+        using param_t = std::uniform_int_distribution<diff_t>::param_type;
+
+        auto size = static_cast<diff_t>(sequence.size());
+        std::uniform_int_distribution<diff_t> dist;
+        auto x_begin = sequence.begin();
+        auto y_begin = x_begin + dist(hasard::engine(), param_t{0, size});
+        std::nth_element(x_begin, y_begin, sequence.end());
+        return y_begin;
+    }
+}
+
+TEMPLATE_TEST_CASE( "test M(XY) <= M(X) + M(Y) if X <= Y for most probes M", "[probe]",
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::sus) )
+{
+    // Fourth property formalized by Mannila
+    // Ensure that the disorder found in the concatenation of two sequences is not
+    // greater than the sum of the individual sequences' disorders when all elements
+    // of the second sequence are greater than all elements of the first sequence
+
+    // Note: some measures do not appear here because we test a stronger bound
+    //       instead (see the next test)
+
+    rc::prop("M(XY) ≤ M(X) + M(Y) if X ≤ Y", [](std::vector<int> sequence) {
+        auto y_begin = split_in_two(sequence);
+        std::decay_t<TestType> measure;
+        return measure(sequence) <= measure(sequence.begin(), y_begin) + measure(y_begin, sequence.end());
+    });
+}
+
+TEMPLATE_TEST_CASE( "test M(XY) = M(X) + M(Y) if X <= Y for some probes M", "[probe]",
+                    decltype(cppsort::probe::ham),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear) )
+{
+    // Property formalized by Estivill-Castro in *Sorting and Measures of Disorder*
+    // It is a stronger bound on Mannila's fourth property that some measures satisfy
+
+    rc::prop("M(XY) = M(X) + M(Y) if X ≤ Y", [](std::vector<int> sequence) {
+        auto y_begin = split_in_two(sequence);
+        std::decay_t<TestType> measure;
+        return measure(sequence) == measure(sequence.begin(), y_begin) + measure(y_begin, sequence.end());
+    });
+}
+
 TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
                     decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
@@ -192,7 +252,7 @@ TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
                     decltype(cppsort::probe::sus) )
 {
     // Fifth property formalized by Mannila
-    // The following probes don't satisfy it: ham, osc, spear
+    // The following probes don't satisfy it: Ham, Osc, Spear
 
     rc::prop("M(⟨a⟩X) ≤ |X| + M(X)", [](const std::vector<int>& sequence) {
         std::decay_t<TestType> measure;
@@ -305,31 +365,5 @@ TEMPLATE_TEST_CASE( "test monotonicity", "[probe]",
         return disorder_x <= disorder_y
             ? disorder_wxz <= disorder_wyz
             : disorder_wyz <= disorder_wxz;
-    });
-}
-
-TEMPLATE_TEST_CASE( "test M(XY) = M(X) + M(Y) if X <= Y for most probes M", "[probe]",
-                    decltype(cppsort::probe::ham),
-                    decltype(cppsort::probe::inv),
-                    decltype(cppsort::probe::rem),
-                    decltype(cppsort::probe::runs),
-                    decltype(cppsort::probe::spear) )
-{
-    // Property formalized by Estivill-Castro in *Sorting and Measures of Disorder*
-    // Not all measures of presortedness satisfy it, but a lot do
-
-    rc::prop("M(XY) = M(X) + M(Y) if X ≤ Y", [](std::vector<int> sequence) {
-        using diff_t = std::vector<int>::difference_type;
-        using param_t = std::uniform_int_distribution<diff_t>::param_type;
-
-        // Split the sequence into two consequent subsequences X and Y
-        auto size = static_cast<diff_t>(sequence.size());
-        std::uniform_int_distribution<diff_t> dist;
-        auto x_begin = sequence.begin();
-        auto y_begin = x_begin + dist(hasard::engine(), param_t{0, size});
-        std::nth_element(x_begin, y_begin, sequence.end());
-
-        std::decay_t<TestType> measure;
-        return measure(sequence) == measure(x_begin, y_begin) + measure(y_begin, sequence.end());
     });
 }
