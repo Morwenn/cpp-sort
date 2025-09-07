@@ -142,8 +142,30 @@ TEMPLATE_TEST_CASE( "test order isomorphism for every probe", "[probe]",
     });
 }
 
+namespace
+{
+    auto get_random_subsequence(std::vector<int> sequence)
+        -> std::vector<int>
+    {
+        std::uniform_int_distribution<int> uni(0, sequence.size());
+
+        using diff_t = std::vector<int>::difference_type;
+        using param_t = std::uniform_int_distribution<diff_t>::param_type;
+        std::uniform_int_distribution<diff_t> dist;
+
+        diff_t size = sequence.size();
+        auto number_of_elements_to_remove = dist(hasard::engine(), param_t{0, size});
+        for (; number_of_elements_to_remove > 0; --number_of_elements_to_remove) {
+            auto idx = dist(hasard::engine(), param_t{0, size - 1});
+            sequence.erase(sequence.begin() + idx);
+            --size;
+        }
+
+        return sequence;
+    }
+}
+
 TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]",
-                    decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
                     decltype(cppsort::probe::inv),
@@ -159,25 +181,24 @@ TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]
     // Ensure that the disorder that exists in a subsequence is no
     // greater than the disorder that exists in the whole sequence
 
-    rc::prop("M(subsequence(X)) ≤ M(X)", [](std::vector<int> sequence) {
+    rc::prop("M(subsequence(X)) ≤ M(X)", [](const std::vector<int>& sequence) {
+        auto subsequence = get_random_subsequence(sequence);
         std::decay_t<TestType> measure;
-        auto disorder_x = measure(sequence);
+        return measure(subsequence) <= measure(sequence);
+    });
+}
 
-        std::uniform_int_distribution<int> uni(0, sequence.size());
+TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M (unique elements)", "[probe]",
+                    decltype(cppsort::probe::block) )
+{
+    // Same as above, but for probes that aren't well-behaved
+    // with regard to equivalent elements
 
-        using diff_t = std::vector<int>::difference_type;
-        using param_t = std::uniform_int_distribution<diff_t>::param_type;
-        std::uniform_int_distribution<diff_t> dist;
-
-        diff_t size = sequence.size();
-        auto number_of_elements_to_remove = dist(hasard::engine(), param_t{0, size});
-        for (; number_of_elements_to_remove > 0; --number_of_elements_to_remove) {
-            auto idx = dist(hasard::engine(), param_t{0, size - 1});
-            sequence.erase(sequence.begin() + idx);
-            --size;
-        }
-
-        return measure(sequence) <= disorder_x;
+    rc::prop("M(subsequence(X)) ≤ M(X)", []() {
+        auto sequence = *rc::gen::unique<std::vector<int>>(rc::gen::arbitrary<int>());
+        auto subsequence = get_random_subsequence(sequence);
+        std::decay_t<TestType> measure;
+        return measure(subsequence) <= measure(sequence);
     });
 }
 

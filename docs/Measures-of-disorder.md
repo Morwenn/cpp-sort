@@ -153,7 +153,9 @@ Our implementation is slightly different from the original description in *Subli
 
 `max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
 
-**Note:** `probe::block` does not respect Mannila's criterion 4: $Block(\langle 1, 0 \rangle) = 1$ and $Block(\langle 2, 3 \rangle) = 0$, but $Block(\langle 1, 0, 2, 3 \rangle) = 2$.
+**Note:** *Block* does not seem to respect Mannila's criterion 3 in the presence of *equivalent elements*.
+
+**Note²:** `probe::block` does not respect Mannila's criterion 4: $Block(\langle 1, 0 \rangle) = 1$ and $Block(\langle 2, 3 \rangle) = 0$, but $Block(\langle 1, 0, 2, 3 \rangle) = 2$.
 
 ### *Dis*
 
