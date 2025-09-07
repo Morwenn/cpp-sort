@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -31,13 +31,27 @@ TEST_CASE( "presortedness measure: osc", "[probe][osc]" )
     {
         // Example from the paper Adaptive Heapsort
         // by Levcopoulos and Petersson, the upper bound
-        // should be (size * (size - 2) - 1) / 2
+        // should be:
+        // - When size is even: (size * (size - 2)) / 2
+        // - When size is odd: (size * (size - 2) - 1) / 2
 
-        std::forward_list<int> li = { 8, 5, 10, 3, 12, 1, 13, 2, 11, 4, 9, 6, 7 };
-        auto max_n = osc.max_for_size(cppsort::utility::size(li));
-        CHECK( max_n == 71 );
-        CHECK( osc(li) == max_n );
-        CHECK( osc(li.begin(), li.end()) == max_n );
+        // Even number of elements
+        {
+            const std::forward_list<int> li = { 8, 5, 10, 3, 12, 1, 13, 2, 11, 4, 9, 6 };
+            auto max_n = osc.max_for_size(cppsort::utility::size(li));
+            CHECK( max_n == 60 );
+            CHECK( osc(li) == max_n );
+            CHECK( osc(li.begin(), li.end()) == max_n );
+        }
+
+        // Odd number of elements
+        {
+            const std::forward_list<int> li = { 8, 5, 10, 3, 12, 1, 13, 2, 11, 4, 9, 6, 7 };
+            auto max_n = osc.max_for_size(cppsort::utility::size(li));
+            CHECK( max_n == 71 );
+            CHECK( osc(li) == max_n );
+            CHECK( osc(li.begin(), li.end()) == max_n );
+        }
     }
 
     SECTION( "regressions" )

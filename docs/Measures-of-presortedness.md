@@ -235,7 +235,7 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 
 When there isn't enough extra memory available, `probe::osc` falls back to an in-place O(n²) algorithm.
 
-`max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
+`max_for_size`: it is reached when the values in $X$ are strongly oscillating, and equals $\frac{|X|(|X| - 2)}{2}$ when $|X|$ is even, and $\frac{|X|(|X| - 2) - 1}{2}$ when $|X|$ is odd.
 
 **Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
 
