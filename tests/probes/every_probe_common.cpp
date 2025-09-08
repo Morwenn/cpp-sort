@@ -171,7 +171,6 @@ TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]
                     decltype(cppsort::probe::inv),
                     decltype(cppsort::probe::max),
                     decltype(cppsort::probe::mono),
-                    decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
@@ -189,6 +188,7 @@ TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]
 }
 
 TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M (unique elements)", "[probe]",
+                    decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::block) )
 {
     // Same as above, but for probes that aren't well-behaved
