@@ -421,6 +421,44 @@ namespace dist
         static constexpr const char* name = "inv";
     };
 
+    struct max:
+        base_distribution<inv>
+    {
+        // Expected value of Max(X) / max_for_size(|X|)
+        double factor;
+
+        constexpr explicit max(double factor) noexcept:
+            factor(factor)
+        {}
+
+        template<typename OutputIterator, typename Projection=cppsort::utility::identity>
+        auto operator()(OutputIterator out, long long int size, Projection projection={}) const
+            -> void
+        {
+            auto&& proj = cppsort::utility::as_function(projection);
+
+            if (size == 0) return;
+            if (size == 1) {
+                *out++ = proj(1);
+                return;
+            }
+
+            // Find the index of the element to switch with the firt one
+            auto swap_idx = static_cast<long long int>(factor * size);
+            *out++ = proj(swap_idx);
+
+            for (long long int idx = 1; idx < size; ++idx) {
+                if (idx == swap_idx) {
+                    *out++ = proj(0);
+                } else {
+                    *out++ = proj(idx);
+                }
+            }
+        }
+
+        static constexpr const char* name = "max";
+    };
+
     struct runs:
         base_distribution<runs>
     {
