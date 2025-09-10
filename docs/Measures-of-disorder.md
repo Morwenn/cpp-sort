@@ -309,7 +309,7 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 
 **Note²:** *Osc* does not respect Mannila's criterion 4: $Osc(\langle 0 \rangle) = 0$ and $Osc(\langle 3, 2, 1 \rangle) = 0$, but $Osc(\langle 0, 3, 2, 1 \rangle) = 2$.
 
-**Note³:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
+**Note³:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 3, 0, 4, 2, 5, 1 \rangle) \not \le |\langle 0, 4, 2, 5, 1 \rangle| + Osc(\langle 0, 4, 2, 5, 1 \rangle)$, simplified: $11 \not \le 5 + 5$.
 
 ### *Rem*
 
