@@ -2,9 +2,12 @@
  * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/osc.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -63,4 +66,10 @@ TEST_CASE( "measure of disorder: osc", "[probe][osc]" )
         };
         CHECK( osc(vec, comp, &wrapper::value) == 17 );
     }
+
+    rc::prop("Osc(Reversed(X)) = Osc(X)", [](std::vector<int> sequence) {
+        auto osc_x = cppsort::probe::osc(sequence);
+        std::reverse(sequence.begin(), sequence.end());
+        return cppsort::probe::osc(sequence) == osc_x;
+    });
 }
