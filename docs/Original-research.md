@@ -204,26 +204,37 @@ Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv
 
 The measure of disorder *Mono* is described in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang. They describe it as follows:
 
-> Intuitively, if *Mono*(*X*) = *k*, then *X* is the concatenation of *k* monotonic lists (either sorted or reversely sorted).
+> Intuitively, if $Mono(X) = k$, then $X$ is the concatenation of $k$ monotonic lists (either sorted or reversely sorted).
 
-It computes the number of ascending or descending runs in *X*. Technically the definition in the paper makes it return 1 when the *X* is sorted, which goes against the original definition of a measure of presortedness by Mannila, which starts with the following condition:
+It computes the number of ascending or descending runs in $X$. Technically the definition in the paper makes it return 1 when the $X$ is sorted, which goes against Mannila's original definition of a measure of presortedness, which starts with the following criterion:
 
-> If *X* is sorted, then *M*(*X*) = 0
+> If $X$ is sorted, then $M(X) = 0$
 
-Therefore we redefine *Mono*(*X*) as the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from *X* to make it sorted.
-- ***Mono* ⊇ *Runs***: this relation is already mentioned in *Sort Race* and rather intuitive: since *Mono* detects both non-increasing and non-decreasing runs, it is as least as good as *Runs* that only detects non-decreasing runs.
-- ***SMS* ⊇ *Mono***: this one seems intuitive too: *SMS* which removes runs of non-adjacent elements should be at least as good as *Mono* which only removes runs of adjacent elements.
-- ***Enc* ⊇ *Mono***: when making encroaching lists, *Enc* is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in *X*, so the result will be at most as big as that of *Mono*. However *Enc* can also find presortedness in patterns such as {5, 6, 4, 7, 3, 8, 2, 9, 1, 10} where *Mono* finds maximum disorder. Therefore *Enc*(*X*) should always be at most as big as *Mono*(*X*).
+As a result the library's [`probe::mono`][probe-mono] uses $Mono(X) - 1$ instead, which does satisfy this first criterion, albeit not the fourth one:
+
+> If $X \le Y$, then $M(XY) ≤ M(X) + M(Y)$
+
+Counterexample: $Mono(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $Mono(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $Mono(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$. As such, we still don't have a definition of $Mono$ that satisfies all the criterion for a measure of presortedness.
+
+Regardless, it is interesting to find how it fits in the existing partial ordering of measures of disorder.:
+- $Mono \preceq Runs$: this relation is already mentioned in *Sort Race* and rather intuitive: since $Mono$ detects both non-increasing and non-decreasing runs, it is as least as good as $Runs$ that only detects non-decreasing runs.
+- $SMS \preceq Mono$: this one seems intuitive too: $SMS$ which detects the minimum number of subsequences of non-adjacent elements should be at least as good as $Mono$ which only detects subsequences of adjacent elements.
+- $Enc \preceq Mono$: when making encroaching lists, $Enc$ is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in $X$, so the result will be at most as big as that of $Mono$. However $Enc$ can also find presortedness in patterns such as $\langle 5, 6, 4, 7, 3, 8, 2, 9, 1, 10 \rangle$ where $Mono$ finds maximum disorder. Therefore $Enc(X)$ should always be at most as big as $Mono(X)$.
+- $Mono \not \equiv SUS$:
+  - There is no constant $c$ such as $c \cdot SUS(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $SUS(X) = |X|$ (each element is decreasing, and as such constitues a new single-element ascending subsequence).
+  - There is no constant $c$ such as $c \cdot Mono(X) \le SUS(X)$: a sequence $X$ like $\langle 0, \frac{n}{2}, 1, \frac{n}{2} + 1, 2, \frac{n}{2} + 2, ..., \frac{n}{2} - 2, n - 1, \frac{n}{2} - 1, n \rangle$ always has $SUS(X) = 2$ (an ascending subsequence of even indices, another one of odd indices), but $Mono(X) = \frac{|X|}{2}$ (every pair of elements is a new descending run).
+- $Mono \not \equiv Max$:
+  - There is no constant $c$ such as $c \cdot Max(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $Max(X) = |X| - 1$ (the distance between the smallest and greatest elements is maximal).
+  - There is no constant $c$ such as $c \cdot Mono(X) \le Max(X)$: a sequence $X$ like $\langle 1, 0, 3, 2, ..., n , n - 1 \rangle$ always has $Max(X) = 1$ (all inversions are with a neighbour, hence they all equal $1$), but $Mono(X) = \frac{|X|}{2}$ (every pair of elements is a new descending run).
 
 The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
-- ***Mono* ⊋ *Exc***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Exc*
-- ***Mono* ⊋ *Inv***: we know that *SMS* ⊇ *Mono* and *SMS* ⊋ *Inv*
-- ***Hist* ⊋ *Mono***: we know that *Mono* ⊇ *Runs* and *Hist* ⊋ *Runs*
+- $Mono \not \preceq Exc$: we know that $SMS \preceq Mono$ and $SMS \not \preceq Exc$.
+- $Mono \not \preceq Inv$: we know that $SMS \preceq Mono$ and $SMS \not \preceq Inv$.
+- $Hist \not \preceq Mono$: we know that $Mono \preceq Runs$ and $Hist \not \preceq Runs$.
 
 The following relations have yet to be analyzed:
-- ***Mono* ⊇ *Max***
-- ***Mono* ≡ *SUS***
-- ***Osc* ⊇ *Mono***
+- $Osc \preceq Mono$
+- $Loc \preceq Mono$
 
 
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
@@ -235,6 +246,7 @@ The following relations have yet to be analyzed:
   [mountain_sort]: https://github.com/Morwenn/mountain-sort
   [poplar-heap]: https://github.com/Morwenn/poplar-heap
   [post-order-heap]: https://people.csail.mit.edu/nickh/Publications/PostOrderHeap/FUN04-PostOrderHeap.pdf
+  [probe-mono]: Measures-of-disorder.md
   [quick-merge-sort]: https://github.com/Morwenn/quick_merge_sort
   [quick-merge-sort-arxiv]: https://arxiv.org/pdf/1804.10062.pdf
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf

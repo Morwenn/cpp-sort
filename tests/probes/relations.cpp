@@ -174,10 +174,13 @@ TEST_CASE( "relations between measures of disorder", "[probe]" )
         return spear(sequence) <= 2 * inv(sequence);
     });
 
-    // Intuitive result: a descending run can be seen as several
-    // ascending runs
+    // Original research about Mono
 
     rc::prop("Mono(X) ≤ Runs(X)", [](const std::vector<int>& sequence) {
         return mono(sequence) <= runs(sequence);
+    });
+
+    rc::prop("Enc(X) ≤ Mono(X) + 1", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= mono(sequence) + 1;
     });
 }

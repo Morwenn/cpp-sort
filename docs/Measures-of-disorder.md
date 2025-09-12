@@ -71,7 +71,7 @@ While useful to understand what we want from a partial order on measures of diso
 
 > Let $M_1$ and $M_2$ be two measures of disorder:
 >
-> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $|below_{M_1}(X)| \le c \cdot |below_{M_2}(X)|$ for any sequence $X.
+> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $|below_{M_1}(X)| \le c \cdot |below_{M_2}(X)|$ for any sequence $X$.
 > * $M_1$ and $M_2$ are equivalent (denoted $M_1 \equiv M_2$) if and only if $M_1 \preceq M_2$ and $M_2 \preceq M_1$.
 
 That definition seems to match the one proposed much earlier by Alistair Moffat and Ola Petersson in *A Framework for Adaptive Sorting*, though the authors use the symbol $\supseteq$ instead of $\preceq$.
@@ -85,7 +85,7 @@ The graph below shows the partial ordering of several measures of disorder:
 
 ![Partial ordering of measures of disorder](images/mops-partial-ordering.png)
 
-This graph is a modified version of the one in *A framework for adaptive sorting*. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Max*, *Osc* and *SUS*).
+This graph is a modified version of the one in *A framework for adaptive sorting*. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Osc* and *Loc*).
 
 The measures of disorder in bold in the graph are available in **cpp-sort**, the others are not.
 
