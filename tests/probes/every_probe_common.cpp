@@ -265,6 +265,35 @@ TEMPLATE_TEST_CASE( "test M(XY) = M(X) + M(Y) if X <= Y for some probes M", "[pr
     });
 }
 
+TEMPLATE_TEST_CASE( "test M(2, 1, 4, 3, 6, 5, ...) <= |X| * M(2, 1) / 2 for most probes M", "[probe]",
+                    decltype(cppsort::probe::dis),
+                    decltype(cppsort::probe::enc),
+                    decltype(cppsort::probe::exc),
+                    decltype(cppsort::probe::ham),
+                    decltype(cppsort::probe::inv),
+                    decltype(cppsort::probe::max),
+                    decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::runs),
+                    decltype(cppsort::probe::spear),
+                    decltype(cppsort::probe::sus) )
+{
+    // From *Sorting and Measures of Disorder* by Estivill-Castro:
+    // property derived from Mannila's criteria 2 & 4
+    // The following probes don't satisfy it: Block, Mono, Osc
+
+    int size = 1000;
+    std::vector<int> sequence(size, 0);
+    std::iota(sequence.begin(), sequence.end(), 0);
+    for (int i = 0; i < size; i += 2) {
+        std::swap(sequence[i], sequence[i + 1]);
+    }
+
+    int inversion[2] = {2, 1};
+
+    std::decay_t<TestType> measure;
+    CHECK( measure(sequence) <= size * measure(inversion) / 2 );
+}
+
 TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
                     decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
