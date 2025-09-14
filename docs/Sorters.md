@@ -14,6 +14,8 @@ If you want to read more about sorters and/or write your own, then you should ha
 
 The following sorters are available and should work with any type for which `std::less` works and should accept any weak order comparison function:
 
+In the complexity cards below, $X$ represents the sequence that's being sorted. Unusual symbols in the average case complexities correspond to [measures of disorder][measures-of-disorder].
+
 ### `adaptive_shivers_sorter`
 
 ```cpp
@@ -36,9 +38,9 @@ While the sorting algorithm is stable and the complexity guarantees are good eno
 
 Implements a [Cartesian tree sort][cartesian-tree-sort], a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Heapsort - Adapted for Presorted Files*.
 
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Forward       |
+| Best        | Average           | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ----------------- | ----------- | ----------- | ----------- | ------------- |
+| n           | n log(Osc(X) / n) | n log n     | n           | No          | Forward       |
 
 ### `d_ary_heap_sorter`
 
@@ -95,7 +97,7 @@ Implements a [bottom-up heapsort][bottom-up-heapsort].
 #include <cpp-sort/sorters/insertion_sorter.h>
 ```
 
-Implements an [insertion sort][insertion-sort].
+Implements a [straight insertion sort][insertion-sort].
 
 | Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
@@ -120,16 +122,16 @@ Implements melsort, a rather slow but *Enc*-adaptive algorithm described by S. S
 
 *MEL* stands for *Merge Encroaching Lists*.
 
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Forward       |
+| Best        | Average      | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ------------ | ----------- | ----------- | ----------- | ------------- |
+| n           | n log Enc(X) | n log n     | n           | No          | Forward       |
 
 This sorter also has the following dedicated algorithms when used together with [`container_aware_adapter`][container-aware-adapter]:
 
-| Container           | Best        | Average     | Worst       | Memory      | Stable      |
-| ------------------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| `std::list`         | n           | n log n     | n log n     | n           | No          |
-| `std::forward_list` | n           | n log n     | n log n     | n           | No          |
+| Container           | Best        | Average      | Worst       | Memory      | Stable      |
+| ------------------- | ----------- | ------------ | ----------- | ----------- | ----------- |
+| `std::list`         | n           | n log Enc(X) | n log n     | n           | No          |
+| `std::forward_list` | n           | n log Enc(X) | n log n     | n           | No          |
 
 None of the container-aware algorithms invalidates iterators.
 
@@ -265,9 +267,9 @@ None of the container-aware algorithms invalidates iterators.
 
 Implements a variant of slabsort, a rather slow but highly adaptive algorithm described by C. Levcopoulos and O. Petersson in *Sorting Shuffled Monotone Sequences*.
 
-| Best        | Average     | Worst       | Memory      | Stable      | Iterators     |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
-| n           | n log n     | n log n     | n           | No          | Bidirectional |
+| Best        | Average      | Worst       | Memory      | Stable      | Iterators     |
+| ----------- | ------------ | ----------- | ----------- | ----------- | ------------- |
+| n           | n log SMS(X) | n log n     | n           | No          | Bidirectional |
 
 This algorithm actually uses a rather big amount of memory but scales better than other O(n log n) algorithms of the library described as "slow" when the collections get bigger.
 
@@ -464,6 +466,7 @@ struct spread_sorter:
   [insertion-sort]: https://en.wikipedia.org/wiki/Insertion_sort
   [introselect]: https://en.wikipedia.org/wiki/Introselect
   [issue-168]: https://github.com/Morwenn/cpp-sort/issues/168
+  [measures-of-disorder]: Measures-of-disorder.md
   [median-of-medians]: https://en.wikipedia.org/wiki/Median_of_medians
   [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort
   [pdq-sorter]: Sorters.md#pdq_sorter
