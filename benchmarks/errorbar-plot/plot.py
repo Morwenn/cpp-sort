@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2020-2021 Morwenn
+# Copyright (c) 2020-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 import argparse
+import itertools
 import pathlib
 import sys
 
@@ -35,7 +36,7 @@ def main():
                    '#f781bf', '#a65628', '#984ea3',
                    '#999999', '#e41a1c', '#dede00']
     colors = iter(palette)
-    markers = iter(['o', '^', 's', 'p', 'v', '*', 'H', 'X', 'd', 'P', '+'])
+    markers = itertools.cycle(['o', '^', 's', 'p', 'v', '*', 'H', 'X', 'd', 'P', '+'])
 
     ax = pyplot.gca()
 
@@ -50,7 +51,7 @@ def main():
         ax.errorbar(
             size,
             avg / 1000.0,
-            yerr=stddev / 1000.0, 
+            yerr=stddev / 1000.0,
             label=algo_name,
             color=next(colors),
             marker=next(markers)
