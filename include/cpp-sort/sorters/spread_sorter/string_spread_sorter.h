@@ -145,8 +145,8 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::ranges::greater compare, Projection projection={}) const
                 -> detail::enable_if_t<
-                    std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::string>
-                    || std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
+                    std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string>
+                    || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::string_view>
                 >
             {
                 static_assert(
@@ -170,8 +170,8 @@ namespace cppsort
             auto operator()(RandomAccessIterator first, RandomAccessIterator last,
                             std::ranges::greater compare, Projection projection={}) const
                 -> detail::enable_if_t<(
-                        std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
-                        || std::is_same_v_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
+                        std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring>
+                        || std::is_same_v<projected_t<RandomAccessIterator, Projection>, std::wstring_view>
                     ) && (sizeof(wchar_t) == 2)
                 >
             {
