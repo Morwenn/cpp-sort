@@ -4,6 +4,7 @@
  */
 #include <algorithm>
 #include <forward_list>
+#include <numeric>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <rapidcheck.h>
@@ -72,4 +73,14 @@ TEST_CASE( "measure of disorder: osc", "[probe][osc]" )
         std::reverse(sequence.begin(), sequence.end());
         return cppsort::probe::osc(sequence) == osc_x;
     });
+
+    SECTION( "Sorting and Measures of Disorder, Theorem 3.18" )
+    {
+        int size = 1000;
+
+        std::vector<int> vec(size, 0);
+        vec[0] = size - 1;
+        std::iota(vec.begin() + 1, vec.end(), 0);
+        CHECK( osc(vec) <= size );
+    }
 }

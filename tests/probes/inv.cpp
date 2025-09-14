@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
+#include <numeric>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/probes/inv.h>
@@ -33,5 +34,15 @@ TEST_CASE( "measure of disorder: inv", "[probe][inv]" )
         CHECK( max_n == 55 );
         CHECK( inv(li) == max_n );
         CHECK( inv(li.begin(), li.end()) == max_n );
+    }
+
+    SECTION( "Sorting and Measures of Disorder, Theorem 3.18" )
+    {
+        int size = 1000;
+
+        std::vector<int> vec(size, 0);
+        vec[0] = size - 1;
+        std::iota(vec.begin() + 1, vec.end(), 0);
+        CHECK( inv(vec) <= size );
     }
 }
