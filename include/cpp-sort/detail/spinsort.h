@@ -19,7 +19,7 @@
 #ifndef CPPSORT_DETAIL_SPINSORT_H_
 #define CPPSORT_DETAIL_SPINSORT_H_
 
-#include <cstddef>
+#include <iterator>
 #include <memory>
 #include <new>
 #include <type_traits>

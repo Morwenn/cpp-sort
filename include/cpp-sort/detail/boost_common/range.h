@@ -19,10 +19,7 @@
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_RANGE_H_
 
-#include <functional>
 #include <iterator>
-#include <memory>
-#include <vector>
 #include "util/merge.h"
 #include "../config.h"
 #include "../iterator_traits.h"

@@ -38,7 +38,6 @@
 #include <iterator>
 #include <memory>
 #include <new>
-#include <type_traits>
 #include <utility>
 #include <vector>
 #include <cpp-sort/utility/as_function.h>

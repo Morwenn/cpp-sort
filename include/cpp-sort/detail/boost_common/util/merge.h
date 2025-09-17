@@ -19,11 +19,8 @@
 #ifndef CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_
 #define CPPSORT_DETAIL_BOOST_COMMON_UTIL_MERGE_H_
 
-#include <algorithm>
-#include <functional>
+#include <cstddef>
 #include <iterator>
-#include <memory>
-#include <type_traits>
 #include <cpp-sort/utility/as_function.h>
 #include "../../buffered_inplace_merge.h"
 #include "../../config.h"

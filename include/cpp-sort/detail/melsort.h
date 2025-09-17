@@ -8,9 +8,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <algorithm>
 #include <cmath>
 #include <iterator>
 #include <vector>
+#include <utility>
 #include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
