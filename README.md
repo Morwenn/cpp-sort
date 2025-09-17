@@ -2,7 +2,7 @@
 
 [![Latest Release](https://img.shields.io/badge/release-1.17.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/1.17.0)
 [![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F1.17.0-blue.svg)](https://conan.io/center/recipes/cpp-sort?version=1.17.0)
-[![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
+[![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/2.x.y-develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 [![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
 
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
