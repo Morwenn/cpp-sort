@@ -117,15 +117,16 @@ page][benchmarks].
 
 # Compiler support & tooling
 
-![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/workflows/Ubuntu%20Builds/badge.svg?branch=develop)
-![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/MSVC%20Builds/badge.svg?branch=develop)
-![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
+![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-ubuntu.yml/badge.svg?branch=2.x.y-develop)
+![MSVC builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-msvc.yml/badge.svg?branch=2.x.y-develop)
+![MinGW-w64 builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-mingw.yml/badge.svg?branch=2.x.y-develop)
+![MacOS builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-macos.yml/badge.svg?branch=2.x.y-develop)
 
 **cpp-sort** requires C++17 support, and should work with the following compilers:
 * g++-9 or more recent.
 * clang++-11 or more recent (with both libstdc++ and libc++).
 * The versions of MinGW-w64 and AppleClang equivalent to the compilers mentioned above.
-* Visual Studio 2019 version 16.8.3 or more recent, only with `/permissive-`. A few features are unavailable.
+* Visual Studio 2022 version 17.14.36414.22 or more recent, only with `/permissive-`. A few features are unavailable.
 * clang-cl corresponding the the Visual Studio version above.
 
 The compilers listed above are the ones used by the CI pipeline, and the library is also tested
