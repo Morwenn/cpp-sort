@@ -375,7 +375,7 @@ auto m = get<foo_tag>(mm);
 
 ***WARNING:** this header is removed in version 3.0.0, use `mstd::distance` instead.*
 
-`size` is a function that can be used to get the size of a container. It is equivalent to the C++17 function [`std::size`][std-size] but has an additional tweak so that, if the container is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(cont), std::end(cont))` on the container. Therefore, this function can also be used for `std::forward_list` as well as some views.
+`size` is a function that can be used to get the size of a container. It is equivalent to [`std::size`][std-size] but has an additional tweak so that, if the container is not a fixed-size C array and doesn't have a `size` method, it calls `std::distance(std::begin(cont), std::end(cont))` on the container. Therefore, this function can also be used for `std::forward_list` as well as some views.
 
 ### `sorted_indices`
 

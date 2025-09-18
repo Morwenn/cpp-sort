@@ -170,7 +170,7 @@ namespace cppsort
     }
 
     ////////////////////////////////////////////////////////////
-    // C++17 std::not_fn equivalent
+    // std::not_fn equivalent
 
     template<typename F>
     constexpr auto not_fn(F&& func)

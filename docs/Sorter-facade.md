@@ -127,8 +127,6 @@ These overloads will generally forward the parameters to the corresponding `oper
 
 It will always call the most suitable range `operator()` overload in the wrapped *sorter implementation* if there is one, and dispatch the call to an overload taking a pair of iterators when it cannot do otherwise.
 
-*NOTE:* range overloads are marked as `constexpr` but rely on [`std::begin`][std-begin] and [`std::end`][std-end], which means that they can't actually be used in a `constexpr` context before C++17 (except for arrays).
-
 ### Projection support for comparison-only sorters
 
 Some *sorter implementations* are able to handle custom comparison functions but don't have any dedicated support for projections. If such an implementation is wrapped by `sorter_facade` and is given a projection function, `sorter_facade` will bake the projection into the comparison function and give the result to the *sorter implementation* as a comparison function. Basically it means that a *sorter implementation* with a single `operator()` taking a pair of iterators and a comparison function can take any range, pair of iterators, comparison and/or projection function once it is wrapped into `sorter_facade`.

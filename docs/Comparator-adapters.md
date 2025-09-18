@@ -56,7 +56,7 @@ constexpr auto base() const
 #include <cpp-sort/comparators/not_fn.h>
 ```
 
-The class template `not_fn_t` is roughly equivalent to the one returned by the C++17 [`std::not_fn`][std-not-fn], a function object which, when called, returns the negation of the *Callable* it holds.
+The class template `not_fn_t` is roughly equivalent to the one returned by [`std::not_fn`][std-not-fn], a function object which, when called, returns the negation of the *Callable* it holds.
 
 `not_fn_t<F>` has the following member functions:
 
