@@ -241,28 +241,14 @@ namespace cppsort::detail
     // list
 
     template<typename Needle, typename... Haystack>
-    struct index_of_impl;
-
-    template<typename Needle>
-    struct index_of_impl<Needle>
-    {
-        static constexpr int value = -1;
-    };
+    inline constexpr int index_of = -1;
 
     template<typename Needle, typename... Tail>
-    struct index_of_impl<Needle, Needle, Tail...>
-    {
-        static constexpr int value = 0;
-    };
+    inline constexpr int index_of<Needle, Needle, Tail...> = 0;
 
     template<typename Needle, typename Head, typename... Tail>
-    struct index_of_impl<Needle, Head, Tail...>
-    {
-        static constexpr int value = index_of_impl<Needle, Tail...>::value + 1;
-    };
-
-    template<typename Needle, typename... Haystack>
-    constexpr int index_of = index_of_impl<Needle, Haystack...>::value;
+    inline constexpr int index_of<Needle, Head, Tail...>
+        = index_of<Needle, Tail...> + 1;
 }
 
 #endif // CPPSORT_DETAIL_TYPE_TRAITS_H_
