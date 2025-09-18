@@ -20,7 +20,6 @@
 #include "../detail/bitops.h"
 #include "../detail/empty_sorter.h"
 #include "../detail/iterator_traits.h"
-#include "../detail/make_array.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort
@@ -65,7 +64,7 @@ namespace cppsort
                 constexpr DifferenceType n = N;
                 constexpr DifferenceType nb_pairs = odd_even_merge_pairs_number(n);
 
-                utility::index_pair<DifferenceType> pairs[nb_pairs] = {};
+                std::array<utility::index_pair<DifferenceType>, nb_pairs> pairs = {};
                 std::size_t current_pair_idx = 0;
 
                 for (DifferenceType p = 1; p < n; p *= 2) {
@@ -81,7 +80,7 @@ namespace cppsort
                     }
                 }
 
-                return cppsort::detail::make_array(pairs);
+                return pairs;
             }
 
             template<
