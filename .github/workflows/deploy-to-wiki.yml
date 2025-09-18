@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2024 Morwenn
+# Copyright (c) 2020-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Wiki Deployment
@@ -6,7 +6,7 @@ name: Wiki Deployment
 on:
   push:
     branches:
-      - 1.x.y-stable
+      - 2.x.y-stable
     paths:
       - 'docs/**'
 

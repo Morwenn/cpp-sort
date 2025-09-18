@@ -411,7 +411,7 @@ The library also contains another stability-related type trait, [`is_stable`][is
 
 ## Stateful sorters
 
-To date (version 1.5.0), every *sorter* provided by **cpp-sort** is a *stateless sorter*, which means that it is an empty type which does not carry any state between construction and subsequent invocations. However, the library is also designed to handle *stateful sorters*: those are sorters which might not be empty and which might carry a state that can change between invocations (even though the invocation itself isn't allowed to change the state as per Rule 1.4).
+To date (version 2.0.0), every *sorter* provided by **cpp-sort** is a *stateless sorter*, which means that it is an empty type which does not carry any state between construction and subsequent invocations. However, the library is also designed to handle *stateful sorters*: those are sorters which might not be empty and which might carry a state that can change between invocations (even though the invocation itself isn't allowed to change the state as per Rule 1.4).
 
 There are no specific rules to differentiate the way *stateful* and *stateless sorters* are written, but the distinction matters because specific components of the library will act differently when exposed to a *stateful* or *stateless* sorter:
 * `sorter_facade` only provides conversions to different kinds of function pointers when the *sorter implementation* is empty (stateless) and default-constructible.

@@ -4,7 +4,7 @@ TODO: description of the new version
 
 TODO
 
-Deprecated components will be removed in cpp-sort 2.0.0.
+Deprecated components will be removed in cpp-sort 3.0.0.
 
 Deprecation warnings can be disabled by defining the preprocessor macro [`CPPSORT_DISABLE_DEPRECATION_WARNINGS`][deprecation-warnings].
 

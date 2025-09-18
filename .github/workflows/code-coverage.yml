@@ -6,9 +6,8 @@ name: Coverage Upload to Codecov
 on:
   push:
     branches:
-      - 1.x.y-develop
-      - 1.x.y-stable
       - 2.x.y-develop
+      - 2.x.y-stable
     paths:
       - '.github/workflows/code-coverage.yml'
       - '.github/.codecov.yml'

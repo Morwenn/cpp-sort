@@ -33,6 +33,10 @@ int main()
 }
 ```
 
+_Note: older versions of the library targeting C++14 are still available in the `1.x.y-develop`
+and `1.x.y-stable`, but they are not actively developed anymore. Open an issue if you need
+anything to be backported._
+
 # The main features & the extra features
 
 **cpp-sort** provides a full set of sorting-related features. Here are the main building blocks
