@@ -23,7 +23,7 @@ target_link_libraries(my-target PRIVATE cpp-sort::cpp-sort)
 ### Building cpp-sort
 
 The project's CMake files offers some options, though they are mainly used to configure the test suite and examples:
-* `CPPSORT_BUILD_TESTING`: whether to build the test suite, defaults to `ON`.
+* `CPPSORT_BUILD_TESTING`: whether to build the test suite, defaults to the value of [`BUILD_TESTING`][cmake-build-testing].
 * `CPPSORT_BUILD_EXAMPLES`: whether to build the examples, defaults to `OFF`.
 * `CPPSORT_ENABLE_COVERAGE`: whether to produce code coverage information when building the test suite, defaults to `OFF`.
 * `CPPSORT_USE_VALGRIND`: whether to run the test suite through Valgrind, defaults to `OFF`.
@@ -69,6 +69,7 @@ Due to slight markup differences, some pages might not fully render correctly bu
   [assertions-and-audits]: Home.md#assertions--audits
   [catch2]: https://github.com/catchorg/Catch2
   [cmake]: https://cmake.org/
+  [cmake-build-testing]: https://cmake.org/cmake/help/latest/variable/BUILD_TESTING.html
   [conan]: https://conan.io/
   [conan-center]: https://conan.io/center/recipes/cpp-sort
   [gollum]: https://github.com/gollum/gollum

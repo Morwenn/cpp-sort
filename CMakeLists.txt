@@ -11,7 +11,7 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # Project options
-option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ON)
+option(CPPSORT_BUILD_TESTING "Build the cpp-sort test suite" ${BUILD_TESTING})
 option(CPPSORT_BUILD_EXAMPLES "Build the cpp-sort examples" OFF)
 option(CPPSORT_ENABLE_AUDITS "Enable assertions in the library" OFF)
 option(CPPSORT_ENABLE_ASSERTIONS "Enable assertions in the library" ${CPPSORT_ENABLE_AUDITS})
