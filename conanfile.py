@@ -37,7 +37,7 @@ class CppSortConan(ConanFile):
 
     def validate(self):
         if self.settings.get_safe("compiler.cppstd"):
-            check_min_cppstd(self, 14)
+            check_min_cppstd(self, 17)
 
     def layout(self):
         cmake_layout(self)
