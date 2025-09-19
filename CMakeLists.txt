@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.11.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.17.0 LANGUAGES CXX)
+project(cpp-sort VERSION 2.0.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
