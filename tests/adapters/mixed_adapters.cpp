@@ -247,7 +247,7 @@ TEST_CASE( "stable_t<hybrid_adapter>", "[stable_adapter][hybrid_adapter]" )
     >;
     using stable_sorter_t = cppsort::stable_t<sorter_t>;
 
-    sorter_t sorter;
+    sorter_t sorter{};
     stable_sorter_t stable_sorter(std::move(sorter));
 
     std::list<int> li;
