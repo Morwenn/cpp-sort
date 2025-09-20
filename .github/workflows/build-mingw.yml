@@ -40,6 +40,7 @@ jobs:
           cmake -H${{github.event.repository.name}} -Bbuild `
                 -DCMAKE_BUILD_TYPE=${{matrix.build_type}} `
                 -G"MinGW Makefiles" `
+                -DCPPSORT_BUILD_TESTING=ON `
                 -DCPPSORT_BUILD_EXAMPLES=ON
 
       - name: Build the test suite

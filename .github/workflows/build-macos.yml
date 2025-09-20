@@ -49,6 +49,7 @@ jobs:
           export CXX=${{matrix.config.cxx}}
           cmake -H${{github.event.repository.name}} -Bbuild \
                 -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}} \
+                -DCPPSORT_BUILD_TESTING=ON \
                 -DCPPSORT_SANITIZE=${{matrix.config.sanitize}} \
                 -DCPPSORT_BUILD_EXAMPLES=ON
 

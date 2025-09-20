@@ -34,6 +34,7 @@ jobs:
         run: >
           cmake -S ${{github.event.repository.name}} -B build
           -DCMAKE_BUILD_TYPE=Debug
+          -DCPPSORT_BUILD_TESTING=ON
           -DCPPSORT_ENABLE_COVERAGE=ON
           -DGENINFO_EXTRA_FLAGS="--ignore-errors mismatch,mismatch"
           -DLCOV_EXTRA_FLAGS="--ignore-errors unused"
