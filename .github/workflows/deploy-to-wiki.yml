@@ -9,6 +9,7 @@ on:
       - 2.x.y-stable
     paths:
       - 'docs/**'
+  workflow_dispatch:
 
 jobs:
   sync-wiki-files:
