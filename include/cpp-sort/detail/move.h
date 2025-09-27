@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Morwenn
+ * Copyright (c) 2019-2025 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_MOVE_H_
@@ -102,8 +102,9 @@ namespace detail
         -> T*
     {
         using truth_type = std::integral_constant<bool,
-            std::is_trivial<value_type_t<InputIterator>>::value &&
-            std::is_trivial<T>::value
+            std::is_trivially_copyable<value_type_t<InputIterator>>::value &&
+            std::is_trivially_copyable<T>::value &&
+            sizeof(T) == sizeof(value_type_t<InputIterator>)
         >;
         return uninitialized_move_impl(truth_type{}, std::move(first), std::move(last),
                                        std::move(result), destroyer);
