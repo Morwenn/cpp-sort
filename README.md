@@ -117,9 +117,10 @@ page][benchmarks].
 
 # Compiler support & tooling
 
-![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/workflows/Ubuntu%20Builds/badge.svg?branch=develop)
-![Windows builds status](https://github.com/Morwenn/cpp-sort/workflows/MSVC%20Builds/badge.svg?branch=develop)
-![MacOS builds status](https://github.com/Morwenn/cpp-sort/workflows/MacOS%20Builds/badge.svg?branch=develop)
+![Ubuntu builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-ubuntu.yml/badge.svg?branch=1.x.y-develop)
+![MSVC builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-msvc.yml/badge.svg?branch=1.x.y-develop)
+![MinGW-w64 builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-mingw.yml/badge.svg?branch=1.x.y-develop)
+![MacOS builds status](https://github.com/Morwenn/cpp-sort/actions/workflows/build-macos.yml/badge.svg?branch=1.x.y-develop)
 
 **cpp-sort** requires C++14 support, and should work with the following compilers:
 * g++-9 or more recent.
