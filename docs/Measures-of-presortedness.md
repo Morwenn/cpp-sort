@@ -235,7 +235,7 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 
 When there isn't enough extra memory available, `probe::osc` falls back to an in-place O(n²) algorithm.
 
-`max_for_size`: (|*X*| * (|*X*| - 2) - 1) / 2 when the values in *X* are strongly oscillating.
+`max_for_size`: it is reached when the values in $X$ are strongly oscillating, and equals $\frac{|X|(|X| - 2)}{2}$ when $|X|$ is even, and $\frac{|X|(|X| - 2) - 1}{2}$ when $|X|$ is odd.
 
 **Note:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 2, 4, 1, 3, 1, 3 \rangle) \not \le |\langle 4, 1, 3, 1, 3 \rangle| + Osc(\langle 4, 1, 3, 1, 3 \rangle)$, though it is possible that it only happens when equivalent elements are involved.
 
@@ -303,7 +303,7 @@ Spearman's footrule distance: sum of distances between the position of individua
 #include <cpp-sort/probes/sus.h>
 ```
 
-Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of *X*.
+Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which *X* can be partitioned, minus 1. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of *X* minus 1.
 
 *SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
 

@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.17.0 LANGUAGES CXX)
+project(cpp-sort VERSION 1.17.1 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -24,7 +24,7 @@ if (CPPSORT_USE_LIBASSERT)
     include(DownloadProject)
     download_project(PROJ libassert
                      GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
-                     GIT_TAG 634f50fb4086d377ad9a2f83d693d2e8fe4972a7  # v2.1.4
+                     GIT_TAG bd33ba116f209bf71761c58dccc2f3bf277e0824  # v2.2.1
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})

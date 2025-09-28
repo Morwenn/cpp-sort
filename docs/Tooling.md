@@ -63,10 +63,10 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 conan search cpp-sort --remote=conancenter
 ```
 
-And then install any version to your local cache as follows (here with version 1.17.0):
+And then install any version to your local cache as follows (here with version 1.17.1):
 
 ```sh
-conan install --requires=cpp-sort/1.17.0
+conan install --requires=cpp-sort/1.17.1
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to create your own package with the `conanfile.py` available in this repository.
@@ -78,7 +78,7 @@ The packages downloaded from conan-center are minimal and only contain the files
 [Gollum][gollum], if installed, can be used to browse this documentation offline:
 
 1. Navigate to the main `cpp-sort` directory in the command line
-2. `gollum --page-file-dir docs --ref <branch-name>`
+2. `gollum --page-file-dir docs --ref <branch-name> --math katex`
 3. Visit http://localhost:4567/Home
 
 This can notably used to browse old versions of the documentation. It seems however that `--ref` doesn't understand Git tags, so you have to create a proper branch from the version tag you want to browse beforehand.

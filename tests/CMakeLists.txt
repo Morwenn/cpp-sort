@@ -27,7 +27,7 @@ else()
     message(STATUS "Catch2 not found")
     download_project(PROJ Catch2
                      GIT_REPOSITORY https://github.com/catchorg/Catch2
-                     GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b  # v3.8.1
+                     GIT_TAG 25319fd3047c6bdcf3c0170e76fa526c77f99ca9  # v3.10.0
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
@@ -208,6 +208,7 @@ add_executable(main-tests
     distributions/ascending.cpp
     distributions/ascending_sawtooth.cpp
     distributions/descending.cpp
+    distributions/descending_plateau.cpp
     distributions/descending_sawtooth.cpp
     distributions/median_of_3_killer.cpp
     distributions/pipe_organ.cpp

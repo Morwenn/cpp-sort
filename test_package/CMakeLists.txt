@@ -1,7 +1,7 @@
-# Copyright (c) 2018-2023 Morwenn
+# Copyright (c) 2018-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.5.0)
 
 project(test_package LANGUAGES CXX)
 
