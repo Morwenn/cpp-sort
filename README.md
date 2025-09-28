@@ -5,6 +5,9 @@
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 [![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
 
+> [!WARNING]
+> **Branch 1.x.y of this library is now in maintenance-only mode: bug fixes might happen and lead to patch versions, but new development will now exclusively happen in branch 2.x.y, which requires at least C++17.**
+
 > *It would be nice if only one or two of the sorting methods would dominate all of the others,
 > regardless of application or the computer being used. But in fact, each method has its own
 > peculiar virtues. [...] Thus we find that nearly all of the algorithms deserve to be remembered,
