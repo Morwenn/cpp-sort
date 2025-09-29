@@ -92,7 +92,7 @@ namespace cppsort::probe
                 while (j <= i && not comp(proj(*lr_cummax[j - 1]), proj(*rl_min_it))
                        && (j == 1 || not comp(proj(*rl_min_it), proj(*lr_cummax[j - 2])))) {
                     // Compute the next value of DM
-                    res = std::max(res, i - j);
+                    res = (std::max)(res, i - j);
                     // Compute the next value of RL
                     if (--i <= res) {
                         return res;
