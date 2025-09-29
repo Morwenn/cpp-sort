@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022 Morwenn
+ * Copyright (c) 2015-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 
@@ -471,7 +471,7 @@ namespace grail
         auto&& proj = utility::as_function(projection);
         auto size = last - first;
 
-        auto kbuf = std::min(K, LExtBuf);
+        auto kbuf = (std::min)(K, LExtBuf);
         while (kbuf & (kbuf - 1)) {
             kbuf &= kbuf - 1;  // max power or 2 - just in case
         }
