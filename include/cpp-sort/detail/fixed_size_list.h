@@ -175,6 +175,7 @@ namespace cppsort::detail
 
             [[nodiscard]]
             auto next_free_node() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> node_type*
             {
                 // Retrieve next free node
@@ -487,6 +488,7 @@ namespace cppsort::detail
 
             [[nodiscard]]
             auto front() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> reference
             {
                 return static_cast<node_type*>(sentinel_node_.next)->value;
@@ -494,6 +496,7 @@ namespace cppsort::detail
 
             [[nodiscard]]
             auto back() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> reference
             {
                 return static_cast<node_type*>(sentinel_node_.prev)->value;
@@ -511,6 +514,7 @@ namespace cppsort::detail
 
             [[nodiscard]]
             auto begin() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> iterator
             {
                 return iterator(sentinel_node_.next);
@@ -518,6 +522,7 @@ namespace cppsort::detail
 
             [[nodiscard]]
             auto end() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> iterator
             {
                 return iterator(&sentinel_node_);
@@ -537,12 +542,14 @@ namespace cppsort::detail
             // Modifiers
 
             auto insert(iterator pos, const value_type& value)
+                CPPSORT_LIFETIME_BOUND
                 -> iterator
             {
                 return iterator(insert_node_(pos.base(), value));
             }
 
             auto insert(iterator pos, value_type&& value)
+                CPPSORT_LIFETIME_BOUND
                 -> iterator
             {
                 return iterator(insert_node_(pos.base(), std::move(value)));
@@ -781,6 +788,7 @@ namespace cppsort::detail
             // Helper functions
 
             auto insert_node_(list_node_base* pos, const value_type& value)
+                CPPSORT_LIFETIME_BOUND
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
@@ -790,6 +798,7 @@ namespace cppsort::detail
             }
 
             auto insert_node_(list_node_base* pos, value_type&& value)
+                CPPSORT_LIFETIME_BOUND
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();
@@ -800,6 +809,7 @@ namespace cppsort::detail
 
             template<typename Callable>
             auto insert_node_(list_node_base* pos, Callable setter)
+                CPPSORT_LIFETIME_BOUND
                 -> node_type*
             {
                 node_type* new_node = node_pool_->next_free_node();

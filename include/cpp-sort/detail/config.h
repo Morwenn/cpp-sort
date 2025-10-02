@@ -142,4 +142,19 @@
 #   endif
 #endif
 
+////////////////////////////////////////////////////////////
+// CPPSORT_LIFETIME_BOUND
+
+#ifdef __has_cpp_attribute
+#   if __has_cpp_attribute(clang::lifetimebound)
+#       define CPPSORT_LIFETIME_BOUND [[clang::lifetimebound]]
+#   elif __has_cpp_attribute(msvc::lifetimebound)
+#       define CPPSORT_LIFETIME_BOUND [[msvc::lifetimebound]]
+#   else
+#       define CPPSORT_LIFETIME_BOUND
+#   endif
+#else
+#   define CPPSORT_LIFETIME_BOUND
+#endif
+
 #endif // CPPSORT_DETAIL_CONFIG_H_

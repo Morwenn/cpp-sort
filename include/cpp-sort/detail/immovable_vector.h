@@ -71,6 +71,7 @@ namespace cppsort::detail
             // Element access
 
             auto operator[](std::ptrdiff_t pos) noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> T&
             {
                 CPPSORT_ASSERT(pos <= end_ - memory_);
@@ -78,6 +79,7 @@ namespace cppsort::detail
             }
 
             auto front() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> T&
             {
                 CPPSORT_ASSERT(memory_ != end_);
@@ -85,6 +87,7 @@ namespace cppsort::detail
             }
 
             auto back() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> T&
             {
                 CPPSORT_ASSERT(end_ - memory_ > 0);
@@ -95,12 +98,14 @@ namespace cppsort::detail
             // Iterators
 
             auto begin() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> T*
             {
                 return memory_;
             }
 
             auto end() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> T*
             {
                 return end_;
@@ -121,6 +126,7 @@ namespace cppsort::detail
 
             template<typename... Args>
             auto emplace_back(Args&&... args)
+                CPPSORT_LIFETIME_BOUND
                 -> T*
             {
                 CPPSORT_ASSERT(end_ - memory_ < capacity_);
