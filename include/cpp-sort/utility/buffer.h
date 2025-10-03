@@ -11,6 +11,7 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include "../detail/config.h"
 
 namespace cppsort::utility
 {
@@ -39,48 +40,56 @@ namespace cppsort::utility
                 }
 
                 constexpr auto operator[](std::size_t pos)
+                    CPPSORT_LIFETIME_BOUND
                     -> typename std::array<T, N>::reference
                 {
                     return _memory[pos];
                 }
 
                 constexpr auto operator[](std::size_t pos) const
+                    CPPSORT_LIFETIME_BOUND
                     -> typename std::array<T, N>::const_reference
                 {
                     return _memory[pos];
                 }
 
                 constexpr auto begin()
+                    CPPSORT_LIFETIME_BOUND
                     -> T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto begin() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto cbegin() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto end()
+                    CPPSORT_LIFETIME_BOUND
                     -> T*
                 {
                     return _memory.data() + _memory.size();
                 }
 
                 constexpr auto end() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.data() + _memory.size();
                 }
 
                 constexpr auto cend() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.data() + _memory.size();
@@ -193,48 +202,56 @@ namespace cppsort::utility
                 }
 
                 auto operator[](std::size_t pos)
+                    CPPSORT_LIFETIME_BOUND
                     -> T&
                 {
                     return _memory[pos];
                 }
 
                 auto operator[](std::size_t pos) const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T&
                 {
                     return _memory[pos];
                 }
 
                 auto begin()
+                    CPPSORT_LIFETIME_BOUND
                     -> T*
                 {
                     return _memory.get();
                 }
 
                 auto begin() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.get();
                 }
 
                 auto cbegin() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.get();
                 }
 
                 auto end()
+                    CPPSORT_LIFETIME_BOUND
                     -> T*
                 {
                     return _memory.get() + size();
                 }
 
                 auto end() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.get() + size();
                 }
 
                 auto cend() const
+                    CPPSORT_LIFETIME_BOUND
                     -> const T*
                 {
                     return _memory.get() + size();
