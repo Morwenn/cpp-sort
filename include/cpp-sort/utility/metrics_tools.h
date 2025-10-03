@@ -12,6 +12,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include "../detail/config.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort::utility
@@ -70,6 +71,7 @@ namespace cppsort::utility
 
             constexpr auto operator=(const T& other)
                 noexcept(std::is_nothrow_copy_assignable_v<T>)
+                CPPSORT_LIFETIME_BOUND
                 -> metric&
             {
                 _value = other;
@@ -78,6 +80,7 @@ namespace cppsort::utility
 
             constexpr auto operator=(T&& other)
                 noexcept(std::is_nothrow_move_assignable_v<T>)
+                CPPSORT_LIFETIME_BOUND
                 -> metric&
             {
                 _value = std::move(other);
@@ -87,6 +90,7 @@ namespace cppsort::utility
             template<typename U>
             constexpr auto operator=(const metric<U, Tag>& other)
                 noexcept(std::is_nothrow_assignable_v<T&, const U&>)
+                CPPSORT_LIFETIME_BOUND
                 -> metric&
             {
                 _value = other._value;
@@ -96,6 +100,7 @@ namespace cppsort::utility
             template<typename U>
             constexpr auto operator=(metric<U, Tag>&& other)
                 noexcept(std::is_nothrow_assignable_v<T&, U>)
+                CPPSORT_LIFETIME_BOUND
                 -> metric&
             {
                 _value = std::move(other._value);
@@ -271,28 +276,28 @@ namespace cppsort::utility
             // Index-based get()
 
             template<std::size_t Idx>
-            friend constexpr auto get(metrics& mm)
+            friend constexpr auto get(metrics& mm CPPSORT_LIFETIME_BOUND)
                 -> std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&
             {
                 return std::get<Idx>(mm.metrics_);
             }
 
             template<std::size_t Idx>
-            friend constexpr auto get(const metrics& mm)
+            friend constexpr auto get(const metrics& mm CPPSORT_LIFETIME_BOUND)
                 -> const std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&
             {
                 return std::get<Idx>(mm.metrics_);
             }
 
             template<std::size_t Idx>
-            friend constexpr auto get(metrics&& mm)
+            friend constexpr auto get(metrics&& mm CPPSORT_LIFETIME_BOUND)
                 -> std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&&
             {
                 return std::get<Idx>(std::move(mm).metrics_);
             }
 
             template<std::size_t Idx>
-            friend constexpr auto get(const metrics&& mm)
+            friend constexpr auto get(const metrics&& mm CPPSORT_LIFETIME_BOUND)
                 -> const std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&&
             {
                 return std::get<Idx>(std::move(mm).metrics_);
@@ -302,28 +307,28 @@ namespace cppsort::utility
             // Tag-based get()
 
             template<typename Tag, std::size_t Idx=cppsort::detail::index_of<Tag, Tags...>>
-            friend constexpr auto get(metrics& mm)
+            friend constexpr auto get(metrics& mm CPPSORT_LIFETIME_BOUND)
                 -> std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&
             {
                 return std::get<Idx>(mm.metrics_);
             }
 
             template<typename Tag, std::size_t Idx=cppsort::detail::index_of<Tag, Tags...>>
-            friend constexpr auto get(const metrics& mm)
+            friend constexpr auto get(const metrics& mm CPPSORT_LIFETIME_BOUND)
                 -> const std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&
             {
                 return std::get<Idx>(mm.metrics_);
             }
 
             template<typename Tag, std::size_t Idx=cppsort::detail::index_of<Tag, Tags...>>
-            friend constexpr auto get(metrics&& mm)
+            friend constexpr auto get(metrics&& mm CPPSORT_LIFETIME_BOUND)
                 -> std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&&
             {
                 return std::get<Idx>(std::move(mm).metrics_);
             }
 
             template<typename Tag, std::size_t Idx=cppsort::detail::index_of<Tag, Tags...>>
-            friend constexpr auto get(const metrics&& mm)
+            friend constexpr auto get(const metrics&& mm CPPSORT_LIFETIME_BOUND)
                 -> const std::tuple_element_t<Idx, std::tuple<metric<TT, Tags>...>>&&
             {
                 return std::get<Idx>(std::move(mm).metrics_);
