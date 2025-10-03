@@ -39,49 +39,49 @@ namespace cppsort::utility
                 }
 
                 constexpr auto operator[](std::size_t pos)
-                    -> decltype(_memory[pos])
+                    -> typename std::array<T, N>::reference
                 {
                     return _memory[pos];
                 }
 
                 constexpr auto operator[](std::size_t pos) const
-                    -> decltype(_memory[pos])
+                    -> typename std::array<T, N>::const_reference
                 {
                     return _memory[pos];
                 }
 
                 constexpr auto begin()
-                    -> decltype(_memory.data())
+                    -> T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto begin() const
-                    -> decltype(_memory.data())
+                    -> const T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto cbegin() const
-                    -> decltype(_memory.data())
+                    -> const T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto end()
-                    -> decltype(_memory.data() + _memory.size())
+                    -> T*
                 {
                     return _memory.data() + _memory.size();
                 }
 
                 constexpr auto end() const
-                    -> decltype(_memory.data() + _memory.size())
+                    -> const T*
                 {
                     return _memory.data() + _memory.size();
                 }
 
                 constexpr auto cend() const
-                    -> decltype(_memory.data() + _memory.size())
+                    -> const T*
                 {
                     return _memory.data() + _memory.size();
                 }
@@ -193,49 +193,49 @@ namespace cppsort::utility
                 }
 
                 auto operator[](std::size_t pos)
-                    -> decltype(_memory[pos])
+                    -> T&
                 {
                     return _memory[pos];
                 }
 
                 auto operator[](std::size_t pos) const
-                    -> decltype(_memory[pos])
+                    -> const T&
                 {
                     return _memory[pos];
                 }
 
                 auto begin()
-                    -> decltype(_memory.get())
+                    -> T*
                 {
                     return _memory.get();
                 }
 
                 auto begin() const
-                    -> decltype(_memory.get())
+                    -> const T*
                 {
                     return _memory.get();
                 }
 
                 auto cbegin() const
-                    -> decltype(_memory.get())
+                    -> const T*
                 {
                     return _memory.get();
                 }
 
                 auto end()
-                    -> decltype(_memory.get() + size())
+                    -> T*
                 {
                     return _memory.get() + size();
                 }
 
                 auto end() const
-                    -> decltype(_memory.get() + size())
+                    -> const T*
                 {
                     return _memory.get() + size();
                 }
 
                 auto cend() const
-                    -> decltype(_memory.get() + size())
+                    -> const T*
                 {
                     return _memory.get() + size();
                 }
