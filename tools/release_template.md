@@ -14,6 +14,11 @@ TODO 1
 
 TODO 2
 
+### Bug fixes
+
+* TODO: bug fix 1
+* TODO: bug fix 2
+
 ### Improvements
 
 Algorithmic & speed improvements:
