@@ -231,7 +231,7 @@ namespace cppsort::utility
             // Stream operators
 
             template<typename U=T>
-            friend auto operator<<(std::ostream& stream, const metric& met)
+            friend auto operator<<(std::ostream& stream CPPSORT_LIFETIME_BOUND, const metric& met)
                 -> decltype(stream << std::declval<U&>())
             {
                 stream << met.value();

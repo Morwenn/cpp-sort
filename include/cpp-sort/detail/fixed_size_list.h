@@ -308,6 +308,7 @@ namespace cppsort::detail
             // Increment/decrement operators
 
             auto operator++() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> fixed_size_list_iterator&
             {
                 ptr_ = ptr_->next;
@@ -323,6 +324,7 @@ namespace cppsort::detail
             }
 
             auto operator--() noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> fixed_size_list_iterator&
             {
                 ptr_ = ptr_->prev;

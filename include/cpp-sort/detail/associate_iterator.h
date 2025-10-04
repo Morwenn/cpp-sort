@@ -11,6 +11,7 @@
 #include <iterator>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "iterator_traits.h"
 
 namespace cppsort::detail
@@ -62,6 +63,7 @@ namespace cppsort::detail
         {}
 
         auto operator=(association&& other) noexcept
+            CPPSORT_LIFETIME_BOUND
             -> association&
         {
             *it = std::move(*other.it);
@@ -70,6 +72,7 @@ namespace cppsort::detail
         }
 
         auto operator=(associated_value<value_type_t<Iterator>, Data>&& other)
+            CPPSORT_LIFETIME_BOUND
             -> association&
         {
             *it = std::move(other.value);
@@ -124,6 +127,7 @@ namespace cppsort::detail
         {}
 
         auto operator=(associated_value&& other)
+            CPPSORT_LIFETIME_BOUND
             -> associated_value&
         {
             value = std::move(other.value);
@@ -133,6 +137,7 @@ namespace cppsort::detail
 
         [[nodiscard]]
         auto get()
+            CPPSORT_LIFETIME_BOUND
             -> Value&
         {
             return value;
@@ -140,6 +145,7 @@ namespace cppsort::detail
 
         [[nodiscard]]
         auto get() const
+            CPPSORT_LIFETIME_BOUND
             -> const Value&
         {
             return value;
@@ -207,6 +213,7 @@ namespace cppsort::detail
             // Increment/decrement operators
 
             auto operator++()
+                CPPSORT_LIFETIME_BOUND
                 -> associate_iterator&
             {
                 ++_it;
@@ -214,6 +221,7 @@ namespace cppsort::detail
             }
 
             auto operator--()
+                CPPSORT_LIFETIME_BOUND
                 -> associate_iterator&
             {
                 --_it;
@@ -221,6 +229,7 @@ namespace cppsort::detail
             }
 
             auto operator+=(difference_type increment)
+                CPPSORT_LIFETIME_BOUND
                 -> associate_iterator&
             {
                 _it += increment;
@@ -228,6 +237,7 @@ namespace cppsort::detail
             }
 
             auto operator-=(difference_type increment)
+                CPPSORT_LIFETIME_BOUND
                 -> associate_iterator&
             {
                 _it -= increment;

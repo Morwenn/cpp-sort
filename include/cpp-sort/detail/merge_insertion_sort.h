@@ -13,6 +13,7 @@
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "fixed_size_list.h"
 #include "immovable_vector.h"
 #include "iterator_traits.h"
@@ -90,6 +91,7 @@ namespace cppsort::detail
             // Increment/decrement operators
 
             auto operator++()
+                CPPSORT_LIFETIME_BOUND
                 -> group_iterator&
             {
                 std::advance(_it, _size);
@@ -97,6 +99,7 @@ namespace cppsort::detail
             }
 
             auto operator--()
+                CPPSORT_LIFETIME_BOUND
                 -> group_iterator&
             {
                 std::advance(_it, -_size);
@@ -104,6 +107,7 @@ namespace cppsort::detail
             }
 
             auto operator+=(difference_type increment)
+                CPPSORT_LIFETIME_BOUND
                 -> group_iterator&
             {
                 _it += _size * increment;
@@ -111,6 +115,7 @@ namespace cppsort::detail
             }
 
             auto operator-=(difference_type increment)
+                CPPSORT_LIFETIME_BOUND
                 -> group_iterator&
             {
                 _it -= _size * increment;
