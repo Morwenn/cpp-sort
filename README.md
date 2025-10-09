@@ -229,6 +229,9 @@ discussion](https://stackoverflow.com/q/2786899/1364752) on StackOverflow and ar
 backed by the article [*Applying Sorting Networks to Synthesize Optimized Sorting
 Libraries*](https://arxiv.org/abs/1505.01962).
 
+* The algorithm behind `utility::quicksort_adversary` is a fairly straightforward adaptation of the
+one provided by M. D. McIlroy in [*A Killer Adversary for Quicksort*](https://www.cs.dartmouth.edu/~doug/mdmspe.pdf).
+
 * The test suite reimplements random number algorithms originally found in the following places:
   - [xoshiro256\*\*](https://prng.di.unimi.it/)
   - [*Optimal Discrete Uniform Generation from Coin Flips, and Applications*](https://arxiv.org/abs/1304.1916)

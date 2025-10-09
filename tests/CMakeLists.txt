@@ -266,6 +266,7 @@ add_executable(main-tests
     utility/chainable_projections.cpp
     utility/iter_swap.cpp
     utility/metric_tools.cpp
+    utility/quicksort_adversary.cpp
     utility/sorted_indices.cpp
     utility/sorted_iterators.cpp
     utility/sorting_networks.cpp

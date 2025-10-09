@@ -367,6 +367,31 @@ auto m = get<foo_tag>(mm);
 
 `utility::metrics` is still mostly experimental and unused in the rest of the library. As such this documentation is voluntarily thin.
 
+### `quicksort_adversary`
+
+```cpp
+#include <cpp-sort/utility/quicksort_adversary.h>
+```
+
+`utility::quicksort_adversary` is a function template that implements an algorithm described by M. D. McIlroy in [*A Killer Adversary for Quicksort*][quicksort-adversary], which attempts to trigger the quadratic case of many quicksort implementations by trying to guess the pivot and forcing the testing comparison to perform a certain set of comparisons.
+
+```cpp
+template<typename Sorter, typename Integer>
+auto quicksort_adversary(Sorter&& sorter, Integer size);
+```
+
+The function accepts a sorter to test, and a parameter corresponding to the size of the input for which we wish to test the sorter. It then instantiates a collection of `size` elements of `Integer` type that it passes to `sorter`, and returns the result of the operation. It additionally passes a custom comparison function to `sorter`, which means that it only works with *comparison sorters*.
+
+It can be used together with [`metrics::comparisons`][metrics-comparisons] or some other metrics to analyze the number of operations performed, and attempt to detect quadratic behavior in quicksort-like sorters:
+
+```cpp
+auto sorter = cppsort::metrics::comparisons(cppsort::quick_sort);
+auto comps = cppsort::utility::quicksort_adversary(sorter, 1000);
+std::print("Comparisons: {}", comps.value());
+```
+
+*New in version 2.1.0*
+
 ### `size`
 
 ```cpp
@@ -474,9 +499,11 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
   [fixed-size-sorters]: Fixed-size-sorters.md
   [is-stable]: Sorter-traits.md#is_stable
   [metrics]: Metrics.md
+  [metrics-comparisons]: Metrics.md#comparisons
   [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [p0022]: https://wg21.link/P0022
   [pdq-sorter]: Sorters.md#pdq_sorter
+  [quicksort-adversary]: https://www.cs.dartmouth.edu/~doug/mdmspe.pdf
   [range-v3]: https://github.com/ericniebler/range-v3
   [sorter-adapters]: Sorter-adapters.md
   [sorters]: Sorters.md
