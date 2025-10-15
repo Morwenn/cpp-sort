@@ -489,7 +489,7 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
     -> void;
 ```
 
-`swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might result in faster runtime and/or increased binary size.
+`swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might not result in faster runtime and/or increased binary size.
 
 
   [apply-permutation]: Miscellaneous-utilities.md#apply_permutation

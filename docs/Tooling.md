@@ -63,8 +63,6 @@ The packages downloaded from conan-center are minimal and only contain the files
 
 This can notably used to browse old versions of the documentation. It seems however that `--ref` doesn't understand Git tags, so you have to create a proper branch from the version tag you want to browse beforehand.
 
-Due to slight markup differences, some pages might not fully render correctly but it should nonetheless be a better experience than navigaitng the Markdown files by hand.
-
 
   [assertions-and-audits]: Home.md#assertions--audits
   [catch2]: https://github.com/catchorg/Catch2

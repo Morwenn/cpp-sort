@@ -4,7 +4,7 @@ All adapters below are composed of two elements:
 * A class template that wraps a comparator and is itself a comparator (ex: `not_fn_t`, `flip_t`).
 * A function template that simplifies the construction and sometimes implements optimizations (ex: `not_fn`, `flip`).
 
-The optimizations performed by the function templates are of the "unwrapping" kind, with a goal to reduce the nesting of templates in the library and to eventually reduce the overall number of instantiated templates.
+The optimizations performed by the function templates are of the "unwrapping" kind, with a goal to reduce the nesting of templates in the library and to eventually reduce the overall number of template instantiations.
 
 ```cpp
 auto cmp = std::less{};

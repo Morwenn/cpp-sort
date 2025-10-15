@@ -1,10 +1,10 @@
 *Measures of disorder* are functions used to measure how much a sequence differs from its sorted permutation. Several loose definitions of measures of disorder exist in the literature; in this documentation, we use the formal definition provided by Vladimir Estivill-Castro in *Sorting and Measures of Disorder*. That is, a *measure of disorder* $M$ is a non-negative real function that accepts a sequence $X$ and satifies the following properties:
-1. When $X$ is sorted, $M(X) = \min_{|Y|=|X|}\{M(Y)\}$. In other words, a measure of disorder *grows* with the amount of disorder in $X$, and reaches its minimum when $X$ is sorted.
+1. When $X$ is sorted, $M(X) = \min_{\lvert Y \rvert=\lvert X \rvert}\{M(Y)\}$. In other words, a measure of disorder *grows* with the amount of disorder in $X$, and reaches its minimum when $X$ is sorted.
 2. Order isomorphism: if the relative order of elements in two sequences $X$ and $Y$ is the same, then $M(X) = M(Y)$.
 
 In the rest of this document, we also use the following notation:
 * Sequences are ordered, and use angle brackets as delimiter, ex: $\langle 1, 3, 2, 4, 10 \rangle$.
-* $|X|$ corresponds to the number of elements in the sequence $X$ (its size).
+* $\lvert X \rvert$ corresponds to the number of elements in the sequence $X$ (its size).
 * Given two sequences $X$ and $Y$, $X \lt Y$ means that every of $X$ compares less than every element in $Y$ (assume similar meaning for other ordering operators).
 * Given two sequences $X$ and $Y$, $XY$ corresponds to their concatenation. Similarly $\langle e \rangle X$ is the concatenation of the sequence made of the single element $e$ and of the sequence $X$.
 * The expression "subsequence of $X$" refers to a sequence obtained by removing any number of possibly non-adjacent elements from $X$, unless specified otherwise.
@@ -19,7 +19,7 @@ In the rest of this document, we also use the following notation:
 > 2. If $X$ and $Y$ are order isomorphic, then $M(X) = M(Y)$
 > 3. If $X$ is a subsequence of $Y$, then $M(X) ≤ M(Y)$
 > 4. If $X \le Y$, then $M(XY) ≤ M(X) + M(Y)$
-> 5. $M(⟨e⟩X) ≤ |X| + M(X)$ for every element $e$ of the domain
+> 5. $M(⟨e⟩X) ≤ \lvert X \rvert + M(X)$ for every element $e$ of the domain
 
 Mannila's goal was to define strong properties allowing to reason about the minimum amount of work required for an adaptive sorting algorithm to sort a sequence with little disorder. Namely:
 * Criterion 1 above tries to formally represent the intuitive notion that no work is needed to sort a sequence that is already sorted.
@@ -34,7 +34,7 @@ Some authors found that definition to be overly strict for their application, an
 > 2. If $X$ and $Y$ are order isomorphic, then $M(X) = M(Y)$
 > 3. If $X$ is a subsequence of $Y$, then $M(X) ≤ M(Y)$
 > 4. If $X \le Y$, then $M(XY) ≤ M(X) + M(Y) + b$
-> 5. $M(⟨e⟩X) ≤ |X| + M(X) + c$ for every element $e$ of the domain
+> 5. $M(⟨e⟩X) ≤ \lvert X \rvert + M(X) + c$ for every element $e$ of the domain
 
 That loosened definition however is arguably less suited to estimate the amount of work need to order a sequence. We include it here for the sake of exposition and to highlight that vocabulary in the domain has historically been debated, but in the rest of this document the expression *measure of presortedness* refers to any measure of disorder that satisfies Mannila's five criteria.
 
@@ -50,13 +50,13 @@ The *monotonicity* property implies the *prefix monotonicity* one. A measure of 
 
 Let $X$ be a sequence of elements, and let $S_X$ be set of all permutations of that sequence:
 
-$$below_M(X) = \{ \pi | \pi \in S_X \text{ and } M(\pi) \le M(X) \}$$
+$$below_M(X) = \{ \pi \vert \pi \in S_X \text{ and } M(\pi) \le M(X) \}$$
 
 Let $T_S(X)$ be the number of steps needed for an algorithm $S$ to sort $X$. A sorting algorithm is said to be $M$-optimal if and only if, for some constant $c$, we have for all $X$:
 
-$$T_S(X) \le c \cdot max\{|X|, \log{} |below_M(X)|\}$$
+$$T_S(X) \le c \cdot max\{\lvert X \rvert, \log{} |below_M(X)|\}$$
 
-In other words, a sorting algorithm is considered $M$-optimal if it takes a number of steps that is within a constant factor of the lower bound of $M$ to sort a sequence. For example a $Rem$-optimal algorithm should be able to sort any sequence in $O(|X| \log{} Rem(X))$ steps.
+In other words, a sorting algorithm is considered $M$-optimal if it takes a number of steps that is within a constant factor of the lower bound of $M$ to sort a sequence. For example a $Rem$-optimal algorithm should be able to sort any sequence in $O(\lvert X \rvert \log{} Rem(X))$ steps.
 
 ### Partial ordering of measures of disorder
 
@@ -71,7 +71,7 @@ While useful to understand what we want from a partial order on measures of diso
 
 > Let $M_1$ and $M_2$ be two measures of disorder:
 >
-> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $|below_{M_1}(X)| \le c \cdot |below_{M_2}(X)|$ for any sequence $X$.
+> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $\lvert below_{M_1}(X) \rvert \le c \cdot \lvert below_{M_2}(X) \rvert$ for any sequence $X$.
 > * $M_1$ and $M_2$ are equivalent (denoted $M_1 \equiv M_2$) if and only if $M_1 \preceq M_2$ and $M_2 \preceq M_1$.
 
 That definition seems to match the one proposed much earlier by Alistair Moffat and Ola Petersson in *A Framework for Adaptive Sorting*, though the authors use the symbol $\supseteq$ instead of $\preceq$.
@@ -141,7 +141,7 @@ Measures of disorder are pretty formalized, so the names of the functions in the
 #include <cpp-sort/probes/block.h>
 ```
 
-Computes the number of elements in a sequence that aren't followed by the same element in the sorted sequence.
+Computes the number of elements in $X$ that aren't followed by the same element in the sorted permutation.
 
 Our implementation is slightly different from the original description in *Sublinear merging and natural mergesort* by S. Carlsson, C. Levcopoulos and O. Petersson:
 * It doesn't add 1 to the general result, thus returning 0 when $X$ is sorted and respecting Mannila's first criterion for what makes a measure of presortedness (though this change might be responsible for the breakage of criterion 4).
@@ -151,7 +151,7 @@ Our implementation is slightly different from the original description in *Subli
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
 
-`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
 **Note:** *Block* does not seem to respect Mannila's criterion 3 in the presence of *equivalent elements*.
 
@@ -172,7 +172,7 @@ Computes the maximum distance determined by an inversion.
 
 When enough memory is available `probe::dis` runs in O(n) using an algorithm described by T. Altman and Y. Igarashi in *Roughly Sorting: Sequential and Parallel Approach*, otherwise it falls back to an O(n log n) algorithm that does not require extra memory. If forward iterators are passed, the O(n log n) algorithm is always used.
 
-`max_for_size`: $|X| - 1$ when the last element of $X$ is smaller than the first one.
+`max_for_size`: $\lvert X \rvert - 1$ when the last element of $X$ is smaller than the first one.
 
 ### *Enc*
 
@@ -203,7 +203,7 @@ $$
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
 
-`max_for_size`: $\frac{|X|}{2}$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
+`max_for_size`: $\frac{\lvert X \rvert}{2}$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
 
 ### *Exc*
 
@@ -211,7 +211,7 @@ $$
 #include <cpp-sort/probes/exc.h>
 ```
 
-Computes the minimum number of exchanges required to sort $X$, which corresponds to $|X|$ minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let $\langle 2, 4, 0, 6, 3, 1, 5 \rangle$ be a sequence, the cycles are $\langle 0, 2 \rangle$ and $\langle 1, 3, 4, 5, 6 \rangle$ so $Exc(X) = |X| - 2 = 5$.
+Computes the minimum number of exchanges required to sort $X$, which corresponds to $\lvert X \rvert$ minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let $\langle 2, 4, 0, 6, 3, 1, 5 \rangle$ be a sequence, the cycles are $\langle 0, 2 \rangle$ and $\langle 1, 3, 4, 5, 6 \rangle$ so $Exc(X) = \lvert X \rvert - 2 = 5$.
 
 **Warning:** `probe::exc` generally returns a result higher than the minimum number of exchanges required to sort $X$ when it contains *equivalent elements*. This is because extending $Exc$ to *equivalent elements* is a NP-hard problem (see *On the Cost of Interchange Rearrangement in Strings* by Amir et al). The function does handle such elements in some simple cases, but not in the general case.
 
@@ -219,7 +219,7 @@ Computes the minimum number of exchanges required to sort $X$, which corresponds
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $|X| - 1$ when every element in $X$ is one element away from its sorted position.
+`max_for_size`: $\lvert X \rvert - 1$ when every element in $X$ is one element away from its sorted position.
 
 **Note:** *Exc* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $Exc(\langle 3, 1, 2, 0 \rangle) = 1$, but $Exc(\langle 3, 1, 2 \rangle) = 2$.
 
@@ -237,11 +237,11 @@ Computes the number of elements in $X$ that are not in their sorted position, wh
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $|X|$ when every element in $X$ is one element away from its sorted position.
+`max_for_size`: $\lvert X \rvert$ when every element in $X$ is one element away from its sorted position.
 
 **Note:** *Ham* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $Ham(\langle 3, 1, 2, 0 \rangle) = 2$, but $Ham(\langle 3, 1, 2 \rangle) = 3$.
 
-**Note²:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Ham(\langle 1, 2, 3 \rangle)$.
+**Note²:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + Ham(\langle 1, 2, 3 \rangle)$.
 
 ### *Inv*
 
@@ -255,7 +255,7 @@ Computes the number of inversions in $X$, where an inversion corresponds to a pa
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $\frac{|X|(|X| - 1)}{2}$ when $X$ is sorted in reverse order.
+`max_for_size`: $\frac{\lvert X \rvert(\lvert X \rvert - 1)}{2}$ when $X$ is sorted in reverse order.
 
 ### *Max*
 
@@ -269,7 +269,7 @@ Computes the maximum distance an element in $X$ must travel to find its sorted p
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
 ### *Mono*
 
@@ -277,7 +277,7 @@ Computes the maximum distance an element in $X$ must travel to find its sorted p
 #include <cpp-sort/probes/mono.h>
 ```
 
-Computes the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from $X$ to make it sorted
+Computes the number of non-increasing and non-decreasing consecutive runs of adjacent elements that need to be removed from $X$ to make it sorted.
 
 The measure of disorder is slightly different from its original description in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang:
 * It subtracts 1 from the number of runs, thus returning 0 when $X$ is sorted.
@@ -287,7 +287,7 @@ The measure of disorder is slightly different from its original description in [
 | ----------- | ----------- | ------------- | --------- |
 | n           | 1           | Forward       | No        |
 
-`max_for_size`: $\frac{|X| + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
+`max_for_size`: $\frac{\lvert X \rvert + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
 **Note:** `probe::mono` does not respect Mannila's criterion 4: $Mono(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $Mono(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $Mono(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
 
@@ -303,13 +303,13 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
 
-`max_for_size`: it is reached when the values in $X$ are strongly oscillating, and equals $\frac{|X|(|X| - 2)}{2}$ when $|X|$ is even, and $\frac{|X|(|X| - 2) - 1}{2}$ when $|X|$ is odd.
+`max_for_size`: it is reached when the values in $X$ are strongly oscillating, and equals $\frac{\lvert X \rvert(\lvert X \rvert - 2)}{2}$ when $\lvert X \rvert$ is even, and $\frac{\lvert X \rvert(\lvert X \rvert - 2) - 1}{2}$ when $\lvert X \rvert$ is odd.
 
 **Note:** *Osc* does not seem to respect Mannila's criterion 3 in the presence of *equivalent elements*.
 
 **Note²:** *Osc* does not respect Mannila's criterion 4: $Osc(\langle 0 \rangle) = 0$ and $Osc(\langle 3, 2, 1 \rangle) = 0$, but $Osc(\langle 0, 3, 2, 1 \rangle) = 2$.
 
-**Note³:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 3, 0, 4, 2, 5, 1 \rangle) \not \le |\langle 0, 4, 2, 5, 1 \rangle| + Osc(\langle 0, 4, 2, 5, 1 \rangle)$, simplified: $11 \not \le 5 + 5$.
+**Note³:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 3, 0, 4, 2, 5, 1 \rangle) \not \le \lvert \langle 0, 4, 2, 5, 1 \rangle \rvert + Osc(\langle 0, 4, 2, 5, 1 \rangle)$, simplified: $11 \not \le 5 + 5$.
 
 ### *Rem*
 
@@ -317,13 +317,13 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 #include <cpp-sort/probes/rem.h>
 ```
 
-Computes the minimum number of elements that must be removed from $X$ to obtain a sorted subsequence, which corresponds to $|X|$ minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of $X$.
+Computes the minimum number of elements that must be removed from $X$ to obtain a sorted subsequence, which corresponds to $\lvert X \rvert$ minus the size of the [longest non-decreasing subsequence][longest-increasing-subsequence] of $X$.
 
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
 ### *Runs*
 
@@ -337,7 +337,7 @@ Computes the number of non-decreasing runs in $X$ minus one.
 | ----------- | ----------- | ------------- | --------- |
 | n           | 1           | Forward       | Yes       |
 
-`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
 ### *Spear*
 
@@ -351,9 +351,9 @@ Spearman's footrule distance: sum of distances between the position of individua
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $\frac{|X|²}{2}$ when $X$ is sorted in reverse order.
+`max_for_size`: $\frac{\lvert X \rvert²}{2}$ when $X$ is sorted in reverse order.
 
-**Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le |\langle 1, 2, 3 \rangle| + Spear(\langle 1, 2, 3 \rangle)$.
+**Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + Spear(\langle 1, 2, 3 \rangle)$.
 
 ### *SUS*
 
@@ -369,7 +369,7 @@ Computes the minimum number of non-decreasing subsequences (of possibly not adja
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $|X| - 1$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
 ## Other measures of disorder
 
@@ -387,11 +387,11 @@ In other domains, that value is called *F* (for *Footrule*). It is no more helpf
 
 *Par* is described by V. Estivill-Castro and D. Wood in *A New Measure of Presortedness* as follows:
 
-> *Par(X)* = min { *p* | $X$ is *p*-sorted }
+> *Par(X)* = min { *p* \vert $X$ is *p*-sorted }
 
 The following definition is also given to determine whether a sequence is *p*-sorted:
 
-> $X$ is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., $|X|$}, *i* - *j* > *p* implies *Xj* ≤ *Xi*.
+> $X$ is *p*-sorted iff for all *i*, *j* ∈ {1, 2, ..., $\lvert X \rvert$}, *i* - *j* > *p* implies *Xj* ≤ *Xi*.
 
 *Right invariant metrics and measures of presortedness* by V. Estivill-Castro, H. Mannila and D. Wood mentions that:
 

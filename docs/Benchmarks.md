@@ -24,6 +24,7 @@ Most sorting algorithms are designed to work with random-access iterators, so th
 Sorting a random-access collection with an unstable sort is probably one of the most common things to want, and not only are those sorts among the fastest comparison sorts, but type-specific sorters can also be used to sort a variety of types. If you don't know what algorithm you want and don't have specific needs, then you probably want one of these.
 
 ![Benchmark speed of unstable sorts with increasing size for std::vector<double>](https://i.imgur.com/Q3IEeci.png)
+
 ![Benchmark speed of unstable sorts with increasing size for std::deque<double>](https://i.imgur.com/oRW5kFr.png)
 
 The plots above show a few general tendencies:
@@ -34,6 +35,7 @@ The plots above show a few general tendencies:
 The quicksort derivatives and the hybrid radix sorts are generally the fastest of the lot, yet `drop_merge_sort` seems to offer interesting speedups for `std::deque` despite not being designed to be the fastest on truly shuffled data. Part of the explanation is that it uses `pdq_sort` in a contiguous memory buffer underneath, which might be faster for `std::deque` than sorting completely in-place.
 
 ![Benchmark unstable sorts over different patterns for std::vector<double>](https://i.imgur.com/WZ4s6Xt.png)
+
 ![Benchmark unstable sorts over different patterns for std::deque<double>](https://i.imgur.com/UAaObUW.png)
 
 A few random takeways:
@@ -50,11 +52,13 @@ A few random takeways:
 Pretty much all stable sorts in the library are different flavours of merge sort with sligthly different properties. Most of them allocate additional merge memory, and a good number of those also have a fallback algorithm that makes them run in O(n log²n) instead of O(n log n) when no extra heap memory is available.
 
 ![Benchmark speed of stable sorts with increasing size for std::vector<double>](https://i.imgur.com/vRW1zcs.png)
+
 ![Benchmark speed of stable sorts with increasing size for std::deque<double>](https://i.imgur.com/CQePcBh.png)
 
 `insertion_sort` being O(n²) it's not surprising that it doesn't perform well in such a benchmark. All the other sorting algorithms display roughly equivalent and rather tight curves.
 
 ![Benchmark stable sorts over different patterns for std::vector<double>](https://i.imgur.com/bRQ5cu5.png)
+
 ![Benchmark stable sorts over different patterns for std::deque<double>](https://i.imgur.com/fHIZB5L.png)
 
 These plots highlight a few important things:
@@ -67,7 +71,9 @@ These plots highlight a few important things:
 I decided to include a dedicated category for slow O(n log n) sorts, because I find this class of algorithms interesting. This category contains experimental algorithms, often taken from rather old research papers. `heap_sort` is used as the "fast" algorithm in this category, despite it being consistently the slowest in the previous category.
 
 ![Benchmark speed of slow O(n log n) sorts with increasing size for std::vector<double>](https://i.imgur.com/SUbyqKV.png)
+
 ![Benchmark slow O(n log n) sorts over different patterns for std::vector<double>](https://i.imgur.com/Dli1xrp.png)
+
 ![Benchmark slow O(n log n) sorts over different patterns for std::deque<double>](https://i.imgur.com/WxBmipj.png)
 
 The analysis is pretty simple here:
@@ -97,6 +103,7 @@ For elements as small as `double`, there are two clear winners here: `drop_merge
 Even fewer sorters can handle forward iterators. `out_of_place_adapter(pdq_sort)` was not included in the patterns benchmark, because it adapts to patterns the same way `pdq_sort` does.
 
 ![Benchmark speed of sorts with increasing size for std::forward_list<double>](https://i.imgur.com/if15kX1.png)
+
 ![Benchmark sorts over different patterns for std::forward_list<double>](https://i.imgur.com/uF0UzLm.png)
 
 The results are roughly the same than with bidirectional collections:
@@ -114,6 +121,7 @@ This category will highlight the advantages of some sorters in sorting scenarios
 Integer sorting is a rather specific scenario for which many solutions exist: counting sorts, radix sorts, algorithms optimized to take advantage of branchless comparisons, etc.
 
 ![Benchmark speed of integer sorts with increasing size for std::vector<int>](https://i.imgur.com/zuCAkIf.png)
+
 ![Benchmark integer sorts over different patterns for std::vector<int>](https://i.imgur.com/20uDwTM.png)
 
 `counting_sort` appears as a clear winner here but with a catch: its speed depends on the difference between the smaller and the greater integers in the collection to sort. In the benchmarks above the integer values scale with the size of the collection, but if a collection contains just a few elements with a big difference of the minimum and maximum values, `counting_sort` won't be a good solution.
@@ -147,12 +155,15 @@ The improvements are not always as clear as in this benchmark, but it shows that
 Only a few algorithms allow to sort a collection stably without using extra heap memory: `grail_sort` and `wiki_sort` can accept a fixed-size buffer (possibly of size 0) while `merge_sort` has a fallback algorithm when no heap memory is available.
 
 ![Benchmark speed of stable sorts with no heap memory with increasing size for std::vector<double>](https://i.imgur.com/1a64irX.png)
+
 ![Benchmark speed of stable sorts with no heap memory with increasing size for std::deque<double>](https://i.imgur.com/U5uD8Er.png)
+
 ![Detail of the previous benchmark](https://i.imgur.com/owUictQ.png)
 
 `merge_sort` is definitely losing this benchmark. Interestingly enough `wiki_sort` is way better with a fixed buffer of 512 elements while it hardly affects `grail_sort` at all. For `std::deque`, `grail_sort` is almost always the fastest no matter what.
 
 ![Benchmark stable sorts with no heap memory over different patterns for std::vector<double>](https://i.imgur.com/74YxCLI.png)
+
 ![Benchmark stable sorts with no heap memory over different patterns for std::deque<double>](https://i.imgur.com/jqek5Ii.png)
 
 Here `merge_sort` still loses the battle, but it also displays an impressive enough adaptiveness to presortedness and patterns.
@@ -162,6 +173,7 @@ Here `merge_sort` still loses the battle, but it also displays an impressive eno
 Some sorting algorithms are particularly suited to sort very small collections: [*fixed-size sorters*][fixed-size-sorters] of course, but also very simple regular sorters such as [`insertion_sorter`][insertion-sorter] or [`selection_sorter`][selection-sorter]. Most other sorting algorithms fallback to one of these when sorting a small collection.
 
 ![Benchmark speed of small sorts with increasing size for std::array<int>](https://i.imgur.com/ABfEmJe.png)
+
 ![Benchmark speed of small sorts with increasing size for std::array<long double>](https://i.imgur.com/wqz1q3R.png)
 
 We can see several trends in these benchmarks, rather consistant across `int` and `long double`:

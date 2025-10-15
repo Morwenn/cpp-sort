@@ -109,7 +109,7 @@ I tried to apply the same technique to create a 40-sorter, but the resulting 20-
 
 ### Sorting network for 29 inputs
 
-_Note: the following has since been improved upon: [SorterHunter][sorter-hunter] found a network that sorts 29 inputs with 164 *compare-exchange* operations._
+_Note: the following has since been improved upon: [SorterHunter][sorter-hunter] found a network that sorts 29 inputs with 164 compare-exchange operations._
 
 The following sorting network for 29 inputs has 165 *compare-exchange* operations (CEs), which is one less that the most size-optimal 29-input sorting networks that I could find in the literature. Here is how I generated it: first it sorts the first 16 inputs and the last 13 inputs independently. Then it merges the two sorted subarrays using a size 32 Batcher odd-even merge network (the version that does not need the inputs to be interleaved), where all compare-exchange operations working on indexes greater than 28 have been dropped. Dropping comparators in such a way is ok: consider that the values at the indexes [29, 32) are greater than every other value in the array to sort, and it will become intuitive that dropping them generates a correct merging network of a smaller size.
 
@@ -221,11 +221,11 @@ Regardless, it is interesting to find how it fits in the existing partial orderi
 - $SMS \preceq Mono$: this one seems intuitive too: $SMS$ which detects the minimum number of subsequences of non-adjacent elements should be at least as good as $Mono$ which only detects subsequences of adjacent elements.
 - $Enc \preceq Mono$: when making encroaching lists, $Enc$ is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in $X$, so the result will be at most as big as that of $Mono$. However $Enc$ can also find presortedness in patterns such as $\langle 5, 6, 4, 7, 3, 8, 2, 9, 1, 10 \rangle$ where $Mono$ finds maximum disorder. Therefore $Enc(X)$ should always be at most as big as $Mono(X)$.
 - $Mono \not \equiv SUS$:
-  - There is no constant $c$ such as $c \cdot SUS(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $SUS(X) = |X|$ (each element is decreasing, and as such constitues a new single-element ascending subsequence).
-  - There is no constant $c$ such as $c \cdot Mono(X) \le SUS(X)$: a sequence $X$ like $\langle 0, \frac{n}{2}, 1, \frac{n}{2} + 1, 2, \frac{n}{2} + 2, ..., \frac{n}{2} - 2, n - 1, \frac{n}{2} - 1, n \rangle$ always has $SUS(X) = 2$ (an ascending subsequence of even indices, another one of odd indices), but $Mono(X) = \frac{|X|}{2}$ (every pair of elements is a new descending run).
+  - There is no constant $c$ such as $c \cdot SUS(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $SUS(X) = \lvert X \rvert$ (each element is decreasing, and as such constitues a new single-element ascending subsequence).
+  - There is no constant $c$ such as $c \cdot Mono(X) \le SUS(X)$: a sequence $X$ like $\langle 0, \frac{n}{2}, 1, \frac{n}{2} + 1, 2, \frac{n}{2} + 2, ..., \frac{n}{2} - 2, n - 1, \frac{n}{2} - 1, n \rangle$ always has $SUS(X) = 2$ (an ascending subsequence of even indices, another one of odd indices), but $Mono(X) = \frac{\lvert X \rvert}{2}$ (every pair of elements is a new descending run).
 - $Mono \not \equiv Max$:
-  - There is no constant $c$ such as $c \cdot Max(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $Max(X) = |X| - 1$ (the distance between the smallest and greatest elements is maximal).
-  - There is no constant $c$ such as $c \cdot Mono(X) \le Max(X)$: a sequence $X$ like $\langle 1, 0, 3, 2, ..., n , n - 1 \rangle$ always has $Max(X) = 1$ (all inversions are with a neighbour, hence they all equal $1$), but $Mono(X) = \frac{|X|}{2}$ (every pair of elements is a new descending run).
+  - There is no constant $c$ such as $c \cdot Max(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $Max(X) = \lvert X \rvert - 1$ (the distance between the smallest and greatest elements is maximal).
+  - There is no constant $c$ such as $c \cdot Mono(X) \le Max(X)$: a sequence $X$ like $\langle 1, 0, 3, 2, ..., n , n - 1 \rangle$ always has $Max(X) = 1$ (all inversions are with a neighbour, hence they all equal $1$), but $Mono(X) = \frac{\lvert X \rvert}{2}$ (every pair of elements is a new descending run).
 
 The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
 - $Mono \not \preceq Exc$: we know that $SMS \preceq Mono$ and $SMS \not \preceq Exc$.
