@@ -373,7 +373,7 @@ auto m = get<foo_tag>(mm);
 #include <cpp-sort/utility/quicksort_adversary.h>
 ```
 
-`utility::quicksort_adversary` is a function template that implements an algorithm described by M. D. McIlroy in [*A Killer Adversary for Quicksort*][quicksort-adversary], which attempts to trigger the quadratic case of many quicksort implementations by trying to guess the pivot and forcing the testing comparison to perform a certain set of comparisons.
+`utility::quicksort_adversary` is a function template that implements an algorithm described by M. D. McIlroy in [*A Killer Adversary for Quicksort*][quicksort-adversary], which attempts to trigger the quadratic case of many quicksort implementations by trying to guess the pivot and forcing the tested algorithm to perform a certain set of comparisons.
 
 ```cpp
 template<typename Sorter, typename Integer>
