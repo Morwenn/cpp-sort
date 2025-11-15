@@ -30,7 +30,7 @@ jobs:
       matrix:
         config:
           # Release build
-          - cxx: g++-12
+          - cxx: g++-13
             build_type: Release
           - cxx: clang++
             build_type: Release
