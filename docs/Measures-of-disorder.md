@@ -83,9 +83,9 @@ The graph below shows the partial ordering of several measures of disorder:
 - *m₀* is a measure of presortedness that always returns 0.
 - *m₀₁* is a measure of presortedness that returns 0 when $X$ is sorted and 1 otherwise.
 
-![Partial ordering of measures of disorder](images/mops-partial-ordering.png)
+![Partial ordering of measures of disorder](images/partial-ordering-measures-of-disorder.png)
 
-This graph is a modified version of the one in *A framework for adaptive sorting*. The relations of *Mono* are empirically derived [original research][original-research] and incomplete (unknown relations with *Osc* and *Loc*).
+This graph is a modified version of the one found in *A framework for adaptive sorting*. The relations of *Mono* and *Amp* with other measures of disorder are empirically derived [original research][original-research] and known to be incomplete (unknown relations with *Osc* and *Loc*).
 
 The measures of disorder in bold in the graph are available in **cpp-sort**, the others are not.
 
@@ -133,7 +133,40 @@ It takes an integer `n` and returns the maximum value that the measure of disord
 
 ## Available measures of disorder
 
-Measures of disorder are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature.
+Measures of disorder are pretty formalized, so the names of the functions in the library are short and generally correspond to the ones used in the literature, with a few exceptions. A justification is given whenever a name does not exactly match the ones from the literature, or when the definition differs.
+
+### *Amp*
+
+```cpp
+#include <cpp-sort/probes/amp.h>
+```
+
+Let's consider the following functions to compare two elements elements of a sequence:
+
+$$
+comp(x, y)=
+\begin{cases}
+1 & \text{ if } x \lt y\\
+-1 & \text{ if } x \gt y\\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+We define $\mathit{Amp}(X)$ as follows:
+
+$$\mathit{Amp}(X) = \lvert X \rvert - \mathit{PTP}(X) - N_{\mathit{eq}}(X) - 1$$
+
+Where $N_{\mathit{eq}}(X)$ is the number of pairs of neighbors that compare equivalent in $X$, and $\mathit{PTP}(X)$ is the number of unique values in the prefix sum of the sequence obtained by applying $comp$ to every pair of adjacent elements in $X$.
+
+![Illustration of how comp is applied to pairs of neighbors up to the prefix sum](images/pairwise-order-shadow.png)
+
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n           | 1           | Forward       | No        |
+
+`max_for_size`: $\lvert X \rvert - 2$ when the sign of $comp$ changes for every pair of neighbors.
+
+**Note:** *Amp* does not respect Mannila's criterion 4: $\mathit{Amp}(\langle 1, 2, 3 \rangle) = 0$ and $\mathit{Amp}(\langle 6, 5, 4 \rangle) = 0$, but $\mathit{Amp}(\langle 1, 2, 3, 6, 5, 4 \rangle) = 4$.
 
 ### *Block*
 
