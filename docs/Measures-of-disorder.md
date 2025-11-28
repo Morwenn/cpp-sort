@@ -50,13 +50,13 @@ The *monotonicity* property implies the *prefix monotonicity* one. A measure of 
 
 Let $X$ be a sequence of elements, and let $S_X$ be set of all permutations of that sequence:
 
-$$below_M(X) = \{ \pi \vert \pi \in S_X \text{ and } M(\pi) \le M(X) \}$$
+$$\mathit{below}_M(X) = \{ \pi \vert \pi \in S_X \text{ and } M(\pi) \le M(X) \}$$
 
 Let $T_S(X)$ be the number of steps needed for an algorithm $S$ to sort $X$. A sorting algorithm is said to be $M$-optimal if and only if, for some constant $c$, we have for all $X$:
 
-$$T_S(X) \le c \cdot max\{\lvert X \rvert, \log{} |below_M(X)|\}$$
+$$T_S(X) \le c \cdot max\{\lvert X \rvert, \log{} |\mathit{below}_M(X)|\}$$
 
-In other words, a sorting algorithm is considered $M$-optimal if it takes a number of steps that is within a constant factor of the lower bound of $M$ to sort a sequence. For example a $Rem$-optimal algorithm should be able to sort any sequence in $O(\lvert X \rvert \log{} Rem(X))$ steps.
+In other words, a sorting algorithm is considered $M$-optimal if it takes a number of steps that is within a constant factor of the lower bound of $M$ to sort a sequence. For example a $\mathit{Rem}$-optimal algorithm should be able to sort any sequence in $O(\lvert X \rvert \log{} \mathit{Rem}(X))$ steps.
 
 ### Partial ordering of measures of disorder
 
@@ -64,19 +64,19 @@ Early on, authors have been wanting to prove that some measures of disorder were
 
 > Let $M_1$ and $M_2$ be two measures of disorder:
 >
-> * $M_1$ is algorithmically finer than $M_2$ (denoted $M_1 \le_{alg} M_2$) if and only if any $M_1$-optimal sorting algorithm is also $M_2$-optimal.
-> * $M_1$ and $M_2$ are algorithmically equivalent (denoted $M_1 =_{alg} M_2$) if and only if $M_1 \le_{alg} M_2$ and $M_2 \le_{alg} M_1$.
+> * $M_1$ is algorithmically finer than $M_2$ (denoted $M_1 \le_\mathit{alg} M_2$) if and only if any $M_1$-optimal sorting algorithm is also $M_2$-optimal.
+> * $M_1$ and $M_2$ are algorithmically equivalent (denoted $M_1 =_\mathit{alg} M_2$) if and only if $M_1 \le_\mathit{alg} M_2$ and $M_2 \le_\mathit{alg} M_1$.
 
 While useful to understand what we want from a partial order on measures of disorder, the definition above does not help a lot when it comes to actually proving that a measure is algorithmically finer than another. To better compare two measures of disorder, Jingsen Chen introduces the following operator in *Computing and ranking measures of presortedness*:
 
 > Let $M_1$ and $M_2$ be two measures of disorder:
 >
-> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $\lvert below_{M_1}(X) \rvert \le c \cdot \lvert below_{M_2}(X) \rvert$ for any sequence $X$.
+> * $M_1$ is superior to $M_2$ (denoted $M_1 \preceq M_2$) if and only if there exists a constant $c$ such as $\lvert \mathit{below}_{M_1}(X) \rvert \le c \cdot \lvert \mathit{below}_{M_2}(X) \rvert$ for any sequence $X$.
 > * $M_1$ and $M_2$ are equivalent (denoted $M_1 \equiv M_2$) if and only if $M_1 \preceq M_2$ and $M_2 \preceq M_1$.
 
 That definition seems to match the one proposed much earlier by Alistair Moffat and Ola Petersson in *A Framework for Adaptive Sorting*, though the authors use the symbol $\supseteq$ instead of $\preceq$.
 
-To prove that two measures of disorder were equivalent, authors have used the simpler method of showing that there exists some non-0 constants $c$ and $d$ such as $M_1(X) \le c \cdot M_2(X) \le d \cdot M_1(X)$. For example, the result $Max \equiv Dis$ below was originally obtained by proving that $Max(X) \le Dis(X) \le 2 Max(X)$ for any sequence $X$.
+To prove that two measures of disorder were equivalent, authors have used the simpler method of showing that there exists some non-0 constants $c$ and $d$ such as $M_1(X) \le c \cdot M_2(X) \le d \cdot M_1(X)$. For example, the result $\mathit{Max} \equiv \mathit{Dis}$ below was originally obtained by proving that $\mathit{Max}(X) \le \mathit{Dis}(X) \le 2 \mathit{Max}(X)$ for any sequence $X$.
 
 The graph below shows the partial ordering of several measures of disorder:
 - *Reg* is a measure of presortedness superior to all other ones in the graph.
@@ -144,7 +144,7 @@ Measures of disorder are pretty formalized, so the names of the functions in the
 Let's consider the following functions to compare two elements elements of a sequence:
 
 $$
-comp(x, y)=
+\mathit{comp}(x, y)=
 \begin{cases}
 1 & \text{ if } x \lt y\\
 -1 & \text{ if } x \gt y\\
@@ -188,7 +188,7 @@ Our implementation is slightly different from the original description in *Subli
 
 **Note:** *Block* does not seem to respect Mannila's criterion 3 in the presence of *equivalent elements*.
 
-**Note²:** `probe::block` does not respect Mannila's criterion 4: $Block(\langle 1, 0 \rangle) = 1$ and $Block(\langle 2, 3 \rangle) = 0$, but $Block(\langle 1, 0, 2, 3 \rangle) = 2$.
+**Note²:** `probe::block` does not respect Mannila's criterion 4: $\mathit{Block}(\langle 1, 0 \rangle) = 1$ and $\mathit{Block}(\langle 2, 3 \rangle) = 0$, but $\mathit{Block}(\langle 1, 0, 2, 3 \rangle) = 2$.
 
 ### *Dis*
 
@@ -222,13 +222,13 @@ Computes an approximation of the number of encroaching lists that can be extract
 
 Those lists are called encroaching because the bounds of a given list "encroach" those of all lists on its right.
 
-The number of encroaching lists does not satisfy the formal definition of a measure of presortedness because it returns $1$ for non-empty sorted sequences instead of $0$, which does not respect first Mannila's criterion. Using $Enc(X) - 1$ does not work either because it does not respect Mannila's fourth criterion. To circumvent these issues, `probe::enc` implements an equivalent measure of disorder $M_{Enc}$ proposed by V. Estivill-Castro in *Sorting and Measures of Disorder*, which satisfies all of Mannila's criteria for what makes a measure of presortedness:
+The number of encroaching lists does not satisfy the formal definition of a measure of presortedness because it returns $1$ for non-empty sorted sequences instead of $0$, which does not respect first Mannila's criterion. Using $\mathit{Enc}(X) - 1$ does not work either because it does not respect Mannila's fourth criterion. To circumvent these issues, `probe::enc` implements an equivalent measure of disorder $M_\mathit{Enc}$ proposed by V. Estivill-Castro in *Sorting and Measures of Disorder*, which satisfies all of Mannila's criteria for what makes a measure of presortedness:
 
 $$
-M_{Enc}(X)=
+M_\mathit{Enc}(X)=
 \begin{cases}
 0 & \text{if } X \text{ is sorted,}\\
-Enc(X_{tail}) & \text{otherwise, where } X_{tail} \text{ is } X \text{ without its leading ascending run.}
+\mathit{Enc}(X_\mathit{tail}) & \text{otherwise, where } X_\mathit{tail} \text{ is } X \text{ without its leading ascending run.}
 \end{cases}
 $$
 
@@ -244,9 +244,9 @@ $$
 #include <cpp-sort/probes/exc.h>
 ```
 
-Computes the minimum number of exchanges required to sort $X$, which corresponds to $\lvert X \rvert$ minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let $\langle 2, 4, 0, 6, 3, 1, 5 \rangle$ be a sequence, the cycles are $\langle 0, 2 \rangle$ and $\langle 1, 3, 4, 5, 6 \rangle$ so $Exc(X) = \lvert X \rvert - 2 = 5$.
+Computes the minimum number of exchanges required to sort $X$, which corresponds to $\lvert X \rvert$ minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let $\langle 2, 4, 0, 6, 3, 1, 5 \rangle$ be a sequence, the cycles are $\langle 0, 2 \rangle$ and $\langle 1, 3, 4, 5, 6 \rangle$ so $\mathit{Exc}(X) = \lvert X \rvert - 2 = 5$.
 
-**Warning:** `probe::exc` generally returns a result higher than the minimum number of exchanges required to sort $X$ when it contains *equivalent elements*. This is because extending $Exc$ to *equivalent elements* is a NP-hard problem (see *On the Cost of Interchange Rearrangement in Strings* by Amir et al). The function does handle such elements in some simple cases, but not in the general case.
+**Warning:** `probe::exc` generally returns a result higher than the minimum number of exchanges required to sort $X$ when it contains *equivalent elements*. This is because extending $\mathit{Exc}$ to *equivalent elements* is a NP-hard problem (see *On the Cost of Interchange Rearrangement in Strings* by Amir et al). The function does handle such elements in some simple cases, but not in the general case.
 
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
@@ -254,7 +254,7 @@ Computes the minimum number of exchanges required to sort $X$, which corresponds
 
 `max_for_size`: $\lvert X \rvert - 1$ when every element in $X$ is one element away from its sorted position.
 
-**Note:** *Exc* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $Exc(\langle 3, 1, 2, 0 \rangle) = 1$, but $Exc(\langle 3, 1, 2 \rangle) = 2$.
+**Note:** *Exc* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $\mathit{Exc}(\langle 3, 1, 2, 0 \rangle) = 1$, but $\mathit{Exc}(\langle 3, 1, 2 \rangle) = 2$.
 
 *Warning: this algorithm might be noticeably slower when the passed range is not random-access.*
 
@@ -272,9 +272,9 @@ Computes the number of elements in $X$ that are not in their sorted position, wh
 
 `max_for_size`: $\lvert X \rvert$ when every element in $X$ is one element away from its sorted position.
 
-**Note:** *Ham* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $Ham(\langle 3, 1, 2, 0 \rangle) = 2$, but $Ham(\langle 3, 1, 2 \rangle) = 3$.
+**Note:** *Ham* does not respect Mannila's criterion 3 (a subsequence contains no more disorder than the whole sequence): $\mathit{Ham}(\langle 3, 1, 2, 0 \rangle) = 2$, but $\mathit{Ham}(\langle 3, 1, 2 \rangle) = 3$.
 
-**Note²:** *Ham* does not respect Mannila's criterion 5: $Ham(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + Ham(\langle 1, 2, 3 \rangle)$.
+**Note²:** *Ham* does not respect Mannila's criterion 5: $\mathit{Ham}(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + \mathit{Ham}(\langle 1, 2, 3 \rangle)$.
 
 ### *Inv*
 
@@ -322,7 +322,7 @@ The measure of disorder is slightly different from its original description in [
 
 `max_for_size`: $\frac{\lvert X \rvert + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
-**Note:** `probe::mono` does not respect Mannila's criterion 4: $Mono(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $Mono(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $Mono(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
+**Note:** `probe::mono` does not respect Mannila's criterion 4: $\mathit{Mono}(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $\mathit{Mono}(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $\mathit{Mono}(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
 
 ### *Osc*
 
@@ -340,9 +340,9 @@ Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson 
 
 **Note:** *Osc* does not seem to respect Mannila's criterion 3 in the presence of *equivalent elements*.
 
-**Note²:** *Osc* does not respect Mannila's criterion 4: $Osc(\langle 0 \rangle) = 0$ and $Osc(\langle 3, 2, 1 \rangle) = 0$, but $Osc(\langle 0, 3, 2, 1 \rangle) = 2$.
+**Note²:** *Osc* does not respect Mannila's criterion 4: $\mathit{Osc}(\langle 0 \rangle) = 0$ and $\mathit{Osc}(\langle 3, 2, 1 \rangle) = 0$, but $\mathit{Osc}(\langle 0, 3, 2, 1 \rangle) = 2$.
 
-**Note³:** *Osc* does not respect Mannila's criterion 5: $Osc(\langle 3, 0, 4, 2, 5, 1 \rangle) \not \le \lvert \langle 0, 4, 2, 5, 1 \rangle \rvert + Osc(\langle 0, 4, 2, 5, 1 \rangle)$, simplified: $11 \not \le 5 + 5$.
+**Note³:** *Osc* does not respect Mannila's criterion 5: $\mathit{Osc}(\langle 3, 0, 4, 2, 5, 1 \rangle) \not \le \lvert \langle 0, 4, 2, 5, 1 \rangle \rvert + \mathit{Osc}(\langle 0, 4, 2, 5, 1 \rangle)$, simplified: $11 \not \le 5 + 5$.
 
 ### *Rem*
 
@@ -386,7 +386,7 @@ Spearman's footrule distance: sum of distances between the position of individua
 
 `max_for_size`: $\frac{\lvert X \rvert²}{2}$ when $X$ is sorted in reverse order.
 
-**Note:** *Spear* does not respect Mannila's criterion 5: $Spear(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + Spear(\langle 1, 2, 3 \rangle)$.
+**Note:** *Spear* does not respect Mannila's criterion 5: $\mathit{Spear}(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + \mathit{Spear}(\langle 1, 2, 3 \rangle)$.
 
 ### *SUS*
 
@@ -428,7 +428,7 @@ The following definition is also given to determine whether a sequence is *p*-so
 
 *Right invariant metrics and measures of presortedness* by V. Estivill-Castro, H. Mannila and D. Wood mentions that:
 
-> In fact, *Par*($X$) = *Dis*($X$), for all $X$.
+> In fact, $\mathit{Par}(X) = \mathit{Dis}(X)$, for all $X$.
 
 In their subsequent papers, those authors consistently use *Dis* instead of *Par*, often accompanied by a link to *A New Measure of Presortedness*.
 

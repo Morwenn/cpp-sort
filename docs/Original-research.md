@@ -204,39 +204,39 @@ Somehow Edelkamp and Weiß eventually [published a paper][quick-merge-sort-arxiv
 
 The measure of disorder *Mono* is described in [*Sort Race*][sort-race] by H. Zhang, B. Meng and Y. Liang. They describe it as follows:
 
-> Intuitively, if $Mono(X) = k$, then $X$ is the concatenation of $k$ monotonic lists (either sorted or reversely sorted).
+> Intuitively, if $\mathit{Mono}(X) = k$, then $X$ is the concatenation of $k$ monotonic lists (either sorted or reversely sorted).
 
 It computes the number of ascending or descending runs in $X$. Technically the definition in the paper makes it return 1 when the $X$ is sorted, which goes against Mannila's original definition of a measure of presortedness, which starts with the following criterion:
 
 > If $X$ is sorted, then $M(X) = 0$
 
-As a result the library's [`probe::mono`][probe-mono] uses $Mono(X) - 1$ instead, which does satisfy this first criterion, albeit not the fourth one:
+As a result the library's [`probe::mono`][probe-mono] uses $\mathit{Mono}(X) - 1$ instead, which does satisfy this first criterion, albeit not the fourth one:
 
-> If $X \le Y$, then $M(XY) ≤ M(X) + M(Y)$
+> If $X \le Y$, then $M(XY) \le M(X) + M(Y)$
 
-Counterexample: $Mono(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $Mono(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $Mono(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$. As such, we still don't have a definition of $Mono$ that satisfies all the criterion for a measure of presortedness.
+Counterexample: $\mathit{Mono}(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $\mathit{Mono}(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $\mathit{Mono}(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$. As such, we still don't have a definition of $\mathit{Mono}$ that satisfies all the criteria for a measure of presortedness.
 
 Regardless, it is interesting to find how it fits in the existing partial ordering of measures of disorder.:
-- $Mono \preceq Runs$: this relation is already mentioned in *Sort Race* and rather intuitive: since $Mono$ detects both non-increasing and non-decreasing runs, it is as least as good as $Runs$ that only detects non-decreasing runs.
-- $SMS \preceq Mono$: this one seems intuitive too: $SMS$ which detects the minimum number of subsequences of non-adjacent elements should be at least as good as $Mono$ which only detects subsequences of adjacent elements.
-- $Enc \preceq Mono$: when making encroaching lists, $Enc$ is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in $X$, so the result will be at most as big as that of $Mono$. However $Enc$ can also find presortedness in patterns such as $\langle 5, 6, 4, 7, 3, 8, 2, 9, 1, 10 \rangle$ where $Mono$ finds maximum disorder. Therefore $Enc(X)$ should always be at most as big as $Mono(X)$.
-- $Mono \not \equiv SUS$:
-  - There is no constant $c$ such as $c \cdot SUS(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $SUS(X) = \lvert X \rvert$ (each element is decreasing, and as such constitues a new single-element ascending subsequence).
-  - There is no constant $c$ such as $c \cdot Mono(X) \le SUS(X)$: a sequence $X$ like $\langle 0, \frac{n}{2}, 1, \frac{n}{2} + 1, 2, \frac{n}{2} + 2, ..., \frac{n}{2} - 2, n - 1, \frac{n}{2} - 1, n \rangle$ always has $SUS(X) = 2$ (an ascending subsequence of even indices, another one of odd indices), but $Mono(X) = \frac{\lvert X \rvert}{2}$ (every pair of elements is a new descending run).
-- $Mono \not \equiv Max$:
-  - There is no constant $c$ such as $c \cdot Max(X) \le Mono(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $Mono(X) = 1$ (a single decreasing run), but $Max(X) = \lvert X \rvert - 1$ (the distance between the smallest and greatest elements is maximal).
-  - There is no constant $c$ such as $c \cdot Mono(X) \le Max(X)$: a sequence $X$ like $\langle 1, 0, 3, 2, ..., n , n - 1 \rangle$ always has $Max(X) = 1$ (all inversions are with a neighbour, hence they all equal $1$), but $Mono(X) = \frac{\lvert X \rvert}{2}$ (every pair of elements is a new descending run).
+- $\mathit{Mono} \preceq \mathit{Runs}$: this relation is already mentioned in *Sort Race* and rather intuitive: since $\mathit{Mono}$ detects both non-increasing and non-decreasing runs, it is as least as good as $\mathit{Runs}$ that only detects non-decreasing runs.
+- $\mathit{SMS} \preceq \mathit{Mono}$: this one seems intuitive too: $\mathit{SMS}$ which detects the minimum number of subsequences of non-adjacent elements should be at least as good as $\mathit{Mono}$ which only detects subsequences of adjacent elements.
+- $\mathit{Enc} \preceq \mathit{Mono}$: when making encroaching lists, $\mathit{Enc}$ is guaranteed to create no more than one such new list per non-increasing or non-decreasing run found in $X$, so the result will be at most as big as that of $\mathit{Mono}$. However $\mathit{Enc}$ can also find presortedness in patterns such as $\langle 5, 6, 4, 7, 3, 8, 2, 9, 1, 10 \rangle$ where $\mathit{Mono}$ finds maximum disorder. Therefore $\mathit{Enc}(X)$ should always be at most as big as $\mathit{Mono}(X)$.
+- $\mathit{Mono} \not \equiv \mathit{SUS}$:
+  - There is no constant $c$ such as $c \cdot \mathit{SUS}(X) \le \mathit{Mono}(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $\mathit{Mono}(X) = 1$ (a single decreasing run), but $\mathit{SUS}(X) = \lvert X \rvert$ (each element is decreasing, and as such constitues a new single-element ascending subsequence).
+  - There is no constant $c$ such as $c \cdot \mathit{Mono}(X) \le \mathit{SUS}(X)$: a sequence $X$ like $\langle 0, \frac{n}{2}, 1, \frac{n}{2} + 1, 2, \frac{n}{2} + 2, ..., \frac{n}{2} - 2, n - 1, \frac{n}{2} - 1, n \rangle$ always has $\mathit{SUS}(X) = 2$ (an ascending subsequence of even indices, another one of odd indices), but $\mathit{Mono}(X) = \frac{\lvert X \rvert}{2}$ (every pair of elements is a new descending run).
+- $\mathit{Mono} \not \equiv \mathit{Max}$:
+  - There is no constant $c$ such as $c \cdot \mathit{Max}(X) \le \mathit{Mono}(X)$: a sequence $X$ like $\langle n - 1, ..., 2, 1, 0 \rangle$ always has $\mathit{Mono}(X) = 1$ (a single decreasing run), but $\mathit{Max}(X) = \lvert X \rvert - 1$ (the distance between the smallest and greatest elements is maximal).
+  - There is no constant $c$ such as $c \cdot \mathit{Mono}(X) \le \mathit{Max}(X)$: a sequence $X$ like $\langle 1, 0, 3, 2, ..., n , n - 1 \rangle$ always has $\mathit{Max}(X) = 1$ (all inversions are with a neighbour, hence they all equal $1$), but $\mathit{Mono}(X) = \frac{\lvert X \rvert}{2}$ (every pair of elements is a new descending run).
 
 The following relations can be transitively deduced from the results presented in *A framework for adaptive sorting*:
-- $Mono \not \preceq Exc$: we know that $SMS \preceq Mono$ and $SMS \not \preceq Exc$.
-- $Mono \not \preceq Inv$: we know that $SMS \preceq Mono$ and $SMS \not \preceq Inv$.
-- $Hist \not \preceq Mono$: we know that $Mono \preceq Runs$ and $Hist \not \preceq Runs$.
+- $\mathit{Mono} \not \preceq \mathit{Exc}$: we know that $\mathit{SMS} \preceq \mathit{Mono}$ and $\mathit{SMS} \not \preceq \mathit{Exc}$.
+- $\mathit{Mono} \not \preceq \mathit{Inv}$: we know that $\mathit{SMS} \preceq \mathit{Mono}$ and $\mathit{SMS} \not \preceq \mathit{Inv}$.
+- $\mathit{Hist} \not \preceq \mathit{Mono}$: we know that $\mathit{Mono} \preceq \mathit{Runs}$ and $\mathit{Hist} \not \preceq \mathit{Runs}$.
 
 The following relations have yet to be analyzed:
-- $Osc \preceq Mono$
-- $Loc \preceq Mono$
+- $\mathit{Osc} \preceq \mathit{Mono}$
+- $\mathit{Loc} \preceq \mathit{Mono}$
 
-Another interesting property of $Mono$ is that it returns the same amount of disorder for a sequence $X$ and for a sequence corresponding to $X$ with the order of all elements reversed, a property that is only shared with $Osc$ in the library.
+Another interesting property of $\mathit{Mono}$ is that it returns the same amount of disorder for a sequence $X$ and for a sequence corresponding to $X$ with the order of all elements reversed, a property that is only shared with $\mathit{Osc}$ in the library.
 
 
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
