@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2025 Morwenn
+# Copyright (c) 2015-2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.8.0)
@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 project(cpp-sort VERSION 1.17.1 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
+include(cpp-sort-utils)
 include(GNUInstallDirs)
 
 # Project options
@@ -28,6 +29,7 @@ if (CPPSORT_USE_LIBASSERT)
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
+    mark_system_library(libassert-lib)
 endif()
 
 # Create cpp-sort library and configure it

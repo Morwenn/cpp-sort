@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2018-2025 Morwenn
+# Copyright (c) 2018-2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 import os.path
@@ -29,7 +29,8 @@ class CppSortConan(ConanFile):
     exports_sources = [
         "include/*",
         "CMakeLists.txt",
-        "cmake/cpp-sort-config.cmake.in"
+        "cmake/cpp-sort-config.cmake.in",
+        "cmake/cpp-sort-utils.cmake",
     ]
     settings = "os", "compiler", "build_type", "arch"
     package_type = "header-library"

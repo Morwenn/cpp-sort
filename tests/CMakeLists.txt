@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2025 Morwenn
+# Copyright (c) 2015-2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -31,11 +31,9 @@ else()
                      UPDATE_DISCONNECTED 1
     )
     add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
+    mark_system_library(Catch2)
+    mark_system_library(Catch2WithMain)
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
-
-    # Make Catch2::Catch2 a SYSTEM target
-    get_target_property(Catch2_INCLUDE_DIRECTORY Catch2 INTERFACE_INCLUDE_DIRECTORIES)
-    set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${Catch2_INCLUDE_DIRECTORY}")
 endif()
 include(Catch)
 
@@ -57,10 +55,8 @@ else()
 
     set(RC_INSTALL_ALL_EXTRAS ON)
     add_subdirectory(${RapidCheck_SOURCE_DIR} ${RapidCheck_BINARY_DIR})
-
-    # Make rapidcheck a SYSTEM target
-    get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
-    set_target_properties(rapidcheck PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${rapidcheck_INCLUDE_DIRECTORY}")
+    mark_system_library(rapidcheck)
+    mark_system_library(rapidcheck_catch)
 endif()
 
 ########################################
