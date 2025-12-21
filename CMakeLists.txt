@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 project(cpp-sort VERSION 2.0.0 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
+include(cpp-sort-utils)
 include(GNUInstallDirs)
 
 # Project options
@@ -30,6 +31,7 @@ if (CPPSORT_USE_LIBASSERT)
     if (NOT libassert_POPULATED)
         FetchContent_Populate(libassert)
         add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
+        mark_system_library(libassert-lib)
     endif()
 endif()
 

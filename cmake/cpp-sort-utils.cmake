@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023 Morwenn
+# Copyright (c) 2019-2025 Morwenn
 # SPDX-License-Identifier: MIT
 
 # Add a selection of warnings to a target
@@ -15,3 +15,17 @@ macro(cppsort_add_warnings target)
         )
     endif()
 endmacro()
+
+# Mark a target as a SYSTEM library
+function(mark_system_library target)
+    get_target_property(
+        TARGET_INCLUDE_DIR
+        ${target}
+        INTERFACE_INCLUDE_DIRECTORIES
+    )
+    set_target_properties(
+        ${target}
+        PROPERTIES
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${TARGET_INCLUDE_DIR}"
+    )
+endfunction()
