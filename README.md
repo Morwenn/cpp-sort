@@ -1,6 +1,6 @@
 ![cpp-sort logo](docs/images/cpp-sort-logo.svg)
 
-[![Latest Release](https://img.shields.io/badge/release-2.0.0-blue.svg)](https://github.com/Morwenn/cpp-sort/releases/tag/v2.0.0)
+[![Latest Release](https://img.shields.io/badge/release-2.0.0-blue.svg)](https://codeberg.org/Morwenn/cpp-sort/releases/tag/v2.0.0)
 [![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F2.0.0-blue.svg)](https://conan.io/center/recipes/cpp-sort?version=2.0.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/2.x.y-develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 [![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
@@ -41,11 +41,11 @@ anything to be backported._
 
 **cpp-sort** provides a full set of sorting-related features. Here are the main building blocks
 of the library:
-* Every sorting algorithm exists as a function object called a [sorter](https://github.com/Morwenn/cpp-sort/wiki/Sorters)
-* Sorters can be wrapped in [sorter adapters](https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters) to augment their behaviour
-* The library provides a [sorter facade](https://github.com/Morwenn/cpp-sort/wiki/Sorter-facade) to easily build sorters
-* [Fixed-size sorters](https://github.com/Morwenn/cpp-sort/wiki/Fixed-size-sorters) can be used to efficiently sort tiny fixed-size collections
-* [Measures of disorder](https://github.com/Morwenn/cpp-sort/wiki/Measures-of-disorder) can be used to evaluate the disorder in a collection
+* Every sorting algorithm exists as a function object called a [sorter][sorters]
+* Sorters can be wrapped in [sorter adapters][sorter-adapters] to augment their behaviour
+* The library provides a [sorter facade][sorter-facade] to easily build sorters
+* [Fixed-size sorters][fixed-size-sorters] can be used to efficiently sort tiny fixed-size collections
+* [Measures of disorder][measures-of-disorder] can be used to evaluate the disorder in a collection
 
 Here is a more complete example of what can be done with the library:
 
@@ -97,7 +97,7 @@ some interesting guarantees (ideas often taken from the Ranges TS):
 * Sorters are function objects: they can directly be passed as "overload sets" to other functions
 
 You can read more about all the available tools and find some tutorials about using
-and extending **cpp-sort** in [the wiki](https://github.com/Morwenn/cpp-sort/wiki).
+and extending **cpp-sort** in [the wiki][cpp-sort-wiki].
 
 # Benchmarks
 
@@ -150,7 +150,7 @@ You can read more about those [in the wiki][tooling].
 > piece.*
 > — Jarod Kintz, $3.33
 
-Even though some parts of the library are [original research](https://github.com/Morwenn/cpp-sort/wiki/Original-research)
+Even though some parts of the library are [original research][original-research]
 and some others correspond to custom and rather naive implementations of standard
 sorting algorithms, **cpp-sort** also reuses a great deal of code and ideas from
 open-source projects, often altered to integrate seamlessly into the library. Here
@@ -175,12 +175,11 @@ module](https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/index.html).
 in [Boost.Sort](https://www.boost.org/doc/libs/1_80_0/libs/sort/doc/html/index.html).
 by Francisco Jose Tapia.
 
-* [`utility::as_function`](https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function),
-and several projection-enhanced helper algorithms come from Eric Niebler's [Range
-v3](https://github.com/ericniebler/range-v3) library. Several ideas such as proxy
-iterators, customization points and projections, as well as a few other utility
-functions also come from that library or from the related articles and standard
-C++ proposals.
+* [`utility::as_function`][utility-as-function], and several projection-enhanced helper
+algorithms come from Eric Niebler's [Range v3](https://github.com/ericniebler/range-v3)
+library. Several ideas such as proxy iterators, customization points and projections,
+as well as a few other utility functions also come from that library or from the related
+articles and standard C++ proposals.
 
 * The algorithm used by `ska_sorter` comes from Malte Skarupke's [implementation](https://github.com/skarupke/ska_sort)
 of his own [ska_sort](https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/) algorithm.
@@ -248,9 +247,17 @@ developed by Thøger Rivera-Thorsen.
 
 
   [adaptive-sort]: https://en.wikipedia.org/wiki/Adaptive_sort
-  [benchmarks]: https://github.com/Morwenn/cpp-sort/wiki/Benchmarks
-  [changelog]: https://github.com/Morwenn/cpp-sort/wiki/Changelog
-  [drop-merge-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#drop_merge_adapter
-  [heap-sorter]: https://github.com/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
-  [split-adapter]: https://github.com/Morwenn/cpp-sort/wiki/Sorter-adapters#split_adapter
-  [tooling]: https://github.com/Morwenn/cpp-sort/wiki/Tooling
+  [benchmarks]: https://codeberg.org/Morwenn/cpp-sort/wiki/Benchmarks
+  [changelog]: https://codeberg.org/Morwenn/cpp-sort/wiki/Changelog
+  [cpp-sort-wiki]: https://codeberg.org/Morwenn/cpp-sort/wiki
+  [drop-merge-adapter]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-adapters#drop_merge_adapter
+  [fixed-size-sorters]: https://codeberg.org/Morwenn/cpp-sort/wiki/Fixed-size-sorters
+  [heap-sorter]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
+  [measures-of-disorder]: https://codeberg.org/Morwenn/cpp-sort/wiki/Measures-of-disorder
+  [original-research]: https://codeberg.org/Morwenn/cpp-sort/wiki/Original-research
+  [sorter-adapters]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-adapters
+  [sorter-facade]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-facade
+  [sorters]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorters
+  [split-adapter]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-adapters#split_adapter
+  [tooling]: https://codeberg.org/Morwenn/cpp-sort/wiki/Tooling
+  [utility-as-function]: https://codeberg.org/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function

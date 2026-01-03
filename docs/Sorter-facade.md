@@ -45,7 +45,7 @@ The return type `Ret` can either match that of the sorter, or be `void`, in whic
 
 Note that the function pointer conversion syntax above is made up, but it allows to clearly highlight what it does while hiding the `typedef`s needed for the syntax to be valid. In these signatures, `Ret` is the [`std::result_of_t`][std-result-of] of the sorter called with the parameters. The actual implementation is more verbose and redundant, but it allows to transform a sorter into a function pointer corresponding to any valid overload of `operator()`.
 
-***WARNING:** conversion to function pointers does not work with MSVC ([issue #185][issue-185]).*
+***WARNING:** conversion to function pointers does not work with MSVC ([issue github#185][issue-185]).*
 
 ## `operator()`
 

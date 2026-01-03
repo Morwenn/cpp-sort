@@ -19,7 +19,7 @@ class CppSortConan(ConanFile):
     version = "2.0.0"
     description = "Sorting algorithms & related tools"
     license = "MIT"
-    url = "https://github.com/Morwenn/cpp-sort"
+    url = "https://codeberg.org/Morwenn/cpp-sort"
     homepage = url
     topics = "cpp-sort", "sorting", "algorithms"
     author = "Morwenn <morwenn29@hotmail.fr>"

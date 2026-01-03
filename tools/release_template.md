@@ -46,5 +46,5 @@ Miscellaneous:
 I didn't manage to fix every bug I could find since the previous release, so you might want to check the [list of known bugs][known-bugs].
 
 
-  [deprecation-warnings]: https://github.com/Morwenn/cpp-sort/wiki#deprecation-warnings
+  [deprecation-warnings]: https://codeberg.org/Morwenn/cpp-sort/wiki#deprecation-warnings
   [known-bugs]: https://github.com/Morwenn/cpp-sort/issues?q=is%3Aissue+is%3Aopen+label%3Abug

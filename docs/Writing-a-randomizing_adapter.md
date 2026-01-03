@@ -72,7 +72,7 @@ When possible, a proper *sorter adapter* is expected to be callable with the sam
 
 ## Returned value
 
-There is currently no strict rule about what a *sorter adapter* should return (this is actually a [open design issue][issue-134]), though the general wisdom is that an adapter should transparently provide as many features as the sorter it adapts when it reasonably can. The idea is that replacing the sorter by its wrapped counterpart should be easy.
+There is no strict rule about what a *sorter adapter* should return. The general wisdom is that an adapter should transparently provide as many features as the *sorter* it adapts when it reasonably can unless it has good reasons to to otherwise. The idea is that replacing the sorter by its wrapped counterpart should be easy.
 
 We don't have a specific use for the return channel of `randomizing_adapter` and it is simple to make it transitively return whatever the wrapped sorter returns - and even convenient -, so I decided to do just that.
 
@@ -142,7 +142,6 @@ The full implementation can be found in the `examples` folder.
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [golden-tests]: https://en.wikipedia.org/wiki/Characterization_test
   [hyrums-law]: https://www.hyrumslaw.com/
-  [issue-134]: https://github.com/Morwenn/cpp-sort/issues/134
   [iterator-category]: https://en.cppreference.com/w/cpp/iterator
   [proxy-iterators]: https://wg21.link/P0022
   [quick-sorter]: Sorters.md#quick_sorter

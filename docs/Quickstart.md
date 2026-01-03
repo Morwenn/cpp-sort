@@ -228,5 +228,5 @@ The previous sections describe some of the main tools provided by **cpp-sort** b
   [std-searchers]: https://en.cppreference.com/w/cpp/utility/functional#Searchers
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [tooling]: Tooling.md
-  [utility-apply-permutation]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#apply_permutation
-  [utility-sorted-indices]: https://github.com/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#sorted_indices
+  [utility-apply-permutation]: Miscellaneous-utilities.md#apply_permutation
+  [utility-sorted-indices]: Miscellaneous-utilities.md#sorted_indices
