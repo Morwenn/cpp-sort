@@ -228,7 +228,7 @@ The following relations have yet to be analyzed:
 
   [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
-  [divide-sort-merge-strategy]: http://www.dtic.mil/dtic/tr/fulltext/u2/737270.pdf
+  [divide-sort-merge-strategy]: https://apps.dtic.mil/sti/tr/pdf/AD0737270.pdf
   [exact-sort]: https://www.geocities.ws/p356spt/
   [indirect-adapter]: Sorter-adapters.md#indirect_adapter
   [morwenn-gist]: https://gist.github.com/Morwenn
