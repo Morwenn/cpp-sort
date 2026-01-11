@@ -231,6 +231,8 @@ Libraries*](https://arxiv.org/abs/1505.01962).
 * The algorithm behind `utility::quicksort_adversary` is a fairly straightforward adaptation of the
 one provided by M. D. McIlroy in [*A Killer Adversary for Quicksort*](https://www.cs.dartmouth.edu/~doug/mdmspe.pdf).
 
+* The algorithm used by [`utility::check_strict_weak_ordering`][utility-check-strict-weak-ordering] is a reimplementation of the one desribed in the README file of danlark1's [quadratic_strict_weak_ordering project](https://github.com/danlark1/quadratic_strict_weak_ordering).
+
 * The test suite reimplements random number algorithms originally found in the following places:
   - [xoshiro256\*\*](https://prng.di.unimi.it/)
   - [*Optimal Discrete Uniform Generation from Coin Flips, and Applications*](https://arxiv.org/abs/1304.1916)
@@ -261,3 +263,4 @@ developed by Thøger Rivera-Thorsen.
   [split-adapter]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-adapters#split_adapter
   [tooling]: https://codeberg.org/Morwenn/cpp-sort/wiki/Tooling
   [utility-as-function]: https://codeberg.org/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#as_function
+  [utility-check-strict-weak-ordering]: https://codeberg.org/Morwenn/cpp-sort/wiki/Miscellaneous-utilities#strict-weak-ordering-checker

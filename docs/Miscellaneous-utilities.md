@@ -491,6 +491,31 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
 
 `swap_index_pairs` loops over the index pairs in the simplest fashion and calls the compare-exchange operations in the simplest possible way. `swap_index_pairs_force_unroll` is a best effort function trying to achieve the same job by unrolling the loop over indices the best it can - a perfect unrolling is thus attempted, but never guaranteed, which might or might not result in faster runtime and/or increased binary size.
 
+## Strict weak ordering checker
+
+```cpp
+#include <cpp-sort/utility/check_strict_weak_ordering.h>
+```
+
+Comparison sorting requires the comparison function to model a [strict weak ordering][strict-weak-ordering] over the values of the range to sort. Otherwise, the sorting algorithm might fail to sort the collection, or encounter even fail in hard-to-predict ways, potentially invoking undefined behavior.
+
+Checking whether a comparison function models such an ordering for a given is an expensive task, which means that it is remains an unchecked precondition of algorithms in the library. If you suspect that a bug with a comparison sort might be linked to a violation of the strict weak ordering by the comparison function, you can use `utility::check_strict_weak_ordering` to analyze it over a given range:
+
+```cpp
+std::vector<double> vec = { 1.0, 9.0, std::nan("1"), 11.5, 56.3, 2.8 };
+assert(not cppsort::utility::check_strict_weak_ordering(vec, std::less{});)
+```
+
+`check_strict_weak_ordering` is a function object that follows the *unified sorting interface*: it takes a range of elements and a comparison function (and optionally a projection function). When called, it returns `true` if the passed comparison function models a strict weak ordering over the values of the input range, and `false` otherwise.
+
+**WARNING: `check_strict_weak_ordering` alters the input range.**
+
+| Time | Memory | Iterators     |
+| ---- | ------ | ------------- |
+| n²   | 1      | Random-access |
+
+*New in version 2.1.0*
+
 
   [apply-permutation]: Miscellaneous-utilities.md#apply_permutation
   [chainable-projections]: Chainable-projections.md
@@ -524,4 +549,5 @@ auto swap_index_pairs_force_unroll(RandomAccessIterator first,
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-size]: https://en.cppreference.com/w/cpp/iterator/size
+  [strict-weak-ordering]: https://en.wikipedia.org/wiki/Weak_ordering#Strict_weak_orderings
   [transparent-func]: Comparators-and-projections.md#Transparent-function-objects

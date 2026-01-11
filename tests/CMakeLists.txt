@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2025 Morwenn
+# Copyright (c) 2015-2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -263,6 +263,7 @@ add_executable(main-tests
     utility/branchless_traits.cpp
     utility/buffer.cpp
     utility/chainable_projections.cpp
+    utility/check_strict_weak_ordering.cpp
     utility/iter_swap.cpp
     utility/metric_tools.cpp
     utility/quicksort_adversary.cpp
