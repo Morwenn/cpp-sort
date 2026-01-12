@@ -264,6 +264,7 @@ add_executable(main-tests
     utility/buffer.cpp
     utility/chainable_projections.cpp
     utility/check_strict_weak_ordering.cpp
+    utility/is_sorted.cpp
     utility/iter_swap.cpp
     utility/metric_tools.cpp
     utility/quicksort_adversary.cpp

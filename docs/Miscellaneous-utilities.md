@@ -137,6 +137,17 @@ struct dynamic_buffer;
 
 This buffer provider allocates on the heap a number of elements depending on a given *size policy* (a class whose `operator()` takes the size of the collection and returns another size). You can use the function objects from `utility/functional.h` as basic size policies. The buffer construction may throw an instance of [`std::bad_alloc`][std-bad-alloc] if it fails to allocate the required memory.
 
+### `is_sorted` and `is_sorted_until`
+
+```cpp
+#include <cpp-sort/utility/is_sorted.h>
+#include <cpp-sort/utility/is_sorted_until.h>
+```
+
+Simple reimplementations of the standard library algorithms [`std::is_sorted`][std-is-sorted] and [`std::is_sorted_until`][std-is-sorted-until], reimplemented as function objects that follow the library's *unified sorting interface*.
+
+*New in version 2.1.0*
+
 ### Miscellaneous function objects
 
 ```cpp
@@ -543,6 +554,8 @@ assert(not cppsort::utility::check_strict_weak_ordering(vec, std::less{});)
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
   [std-is-arithmetic]: https://en.cppreference.com/w/cpp/types/is_arithmetic
   [std-is-member-function-pointer]: https://en.cppreference.com/w/cpp/types/is_member_function_pointer
+  [std-is-sorted]: https://en.cppreference.com/w/cpp/algorithm/is_sorted.html
+  [std-is-sorted-until]: https://en.cppreference.com/w/cpp/algorithm/is_sorted_until.html
   [std-less]: https://en.cppreference.com/w/cpp/utility/functional/less
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
