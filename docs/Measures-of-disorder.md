@@ -414,7 +414,7 @@ Computes the minimum number of non-decreasing subsequences (of possibly non-adja
 
 ## Other measures of disorder
 
-Some additional measures of disorder have been described in the literature but do not appear in the partial ordering graph. This section describes some of them but is not an exhaustive list.
+Some additional measures of disorder have been described in the literature but do not appear in the partial ordering graph, or are not provided in the library. This section describes some of them but is not an exhaustive list.
 
 ### *DS*
 
@@ -423,6 +423,13 @@ A measure called *DS* appears in *Computing and ranking measures of presortednes
 *Spear* is introduced under the name *D*, likely for (Spearman's Footrule) *Distance*, in *Spearman's Footrule as a Measure of Disarray* by P. Diaconis and R. L. Graham. Other sources give the name $D_S$, and similary give the name $D_H$ to *Ham*, for Hamming distance. I believe that's where the name *DS* comes from.
 
 In other domains, that value is called *F* (for *Footrule*). It is no more helpful a name than *D* or *DS*, so I decided to use *Spear* for this library's name (for *Spearman*) - following the same naming pattern that led to *Ham* -, despite there being no precedent in the literature.
+
+### *Las*, *Lds* and *Lads*
+
+Those names tend to appear in papers authored by Jinseng Chen, such as *On Partitions and Presortedness of Sequences* and *Computing and Ranking Measures of Presortedness*:
+* *Las(X)* is the length of the *longest ascending subsequence* of *X*. We do not provide it because it grows with _order_ in the sequence intead of growing with _disorder_. $\mathit{Rem}(X) = \lvert X \rvert - \mathit{Las}(X)$ is the closest measure provided by the library.
+* *Lds(X)* is the length of the *longest descending subsequence* of *X*. It corresponds to to [$\mathit{SUS}$][probe-sus] in the library, the minimum number of increasing subsequences into which *X* can be decomposed.
+* *Lads(X)* is an extension of both of the measures above, computing the minimum number of monotonic subsequences (ascending or descending) into which *X* can be decomposed. It is a different name for [*SMS*][probe-sms].
 
 ### *Par*
 
@@ -463,5 +470,6 @@ Nevertheless we do know a few of the measure's properties:
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [original-research]: Original-research.md#partial-ordering-of-mono
+  [probe-sms]: Measures-of-disorder.md#sms
   [probe-sus]: Measures-of-disorder.md#sus
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
