@@ -402,9 +402,9 @@ Spearman's footrule distance: sum of distances between the position of individua
 #include <cpp-sort/probes/sus.h>
 ```
 
-Computes the minimum number of non-decreasing subsequences (of possibly not adjacent elements) into which $X$ can be partitioned, minus 1. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of $X$ minus 1.
+Computes the minimum number of non-decreasing subsequences (of possibly non-adjacent elements) into which $X$ can be partitioned, minus 1. It happens to correspond to the size of the [longest decreasing subsequence][longest-increasing-subsequence] of $X$ minus 1.
 
-*SUS* stands for *Shuffled Up-Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
+*SUS* stands for *Shuffled UpSequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson.
 
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
@@ -448,8 +448,20 @@ In their subsequent papers, those authors consistently use *Dis* instead of *Par
 
 T. Altman and Y. Igarashi mention the concept of *k*-sortedness and the measure *Radius*($X$) in *Roughly Sorting: Sequential and Parallel Approach*. However *k*-sortedness is the same as *p*-sortedness, and *Radius* is just another name for *Par* (and thus for *Dis*).
 
+### *SMS*
+
+*SMS* stands for *Shuffled Monotone Sequences* and was introduced in *Sorting Shuffled Monotone Sequences* by C. Levcopoulos and O. Petersson. It computes the minimum number of increasing or decreasing subsequences (of possibly non-adjacent elements) into which a sequence $X$ can be partitioned, minus 1.
+
+The concept in itself is fiarly straightforward, yet the problem of computing $\mathit{SMS}(X) \le k$ in NP-complete, as shown by K. Wagner in *Monotonic coverings of finite sets*. For this reason, the library does not provide an implementation. It is technically possible to compute an approximation of $\mathit{SMS}(X)$ by repeatedly removing the longest monotonic subsequence from $X$.
+
+Nevertheless we do know a few of the measure's properties:
+* $1 \le \mathit{SMS}(X) \le \min {\mathit{SUS}(X), \mathit{SDS}(X)}$, where $\mathit{SUS}$ and $\mathit{SDS}$ respectivey standard for [*Shuffled UpSequences*][probe-sus] and *Shuffled DownSequences*, the first being a measure of presortedness that we provide.
+* $\mathit{SMS}(X) \le \lfloor \sqrt{2n + \frac{1}{4}} - \frac{1}{2} \rfloor$, as proven by A. Brandstädt and D. Kratsch in *On partitions of permutations into increasing and decreasing subsequences*.
+
+
 
   [hamming-distance]: https://en.wikipedia.org/wiki/Hamming_distance
   [longest-increasing-subsequence]: https://en.wikipedia.org/wiki/Longest_increasing_subsequence
   [original-research]: Original-research.md#partial-ordering-of-mono
+  [probe-sus]: Measures-of-disorder.md#sus
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
