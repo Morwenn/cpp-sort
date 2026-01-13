@@ -246,7 +246,9 @@ $$
 
 Computes the minimum number of exchanges required to sort $X$, which corresponds to $\lvert X \rvert$ minus the number of cycles in the sequence. A cycle corresponds to a number of elements in a sequence that need to be rotated to be in their sorted position; for example, let $\langle 2, 4, 0, 6, 3, 1, 5 \rangle$ be a sequence, the cycles are $\langle 0, 2 \rangle$ and $\langle 1, 3, 4, 5, 6 \rangle$ so $\mathit{Exc}(X) = \lvert X \rvert - 2 = 5$.
 
-**Warning:** `probe::exc` generally returns a result higher than the minimum number of exchanges required to sort $X$ when it contains *equivalent elements*. This is because extending $\mathit{Exc}$ to *equivalent elements* is a NP-hard problem (see *On the Cost of Interchange Rearrangement in Strings* by Amir et al). The function does handle such elements in some simple cases, but not in the general case.
+![Visual representation of the two cycles of exchanges required to sort the aforementioned sequence](images/sorting-exchange-cycles.png)
+
+**Warning:** `probe::exc` generally returns a result greater than the minimum number of exchanges required to sort $X$ when it contains *equivalent elements*. This is because extending $\mathit{Exc}$ to *equivalent elements* is a NP-hard problem (see *On the Cost of Interchange Rearrangement in Strings* by Amir et al). The function does handle such elements in some simple cases, but not in the general case.
 
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
