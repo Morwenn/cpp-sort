@@ -332,6 +332,12 @@ The measure of disorder is slightly different from its original description in [
 
 Computes the *Oscillation* measure described by C. Levcopoulos and O. Petersson in *Adaptive Heapsort*, using an algorithm devised by J. Nehring.
 
+Let $\lvert \lvert \mathit{Cross}(x_i) \rvert \rvert$ be the number of links between adjacent pairs that "cross" the value $x_i$. We define the oscillation measure as $\mathit{Osc}(X) = \sum_{i=0}^{\lvert X \rvert - 1} \lvert \lvert \mathit{Cross}(x_i) \rvert \rvert$.
+
+![Plot of Cross(x_5) over the sequence 6, 3, 9, 8, 4, 7, 1, 10](images/measures-of-disorder-osc-cross.png)
+
+In the illustration above, we can see that a horizontal line drawn from $x_5$ crosses three pairs of adjacent elements in the geometrical representation of the sequence $X = \langle 6, 3, 9, 8, 4, 7, 1, 10 \rangle$. Thus $\lvert \lvert \mathit{Cross}(x_5) \rvert \rvert = 3$. In this example, we have $\mathit{Osc(X) = 17}$.
+
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
