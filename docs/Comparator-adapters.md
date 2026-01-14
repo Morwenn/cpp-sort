@@ -20,7 +20,7 @@ Those unwrappings are meant to be simple and only intended to work with "well-fo
 #include <cpp-sort/comparators/flip.h>
 ```
 
-The class template `flip_t` is a function object which, when called, passes the arguments in reversed order to the *Callable* it holds with and returns the result. It is named after the [`flip`][prelude-flip] function from Haskell's Prelude module.
+The class template `flip_t` is a function object which, when called, passes the arguments in reversed order to the *Callable* it holds and returns the result. It is named after the [`flip`][prelude-flip] function from Haskell's Prelude module. You can find more trivia about this function object, as well as examples of use [in a article][blog-std-flip] on my blog.
 
 `flip_t<F>` has the following member functions:
 
@@ -137,6 +137,7 @@ constexpr auto projection() const
 
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate
+  [blog-std-flip]: https://morwenn.github.io/c++/2025/09/25/TSB004-std-flip.html
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [prelude-flip]: https://hackage.haskell.org/package/base-4.16.0.0/docs/Prelude.html#v:flip
