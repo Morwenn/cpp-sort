@@ -164,6 +164,40 @@ Almost any sorter can be passed to any adapter, with a few exceptions:
 
 The specific restrictions are all documented in the adapters descriptions.
 
+## Metrics
+
+[Metrics][metrics] are a special kind of sorter adapters that can be used to retrieve information about about, such as the number of comparisons performed by a sorter, or the time it took to sort a collection. They are used together with the [metrics tools][metrics-tools] from the library utilities.
+
+* Count the number of comparisons performed by a comparison sort:
+    ```cpp
+    #include <vector>
+    #include <cpp-sort/metrics/comparisons.h>
+    #include <cpp-sort/sorters/slab_sorter.h>
+
+    int main()
+    {
+        auto sorter = cppsort::metrics::comparisons<cppsort::slab_sorter>{};
+        std::vector<int> collection = { /* ... */ };
+        auto comps = sorter(collection);
+        std::print("slabsort perform {} comparisons", comps.value());
+    }
+    ```
+
+* Compute the time it takes to sort a collection:
+    ```cpp
+    #include <vector>
+    #include <cpp-sort/metrics/running_time.h>
+    #include <cpp-sort/sorters/mel_sorter.h>
+
+    int main()
+    {
+        auto sorter = cppsort::metrics::running_time<cppsort::mel_sorter>{};
+        std::vector<int> collection = { /* ... */ };
+        auto comps = sorter(collection);
+        std::print("melsort took {}", comps.value());
+    }
+    ```
+
 ## Two-step sorting
 
 Sometimes the information is not represented as simple collection of class instances, but as [parallel arrays][parallel-arrays] (also known as structure of arrays). To sort those, **cpp-sort** provides components for two-step sorting of random-access collections:
@@ -212,8 +246,10 @@ The previous sections describe some of the main tools provided by **cpp-sort** b
 
   [cmake]: https://cmake.org/
   [conan]: https://conan.io/
-  [merge-sorter]: Sorters.md#merge_sorter
   [measures-of-disorder]: Measures-of-disorder.md
+  [merge-sorter]: Sorters.md#merge_sorter
+  [metrics]: Metrics.md
+  [metrics-tools]: Miscellaneous-utilities.md#metrics-tools
   [numpy-argsort]: https://numpy.org/doc/stable/reference/generated/numpy.argsort.html
   [parallel-arrays]: https://en.wikipedia.org/wiki/Parallel_array
   [pdq-sorter]: Sorters.md#pdq_sorter
