@@ -45,6 +45,7 @@ of the library:
 * Sorters can be wrapped in [sorter adapters][sorter-adapters] to augment their behaviour
 * The library provides a [sorter facade][sorter-facade] to easily build sorters
 * [Fixed-size sorters][fixed-size-sorters] can be used to efficiently sort tiny fixed-size collections
+* [Metrics][metrics] can be used to gather information about the sorting operation
 * [Measures of disorder][measures-of-disorder] can be used to evaluate the disorder in a collection
 
 Here is a more complete example of what can be done with the library:
@@ -256,6 +257,7 @@ developed by Thøger Rivera-Thorsen.
   [fixed-size-sorters]: https://codeberg.org/Morwenn/cpp-sort/wiki/Fixed-size-sorters
   [heap-sorter]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorters#heap_sorter
   [measures-of-disorder]: https://codeberg.org/Morwenn/cpp-sort/wiki/Measures-of-disorder
+  [metrics]: https://codeberg.org/Morwenn/cpp-sort/wiki/Metrics
   [original-research]: https://codeberg.org/Morwenn/cpp-sort/wiki/Original-research
   [sorter-adapters]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-adapters
   [sorter-facade]: https://codeberg.org/Morwenn/cpp-sort/wiki/Sorter-facade
