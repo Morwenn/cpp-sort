@@ -14,13 +14,14 @@ from matplotlib import pyplot
 def main():
     parser = argparse.ArgumentParser(description="Plot the results of the errorbar-plot benchmark.")
     parser.add_argument('root', help="directory with the result files to plot")
-    parser.add_argument('--alternative-palette', dest='use_alt_palette',
-                        action='store_true', default=False,
+    parser.add_argument('--alternative-palette',
+                        dest='use_alt_palette',
+                        action='store_true',
                         help="Use another color palette")
     args = parser.parse_args()
 
     root = pathlib.Path(args.root)
-    result_files = list(root.glob('*.csv'))
+    result_files = sorted(root.glob('*.csv'))
     if len(result_files) == 0:
         print(f"There are no files to plot in {root}")
         sys.exit(1)
