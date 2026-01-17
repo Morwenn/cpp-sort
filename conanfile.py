@@ -16,7 +16,7 @@ required_conan_version = ">=1.50.0"
 
 class CppSortConan(ConanFile):
     name = "cpp-sort"
-    version = "1.17.1"
+    version = "1.17.2"
     description = "Sorting algorithms & related tools"
     license = "MIT"
     url = "https://github.com/Morwenn/cpp-sort"
