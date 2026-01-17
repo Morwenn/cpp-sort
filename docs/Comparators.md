@@ -117,11 +117,11 @@ The two-parameter version of the customization point calls the three-parameter o
 *Changed in version 1.5.0:* `case_insensitive_less` is an instance of type `case_insensitive_less_t`.
 
 
-  [binary-predicate]: https://en.cppreference.com/w/cpp/concept/BinaryPredicate
+  [binary-predicate]: https://en.cppreference.com/w/cpp/named_req/BinaryPredicate
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [case-sensitivity]: https://en.wikipedia.org/wiki/Case_sensitivity
-  [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler%20-%20Lawrence%20Crowl%20-%20CppCon%202015
+  [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler
   [custom-point]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
   [natural-sort]: https://en.wikipedia.org/wiki/Natural_sort_order
   [P0100]: http://open-std.org/JTC1/SC22/WG21/docs/papers/2015/p0100r1.html
