@@ -20,6 +20,7 @@
 //
 
 TEMPLATE_TEST_CASE( "heap exhaustion for random-access probes", "[probe][heap_exhaustion]",
+                    decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::runs) )
@@ -38,6 +39,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for random-access probes", "[probe][heap_ex
 }
 
 TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional probes", "[probe][heap_exhaustion]",
+                    decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::runs) )
@@ -56,6 +58,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional probes", "[probe][heap_ex
 }
 
 TEMPLATE_TEST_CASE( "heap exhaustion for forward probes", "[probe][heap_exhaustion]",
+                    decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::runs) )

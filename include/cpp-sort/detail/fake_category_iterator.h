@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "iterator_traits.h"
 #include "type_traits.h"
 
@@ -84,6 +85,7 @@ namespace cppsort::detail
             // Increment/decrement operators
 
             auto operator++()
+                CPPSORT_LIFETIME_BOUND
                 -> fake_category_iterator&
             {
                 ++_it;
@@ -99,6 +101,7 @@ namespace cppsort::detail
             }
 
             auto operator--()
+                CPPSORT_LIFETIME_BOUND
                 -> fake_category_iterator&
             {
                 --_it;
@@ -114,6 +117,7 @@ namespace cppsort::detail
             }
 
             auto operator+=(difference_type increment)
+                CPPSORT_LIFETIME_BOUND
                 -> fake_category_iterator&
             {
                 _it += increment;
@@ -121,6 +125,7 @@ namespace cppsort::detail
             }
 
             auto operator-=(difference_type increment)
+                CPPSORT_LIFETIME_BOUND
                 -> fake_category_iterator&
             {
                 _it -= increment;

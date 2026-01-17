@@ -1,4 +1,4 @@
-% Copyright (c) 2021 Morwenn
+% Copyright (c) 2021-2025 Morwenn
 % SPDX-License-Identifier: MIT
 
 \documentclass{standalone}
@@ -10,7 +10,8 @@
             background rectangle/.style={fill=white},
             show background rectangle,
             auto,
-            node distance = 1.3cm,
+            on grid,
+            node distance = 1.3cm and 3cm,
             semithick
         ]
 
@@ -26,21 +27,23 @@
         % Max=Dis equivalence comes from:
         % NeatSort - A practical adaptive algorithm
         % by M. La Rocca and D. Cantone
-        \node[state] (reg) {$Reg$};
-        \node[state] (loc) [below of=reg] {$Loc$};
-        \node[state] (hist) [left=2.2cm of loc] {$Hist$};
-        \node[state] (sms) [right=2.2cm of loc] {$SMS$};
-        \node[state] (block) [below of=hist] {$\bm{Block}$};
-        \node[state] (osc) [below of=loc] {$\bm{Osc}$};
-        \node[state] (enc) [below of=sms] {$\bm{Enc}$};
-        \node[state] (rem) [below of=block] {$\bm{Rem}$};
-        \node[state] (inv) [below of=osc] {$\bm{Inv}~$$\equiv$$~\bm{Spear}$};
-        \node[state] (sus) [below of=enc] {$\bm{SUS}$};
-        \node[state] (exc) [below of=rem] {$\bm{Exc}~$$\equiv$$~\bm{Ham}$};
-        \node[state] (max) [below of=inv] {$\bm{Max}~$$\equiv$$~\bm{Dis}~$};
-        \node[state] (runs) [below of=sus] {$\bm{Runs}$};
+        \node[state] (reg) {$\mathit{Reg}$};
+        \node[state] (loc) [below of=reg] {$\mathit{Loc}$};
+        \node[state] (sms) [right=of loc] {$\mathit{SMS}$};
+        \node[state] (osc) [below of=loc] {$\bm{\mathit{Osc}}$};
+        \node[state] (hist) [left=of loc] {$\mathit{Hist}$};
+        \node[state] (blank) [below=of osc] {};
+        \node[state] (enc) [below of=sms] {$\bm{\mathit{Enc}}$};
+        \node[state] (inv) [below of=blank] {$\bm{\mathit{Inv}}~$$\equiv$$~\bm{\mathit{Spear}}$};
+        \node[state] (rem) [left=of inv] {$\bm{\mathit{Rem}}$};
+        \node[state] (sus) [below of=enc] {$\bm{\mathit{SUS}}$};
+        \node[state] (exc) [below of=rem] {$\bm{\mathit{Exc}}~$$\equiv$$~\bm{\mathit{Ham}}$};
+        \node[state] (block) [above=of rem] {$\bm{\mathit{Block}}$};
+        \node[state] (max) [below of=inv] {$\bm{\mathit{Max}}~$$\equiv$$~\bm{\mathit{Dis}}~$};
+        \node[state] (runs) [right=of max] {$\bm{\mathit{Runs}}$};
         \node[state] (m01) [below of=max] {$m_{01}$};
         \node[state] (m0) [below of=m01] {$m_{0}$};
+
         \path[-] (reg) edge node {} (hist);
         \path[-] (reg) edge node {} (loc);
         \path[-] (reg) edge node {} (sms);
@@ -64,11 +67,15 @@
 
         % Sort Race
         % by H. Zhang, B. Meng and Y. Liang
-        \node[state] (mono) [right=1.4cm of sus] {$\bm{Mono}$};
-        \path[-] (mono) edge node {} (runs);
-
+        \node[state] (mono) [right=of sus] {$\bm{\mathit{Mono}}$};
         % See the Original Research page of the docs
         \path[-] (enc) edge node {} (mono);
+        
+        % Original research: Amp
+        \node[state] (amp) [below=of mono] {$\bm{\mathit{Amp}}$};
+        \path[-] (amp) edge node {} (runs);
+        % Conjecture
+        \path[-] (amp) edge node {} (mono);
 
     \end{tikzpicture}
 \end{document}

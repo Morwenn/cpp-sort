@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2025 Morwenn
+# Copyright (c) 2015-2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 include(cpp-sort-utils)
@@ -25,16 +25,15 @@ else()
     FetchContent_Declare(
         Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2
-        GIT_TAG 25319fd3047c6bdcf3c0170e76fa526c77f99ca9  # v3.10.0
+        GIT_TAG 88abf9bf325c798c33f54f6b9220ef885b267f4f  # v3.12.0
     )
     FetchContent_GetProperties(Catch2)
     if (NOT Catch2_POPULATED)
         FetchContent_Populate(Catch2)
         add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
         list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-        # Make Catch2::Catch2 a SYSTEM target
-        get_target_property(catch2_INCLUDE_DIRECTORY Catch2 INTERFACE_INCLUDE_DIRECTORIES)
-        set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${catch2_INCLUDE_DIRECTORY}")
+        mark_system_library(Catch2)
+        mark_system_library(Catch2WithMain)
     endif()
 endif()
 include(Catch)
@@ -59,9 +58,8 @@ else()
         FetchContent_Populate(RapidCheck)
         set(RC_INSTALL_ALL_EXTRAS ON)
         add_subdirectory(${rapidcheck_SOURCE_DIR} ${rapidcheck_BINARY_DIR})
-        # Make rapidcheck a SYSTEM target
-        get_target_property(rapidcheck_INCLUDE_DIRECTORY rapidcheck INTERFACE_INCLUDE_DIRECTORIES)
-        set_target_properties(rapidcheck PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${rapidcheck_INCLUDE_DIRECTORY}")
+        mark_system_library(rapidcheck)
+        mark_system_library(rapidcheck_catch)
     endif()
 endif()
 
@@ -209,6 +207,7 @@ add_executable(main-tests
     distributions/shuffled_16_values.cpp
 
     # Probes tests
+    probes/amp.cpp
     probes/block.cpp
     probes/dis.cpp
     probes/enc.cpp
@@ -264,8 +263,11 @@ add_executable(main-tests
     utility/branchless_traits.cpp
     utility/buffer.cpp
     utility/chainable_projections.cpp
+    utility/check_strict_weak_ordering.cpp
+    utility/is_sorted.cpp
     utility/iter_swap.cpp
     utility/metric_tools.cpp
+    utility/quicksort_adversary.cpp
     utility/sorted_indices.cpp
     utility/sorted_iterators.cpp
     utility/sorting_networks.cpp
@@ -303,8 +305,7 @@ endif()
 
 include(CTest)
 
-string(RANDOM LENGTH 6 ALPHABET 123456789 RNG_SEED)
-catch_discover_tests(main-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+catch_discover_tests(main-tests)
 if (NOT "${CPPSORT_SANITIZE}" MATCHES "address|memory")
-    catch_discover_tests(heap-memory-exhaustion-tests EXTRA_ARGS --rng-seed ${RNG_SEED})
+    catch_discover_tests(heap-memory-exhaustion-tests)
 endif()

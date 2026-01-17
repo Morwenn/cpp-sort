@@ -137,7 +137,7 @@ namespace cppsort::utility
         projection_base<identity>
     {
         template<typename T>
-        constexpr auto operator()(T&& value) const noexcept
+        constexpr auto operator()(T&& value CPPSORT_LIFETIME_BOUND) const noexcept
             -> T&&
         {
             return std::forward<T>(value);

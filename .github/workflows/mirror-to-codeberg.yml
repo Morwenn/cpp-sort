@@ -1,0 +1,25 @@
+# Copyright (c) 2025 Morwenn
+# SPDX-License-Identifier: MIT
+
+name: Mirror Commits to Codeberg
+
+on: [push, workflow_dispatch]
+
+jobs:
+  mirror-to-codeberg:
+    name: Mirror to Codeberg
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Mirror
+        uses: yesolutions/mirror-action@v0.7.0
+        with:
+          REMOTE: 'https://codeberg.org/Morwenn/cpp-sort.git'
+          GIT_USERNAME: Morwenn
+          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}

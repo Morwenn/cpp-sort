@@ -10,11 +10,11 @@
 ////////////////////////////////////////////////////////////
 #include <functional>
 #include <utility>
-#include <cpp-sort/comparators/not_fn.h>
+#include <cpp-sort/comparators/flip.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
-#include "../detail/longest_non_descending_subsequence.h"
+#include "../detail/longest_increasing_subsequence.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort::probe
@@ -37,10 +37,10 @@ namespace cppsort::probe
             {
                 // We don't need the size information, so we can avoid
                 // computing it altogether
-                auto res = cppsort::detail::longest_non_descending_subsequence<false>(
+                auto res = cppsort::detail::longest_increasing_subsequence<false>(
                     first, last,
                     0, // Dummy value, not useful here
-                    cppsort::not_fn(compare), std::move(projection)
+                    cppsort::flip(compare), std::move(projection)
                 );
                 return res.first > 0 ? res.first - 1 : 0;
             }

@@ -11,6 +11,7 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include "../detail/config.h"
 
 namespace cppsort::utility
 {
@@ -39,49 +40,57 @@ namespace cppsort::utility
                 }
 
                 constexpr auto operator[](std::size_t pos)
-                    -> decltype(_memory[pos])
+                    CPPSORT_LIFETIME_BOUND
+                    -> typename std::array<T, N>::reference
                 {
                     return _memory[pos];
                 }
 
                 constexpr auto operator[](std::size_t pos) const
-                    -> decltype(_memory[pos])
+                    CPPSORT_LIFETIME_BOUND
+                    -> typename std::array<T, N>::const_reference
                 {
                     return _memory[pos];
                 }
 
                 constexpr auto begin()
-                    -> decltype(_memory.data())
+                    CPPSORT_LIFETIME_BOUND
+                    -> T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto begin() const
-                    -> decltype(_memory.data())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto cbegin() const
-                    -> decltype(_memory.data())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.data();
                 }
 
                 constexpr auto end()
-                    -> decltype(_memory.data() + _memory.size())
+                    CPPSORT_LIFETIME_BOUND
+                    -> T*
                 {
                     return _memory.data() + _memory.size();
                 }
 
                 constexpr auto end() const
-                    -> decltype(_memory.data() + _memory.size())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.data() + _memory.size();
                 }
 
                 constexpr auto cend() const
-                    -> decltype(_memory.data() + _memory.size())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.data() + _memory.size();
                 }
@@ -193,49 +202,57 @@ namespace cppsort::utility
                 }
 
                 auto operator[](std::size_t pos)
-                    -> decltype(_memory[pos])
+                    CPPSORT_LIFETIME_BOUND
+                    -> T&
                 {
                     return _memory[pos];
                 }
 
                 auto operator[](std::size_t pos) const
-                    -> decltype(_memory[pos])
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T&
                 {
                     return _memory[pos];
                 }
 
                 auto begin()
-                    -> decltype(_memory.get())
+                    CPPSORT_LIFETIME_BOUND
+                    -> T*
                 {
                     return _memory.get();
                 }
 
                 auto begin() const
-                    -> decltype(_memory.get())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.get();
                 }
 
                 auto cbegin() const
-                    -> decltype(_memory.get())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.get();
                 }
 
                 auto end()
-                    -> decltype(_memory.get() + size())
+                    CPPSORT_LIFETIME_BOUND
+                    -> T*
                 {
                     return _memory.get() + size();
                 }
 
                 auto end() const
-                    -> decltype(_memory.get() + size())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.get() + size();
                 }
 
                 auto cend() const
-                    -> decltype(_memory.get() + size())
+                    CPPSORT_LIFETIME_BOUND
+                    -> const T*
                 {
                     return _memory.get() + size();
                 }

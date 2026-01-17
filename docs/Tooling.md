@@ -45,10 +45,10 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 conan search cpp-sort --remote=conancenter
 ```
 
-And then install any version to your local cache as follows (here with version 2.0.0):
+And then install any version to your local cache as follows (here with version 2.1.0):
 
 ```sh
-conan install --requires=cpp-sort/2.0.0
+conan install --requires=cpp-sort/2.1.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to create your own package with the `conanfile.py` available in this repository.
@@ -62,8 +62,6 @@ The packages downloaded from conan-center are minimal and only contain the files
 3. Visit http://localhost:4567/Home
 
 This can notably used to browse old versions of the documentation. It seems however that `--ref` doesn't understand Git tags, so you have to create a proper branch from the version tag you want to browse beforehand.
-
-Due to slight markup differences, some pages might not fully render correctly but it should nonetheless be a better experience than navigaitng the Markdown files by hand.
 
 
   [assertions-and-audits]: Home.md#assertions--audits

@@ -23,6 +23,7 @@
 #include <new>
 #include <type_traits>
 #include <utility>
+#include "config.h"
 #include "type_traits.h"
 
 namespace cppsort::detail
@@ -201,6 +202,7 @@ namespace cppsort::detail
             temporary_buffer& operator=(const temporary_buffer&) = delete;
 
             auto operator=(temporary_buffer&& other) noexcept
+                CPPSORT_LIFETIME_BOUND
                 -> temporary_buffer&
             {
                 using std::swap;

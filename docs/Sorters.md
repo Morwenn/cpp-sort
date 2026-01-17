@@ -465,7 +465,6 @@ struct spread_sorter:
   [heap-sorter]: Sorters.md#heap_sorter
   [insertion-sort]: https://en.wikipedia.org/wiki/Insertion_sort
   [introselect]: https://en.wikipedia.org/wiki/Introselect
-  [issue-168]: https://github.com/Morwenn/cpp-sort/issues/168
   [measures-of-disorder]: Measures-of-disorder.md
   [median-of-medians]: https://en.wikipedia.org/wiki/Median_of_medians
   [merge-sort]: https://en.wikipedia.org/wiki/Merge_sort

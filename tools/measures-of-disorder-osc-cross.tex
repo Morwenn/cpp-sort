@@ -1,0 +1,50 @@
+\documentclass[margin=0.5cm]{standalone}
+\usepackage{tikz}
+\pagestyle{empty}
+
+\begin{document}
+\begin{tikzpicture}
+
+\draw[thin,->] (-0.25,0) -- (8,0) node[right] {$pos$};
+\draw[thin,->] (0,-0.25) -- (0,6) node[above] {$val$};
+
+% ticks
+\foreach \x [count=\xi starting from 0] in {1,2,3,4,5,6,7}{
+    \draw (\x,2pt) -- (\x,-2pt);
+    \ifodd\xi
+        \node[anchor=north] at (\x,0) {$\x$};
+    \fi
+}
+\foreach \x [count=\xi starting from 0] in {1,2,3,4,5,6,7,8,9,10,11}{
+    \draw (2pt,\x/2) -- (-2pt,\x/2);
+    \ifodd\xi
+        \node[anchor=east] at (0,\x/2) {$\x$};
+    \fi
+}
+
+% points
+\foreach \y [count=\x] in {
+	6, 3, 9, 8, 4, 7, 1, 10
+}{
+    \fill (\x-1,\y/2) circle (2pt);
+}
+
+\tikzset{every edge/.append style = {gray}};
+
+\path[every node/.style={font=\sffamily\small}]
+  (0,6/2) edge (1,3/2)
+  (1,3/2) edge (2,9/2)
+  (2,9/2) edge (3,8/2)
+  (3,8/2) edge (4,4/2)
+  (4,4/2) edge (5,7/2)
+  (5,7/2) edge (6,1/2)
+  (6,1/2) edge (7,10/2);
+
+
+\tikzset{every edge/.append style = {dashed,gray}};
+
+\path[every node/.style={font=\sffamily\small}]
+  (0,7/2) edge (8,7/2);
+
+\end{tikzpicture}
+\end{document}

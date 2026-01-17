@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2025 Morwenn
+# Copyright (c) 2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Wiki Deployment
@@ -6,7 +6,7 @@ name: Wiki Deployment
 on:
   push:
     branches:
-      - 2.x.y-stable
+      - trunk
     paths:
       - 'docs/**'
   workflow_dispatch:
@@ -15,23 +15,25 @@ jobs:
   sync-wiki-files:
     name: Sync Wiki Files
 
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny-lazy
 
     steps:
       - name: Checkout /docs
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          repository: ${{github.repository}}
+          repository: ${{forgejo.repository}}
           path: main
 
       - name: Checkout wiki
         uses: actions/checkout@v4
         with:
-          repository: ${{github.repository}}.wiki
+          repository: ${{forgejo.repository}}.wiki
           path: wiki
 
       - name: Sync wiki files
         run: |
+          apt-get update
+          apt-get install -y rsync
           for docname in main/docs/*.md; do
             old=$(basename "$docname");
             new=${old%.*};
@@ -42,14 +44,12 @@ jobs:
       - name: Commit changes
         working-directory: wiki
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "action@forgejo.org"
+          git config --local user.name "Forgejo Action"
           git add .
           git commit -m "Synchronize wiki with docs/"
 
       - name: Push changes to wiki
-        uses: ad-m/github-push-action@master
-        with:
-          directory: wiki
-          repository: ${{github.repository}}.wiki
-          branch: master
+        working-directory: wiki
+        run: |
+          git push

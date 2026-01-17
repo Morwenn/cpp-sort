@@ -18,6 +18,7 @@
 #include <cpp-sort/utility/metrics_tools.h>
 #include <cpp-sort/utility/size.h>
 #include "../detail/checkers.h"
+#include "../detail/config.h"
 #include "../detail/fake_category_iterator.h"
 #include "../detail/immovable_vector.h"
 #include "../detail/iterator_traits.h"
@@ -50,6 +51,7 @@ namespace cppsort::metrics
             }
 
             auto operator=(move_counting_wrapper&& other)
+                CPPSORT_LIFETIME_BOUND
                 -> move_counting_wrapper&
             {
                 value = std::move(other.value);

@@ -23,6 +23,7 @@
 #include <utility>
 #include <cpp-sort/utility/as_function.h>
 #include <cpp-sort/utility/iter_move.h>
+#include "config.h"
 #include "iterator_traits.h" // projected_t
 #include "memcpy_cast.h"
 #include "partition.h"
@@ -460,7 +461,7 @@ namespace cppsort::detail
         using next = SubKey<void>;
         using sub_key_type = T;
 
-        static auto sub_key(const T& value, void*)
+        static auto sub_key(const T& value CPPSORT_LIFETIME_BOUND, void*)
             -> const T&
         {
             return value;

@@ -11,11 +11,13 @@
 #include <functional>
 #include <iterator>
 #include <utility>
+#include <cpp-sort/comparators/flip.h>
+#include <cpp-sort/comparators/not_fn.h>
 #include <cpp-sort/sorter_facade.h>
 #include <cpp-sort/sorter_traits.h>
 #include <cpp-sort/utility/functional.h>
 #include <cpp-sort/utility/size.h>
-#include "../detail/longest_non_descending_subsequence.h"
+#include "../detail/longest_increasing_subsequence.h"
 #include "../detail/type_traits.h"
 
 namespace cppsort::probe
@@ -49,10 +51,10 @@ namespace cppsort::probe
                 // with the assumption that it's better than O(n) - which is at least
                 // consistent as far as the standard library is concerned. We also
                 // handle C arrays whose size is known and part of the type.
-                auto res = cppsort::detail::longest_non_descending_subsequence<false>(
+                auto res = cppsort::detail::longest_increasing_subsequence<false>(
                     std::begin(range), std::end(range),
                     utility::size(range),
-                    std::move(compare), std::move(projection)
+                    cppsort::not_fn(cppsort::flip(compare)), std::move(projection)
                 );
                 auto lnds_size = res.second - res.first;
                 return lnds_size >= 0 ? lnds_size : 0;
@@ -73,8 +75,9 @@ namespace cppsort::probe
                 // We give 0 as a "dummy" value since it will be recomputed, but it
                 // is also used by the non-random-access iterators version as the
                 // initial value used for the size count
-                auto res = cppsort::detail::longest_non_descending_subsequence<true>(
-                    first, last, 0, std::move(compare), std::move(projection)
+                auto res = cppsort::detail::longest_increasing_subsequence<true>(
+                    first, last, 0,
+                    cppsort::not_fn(cppsort::flip(compare)), std::move(projection)
                 );
                 auto lnds_size = res.second - res.first;
                 return lnds_size >= 0 ? lnds_size : 0;

@@ -40,7 +40,7 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [counting-sorter]: Sorters.md#counting_sorter
   [cpp-sort-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
-  [cpp-sort-releases]: https://github.com/Morwenn/cpp-sort/releases
+  [cpp-sort-releases]: https://codeberg.org/Morwenn/cpp-sort/releases
   [feature-test-macros]: https://wg21.link/SD6
   [pdq-sorter]: Sorters.md#pdq_sorter
   [ska-sorter]: Sorters.md#ska_sorter

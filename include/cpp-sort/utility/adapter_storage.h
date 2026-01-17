@@ -10,6 +10,7 @@
 ////////////////////////////////////////////////////////////
 #include <type_traits>
 #include <utility>
+#include "../detail/config.h"
 
 namespace cppsort::utility
 {
@@ -87,24 +88,28 @@ namespace cppsort::utility
         }
 
         constexpr auto get() & noexcept
+            CPPSORT_LIFETIME_BOUND
             -> Sorter&
         {
             return static_cast<Sorter&>(sorter);
         }
 
         constexpr auto get() const& noexcept
+            CPPSORT_LIFETIME_BOUND
             -> const Sorter&
         {
             return static_cast<const Sorter&>(sorter);
         }
 
         constexpr auto get() && noexcept
+            CPPSORT_LIFETIME_BOUND
             -> Sorter&&
         {
             return static_cast<Sorter&&>(sorter);
         }
 
         constexpr auto get() const&& noexcept
+            CPPSORT_LIFETIME_BOUND
             -> const Sorter&&
         {
             return static_cast<const Sorter&&>(sorter);

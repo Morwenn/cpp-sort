@@ -183,4 +183,16 @@ TEST_CASE( "relations between measures of disorder", "[probe]" )
     rc::prop("Enc(X) ≤ Mono(X) + 1", [](const std::vector<int>& sequence) {
         return enc(sequence) <= mono(sequence) + 1;
     });
+
+    // Original research about Amp
+
+    // https://morwenn.github.io/presortedness/2025/11/09/TSB007-relationship-between-amp-and-runs.html
+    rc::prop("Amp(X) ≤ 2 Runs(X)", [](const std::vector<int>& sequence) {
+        return amp(sequence) <= 2 * runs(sequence);
+    });
+
+    // Conjecture
+    rc::prop("Mono(X) ≤ Amp(X)", [](const std::vector<int>& sequence) {
+        return mono(sequence) <= amp(sequence);
+    });
 }
