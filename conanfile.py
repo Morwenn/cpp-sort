@@ -29,7 +29,8 @@ class CppSortConan(ConanFile):
     exports_sources = [
         "include/*",
         "CMakeLists.txt",
-        "cmake/cpp-sort-config.cmake.in"
+        "cmake/cpp-sort-config.cmake.in",
+        "cmake/cpp-sort-utils.cmake",
     ]
     settings = "os", "compiler", "build_type", "arch"
     package_type = "header-library"
