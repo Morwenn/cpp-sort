@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Morwenn
+# Copyright (c) 2025-2026 Morwenn
 # SPDX-License-Identifier: MIT
 
 name: Mirror Commits to Codeberg
@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

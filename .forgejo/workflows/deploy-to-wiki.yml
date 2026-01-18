@@ -25,7 +25,7 @@ jobs:
           path: main
 
       - name: Checkout wiki
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{forgejo.repository}}.wiki
           path: wiki
