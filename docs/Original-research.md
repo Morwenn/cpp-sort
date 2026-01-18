@@ -239,7 +239,6 @@ The following relations have yet to be analyzed:
 Another interesting property of $\mathit{Mono}$ is that it returns the same amount of disorder for a sequence $X$ and for a sequence corresponding to $X$ with the order of all elements reversed, a property that is only shared with $\mathit{Osc}$ in the library.
 
 
-  [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [divide-sort-merge-strategy]: https://apps.dtic.mil/sti/tr/pdf/AD0737270.pdf
   [exact-sort]: https://www.geocities.ws/p356spt/

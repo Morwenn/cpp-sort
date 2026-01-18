@@ -201,7 +201,7 @@ The specific restrictions are all documented in the adapters descriptions.
 ## Two-step sorting
 
 Sometimes the information is not represented as simple collection of class instances, but as [parallel arrays][parallel-arrays] (also known as structure of arrays). To sort those, **cpp-sort** provides components for two-step sorting of random-access collections:
-1. Extract the sorted indices of a collection with [`utility::sorted_indices`][utility-sorter-indices] (similar to [`numpy.argsort`][numpy-argsort]).
+1. Extract the sorted indices of a collection with [`utility::sorted_indices`][utility-sorted-indices] (similar to [`numpy.argsort`][numpy-argsort]).
 2. Use the sorted indices to permute the arrays with [`utility::apply_permutation`][utility-apply-permutation].
 
 ```cpp
@@ -259,7 +259,6 @@ The previous sections describe some of the main tools provided by **cpp-sort** b
   [ska-sorter]: Sorters.md#ska_sorter
   [sorter-adapters]: Sorter-adapters.md
   [sorter-facade]: Sorter-facade.md
-  [sorter-traits]: Sorter-traits.md
   [sorters]: Sorters.md
   [std-searchers]: https://en.cppreference.com/w/cpp/utility/functional#Searchers
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort

@@ -549,7 +549,6 @@ assert(not cppsort::utility::check_strict_weak_ordering(vec, std::less{});)
   [std-greater]: https://en.cppreference.com/w/cpp/utility/functional/greater
   [std-greater-void]: https://en.cppreference.com/w/cpp/utility/functional/greater_void
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
-  [std-integer-sequence]: https://en.cppreference.com/w/cpp/utility/integer_sequence
   [std-integral-constant]: https://en.cppreference.com/w/cpp/types/integral_constant
   [std-invoke]: https://en.cppreference.com/w/cpp/utility/functional/invoke
   [std-is-arithmetic]: https://en.cppreference.com/w/cpp/types/is_arithmetic

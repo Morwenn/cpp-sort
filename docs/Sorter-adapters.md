@@ -322,7 +322,6 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
 [This page][vergesort-fallbacks] contains benchmarks of vergesort on top of several sorting algorithms, showing that it can be valuable tool to add on top of most sorting algorithms.
 
 
-  [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
   [ctad]: https://en.cppreference.com/w/cpp/language/class_template_argument_deduction
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [drop-merge-sort]: https://github.com/emilk/drop-merge-sort
@@ -335,7 +334,6 @@ When wrapped into [`stable_adapter`][stable-adapter], it has a slightly differen
   [iterator-category]: Sorter-traits.md#iterator_category
   [iterator-tags]: https://en.cppreference.com/w/cpp/iterator/iterator_tags
   [low-moves-sorter]: Fixed-size-sorters.md#low_moves_sorter
-  [metrics-comparisons]: Metrics.md#comparisons
   [mountain-sort]: https://github.com/Morwenn/mountain-sort
   [probe-mono]: Measures-of-disorder.md#mono
   [probe-rem]: Measures-of-disorder.md#rem

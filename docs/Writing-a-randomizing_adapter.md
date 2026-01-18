@@ -143,12 +143,9 @@ The full implementation can be found in the `examples` folder.
   [golden-tests]: https://en.wikipedia.org/wiki/Characterization_test
   [hyrums-law]: https://www.hyrumslaw.com/
   [iterator-category]: https://en.cppreference.com/w/cpp/iterator
-  [proxy-iterators]: https://wg21.link/P0022
   [quick-sorter]: Sorters.md#quick_sorter
   [sfinae]: https://en.cppreference.com/w/cpp/language/sfinae
   [sorter-adapters]: Sorter-adapters.md
   [sorter-facade]: Sorter-facade.md
-  [sorter-traits]: Sorter-traits.md#sorter_traits
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort.html
-  [writing-a-sorter]: Writing-a-sorter.md
   [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md

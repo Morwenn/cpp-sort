@@ -182,8 +182,6 @@ While it does not appear in this documentation, `sorter_facade` actually relies 
 
   [issue-185]: https://github.com/Morwenn/cpp-sort/issues/185
   [selection-sort]: https://en.wikipedia.org/wiki/Selection_sort
-  [std-begin]: https://en.cppreference.com/w/cpp/iterator/begin
-  [std-end]: https://en.cppreference.com/w/cpp/iterator/end
   [std-identity]: https://en.cppreference.com/w/cpp/utility/functional/identity
   [std-less-void]: https://en.cppreference.com/w/cpp/utility/functional/less_void
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less

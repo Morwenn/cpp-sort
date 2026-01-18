@@ -99,7 +99,6 @@ The two-parameter version of the customization point calls the three-parameter o
 
   [binary-predicate]: https://en.cppreference.com/w/cpp/named_req/BinaryPredicate
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
-  [callable]: https://en.cppreference.com/w/cpp/named_req/Callable
   [case-sensitivity]: https://en.wikipedia.org/wiki/Case_sensitivity
   [cppcon2015-compare]: https://github.com/CppCon/CppCon2015/tree/master/Presentations/Comparison%20is%20not%20simple%2C%20but%20it%20can%20be%20simpler
   [custom-point]: https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/
