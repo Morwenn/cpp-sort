@@ -9,6 +9,7 @@ import textwrap
 from pathlib import Path
 
 import z3
+from natsort import natsorted
 
 
 def find_sorter_hunter_file(path: Path, size: int):
@@ -17,10 +18,7 @@ def find_sorter_hunter_file(path: Path, size: int):
     one corresponding for sorting a network of the given size, pereferring
     the ones that minimize the number of compare-exchanges.
     """
-    return min(
-        path.glob(f"Sort_{size}_*.json"),
-        key=lambda x: int(x.name.split('_')[2])
-    )
+    return natsorted(path.glob(f"Sort_{size}_*.json"))[0]
 
 
 def parse_sorter_hunter_network(path: Path) -> list[list[tuple]]:
@@ -71,7 +69,7 @@ def verify_network(pairs: list[tuple]):
 
 
 def generate_cxx(network: list[list[tuple]]):
-    template = textwrap.dedent("""
+    template = textwrap.dedent("""\
         namespace cppsort::detail
         {{
             template<>
@@ -137,6 +135,8 @@ def main():
     parser = argparse.ArgumentParser(description="Turn a SorterHunter network into a cpp-sort one")
     parser.add_argument('-s', '--size', type=int,
                         help="Number of inputs the network should sort")
+    parser.add_argument('-o', '--output-file', type=str,
+                        help="File where to store the generate C++ code")
     parser.add_argument('directory', help="Directory containing the SorterHunter networks")
     args = parser.parse_args()
 
@@ -145,15 +145,19 @@ def main():
 
     network = parse_sorter_hunter_network(path)
     pairs = sum(network, [])
-    print(f"Number of pairs: {len(pairs)}")
+    print(f"Number of pairs: {len(pairs)}\n")
 
     valid, failing_input = verify_network(pairs)
     if not valid:
         print("Network failed to sort: {failing_input}")
         exit(1)
 
-    print(generate_cxx(network))
-
+    generated_code = generate_cxx(network)
+    if args.output_file:
+        with open(args.output_file, "w", encoding="utf-8") as fd:
+            fd.write(generated_code)
+    else:
+        print(generated_code)
 
 if __name__ == '__main__':
     main()
