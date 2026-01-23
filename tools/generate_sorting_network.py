@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+# Copyright (c) 2022-2026 Morwenn
+# SPDX-License-Identifier: MIT
+
 import argparse
 import ast
 import textwrap
@@ -69,9 +72,7 @@ def verify_network(pairs: list[tuple]):
 
 def generate_cxx(network: list[list[tuple]]):
     template = textwrap.dedent("""
-        namespace cppsort
-        {{
-        namespace detail
+        namespace cppsort::detail
         {{
             template<>
             struct sorting_network_sorter_impl<{nb_inputs}>
@@ -101,7 +102,7 @@ def generate_cxx(network: list[list[tuple]]):
                     }}}};
                 }}
             }};
-        }}}}
+        }}
     """)
 
     pairs = sum(network, [])
