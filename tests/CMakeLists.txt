@@ -187,7 +187,7 @@ add_executable(main-tests
     comparators/flip_not.cpp
     comparators/natural_less.cpp
     comparators/projection_compare.cpp
-    comparators/total_less.cpp
+    comparators/total_order.cpp
     comparators/transparent_comparators.cpp
 
     # Distributions tests
