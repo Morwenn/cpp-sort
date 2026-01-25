@@ -11,6 +11,11 @@ While **cpp-sort** theoretically requires a fully C++17-compliant compiler, a fe
 
 When compiled with C++20, **cpp-sort** might gain a few additional features depending on the level of C++20 support provided by the compiler. The availability of those features depends on the presence of corresponding [feature-testing macros][feature-test-macros] when possible, even though some checks are more granular. Don't hesitate to open an issue if your compiler and standard library supports one of those features but it doesn't seem to work in **cpp-sort**.
 
+**Correctness improvements:**
+* When possible, the total order predicates [`total_less` and `total_greater`][total-greater-less] use [`std::strong_order`][std-strong-order] to compare floating-point numbers, leading to a supposedly correct implementation of the IEEE *totalOrder* operator. In C++17 and earlier, those comparators don't actually implement a proper total order: they are unable to differentiate between quiet and signaling NaNs, and connot read NaN payloads.
+
+    The feature-test macro `__cpp_lib_three_way_comparison` can be used to check whether `std::strong_order` is available.
+
 **New features:**
 * When available, [`std::identity`][std-identity] benefits from dedicated support wherever [`utility::identity`][cpp-sort-function-objects] is supported, with equivalent semantics.
 
@@ -50,5 +55,7 @@ When compiled with C++20, **cpp-sort** might gain a few additional features depe
   [std-mem-fn]: https://en.cppreference.com/w/cpp/utility/functional/mem_fn
   [std-ranges-greater]: https://en.cppreference.com/w/cpp/utility/functional/ranges/greater
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
+  [std-strong-order]: https://en.cppreference.com/w/cpp/utility/compare/strong_order
   [std-swap]: https://en.cppreference.com/w/cpp/algorithm/swap
+  [total-greater-less]: Comparators.md#total-order-comparators
   [utility-iter-move]: Miscellaneous-utilities.md#iter_move-and-iter_swap
