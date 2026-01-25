@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_TOTAL_GREATER_H_
@@ -8,13 +8,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cmath>
 #include <type_traits>
 #include <utility>
 #include <cpp-sort/utility/branchless_traits.h>
 #include <cpp-sort/utility/static_const.h>
-#include "../detail/floating_point_weight.h"
 #include "../detail/type_traits.h"
+
+#if defined(__cpp_lib_three_way_comparison)
+#   include <compare>
+#else
+#   include <cmath>
+#   include "../detail/floating_point_weight.h"
+#endif
 
 namespace cppsort
 {
@@ -37,6 +42,11 @@ namespace cppsort
         auto total_greater(T lhs, T rhs)
             -> detail::enable_if_t<std::is_floating_point<T>::value, bool>
         {
+#if defined(__cpp_lib_three_way_comparison)
+            // Full implementation of totalOrder
+            return std::is_gt(std::strong_order(lhs, rhs));
+#else
+            // Approximation, unable to differentiate NaNs
             if (std::isfinite(lhs) && std::isfinite(rhs)) {
                 if (lhs == 0 && rhs == 0) {
                     return std::signbit(rhs) && not std::signbit(lhs);
@@ -47,6 +57,7 @@ namespace cppsort
             int lhs_weight = total_weight(lhs);
             int rhs_weight = total_weight(rhs);
             return lhs_weight > rhs_weight;
+#endif
         }
 
         ////////////////////////////////////////////////////////////
