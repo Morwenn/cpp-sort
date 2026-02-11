@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_WEAK_LESS_H_
@@ -42,7 +42,10 @@ namespace cppsort
         template<typename T>
         auto weak_less(const T& lhs, const T& rhs)
             noexcept(noexcept(cppsort::total_less(lhs, rhs)))
-            -> decltype(cppsort::total_less(lhs, rhs))
+            -> detail::enable_if_t<
+                not std::is_floating_point_v<T>,
+                decltype(cppsort::total_less(lhs, rhs))
+            >
         {
             return cppsort::total_less(lhs, rhs);
         }

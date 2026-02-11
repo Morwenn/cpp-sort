@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_WEAK_GREATER_H_
@@ -42,7 +42,10 @@ namespace cppsort
         template<typename T>
         auto weak_greater(const T& lhs, const T& rhs)
             noexcept(noexcept(cppsort::total_greater(lhs, rhs)))
-            -> decltype(cppsort::total_greater(lhs, rhs))
+            -> detail::enable_if_t<
+                not std::is_floating_point_v<T>,
+                decltype(cppsort::total_greater(lhs, rhs))
+            >
         {
             return cppsort::total_greater(lhs, rhs);
         }
