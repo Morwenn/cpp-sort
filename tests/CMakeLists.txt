@@ -197,6 +197,7 @@ add_executable(main-tests
     comparators/projection_compare.cpp
     comparators/total_order.cpp
     comparators/transparent_comparators.cpp
+    comparators/weak_order.cpp
 
     # Distributions tests
     distributions/all_equal.cpp
