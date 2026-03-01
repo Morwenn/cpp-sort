@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cmath>
@@ -191,8 +191,13 @@ TEST_CASE( "relations between measures of disorder", "[probe]" )
         return amp(sequence) <= 2 * runs(sequence);
     });
 
-    // Conjecture
+    // Conjectures
     rc::prop("Mono(X) ≤ Amp(X)", [](const std::vector<int>& sequence) {
         return mono(sequence) <= amp(sequence);
+    });
+
+    rc::prop("Inv(X) % 2 = Exc(X) % 2", []() {
+        auto sequence = *rc::gen::unique<std::vector<int>>(rc::gen::arbitrary<int>());
+        return inv(sequence) % 2 == exc(sequence) % 2;
     });
 }
