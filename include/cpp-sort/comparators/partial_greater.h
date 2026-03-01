@@ -34,7 +34,10 @@ namespace cppsort
         template<typename T>
         constexpr auto partial_greater(const T& lhs, const T& rhs)
             noexcept(noexcept(cppsort::weak_greater(lhs, rhs)))
-            -> decltype(cppsort::weak_greater(lhs, rhs))
+            -> detail::enable_if_t<
+                not std::is_floating_point_v<T>,
+                decltype(cppsort::weak_greater(lhs, rhs))
+            >
         {
             return cppsort::weak_greater(lhs, rhs);
         }

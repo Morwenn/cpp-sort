@@ -2,10 +2,55 @@
  * Copyright (c) 2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <cmath>
+#include <functional>
+#include <limits>
 #include <catch2/catch_test_macros.hpp>
 #include <cpp-sort/comparators/partial_greater.h>
 #include <cpp-sort/comparators/partial_less.h>
+#include <cpp-sort/sorters/heap_sorter.h>
+#include <cpp-sort/utility/is_sorted.h>
 #include <testing-tools/comparators.h>
+
+TEST_CASE( "Partial ordering of floating-point numbers", "[comparison]" )
+{
+    constexpr double inf = std::numeric_limits<double>::infinity();
+
+    // We can't do anything with NaNs in the partial order
+    double array[] = { +1.0, +inf, -1.0, -2.3, +0.0, -inf, +5.6, -0.0, +inf, -inf };
+
+    SECTION( "partial_less" )
+    {
+        cppsort::heap_sort(array, cppsort::partial_less);
+
+        CHECK( std::isinf(array[0]) );
+        CHECK( std::signbit(array[0]) );
+        CHECK( std::isinf(array[1]) );
+        CHECK( std::signbit(array[1]) );
+        CHECK( std::isinf(array[8]) );
+        CHECK( not std::signbit(array[8]) );
+        CHECK( std::isinf(array[9]) );
+        CHECK( not std::signbit(array[9]) );
+
+        CHECK( cppsort::utility::is_sorted(array) );
+    }
+
+    SECTION( "weak_greater" )
+    {
+        cppsort::heap_sort(array, cppsort::partial_greater);
+
+        CHECK( std::isinf(array[0]) );
+        CHECK( not std::signbit(array[0]) );
+        CHECK( std::isinf(array[1]) );
+        CHECK( not std::signbit(array[1]) );
+        CHECK( std::isinf(array[8]) );
+        CHECK( std::signbit(array[8]) );
+        CHECK( std::isinf(array[9]) );
+        CHECK( std::signbit(array[9]) );
+
+        CHECK( cppsort::utility::is_sorted(array, std::greater{}) );
+    }
+}
 
 TEST_CASE( "Partial order customization point", "[comparison]" )
 {
