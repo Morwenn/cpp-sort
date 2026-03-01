@@ -40,7 +40,7 @@ namespace cppsort
         // Generic overload: a total order is also a weak order
 
         template<typename T>
-        auto weak_greater(const T& lhs, const T& rhs)
+        constexpr auto weak_greater(const T& lhs, const T& rhs)
             noexcept(noexcept(cppsort::total_greater(lhs, rhs)))
             -> detail::enable_if_t<
                 not std::is_floating_point_v<T>,

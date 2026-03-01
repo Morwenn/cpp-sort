@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PARTIAL_GREATER_H_
@@ -32,7 +32,7 @@ namespace cppsort
         // Generic overload: a weak order is also a partial order
 
         template<typename T>
-        auto partial_greater(const T& lhs, const T& rhs)
+        constexpr auto partial_greater(const T& lhs, const T& rhs)
             noexcept(noexcept(cppsort::weak_greater(lhs, rhs)))
             -> decltype(cppsort::weak_greater(lhs, rhs))
         {
