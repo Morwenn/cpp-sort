@@ -8,6 +8,7 @@
 #include <cpp-sort/comparators/total_greater.h>
 #include <cpp-sort/comparators/total_less.h>
 #include <cpp-sort/sorters/heap_sorter.h>
+#include <testing-tools/comparators.h>
 
 TEST_CASE( "IEEE 754 totalOrder implementation", "[comparison]" )
 {
@@ -59,4 +60,13 @@ TEST_CASE( "IEEE 754 totalOrder implementation", "[comparison]" )
         CHECK( std::isnan(array[7]) );
         CHECK( std::signbit(array[7]) );
     }
+}
+
+TEST_CASE( "Total order customization point", "[comparison]" )
+{
+    helpers::totally_comparable ta, tb;
+
+    // Ensure that overload resolution is correct
+    STATIC_CHECK( cppsort::total_less(ta, tb) == helpers::compare_result::total_less );
+    STATIC_CHECK( cppsort::total_greater(ta, tb) == helpers::compare_result::total_greater );
 }

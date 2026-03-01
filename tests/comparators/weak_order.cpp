@@ -8,6 +8,7 @@
 #include <cpp-sort/comparators/weak_greater.h>
 #include <cpp-sort/comparators/weak_less.h>
 #include <cpp-sort/sorters/heap_sorter.h>
+#include <testing-tools/comparators.h>
 
 TEST_CASE( "Weak ordering of floating-point numbers", "[comparison]" )
 {
@@ -54,4 +55,16 @@ TEST_CASE( "Weak ordering of floating-point numbers", "[comparison]" )
         CHECK( std::isnan(array[7]) );
         CHECK( std::signbit(array[7]) );
     }
+}
+
+TEST_CASE( "Weak order customization point", "[comparison]" )
+{
+    helpers::totally_comparable ta, tb;
+    helpers::weakly_comparable wa, wb;
+
+    // Ensure that overload resolution is correct
+    STATIC_CHECK( cppsort::weak_less(ta, tb) == helpers::compare_result::total_less );
+    STATIC_CHECK( cppsort::weak_greater(ta, tb) == helpers::compare_result::total_greater );
+    STATIC_CHECK( cppsort::weak_less(wa, wb) == helpers::compare_result::weak_less );
+    STATIC_CHECK( cppsort::weak_greater(wa, wb) == helpers::compare_result::weak_greater );
 }
