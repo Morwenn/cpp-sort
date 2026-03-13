@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2025 Morwenn
+ * Copyright (c) 2018-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -59,6 +59,15 @@ TEST_CASE( "measure of disorder: mono", "[probe][mono]" )
     rc::prop("Mono(Reversed(X)) = Mono(X)", [](std::vector<int> sequence) {
         auto mono_x = mono(sequence);
         std::reverse(sequence.begin(), sequence.end());
+        return mono(sequence) == mono_x;
+    });
+
+    rc::prop("Mono(Unique(X)) = Mono(X)", [](std::vector<int> sequence) {
+        auto mono_x = mono(sequence);
+        sequence.erase(
+            std::unique(sequence.begin(), sequence.end()),
+            sequence.end()
+        );
         return mono(sequence) == mono_x;
     });
 }

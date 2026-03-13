@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
+#include <algorithm>
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
+#include <rapidcheck.h>
+#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/runs.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -40,4 +43,13 @@ TEST_CASE( "measure of disorder: runs", "[probe][runs]" )
         CHECK( runs(li) == max_n );
         CHECK( runs(li.begin(), li.end()) == max_n );
     }
+
+    rc::prop("Runs(Unique(X)) = Runs(X)", [](std::vector<int> sequence) {
+        auto runs_x = runs(sequence);
+        sequence.erase(
+            std::unique(sequence.begin(), sequence.end()),
+            sequence.end()
+        );
+        return runs(sequence) == runs_x;
+    });
 }

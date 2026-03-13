@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Morwenn
+ * Copyright (c) 2025-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>
@@ -41,6 +41,15 @@ TEST_CASE( "measure of disorder: amp", "[probe][amp]" )
     rc::prop("Amp(Reversed(X)) = Amp(X)", [](std::vector<int> sequence) {
         auto amp_x = amp(sequence);
         std::reverse(sequence.begin(), sequence.end());
+        return amp(sequence) == amp_x;
+    });
+
+    rc::prop("Amp(Unique(X)) = Amp(X)", [](std::vector<int> sequence) {
+        auto amp_x = amp(sequence);
+        sequence.erase(
+            std::unique(sequence.begin(), sequence.end()),
+            sequence.end()
+        );
         return amp(sequence) == amp_x;
     });
 }
