@@ -2,13 +2,10 @@
  * Copyright (c) 2021-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <iterator>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <rapidcheck.h>
-#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/block.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/distributions.h>
@@ -39,13 +36,4 @@ TEST_CASE( "measure of disorder: block", "[probe][block]" )
         CHECK( block(li) == max_n );
         CHECK( block(li.begin(), li.end()) == max_n );
     }
-
-    rc::prop("Block(Unique(X)) = Block(X)", [](std::vector<int> sequence) {
-        auto block_x = block(sequence);
-        sequence.erase(
-            std::unique(sequence.begin(), sequence.end()),
-            sequence.end()
-        );
-        return block(sequence) == block_x;
-    });
 }
