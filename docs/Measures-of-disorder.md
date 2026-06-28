@@ -236,7 +236,7 @@ $$
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
 
-`max_for_size`: $\frac{\lvert X \rvert}{2}$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
+`max_for_size`: $\lfloor \frac{\lvert X \rvert}{2} \rfloor$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
 
 ### *Exc*
 
@@ -290,7 +290,7 @@ Computes the number of inversions in $X$, where an inversion corresponds to a pa
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $\frac{\lvert X \rvert(\lvert X \rvert - 1)}{2}$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lfloor \frac{\lvert X \rvert(\lvert X \rvert - 1)}{2} \rfloor$ when $X$ is sorted in reverse order.
 
 ### *Max*
 
@@ -322,7 +322,7 @@ The measure of disorder is slightly different from its original description in [
 | ----------- | ----------- | ------------- | --------- |
 | n           | 1           | Forward       | No        |
 
-`max_for_size`: $\frac{\lvert X \rvert + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
+`max_for_size`: $\lfloor \frac{\lvert X \rvert + 1}{2} \rfloor - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
 
 **Note:** `probe::mono` does not respect Mannila's criterion 4: $\mathit{Mono}(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $\mathit{Mono}(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $\mathit{Mono}(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
 
@@ -392,7 +392,7 @@ Spearman's footrule distance: sum of distances between the position of individua
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $\frac{\lvert X \rvert²}{2}$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lfloor \frac{\lvert X \rvert^2}{2} \rfloor$ when $X$ is sorted in reverse order.
 
 **Note:** *Spear* does not respect Mannila's criterion 5: $\mathit{Spear}(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + \mathit{Spear}(\langle 1, 2, 3 \rangle)$.
 
