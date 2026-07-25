@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_DETAIL_POPLAR_SORT_H_
@@ -203,6 +203,86 @@ namespace cppsort::detail
             }
 
         } while (poplars.size() > 1);
+    }
+
+    template<typename BidirectionalIterator, typename Compare, typename Projection>
+    auto unchecked_insertion_sort(BidirectionalIterator first, BidirectionalIterator last,
+                                  Compare compare, Projection projection)
+        -> void
+    {
+        using utility::iter_move;
+        auto&& comp = utility::as_function(compare);
+        auto&& proj = utility::as_function(projection);
+
+        for (auto cur = std::next(first) ; cur != last ; ++cur) {
+            auto sift = cur;
+            auto sift_1 = std::prev(cur);
+
+            // Compare first so we can avoid 2 moves for
+            // an element already positioned correctly
+            if (comp(proj(*sift), proj(*sift_1))) {
+                auto tmp = iter_move(sift);
+                auto&& tmp_proj = proj(tmp);
+
+                do {
+                    *sift = iter_move(sift_1);
+                } while (--sift != first && comp(tmp_proj, proj(*--sift_1)));
+                *sift = std::move(tmp);
+            }
+        }
+    }
+
+    template<typename RandomAccessIterator, typename Compare, typename Projection>
+    auto make_poplar_heap(RandomAccessIterator first, RandomAccessIterator last,
+                          Compare compare, Projection projection)
+        -> void
+    {
+        using poplar_size_t = std::make_unsigned_t<difference_type_t<RandomAccessIterator>>;
+
+        poplar_size_t size = last - first;
+        if (size < 2) return;
+
+        // A sorted collection is a valid poplar heap; whenever the heap
+        // is small, using insertion sort should be faster, which is why
+        // we start by constructing 15-element poplars instead of 1-element
+        // ones as the base case
+        constexpr poplar_size_t small_poplar_size = 15;
+        if (size <= small_poplar_size) {
+            unchecked_insertion_sort(std::move(first), std::move(last),
+                                     std::move(compare), std::move(projection));
+            return;
+        }
+
+        // Determines the "level" of the poplars seen so far; the log2 of this
+        // variable will be used to make the binary carry sequence
+        poplar_size_t poplar_level = 1;
+
+        auto it = first;
+        auto next = it + small_poplar_size;
+        while (true) {
+            // Make a 15 element poplar
+            unchecked_insertion_sort(it, next, compare, projection);
+
+            poplar_size_t poplar_size = small_poplar_size;
+            // Bit trick iterate without actually having to compute log2(poplar_level)
+            for (auto i = (poplar_level & -poplar_level) >> 1 ; i != 0 ; i >>= 1) {
+                it -= poplar_size;
+                poplar_size = 2 * poplar_size + 1;
+                if (poplar_size > size) break;
+                sift(it, poplar_size, compare, projection);
+                ++next;
+            }
+
+            if (poplar_size_t(last - next) <= small_poplar_size) {
+                insertion_sort(std::move(next), std::move(last),
+                               std::move(compare), std::move(projection));
+                return;
+            }
+
+            it = next;
+            next += small_poplar_size;
+            ++poplar_level;
+        }
     }
 }
 

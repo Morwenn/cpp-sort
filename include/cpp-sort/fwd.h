@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_FWD_H_
@@ -66,6 +66,14 @@ namespace cppsort
     struct odd_even_merge_network_sorter;
     template<std::size_t N>
     struct sorting_network_sorter;
+
+    ////////////////////////////////////////////////////////////
+    // Presorters
+
+    struct max_heap_presorter;
+    struct min_heap_presorter;
+    struct poplar_heap_presorter;
+    struct reverse_descending_runs_presorter;
 
     ////////////////////////////////////////////////////////////
     // Sorter adapters

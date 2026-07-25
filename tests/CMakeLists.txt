@@ -200,6 +200,12 @@ add_executable(main-tests
     distributions/shuffled.cpp
     distributions/shuffled_16_values.cpp
 
+    # Presorters tests
+    presorters/max_heap_presorter.cpp
+    presorters/min_heap_presorter.cpp
+    presorters/poplar_heap_presorter.cpp
+    presorters/reverse_descending_runs_presorter.cpp
+
     # Probes tests
     probes/amp.cpp
     probes/block.cpp
