@@ -196,6 +196,22 @@ TEST_CASE( "relations between measures of disorder", "[probe]" )
         return mono(sequence) <= amp(sequence);
     });
 
+    // Conjectures
+    rc::prop("Mono(X) ≤ Amp(X)", [](const std::vector<int>& sequence) {
+        return mono(sequence) <= amp(sequence);
+    });
+
+    // Conjectures
+    rc::prop("Mono(X) ≤ Reve(X)", [](const std::vector<int>& sequence) {
+        return mono(sequence) <= reve(sequence);
+    });
+    rc::prop("Reve(X) ≤ 2 Mono(X)", [](const std::vector<int>& sequence) {
+        return reve(sequence) <= 2 * mono(sequence);
+    });
+    rc::prop("Reve(X) ≤ Amp(X)", [](const std::vector<int>& sequence) {
+        return reve(sequence) <= amp(sequence);
+    });
+
     rc::prop("Inv(X) % 2 = Exc(X) % 2", []() {
         auto sequence = *rc::gen::unique<std::vector<int>>(rc::gen::arbitrary<int>());
         return inv(sequence) % 2 == exc(sequence) % 2;

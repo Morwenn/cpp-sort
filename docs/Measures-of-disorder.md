@@ -366,6 +366,24 @@ Computes the minimum number of elements that must be removed from $X$ to obtain 
 
 `max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
+### *Reve*
+
+```cpp
+#include <cpp-sort/probes/reve.h>
+```
+
+TODO: description, link to blog post
+
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n           | 1           | Forward       | No        |
+
+`max_for_size`: $\lvert X \rvert - 2$ when $X$ is sorted in reverse order.
+
+TODO: fix below
+
+**Note:** `probe::reve` does not respect Mannila's criterion 4: $\mathit{Reve}(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $\mathit{Reve}(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $\mathit{Reve}(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
+
 ### *Runs*
 
 ```cpp

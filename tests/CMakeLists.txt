@@ -220,6 +220,7 @@ add_executable(main-tests
     probes/mono.cpp
     probes/osc.cpp
     probes/rem.cpp
+    probes/reve.cpp
     probes/runs.cpp
     probes/spear.cpp
     probes/sus.cpp
