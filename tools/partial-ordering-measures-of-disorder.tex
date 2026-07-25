@@ -1,4 +1,4 @@
-% Copyright (c) 2021-2025 Morwenn
+% Copyright (c) 2021-2026 Morwenn
 % SPDX-License-Identifier: MIT
 
 \documentclass{standalone}
@@ -65,13 +65,13 @@
         \path[-] (runs) edge node {} (m01);
         \path[-] (m01) edge node {} (m0);
 
-        % Sort Race
-        % by H. Zhang, B. Meng and Y. Liang
-        \node[state] (mono) [right=of sus] {$\bm{\mathit{Mono}}$};
+        % Mono: Sort Race, by H. Zhang, B. Meng and Y. Liang
+        % Reve: original research
+        \node[state] (mono) [right=of sus] {$\bm{\mathit{Mono}}\equiv \bm{\mathit{Reve}}$};
         % See the Original Research page of the docs
         \path[-] (enc) edge node {} (mono);
-        
-        % Original research: Amp
+
+        % Amp: original research
         \node[state] (amp) [below=of mono] {$\bm{\mathit{Amp}}$};
         \path[-] (amp) edge node {} (runs);
         % Conjecture
