@@ -19,13 +19,13 @@ jobs:
 
     steps:
       - name: Checkout /docs
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{forgejo.repository}}
           path: main
 
       - name: Checkout wiki
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: ${{forgejo.repository}}.wiki
           path: wiki
