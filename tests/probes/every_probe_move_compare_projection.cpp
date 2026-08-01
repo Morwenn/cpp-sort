@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 Morwenn
+ * Copyright (c) 2020-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <iterator>
@@ -10,6 +10,7 @@
 #include <testing-tools/functional_checks.h>
 
 TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[probe]",
+                    decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
@@ -20,6 +21,7 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
@@ -34,6 +36,7 @@ TEMPLATE_TEST_CASE( "every probe with comparison function altered by move", "[pr
 }
 
 TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[probe]",
+                    decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::block),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::enc),
@@ -44,6 +47,7 @@ TEMPLATE_TEST_CASE( "every probe with projection function altered by move", "[pr
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
