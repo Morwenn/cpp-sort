@@ -318,6 +318,8 @@ The measure of disorder is slightly different from its original description in [
 * It subtracts 1 from the number of runs, thus returning 0 when $X$ is sorted.
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones.
 
+![Illustration of Mono showing how a sequence of integers can be split into monotonic runs](images/measure-of-disorder-mono.png)
+
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
 | n           | 1           | Forward       | No        |
