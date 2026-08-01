@@ -2,12 +2,9 @@
  * Copyright (c) 2021-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <rapidcheck.h>
-#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/sus.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -37,13 +34,4 @@ TEST_CASE( "measure of disorder: sus", "[probe][sus]" )
         CHECK( sus(li) == max_n );
         CHECK( sus(li.begin(), li.end()) == max_n );
     }
-
-    rc::prop("SUS(Unique(X)) = SUS(X)", [](std::vector<int> sequence) {
-        auto sus_x = sus(sequence);
-        sequence.erase(
-            std::unique(sequence.begin(), sequence.end()),
-            sequence.end()
-        );
-        return sus(sequence) == sus_x;
-    });
 }

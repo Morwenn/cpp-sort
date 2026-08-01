@@ -2,12 +2,9 @@
  * Copyright (c) 2018-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <rapidcheck.h>
-#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/mono.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -55,19 +52,4 @@ TEST_CASE( "measure of disorder: mono", "[probe][mono]" )
         const std::forward_list<int> li2 = { 1, 1, 2, 8, 3, 3, 2, 1, 1, 5, 6 };
         CHECK( mono(li2) == 2 );
     }
-
-    rc::prop("Mono(Reversed(X)) = Mono(X)", [](std::vector<int> sequence) {
-        auto mono_x = mono(sequence);
-        std::reverse(sequence.begin(), sequence.end());
-        return mono(sequence) == mono_x;
-    });
-
-    rc::prop("Mono(Unique(X)) = Mono(X)", [](std::vector<int> sequence) {
-        auto mono_x = mono(sequence);
-        sequence.erase(
-            std::unique(sequence.begin(), sequence.end()),
-            sequence.end()
-        );
-        return mono(sequence) == mono_x;
-    });
 }

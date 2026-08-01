@@ -14,7 +14,10 @@
 #include "testing-tools/random.h"
 
 //
-// Test common properties of measures of presortedness
+// Test common properties of measures of presortedness:
+// - Basic properties such a checking max_for_size consistency
+// - Mannilla 5 axioms for measures of presortedness
+// - Estivill-Castro additional properties such as monotonicity
 //
 
 TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
@@ -34,7 +37,7 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
-    // First property formalized by Mannila
+    // First axiom formalized by Mannila
     // Ensure that all measures of disorder return 0 when
     // given a collection where all elements are equal
 

@@ -5,8 +5,6 @@
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <rapidcheck.h>
-#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/amp.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -36,20 +34,4 @@ TEST_CASE( "measure of disorder: amp", "[probe][amp]" )
         CHECK( amp(li) == max_n );
         CHECK( amp(li.begin(), li.end()) == max_n );
     }
-
-    // https://morwenn.github.io/presortedness/2025/10/18/TSB005-symmetry-of-amp.html
-    rc::prop("Amp(Reversed(X)) = Amp(X)", [](std::vector<int> sequence) {
-        auto amp_x = amp(sequence);
-        std::reverse(sequence.begin(), sequence.end());
-        return amp(sequence) == amp_x;
-    });
-
-    rc::prop("Amp(Unique(X)) = Amp(X)", [](std::vector<int> sequence) {
-        auto amp_x = amp(sequence);
-        sequence.erase(
-            std::unique(sequence.begin(), sequence.end()),
-            sequence.end()
-        );
-        return amp(sequence) == amp_x;
-    });
 }

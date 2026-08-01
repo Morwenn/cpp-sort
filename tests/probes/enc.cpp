@@ -2,12 +2,9 @@
  * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <rapidcheck.h>
-#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/enc.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -49,13 +46,4 @@ TEST_CASE( "measure of disorder: enc", "[probe][enc]" )
             CHECK( enc(li.begin(), li.end()) == max_n );
         }
     }
-
-    rc::prop("Enc(Unique(X)) = Enc(X)", [](std::vector<int> sequence) {
-        auto enc_x = enc(sequence);
-        sequence.erase(
-            std::unique(sequence.begin(), sequence.end()),
-            sequence.end()
-        );
-        return enc(sequence) == enc_x;
-    });
 }

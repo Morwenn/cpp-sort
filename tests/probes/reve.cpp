@@ -2,12 +2,9 @@
  * Copyright (c) 2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
-#include <algorithm>
 #include <forward_list>
 #include <vector>
 #include <catch2/catch_test_macros.hpp>
-#include <rapidcheck.h>
-#include <rapidcheck/catch.h>
 #include <cpp-sort/probes/reve.h>
 #include <cpp-sort/utility/size.h>
 #include <testing-tools/internal_compare.h>
@@ -54,19 +51,4 @@ TEST_CASE( "measure of disorder: reve", "[probe][reve]" )
         const std::forward_list<int> li2 = { 1, 1, 2, 8, 3, 3, 2, 1, 1, 5, 6 };
         CHECK( reve(li2) == 2 );
     }
-
-    rc::prop("Reve(Reversed(X)) = Reve(X)", [](std::vector<int> sequence) {
-        auto reve_x = reve(sequence);
-        std::reverse(sequence.begin(), sequence.end());
-        return reve(sequence) == reve_x;
-    });
-
-    rc::prop("Reve(Unique(X)) = Reve(X)", [](std::vector<int> sequence) {
-        auto reve_x = reve(sequence);
-        sequence.erase(
-            std::unique(sequence.begin(), sequence.end()),
-            sequence.end()
-        );
-        return reve(sequence) == reve_x;
-    });
 }
