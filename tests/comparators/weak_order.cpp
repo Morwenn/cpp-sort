@@ -8,7 +8,25 @@
 #include <cpp-sort/comparators/weak_greater.h>
 #include <cpp-sort/comparators/weak_less.h>
 #include <cpp-sort/sorters/heap_sorter.h>
+#include <cpp-sort/utility/is_sorted.h>
 #include <testing-tools/comparators.h>
+
+TEST_CASE( "Weak ordering of integers", "[comparison]" )
+{
+    long array[] = { -52, 1, 4, 32, 9, -9, -8, -7, 123456, -7, 12, -987 };
+
+    SECTION( "weak_less" )
+    {
+        cppsort::heap_sort(array, cppsort::weak_less);
+        CHECK( cppsort::utility::is_sorted(array) );
+    }
+
+    SECTION( "weak_greater" )
+    {
+        cppsort::heap_sort(array, cppsort::weak_greater);
+        CHECK( cppsort::utility::is_sorted(array, std::greater{}) );
+    }
+}
 
 TEST_CASE( "Weak ordering of floating-point numbers", "[comparison]" )
 {

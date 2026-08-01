@@ -12,6 +12,23 @@
 #include <cpp-sort/utility/is_sorted.h>
 #include <testing-tools/comparators.h>
 
+TEST_CASE( "Partial ordering of integers", "[comparison]" )
+{
+    long array[] = { -52, 1, 4, 32, 9, -9, -8, -7, 123456, -7, 12, -987 };
+
+    SECTION( "partial_less" )
+    {
+        cppsort::heap_sort(array, cppsort::partial_less);
+        CHECK( cppsort::utility::is_sorted(array) );
+    }
+
+    SECTION( "partial_greater" )
+    {
+        cppsort::heap_sort(array, cppsort::partial_greater);
+        CHECK( cppsort::utility::is_sorted(array, std::greater{}) );
+    }
+}
+
 TEST_CASE( "Partial ordering of floating-point numbers", "[comparison]" )
 {
     constexpr double inf = std::numeric_limits<double>::infinity();
@@ -35,7 +52,7 @@ TEST_CASE( "Partial ordering of floating-point numbers", "[comparison]" )
         CHECK( cppsort::utility::is_sorted(array) );
     }
 
-    SECTION( "weak_greater" )
+    SECTION( "partial_greater" )
     {
         cppsort::heap_sort(array, cppsort::partial_greater);
 
