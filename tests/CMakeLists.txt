@@ -25,7 +25,7 @@ else()
     FetchContent_Declare(
         Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2
-        GIT_TAG 6ee0826dcae55ed1e06b2c5701981221e979e1e6  # v3.15.0
+        GIT_TAG 8b08d4d79514f45f7e4ce2a607ac9c94e920d1bb  # v3.15.3
     )
     FetchContent_GetProperties(Catch2)
     if (NOT Catch2_POPULATED)
