@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <forward_list>

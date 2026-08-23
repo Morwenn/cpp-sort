@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 Morwenn
+ * Copyright (c) 2020-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -23,6 +23,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for random-access probes", "[probe][heap_ex
                     decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs) )
 {
     std::vector<int> collection; collection.reserve(491);
@@ -42,6 +43,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for bidirectional probes", "[probe][heap_ex
                     decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs) )
 {
     std::list<int> collection;
@@ -61,6 +63,7 @@ TEMPLATE_TEST_CASE( "heap exhaustion for forward probes", "[probe][heap_exhausti
                     decltype(cppsort::probe::amp),
                     decltype(cppsort::probe::dis),
                     decltype(cppsort::probe::mono),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs) )
 {
     std::forward_list<int> collection;

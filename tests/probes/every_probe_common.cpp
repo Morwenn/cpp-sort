@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Morwenn
+ * Copyright (c) 2021-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <algorithm>
@@ -14,7 +14,10 @@
 #include "testing-tools/random.h"
 
 //
-// Test common properties of measures of presortedness
+// Test common properties of measures of presortedness:
+// - Basic properties such a checking max_for_size consistency
+// - Mannilla 5 axioms for measures of presortedness
+// - Estivill-Castro additional properties such as monotonicity
 //
 
 TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
@@ -29,11 +32,12 @@ TEMPLATE_TEST_CASE( "test every probe with all_equal distribution", "[probe]",
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
 {
-    // First property formalized by Mannila
+    // First axiom formalized by Mannila
     // Ensure that all measures of disorder return 0 when
     // given a collection where all elements are equal
 
@@ -55,6 +59,7 @@ TEMPLATE_TEST_CASE( "test every probe with a sorted collection", "[probe]",
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
@@ -82,6 +87,7 @@ TEMPLATE_TEST_CASE( "test every probe with a 0 or 1 element", "[probe]",
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
@@ -121,6 +127,7 @@ TEMPLATE_TEST_CASE( "test order isomorphism for every probe", "[probe]",
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
@@ -177,6 +184,7 @@ TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]
                     decltype(cppsort::probe::max),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )
@@ -193,8 +201,9 @@ TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M", "[probe]
 }
 
 TEMPLATE_TEST_CASE( "test M(subsequence(X)) <= M(X) for most probes M (unique elements)", "[probe]",
-                    decltype(cppsort::probe::osc),
-                    decltype(cppsort::probe::block) )
+                    decltype(cppsort::probe::block),
+                    decltype(cppsort::probe::reve),
+                    decltype(cppsort::probe::osc) )
 {
     // Same as above, but for probes that aren't well-behaved
     // with regard to equivalent elements
@@ -284,7 +293,7 @@ TEMPLATE_TEST_CASE( "test M(2, 1, 4, 3, 6, 5, ...) <= |X| * M(2, 1) / 2 for most
 {
     // From *Sorting and Measures of Disorder* by Estivill-Castro:
     // property derived from Mannila's criteria 2 & 4
-    // The following probes don't satisfy it: Amp, Block, Mono, Osc
+    // The following probes don't satisfy it: Amp, Block, Mono, Osc, Reve
 
     int size = 1000;
     std::vector<int> sequence(size, 0);
@@ -309,6 +318,7 @@ TEMPLATE_TEST_CASE( "test M(aX) <= |X| + M(X) for most probes M", "[probe]",
                     decltype(cppsort::probe::max),
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::sus) )
 {
@@ -341,7 +351,7 @@ TEMPLATE_TEST_CASE( "test prefix monotonicity", "[probe]",
                     decltype(cppsort::probe::sus) )
 {
     // Property formalized by Estivill-Castro in *Sorting and Measures of Disorder*
-    // The following probes don't satisfy it: Amp, Block, Mono, Osc
+    // The following probes don't satisfy it: Amp, Block, Mono, Osc, Reve
 
     // Note: the original paper claims that Osc also satisfies this property,
     // but it fails for X=⟨3, 0⟩ Y=⟨⟩ Z=⟨4, 2⟩
@@ -441,6 +451,7 @@ TEMPLATE_TEST_CASE( "test that probes never produce more disorder than their the
                     decltype(cppsort::probe::mono),
                     decltype(cppsort::probe::osc),
                     decltype(cppsort::probe::rem),
+                    decltype(cppsort::probe::reve),
                     decltype(cppsort::probe::runs),
                     decltype(cppsort::probe::spear),
                     decltype(cppsort::probe::sus) )

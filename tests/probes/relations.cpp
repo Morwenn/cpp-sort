@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #include <cmath>
@@ -174,25 +174,44 @@ TEST_CASE( "relations between measures of disorder", "[probe]" )
         return spear(sequence) <= 2 * inv(sequence);
     });
 
-    // Original research about Mono
+    // Parity of permutations
+    // https://en.wikipedia.org/wiki/Parity_of_a_permutation#Equivalence_of_the_two_definitions
+
+    rc::prop("Inv(X) % 2 = Exc(X) % 2", []() {
+        auto sequence = *rc::gen::unique<std::vector<int>>(rc::gen::arbitrary<int>());
+        return inv(sequence) % 2 == exc(sequence) % 2;
+    });
+
+    // Original research about Amp, Mono and Reve:
+    // https://morwenn.github.io/presortedness/2025/11/09/TSB007-relationship-between-amp-and-runs.html
+    // https://morwenn.github.io/presortedness/2026/07/26/TSB012-relationship-between-amp-and-mono.html
 
     rc::prop("Mono(X) ≤ Runs(X)", [](const std::vector<int>& sequence) {
         return mono(sequence) <= runs(sequence);
     });
 
-    rc::prop("Enc(X) ≤ Mono(X) + 1", [](const std::vector<int>& sequence) {
-        return enc(sequence) <= mono(sequence) + 1;
-    });
-
-    // Original research about Amp
-
-    // https://morwenn.github.io/presortedness/2025/11/09/TSB007-relationship-between-amp-and-runs.html
     rc::prop("Amp(X) ≤ 2 Runs(X)", [](const std::vector<int>& sequence) {
         return amp(sequence) <= 2 * runs(sequence);
     });
 
-    // Conjecture
     rc::prop("Mono(X) ≤ Amp(X)", [](const std::vector<int>& sequence) {
         return mono(sequence) <= amp(sequence);
+    });
+
+    rc::prop("Mono(X) ≤ Reve(X)", [](const std::vector<int>& sequence) {
+        return mono(sequence) <= reve(sequence);
+    });
+
+    rc::prop("Reve(X) ≤ 2 Mono(X)", [](const std::vector<int>& sequence) {
+        return reve(sequence) <= 2 * mono(sequence);
+    });
+
+    rc::prop("Reve(X) ≤ Amp(X)", [](const std::vector<int>& sequence) {
+        return reve(sequence) <= amp(sequence);
+    });
+
+    // See "Original research" page in the documentation
+    rc::prop("Enc(X) ≤ Mono(X) + 1", [](const std::vector<int>& sequence) {
+        return enc(sequence) <= mono(sequence) + 1;
     });
 }

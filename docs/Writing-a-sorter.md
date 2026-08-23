@@ -593,7 +593,6 @@ In the example above, the resulting sorter will use our `low_projections_sorter`
   [std-ranges-less]: https://en.cppreference.com/w/cpp/utility/functional/ranges/less
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [stlab]: https://stlab.adobe.com/
-  [utility-as-function]: Miscellaneous-utilities.md#as_function
   [utility-function-objects]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [utility-identity]: Miscellaneous-utilities.md#miscellaneous-function-objects
   [wiki-sorter]: Sorters.md#wiki_sorter

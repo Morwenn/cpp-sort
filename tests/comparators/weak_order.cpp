@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2026 Morwenn
+ * SPDX-License-Identifier: MIT
+ */
+#include <cmath>
+#include <limits>
+#include <catch2/catch_test_macros.hpp>
+#include <cpp-sort/comparators/weak_greater.h>
+#include <cpp-sort/comparators/weak_less.h>
+#include <cpp-sort/sorters/heap_sorter.h>
+#include <cpp-sort/utility/is_sorted.h>
+#include <testing-tools/comparators.h>
+
+TEST_CASE( "Weak ordering of integers", "[comparison]" )
+{
+    long array[] = { -52, 1, 4, 32, 9, -9, -8, -7, 123456, -7, 12, -987 };
+
+    SECTION( "weak_less" )
+    {
+        cppsort::heap_sort(array, cppsort::weak_less);
+        CHECK( cppsort::utility::is_sorted(array) );
+    }
+
+    SECTION( "weak_greater" )
+    {
+        cppsort::heap_sort(array, cppsort::weak_greater);
+        CHECK( cppsort::utility::is_sorted(array, std::greater{}) );
+    }
+}
+
+TEST_CASE( "Weak ordering of floating-point numbers", "[comparison]" )
+{
+    constexpr double inf = std::numeric_limits<double>::infinity();
+
+    double array[] = { +1.0, +inf, -1.0, -std::nan("2"), +0.0, -inf, +std::nan("1"), -0.0 };
+
+    SECTION( "weak_less" )
+    {
+        cppsort::heap_sort(array, cppsort::weak_less);
+
+        // Check that equivalent values compare equivalent,
+        // regardless of their representation
+        CHECK( std::isnan(array[0]) );
+        CHECK( std::signbit(array[0]) );
+        CHECK( std::isinf(array[1]) );
+        CHECK( std::signbit(array[1]) );
+        CHECK( array[2] == -1.0 );
+        CHECK( array[3] == 0.0 );
+        CHECK( array[4] == 0.0 );
+        CHECK( array[5] == +1.0 );
+        CHECK( std::isinf(array[6]) );
+        CHECK( not std::signbit(array[6]) );
+        CHECK( std::isnan(array[7]) );
+        CHECK( not std::signbit(array[7]) );
+    }
+
+    SECTION( "weak_greater" )
+    {
+        cppsort::heap_sort(array, cppsort::weak_greater);
+
+        // Check that equivalent values compare equivalent,
+        // regardless of their representation
+        CHECK( not std::signbit(array[0]) );
+        CHECK( std::isnan(array[0]) );
+        CHECK( std::isinf(array[1]) );
+        CHECK( not std::signbit(array[1]) );
+        CHECK( array[2] == +1.0 );
+        CHECK( array[3] == 0.0 );
+        CHECK( array[4] == 0.0 );
+        CHECK( array[5] == -1.0 );
+        CHECK( std::isinf(array[6]) );
+        CHECK( std::signbit(array[6]) );
+        CHECK( std::isnan(array[7]) );
+        CHECK( std::signbit(array[7]) );
+    }
+}
+
+TEST_CASE( "Weak order customization point", "[comparison]" )
+{
+    helpers::totally_comparable ta, tb;
+    helpers::weakly_comparable wa, wb;
+
+    // Ensure that overload resolution is correct
+    STATIC_CHECK( cppsort::weak_less(ta, tb) == helpers::compare_result::total_less );
+    STATIC_CHECK( cppsort::weak_greater(ta, tb) == helpers::compare_result::total_greater );
+    STATIC_CHECK( cppsort::weak_less(wa, wb) == helpers::compare_result::weak_less );
+    STATIC_CHECK( cppsort::weak_greater(wa, wb) == helpers::compare_result::weak_greater );
+}

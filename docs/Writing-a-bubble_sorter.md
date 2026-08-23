@@ -421,7 +421,6 @@ That's it: we have covered pretty much every interesting aspect of writing a sim
 
   [as-function]: Miscellaneous-utilities.md#as_function
   [bubble-sort]: https://en.wikipedia.org/wiki/Bubble_sort
-  [bubble-sorter]: https://en.wikipedia.org/wiki/Bubble_sort
   [heap-sorter]: Sorters.md#heap_sorter
   [hybrid-adapter]: Sorter-adapters.md#hybrid_adapter
   [is-projection]: Sorter-traits.md#is_projection-and-is_projection_iterator

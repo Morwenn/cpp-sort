@@ -164,9 +164,11 @@ Where $N_{\mathit{eq}}(X)$ is the number of pairs of neighbors that compare equi
 | ----------- | ----------- | ------------- | --------- |
 | n           | 1           | Forward       | No        |
 
-`max_for_size`: $\lvert X \rvert - 2$ when the sign of $comp$ changes for every pair of neighbors.
+`max_for_size`: $\lvert X \rvert - 2$ for [zigzag permutations][zigzag-permutation].
 
 **Note:** *Amp* does not respect Mannila's criterion 4: $\mathit{Amp}(\langle 1, 2, 3 \rangle) = 0$ and $\mathit{Amp}(\langle 6, 5, 4 \rangle) = 0$, but $\mathit{Amp}(\langle 1, 2, 3, 6, 5, 4 \rangle) = 4$.
+
+*New in version 2.1.0*
 
 ### *Block*
 
@@ -236,7 +238,7 @@ $$
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | No        |
 
-`max_for_size`: $\frac{\lvert X \rvert}{2}$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
+`max_for_size`: $\lfloor \frac{\lvert X \rvert}{2} \rfloor$ when all values extracted from $X$ are within the bounds of already extracted encroaching lists (for example the sequence $\langle 10, 0, 9, 1, 8, 2, 7, 3, 6, 4, 5 \rangle$ triggers the worst case).
 
 ### *Exc*
 
@@ -290,7 +292,7 @@ Computes the number of inversions in $X$, where an inversion corresponds to a pa
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $\frac{\lvert X \rvert(\lvert X \rvert - 1)}{2}$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lfloor \frac{\lvert X \rvert(\lvert X \rvert - 1)}{2} \rfloor$ when $X$ is sorted in reverse order.
 
 ### *Max*
 
@@ -318,11 +320,13 @@ The measure of disorder is slightly different from its original description in [
 * It subtracts 1 from the number of runs, thus returning 0 when $X$ is sorted.
 * It explicitly handles non-increasing and non-decreasing runs, not only the strictly increasing or decreasing ones.
 
+![Illustration of Mono showing how a sequence of integers can be split into monotonic runs](images/measure-of-disorder-mono.png)
+
 | Complexity  | Memory      | Iterators     | Monotonic |
 | ----------- | ----------- | ------------- | --------- |
 | n           | 1           | Forward       | No        |
 
-`max_for_size`: $\frac{\lvert X \rvert + 1}{2} - 1$ when $X$ is a sequence of elements that are alternatively greater then lesser than their previous neighbour.
+`max_for_size`: $\lfloor \frac{\lvert X \rvert + 1}{2} \rfloor - 1$ for [zigzag permutations][zigzag-permutation] (but not only those).
 
 **Note:** `probe::mono` does not respect Mannila's criterion 4: $\mathit{Mono}(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $\mathit{Mono}(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $\mathit{Mono}(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
 
@@ -366,6 +370,26 @@ Computes the minimum number of elements that must be removed from $X$ to obtain 
 
 `max_for_size`: $\lvert X \rvert - 1$ when $X$ is sorted in reverse order.
 
+### *Reve*
+
+```cpp
+#include <cpp-sort/probes/reve.h>
+```
+
+The number of reversals in the growth direction of a sequence.
+
+![Illustration showing a line diagram of a sequence of integer numbers, highlighting the inflection points in the growth direction](images/measure-of-disorder-reve.png)
+
+| Complexity  | Memory      | Iterators     | Monotonic |
+| ----------- | ----------- | ------------- | --------- |
+| n           | 1           | Forward       | No        |
+
+`max_for_size`: $\lvert X \rvert - 2$ for [zigzag permutations][zigzag-permutation].
+
+**Note:** `probe::reve` does not respect Mannila's criterion 4: $\mathit{Reve}(\langle 1, 2, 3, 4, 5 \rangle) = 0$ and $\mathit{Reve}(\langle 10, 9, 8, 7, 6 \rangle) = 0$, but $\mathit{Reve}(\langle 1, 2, 3, 4, 5, 10, 9, 8, 7, 6 \rangle) = 1$.
+
+*New in version 2.2.0*
+
 ### *Runs*
 
 ```cpp
@@ -392,9 +416,11 @@ Spearman's footrule distance: sum of distances between the position of individua
 | ----------- | ----------- | ------------- | --------- |
 | n log n     | n           | Forward       | Yes       |
 
-`max_for_size`: $\frac{\lvert X \rvert²}{2}$ when $X$ is sorted in reverse order.
+`max_for_size`: $\lfloor \frac{\lvert X \rvert^2}{2} \rfloor$ when $X$ is sorted in reverse order.
 
-**Note:** *Spear* does not respect Mannila's criterion 5: $\mathit{Spear}(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 1, 2, 3 \rangle \rvert + \mathit{Spear}(\langle 1, 2, 3 \rangle)$.
+**Note:** *Spear* does not respect Mannila's criterion 5: $\mathit{Spear}(\langle 4, 1, 2, 3 \rangle) \not \le \lvert \langle 4 \rangle \rvert + \mathit{Spear}(\langle 1, 2, 3 \rangle)$.
+
+**Note²:** $\lfloor \frac{\mathit{Spear}(X)}{2} \rfloor$ respects Mannila's criterion 5, and is a proper measure of presortedness. A future version of **cpp-sort** might replace the current implementation with one that halves its result.
 
 ### *SUS*
 
@@ -473,3 +499,4 @@ Nevertheless we do know a few of the measure's properties:
   [probe-sms]: Measures-of-disorder.md#sms
   [probe-sus]: Measures-of-disorder.md#sus
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf
+  [zigzag-permutation]: https://en.wikipedia.org/wiki/Alternating_permutation

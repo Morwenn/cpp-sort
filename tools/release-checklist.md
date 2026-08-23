@@ -25,6 +25,7 @@ List of actions to perform when releasing a new cpp-sort version.
 ### After the release
 
 - [ ] Add the Zenodo badge to the release notes.
+- [ ] Copy the release to mirrors as needed.
 - [ ] Close the new version's milestone.
 - [ ] Check that the documentation was correctly uploaded.
 - [ ] Add the new version to Conan Center Index.

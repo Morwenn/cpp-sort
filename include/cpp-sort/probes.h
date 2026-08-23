@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2025 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_PROBES_H_
@@ -19,6 +19,7 @@
 #include <cpp-sort/probes/mono.h>
 #include <cpp-sort/probes/osc.h>
 #include <cpp-sort/probes/rem.h>
+#include <cpp-sort/probes/reve.h>
 #include <cpp-sort/probes/runs.h>
 #include <cpp-sort/probes/spear.h>
 #include <cpp-sort/probes/sus.h>

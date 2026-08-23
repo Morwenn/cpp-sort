@@ -236,10 +236,9 @@ The following relations have yet to be analyzed:
 - $\mathit{Osc} \preceq \mathit{Mono}$
 - $\mathit{Loc} \preceq \mathit{Mono}$
 
-Another interesting property of $\mathit{Mono}$ is that it returns the same amount of disorder for a sequence $X$ and for a sequence corresponding to $X$ with the order of all elements reversed, a property that is only shared with $\mathit{Osc}$ in the library.
+Another interesting property of $\mathit{Mono}$ is that it returns the same amount of disorder for a sequence $X$ and for a sequence corresponding to $X$ with the order of all elements reversed, a property that is shared with $\mathit{Amp}$, $\mathit{Osc}$ and $\mathit{Reve}$ in the library.
 
 
-  [better-sorting-networks]: https://etd.ohiolink.edu/!etd.send_file?accession=kent1239814529
   [cycle-sort]: https://en.wikipedia.org/wiki/Cycle_sort
   [divide-sort-merge-strategy]: https://apps.dtic.mil/sti/tr/pdf/AD0737270.pdf
   [exact-sort]: https://www.geocities.ws/p356spt/
@@ -248,7 +247,7 @@ Another interesting property of $\mathit{Mono}$ is that it returns the same amou
   [mountain_sort]: https://github.com/Morwenn/mountain-sort
   [poplar-heap]: https://github.com/Morwenn/poplar-heap
   [post-order-heap]: https://people.csail.mit.edu/nickh/Publications/PostOrderHeap/FUN04-PostOrderHeap.pdf
-  [probe-mono]: Measures-of-disorder.md
+  [probe-mono]: Measures-of-disorder.md#mono
   [quick-merge-sort]: https://github.com/Morwenn/quick_merge_sort
   [quick-merge-sort-arxiv]: https://arxiv.org/pdf/1804.10062.pdf
   [sort-race]: https://arxiv.org/ftp/arxiv/papers/1609/1609.04471.pdf

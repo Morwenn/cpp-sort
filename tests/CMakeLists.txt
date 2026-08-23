@@ -25,7 +25,7 @@ else()
     FetchContent_Declare(
         Catch2
         GIT_REPOSITORY https://github.com/catchorg/Catch2
-        GIT_TAG 88abf9bf325c798c33f54f6b9220ef885b267f4f  # v3.12.0
+        GIT_TAG 8b08d4d79514f45f7e4ce2a607ac9c94e920d1bb  # v3.15.3
     )
     FetchContent_GetProperties(Catch2)
     if (NOT Catch2_POPULATED)
@@ -186,9 +186,11 @@ add_executable(main-tests
     comparators/case_insensitive_less.cpp
     comparators/flip_not.cpp
     comparators/natural_less.cpp
+    comparators/partial_order.cpp
     comparators/projection_compare.cpp
-    comparators/total_less.cpp
+    comparators/total_order.cpp
     comparators/transparent_comparators.cpp
+    comparators/weak_order.cpp
 
     # Distributions tests
     distributions/all_equal.cpp
@@ -218,11 +220,13 @@ add_executable(main-tests
     probes/mono.cpp
     probes/osc.cpp
     probes/rem.cpp
+    probes/reve.cpp
     probes/runs.cpp
     probes/spear.cpp
     probes/sus.cpp
     probes/relations.cpp
     probes/every_probe_common.cpp
+    probes/every_probe_common_extra.cpp
     probes/every_probe_move_compare_projection.cpp
 
     # Sorters tests

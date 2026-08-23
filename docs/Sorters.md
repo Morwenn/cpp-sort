@@ -285,7 +285,7 @@ Implements a [smoothsort][smoothsort].
 | ----------- | ----------- | ----------- | ----------- | ----------- | ------------- |
 | n           | n log n     | n log n     | 1           | No          | Random-access |
 
-While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where `tim_sorter` or `pdq_sorter` are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
+While the complexity guarantees of this algorithm are optimal, this smoothsort isn't actually *fast* in practice. Except for some specific patterns (where [`tim_sorter`][tim-sorter] or [`pdq_sorter`][pdq-sorter] are still faster anyway), it is always almost twice as slow as `heap_sorter`. Huge collections and/or huge objects may make a difference, but I have yet to see a case where this is a useful sorting algorithm.
 
 ### `spin_sorter`
 
@@ -452,7 +452,6 @@ struct spread_sorter:
 
   [adaptive-quickselect]: https://arxiv.org/abs/1606.00484
   [adaptive-shivers-sort]: https://arxiv.org/abs/1809.08411
-  [bitmap-allocator]: https://gcc.gnu.org/onlinedocs/libstdc++/manual/bitmap_allocator.html
   [block-sort]: https://en.wikipedia.org/wiki/Block_sort
   [bottom-up-heapsort]: https://en.wikipedia.org/wiki/Heapsort#Bottom-up_heapsort
   [branchless-traits]: Miscellaneous-utilities.md#branchless-traits
@@ -487,8 +486,8 @@ struct spread_sorter:
   [std-sort]: https://en.cppreference.com/w/cpp/algorithm/sort
   [std-stable-sort]: https://en.cppreference.com/w/cpp/algorithm/stable_sort
   [std-vector-bool]: https://en.cppreference.com/w/cpp/container/vector_bool
+  [tim-sorter]: Sorters.md#tim_sorter
   [timsort]: https://en.wikipedia.org/wiki/Timsort
   [wiki-sort]: https://github.com/BonzaiThePenguin/WikiSort
-  [wiki-sorter]: Sorters.md#wiki_sorter
   [writing-a-sorter]: Writing-a-sorter.md
   [writing-a-bubble-sorter]: Writing-a-bubble_sorter.md
