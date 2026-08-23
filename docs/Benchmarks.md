@@ -1,7 +1,7 @@
 *Note: this page only benchmarks sorting algorithms under specific conditions. It can be used as a quick guide but if you really need a fast algorithm for a specific use case, you better run your own benchmarks.*
 
 *Last meaningful updates:*
-* *2.1.0 for measures of disorder*
+* *2.2.0 for measures of disorder*
 * *1.16.0 for slow O(n log n) sorts*
 * *1.14.0 for small array sorts*
 * *1.13.1 for unstable random-access sorts, forward sorts, and the expensive move/cheap comparison benchmark*
@@ -14,7 +14,7 @@ It is worth noting that most benchmarks on this page use collections of `double`
 All of the graphs on this page have been generated with slightly modified versions of the scripts found in the project's benchmarks folder. There are just too many things to check; if you ever want a specific benchmark, don't hesitate to ask for it.
 
 *The benchmarks were run on:*
-* *For version 2.0.0 and newer: EndeavourOS with g++ 15.2, with the flags -O3 -march=native -std=c++26.*
+* *For version 2.0.0 and newer: EndeavourOS with g++ 16.2, with the flags -O3 -march=native -std=c++26.*
 * *For older versions: Windows 10 with 64-bit MinGW-w64 g++ 12.0, with the flags -O3 -march=native -std=c++20.*
 
 # Random-access collections
@@ -176,10 +176,10 @@ We can see several trends in these benchmarks, rather consistant across `int` an
 
 This benchmark for [measures of disorder][Measures-of-disorder] is small and only intends to show the cost that these tools might incur. It is not meant to be exhaustive in any way.
 
-![Benchmark speed of measures of disorder for increasing size for std::vector&lt;int&gt;](https://i.imgur.com/uGoVIcE.png)
+![Benchmark speed of measures of disorder for increasing size for std::vector&lt;int&gt;](https://i.imgur.com/xOJIhm1.png)
 
 It makes rather easy to see the different groups of complexities:
-* *Amp(X)*, *Runs(X)* and *Mono(X)* are obvious O(n) algorithms.
+* *Amp(X)*, *Reve(X)*, *Runs(X)* and *Mono(X)* are obvious O(n) algorithms.
 * *Dis(X)* is a more involved O(n) algorithm.
 * All of the other measures of disorder run in O(n log n) time.
 
