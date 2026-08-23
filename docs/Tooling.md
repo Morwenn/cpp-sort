@@ -45,10 +45,10 @@ Note: when `CPPSORT_ENABLE_AUDITS` is `ON`, assertions in the library are enable
 conan search cpp-sort --remote=conancenter
 ```
 
-And then install any version to your local cache as follows (here with version 2.1.0):
+And then install any version to your local cache as follows (here with version 2.2.0):
 
 ```sh
-conan install --requires=cpp-sort/2.1.0
+conan install --requires=cpp-sort/2.2.0
 ```
 
 The packages downloaded from conan-center are minimal and only contain the files required to use **cpp-sort** as a library: the headers, CMake files and licensing information. If you need anything else you have to create your own package with the `conanfile.py` available in this repository.

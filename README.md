@@ -1,7 +1,7 @@
 ![cpp-sort logo](docs/images/cpp-sort-logo.svg)
 
-[![Latest Release](https://img.shields.io/badge/release-2.1.0-blue.svg)](https://codeberg.org/Morwenn/cpp-sort/releases/tag/v2.1.0)
-[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F2.1.0-blue.svg)](https://conan.io/center/recipes/cpp-sort?version=2.1.0)
+[![Latest Release](https://img.shields.io/badge/release-2.2.0-blue.svg)](https://codeberg.org/Morwenn/cpp-sort/releases/tag/v2.2.0)
+[![Conan Package](https://img.shields.io/badge/conan-cpp--sort%2F2.2.0-blue.svg)](https://conan.io/center/recipes/cpp-sort?version=2.2.0)
 [![Code Coverage](https://codecov.io/gh/Morwenn/cpp-sort/branch/2.x.y-develop/graph/badge.svg)](https://codecov.io/gh/Morwenn/cpp-sort)
 [![Pitchfork Layout](https://img.shields.io/badge/standard-PFL-orange.svg)](https://github.com/vector-of-bool/pitchfork)
 
