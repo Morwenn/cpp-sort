@@ -1,0 +1,10 @@
+# Copyright (c) 2026 Morwenn
+# SPDX-License-Identifier: MIT
+
+# Codeberg seems to run the repository's GitHub actions when
+# there is no Forgejo workflow: the goa of this file is to
+# skip that callback
+name: Do Nothing
+
+on:
+  workflow_dispatch:
