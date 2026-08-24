@@ -40,7 +40,7 @@ jobs:
             sanitize: address,undefined
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Configure CMake
         working-directory: ${{runner.workspace}}
