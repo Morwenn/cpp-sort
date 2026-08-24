@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.8.0)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(cpp-sort VERSION 1.17.2 LANGUAGES CXX)
+project(cpp-sort VERSION 1.17.3 LANGUAGES CXX)
 
 include(CMakePackageConfigHelpers)
 include(cpp-sort-utils)
