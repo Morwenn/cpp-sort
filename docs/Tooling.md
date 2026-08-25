@@ -6,7 +6,7 @@ The library's repository does contain files specific to other tools, but most of
 
 ### Using cpp-sort
 
-**cpp-sort** can be installed via CMake (3.11 or greater), in which case it exports a `cpp-sort::cpp-sort` target and all the files required for a basic integration. Once it has been installed on the system, the following lines should be enough to use it as a dependency:
+**cpp-sort** can be installed via CMake (3.14 or greater), in which case it exports a `cpp-sort::cpp-sort` target and all the files required for a basic integration. Once it has been installed on the system, the following lines should be enough to use it as a dependency:
 
 ```cmake
 find_package(cpp-sort REQUIRED CONFIG)
