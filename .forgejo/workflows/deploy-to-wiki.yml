@@ -6,7 +6,7 @@ name: Wiki Deployment
 on:
   push:
     branches:
-      - trunk
+      - 2.x.y-stable
     paths:
       - 'docs/**'
   workflow_dispatch:
