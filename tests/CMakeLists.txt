@@ -27,14 +27,10 @@ else()
         GIT_REPOSITORY https://github.com/catchorg/Catch2
         GIT_TAG 8b08d4d79514f45f7e4ce2a607ac9c94e920d1bb  # v3.15.3
     )
-    FetchContent_GetProperties(Catch2)
-    if (NOT Catch2_POPULATED)
-        FetchContent_Populate(Catch2)
-        add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
-        list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-        mark_system_library(Catch2)
-        mark_system_library(Catch2WithMain)
-    endif()
+    FetchContent_MakeAvailable(Catch2)
+    list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
+    mark_system_library(Catch2)
+    mark_system_library(Catch2WithMain)
 endif()
 include(Catch)
 
@@ -48,19 +44,15 @@ if (TARGET rapidcheck)
     message(STATUS "RapidCheck found: ${rapidcheck_INCLUDE_DIRECTORY}")
 else()
     message(STATUS "RapidCheck not found")
+    set(RC_INSTALL_ALL_EXTRAS ON)
     FetchContent_Declare(
         RapidCheck
         GIT_REPOSITORY https://github.com/emil-e/rapidcheck
         GIT_TAG ff6af6fc683159deb51c543b065eba14dfcf329b
     )
-    FetchContent_GetProperties(RapidCheck)
-    if (NOT RapidCheck_POPULATED)
-        FetchContent_Populate(RapidCheck)
-        set(RC_INSTALL_ALL_EXTRAS ON)
-        add_subdirectory(${rapidcheck_SOURCE_DIR} ${rapidcheck_BINARY_DIR})
-        mark_system_library(rapidcheck)
-        mark_system_library(rapidcheck_catch)
-    endif()
+    FetchContent_MakeAvailable(RapidCheck)
+    mark_system_library(rapidcheck)
+    mark_system_library(rapidcheck_catch)
 endif()
 
 ########################################

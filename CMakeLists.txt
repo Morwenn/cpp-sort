@@ -27,12 +27,8 @@ if (CPPSORT_USE_LIBASSERT)
         GIT_REPOSITORY https://github.com/jeremy-rifkin/libassert
         GIT_TAG bd33ba116f209bf71761c58dccc2f3bf277e0824  # v2.2.1
     )
-    FetchContent_GetProperties(libassert)
-    if (NOT libassert_POPULATED)
-        FetchContent_Populate(libassert)
-        add_subdirectory(${libassert_SOURCE_DIR} ${libassert_BINARY_DIR})
-        mark_system_library(libassert-lib)
-    endif()
+    FetchContent_MakeAvailable(libassert)
+    mark_system_library(libassert-lib)
 endif()
 
 # Create cpp-sort library and configure it
