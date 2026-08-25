@@ -27,7 +27,7 @@ When it doesn't handle a type natively and ADL doesn't find any suitable `total_
 
 Total order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_integral`][std-is-integral].
 
-*Changed in version 2.1.0:* `total_less` and `total_greater` now correctly implement IEEE 754 `totalOrder` in C++20 mode, when the featur-test macro `__cpp_lib_three_way_comparison` is defined.
+*Changed in version 2.2.0:* `total_less` and `total_greater` now correctly implement IEEE 754 `totalOrder` in C++20 mode, when the feature-test macro `__cpp_lib_three_way_comparison` is defined.
 
 ### Weak order comparators
 
@@ -116,6 +116,7 @@ The two-parameter version of the customization point calls the three-parameter o
   [std-is-digit]: https://en.cppreference.com/w/cpp/string/byte/isdigit
   [std-is-integral]: https://en.cppreference.com/w/cpp/types/is_integral
   [std-locale]: https://en.cppreference.com/w/cpp/locale/locale
+  [std-strong-order]: https://cppreference.com/cpp/utility/compare/strong_order
   [to-lower]: https://en.cppreference.com/w/cpp/locale/ctype/tolower
   [total-order]: https://en.wikipedia.org/wiki/Total_order
   [transparent-func]: Comparators-and-projections.md#Transparent-function-objects
