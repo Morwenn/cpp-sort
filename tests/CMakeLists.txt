@@ -96,7 +96,7 @@ macro(configure_tests target)
     # More warnings and settings
     cppsort_add_warnings(${target})
     target_compile_options(${target} PRIVATE
-        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:Clang>>:-O0>
+        $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_FRONTEND_VARIANT:Clang>>:-O0>
         $<$<AND:$<CONFIG:Debug>,$<CXX_COMPILER_ID:GNU>>:-Og>
     )
 
