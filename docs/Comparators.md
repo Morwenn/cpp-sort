@@ -11,7 +11,7 @@ Every non-refined comparator described below is also a [transparent comparator][
 #include <cpp-sort/comparators/total_less.h>
 ```
 
-The comparators `total_less` and `total_order` are [customization points][custom-point] implementing a [total order][total-order], inspired by the similar functions described in [P0100][P0100]. The provided functions handle built-in integer out of the box (using the built-in relational operators) and implement IEEE 754's `totalOrder` for floating point numbers (from lesser to greater):
+The comparators `total_less` and `total_order` are [customization points][custom-point] implementing a [total order][total-order], inspired by the similar functions described in [P0100][P0100]. The provided functions handle built-in integer types out of the box (using the built-in relational operators) and attempt to implement IEEE 754's `totalOrder` for floating point numbers (from lesser to greater):
 * positive quiet NaNs
 * positive signaling NaNs
 * positive infinity
@@ -23,13 +23,17 @@ The comparators `total_less` and `total_order` are [customization points][custom
 * negative signaling NaNs
 * negative quiet NaNs
 
-That said, the comparators are currently unable to discriminate between quiet and signaling NaNs, so they are considered to be *equivalent*. When it doesn't handle a type natively and ADL doesn't find any suitable `total_less` function in a class namespace, `cppsort::total_less` does *not* fall back to `operator<`; see [P0100][P0100] for the rationale (it applies to the whole `total_*` family of customization points).
+That said, the comparators are unable to discriminate between quiet and signaling NaNs, and have no way to inspect the bit patterns of NaNs to compare them. All NaNs that share a same sign are therefore considered to be *equivalent* in C++17. In C++20 however, the comparators rely on [`std::strong_order`][std-strong-order] when available, which correctly implements `totalOrder` for IEEE 754 floating point numbers.
+
+When it doesn't handle a type natively and ADL doesn't find any suitable `total_less` function in a class namespace, `cppsort::total_less` does *not* fall back to `operator<`; see [P0100][P0100] for the rationale (it applies to the whole `total_*` family of customization points).
 
 Total order comparators are considered as [generating branchless code][branchless-traits] when comparing instances of a type that satisfies [`std::is_integral`][std-is-integral].
 
 *Changed in version 1.5.0:* `total_greater` and `total_less` are respectively of type `total_greater_t` and `total_less_t`.
 
 *Changed in version 1.13.1:* support for `[un]signed __int128`.
+
+*Changed in version 1.17.3:* `total_less` and `total_greater` now correctly implement IEEE 754 `totalOrder` in C++20 mode, when the feature-test macro `__cpp_lib_three_way_comparison` is defined.
 
 ### Weak order comparators
 

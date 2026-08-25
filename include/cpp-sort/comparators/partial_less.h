@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2021 Morwenn
+ * Copyright (c) 2016-2026 Morwenn
  * SPDX-License-Identifier: MIT
  */
 #ifndef CPPSORT_COMPARATORS_PARTIAL_LESS_H_
@@ -33,9 +33,12 @@ namespace cppsort
         // Generic overload: a weak order is also a partial order
 
         template<typename T>
-        auto partial_less(const T& lhs, const T& rhs)
+        constexpr auto partial_less(const T& lhs, const T& rhs)
             noexcept(noexcept(cppsort::weak_less(lhs, rhs)))
-            -> decltype(cppsort::weak_less(lhs, rhs))
+            -> detail::enable_if_t<
+                not std::is_floating_point<T>::value,
+                decltype(cppsort::weak_less(lhs, rhs))
+            >
         {
             return cppsort::weak_less(lhs, rhs);
         }

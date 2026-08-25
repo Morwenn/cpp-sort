@@ -194,9 +194,11 @@ add_executable(main-tests
     comparators/case_insensitive_less.cpp
     comparators/flip_not.cpp
     comparators/natural_less.cpp
+    comparators/partial_order.cpp
     comparators/projection_compare.cpp
-    comparators/total_less.cpp
+    comparators/total_order.cpp
     comparators/transparent_comparators.cpp
+    comparators/weak_order.cpp
 
     # Distributions tests
     distributions/all_equal.cpp
